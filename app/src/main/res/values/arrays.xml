@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="tipo_armas">
+        <item>Pistola</item>
+        <item>Escopeta</item>
+        <item>Rifle</item>
+        <item>Revolver</item>
+        <item>Avancarga</item>
+    </string-array>
+</resources>
