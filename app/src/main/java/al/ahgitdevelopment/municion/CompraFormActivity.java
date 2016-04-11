@@ -11,9 +11,9 @@ import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 
 /**
- * Created by Alberto on 25/03/2016.
+ * Created by ahidalgog on 11/04/2016.
  */
-public class GuiaFormActivity extends AppCompatActivity {
+public class CompraFormActivity extends AppCompatActivity {
     private AppCompatEditText nombreArma;
     private AppCompatEditText marca;
     private AppCompatEditText modelo;
@@ -31,7 +31,7 @@ public class GuiaFormActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.form_guia);
+        setContentView(R.layout.form_compra);
 
         nombreArma = (AppCompatEditText) findViewById(R.id.form_nombre_arma);
         marca = (AppCompatEditText) findViewById(R.id.form_marca);

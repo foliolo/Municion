@@ -25,6 +25,7 @@ public class LoginPasswordActivity extends AppCompatActivity {
 
     /**
      * Inicializa la actividad
+     *
      * @param savedInstanceState Instancia del estado de la activity
      */
     @Override
@@ -38,15 +39,14 @@ public class LoginPasswordActivity extends AppCompatActivity {
         button = (Button) findViewById(R.id.continuar);
 
         // Registro de contraseña
-        if(!prefs.contains("password")) {
+        if (!prefs.contains("password")) {
             password.setHint(getResources().getString(R.string.lbl_password));
             button.setText(R.string.guardar);
-        }
-        else {
+        } else {
             password.setHint(getResources().getString(R.string.lbl_insert_password));
             button.setText(R.string.login);
         }
-            //Añadimos la contraseña a las preferencias
+        //Añadimos la contraseña a las preferencias
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -70,6 +70,7 @@ public class LoginPasswordActivity extends AppCompatActivity {
 
     /**
      * Validación de la contraseña para poder entrar a la aplicación
+     *
      * @param prefs Preferencias
      */
     private void CheckPassword(SharedPreferences prefs) {
@@ -101,6 +102,7 @@ public class LoginPasswordActivity extends AppCompatActivity {
 
     /**
      * Guarda la contraseña en el sharedPreference
+     *
      * @return Contraseña valida o no
      */
     private boolean savePassword() {
@@ -109,13 +111,12 @@ public class LoginPasswordActivity extends AppCompatActivity {
         if (prefs == null)
             prefs = getSharedPreferences("Preferences", Context.MODE_PRIVATE);
 
-        if(password.getText().toString().length()>4) {
+        if (password.getText().toString().length() > 4) {
             SharedPreferences.Editor editor = prefs.edit();
             editor.putString("password", password.getText().toString());
             editor.commit();
             flag = true;
-        }
-        else
+        } else
             flag = false;
 
         return flag;
@@ -123,18 +124,16 @@ public class LoginPasswordActivity extends AppCompatActivity {
 
     /**
      * Valida la contraseña introducida por el usuario frente a la guardad en el sharedPreferences
+     *
      * @return Contraseña valida o invalida
      */
     private boolean checkPassword() {
-        if(prefs == null)
+        if (prefs == null)
             prefs = getSharedPreferences("Preferences", Context.MODE_PRIVATE);
 
         String pass = prefs.getString("password", "");
 
-        if (pass.equals(password.getText().toString()))
-            return true;
-        else
-            return false;
+        return pass.equals(password.getText().toString());
     }
 
     @Override

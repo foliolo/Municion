@@ -19,8 +19,8 @@
     <string name="title_nueva_guia">Nueva Guia</string>
     <string name="menu_form_save">Guardar</string>
 
-    <string name="labelInfo">Información de la nueva guia</string>
-    <string name="nombreArma">Apodo</string>
+    <string name="labelInfoGuia">Información de la nueva guia</string>
+    <string name="nombreArma">Nombre del arma</string>
     <string name="marca">Marca</string>
     <string name="modelo">Modelo  </string>
     <string name="numGuia">Numero de guia</string>
@@ -29,6 +29,12 @@
     <string name="cartuchosGastados">Cartuchos gastados</string>
     <string name="cartuchosTotales">Cartuchos de la guia</string>
 
+    <!--String Compras Form-->
+    <string name="title_nueva_compra">Nueva Compra</string>
+    <string name="labelInfoCompra">Información de la nueva compra</string>
+
+    <string name="precio">Precio</string>
+    <string name="cartuchosComprados">Numero de cartuchos comprados</string>
 
     <!-- Strings related to Settings -->
 

@@ -13,19 +13,19 @@
         android:id="@+id/password"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:inputType="numberPassword"
-        android:ems="15"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:password="true"/>
+        android:ems="15"
+        android:inputType="numberPassword"
+        android:password="true" />
 
     <Button
         android:id="@+id/continuar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="New Button"
         android:layout_below="@+id/password"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="35dp"
-        android:elevation="8dp" />
+        android:elevation="8dp"
+        android:text="New Button" />
 </RelativeLayout>

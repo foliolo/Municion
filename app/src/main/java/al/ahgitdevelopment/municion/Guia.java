@@ -15,6 +15,7 @@ public class Guia {
     public String tipoArma;
     public int cartuchosGastados;
     public int cartuchosTotales;
+    private int id;
 
     public Guia(Bundle bundle) {
         this.nombreArma = bundle.getString("nombreArma");
@@ -25,6 +26,14 @@ public class Guia {
         this.tipoArma = bundle.getString("tipoArma");
         this.cartuchosGastados = bundle.getInt("cartuchosGastados", 0);
         this.cartuchosTotales = bundle.getInt("cartuchosTotales", 0);
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getNombreArma() {
@@ -91,3 +100,5 @@ public class Guia {
         this.cartuchosTotales = cartuchosTotales;
     }
 }
+
+// http://stackoverflow.com/questions/5457699/cursor-adapter-and-sqlite-example

@@ -77,7 +77,7 @@ public class MyExpandableGuias extends android.widget.BaseExpandableListAdapter 
 
     @Override
     public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
-        final Guia child = (Guia) getChild(groupPosition, childPosition);
+        final Guia child = getChild(groupPosition, childPosition);
 
         if (convertView == null) {
             LayoutInflater infalInflater = (LayoutInflater) context
@@ -86,12 +86,12 @@ public class MyExpandableGuias extends android.widget.BaseExpandableListAdapter 
         }
 
         TextView nombreGuia = (TextView) convertView.findViewById(R.id.item_nombre_guia);
-        TextView municion = (TextView) convertView.findViewById(R.id.item_municion_consumida);
-        TextView porcentaje = (TextView) convertView.findViewById(R.id.item_porcentaje);
+        TextView municion = (TextView) convertView.findViewById(R.id.item_precio);
+        TextView porcentaje = (TextView) convertView.findViewById(R.id.item_cartuchos_comprados);
 
         nombreGuia.setText(child.getNombreArma());
         municion.setText(child.getCartuchosGastados() + "\\" + child.getCartuchosTotales());
-        float percentValue = (float)child.cartuchosGastados * 100 / child.cartuchosTotales;
+        float percentValue = (float) child.cartuchosGastados * 100 / child.cartuchosTotales;
         porcentaje.setText(percentValue + "%");
 
         return convertView;
