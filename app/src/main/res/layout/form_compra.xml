@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?><!--<android.support.v4.widget.NestedScrollView--><!--xmlns:android="http://schemas.android.com/apk/res/android"--><!--android:orientation="vertical"--><!--android:layout_width="match_parent"--><!--android:layout_height="match_parent"--><!--android:paddingBottom="@dimen/activity_vertical_margin"--><!--android:paddingLeft="@dimen/activity_horizontal_margin"--><!--android:paddingRight="@dimen/activity_horizontal_margin"--><!--android:paddingTop="@dimen/activity_vertical_margin">-->
+
+<android.support.v7.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin">
+
+    <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/form_label_info"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="15dp"
+        android:ems="25"
+        android:gravity="center"
+        android:hint="@string/labelInfo"
+        android:inputType="text"
+        android:textSize="22dip" />
+
+    <android.support.v7.widget.AppCompatEditText
+        android:id="@+id/form_nombre_arma"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="15"
+        android:hint="@string/nombreArma"
+        android:inputType="text" />
+
+    <android.support.v7.widget.AppCompatEditText
+        android:id="@+id/form_marca"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="15"
+        android:hint="@string/marca"
+        android:inputType="text" />
+
+    <android.support.v7.widget.AppCompatEditText
+        android:id="@+id/form_modelo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="15"
+        android:hint="@string/modelo"
+        android:inputType="text" />
+
+    <android.support.v7.widget.AppCompatEditText
+        android:id="@+id/form_num_guia"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="15"
+        android:hint="@string/numGuia"
+        android:inputType="number" />
+
+    <android.support.v7.widget.AppCompatEditText
+        android:id="@+id/form_calibre"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="15"
+        android:hint="@string/calibre"
+        android:inputType="text" />
+
+    <android.support.v7.widget.AppCompatSpinner
+        android:id="@+id/form_tipo_arma"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="15"
+        android:hint="@string/tipoArma"
+        android:inputType="text"
+        android:spinnerMode="dropdown" />
+
+    <android.support.v7.widget.AppCompatEditText
+        android:id="@+id/form_cartuchos_gastados"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="15"
+        android:hint="@string/cartuchosGastados"
+        android:inputType="number" />
+
+    <android.support.v7.widget.AppCompatEditText
+        android:id="@+id/form_cartuchos_totales"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="15"
+        android:hint="@string/cartuchosTotales"
+        android:inputType="number" />
+
+</android.support.v7.widget.LinearLayoutCompat><!--</android.support.v4.widget.NestedScrollView>-->

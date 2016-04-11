@@ -7,9 +7,12 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -18,32 +21,31 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 public class FragmentMainActivity extends AppCompatActivity {
 
+    private final int GUIA_COMPLETED = 1;
+    private final int COMPRA_COMPLETED = 2;
     /**
-     * The {@link android.support.v4.view.PagerAdapter} that will provide
+     * The {@link PagerAdapter} that will provide
      * fragments for each of the sections. We use a
      * {@link FragmentPagerAdapter} derivative, which will keep every
      * loaded fragment in memory. If this becomes too memory intensive, it
      * may be best to switch to a
-     * {@link android.support.v4.app.FragmentStatePagerAdapter}.
+     * {@link FragmentStatePagerAdapter}.
      */
     private SectionsPagerAdapter mSectionsPagerAdapter;
-
     /**
      * The {@link ViewPager} that will host the section contents.
      */
     private ViewPager mViewPager;
-    private final int FORM_COMPLETED = 1;
-    private static HashMap<String, ArrayList<Guia>> grupoGuias = new HashMap<String, ArrayList<Guia>>();
-    private static ArrayList<Guia> guias = new ArrayList<Guia>();
-    private static ArrayList<Compra> compras = new ArrayList<Compra>();
+//    private static HashMap<String, ArrayList<Guia>> grupoGuias = new HashMap<String, ArrayList<Guia>>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+//        final View layout = getLayoutInflater().inflate(R.layout.activity_fragment_main,null);
+//        setContentView(layout);
         setContentView(R.layout.activity_fragment_main);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -68,14 +70,13 @@ public class FragmentMainActivity extends AppCompatActivity {
             public void onClick(View view) {
 //                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
 //                        .setAction("Action", null).show();
-
-                Intent form = new Intent(FragmentMainActivity.this, GuiaFormActivity.class);
-                startActivityForResult(form, FORM_COMPLETED);
-                if(((PlaceholderFragment) mSectionsPagerAdapter.getItem(0)).myGuiaAdapter != null)
-                    ((PlaceholderFragment) mSectionsPagerAdapter.getItem(0)).myGuiaAdapter.notifyDataSetChanged();
-
-                if (((PlaceholderFragment) mSectionsPagerAdapter.getItem(0)).myCompraAdapter != null)
-                ((PlaceholderFragment) mSectionsPagerAdapter.getItem(0)).myCompraAdapter.notifyDataSetChanged();
+                if (mViewPager.getCurrentItem() == 0) {
+                    Intent form = new Intent(FragmentMainActivity.this, GuiaFormActivity.class);
+                    startActivityForResult(form, GUIA_COMPLETED);
+                } else {
+                    Intent form = new Intent(FragmentMainActivity.this, CompraFormActivity.class);
+                    startActivityForResult(form, COMPRA_COMPLETED);
+                }
             }
         });
     }
@@ -102,6 +103,7 @@ public class FragmentMainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+
     /**
      * Recepción de los datos del formulario
      * @param requestCode
@@ -111,10 +113,24 @@ public class FragmentMainActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         // Check which request we're responding to
-        if (requestCode == FORM_COMPLETED) {
+        if (requestCode == GUIA_COMPLETED) {
             // Make sure the request was successful
             if (resultCode == RESULT_OK) {
-                addNewGuia(data);
+                ((PlaceholderFragment) mSectionsPagerAdapter.getItem(0))
+                        .getGuias().add(new Guia(data.getExtras()));
+                ((PlaceholderFragment) mSectionsPagerAdapter.getItem(0)).myGuiaAdapter.notifyDataSetChanged();
+
+            }
+        }
+
+        if (requestCode == COMPRA_COMPLETED) {
+            // Make sure the request was successful
+            if (resultCode == RESULT_OK) {
+                ((PlaceholderFragment) mSectionsPagerAdapter.getItem(1))
+                        .getCompras().add(new Compra(data.getExtras()));
+//                ((PlaceholderFragment) mSectionsPagerAdapter.getItem(1)).getView().invalidate();
+                ((PlaceholderFragment) mSectionsPagerAdapter.getItem(1)).myCompraAdapter.notifyDataSetChanged();
+
             }
         }
     }
@@ -126,30 +142,30 @@ public class FragmentMainActivity extends AppCompatActivity {
 //
 //        ArrayList<Guia> itemsList = grupoGuias.get(tipoArma);
 //
-//        // if list does not exist create it
+//        // if list_guias does not exist create it
 //        if (itemsList == null) {
 //            itemsList = new ArrayList<Guia>();
 //            itemsList.add(new Guia(bundle));
 //            grupoGuias.put(tipoArma, itemsList);
 //        } else {
-//            // add if item is not already in list
+//            // add if item is not already in list_guias
 //            itemsList.add(new Guia(bundle));
 //        }
 //    }
 
-    // Version 2
-    private void addNewGuia(Intent data) {
-        Bundle bundle = data.getExtras();
-
-        // if list does not exist create it
-        if (guias == null) {
-            guias = new ArrayList<Guia>();
-            guias.add(new Guia(bundle));
-        } else {
-            // add if item is not already in list
-            guias.add(new Guia(bundle));
-        }
-    }
+//    // Version 2
+//    private void addNewGuia(Intent data) {
+//        Bundle bundle = data.getExtras();
+//
+//        // if list_guias does not exist create it
+//        if (guias == null) {
+//            guias = new ArrayList<Guia>();
+//            guias.add(new Guia(bundle));
+//        } else {
+//            // add if item is not already in list_guias
+//            guias.add(new Guia(bundle));
+//        }
+//    }
 
     /**
      * A placeholder fragment containing a simple view.
@@ -160,9 +176,12 @@ public class FragmentMainActivity extends AppCompatActivity {
          * fragment.
          */
         private static final String ARG_SECTION_NUMBER = "section_number";
-        public MyExpandableGuias expListAdapter;
-        public GuiaAdapter myGuiaAdapter;
-        public CompraAdapter myCompraAdapter;
+
+        //        private MyExpandableGuias expListAdapter;
+        private static GuiaAdapter myGuiaAdapter;
+        private static CompraAdapter myCompraAdapter;
+        private static ArrayList<Guia> guias = new ArrayList<Guia>();
+        private static ArrayList<Compra> compras = new ArrayList<Compra>();
 
 
         /**
@@ -174,6 +193,13 @@ public class FragmentMainActivity extends AppCompatActivity {
             Bundle args = new Bundle();
             args.putInt(ARG_SECTION_NUMBER, sectionNumber);
             fragment.setArguments(args);
+            try {
+                myGuiaAdapter = new GuiaAdapter(fragment.getActivity(), guias);
+                myCompraAdapter = new CompraAdapter(fragment.getActivity(), compras);
+            } catch (Exception ex) {
+                Log.e("TAG", "Error en la instaciacion de los adapter", ex);
+            }
+
             return fragment;
         }
 
@@ -186,19 +212,16 @@ public class FragmentMainActivity extends AppCompatActivity {
 //            expListAdapter = new MyExpandableGuias(this.getActivity(), grupoGuias);
 //            expandableListView.setAdapter(expListAdapter);
 
-            View rootView = null;
+            View rootView = inflater.inflate(android.R.layout.list_content, container, false);
+            ListView listView = (ListView) rootView.findViewById(android.R.id.list);
 
             // Lista de guias
-            if(getArguments().getInt(ARG_SECTION_NUMBER) == 0) {
-                rootView = inflater.inflate(android.R.layout.list_content, container, false);
-                ListView listView = (ListView) rootView.findViewById(android.R.id.list);
+            if (getArguments().getInt(ARG_SECTION_NUMBER) == 0) {
                 myGuiaAdapter = new GuiaAdapter(getActivity(), guias);
                 listView.setAdapter(myGuiaAdapter);
             }
             // Lista de compras
-            else{
-                rootView = inflater.inflate(android.R.layout.list_content, container, false);
-                ListView listView = (ListView) rootView.findViewById(android.R.id.list);
+            else {
                 myCompraAdapter = new CompraAdapter(getActivity(), compras);
                 listView.setAdapter(myCompraAdapter);
             }
@@ -206,13 +229,21 @@ public class FragmentMainActivity extends AppCompatActivity {
             return rootView;
         }
 
-        public MyExpandableGuias getExpListAdapter() {
-            if (expListAdapter == null)
-                expListAdapter = new MyExpandableGuias(this.getActivity(), grupoGuias);
+//        public MyExpandableGuias getExpListAdapter() {
+//            if (expListAdapter == null)
+//                expListAdapter = new MyExpandableGuias(this.getActivity(), grupoGuias);
+//
+//            expListAdapter.notifyDataSetChanged();
+//
+//            return expListAdapter;
+//        }
 
-            expListAdapter.notifyDataSetChanged();
+        public ArrayList<Guia> getGuias() {
+            return guias;
+        }
 
-            return expListAdapter;
+        public ArrayList<Compra> getCompras() {
+            return compras;
         }
     }
 
@@ -230,7 +261,7 @@ public class FragmentMainActivity extends AppCompatActivity {
         public Fragment getItem(int position) {
             // getItem is called to instantiate the fragment for the given page.
             // Return a PlaceholderFragment (defined as a static inner class below).
-            return PlaceholderFragment.newInstance(position + 1);
+            return PlaceholderFragment.newInstance(position);
         }
 
         @Override

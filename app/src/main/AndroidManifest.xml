@@ -30,13 +30,16 @@
         </activity>
 
         <activity
-            android:name=".SettingsActivity"
-            android:label="@string/title_activity_settings"></activity>
-
-        <activity
             android:name=".GuiaFormActivity"
             android:label="@string/title_nueva_guia"></activity>
 
+        <activity
+            android:name=".CompraFormActivity"
+            android:label="@string/title_nueva_compra"></activity>
+
+        <activity
+            android:name=".SettingsActivity"
+            android:label="@string/title_activity_settings"></activity>
 
     </application>
 
