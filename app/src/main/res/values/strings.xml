@@ -17,6 +17,7 @@
 
     <!--String Guias Form-->
     <string name="title_nueva_guia">Nueva Guia</string>
+    <string name="title_nueva_compra">Nueva Compra</string>
     <string name="menu_form_save">Guardar</string>
 
     <string name="labelInfoGuia">Información de la nueva guia</string>
