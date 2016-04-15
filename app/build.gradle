@@ -17,7 +17,7 @@ android {
     }
     productFlavors {
     }
-    buildToolsVersion '24.0.0 rc2'
+    buildToolsVersion '24.0.0 rc3'
 }
 
 dependencies {

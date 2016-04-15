@@ -52,9 +52,9 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
     private static final String CREATE_TABLE_COMPRA = "CREATE TABLE " + TABLE_COMPRAS + "("
             + KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "
             + KEY_GUIA_ID + " INTEGER NOT NULL,"
-            + " FOREIGN KEY (" + KEY_GUIA_ID + ") REFERENCES " + TABLE_GUIAS + "(" + KEY_ID + "),"
             + KEY_COMPRA_PRECIO + " REAL NOT NULL,"
-            + KEY_COMPRA_CARTUCHOS_COMPRADOS + " INTEGER NOT NULL"
+            + KEY_COMPRA_CARTUCHOS_COMPRADOS + " INTEGER NOT NULL,"
+            + " FOREIGN KEY (" + KEY_GUIA_ID + ") REFERENCES " + TABLE_GUIAS + "(" + KEY_ID + ")"
             + ")";
 
 
@@ -80,3 +80,5 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
     }
 }
 
+//      android adb, retrieve database using run-as
+//      http://www.hermosaprogramacion.com/2014/10/android-sqlite-bases-de-datos/
