@@ -1,47 +1,52 @@
 package al.ahgitdevelopment.municion;
 
-import android.os.Bundle;
+import android.media.Image;
 
 /**
- * Created by Alberto on 29/03/2016.
- * Guia del arma, contiene la información ccompleta del arma.
+ * Created by Alberto on 13/05/2016.
  */
 public class Guia {
-    public String nombreArma;
-    public String marca;
-    public String modelo;
-    public int numGuia;
-    public String calibre;
-    public String tipoArma;
-    public int cartuchosGastados;
-    public int cartuchosTotales;
     private int id;
-
-    public Guia(Bundle bundle) {
-        this.nombreArma = bundle.getString("nombreArma");
-        this.marca = bundle.getString("marca");
-        this.modelo = bundle.getString("modelo");
-        this.numGuia = bundle.getInt("numGuia", -1);
-        this.calibre = bundle.getString("calibre");
-        this.tipoArma = bundle.getString("tipoArma");
-        this.cartuchosGastados = bundle.getInt("cartuchosGastados", 0);
-        this.cartuchosTotales = bundle.getInt("cartuchosTotales", 0);
-    }
+    private int idCompra;
+    private int idLicencia;
+    private String apodo;
+    private String marca;
+    private String modelo;
+    private int tipoArma;
+    private String calibre1;
+    private String calibre2;
+    private int numGuia;
+    private int numAram;
+    private Image imagen;
+    private int cupo;
+    private int gastado;
 
     public int getId() {
         return id;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public int getIdCompra() {
+        return idCompra;
     }
 
-    public String getNombreArma() {
-        return nombreArma;
+    public void setIdCompra(int idCompra) {
+        this.idCompra = idCompra;
     }
 
-    public void setNombreArma(String nombreArma) {
-        this.nombreArma = nombreArma;
+    public int getIdLicencia() {
+        return idLicencia;
+    }
+
+    public void setIdLicencia(int idLicencia) {
+        this.idLicencia = idLicencia;
+    }
+
+    public String getApodo() {
+        return apodo;
+    }
+
+    public void setApodo(String apodo) {
+        this.apodo = apodo;
     }
 
     public String getMarca() {
@@ -60,6 +65,30 @@ public class Guia {
         this.modelo = modelo;
     }
 
+    public int getTipoArma() {
+        return tipoArma;
+    }
+
+    public void setTipoArma(int tipoArma) {
+        this.tipoArma = tipoArma;
+    }
+
+    public String getCalibre1() {
+        return calibre1;
+    }
+
+    public void setCalibre1(String calibre1) {
+        this.calibre1 = calibre1;
+    }
+
+    public String getCalibre2() {
+        return calibre2;
+    }
+
+    public void setCalibre2(String calibre2) {
+        this.calibre2 = calibre2;
+    }
+
     public int getNumGuia() {
         return numGuia;
     }
@@ -68,37 +97,35 @@ public class Guia {
         this.numGuia = numGuia;
     }
 
-    public String getCalibre() {
-        return calibre;
+    public int getNumAram() {
+        return numAram;
     }
 
-    public void setCalibre(String calibre) {
-        this.calibre = calibre;
+    public void setNumAram(int numAram) {
+        this.numAram = numAram;
     }
 
-    public String getTipoArma() {
-        return tipoArma;
+    public Image getImagen() {
+        return imagen;
     }
 
-    public void setTipoArma(String tipoArma) {
-        this.tipoArma = tipoArma;
+    public void setImagen(Image imagen) {
+        this.imagen = imagen;
     }
 
-    public int getCartuchosGastados() {
-        return cartuchosGastados;
+    public int getCupo() {
+        return cupo;
     }
 
-    public void setCartuchosGastados(int cartuchosGastados) {
-        this.cartuchosGastados = cartuchosGastados;
+    public void setCupo(int cupo) {
+        this.cupo = cupo;
     }
 
-    public int getCartuchosTotales() {
-        return cartuchosTotales;
+    public int getGastado() {
+        return gastado;
     }
 
-    public void setCartuchosTotales(int cartuchosTotales) {
-        this.cartuchosTotales = cartuchosTotales;
+    public void setGastado(int gastado) {
+        this.gastado = gastado;
     }
 }
-
-// http://stackoverflow.com/questions/5457699/cursor-adapter-and-sqlite-example

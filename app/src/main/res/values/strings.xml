@@ -14,13 +14,14 @@
     <!--String sections-->
     <string name="section_guias_title">Guías</string>
     <string name="section_compras_title">Compras</string>
+    <string name="section_licencias_title">Licencias</string>
 
     <!--String Guias Form-->
     <string name="title_nueva_guia">Nueva Guia</string>
     <string name="menu_form_save">Guardar</string>
 
     <string name="labelInfoGuia">Información de la nueva guia</string>
-    <string name="nombreArma">Nombre del arma</string>
+    <string name="apodo">Nombre del arma</string>
     <string name="marca">Marca</string>
     <string name="modelo">Modelo  </string>
     <string name="numGuia">Numero de guia</string>
@@ -61,7 +62,7 @@
         <item>-1</item>
     </string-array>
 
-    <!-- Example settings for Data & Sync -->
+    <!-- Example settings for DataModel & Sync -->
     <string name="pref_header_data_sync">Data &amp; sync</string>
 
     <string name="pref_title_sync_frequency">Sync frequency</string>
@@ -86,11 +87,10 @@
 
     <!-- Example settings for Notifications -->
     <string name="pref_header_notifications">Notifications</string>
-
     <string name="pref_title_new_message_notifications">New message notifications</string>
-
     <string name="pref_title_ringtone">Ringtone</string>
     <string name="pref_ringtone_silent">Silent</string>
-
     <string name="pref_title_vibrate">Vibrate</string>
+    <string name="label_cupo">Cupo</string>
+    <string name="label_gastado">Gastado</string>
 </resources>

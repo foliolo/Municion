@@ -25,7 +25,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ems="15"
-        android:hint="@string/nombreArma"
+        android:hint="@string/apodo"
         android:inputType="text" />
 
     <android.support.v7.widget.AppCompatEditText

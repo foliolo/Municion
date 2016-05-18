@@ -1,6 +1,5 @@
 package al.ahgitdevelopment.municion;
 
-import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -14,28 +13,21 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.support.v4.widget.CursorAdapter;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CursorAdapter;
 import android.widget.ListView;
-import android.widget.Toast;
-
-import java.util.ArrayList;
 
 public class FragmentMainActivity extends AppCompatActivity {
 
+    private static SQLiteDatabase db;
     private final int GUIA_COMPLETED = 1;
     private final int COMPRA_COMPLETED = 2;
-    //    private static HashMap<String, ArrayList<Guia>> grupoGuias = new HashMap<String, ArrayList<Guia>>();
-    private DataBaseSQLiteHelper dbSqlHelper;
-    private SQLiteDatabase db;
-
     /**
      * The {@link PagerAdapter} that will provide
      * fragments for each of the sections. We use a
@@ -53,8 +45,6 @@ public class FragmentMainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        final View layout = getLayoutInflater().inflate(R.layout.activity_fragment_main,null);
-//        setContentView(layout);
         setContentView(R.layout.activity_fragment_main);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -62,8 +52,16 @@ public class FragmentMainActivity extends AppCompatActivity {
         toolbar.setCollapsible(false);
 
         //Abrimos la base de datos 'DBUMunicion' en modo escritura
-        dbSqlHelper = new DataBaseSQLiteHelper(getApplicationContext());
-        db = dbSqlHelper.getWritableDatabase();
+        if (db == null) {
+            DataBaseSQLiteHelper dbSqlHelper = new DataBaseSQLiteHelper(getApplicationContext());
+            db = dbSqlHelper.getWritableDatabase();
+
+            if (DataBaseSQLiteHelper.getGuias(db).getCount() == 0) {
+                DataBaseSQLiteHelper.addCompras(db);
+                DataBaseSQLiteHelper.addLicencias(db);
+                DataBaseSQLiteHelper.addGuias(db);
+            }
+        }
 
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
@@ -85,8 +83,10 @@ public class FragmentMainActivity extends AppCompatActivity {
                     //                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                     //                        .setAction("Action", null).show();
                     if (mViewPager.getCurrentItem() == 0) {
-                        Intent form = new Intent(FragmentMainActivity.this, GuiaFormActivity.class);
-                        startActivityForResult(form, GUIA_COMPLETED);
+
+
+//                        Intent form = new Intent(FragmentMainActivity.this, GuiaFormActivity.class);
+//                        startActivityForResult(form, GUIA_COMPLETED);
                     } else {
                         Snackbar.make(view, "Mostrar Fragment Dialog para seleccionar una guia", Snackbar.LENGTH_LONG)
                                 .setAction("Action", null).show();
@@ -123,6 +123,7 @@ public class FragmentMainActivity extends AppCompatActivity {
 
     /**
      * Recepción de los datos del formulario
+     *
      * @param requestCode
      * @param resultCode
      * @param data
@@ -137,7 +138,7 @@ public class FragmentMainActivity extends AppCompatActivity {
 //                        .getGuias().add(new Guia(data.getExtras()));
 //                ((PlaceholderFragment) mSectionsPagerAdapter.getItem(0)).myGuiaAdapter.notifyDataSetChanged();
 
-                insertGuiaToBBDD(data.getExtras());
+//                insertGuiaToBBDD(data.getExtras());
 //                ((PlaceholderFragment) mSectionsPagerAdapter.getItem(0)).getMyGuiaCursorAdapter().notifyDataSetChanged();
             }
         }
@@ -145,59 +146,24 @@ public class FragmentMainActivity extends AppCompatActivity {
         if (requestCode == COMPRA_COMPLETED) {
             // Make sure the request was successful
             if (resultCode == RESULT_OK) {
-                ((PlaceholderFragment) mSectionsPagerAdapter.getItem(1))
-                        .getCompras().add(new Compra(data.getExtras()));
+//                ((PlaceholderFragment) mSectionsPagerAdapter.getItem(1))
+//                        .getCompras().add(new Compra(data.getExtras()));
 //                ((PlaceholderFragment) mSectionsPagerAdapter.getItem(1)).getView().invalidate();
-                ((PlaceholderFragment) mSectionsPagerAdapter.getItem(1)).myCompraAdapter.notifyDataSetChanged();
-                insertCompraToBBDD(data.getExtras());
+//                ((PlaceholderFragment) mSectionsPagerAdapter.getItem(1)).myCompraAdapter.notifyDataSetChanged();
+//                insertCompraToBBDD(data.getExtras());
             }
         }
     }
-
-    private void insertGuiaToBBDD(Bundle data) {
-        ContentValues values = new ContentValues();
-        values.put(DataBaseSQLiteHelper.KEY_GUIA_NOMBRE, data.getString("nombreArma", ""));
-        values.put(DataBaseSQLiteHelper.KEY_GUIA_MARCA, data.getString("marca", ""));
-        values.put(DataBaseSQLiteHelper.KEY_GUIA_MODELO, data.getString("modelo", ""));
-        values.put(DataBaseSQLiteHelper.KEY_GUIA_NUM_GUIA, data.getInt("numGuia", 0));
-        values.put(DataBaseSQLiteHelper.KEY_GUIA_CALIBRE, data.getString("calibre", ""));
-        values.put(DataBaseSQLiteHelper.KEY_GUIA_TIPO_ARMA, data.getString("tipoArma", ""));
-        values.put(DataBaseSQLiteHelper.KEY_GUIA_CARTUCHOS_GASTADOS, data.getInt("cartuchosGastados", 0));
-        values.put(DataBaseSQLiteHelper.KEY_GUIA_CARTUCHOS_TOTALES, data.getInt("cartuchosTotales", 0));
-
-        long newRowId = db.insert(DataBaseSQLiteHelper.TABLE_GUIAS, null, values);
-        Toast.makeText(FragmentMainActivity.this, "Row id: " + newRowId, Toast.LENGTH_LONG).show();
-    }
-
-    private void insertCompraToBBDD(Bundle data) {
-        ContentValues values = new ContentValues();
-        values.put(DataBaseSQLiteHelper.KEY_COMPRA_PRECIO, data.getFloat("precio", 0));
-        values.put(DataBaseSQLiteHelper.KEY_COMPRA_CARTUCHOS_COMPRADOS, data.getInt("cartuchosComprados", 0));
-
-        db.insert(DataBaseSQLiteHelper.TABLE_COMPRAS, null, values);
-    }
-
 
     /**
      * A placeholder fragment containing a simple view.
      */
     public static class PlaceholderFragment extends Fragment {
         /**
-         * The fragment argument representing the section number for this
-         * fragment.
+         * The fragment argument representing the section number for this fragment.
          */
         private static final String ARG_SECTION_NUMBER = "section_number";
-
-        //        private MyExpandableGuias expListAdapter;
-        private static GuiaAdapter myGuiaAdapter;
-        private static GuiaCursorAdapter myGuiaCursorAdapter;
-        private static CompraAdapter myCompraAdapter;
-        //        private static CompraCursorAdapter myCompraCursorAdapter;
-        private static ArrayList<Guia> guias = new ArrayList<Guia>();
-        private static Cursor cursorGuias;
-        private static ArrayList<Compra> compras = new ArrayList<Compra>();
-        private static DataBaseSQLiteHelper dbSqlHelper;
-        private static SQLiteDatabase db;
+        private static ListView listView = null;
 
         /**
          * Returns a new instance of this fragment for the given section
@@ -209,30 +175,6 @@ public class FragmentMainActivity extends AppCompatActivity {
             args.putInt(ARG_SECTION_NUMBER, sectionNumber);
             fragment.setArguments(args);
 
-            try {
-//                myGuiaAdapter = new GuiaAdapter(fragment.getActivity(), guias);
-
-                //Abrimos la base de datos 'DBUMunicion' en modo escritura
-                dbSqlHelper = new DataBaseSQLiteHelper(fragment.getActivity());
-
-                db = dbSqlHelper.getWritableDatabase();
-                cursorGuias = db.query(
-                        DataBaseSQLiteHelper.TABLE_GUIAS,  //Nombre de la tabla
-                        null,  //Lista de Columnas a consultar
-                        null,  //Columnas para la clausula WHERE
-                        null,  //Valores a comparar con las columnas del WHERE
-                        null,  //Agrupar con GROUP BY
-                        null,  //Condición HAVING para GROUP BY
-                        null  //Clausula ORDER BY
-                );
-
-                myGuiaCursorAdapter = new GuiaCursorAdapter(fragment.getActivity(), cursorGuias, CursorAdapter.FLAG_AUTO_REQUERY);
-
-                myCompraAdapter = new CompraAdapter(fragment.getActivity(), compras);
-            } catch (Exception ex) {
-                Log.e("TAG", "Error en la instaciacion de los adapter", ex);
-            }
-
             return fragment;
         }
 
@@ -240,11 +182,43 @@ public class FragmentMainActivity extends AppCompatActivity {
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 //          Example: getArguments().getInt(ARG_SECTION_NUMBER)));
 
-//            View rootView = inflater.inflate(R.layout.fragment_fragment_main, container, false);
-//            ExpandableListView expandableListView = (ExpandableListView) rootView.findViewById(R.id.expandableListView);
+            View rootView = inflater.inflate(R.layout.fragment_fragment_main, container, false);
+
+
 //            expListAdapter = new MyExpandableGuias(this.getActivity(), grupoGuias);
 //            expandableListView.setAdapter(expListAdapter);
 
+//            http:stackoverflow.com/questions/7331310/how-to-store-image-as-blob-in-sqlite-how-to-retrieve-it
+            switch (getArguments().getInt(ARG_SECTION_NUMBER)) {
+                case 0: // Lista de las guias
+                    //Abrimos la base de datos 'DBUMunicion' en modo escritura
+                    Cursor cursorGuias = DataBaseSQLiteHelper.getGuias(db);
+                    GuiaCursorAdapter guiaCursorAdapter = new GuiaCursorAdapter(this.getActivity(), cursorGuias, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
+                    listView = (ListView) rootView.findViewById(R.id.ListView);
+                    listView.setAdapter(guiaCursorAdapter);
+                    break;
+
+                case 1: // Lista de las compras
+                    //Abrimos la base de datos 'DBUMunicion' en modo escritura
+                    Cursor cursorCompras = db.query(
+                            DataBaseSQLiteHelper.TABLE_COMPRAS,  //Nombre de la tabla
+                            null,  //Lista de Columnas a consultar
+                            null,  //Columnas para la clausula WHERE
+                            null,  //Valores a comparar con las columnas del WHERE
+                            null,  //Agrupar con GROUP BY
+                            null,  //Condición HAVING para GROUP BY
+                            null  //Clausula ORDER BY
+                    );
+                    CompraCursorAdapter compraCursorAdapter = new CompraCursorAdapter(this.getActivity(), cursorCompras, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER); //Todo: que es el -1?
+                    listView = (ListView) rootView.findViewById(R.id.ListView);
+                    listView.setAdapter(compraCursorAdapter);
+                    break;
+
+                case 2: // Lista de las licencias
+
+                    break;
+            }
+/*
             db = dbSqlHelper.getWritableDatabase();
             if (db != null) {
                 cursorGuias = db.query(
@@ -271,10 +245,10 @@ public class FragmentMainActivity extends AppCompatActivity {
             }
             // Lista de compras
             else {
-                myCompraAdapter = new CompraAdapter(getActivity(), compras);
+//                myCompraAdapter = new CompraAdapter(getActivity(), compras);
                 listView.setAdapter(myCompraAdapter);
             }
-
+*/
             return rootView;
         }
 
@@ -287,13 +261,13 @@ public class FragmentMainActivity extends AppCompatActivity {
 //            return expListAdapter;
 //        }
 
-        public ArrayList<Guia> getGuias() {
-            return guias;
-        }
-
-        public ArrayList<Compra> getCompras() {
-            return compras;
-        }
+//        public ArrayList<Guia> getGuias() {
+//            return guias;
+//        }
+//
+//        public ArrayList<Compra> getCompras() {
+//            return compras;
+//        }
     }
 
     /**
@@ -315,7 +289,7 @@ public class FragmentMainActivity extends AppCompatActivity {
 
         @Override
         public int getCount() {
-            return 2;
+            return 3;
         }
 
         @Override
@@ -325,6 +299,8 @@ public class FragmentMainActivity extends AppCompatActivity {
                     return getResources().getString(R.string.section_guias_title);
                 case 1:
                     return getResources().getString(R.string.section_compras_title);
+                case 2:
+                    return getResources().getString(R.string.section_licencias_title);
             }
             return null;
         }
