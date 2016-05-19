@@ -20,7 +20,8 @@ public class LoginPasswordActivity extends AppCompatActivity {
 
     ActionBar actionBar;
     SharedPreferences prefs;
-    EditText password;
+    EditText password1;
+    EditText password2;
     Button button;
 
     /**
@@ -35,15 +36,16 @@ public class LoginPasswordActivity extends AppCompatActivity {
 
         final SharedPreferences prefs = getSharedPreferences("Preferences", Context.MODE_PRIVATE);
 
-        password = (EditText) findViewById(R.id.password);
+        password1 = (EditText) findViewById(R.id.password1);
+        password2 = (EditText) findViewById(R.id.password2);
         button = (Button) findViewById(R.id.continuar);
 
         // Registro de contraseña
         if (!prefs.contains("password")) {
-            password.setHint(getResources().getString(R.string.lbl_password));
+//            password1.setHint(getResources().getString(R.string.lbl_password));
             button.setText(R.string.guardar);
         } else {
-            password.setHint(getResources().getString(R.string.lbl_insert_password));
+//            password1.setHint(getResources().getString(R.string.lbl_insert_password));
             button.setText(R.string.login);
         }
         //Añadimos la contraseña a las preferencias
@@ -53,7 +55,7 @@ public class LoginPasswordActivity extends AppCompatActivity {
                 CheckPassword(prefs);
             }
         });
-        password.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+        password1.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 switch (actionId) {
@@ -82,15 +84,15 @@ public class LoginPasswordActivity extends AppCompatActivity {
                 startActivity(intent);
                 finish();
             } else { // Fallo al guardar la contraseñas
-                password.setText("");
-                password.setError(getResources().getString(R.string.password_save_fail));
+                password1.setText("");
+                password1.setError(getResources().getString(R.string.password_save_fail));
             }
         }
         // Login de usuario
         else {
             if (!checkPassword()) { // Password erronea
-                password.setText("");
-                password.setError(getResources().getString(R.string.password_fail));
+                password1.setText("");
+                password1.setError(getResources().getString(R.string.password_fail));
             } else { // Password correcta
                 Toast.makeText(LoginPasswordActivity.this, "Login Correcto", Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(LoginPasswordActivity.this, FragmentMainActivity.class);
@@ -111,9 +113,9 @@ public class LoginPasswordActivity extends AppCompatActivity {
         if (prefs == null)
             prefs = getSharedPreferences("Preferences", Context.MODE_PRIVATE);
 
-        if (password.getText().toString().length() > 4) {
+        if (password1.getText().toString().length() > 4) {
             SharedPreferences.Editor editor = prefs.edit();
-            editor.putString("password", password.getText().toString());
+            editor.putString("password", password1.getText().toString());
             editor.commit();
             flag = true;
         } else
@@ -133,7 +135,7 @@ public class LoginPasswordActivity extends AppCompatActivity {
 
         String pass = prefs.getString("password", "");
 
-        return pass.equals(password.getText().toString());
+        return pass.equals(password1.getText().toString());
     }
 
     @Override
