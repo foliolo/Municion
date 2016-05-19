@@ -12,9 +12,9 @@
         android:layout_alignParentTop="true"
         android:layout_margin="10dp"
         android:clickable="true"
-        android:onClick="changeImagen"
         android:scaleType="centerCrop"
-        android:src="@drawable/pistola" />
+        android:src="@android:drawable/ic_menu_camera" />
+    <!--android:src="@drawable/pistola" -->
 
     <TextView
         android:id="@+id/item_apodo_guia"
