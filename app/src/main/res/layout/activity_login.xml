@@ -34,15 +34,22 @@
             android:inputType="numberPassword" />
     </android.support.design.widget.TextInputLayout>
 
-    <EditText
-        android:id="@+id/password2"
-        android:layout_width="wrap_content"
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/text_input_layout2"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:ems="15"
-        android:inputType="numberPassword"
-        android:layout_below="@+id/text_input_layout1"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/text_input_layout1">
+
+        <EditText
+            android:id="@+id/password2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/lb2_insert_password"
+            android:ems="15"
+            android:inputType="numberPassword" />
+    </android.support.design.widget.TextInputLayout>
 
     <Button
         android:id="@+id/continuar"
@@ -50,6 +57,6 @@
         android:layout_height="wrap_content"
         android:elevation="8dp"
         android:text="New Button"
-        android:layout_below="@+id/password2"
+        android:layout_below="@+id/text_input_layout2"
         android:layout_centerHorizontal="true" />
 </RelativeLayout>
