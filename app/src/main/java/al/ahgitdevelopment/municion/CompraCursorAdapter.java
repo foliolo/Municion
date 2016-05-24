@@ -35,5 +35,4 @@ public class CompraCursorAdapter extends CursorAdapter {
         View view = inflater.inflate(R.layout.compra_item, null, false);
         return view;
     }
-
 }

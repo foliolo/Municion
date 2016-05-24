@@ -200,74 +200,22 @@ public class FragmentMainActivity extends AppCompatActivity {
 
                 case 1: // Lista de las compras
                     //Abrimos la base de datos 'DBUMunicion' en modo escritura
-                    Cursor cursorCompras = db.query(
-                            DataBaseSQLiteHelper.TABLE_COMPRAS,  //Nombre de la tabla
-                            null,  //Lista de Columnas a consultar
-                            null,  //Columnas para la clausula WHERE
-                            null,  //Valores a comparar con las columnas del WHERE
-                            null,  //Agrupar con GROUP BY
-                            null,  //Condición HAVING para GROUP BY
-                            null  //Clausula ORDER BY
-                    );
-                    CompraCursorAdapter compraCursorAdapter = new CompraCursorAdapter(this.getActivity(), cursorCompras, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER); //Todo: que es el -1?
+                    Cursor cursorCompras = DataBaseSQLiteHelper.getCompras(db);
+                    CompraCursorAdapter compraCursorAdapter = new CompraCursorAdapter(this.getActivity(), cursorCompras, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
                     listView = (ListView) rootView.findViewById(R.id.ListView);
                     listView.setAdapter(compraCursorAdapter);
                     break;
 
                 case 2: // Lista de las licencias
-
+                    //Abrimos la base de datos 'DBUMunicion' en modo escritura
+                    Cursor cursorLicencias = DataBaseSQLiteHelper.getLicencias(db);
+                    LicenciaCursorAdapter licenciaCursorAdapter = new LicenciaCursorAdapter(this.getActivity(), cursorLicencias, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
+                    listView = (ListView) rootView.findViewById(R.id.ListView);
+                    listView.setAdapter(licenciaCursorAdapter);
                     break;
             }
-/*
-            db = dbSqlHelper.getWritableDatabase();
-            if (db != null) {
-                cursorGuias = db.query(
-                        DataBaseSQLiteHelper.TABLE_GUIAS,  //Nombre de la tabla
-                        null,  //Lista de Columnas a consultar
-                        null,  //Columnas para la clausula WHERE
-                        null,  //Valores a comparar con las columnas del WHERE
-                        null,  //Agrupar con GROUP BY
-                        null,  //Condición HAVING para GROUP BY
-                        null  //Clausula ORDER BY
-                );
-            }
-            myGuiaCursorAdapter = new GuiaCursorAdapter(getActivity(), cursorGuias, CursorAdapter.FLAG_AUTO_REQUERY);
-
-            View rootView = inflater.inflate(android.R.layout.list_content, container, false);
-            ListView listView = (ListView) rootView.findViewById(android.R.id.list);
-
-            // Lista de guias
-            if (getArguments().getInt(ARG_SECTION_NUMBER) == 0) {
-                //Utilizando un adapter
-//                listView.setAdapter(myGuiaAdapter);
-                //Utilizando un cursorAdapter
-                listView.setAdapter(myGuiaCursorAdapter);
-            }
-            // Lista de compras
-            else {
-//                myCompraAdapter = new CompraAdapter(getActivity(), compras);
-                listView.setAdapter(myCompraAdapter);
-            }
-*/
             return rootView;
         }
-
-//        public MyExpandableGuias getExpListAdapter() {
-//            if (expListAdapter == null)
-//                expListAdapter = new MyExpandableGuias(this.getActivity(), grupoGuias);
-//
-//            expListAdapter.notifyDataSetChanged();
-//
-//            return expListAdapter;
-//        }
-
-//        public ArrayList<Guia> getGuias() {
-//            return guias;
-//        }
-//
-//        public ArrayList<Compra> getCompras() {
-//            return compras;
-//        }
     }
 
     /**

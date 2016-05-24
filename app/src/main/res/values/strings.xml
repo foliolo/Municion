@@ -2,6 +2,7 @@
     <string name="app_name">Municion</string>
     <string name="lbl_password">Guarda una contraseña</string>
     <string name="lbl_insert_password">Introduce tu contraseña</string>
+    <string name="lb2_insert_password">Introduce tu contraseña de nuevo</string>
     <string name="password_fail">Contraseña incorrecta</string>
     <string name="password_save_fail">Contraseña invalida</string>
     <string name="title_activity_fragment_main">FragmentMainActivity</string>
@@ -91,6 +92,12 @@
     <string name="pref_title_ringtone">Ringtone</string>
     <string name="pref_ringtone_silent">Silent</string>
     <string name="pref_title_vibrate">Vibrate</string>
+
+
     <string name="label_cupo">Cupo</string>
     <string name="label_gastado">Gastado</string>
+    <string name="lbl_tipo_licencia">Tipo</string>
+    <string name="lbl_num_licencia">Licencia</string>
+    <string name="lbl_expedicion_licencia">Expedicion</string>
+    <string name="lbl_caducidad_licencia">Caducidad</string>
 </resources>

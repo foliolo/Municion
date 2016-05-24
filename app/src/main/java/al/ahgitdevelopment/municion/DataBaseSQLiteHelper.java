@@ -55,7 +55,7 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
     // Logcat tag
     private static final String LOG = "DatabaseHelper";
     // Database Version
-    private static final int DATABASE_VERSION = 4;
+    private static final int DATABASE_VERSION = 6;
     // Database Name
     private static final String DATABASE_NAME = "DBMunicion.db";
     // Table Create Statements
@@ -174,7 +174,7 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
                 KEY_LICENCIAS_FECHA_CADUCIDAD +
                 ") VALUES (" +
                 "'A2' , " +
-                "'192837465' , " +
+                "'192834' , " +
                 "'18/05/2007' , " +
                 "'18/05/2017'" +
                 ");");
@@ -183,6 +183,30 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
     public static Cursor getGuias(SQLiteDatabase db) {
         return db.query(
                 DataBaseSQLiteHelper.TABLE_GUIAS,  //Nombre de la tabla
+                null,  //Lista de Columnas a consultar
+                null,  //Columnas para la clausula WHERE
+                null,  //Valores a comparar con las columnas del WHERE
+                null,  //Agrupar con GROUP BY
+                null,  //Condición HAVING para GROUP BY
+                null  //Clausula ORDER BY
+        );
+    }
+
+    public static Cursor getCompras(SQLiteDatabase db) {
+        return db.query(
+                DataBaseSQLiteHelper.TABLE_COMPRAS,  //Nombre de la tabla
+                null,  //Lista de Columnas a consultar
+                null,  //Columnas para la clausula WHERE
+                null,  //Valores a comparar con las columnas del WHERE
+                null,  //Agrupar con GROUP BY
+                null,  //Condición HAVING para GROUP BY
+                null  //Clausula ORDER BY
+        );
+    }
+
+    public static Cursor getLicencias(SQLiteDatabase db) {
+        return db.query(
+                DataBaseSQLiteHelper.TABLE_LICENCIAS,  //Nombre de la tabla
                 null,  //Lista de Columnas a consultar
                 null,  //Columnas para la clausula WHERE
                 null,  //Valores a comparar con las columnas del WHERE
