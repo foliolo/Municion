@@ -55,7 +55,7 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
     // Logcat tag
     private static final String LOG = "DatabaseHelper";
     // Database Version
-    private static final int DATABASE_VERSION = 6;
+    private static final int DATABASE_VERSION = 8;
     // Database Name
     private static final String DATABASE_NAME = "DBMunicion.db";
     // Table Create Statements
@@ -87,7 +87,7 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
             + KEY_COMPRA_MUNICION_PROPIA + " TEXT,"
             + KEY_COMPRA_UNIDADES + " INTEGER NOT NULL,"
             + KEY_COMPRA_PRECIO + " REAL NOT NULL,"
-            + KEY_COMPRA_FECHA + " INTEGER NOT NULL," //INTEGER as Unix Time, the number of seconds since 1970-01-01 00:00:00 UTC.
+            + KEY_COMPRA_FECHA + " TEXT NOT NULL,"
             + KEY_COMPRA_TIPO + " TEXT,"
             + KEY_COMPRA_PESO + " TEXT,"
             + KEY_COMPRA_MARCA + " TEXT,"
@@ -101,8 +101,8 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
             + KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,"
             + KEY_LICENCIAS_TIPO + " TEXT NOT NULL,"
             + KEY_LICENCIAS_NUM_LICENCIA + " INTEGER NOT NULL,"
-            + KEY_LICENCIAS_FECHA_EXPEDICION + " INTEGER NOT NULL,"
-            + KEY_LICENCIAS_FECHA_CADUCIDAD + " INTEGER NOT NULL"
+            + KEY_LICENCIAS_FECHA_EXPEDICION + " TEXT NOT NULL,"
+            + KEY_LICENCIAS_FECHA_CADUCIDAD + " TEXT NOT NULL"
             + ")";
 
     public DataBaseSQLiteHelper(Context context) {
@@ -140,6 +140,31 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
                 "'1000' , " +
                 "'500'" +
                 ");");
+        db.execSQL("INSERT INTO " + TABLE_GUIAS + " (" +
+                KEY_GUIA_ID_COMPRA + ", " +
+                KEY_GUIA_ID_LICENCIA + ", " +
+                KEY_GUIA_APODO + ", " +
+                KEY_GUIA_MARCA + ", " +
+                KEY_GUIA_MODELO + ", " +
+                KEY_GUIA_TIPO_ARMA + ", " +
+                KEY_GUIA_CALIBRE1 + ", " +
+                KEY_GUIA_NUM_GUIA + ", " +
+                KEY_GUIA_NUM_ARMA + ", " +
+                KEY_GUIA_CUPO + ", " +
+                KEY_GUIA_GASTADO +
+                ") VALUES (" +
+                "'2' , " +
+                "'2' , " +
+                "'Rifle' , " +
+                "'Norinco' , " +
+                "'C3PO' , " +
+                "'2' , " +
+                "'Calibre 50' , " +
+                "'987654' , " +
+                "'98765' , " +
+                "'100' , " +
+                "'20'" +
+                ");");
     }
 
     /**
@@ -159,6 +184,17 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
                 "'25.50' , " +
                 "'18/05/2016'" +
                 ");");
+        db.execSQL("INSERT INTO " + TABLE_COMPRAS + " (" +
+                KEY_COMPRA_CALIBRE1 + ", " +
+                KEY_COMPRA_UNIDADES + ", " +
+                KEY_COMPRA_PRECIO + ", " +
+                KEY_COMPRA_FECHA +
+                ") VALUES (" +
+                "'Calibre 50' , " +
+                "'50' , " +
+                "'40' , " +
+                "'18/05/2016'" +
+                ");");
     }
 
     /**
@@ -173,9 +209,9 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
                 KEY_LICENCIAS_FECHA_EXPEDICION + ", " +
                 KEY_LICENCIAS_FECHA_CADUCIDAD +
                 ") VALUES (" +
-                "'A2' , " +
+                "'A' , " +
                 "'192834' , " +
-                "'18/05/2007' , " +
+                "'18/05/2015' , " +
                 "'18/05/2017'" +
                 ");");
     }

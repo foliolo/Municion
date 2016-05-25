@@ -42,10 +42,10 @@ public class LoginPasswordActivity extends AppCompatActivity {
 
         // Registro de contraseña
         if (!prefs.contains("password")) {
-//            password1.setHint(getResources().getString(R.string.lbl_password));
+            password2.setVisibility(View.VISIBLE);
             button.setText(R.string.guardar);
         } else {
-//            password1.setHint(getResources().getString(R.string.lbl_insert_password));
+            password2.setVisibility(View.GONE);
             button.setText(R.string.login);
         }
         //Añadimos la contraseña a las preferencias

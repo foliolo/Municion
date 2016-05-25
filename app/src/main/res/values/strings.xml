@@ -20,23 +20,49 @@
     <!--String Guias Form-->
     <string name="title_nueva_guia">Nueva Guia</string>
     <string name="menu_form_save">Guardar</string>
-
     <string name="labelInfoGuia">Información de la nueva guia</string>
-    <string name="apodo">Nombre del arma</string>
+    <string name="apodo">Apodo</string>
     <string name="marca">Marca</string>
     <string name="modelo">Modelo  </string>
-    <string name="numGuia">Numero de guia</string>
-    <string name="calibre">Calibre</string>
     <string name="tipoArma">Tipo</string>
-    <string name="cartuchosGastados">Cartuchos gastados</string>
-    <string name="cartuchosTotales">Cartuchos de la guia</string>
+    <string name="calibre">Calibre</string>
+    <string name="calibre2">Calibre2</string>
+    <string name="numGuia">Numero de guia</string>
+    <string name="num_arma">Numero de arma</string>
+    <string name="cupo">Cupo de la guia</string>
+    <string name="cartuchos_gastados">Cartuchos gastados</string>
+    <!--String Guias Item-->
+    <string name="label_cupo">Cupo</string>
+    <string name="label_gastado">Gastado</string>
+    <string name="form_lbl_tipo_arma">Tipo de arma</string>
+    <string name="lbl_tipo_licencia">Tipo de licencia</string>
+    <string name="lbl_num_licencia">Numero de licencia</string>
+    <string name="lbl_expedicion_licencia">Expedicion</string>
+    <string name="lbl_caducidad_licencia">Caducidad</string>
+    <string name="item_apodo_guia">Apodo</string>
+    <string name="check_segundo_calibre">Tiene segundo calibre</string>
 
     <!--String Compras Form-->
     <string name="title_nueva_compra">Nueva Compra</string>
     <string name="labelInfoCompra">Información de la nueva compra</string>
 
     <string name="precio">Precio</string>
-    <string name="cartuchosComprados">Numero de cartuchos comprados</string>
+    <string name="cartuchos_comprados">Numero de cartuchos comprados</string>
+    <string name="municion_propia">Municion propia</string>
+    <string name="cablibre_propio">Calibre propio</string>
+    <string name="unidades">Unidades</string>
+    <string name="fecha">Fecha</string>
+    <string name="tipo_municion">Tipo de munición</string>
+    <string name="peso_municion">Peso de munición</string>
+    <string name="tienda">Ubicacion de la tienda</string>
+    <string name="valoracion">Valoracion</string>
+
+    <!--String Licencias Form-->
+    <string name="title_nueva_licencia">Nueva Licencia</string>
+    <string name="tipo_licencia">Tipo de licencia</string>
+    <string name="fecha_expedicion">Fecha de expedición</string>
+    <string name="fecha_caducidad">Fecha de caducidad</string>
+
 
     <!-- Strings related to Settings -->
 
@@ -94,10 +120,4 @@
     <string name="pref_title_vibrate">Vibrate</string>
 
 
-    <string name="label_cupo">Cupo</string>
-    <string name="label_gastado">Gastado</string>
-    <string name="lbl_tipo_licencia">Tipo</string>
-    <string name="lbl_num_licencia">Licencia</string>
-    <string name="lbl_expedicion_licencia">Expedicion</string>
-    <string name="lbl_caducidad_licencia">Caducidad</string>
 </resources>

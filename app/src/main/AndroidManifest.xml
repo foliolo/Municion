@@ -11,7 +11,7 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".LoginPasswordActivity"
-            android:windowSoftInputMode="stateHidden">
+            android:windowSoftInputMode="stateVisible">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -31,11 +31,18 @@
 
         <activity
             android:name=".GuiaFormActivity"
-            android:label="@string/title_nueva_guia" />
+            android:label="@string/title_nueva_guia"
+            android:windowSoftInputMode="stateHidden" />
 
         <activity
             android:name=".CompraFormActivity"
-            android:label="@string/title_nueva_compra" />
+            android:label="@string/title_nueva_compra"
+            android:windowSoftInputMode="stateHidden" />
+
+        <activity
+            android:name=".LicenciaFormActivity"
+            android:label="@string/title_nueva_licencia"
+            android:windowSoftInputMode="stateHidden" />
 
         <activity
             android:name=".SettingsActivity"

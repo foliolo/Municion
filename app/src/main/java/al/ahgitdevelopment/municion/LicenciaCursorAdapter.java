@@ -26,22 +26,8 @@ public class LicenciaCursorAdapter extends CursorAdapter {
 
         tipo.setText(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_LICENCIAS_TIPO)));
         numLicencia.setText(String.valueOf(cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_LICENCIAS_NUM_LICENCIA))));
-
-//        TODO: Arreglar
-//        Calendar t = new GregorianCalendar();
-//        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
-//        java.util.Date dt = null;
-
-//        try {
-//            dt = sdf.parse(String.valueOf(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_LICENCIAS_FECHA_EXPEDICION)))); //replace 4 with the column index
-//            expedicion.setText(dt.getDate());
-//
-//            dt = sdf.parse(String.valueOf(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_LICENCIAS_FECHA_CADUCIDAD)))); //replace 4 with the column indexK
-////            t.setTime(dt);
-//            caducidad.setText(dt.getMonth());
-//        } catch (ParseException e) {
-//            e.printStackTrace();
-//        }
+        expedicion.setText(String.valueOf(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_LICENCIAS_FECHA_EXPEDICION))));
+        caducidad.setText(String.valueOf(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_LICENCIAS_FECHA_CADUCIDAD))));
     }
 
     @Override

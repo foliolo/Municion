@@ -5,7 +5,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -28,6 +27,7 @@ public class FragmentMainActivity extends AppCompatActivity {
     private static SQLiteDatabase db;
     private final int GUIA_COMPLETED = 1;
     private final int COMPRA_COMPLETED = 2;
+    private final int LICENCIA_COMPLETED = 3;
     /**
      * The {@link PagerAdapter} that will provide
      * fragments for each of the sections. We use a
@@ -74,7 +74,6 @@ public class FragmentMainActivity extends AppCompatActivity {
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
 
-
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         if (fab != null) {
             fab.setOnClickListener(new View.OnClickListener() {
@@ -82,16 +81,28 @@ public class FragmentMainActivity extends AppCompatActivity {
                 public void onClick(View view) {
                     //                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                     //                        .setAction("Action", null).show();
-                    if (mViewPager.getCurrentItem() == 0) {
 
+                    Intent form = null;
+                    switch (mViewPager.getCurrentItem()) {
+                        case 0:
+//                            Snackbar.make(view, "Introduce una guía", Snackbar.LENGTH_LONG)
+//                                    .setAction("Action", null).show();
+                            form = new Intent(FragmentMainActivity.this, GuiaFormActivity.class);
+                            startActivityForResult(form, GUIA_COMPLETED);
+                            break;
+                        case 1:
+//                            Snackbar.make(view, "Introduce una compra", Snackbar.LENGTH_LONG)
+//                                    .setAction("Action", null).show();
+                            form = new Intent(FragmentMainActivity.this, CompraFormActivity.class);
+                            startActivityForResult(form, COMPRA_COMPLETED);
 
-//                        Intent form = new Intent(FragmentMainActivity.this, GuiaFormActivity.class);
-//                        startActivityForResult(form, GUIA_COMPLETED);
-                    } else {
-                        Snackbar.make(view, "Mostrar Fragment Dialog para seleccionar una guia", Snackbar.LENGTH_LONG)
-                                .setAction("Action", null).show();
-                        //                    Intent form = new Intent(FragmentMainActivity.this, CompraFormActivity.class);
-                        //                    startActivityForResult(form, COMPRA_COMPLETED);
+                            break;
+                        case 2:
+//                            Snackbar.make(view, "Introduce una licencia", Snackbar.LENGTH_LONG)
+//                                    .setAction("Action", null).show();
+                            form = new Intent(FragmentMainActivity.this, LicenciaFormActivity.class);
+                            startActivityForResult(form, COMPRA_COMPLETED);
+                            break;
                     }
                 }
             });
@@ -152,6 +163,17 @@ public class FragmentMainActivity extends AppCompatActivity {
 //                ((PlaceholderFragment) mSectionsPagerAdapter.getItem(1)).myCompraAdapter.notifyDataSetChanged();
 //                insertCompraToBBDD(data.getExtras());
             }
+
+            if (requestCode == LICENCIA_COMPLETED) {
+                // Make sure the request was successful
+                if (resultCode == RESULT_OK) {
+//                ((PlaceholderFragment) mSectionsPagerAdapter.getItem(1))
+//                        .getCompras().add(new Compra(data.getExtras()));
+//                ((PlaceholderFragment) mSectionsPagerAdapter.getItem(1)).getView().invalidate();
+//                ((PlaceholderFragment) mSectionsPagerAdapter.getItem(1)).myCompraAdapter.notifyDataSetChanged();
+//                insertCompraToBBDD(data.getExtras());
+                }
+            }
         }
     }
 
@@ -184,11 +206,6 @@ public class FragmentMainActivity extends AppCompatActivity {
 
             View rootView = inflater.inflate(R.layout.fragment_fragment_main, container, false);
 
-
-//            expListAdapter = new MyExpandableGuias(this.getActivity(), grupoGuias);
-//            expandableListView.setAdapter(expListAdapter);
-
-//            http:stackoverflow.com/questions/7331310/how-to-store-image-as-blob-in-sqlite-how-to-retrieve-it
             switch (getArguments().getInt(ARG_SECTION_NUMBER)) {
                 case 0: // Lista de las guias
                     //Abrimos la base de datos 'DBUMunicion' en modo escritura
@@ -254,3 +271,5 @@ public class FragmentMainActivity extends AppCompatActivity {
         }
     }
 }
+
+//http://stackoverflow.com/questions/17207366/creating-a-menu-after-a-long-click-event-on-a-list-view

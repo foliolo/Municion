@@ -4,24 +4,28 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.AppCompatEditText;
 import android.support.v7.widget.AppCompatSpinner;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.ArrayAdapter;
+import android.view.View;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.EditText;
 
 /**
  * Created by Alberto on 25/03/2016.
  */
 public class GuiaFormActivity extends AppCompatActivity {
-    private AppCompatEditText nombreArma;
-    private AppCompatEditText marca;
-    private AppCompatEditText modelo;
-    private AppCompatEditText numGuia;
-    private AppCompatEditText calibre;
+    private EditText nombreArma;
+    private EditText marca;
+    private EditText modelo;
+    private EditText numGuia;
+    private EditText calibre1;
+    private CheckBox segundoCalibre;
+    private EditText calibre2;
     private AppCompatSpinner tipoArma;
-    private AppCompatEditText cartuchosGastados;
-    private AppCompatEditText cartuchosTotales;
+    private EditText cartuchosGastados;
+    private EditText cartuchosTotales;
 
     /**
      * Inicializa la actividad
@@ -33,19 +37,27 @@ public class GuiaFormActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.form_guia);
 
-        nombreArma = (AppCompatEditText) findViewById(R.id.form_nombre_arma);
-        marca = (AppCompatEditText) findViewById(R.id.form_marca);
-        modelo = (AppCompatEditText) findViewById(R.id.form_modelo);
-        numGuia = (AppCompatEditText) findViewById(R.id.form_num_guia);
-        calibre = (AppCompatEditText) findViewById(R.id.form_calibre);
+        nombreArma = (EditText) findViewById(R.id.form_apodo_arma);
+        marca = (EditText) findViewById(R.id.form_marca);
+        modelo = (EditText) findViewById(R.id.form_modelo);
+        numGuia = (EditText) findViewById(R.id.form_num_guia);
+        calibre1 = (EditText) findViewById(R.id.form_calibre1);
+        segundoCalibre = (CheckBox) findViewById(R.id.form_check_segundo_calibre);
+        calibre2 = (EditText) findViewById(R.id.form_calibre2);
         tipoArma = (AppCompatSpinner) findViewById(R.id.form_tipo_arma);
-        cartuchosGastados = (AppCompatEditText) findViewById(R.id.form_cartuchos_gastados);
-        cartuchosTotales = (AppCompatEditText) findViewById(R.id.form_cartuchos_totales);
+        cartuchosGastados = (EditText) findViewById(R.id.form_cartuchos_gastados);
+        cartuchosTotales = (EditText) findViewById(R.id.form_cartuchos_totales);
 
-        tipoArma.setAdapter(new ArrayAdapter<String>(this,
-                android.R.layout.simple_spinner_dropdown_item,
-                getResources().getStringArray(R.array.tipo_armas)));
-        tipoArma.setSelection(0);
+        segundoCalibre.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    calibre2.setVisibility(View.VISIBLE);
+                } else {
+                    calibre2.setVisibility(View.GONE);
+                }
+            }
+        });
     }
 
     @Override
@@ -71,7 +83,9 @@ public class GuiaFormActivity extends AppCompatActivity {
             bundle.putString("marca", marca.getText().toString());
             bundle.putString("modelo", modelo.getText().toString());
             bundle.putInt("numGuia", Integer.parseInt(numGuia.getText().toString()));
-            bundle.putString("calibre", calibre.getText().toString());
+            bundle.putString("calibre1", calibre1.getText().toString());
+            if (segundoCalibre.isChecked())
+                bundle.putString("calibre2", calibre2.getText().toString());
             bundle.putString("tipoArma", (String) tipoArma.getSelectedItem());
             bundle.putInt("cartuchosGastados", Integer.parseInt(cartuchosGastados.getText().toString()));
             bundle.putInt("cartuchosTotales", Integer.parseInt(cartuchosTotales.getText().toString()));

@@ -1,49 +1,175 @@
-<?xml version="1.0" encoding="utf-8"?><!--<android.support.v4.widget.NestedScrollView--><!--xmlns:android="http://schemas.android.com/apk/res/android"--><!--android:orientation="vertical"--><!--android:layout_width="match_parent"--><!--android:layout_height="match_parent"--><!--android:paddingBottom="@dimen/activity_vertical_margin"--><!--android:paddingLeft="@dimen/activity_horizontal_margin"--><!--android:paddingRight="@dimen/activity_horizontal_margin"--><!--android:paddingTop="@dimen/activity_vertical_margin">-->
-
-<android.support.v7.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin">
+    android:layout_height="wrap_content">
 
-    <android.support.v7.widget.AppCompatTextView
-        android:id="@+id/form_label_info"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="15dp"
-        android:ems="25"
-        android:gravity="center"
-        android:hint="@string/labelInfoCompra"
-        android:inputType="text"
-        android:textSize="22sp" />
+        android:orientation="vertical"
+        android:paddingBottom="@dimen/activity_vertical_margin"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:paddingTop="@dimen/activity_vertical_margin">
 
-    <android.support.v7.widget.AppCompatTextView
-        android:id="@+id/form_nombre_arma"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:height="25dp"
-        android:ems="15"
-        android:hint="@string/apodo"
-        android:textSize="19sp" />
+        <!--CALIBRE 1-->
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-    <android.support.v7.widget.AppCompatEditText
-        android:id="@+id/form_precio"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:ems="15"
-        android:hint="@string/precio"
-        android:inputType="text" />
+            <EditText
+                android:id="@+id/form_calibre1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/calibre"
+                android:inputType="text" />
+        </android.support.design.widget.TextInputLayout>
 
-    <android.support.v7.widget.AppCompatEditText
-        android:id="@+id/form_cartuchos_comprados"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:ems="15"
-        android:hint="@string/cartuchosComprados"
-        android:inputType="text" />
+        <!--CHECK BOX CALIBRE 2-->
 
+        <CheckBox
+            android:id="@+id/form_check_segundo_calibre"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:checked="false"
+            android:text="@string/check_segundo_calibre" />
+        <!--CALIBRE 2-->
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-</android.support.v7.widget.LinearLayoutCompat><!--</android.support.v4.widget.NestedScrollView>-->
+            <EditText
+                android:id="@+id/form_calibre2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/calibre2"
+                android:inputType="text"
+                android:visibility="gone" />
+        </android.support.design.widget.TextInputLayout>
+
+        <CheckBox
+            android:id="@+id/form_check_municion_propia"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:checked="false"
+            android:text="@string/municion_propia" />
+        <!--MUNICION PROPIA-->
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <EditText
+                android:id="@+id/form_municion_propia"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/cablibre_propio"
+                android:inputType="text"
+                android:visibility="gone" />
+        </android.support.design.widget.TextInputLayout>
+
+        <!--UNIDADES-->
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <EditText
+                android:id="@+id/form_unidades"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/unidades"
+                android:inputType="number" />
+        </android.support.design.widget.TextInputLayout>
+
+        <!--PRECIO-->
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <EditText
+                android:id="@+id/form_precio"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/precio"
+                android:inputType="numberDecimal" />
+        </android.support.design.widget.TextInputLayout>
+
+        <!--FECHA-->
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <EditText
+                android:id="@+id/form_fecha"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/fecha"
+                android:inputType="date" />
+        </android.support.design.widget.TextInputLayout>
+
+        <!--TIPO MUNICION-->
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <EditText
+                android:id="@+id/form_tipo_municion"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/tipo_municion"
+                android:inputType="text" />
+        </android.support.design.widget.TextInputLayout>
+
+        <!--PESO MUNICION-->
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <EditText
+                android:id="@+id/form_peso_municion"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/peso_municion"
+                android:inputType="text" />
+        </android.support.design.widget.TextInputLayout>
+
+        <!--MARCA MUNICION-->
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <EditText
+                android:id="@+id/form_marca_municion"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/marca"
+                android:inputType="text" />
+        </android.support.design.widget.TextInputLayout>
+
+        <!--TIENDA MUNICION-->
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <EditText
+                android:id="@+id/form_tienda"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/tienda"
+                android:inputType="text" />
+        </android.support.design.widget.TextInputLayout>
+
+        <!--VALORACION-->
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/valoracion"
+            android:textAppearance="?android:attr/textAppearanceSmall" />
+
+        <RatingBar
+            android:id="@+id/form_ratingBar_valoracion"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center" />
+    </LinearLayout>
+</ScrollView>

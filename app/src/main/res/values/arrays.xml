@@ -7,4 +7,16 @@
         <item>Revolver</item>
         <item>Avancarga</item>
     </string-array>
+
+    <string-array name="tipo_licencias">
+        <item>A</item>
+        <item>B</item>
+        <item>C</item>
+        <item>D</item>
+        <item>E</item>
+        <item>F</item>
+        <item>AE</item>
+        <item>AER</item>
+        <item>Libro de coleccionista</item>
+    </string-array>
 </resources>

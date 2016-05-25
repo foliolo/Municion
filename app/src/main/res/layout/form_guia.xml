@@ -1,88 +1,160 @@
-<?xml version="1.0" encoding="utf-8"?><!--<android.support.v4.widget.NestedScrollView--><!--xmlns:android="http://schemas.android.com/apk/res/android"--><!--android:orientation="vertical"--><!--android:layout_width="match_parent"--><!--android:layout_height="match_parent"--><!--android:paddingBottom="@dimen/activity_vertical_margin"--><!--android:paddingLeft="@dimen/activity_horizontal_margin"--><!--android:paddingRight="@dimen/activity_horizontal_margin"--><!--android:paddingTop="@dimen/activity_vertical_margin">-->
-
-<android.support.v7.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin">
+    android:layout_height="match_parent">
 
-    <android.support.v7.widget.AppCompatTextView
-        android:id="@+id/form_label_info"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="15dp"
-        android:ems="25"
-        android:gravity="center"
-        android:hint="@string/labelInfoGuia"
-        android:inputType="text"
-        android:textSize="22dip" />
+        android:orientation="vertical"
+        android:paddingBottom="@dimen/activity_vertical_margin"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:paddingTop="@dimen/activity_vertical_margin">
 
-    <android.support.v7.widget.AppCompatEditText
-        android:id="@+id/form_nombre_arma"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:ems="15"
-        android:hint="@string/apodo"
-        android:inputType="text" />
+        <!--APODO-->
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-    <android.support.v7.widget.AppCompatEditText
-        android:id="@+id/form_marca"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:ems="15"
-        android:hint="@string/marca"
-        android:inputType="text" />
+            <EditText
+                android:id="@+id/form_apodo_arma"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/apodo"
+                android:inputType="text" />
+        </android.support.design.widget.TextInputLayout>
 
-    <android.support.v7.widget.AppCompatEditText
-        android:id="@+id/form_modelo"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:ems="15"
-        android:hint="@string/modelo"
-        android:inputType="text" />
+        <!--MARCA-->
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-    <android.support.v7.widget.AppCompatEditText
-        android:id="@+id/form_num_guia"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:ems="15"
-        android:hint="@string/numGuia"
-        android:inputType="number" />
+            <EditText
+                android:id="@+id/form_marca"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/marca"
+                android:inputType="text" />
+        </android.support.design.widget.TextInputLayout>
 
-    <android.support.v7.widget.AppCompatEditText
-        android:id="@+id/form_calibre"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:ems="15"
-        android:hint="@string/calibre"
-        android:inputType="text" />
+        <!--MODELO-->
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-    <android.support.v7.widget.AppCompatSpinner
-        android:id="@+id/form_tipo_arma"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:ems="15"
-        android:hint="@string/tipoArma"
-        android:inputType="text"
-        android:spinnerMode="dropdown" />
+            <EditText
+                android:id="@+id/form_modelo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/modelo"
+                android:inputType="text" />
+        </android.support.design.widget.TextInputLayout>
 
-    <android.support.v7.widget.AppCompatEditText
-        android:id="@+id/form_cartuchos_gastados"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:ems="15"
-        android:hint="@string/cartuchosGastados"
-        android:inputType="number" />
+        <!--TIPO ARMA-->
+        <TextView
+            android:id="@+id/lbl_tipo_arma"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/form_lbl_tipo_arma"
+            android:textAppearance="?android:attr/textAppearanceSmall" />
 
-    <android.support.v7.widget.AppCompatEditText
-        android:id="@+id/form_cartuchos_totales"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:ems="15"
-        android:hint="@string/cartuchosTotales"
-        android:inputType="number" />
+        <android.support.v7.widget.AppCompatSpinner
+            android:id="@+id/form_tipo_arma"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:entries="@array/tipo_armas"
+            android:hint="@string/tipoArma"
+            android:inputType="text"
+            android:spinnerMode="dropdown" />
 
-</android.support.v7.widget.LinearLayoutCompat><!--</android.support.v4.widget.NestedScrollView>-->
+        <!--CALIBRE 1-->
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <EditText
+                android:id="@+id/form_calibre1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/calibre"
+                android:inputType="text" />
+        </android.support.design.widget.TextInputLayout>
+
+        <!--CHECK BOX CALIBRE 2-->
+
+        <CheckBox
+            android:id="@+id/form_check_segundo_calibre"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:checked="false"
+            android:text="@string/check_segundo_calibre" />
+
+        <!--CALIBRE 2-->
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <EditText
+                android:id="@+id/form_calibre2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/calibre2"
+                android:inputType="text"
+                android:visibility="gone" />
+        </android.support.design.widget.TextInputLayout>
+
+        <!--NUMERO DE GUIA-->
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <EditText
+                android:id="@+id/form_num_guia"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/numGuia"
+                android:inputType="number" />
+        </android.support.design.widget.TextInputLayout>
+
+        <!--NUMERO DE ARMA-->
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <EditText
+                android:id="@+id/form_num_arma"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/num_arma"
+                android:inputType="number" />
+        </android.support.design.widget.TextInputLayout>
+
+        <!--CUPO-->
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <EditText
+                android:id="@+id/form_cartuchos_totales"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/cupo"
+                android:inputType="text" />
+        </android.support.design.widget.TextInputLayout>
+
+        <!--CARTUCHOS GASTADOS-->
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <EditText
+                android:id="@+id/form_cartuchos_gastados"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/cartuchos_gastados"
+                android:inputType="text" />
+        </android.support.design.widget.TextInputLayout>
+
+    </LinearLayout>
+</ScrollView>

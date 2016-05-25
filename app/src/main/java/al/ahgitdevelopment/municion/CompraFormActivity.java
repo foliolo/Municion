@@ -4,24 +4,31 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.AppCompatEditText;
-import android.support.v7.widget.AppCompatSpinner;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.ArrayAdapter;
+import android.view.View;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.EditText;
+import android.widget.RatingBar;
 
 /**
  * Created by ahidalgog on 11/04/2016.
  */
 public class CompraFormActivity extends AppCompatActivity {
-    private AppCompatEditText nombreArma;
-    private AppCompatEditText marca;
-    private AppCompatEditText modelo;
-    private AppCompatEditText numGuia;
-    private AppCompatEditText calibre;
-    private AppCompatSpinner tipoArma;
-    private AppCompatEditText cartuchosGastados;
-    private AppCompatEditText cartuchosTotales;
+    private EditText calibre1;
+    private EditText calibre2;
+    private EditText municionPropia;
+    private CheckBox checkSegundoCalibre;
+    private CheckBox checkMunicionPropia;
+    private EditText unidades;
+    private EditText precio;
+    private EditText fecha;
+    private EditText tipoMunicion;
+    private EditText pesoMunicion;
+    private EditText marcaMunicion;
+    private EditText tienda;
+    private RatingBar valoracion;
 
     /**
      * Inicializa la actividad
@@ -33,19 +40,42 @@ public class CompraFormActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.form_compra);
 
-        nombreArma = (AppCompatEditText) findViewById(R.id.form_nombre_arma);
-        marca = (AppCompatEditText) findViewById(R.id.form_marca);
-        modelo = (AppCompatEditText) findViewById(R.id.form_modelo);
-        numGuia = (AppCompatEditText) findViewById(R.id.form_num_guia);
-        calibre = (AppCompatEditText) findViewById(R.id.form_calibre);
-        tipoArma = (AppCompatSpinner) findViewById(R.id.form_tipo_arma);
-        cartuchosGastados = (AppCompatEditText) findViewById(R.id.form_cartuchos_gastados);
-        cartuchosTotales = (AppCompatEditText) findViewById(R.id.form_cartuchos_totales);
+        calibre1 = (EditText) findViewById(R.id.form_calibre1);
+        checkSegundoCalibre = (CheckBox) findViewById(R.id.form_check_segundo_calibre);
+        calibre2 = (EditText) findViewById(R.id.form_calibre2);
+        checkMunicionPropia = (CheckBox) findViewById(R.id.form_check_municion_propia);
+        municionPropia = (EditText) findViewById(R.id.form_municion_propia);
+        unidades = (EditText) findViewById(R.id.form_unidades);
+        precio = (EditText) findViewById(R.id.form_precio);
+        fecha = (EditText) findViewById(R.id.form_fecha);
+        tipoMunicion = (EditText) findViewById(R.id.form_tipo_municion);
+        pesoMunicion = (EditText) findViewById(R.id.form_peso_municion);
+        marcaMunicion = (EditText) findViewById(R.id.form_marca_municion);
+        tienda = (EditText) findViewById(R.id.form_tienda);
+        valoracion = (RatingBar) findViewById(R.id.form_ratingBar_valoracion);
 
-        tipoArma.setAdapter(new ArrayAdapter<String>(this,
-                android.R.layout.simple_spinner_dropdown_item,
-                getResources().getStringArray(R.array.tipo_armas)));
-        tipoArma.setSelection(0);
+        checkSegundoCalibre.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    calibre2.setVisibility(View.VISIBLE);
+                } else {
+                    calibre2.setVisibility(View.GONE);
+                }
+            }
+        });
+
+        checkMunicionPropia.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    municionPropia.setVisibility(View.VISIBLE);
+                } else {
+                    municionPropia.setVisibility(View.GONE);
+                }
+            }
+        });
+
     }
 
     @Override
@@ -67,14 +97,18 @@ public class CompraFormActivity extends AppCompatActivity {
             Intent result = new Intent(this, FragmentMainActivity.class);
 
             Bundle bundle = new Bundle();
-            bundle.putString("nombreArma", nombreArma.getText().toString());
-            bundle.putString("marca", marca.getText().toString());
-            bundle.putString("modelo", modelo.getText().toString());
-            bundle.putInt("numGuia", Integer.parseInt(numGuia.getText().toString()));
-            bundle.putString("calibre", calibre.getText().toString());
-            bundle.putString("tipoArma", (String) tipoArma.getSelectedItem());
-            bundle.putInt("cartuchosGastados", Integer.parseInt(cartuchosGastados.getText().toString()));
-            bundle.putInt("cartuchosTotales", Integer.parseInt(cartuchosTotales.getText().toString()));
+            bundle.putString("calibre1", calibre1.getText().toString());
+            bundle.putString("calibre2", calibre2.getText().toString());
+            bundle.putString("municion_propia", municionPropia.getText().toString());
+            bundle.putInt("unidades", Integer.parseInt(unidades.getText().toString()));
+            bundle.putString("precio", precio.getText().toString());
+            bundle.putString("fecha", fecha.getText().toString());
+            bundle.putString("tipo", tipoMunicion.getText().toString());
+            bundle.putString("peso", pesoMunicion.getText().toString());
+            bundle.putString("marca", marcaMunicion.getText().toString());
+            bundle.putString("tienda", tienda.getText().toString());
+            bundle.putInt("valoracion", valoracion.getNumStars());
+
             result.putExtras(bundle);
 
             setResult(Activity.RESULT_OK, result);
