@@ -9,14 +9,13 @@ public class Compra {
     private int id;
     private String calibre1;
     private String calibre2;
-    private String municionPropia;
     private int unidades;
     private double precio;
     private Date fecha;
     private int tipo;
     private String peso;
     private String marca;
-    private String tiendoa;
+    private String tienda;
     private Date valoracion;
 
     public int getId() {
@@ -37,14 +36,6 @@ public class Compra {
 
     public void setCalibre2(String calibre2) {
         this.calibre2 = calibre2;
-    }
-
-    public String getMunicionPropia() {
-        return municionPropia;
-    }
-
-    public void setMunicionPropia(String municionPropia) {
-        this.municionPropia = municionPropia;
     }
 
     public int getUnidades() {
@@ -95,12 +86,12 @@ public class Compra {
         this.marca = marca;
     }
 
-    public String getTiendoa() {
-        return tiendoa;
+    public String getTienda() {
+        return tienda;
     }
 
-    public void setTiendoa(String tiendoa) {
-        this.tiendoa = tiendoa;
+    public void setTienda(String tienda) {
+        this.tienda = tienda;
     }
 
     public Date getValoracion() {

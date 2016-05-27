@@ -8,7 +8,7 @@ import java.util.Date;
 public class Licencia {
     private int id;
     private String tipo;
-    private int num_licencia;
+    private int numLicencia;
     private Date fechaExpedicion;
     private Date fechaCaducidad;
 
@@ -24,12 +24,12 @@ public class Licencia {
         this.tipo = tipo;
     }
 
-    public int getNum_licencia() {
-        return num_licencia;
+    public int getNumLicencia() {
+        return numLicencia;
     }
 
-    public void setNum_licencia(int num_licencia) {
-        this.num_licencia = num_licencia;
+    public void setNumLicencia(int numLicencia) {
+        this.numLicencia = numLicencia;
     }
 
     public Date getFechaExpedicion() {

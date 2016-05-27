@@ -18,9 +18,7 @@ import android.widget.RatingBar;
 public class CompraFormActivity extends AppCompatActivity {
     private EditText calibre1;
     private EditText calibre2;
-    private EditText municionPropia;
     private CheckBox checkSegundoCalibre;
-    private CheckBox checkMunicionPropia;
     private EditText unidades;
     private EditText precio;
     private EditText fecha;
@@ -43,8 +41,6 @@ public class CompraFormActivity extends AppCompatActivity {
         calibre1 = (EditText) findViewById(R.id.form_calibre1);
         checkSegundoCalibre = (CheckBox) findViewById(R.id.form_check_segundo_calibre);
         calibre2 = (EditText) findViewById(R.id.form_calibre2);
-        checkMunicionPropia = (CheckBox) findViewById(R.id.form_check_municion_propia);
-        municionPropia = (EditText) findViewById(R.id.form_municion_propia);
         unidades = (EditText) findViewById(R.id.form_unidades);
         precio = (EditText) findViewById(R.id.form_precio);
         fecha = (EditText) findViewById(R.id.form_fecha);
@@ -64,18 +60,6 @@ public class CompraFormActivity extends AppCompatActivity {
                 }
             }
         });
-
-        checkMunicionPropia.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                    municionPropia.setVisibility(View.VISIBLE);
-                } else {
-                    municionPropia.setVisibility(View.GONE);
-                }
-            }
-        });
-
     }
 
     @Override
@@ -99,7 +83,6 @@ public class CompraFormActivity extends AppCompatActivity {
             Bundle bundle = new Bundle();
             bundle.putString("calibre1", calibre1.getText().toString());
             bundle.putString("calibre2", calibre2.getText().toString());
-            bundle.putString("municion_propia", municionPropia.getText().toString());
             bundle.putInt("unidades", Integer.parseInt(unidades.getText().toString()));
             bundle.putString("precio", precio.getText().toString());
             bundle.putString("fecha", fecha.getText().toString());

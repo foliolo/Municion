@@ -6,7 +6,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CursorAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
+
+import java.util.Random;
 
 /**
  * Created by Alberto on 11/04/2016.
@@ -19,12 +22,14 @@ public class CompraCursorAdapter extends CursorAdapter {
 
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
+        ImageView imagen = (ImageView) view.findViewById(R.id.imageMunicion);
         TextView calibre = (TextView) view.findViewById(R.id.item_calibre_compra);
-        TextView unidades = (TextView) view.findViewById(R.id.item_unidades_conmpra);
+        TextView unidades = (TextView) view.findViewById(R.id.item_unidades_compra);
         TextView precio = (TextView) view.findViewById(R.id.item_precio_compra);
 
+        imagen.setImageResource((new Random().nextInt()) % 2 == 0 ? R.drawable.municion1 : R.drawable.municion2);
         calibre.setText(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_COMPRA_CALIBRE1)));
-        unidades.setText("Unidades: " + cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_COMPRA_UNIDADES)));
+        unidades.setText(String.valueOf(cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_COMPRA_UNIDADES))));
         precio.setText(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_COMPRA_PRECIO)) + "€");
     }
 

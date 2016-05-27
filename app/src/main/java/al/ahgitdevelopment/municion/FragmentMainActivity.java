@@ -101,7 +101,7 @@ public class FragmentMainActivity extends AppCompatActivity {
 //                            Snackbar.make(view, "Introduce una licencia", Snackbar.LENGTH_LONG)
 //                                    .setAction("Action", null).show();
                             form = new Intent(FragmentMainActivity.this, LicenciaFormActivity.class);
-                            startActivityForResult(form, COMPRA_COMPLETED);
+                            startActivityForResult(form, LICENCIA_COMPLETED);
                             break;
                     }
                 }
@@ -142,37 +142,33 @@ public class FragmentMainActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         // Check which request we're responding to
-        if (requestCode == GUIA_COMPLETED) {
-            // Make sure the request was successful
-            if (resultCode == RESULT_OK) {
+        if (resultCode == RESULT_OK) {
+            switch (requestCode) {
+                case GUIA_COMPLETED:
 //                ((PlaceholderFragment) mSectionsPagerAdapter.getItem(0))
 //                        .getGuias().add(new Guia(data.getExtras()));
 //                ((PlaceholderFragment) mSectionsPagerAdapter.getItem(0)).myGuiaAdapter.notifyDataSetChanged();
 
 //                insertGuiaToBBDD(data.getExtras());
 //                ((PlaceholderFragment) mSectionsPagerAdapter.getItem(0)).getMyGuiaCursorAdapter().notifyDataSetChanged();
-            }
-        }
 
-        if (requestCode == COMPRA_COMPLETED) {
-            // Make sure the request was successful
-            if (resultCode == RESULT_OK) {
+                    break;
+                case COMPRA_COMPLETED:
 //                ((PlaceholderFragment) mSectionsPagerAdapter.getItem(1))
 //                        .getCompras().add(new Compra(data.getExtras()));
 //                ((PlaceholderFragment) mSectionsPagerAdapter.getItem(1)).getView().invalidate();
 //                ((PlaceholderFragment) mSectionsPagerAdapter.getItem(1)).myCompraAdapter.notifyDataSetChanged();
 //                insertCompraToBBDD(data.getExtras());
-            }
 
-            if (requestCode == LICENCIA_COMPLETED) {
-                // Make sure the request was successful
-                if (resultCode == RESULT_OK) {
+                    break;
+                case LICENCIA_COMPLETED:
 //                ((PlaceholderFragment) mSectionsPagerAdapter.getItem(1))
 //                        .getCompras().add(new Compra(data.getExtras()));
 //                ((PlaceholderFragment) mSectionsPagerAdapter.getItem(1)).getView().invalidate();
 //                ((PlaceholderFragment) mSectionsPagerAdapter.getItem(1)).myCompraAdapter.notifyDataSetChanged();
 //                insertCompraToBBDD(data.getExtras());
-                }
+
+                    break;
             }
         }
     }

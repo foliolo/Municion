@@ -12,19 +12,6 @@
         android:paddingRight="@dimen/activity_horizontal_margin"
         android:paddingTop="@dimen/activity_vertical_margin">
 
-        <!--APODO-->
-        <android.support.design.widget.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <EditText
-                android:id="@+id/form_apodo_arma"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/apodo"
-                android:inputType="text" />
-        </android.support.design.widget.TextInputLayout>
-
         <!--MARCA-->
         <android.support.design.widget.TextInputLayout
             android:layout_width="match_parent"
@@ -48,6 +35,19 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/modelo"
+                android:inputType="text" />
+        </android.support.design.widget.TextInputLayout>
+
+        <!--APODO-->
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <EditText
+                android:id="@+id/form_apodo_arma"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/apodo"
                 android:inputType="text" />
         </android.support.design.widget.TextInputLayout>
 
@@ -82,7 +82,6 @@
         </android.support.design.widget.TextInputLayout>
 
         <!--CHECK BOX CALIBRE 2-->
-
         <CheckBox
             android:id="@+id/form_check_segundo_calibre"
             android:layout_width="match_parent"
@@ -130,6 +129,22 @@
                 android:inputType="number" />
         </android.support.design.widget.TextInputLayout>
 
+        <!--CHECK BOX AUMENTO DE CUPO-->
+        <CheckBox
+            android:id="@+id/form_check_aumento_cupo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:checked="false"
+            android:text="@string/aumento_cupo"/>
+        <!--TODO-->
+        <!--<view-->
+        <!--android:id="@+id/contador_aumento_cupo"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content">-->
+        <!--<ImageView />-->
+
+        <!--</view>-->
+
         <!--CUPO-->
         <android.support.design.widget.TextInputLayout
             android:layout_width="match_parent"
@@ -139,8 +154,9 @@
                 android:id="@+id/form_cartuchos_totales"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/cupo"
-                android:inputType="text" />
+                android:text="Cupo Actual: 100"
+                android:inputType="number"
+                android:enabled="true"/>
         </android.support.design.widget.TextInputLayout>
 
         <!--CARTUCHOS GASTADOS-->

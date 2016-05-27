@@ -35,7 +35,6 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
     // Table COMPRAS  - column names
     public static final String KEY_COMPRA_CALIBRE1 = "calibre1";
     public static final String KEY_COMPRA_CALIBRE2 = "calibre2";
-    public static final String KEY_COMPRA_MUNICION_PROPIA = "municion_propia";
     public static final String KEY_COMPRA_UNIDADES = "unidades";
     public static final String KEY_COMPRA_PRECIO = "precio";
     public static final String KEY_COMPRA_FECHA = "fecha";
@@ -55,7 +54,7 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
     // Logcat tag
     private static final String LOG = "DatabaseHelper";
     // Database Version
-    private static final int DATABASE_VERSION = 8;
+    private static final int DATABASE_VERSION = 9;
     // Database Name
     private static final String DATABASE_NAME = "DBMunicion.db";
     // Table Create Statements
@@ -84,7 +83,6 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
             + KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,"
             + KEY_COMPRA_CALIBRE1 + " TEXT NOT NULL, "
             + KEY_COMPRA_CALIBRE2 + " TEXT,"
-            + KEY_COMPRA_MUNICION_PROPIA + " TEXT,"
             + KEY_COMPRA_UNIDADES + " INTEGER NOT NULL,"
             + KEY_COMPRA_PRECIO + " REAL NOT NULL,"
             + KEY_COMPRA_FECHA + " TEXT NOT NULL,"

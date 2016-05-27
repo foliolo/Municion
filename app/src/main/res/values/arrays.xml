@@ -9,14 +9,14 @@
     </string-array>
 
     <string-array name="tipo_licencias">
-        <item>A</item>
-        <item>B</item>
-        <item>C</item>
-        <item>D</item>
-        <item>E</item>
-        <item>F</item>
-        <item>AE</item>
-        <item>AER</item>
+        <item>A - Profesionales, agentes de la autoridad</item>
+        <item>B - Defensa</item>
+        <item>C - Vigilante de seguridad</item>
+        <item>D - Caza mayor</item>
+        <item>E - Escopeta</item>
+        <item>F - Tiro olimpico</item>
+        <item>AE - Autorización especial</item>
+        <item>AER - Autorización especial replicas</item>
         <item>Libro de coleccionista</item>
     </string-array>
 </resources>

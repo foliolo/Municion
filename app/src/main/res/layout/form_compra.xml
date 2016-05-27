@@ -47,26 +47,6 @@
                 android:visibility="gone" />
         </android.support.design.widget.TextInputLayout>
 
-        <CheckBox
-            android:id="@+id/form_check_municion_propia"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:checked="false"
-            android:text="@string/municion_propia" />
-        <!--MUNICION PROPIA-->
-        <android.support.design.widget.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <EditText
-                android:id="@+id/form_municion_propia"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/cablibre_propio"
-                android:inputType="text"
-                android:visibility="gone" />
-        </android.support.design.widget.TextInputLayout>
-
         <!--UNIDADES-->
         <android.support.design.widget.TextInputLayout
             android:layout_width="match_parent"
