@@ -1,11 +1,25 @@
 package al.ahgitdevelopment.municion;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.util.Date;
 
 /**
  * Created by Alberto on 12/05/2016.
  */
-public class Compra {
+public class Compra implements Parcelable {
+    public static final Creator<Compra> CREATOR = new Creator<Compra>() {
+        @Override
+        public Compra createFromParcel(Parcel in) {
+            return new Compra(in);
+        }
+
+        @Override
+        public Compra[] newArray(int size) {
+            return new Compra[size];
+        }
+    };
     private int id;
     private String calibre1;
     private String calibre2;
@@ -16,10 +30,29 @@ public class Compra {
     private String peso;
     private String marca;
     private String tienda;
-    private Date valoracion;
+    private double valoracion;
+
+    protected Compra() {
+    }
+
+    protected Compra(Parcel in) {
+        id = in.readInt();
+        calibre1 = in.readString();
+        calibre2 = in.readString();
+        unidades = in.readInt();
+        precio = in.readDouble();
+        tipo = in.readInt();
+        peso = in.readString();
+        marca = in.readString();
+        tienda = in.readString();
+    }
 
     public int getId() {
         return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getCalibre1() {
@@ -94,11 +127,29 @@ public class Compra {
         this.tienda = tienda;
     }
 
-    public Date getValoracion() {
+    public double getValoracion() {
         return valoracion;
     }
 
-    public void setValoracion(Date valoracion) {
+    public void setValoracion(double valoracion) {
         this.valoracion = valoracion;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(id);
+        dest.writeString(calibre1);
+        dest.writeString(calibre2);
+        dest.writeInt(unidades);
+        dest.writeDouble(precio);
+        dest.writeInt(tipo);
+        dest.writeString(peso);
+        dest.writeString(marca);
+        dest.writeString(tienda);
     }
 }

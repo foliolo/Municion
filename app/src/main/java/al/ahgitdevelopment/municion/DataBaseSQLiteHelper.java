@@ -4,6 +4,12 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 
 /**
  * Created by Alberto on 12/04/2016.
@@ -103,16 +109,37 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
             + KEY_LICENCIAS_FECHA_CADUCIDAD + " TEXT NOT NULL"
             + ")";
 
+    public Context context;
+
     public DataBaseSQLiteHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
+        this.context = context;
+    }
+
+    @Override
+    public void onCreate(SQLiteDatabase db) {
+        // Creating required tables
+        db.execSQL(CREATE_TABLE_GUIA);
+        db.execSQL(CREATE_TABLE_COMPRA);
+        db.execSQL(CREATE_TABLE_LICENCIAS);
+    }
+
+    @Override
+    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        // On upgrade drop older tables
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_GUIAS);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_COMPRAS);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_LICENCIAS);
+
+        // Create new tables
+        onCreate(db);
     }
 
     /**
      * Metodo para insertar Guias de prueba en la BBDD
-     *
-     * @param db
      */
-    public static void addGuias(SQLiteDatabase db) {
+    public void addGuias() {
+        SQLiteDatabase db = this.getWritableDatabase();
         db.execSQL("INSERT INTO " + TABLE_GUIAS + " (" +
                 KEY_GUIA_ID_COMPRA + ", " +
                 KEY_GUIA_ID_LICENCIA + ", " +
@@ -167,10 +194,9 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
 
     /**
      * Metodo para insertar Conmpras de prueba en la BBDD
-     *
-     * @param db
      */
-    public static void addCompras(SQLiteDatabase db) {
+    public void addCompras() {
+        SQLiteDatabase db = this.getWritableDatabase();
         db.execSQL("INSERT INTO " + TABLE_COMPRAS + " (" +
                 KEY_COMPRA_CALIBRE1 + ", " +
                 KEY_COMPRA_UNIDADES + ", " +
@@ -197,10 +223,9 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
 
     /**
      * Metodo para insertar Licencias de prueba en la BBDD
-     *
-     * @param db
      */
-    public static void addLicencias(SQLiteDatabase db) {
+    public void addLicencias() {
+        SQLiteDatabase db = this.getWritableDatabase();
         db.execSQL("INSERT INTO " + TABLE_LICENCIAS + " (" +
                 KEY_LICENCIAS_TIPO + ", " +
                 KEY_LICENCIAS_NUM_LICENCIA + ", " +
@@ -214,7 +239,8 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
                 ");");
     }
 
-    public static Cursor getGuias(SQLiteDatabase db) {
+    public Cursor getCursorGuias() {
+        SQLiteDatabase db = this.getWritableDatabase();
         return db.query(
                 DataBaseSQLiteHelper.TABLE_GUIAS,  //Nombre de la tabla
                 null,  //Lista de Columnas a consultar
@@ -226,7 +252,8 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
         );
     }
 
-    public static Cursor getCompras(SQLiteDatabase db) {
+    public Cursor getCursorCompras() {
+        SQLiteDatabase db = this.getWritableDatabase();
         return db.query(
                 DataBaseSQLiteHelper.TABLE_COMPRAS,  //Nombre de la tabla
                 null,  //Lista de Columnas a consultar
@@ -238,7 +265,8 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
         );
     }
 
-    public static Cursor getLicencias(SQLiteDatabase db) {
+    public Cursor getCursorLicencias() {
+        SQLiteDatabase db = this.getWritableDatabase();
         return db.query(
                 DataBaseSQLiteHelper.TABLE_LICENCIAS,  //Nombre de la tabla
                 null,  //Lista de Columnas a consultar
@@ -250,23 +278,114 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
         );
     }
 
-    @Override
-    public void onCreate(SQLiteDatabase db) {
-        // Creating required tables
-        db.execSQL(CREATE_TABLE_GUIA);
-        db.execSQL(CREATE_TABLE_COMPRA);
-        db.execSQL(CREATE_TABLE_LICENCIAS);
+    public ArrayList<Guia> getListGuias() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ArrayList<Guia> guias = new ArrayList<Guia>();
+        Cursor cursor = getCursorGuias();
+
+        // Looping through all rows and adding to list
+        if (cursor.moveToFirst()) {
+            do {
+                Guia guia = new Guia();
+                guia.setId(cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_ID)));
+                guia.setIdCompra(cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_GUIA_ID_COMPRA)));
+                guia.setIdLicencia(cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_GUIA_ID_LICENCIA)));
+                guia.setApodo(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_GUIA_APODO)));
+                guia.setMarca(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_GUIA_MARCA)));
+                guia.setModelo(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_GUIA_MODELO)));
+                guia.setTipoArma(cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_GUIA_TIPO_ARMA)));
+                guia.setCalibre1(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_GUIA_CALIBRE1)));
+                guia.setCalibre2(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_GUIA_CALIBRE2)));
+                guia.setNumGuia(cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_GUIA_NUM_GUIA)));
+                guia.setNumArma(cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_GUIA_NUM_ARMA)));
+                guia.setNumArma(cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_GUIA_NUM_ARMA)));
+                guia.setImagen(getImageFromBlob(cursor.getBlob(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_GUIA_IMAGEN))));
+                guia.setCupo(cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_GUIA_CUPO)));
+                guia.setGastado(cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_GUIA_GASTADO)));
+
+                // Adding contact to list
+                guias.add(guia);
+            } while (cursor.moveToNext());
+        }
+
+        // return contact list
+        return guias;
     }
 
-    @Override
-    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        // On upgrade drop older tables
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_GUIAS);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_COMPRAS);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_LICENCIAS);
+    public ArrayList<Compra> getListCompras() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ArrayList<Compra> compras = new ArrayList<Compra>();
+        Cursor cursor = getCursorCompras();
 
-        // Create new tables
-        onCreate(db);
+        // Looping through all rows and adding to list
+        try {
+            if (cursor.moveToFirst()) {
+                do {
+                    Compra compra = new Compra();
+                    compra.setId(cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_ID)));
+                    compra.setCalibre1(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_COMPRA_CALIBRE1)));
+                    compra.setCalibre2(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_COMPRA_CALIBRE2)));
+                    compra.setUnidades(cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_COMPRA_UNIDADES)));
+                    compra.setPrecio(cursor.getDouble(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_COMPRA_PRECIO)));
+                    compra.setFecha(new SimpleDateFormat("dd/MM/yyyy").parse(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_COMPRA_FECHA))));
+                    compra.setTipo(cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_COMPRA_TIPO)));
+                    compra.setPeso(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_COMPRA_PESO)));
+                    compra.setMarca(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_COMPRA_MARCA)));
+                    compra.setTienda(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_COMPRA_TIENDA)));
+                    compra.setValoracion(cursor.getDouble(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_COMPRA_VALORACION)));
+
+                    // Adding contact to list
+                    compras.add(compra);
+                } while (cursor.moveToNext());
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        // return contact list
+        return compras;
+    }
+
+    public ArrayList<Licencia> getListLicencias() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ArrayList<Licencia> licencias = new ArrayList<Licencia>();
+        Cursor cursor = getCursorLicencias();
+
+        // Looping through all rows and adding to list
+        try {
+            if (cursor.moveToFirst()) {
+                do {
+                    Licencia licencia = new Licencia();
+                    licencia.setId(cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_ID)));
+                    licencia.setTipo(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_LICENCIAS_TIPO)));
+                    licencia.setNumLicencia(cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_LICENCIAS_NUM_LICENCIA)));
+                    licencia.setFechaExpedicion(new SimpleDateFormat("dd/MM/yyyy").parse(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_LICENCIAS_FECHA_EXPEDICION))));
+                    licencia.setFechaCaducidad(new SimpleDateFormat("dd/MM/yyyy").parse(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_LICENCIAS_FECHA_CADUCIDAD))));
+
+                    // Adding contact to list
+                    licencias.add(licencia);
+                } while (cursor.moveToNext());
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        // return contact list
+        return licencias;
+    }
+
+    /**
+     * Convierte un Blob de la BBDD en Imagen. Los Blob son byte[].
+     *
+     * @param img Imagen en byte[]
+     * @return El bitmap con la imagen
+     */
+    private Bitmap getImageFromBlob(byte[] img) {
+        if (img != null)
+            return BitmapFactory.decodeByteArray(img, 0, img.length);
+        else
+//            return BitmapFactory.decodeResource(Resources.getSystem(), R.drawable.pistola);
+            return BitmapFactory.decodeResource(context.getResources(), R.drawable.pistola);
     }
 }
 

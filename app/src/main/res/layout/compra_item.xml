@@ -10,7 +10,7 @@
         android:layout_height="100dp"
         android:clickable="true"
         android:scaleType="fitCenter"
-        android:src="@drawable/municion2"
+        android:src="@drawable/municion1"
         android:cropToPadding="false"/>
 
 

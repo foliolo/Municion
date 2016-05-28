@@ -1,28 +1,80 @@
 package al.ahgitdevelopment.municion;
 
-import android.media.Image;
+import android.graphics.Bitmap;
+import android.os.Bundle;
+import android.os.Parcel;
+import android.os.Parcelable;
 
 /**
  * Created by Alberto on 13/05/2016.
  */
-public class Guia {
+public class Guia implements Parcelable {
+    public static final Creator<Guia> CREATOR = new Creator<Guia>() {
+        @Override
+        public Guia createFromParcel(Parcel in) {
+            return new Guia(in);
+        }
+
+        @Override
+        public Guia[] newArray(int size) {
+            return new Guia[size];
+        }
+    };
     private int id;
     private int idCompra;
     private int idLicencia;
-    private String apodo;
     private String marca;
     private String modelo;
+    private String apodo;
     private int tipoArma;
     private String calibre1;
     private String calibre2;
     private int numGuia;
-    private int numAram;
-    private Image imagen;
+    private int numArma;
+    private Bitmap imagen;
     private int cupo;
     private int gastado;
 
+    protected Guia() {
+    }
+
+    protected Guia(Parcel in) {
+        id = in.readInt();
+        idCompra = in.readInt();
+        idLicencia = in.readInt();
+        marca = in.readString();
+        modelo = in.readString();
+        apodo = in.readString();
+        tipoArma = in.readInt();
+        calibre1 = in.readString();
+        calibre2 = in.readString();
+        numGuia = in.readInt();
+        numArma = in.readInt();
+//        imagen = in.readParcelable(Bitmap.class.getClassLoader());
+        cupo = in.readInt();
+        gastado = in.readInt();
+    }
+
+    public Guia(Bundle extras) {
+        marca = extras.getString("marca");
+        modelo = extras.getString("modelo");
+        apodo = extras.getString("apodo");
+        tipoArma = extras.getInt("tipoArma");
+        calibre1 = extras.getString("calibre1");
+        calibre2 = extras.getString("calibre2");
+        numGuia = extras.getInt("numGuia");
+        numArma = extras.getInt("numArma");
+//        imagen = i(Bitmap.class.getClassLoader());
+        gastado = extras.getInt("gastado");
+        cupo = extras.getInt("cupo");
+    }
+
     public int getId() {
         return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public int getIdCompra() {
@@ -97,19 +149,19 @@ public class Guia {
         this.numGuia = numGuia;
     }
 
-    public int getNumAram() {
-        return numAram;
+    public int getNumArma() {
+        return numArma;
     }
 
-    public void setNumAram(int numAram) {
-        this.numAram = numAram;
+    public void setNumArma(int numArma) {
+        this.numArma = numArma;
     }
 
-    public Image getImagen() {
+    public Bitmap getImagen() {
         return imagen;
     }
 
-    public void setImagen(Image imagen) {
+    public void setImagen(Bitmap imagen) {
         this.imagen = imagen;
     }
 
@@ -127,5 +179,28 @@ public class Guia {
 
     public void setGastado(int gastado) {
         this.gastado = gastado;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(id);
+        dest.writeInt(idCompra);
+        dest.writeInt(idLicencia);
+        dest.writeString(apodo);
+        dest.writeString(marca);
+        dest.writeString(modelo);
+        dest.writeInt(tipoArma);
+        dest.writeString(calibre1);
+        dest.writeString(calibre2);
+        dest.writeInt(numGuia);
+        dest.writeInt(numArma);
+//        dest.writeParcelable(imagen, flags);
+        dest.writeInt(cupo);
+        dest.writeInt(gastado);
     }
 }

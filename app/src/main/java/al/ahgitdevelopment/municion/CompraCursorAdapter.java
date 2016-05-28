@@ -9,8 +9,6 @@ import android.widget.CursorAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.util.Random;
-
 /**
  * Created by Alberto on 11/04/2016.
  */
@@ -27,7 +25,7 @@ public class CompraCursorAdapter extends CursorAdapter {
         TextView unidades = (TextView) view.findViewById(R.id.item_unidades_compra);
         TextView precio = (TextView) view.findViewById(R.id.item_precio_compra);
 
-        imagen.setImageResource((new Random().nextInt()) % 2 == 0 ? R.drawable.municion1 : R.drawable.municion2);
+        imagen.setImageResource(R.drawable.municion1);
         calibre.setText(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_COMPRA_CALIBRE1)));
         unidades.setText(String.valueOf(cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_COMPRA_UNIDADES))));
         precio.setText(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_COMPRA_PRECIO)) + "€");

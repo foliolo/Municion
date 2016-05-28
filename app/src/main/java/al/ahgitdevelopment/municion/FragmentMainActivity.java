@@ -2,7 +2,6 @@ package al.ahgitdevelopment.municion;
 
 import android.content.Intent;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
@@ -12,6 +11,7 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v4.widget.CursorAdapter;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
@@ -19,12 +19,16 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CursorAdapter;
 import android.widget.ListView;
+
+import java.util.ArrayList;
 
 public class FragmentMainActivity extends AppCompatActivity {
 
-    private static SQLiteDatabase db;
+    private static DataBaseSQLiteHelper dbSqlHelper;
+    private static ArrayList<Guia> guias;
+    private static ArrayList<Guia> compras;
+    private static ArrayList<Guia> licencias;
     private final int GUIA_COMPLETED = 1;
     private final int COMPRA_COMPLETED = 2;
     private final int LICENCIA_COMPLETED = 3;
@@ -51,17 +55,16 @@ public class FragmentMainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         toolbar.setCollapsible(false);
 
-        //Abrimos la base de datos 'DBUMunicion' en modo escritura
-        if (db == null) {
-            DataBaseSQLiteHelper dbSqlHelper = new DataBaseSQLiteHelper(getApplicationContext());
-            db = dbSqlHelper.getWritableDatabase();
+        // Instanciamos la base de datos
+        dbSqlHelper = new DataBaseSQLiteHelper(getApplicationContext());
 
-            if (DataBaseSQLiteHelper.getGuias(db).getCount() == 0) {
-                DataBaseSQLiteHelper.addCompras(db);
-                DataBaseSQLiteHelper.addLicencias(db);
-                DataBaseSQLiteHelper.addGuias(db);
-            }
-        }
+        // Obtenemos las estructuras de datos
+        if (guias == null)
+            guias = getIntent().getParcelableArrayListExtra("guias");
+        if (compras == null)
+            compras = getIntent().getParcelableArrayListExtra("compras");
+        if (licencias == null)
+            licencias = getIntent().getParcelableArrayListExtra("licencias");
 
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
@@ -145,12 +148,9 @@ public class FragmentMainActivity extends AppCompatActivity {
         if (resultCode == RESULT_OK) {
             switch (requestCode) {
                 case GUIA_COMPLETED:
-//                ((PlaceholderFragment) mSectionsPagerAdapter.getItem(0))
-//                        .getGuias().add(new Guia(data.getExtras()));
-//                ((PlaceholderFragment) mSectionsPagerAdapter.getItem(0)).myGuiaAdapter.notifyDataSetChanged();
-
-//                insertGuiaToBBDD(data.getExtras());
-//                ((PlaceholderFragment) mSectionsPagerAdapter.getItem(0)).getMyGuiaCursorAdapter().notifyDataSetChanged();
+                    guias.add(new Guia(data.getExtras()));
+//                    ((PlaceholderFragment) mSectionsPagerAdapter.getItem(0)).getListView().invalidate();
+                    ((GuiaArrayAdapter) ((PlaceholderFragment) mSectionsPagerAdapter.getItem(0)).getListView().getAdapter()).notifyDataSetChanged();
 
                     break;
                 case COMPRA_COMPLETED:
@@ -173,6 +173,12 @@ public class FragmentMainActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+//        saveDataIntoDataBase(); //TODO
+    }
+
     /**
      * A placeholder fragment containing a simple view.
      */
@@ -181,7 +187,12 @@ public class FragmentMainActivity extends AppCompatActivity {
          * The fragment argument representing the section number for this fragment.
          */
         private static final String ARG_SECTION_NUMBER = "section_number";
+
         private static ListView listView = null;
+
+        public static ListView getListView() {
+            return listView;
+        }
 
         /**
          * Returns a new instance of this fragment for the given section
@@ -205,15 +216,14 @@ public class FragmentMainActivity extends AppCompatActivity {
             switch (getArguments().getInt(ARG_SECTION_NUMBER)) {
                 case 0: // Lista de las guias
                     //Abrimos la base de datos 'DBUMunicion' en modo escritura
-                    Cursor cursorGuias = DataBaseSQLiteHelper.getGuias(db);
-                    GuiaCursorAdapter guiaCursorAdapter = new GuiaCursorAdapter(this.getActivity(), cursorGuias, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
+                    GuiaArrayAdapter guiaArrayAdapter = new GuiaArrayAdapter(getActivity(), R.layout.guia_item, guias);
                     listView = (ListView) rootView.findViewById(R.id.ListView);
-                    listView.setAdapter(guiaCursorAdapter);
+                    listView.setAdapter(guiaArrayAdapter);
                     break;
 
                 case 1: // Lista de las compras
                     //Abrimos la base de datos 'DBUMunicion' en modo escritura
-                    Cursor cursorCompras = DataBaseSQLiteHelper.getCompras(db);
+                    Cursor cursorCompras = dbSqlHelper.getCursorCompras();
                     CompraCursorAdapter compraCursorAdapter = new CompraCursorAdapter(this.getActivity(), cursorCompras, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
                     listView = (ListView) rootView.findViewById(R.id.ListView);
                     listView.setAdapter(compraCursorAdapter);
@@ -221,7 +231,7 @@ public class FragmentMainActivity extends AppCompatActivity {
 
                 case 2: // Lista de las licencias
                     //Abrimos la base de datos 'DBUMunicion' en modo escritura
-                    Cursor cursorLicencias = DataBaseSQLiteHelper.getLicencias(db);
+                    Cursor cursorLicencias = dbSqlHelper.getCursorLicencias();
                     LicenciaCursorAdapter licenciaCursorAdapter = new LicenciaCursorAdapter(this.getActivity(), cursorLicencias, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
                     listView = (ListView) rootView.findViewById(R.id.ListView);
                     listView.setAdapter(licenciaCursorAdapter);
