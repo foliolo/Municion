@@ -1,7 +1,6 @@
 package al.ahgitdevelopment.municion;
 
 import android.content.Intent;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
@@ -11,7 +10,6 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.support.v4.widget.CursorAdapter;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
@@ -27,11 +25,13 @@ public class FragmentMainActivity extends AppCompatActivity {
 
     private static DataBaseSQLiteHelper dbSqlHelper;
     private static ArrayList<Guia> guias;
-    private static ArrayList<Guia> compras;
-    private static ArrayList<Guia> licencias;
+    private static ArrayList<Compra> compras;
+    private static ArrayList<Licencia> licencias;
+
     private final int GUIA_COMPLETED = 1;
     private final int COMPRA_COMPLETED = 2;
     private final int LICENCIA_COMPLETED = 3;
+
     /**
      * The {@link PagerAdapter} that will provide
      * fragments for each of the sections. We use a
@@ -134,7 +134,6 @@ public class FragmentMainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-
     /**
      * Recepción de los datos del formulario
      *
@@ -149,25 +148,15 @@ public class FragmentMainActivity extends AppCompatActivity {
             switch (requestCode) {
                 case GUIA_COMPLETED:
                     guias.add(new Guia(data.getExtras()));
-//                    ((PlaceholderFragment) mSectionsPagerAdapter.getItem(0)).getListView().invalidate();
-                    ((GuiaArrayAdapter) ((PlaceholderFragment) mSectionsPagerAdapter.getItem(0)).getListView().getAdapter()).notifyDataSetChanged();
-
+                    ((PlaceholderFragment) mSectionsPagerAdapter.getItem(0)).guiaArrayAdapter.notifyDataSetChanged();
                     break;
                 case COMPRA_COMPLETED:
-//                ((PlaceholderFragment) mSectionsPagerAdapter.getItem(1))
-//                        .getCompras().add(new Compra(data.getExtras()));
-//                ((PlaceholderFragment) mSectionsPagerAdapter.getItem(1)).getView().invalidate();
-//                ((PlaceholderFragment) mSectionsPagerAdapter.getItem(1)).myCompraAdapter.notifyDataSetChanged();
-//                insertCompraToBBDD(data.getExtras());
-
+                    compras.add(new Compra(data.getExtras()));
+                    ((PlaceholderFragment) mSectionsPagerAdapter.getItem(1)).compraArrayAdapter.notifyDataSetChanged();
                     break;
                 case LICENCIA_COMPLETED:
-//                ((PlaceholderFragment) mSectionsPagerAdapter.getItem(1))
-//                        .getCompras().add(new Compra(data.getExtras()));
-//                ((PlaceholderFragment) mSectionsPagerAdapter.getItem(1)).getView().invalidate();
-//                ((PlaceholderFragment) mSectionsPagerAdapter.getItem(1)).myCompraAdapter.notifyDataSetChanged();
-//                insertCompraToBBDD(data.getExtras());
-
+                    licencias.add(new Licencia(data.getExtras()));
+                    ((PlaceholderFragment) mSectionsPagerAdapter.getItem(2)).licenciaArrayAdapter.notifyDataSetChanged();
                     break;
             }
         }
@@ -176,7 +165,10 @@ public class FragmentMainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-//        saveDataIntoDataBase(); //TODO
+        dbSqlHelper.saveListGuias(guias);
+        dbSqlHelper.saveListCompras(compras);
+        dbSqlHelper.saveListLicencias(licencias);
+
     }
 
     /**
@@ -187,7 +179,9 @@ public class FragmentMainActivity extends AppCompatActivity {
          * The fragment argument representing the section number for this fragment.
          */
         private static final String ARG_SECTION_NUMBER = "section_number";
-
+        public static GuiaArrayAdapter guiaArrayAdapter = null;
+        public static CompraArrayAdapter compraArrayAdapter = null;
+        public static LicenciaArrayAdapter licenciaArrayAdapter = null;
         private static ListView listView = null;
 
         public static ListView getListView() {
@@ -209,32 +203,26 @@ public class FragmentMainActivity extends AppCompatActivity {
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-//          Example: getArguments().getInt(ARG_SECTION_NUMBER)));
-
             View rootView = inflater.inflate(R.layout.fragment_fragment_main, container, false);
 
             switch (getArguments().getInt(ARG_SECTION_NUMBER)) {
                 case 0: // Lista de las guias
                     //Abrimos la base de datos 'DBUMunicion' en modo escritura
-                    GuiaArrayAdapter guiaArrayAdapter = new GuiaArrayAdapter(getActivity(), R.layout.guia_item, guias);
+                    guiaArrayAdapter = new GuiaArrayAdapter(getActivity(), R.layout.guia_item, guias);
                     listView = (ListView) rootView.findViewById(R.id.ListView);
                     listView.setAdapter(guiaArrayAdapter);
                     break;
 
                 case 1: // Lista de las compras
-                    //Abrimos la base de datos 'DBUMunicion' en modo escritura
-                    Cursor cursorCompras = dbSqlHelper.getCursorCompras();
-                    CompraCursorAdapter compraCursorAdapter = new CompraCursorAdapter(this.getActivity(), cursorCompras, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
+                    compraArrayAdapter = new CompraArrayAdapter(getActivity(), R.layout.compra_item, compras);
                     listView = (ListView) rootView.findViewById(R.id.ListView);
-                    listView.setAdapter(compraCursorAdapter);
+                    listView.setAdapter(compraArrayAdapter);
                     break;
 
                 case 2: // Lista de las licencias
-                    //Abrimos la base de datos 'DBUMunicion' en modo escritura
-                    Cursor cursorLicencias = dbSqlHelper.getCursorLicencias();
-                    LicenciaCursorAdapter licenciaCursorAdapter = new LicenciaCursorAdapter(this.getActivity(), cursorLicencias, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
+                    licenciaArrayAdapter = new LicenciaArrayAdapter(getActivity(), R.layout.licencia_item, licencias);
                     listView = (ListView) rootView.findViewById(R.id.ListView);
-                    listView.setAdapter(licenciaCursorAdapter);
+                    listView.setAdapter(licenciaArrayAdapter);
                     break;
             }
             return rootView;

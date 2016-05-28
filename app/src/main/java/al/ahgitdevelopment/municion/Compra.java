@@ -1,8 +1,12 @@
 package al.ahgitdevelopment.municion;
 
+import android.graphics.Bitmap;
+import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
@@ -31,6 +35,7 @@ public class Compra implements Parcelable {
     private String marca;
     private String tienda;
     private double valoracion;
+    private Bitmap imagen;
 
     protected Compra() {
     }
@@ -45,6 +50,23 @@ public class Compra implements Parcelable {
         peso = in.readString();
         marca = in.readString();
         tienda = in.readString();
+    }
+
+    public Compra(Bundle extras) {
+        calibre1 = extras.getString("calibre1");
+        calibre2 = extras.getString("calibre2", "");
+        unidades = extras.getInt("unidades");
+        precio = extras.getDouble("precio");
+        try {
+            fecha = new SimpleDateFormat("dd/MM/yyyy").parse(extras.getString("fecha", ""));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        tipo = extras.getInt("tipo");
+        peso = extras.getString("peso");
+        marca = extras.getString("marca");
+        tienda = extras.getString("tienda");
+        valoracion = extras.getInt("valoracion");
     }
 
     public int getId() {
@@ -95,6 +117,14 @@ public class Compra implements Parcelable {
         this.fecha = fecha;
     }
 
+    public void setFecha(String fecha) {
+        try {
+            this.fecha = new SimpleDateFormat("dd/MM/yyyy").parse(fecha);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+    }
+
     public int getTipo() {
         return tipo;
     }
@@ -133,6 +163,14 @@ public class Compra implements Parcelable {
 
     public void setValoracion(double valoracion) {
         this.valoracion = valoracion;
+    }
+
+    public Bitmap getImagen() {
+        return imagen;
+    }
+
+    public void setImagen(Bitmap imagen) {
+        this.imagen = imagen;
     }
 
     @Override

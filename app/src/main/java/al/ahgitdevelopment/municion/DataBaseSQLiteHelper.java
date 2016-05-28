@@ -374,6 +374,18 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
         return licencias;
     }
 
+    public void saveListGuias(ArrayList<Guia> guias) {
+        //TODO: Guardado la lista en la BBDD
+    }
+
+    public void saveListCompras(ArrayList<Compra> compras) {
+        //TODO: Guardado la lista en la BBDD
+    }
+
+    public void saveListLicencias(ArrayList<Licencia> licencias) {
+        //TODO: Guardado la lista en la BBDD
+    }
+
     /**
      * Convierte un Blob de la BBDD en Imagen. Los Blob son byte[].
      *

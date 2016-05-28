@@ -1,8 +1,11 @@
 package al.ahgitdevelopment.municion;
 
+import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
@@ -33,6 +36,25 @@ public class Licencia implements Parcelable {
         id = in.readInt();
         tipo = in.readString();
         numLicencia = in.readInt();
+    }
+
+    public Licencia(Bundle extras) {
+        tipo = extras.getString("tipo");
+        numLicencia = extras.getInt("num_licencia");
+        try {
+            fechaExpedicion = new SimpleDateFormat("dd/MM/yyyy").parse(extras.getString("fecha_expedicion", ""));
+            fechaCaducidad = new SimpleDateFormat("dd/MM/yyyy").parse(extras.getString("fecha_caducidad", ""));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public Licencia(Licencia licencia) {
+        this.setId(licencia.getId());
+        this.setTipo(licencia.getTipo());
+        this.setNumLicencia(licencia.getNumLicencia());
+        this.setFechaExpedicion(licencia.getFechaExpedicion());
+        this.setFechaCaducidad(licencia.getFechaCaducidad());
     }
 
     public int getId() {

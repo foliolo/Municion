@@ -88,7 +88,6 @@
             android:layout_height="wrap_content"
             android:checked="false"
             android:text="@string/check_segundo_calibre" />
-
         <!--CALIBRE 2-->
         <android.support.design.widget.TextInputLayout
             android:layout_width="match_parent"
@@ -136,15 +135,6 @@
             android:layout_height="wrap_content"
             android:checked="false"
             android:text="@string/aumento_cupo"/>
-        <!--TODO-->
-        <!--<view-->
-        <!--android:id="@+id/contador_aumento_cupo"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content">-->
-        <!--<ImageView />-->
-
-        <!--</view>-->
-
         <!--CUPO-->
         <android.support.design.widget.TextInputLayout
             android:layout_width="match_parent"

@@ -230,12 +230,6 @@ public class LoginPasswordActivity extends AppCompatActivity {
         intent.putParcelableArrayListExtra("compras", dbSqlHelper.getListCompras());
         intent.putParcelableArrayListExtra("licencias", dbSqlHelper.getListLicencias());
 
-//        Bundle bundle = new Bundle();
-//        bundle.putParcelableArrayList("guias", dbSqlHelper.getListGuias());
-//        bundle.putParcelableArrayList("compras", dbSqlHelper.getListCompras());
-//        bundle.putParcelableArrayList("licencias", dbSqlHelper.getListLicencias());
-
-
         startActivity(intent);
     }
 }

@@ -86,7 +86,7 @@ public class CompraFormActivity extends AppCompatActivity {
             bundle.putInt("unidades", Integer.parseInt(unidades.getText().toString()));
             bundle.putString("precio", precio.getText().toString());
             bundle.putString("fecha", fecha.getText().toString());
-            bundle.putString("tipo", tipoMunicion.getText().toString());
+            bundle.putInt("tipo", Integer.parseInt(tipoMunicion.getText().toString()));
             bundle.putString("peso", pesoMunicion.getText().toString());
             bundle.putString("marca", marcaMunicion.getText().toString());
             bundle.putString("tienda", tienda.getText().toString());
