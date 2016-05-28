@@ -91,7 +91,7 @@ public class LoginPasswordActivity extends AppCompatActivity {
                 if (!pass.equals("") && !password1.getText().toString().equals(pass) && textInputLayout1.getError() != null)
                     textInputLayout1.setError(getString(R.string.password_equal_fail));
 
-                if (password1.getText().toString().equals(pass))
+                if (password1.getText().toString().equals(pass) && password1.getText().toString().length() >= 4)
                     textInputLayout1.setError(null);
             }
 
@@ -194,7 +194,7 @@ public class LoginPasswordActivity extends AppCompatActivity {
     }
 
     /**
-     * Valida la contraseña introducida por el usuario frente a la guardad en el sharedPreferences
+     * Valida la contraseña introducida por el usuario frente a la guardada en el sharedPreferences
      *
      * @return Contraseña valida o invalida
      */
