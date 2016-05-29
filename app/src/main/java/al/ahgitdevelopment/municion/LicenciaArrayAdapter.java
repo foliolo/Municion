@@ -1,6 +1,7 @@
 package al.ahgitdevelopment.municion;
 
 import android.content.Context;
+import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,11 +15,9 @@ import java.util.List;
  * Created by Alberto on 28/05/2016.
  */
 public class LicenciaArrayAdapter extends ArrayAdapter<Licencia> {
-    private final List<Licencia> licencias;
 
     public LicenciaArrayAdapter(Context context, int resource, List<Licencia> licencias) {
         super(context, resource, licencias);
-        this.licencias = licencias;
     }
 
 //    @Override
@@ -41,8 +40,23 @@ public class LicenciaArrayAdapter extends ArrayAdapter<Licencia> {
         TextView expedicion = (TextView) convertView.findViewById(R.id.item_expedicion_licencia);
         TextView caducidad = (TextView) convertView.findViewById(R.id.item_caducidad_licencia);
 
-        tipo.setText(licencia.getTipo().split("-")[0].trim());
+        // El último elemento es el libro de coleccionista y no tiene "-"
+        int lengthArrayLicencias = getContext().getResources().getTextArray(R.array.tipo_licencias).length - 1;
+        if (licencia.getTipo().equals(getContext().getResources().getTextArray(R.array.tipo_licencias)[lengthArrayLicencias])) {
+            tipo.setText(licencia.getTipo());
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+                tipo.setTextAppearance(android.R.style.TextAppearance_Medium);
+            else
+                tipo.setTextAppearance(getContext(), android.R.style.TextAppearance_Medium);
+        } else {
+            tipo.setText(licencia.getTipo().split("-")[0].trim());
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+                tipo.setTextAppearance(android.R.style.TextAppearance_Large);
+            else
+                tipo.setTextAppearance(getContext(), android.R.style.TextAppearance_Large);
+        }
         numLicencia.setText(licencia.getNumLicencia() + "");
+
         if (licencia.getFechaCaducidad() != null)
             caducidad.setText(new SimpleDateFormat("dd/MM/yyyy").format(licencia.getFechaCaducidad()).toString());
         if (licencia.getFechaExpedicion() != null)

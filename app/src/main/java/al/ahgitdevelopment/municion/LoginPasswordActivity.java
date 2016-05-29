@@ -231,5 +231,6 @@ public class LoginPasswordActivity extends AppCompatActivity {
         intent.putParcelableArrayListExtra("licencias", dbSqlHelper.getListLicencias());
 
         startActivity(intent);
+        dbSqlHelper.close();
     }
 }

@@ -44,6 +44,7 @@
 
         <!--FECHA EXPEDICION-->
         <android.support.design.widget.TextInputLayout
+            android:id="@+id/layout_form_fecha_expedicion"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
@@ -57,6 +58,7 @@
 
         <!--FECHA CADUCIDAD-->
         <android.support.design.widget.TextInputLayout
+            android:id="@+id/layout_form_fecha_caducidad"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
@@ -65,7 +67,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/fecha_caducidad"
-                android:inputType="date" />
+                android:inputType="date"
+                android:enabled="true"/>
         </android.support.design.widget.TextInputLayout>
 
     </LinearLayout>

@@ -12,12 +12,16 @@ import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -72,10 +76,12 @@ public class FragmentMainActivity extends AppCompatActivity {
 
         // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) findViewById(R.id.container);
-        mViewPager.setAdapter(mSectionsPagerAdapter);
+        if (mViewPager != null && mSectionsPagerAdapter != null)
+            mViewPager.setAdapter(mSectionsPagerAdapter);
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
-        tabLayout.setupWithViewPager(mViewPager);
+        if (mViewPager != null)
+            tabLayout.setupWithViewPager(mViewPager);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         if (fab != null) {
@@ -126,9 +132,11 @@ public class FragmentMainActivity extends AppCompatActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        switch (id) {
+            case R.id.action_settings:
+                Intent intent = new Intent(FragmentMainActivity.this, SettingsActivity.class);
+                startActivity(intent);
+                break;
         }
 
         return super.onOptionsItemSelected(item);
@@ -148,15 +156,15 @@ public class FragmentMainActivity extends AppCompatActivity {
             switch (requestCode) {
                 case GUIA_COMPLETED:
                     guias.add(new Guia(data.getExtras()));
-                    ((PlaceholderFragment) mSectionsPagerAdapter.getItem(0)).guiaArrayAdapter.notifyDataSetChanged();
+                    ((PlaceholderFragment) mSectionsPagerAdapter.getItem(mViewPager.getCurrentItem())).guiaArrayAdapter.notifyDataSetChanged();
                     break;
                 case COMPRA_COMPLETED:
                     compras.add(new Compra(data.getExtras()));
-                    ((PlaceholderFragment) mSectionsPagerAdapter.getItem(1)).compraArrayAdapter.notifyDataSetChanged();
+                    ((PlaceholderFragment) mSectionsPagerAdapter.getItem(mViewPager.getCurrentItem())).compraArrayAdapter.notifyDataSetChanged();
                     break;
                 case LICENCIA_COMPLETED:
                     licencias.add(new Licencia(data.getExtras()));
-                    ((PlaceholderFragment) mSectionsPagerAdapter.getItem(2)).licenciaArrayAdapter.notifyDataSetChanged();
+                    ((PlaceholderFragment) mSectionsPagerAdapter.getItem(mViewPager.getCurrentItem())).licenciaArrayAdapter.notifyDataSetChanged();
                     break;
             }
         }
@@ -168,12 +176,14 @@ public class FragmentMainActivity extends AppCompatActivity {
         dbSqlHelper.saveListGuias(guias);
         dbSqlHelper.saveListCompras(compras);
         dbSqlHelper.saveListLicencias(licencias);
+        dbSqlHelper.close();
 
     }
 
     /**
      * A placeholder fragment containing a simple view.
      */
+
     public static class PlaceholderFragment extends Fragment {
         /**
          * The fragment argument representing the section number for this fragment.
@@ -184,9 +194,60 @@ public class FragmentMainActivity extends AppCompatActivity {
         public static LicenciaArrayAdapter licenciaArrayAdapter = null;
         private static ListView listView = null;
 
-        public static ListView getListView() {
+        public ListView getListView() {
             return listView;
         }
+
+        private ActionMode mActionMode = null;
+        private ActionMode.Callback mActionModeCallback = new ActionMode.Callback() {
+            @Override
+            public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+//                MenuInflater inflater = mode.getMenuInflater();
+//                inflater.inflate(R.menu.menu_fragment_main, menu);
+//
+//                MenuItem item = menu.findItem(R.id.action_settings);
+//                item.setVisible(false);
+//                menu.setGroupVisible(R.id.item_selected_group_menu, true);
+                return false;
+            }
+
+            @Override
+            public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+                // Here you can perform updates to the CAB due to
+                // an invalidate() request
+                MenuInflater inflater = mode.getMenuInflater();
+                inflater.inflate(R.menu.menu_fragment_main, menu);
+
+                MenuItem item = menu.findItem(R.id.action_settings);
+                item.setVisible(true);
+                menu.setGroupVisible(R.id.item_selected_group_menu, false);
+                return true;
+            }
+
+            @Override
+            public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+                // Respond to clicks on the actions in the CAB
+                switch (item.getItemId()) {
+                    case R.id.item_menu_modify:
+//                            openForm();
+                        Toast.makeText(getActivity(), "Modify item", Toast.LENGTH_SHORT).show();
+                        mode.finish(); // Action picked, so close the CAB
+                        return true;
+                    case R.id.item_menu_delete:
+//                            deleteSelectedItems();
+                        Toast.makeText(getActivity(), "Delete item", Toast.LENGTH_SHORT).show();
+                        mode.finish(); // Action picked, so close the CAB
+                        return true;
+                    default:
+                        return false;
+                }
+            }
+
+            @Override
+            public void onDestroyActionMode(ActionMode mode) {
+                mode.invalidate();
+            }
+        };
 
         /**
          * Returns a new instance of this fragment for the given section
@@ -225,6 +286,32 @@ public class FragmentMainActivity extends AppCompatActivity {
                     listView.setAdapter(licenciaArrayAdapter);
                     break;
             }
+
+            listView.setChoiceMode(AbsListView.CHOICE_MODE_SINGLE);
+//            listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+//                @Override
+//                public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+//                    listView.setItemChecked(position, true);
+//                    Toast.makeText(getActivity(), "Elemento pulsado", Toast.LENGTH_SHORT).show();
+//                    return true;
+//                }
+//            });
+
+
+            listView.setOnLongClickListener(new View.OnLongClickListener() {
+                // Called when the user long-clicks on someView
+                public boolean onLongClick(View view) {
+                    if (mActionMode != null) {
+                        return false;
+                    }
+
+                    // Start the CAB using the ActionMode.Callback defined above
+                    mActionMode = getActivity().startActionMode(mActionModeCallback);
+                    view.setSelected(true);
+                    return true;
+                }
+            });
+
             return rootView;
         }
     }
@@ -267,3 +354,4 @@ public class FragmentMainActivity extends AppCompatActivity {
 }
 
 //http://stackoverflow.com/questions/17207366/creating-a-menu-after-a-long-click-event-on-a-list-view
+//http://stackoverflow.com/questions/18204386/contextual-action-mode-in-fragment-close-if-not-focused

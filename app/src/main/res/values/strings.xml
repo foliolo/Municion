@@ -124,5 +124,8 @@
     <string name="pref_title_vibrate">Vibrate</string>
     <string name="aumento_cupo">Aumento de cupo</string>
 
+    <!--MENU-->
+    <string name="modify">Modifciar</string>
+    <string name="delete">Eliminar</string>
 
 </resources>

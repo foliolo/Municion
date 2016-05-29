@@ -232,7 +232,7 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
                 KEY_LICENCIAS_FECHA_EXPEDICION + ", " +
                 KEY_LICENCIAS_FECHA_CADUCIDAD +
                 ") VALUES (" +
-                "'A' , " +
+                "'A - Profesionales, agentes de la autoridad' , " +
                 "'192834' , " +
                 "'18/05/2015' , " +
                 "'18/05/2017'" +
