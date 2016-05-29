@@ -8,7 +8,7 @@
     <string name="password_save_fail">Contraseña invalida</string>
     <string name="password_short_fail">Contraseña demasiado corta</string>
     <string name="password_equal_fail">Las contraseñas no coinciden</string>
-    <string name="title_activity_fragment_main">FragmentMainActivity</string>
+    <string name="title_activity_fragment_main">Menú Principal</string>
     <string name="action_settings">Configuración</string>
     <string name="section_format">Hello World from section: %1$d</string>
     <string name="guardar">Guardar</string>
@@ -34,10 +34,14 @@
     <string name="numGuia">Numero de guia</string>
     <string name="num_arma">Numero de arma</string>
     <string name="cupo">Cupo de la guia</string>
+    <string name="cupo_actual">Cupo Actual: 100</string>
     <string name="cartuchos_gastados">Cartuchos gastados</string>
+    <string name="error_before_save">Este campo es obligatorio</string>
+    <string name="error_mensaje_cabecera">Antes de guardar debe rellenar los campos obligatorios</string>
+
     <!--String Guias Item-->
     <string name="label_cupo">Cupo</string>
-    <string name="label_gastado">Gastado</string>
+    <string name="label_gastado">Gastgado</string>
     <string name="form_lbl_tipo_arma">Tipo de arma</string>
     <string name="lbl_tipo_licencia">Tipo de licencia</string>
     <string name="lbl_num_licencia">Numero de licencia</string>
