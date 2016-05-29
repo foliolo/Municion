@@ -159,7 +159,7 @@ public class LoginPasswordActivity extends AppCompatActivity {
                 Toast.makeText(LoginPasswordActivity.this, R.string.login_ok, Toast.LENGTH_SHORT).show();
                 launchActivity();
                 finish();
-            } else { // Password correcta
+            } else { // Password incorrecta
                 textInputLayout1.setError(getString(R.string.password_fail));
             }
         }

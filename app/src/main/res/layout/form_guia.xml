@@ -12,6 +12,13 @@
         android:paddingRight="@dimen/activity_horizontal_margin"
         android:paddingTop="@dimen/activity_vertical_margin">
 
+        <!--Mensaje de error formulario-->
+        <TextView
+            android:id="@+id/form_mensaje"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone" />
+
         <!--MARCA-->
         <android.support.design.widget.TextInputLayout
             android:layout_width="match_parent"
@@ -144,7 +151,7 @@
                 android:id="@+id/form_cartuchos_totales"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Cupo Actual: 100"
+                android:text="@string/cupo_actual"
                 android:inputType="number"
                 android:enabled="true"/>
         </android.support.design.widget.TextInputLayout>
