@@ -19,7 +19,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -49,15 +49,70 @@ public class FragmentMainActivity extends AppCompatActivity {
      * The {@link ViewPager} that will host the section contents.
      */
     private ViewPager mViewPager;
+    Toolbar toolbar;
+
+    public static ActionMode mActionMode = null;
+    public static ActionMode.Callback mActionModeCallback;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_fragment_main);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        mActionModeCallback = new ActionMode.Callback() {
+            @Override
+            public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+//                MenuInflater inflater = mode.getMenuInflater();
+//                inflater.inflate(R.menu.menu_cab, menu);
+
+                toolbar.inflateMenu(R.menu.menu_cab);
+                toolbar.getMenu().findItem(R.id.action_settings).setVisible(false);
+                return true;
+            }
+
+            @Override
+            public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+                // Here you can perform updates to the CAB due to
+                // an invalidate() request
+                Toast.makeText(FragmentMainActivity.this, "Invalidate", Toast.LENGTH_SHORT).show();
+                MenuInflater inflater = mode.getMenuInflater();
+                inflater.inflate(R.menu.menu_cab, menu);
+                return true;
+            }
+
+            @Override
+            public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+                // Respond to clicks on the actions in the CAB
+                switch (item.getItemId()) {
+                    case R.id.item_menu_modify:
+//                            openForm();
+                        Toast.makeText(FragmentMainActivity.this, "Modify item", Toast.LENGTH_SHORT).show();
+                        mode.finish(); // Action picked, so close the CAB
+                        return true;
+                    case R.id.item_menu_delete:
+//                            deleteSelectedItems();
+                        Toast.makeText(FragmentMainActivity.this, "Delete item", Toast.LENGTH_SHORT).show();
+                        mode.finish(); // Action picked, so close the CAB
+                        return true;
+                    default:
+                        return false;
+                }
+            }
+
+            @Override
+            public void onDestroyActionMode(ActionMode mode) {
+//                toolbar.getMenu().findItem(R.id.action_settings).setVisible(true);
+//                toolbar.getMenu().findItem(R.id.item_menu_modify).setVisible(false);
+//                toolbar.getMenu().findItem(R.id.item_menu_delete).setVisible(false);
+            }
+        };
+
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setTitle(R.string.title_activity_fragment_main);
         toolbar.setCollapsible(false);
+        toolbar.inflateMenu(R.menu.menu_fragment_main);
+
+
 
         // Instanciamos la base de datos
         dbSqlHelper = new DataBaseSQLiteHelper(getApplicationContext());
@@ -90,7 +145,6 @@ public class FragmentMainActivity extends AppCompatActivity {
                 public void onClick(View view) {
                     //                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                     //                        .setAction("Action", null).show();
-
                     Intent form = null;
                     switch (mViewPager.getCurrentItem()) {
                         case 0:
@@ -198,57 +252,6 @@ public class FragmentMainActivity extends AppCompatActivity {
             return listView;
         }
 
-        private ActionMode mActionMode = null;
-        private ActionMode.Callback mActionModeCallback = new ActionMode.Callback() {
-            @Override
-            public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-//                MenuInflater inflater = mode.getMenuInflater();
-//                inflater.inflate(R.menu.menu_fragment_main, menu);
-//
-//                MenuItem item = menu.findItem(R.id.action_settings);
-//                item.setVisible(false);
-//                menu.setGroupVisible(R.id.item_selected_group_menu, true);
-                return false;
-            }
-
-            @Override
-            public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-                // Here you can perform updates to the CAB due to
-                // an invalidate() request
-                MenuInflater inflater = mode.getMenuInflater();
-                inflater.inflate(R.menu.menu_fragment_main, menu);
-
-                MenuItem item = menu.findItem(R.id.action_settings);
-                item.setVisible(true);
-                menu.setGroupVisible(R.id.item_selected_group_menu, false);
-                return true;
-            }
-
-            @Override
-            public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-                // Respond to clicks on the actions in the CAB
-                switch (item.getItemId()) {
-                    case R.id.item_menu_modify:
-//                            openForm();
-                        Toast.makeText(getActivity(), "Modify item", Toast.LENGTH_SHORT).show();
-                        mode.finish(); // Action picked, so close the CAB
-                        return true;
-                    case R.id.item_menu_delete:
-//                            deleteSelectedItems();
-                        Toast.makeText(getActivity(), "Delete item", Toast.LENGTH_SHORT).show();
-                        mode.finish(); // Action picked, so close the CAB
-                        return true;
-                    default:
-                        return false;
-                }
-            }
-
-            @Override
-            public void onDestroyActionMode(ActionMode mode) {
-                mode.invalidate();
-            }
-        };
-
         /**
          * Returns a new instance of this fragment for the given section
          * number.
@@ -264,7 +267,7 @@ public class FragmentMainActivity extends AppCompatActivity {
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_fragment_main, container, false);
+            View rootView = inflater.inflate(R.layout.list_view_pager, container, false);
 
             switch (getArguments().getInt(ARG_SECTION_NUMBER)) {
                 case 0: // Lista de las guias
@@ -287,26 +290,19 @@ public class FragmentMainActivity extends AppCompatActivity {
                     break;
             }
 
-            listView.setChoiceMode(AbsListView.CHOICE_MODE_SINGLE);
-//            listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-//                @Override
-//                public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-//                    listView.setItemChecked(position, true);
-//                    Toast.makeText(getActivity(), "Elemento pulsado", Toast.LENGTH_SHORT).show();
-//                    return true;
-//                }
-//            });
-
-
-            listView.setOnLongClickListener(new View.OnLongClickListener() {
-                // Called when the user long-clicks on someView
-                public boolean onLongClick(View view) {
+//            listView.setChoiceMode(AbsListView.CHOICE_MODE_SINGLE);
+//
+            listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+                @Override
+                public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                    Toast.makeText(getActivity(), "Elemento pulsado", Toast.LENGTH_SHORT).show();
                     if (mActionMode != null) {
-                        return false;
+                        mActionMode.invalidate();
+                        return true;
                     }
 
                     // Start the CAB using the ActionMode.Callback defined above
-                    mActionMode = getActivity().startActionMode(mActionModeCallback);
+                    mActionMode = getActivity().startActionMode(FragmentMainActivity.mActionModeCallback);
                     view.setSelected(true);
                     return true;
                 }
