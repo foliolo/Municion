@@ -20,12 +20,6 @@ public class LicenciaArrayAdapter extends ArrayAdapter<Licencia> {
         super(context, resource, licencias);
     }
 
-//    @Override
-//    public Licencia getItem(int position) {
-//        Licencia licencia = new Licencia(licencias.get(position));
-//        return licencia;
-//    }
-
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         // Get the data item for this position
@@ -33,6 +27,9 @@ public class LicenciaArrayAdapter extends ArrayAdapter<Licencia> {
         // Check if an existing view is being reused, otherwise inflate the view
         if (convertView == null) {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.licencia_item, parent, false);
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            convertView.setBackground(getContext().getDrawable(R.drawable.selector));
         }
 
         TextView tipo = (TextView) convertView.findViewById(R.id.item_tipo_licencia);

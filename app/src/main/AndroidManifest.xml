@@ -21,7 +21,7 @@
         <activity
             android:name=".FragmentMainActivity"
             android:label="@string/title_activity_fragment_main"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme">
 
             <!--<intent-filter>-->
             <!--<action android:name="android.intent.action.MAIN"/>-->
@@ -32,7 +32,8 @@
         <activity
             android:name=".GuiaFormActivity"
             android:label="@string/title_nueva_guia"
-            android:windowSoftInputMode="stateHidden" />
+            android:windowSoftInputMode="stateHidden"
+            android:theme="@style/AppTheme.NoActionBar" />
 
         <activity
             android:name=".CompraFormActivity"

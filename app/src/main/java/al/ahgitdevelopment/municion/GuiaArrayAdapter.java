@@ -1,6 +1,7 @@
 package al.ahgitdevelopment.municion;
 
 import android.content.Context;
+import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,6 +26,9 @@ public class GuiaArrayAdapter extends ArrayAdapter<Guia> {
         // Check if an existing view is being reused, otherwise inflate the view
         if (convertView == null) {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.guia_item, parent, false);
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            convertView.setBackground(getContext().getDrawable(R.drawable.selector));
         }
 
         ImageView imagen = (ImageView) convertView.findViewById(R.id.imageArma);

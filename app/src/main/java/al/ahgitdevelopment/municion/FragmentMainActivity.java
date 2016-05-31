@@ -11,14 +11,14 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-import android.view.ActionMode;
+import android.support.v7.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -49,10 +49,10 @@ public class FragmentMainActivity extends AppCompatActivity {
      * The {@link ViewPager} that will host the section contents.
      */
     private ViewPager mViewPager;
-    Toolbar toolbar;
+//    public Toolbar toolbar;
 
     public static ActionMode mActionMode = null;
-    public static ActionMode.Callback mActionModeCallback;
+    public static ActionMode.Callback mActionModeCallback = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,11 +62,9 @@ public class FragmentMainActivity extends AppCompatActivity {
         mActionModeCallback = new ActionMode.Callback() {
             @Override
             public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-//                MenuInflater inflater = mode.getMenuInflater();
-//                inflater.inflate(R.menu.menu_cab, menu);
+                MenuInflater inflater = mode.getMenuInflater();
+                inflater.inflate(R.menu.menu_cab, menu);
 
-                toolbar.inflateMenu(R.menu.menu_cab);
-                toolbar.getMenu().findItem(R.id.action_settings).setVisible(false);
                 return true;
             }
 
@@ -74,10 +72,7 @@ public class FragmentMainActivity extends AppCompatActivity {
             public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
                 // Here you can perform updates to the CAB due to
                 // an invalidate() request
-                Toast.makeText(FragmentMainActivity.this, "Invalidate", Toast.LENGTH_SHORT).show();
-                MenuInflater inflater = mode.getMenuInflater();
-                inflater.inflate(R.menu.menu_cab, menu);
-                return true;
+                return false;
             }
 
             @Override
@@ -86,12 +81,12 @@ public class FragmentMainActivity extends AppCompatActivity {
                 switch (item.getItemId()) {
                     case R.id.item_menu_modify:
 //                            openForm();
-                        Toast.makeText(FragmentMainActivity.this, "Modify item", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(FragmentMainActivity.this, "Modify item: " + (int) mActionMode.getTag(), Toast.LENGTH_SHORT).show();
                         mode.finish(); // Action picked, so close the CAB
                         return true;
                     case R.id.item_menu_delete:
 //                            deleteSelectedItems();
-                        Toast.makeText(FragmentMainActivity.this, "Delete item", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(FragmentMainActivity.this, "Delete item" + (int) mActionMode.getTag(), Toast.LENGTH_SHORT).show();
                         mode.finish(); // Action picked, so close the CAB
                         return true;
                     default:
@@ -101,18 +96,16 @@ public class FragmentMainActivity extends AppCompatActivity {
 
             @Override
             public void onDestroyActionMode(ActionMode mode) {
-//                toolbar.getMenu().findItem(R.id.action_settings).setVisible(true);
-//                toolbar.getMenu().findItem(R.id.item_menu_modify).setVisible(false);
-//                toolbar.getMenu().findItem(R.id.item_menu_delete).setVisible(false);
+//                ((PlaceholderFragment) mSectionsPagerAdapter.getItem(mViewPager.getCurrentItem())).getListView()
+//                        .getSelectedView().setSelected(false);
+                mActionMode = null;
             }
         };
 
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setTitle(R.string.title_activity_fragment_main);
-        toolbar.setCollapsible(false);
-        toolbar.inflateMenu(R.menu.menu_fragment_main);
-
-
+//        toolbar = (Toolbar) findViewById(R.id.toolbar);
+//        toolbar.setTitle(R.string.title_activity_fragment_main);
+//        toolbar.setCollapsible(false);
+//        setSupportActionBar(toolbar); //con esto sale el "puto" action bar de arriba
 
         // Instanciamos la base de datos
         dbSqlHelper = new DataBaseSQLiteHelper(getApplicationContext());
@@ -133,6 +126,24 @@ public class FragmentMainActivity extends AppCompatActivity {
         mViewPager = (ViewPager) findViewById(R.id.container);
         if (mViewPager != null && mSectionsPagerAdapter != null)
             mViewPager.setAdapter(mSectionsPagerAdapter);
+        mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+                if (mActionMode != null)
+                    mActionMode.finish();
+                mActionMode = null;
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         if (mViewPager != null)
@@ -191,6 +202,8 @@ public class FragmentMainActivity extends AppCompatActivity {
                 Intent intent = new Intent(FragmentMainActivity.this, SettingsActivity.class);
                 startActivity(intent);
                 break;
+            default:
+                return false;
         }
 
         return super.onOptionsItemSelected(item);
@@ -233,6 +246,7 @@ public class FragmentMainActivity extends AppCompatActivity {
         dbSqlHelper.close();
 
     }
+
 
     /**
      * A placeholder fragment containing a simple view.
@@ -290,20 +304,20 @@ public class FragmentMainActivity extends AppCompatActivity {
                     break;
             }
 
-//            listView.setChoiceMode(AbsListView.CHOICE_MODE_SINGLE);
-//
+            listView.setChoiceMode(AbsListView.CHOICE_MODE_SINGLE);
             listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
                 @Override
                 public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
                     Toast.makeText(getActivity(), "Elemento pulsado", Toast.LENGTH_SHORT).show();
+
                     if (mActionMode != null) {
-                        mActionMode.invalidate();
-                        return true;
+                        return false;
                     }
 
-                    // Start the CAB using the ActionMode.Callback defined above
-                    mActionMode = getActivity().startActionMode(FragmentMainActivity.mActionModeCallback);
                     view.setSelected(true);
+                    // Start the CAB using the ActionMode.Callback defined above
+                    mActionMode = ((AppCompatActivity) getActivity()).startSupportActionMode(mActionModeCallback);
+                    mActionMode.setTag(position);
                     return true;
                 }
             });
@@ -346,6 +360,7 @@ public class FragmentMainActivity extends AppCompatActivity {
             }
             return null;
         }
+
     }
 }
 
