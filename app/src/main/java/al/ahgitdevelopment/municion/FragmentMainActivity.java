@@ -43,6 +43,8 @@ public class FragmentMainActivity extends AppCompatActivity {
     private final int COMPRA_COMPLETED = 2;
     private final int LICENCIA_COMPLETED = 3;
 
+    public static View auxView = null;
+
     /**
      * The {@link PagerAdapter} that will provide
      * fragments for each of the sections. We use a
@@ -103,8 +105,9 @@ public class FragmentMainActivity extends AppCompatActivity {
 
             @Override
             public void onDestroyActionMode(ActionMode mode) {
-//                ((PlaceholderFragment) mSectionsPagerAdapter.getItem(mViewPager.getCurrentItem())).getListView()
-//                        .getSelectedView().setSelected(false);
+                if (auxView != null)
+                    auxView.setSelected(false);
+
                 mActionMode = null;
             }
         };
@@ -136,14 +139,14 @@ public class FragmentMainActivity extends AppCompatActivity {
         mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-                if (mActionMode != null)
-                    mActionMode.finish();
-                mActionMode = null;
+
             }
 
             @Override
             public void onPageSelected(int position) {
-
+                if (mActionMode != null)
+                    mActionMode.finish();
+                mActionMode = null;
             }
 
             @Override
@@ -251,7 +254,6 @@ public class FragmentMainActivity extends AppCompatActivity {
         dbSqlHelper.saveListCompras(compras);
         dbSqlHelper.saveListLicencias(licencias);
         dbSqlHelper.close();
-
     }
 
 
@@ -322,10 +324,20 @@ public class FragmentMainActivity extends AppCompatActivity {
                     }
 
                     view.setSelected(true);
+                    auxView = view;
                     // Start the CAB using the ActionMode.Callback defined above
                     mActionMode = ((AppCompatActivity) getActivity()).startSupportActionMode(mActionModeCallback);
                     mActionMode.setTag(position);
                     return true;
+                }
+            });
+
+            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    if (mActionMode != null)
+                        mActionMode.finish();
+                    mActionMode = null;
                 }
             });
 
