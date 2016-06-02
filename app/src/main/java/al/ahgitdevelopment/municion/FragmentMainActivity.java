@@ -25,6 +25,13 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 
+import al.ahgitdevelopment.municion.Adapters.CompraArrayAdapter;
+import al.ahgitdevelopment.municion.Adapters.GuiaArrayAdapter;
+import al.ahgitdevelopment.municion.Adapters.LicenciaArrayAdapter;
+import al.ahgitdevelopment.municion.DataModel.Compra;
+import al.ahgitdevelopment.municion.DataModel.Guia;
+import al.ahgitdevelopment.municion.DataModel.Licencia;
+
 public class FragmentMainActivity extends AppCompatActivity {
 
     private static DataBaseSQLiteHelper dbSqlHelper;

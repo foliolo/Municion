@@ -1,4 +1,4 @@
-package al.ahgitdevelopment.municion;
+package al.ahgitdevelopment.municion.DataModel;
 
 import android.graphics.Bitmap;
 import android.os.Bundle;
@@ -37,7 +37,7 @@ public class Compra implements Parcelable {
     private double valoracion;
     private Bitmap imagen;
 
-    protected Compra() {
+    public Compra() {
     }
 
     protected Compra(Parcel in) {

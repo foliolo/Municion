@@ -1,4 +1,4 @@
-package al.ahgitdevelopment.municion;
+package al.ahgitdevelopment.municion.DataModel;
 
 import android.graphics.Bitmap;
 import android.os.Bundle;
@@ -35,7 +35,7 @@ public class Guia implements Parcelable {
     private int cupo;
     private int gastado;
 
-    protected Guia() {
+    public Guia() {
     }
 
     protected Guia(Parcel in) {

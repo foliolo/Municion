@@ -1,4 +1,4 @@
-package al.ahgitdevelopment.municion;
+package al.ahgitdevelopment.municion.DataModel;
 
 import android.os.Bundle;
 import android.os.Parcel;
@@ -29,7 +29,7 @@ public class Licencia implements Parcelable {
     private Date fechaExpedicion;
     private Date fechaCaducidad;
 
-    protected Licencia() {
+    public Licencia() {
     }
 
     protected Licencia(Parcel in) {

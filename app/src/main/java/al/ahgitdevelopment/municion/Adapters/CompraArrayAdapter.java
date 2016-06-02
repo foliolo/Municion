@@ -1,4 +1,4 @@
-package al.ahgitdevelopment.municion;
+package al.ahgitdevelopment.municion.Adapters;
 
 import android.content.Context;
 import android.os.Build;
@@ -10,6 +10,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.List;
+
+import al.ahgitdevelopment.municion.DataModel.Compra;
+import al.ahgitdevelopment.municion.R;
 
 /**
  * Created by Alberto on 28/05/2016.

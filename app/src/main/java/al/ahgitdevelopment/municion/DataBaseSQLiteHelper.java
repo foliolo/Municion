@@ -11,6 +11,10 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
+import al.ahgitdevelopment.municion.DataModel.Compra;
+import al.ahgitdevelopment.municion.DataModel.Guia;
+import al.ahgitdevelopment.municion.DataModel.Licencia;
+
 /**
  * Created by Alberto on 12/04/2016.
  */

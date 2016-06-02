@@ -1,4 +1,4 @@
-package al.ahgitdevelopment.municion;
+package al.ahgitdevelopment.municion.Adapters;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -8,6 +8,9 @@ import android.view.ViewGroup;
 import android.widget.CursorAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import al.ahgitdevelopment.municion.DataBaseSQLiteHelper;
+import al.ahgitdevelopment.municion.R;
 
 /**
  * Created by Alberto on 11/04/2016.
