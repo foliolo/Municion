@@ -75,15 +75,18 @@
 
         <!--FECHA-->
         <android.support.design.widget.TextInputLayout
+            android:id="@+id/layout_form_fecha_compra"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:onClick="callDatePickerFragment">
 
             <EditText
                 android:id="@+id/form_fecha"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/fecha"
-                android:inputType="date" />
+                android:inputType="none"
+                android:editable="false"/>
         </android.support.design.widget.TextInputLayout>
 
         <!--TIPO MUNICION-->
@@ -109,7 +112,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/peso_municion"
-                android:inputType="text" />
+                android:inputType="numberDecimal"/>
         </android.support.design.widget.TextInputLayout>
 
         <!--MARCA MUNICION-->
@@ -145,11 +148,11 @@
             android:layout_height="wrap_content"
             android:text="@string/valoracion"
             android:textAppearance="?android:attr/textAppearanceSmall" />
-
         <RatingBar
             android:id="@+id/form_ratingBar_valoracion"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center" />
+
     </LinearLayout>
 </ScrollView>

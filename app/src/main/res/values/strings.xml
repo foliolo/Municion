@@ -44,14 +44,14 @@
     <string name="label_gastado">Gastgado</string>
     <string name="form_lbl_tipo_arma">Tipo de arma</string>
     <string name="lbl_tipo_licencia">Tipo de licencia</string>
-    <string name="lbl_num_licencia">Numero de licencia</string>
+    <string name="lbl_num_licencia">Nº de licencia</string>
     <string name="lbl_expedicion_licencia">Expedicion</string>
     <string name="lbl_caducidad_licencia">Caducidad</string>
     <string name="item_apodo_guia">Apodo</string>
     <string name="check_segundo_calibre">Tiene segundo calibre</string>
 
     <!--String Compras Form-->
-    <string name="title_nueva_compra">Nueva Compra</string>
+    <string name="title_nueva_compra">Nueva compra de municion este año</string>
     <string name="labelInfoCompra">Información de la nueva compra</string>
 
     <string name="precio">Precio</string>

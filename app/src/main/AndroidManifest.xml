@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="al.ahgitdevelopment.municion">
+          package="al.ahgitdevelopment.municion">
 
     <application
         android:allowBackup="true"
@@ -13,15 +13,14 @@
             android:name=".LoginPasswordActivity"
             android:windowSoftInputMode="stateVisible">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
 
         <activity
             android:name=".FragmentMainActivity"
-            android:label="@string/title_activity_fragment_main"
-            android:theme="@style/AppTheme">
+            android:label="@string/title_activity_fragment_main">
 
             <!--<intent-filter>-->
             <!--<action android:name="android.intent.action.MAIN"/>-->
@@ -32,22 +31,21 @@
         <activity
             android:name=".GuiaFormActivity"
             android:label="@string/title_nueva_guia"
-            android:windowSoftInputMode="stateHidden"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:windowSoftInputMode="stateHidden"/>
 
         <activity
             android:name=".CompraFormActivity"
             android:label="@string/title_nueva_compra"
-            android:windowSoftInputMode="stateHidden" />
+            android:windowSoftInputMode="stateHidden"/>
 
         <activity
             android:name=".LicenciaFormActivity"
             android:label="@string/title_nueva_licencia"
-            android:windowSoftInputMode="stateHidden" />
+            android:windowSoftInputMode="stateHidden"/>
 
         <activity
             android:name=".SettingsActivity"
-            android:label="@string/title_activity_settings" />
+            android:label="@string/title_activity_settings"/>
 
     </application>
 

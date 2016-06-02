@@ -1,31 +1,39 @@
 package al.ahgitdevelopment.municion;
 
 import android.app.Activity;
+import android.app.DatePickerDialog;
+import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.TextInputLayout;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatSpinner;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.text.format.DateFormat;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.DatePicker;
 import android.widget.EditText;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 
 /**
  * Created by Alberto on 24/05/2016.
  */
 public class LicenciaFormActivity extends AppCompatActivity {
-    TextInputLayout layoutFechaExpedicion;
-    TextInputLayout layoutFechaCaducidad;
+    public static EditText fechaExpedicion;
+    private TextInputLayout layoutFechaExpedicion;
+    private TextInputLayout layoutFechaCaducidad;
     private AppCompatSpinner tipoLicencia;
     private EditText numLicencia;
-    private EditText fechaExpedicion;
     private EditText fechaCaducidad;
 
     /**
@@ -44,6 +52,29 @@ public class LicenciaFormActivity extends AppCompatActivity {
         fechaExpedicion = (EditText) findViewById(R.id.form_fecha_expedicion);
         layoutFechaCaducidad = (TextInputLayout) findViewById(R.id.layout_form_fecha_caducidad);
         fechaCaducidad = (EditText) findViewById(R.id.form_fecha_caducidad);
+
+        fechaExpedicion.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus) {
+                    callDatePickerFragment();
+                }
+            }
+        });
+
+        fechaExpedicion.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                callDatePickerFragment();
+            }
+        });
+
+        layoutFechaExpedicion.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                callDatePickerFragment();
+            }
+        });
 
         fechaExpedicion.addTextChangedListener(new TextWatcher() {
             @Override
@@ -66,15 +97,17 @@ public class LicenciaFormActivity extends AppCompatActivity {
                 }
 
                 switch (tipoLicencia.getSelectedItemPosition()) {
-                    case 0: // Sumamos 1 año
+                    // Sumamos 3 año
                     case 1:
-                    case 2:
-                    case 3:
-                        calendar.add(Calendar.YEAR, 1);
+                    case 5:
+                        calendar.add(Calendar.YEAR, 3);
                         fechaCaducidad.setText(simpleDate.format(calendar.getTime()));
                         break;
-                    case 4: // Sumamos 5 años
-                    case 5:
+                    // Sumamos 5 años
+                    case 0:
+                    case 2:
+                    case 3:
+                    case 4:
                     case 6:
                     case 7:
                     case 8:
@@ -84,6 +117,52 @@ public class LicenciaFormActivity extends AppCompatActivity {
                 }
             }
         });
+
+        tipoLicencia.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if (!fechaExpedicion.getText().toString().equals("")) {
+                    //Calculamos al fecha de caducidad en función de fecha de expedición introducida
+                    SimpleDateFormat simpleDate = new SimpleDateFormat("dd/MM/yyyy");
+                    Calendar calendar = Calendar.getInstance();
+                    try {
+                        calendar.setTime(simpleDate.parse(fechaExpedicion.getText().toString()));
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+
+                    switch (tipoLicencia.getSelectedItemPosition()) {
+                        // Sumamos 3 año
+                        case 1:
+                        case 5:
+                            calendar.add(Calendar.YEAR, 3);
+                            fechaCaducidad.setText(simpleDate.format(calendar.getTime()));
+                            break;
+                        // Sumamos 5 años
+                        case 0:
+                        case 2:
+                        case 3:
+                        case 4:
+                        case 6:
+                        case 7:
+                        case 8:
+                            calendar.add(Calendar.YEAR, 5);
+                            fechaCaducidad.setText(simpleDate.format(calendar.getTime()));
+                            break;
+                    }
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+    }
+
+    private void callDatePickerFragment() {
+        DialogFragment newFragment = new DatePickerFragment();
+        newFragment.show(getSupportFragmentManager(), "datePicker");
     }
 
     @Override
@@ -142,5 +221,36 @@ public class LicenciaFormActivity extends AppCompatActivity {
         }
 
         return flag;
+    }
+
+    /**
+     * DatePickerFragment para seleccionar la fecha de expedicion
+     */
+    public static class DatePickerFragment extends DialogFragment
+            implements DatePickerDialog.OnDateSetListener {
+
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            // Use the current date as the default date in the picker
+            final Calendar c = Calendar.getInstance();
+            int year = c.get(Calendar.YEAR);
+            int month = c.get(Calendar.MONTH);
+            int day = c.get(Calendar.DAY_OF_MONTH);
+
+            // Create a new instance of DatePickerDialog and return it
+            return new DatePickerDialog(getActivity(), this, year, month, day);
+        }
+
+        public void onDateSet(DatePicker view, int year, int month, int day) {
+            // Do something with the date chosen by the user
+            Calendar cal = Calendar.getInstance();
+            cal.set(Calendar.YEAR, year);
+            cal.set(Calendar.MONTH, month);
+            cal.set(Calendar.DAY_OF_MONTH, day);
+            Date date = cal.getTime();
+
+            String fecha = new DateFormat().format("dd/MM/yyyy", date).toString();
+            fechaExpedicion.setText(fecha);
+        }
     }
 }
