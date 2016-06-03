@@ -40,6 +40,9 @@ public class LoginPasswordActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setIcon(R.mipmap.ic_launcher_2);
+
         final SharedPreferences prefs = getSharedPreferences("Preferences", Context.MODE_PRIVATE);
 
         textInputLayout1 = (TextInputLayout) findViewById(R.id.text_input_layout1);

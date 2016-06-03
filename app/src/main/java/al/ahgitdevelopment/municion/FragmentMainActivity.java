@@ -12,6 +12,7 @@ import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -58,7 +59,7 @@ public class FragmentMainActivity extends AppCompatActivity {
      * The {@link ViewPager} that will host the section contents.
      */
     private ViewPager mViewPager;
-//    public Toolbar toolbar;
+    public static Toolbar toolbar;
 
     public static ActionMode mActionMode = null;
     public static ActionMode.Callback mActionModeCallback = null;
@@ -94,7 +95,8 @@ public class FragmentMainActivity extends AppCompatActivity {
                         mode.finish(); // Action picked, so close the CAB
                         return true;
                     case R.id.item_menu_delete:
-//                            deleteSelectedItems();
+                        deleteSelectedItems((int) mActionMode.getTag());
+
                         Toast.makeText(FragmentMainActivity.this, "Delete item" + (int) mActionMode.getTag(), Toast.LENGTH_SHORT).show();
                         mode.finish(); // Action picked, so close the CAB
                         return true;
@@ -112,10 +114,13 @@ public class FragmentMainActivity extends AppCompatActivity {
             }
         };
 
-//        toolbar = (Toolbar) findViewById(R.id.toolbar);
-//        toolbar.setTitle(R.string.title_activity_fragment_main);
-//        toolbar.setCollapsible(false);
-//        setSupportActionBar(toolbar); //con esto sale el "puto" action bar de arriba
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setTitle(R.string.title_activity_fragment_main);
+        toolbar.setCollapsible(false);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setIcon(R.mipmap.ic_launcher_2);
+
 
         // Instanciamos la base de datos
         dbSqlHelper = new DataBaseSQLiteHelper(getApplicationContext());
@@ -192,6 +197,24 @@ public class FragmentMainActivity extends AppCompatActivity {
             });
         }
     }
+
+    private void deleteSelectedItems(int position) {
+        switch (mViewPager.getCurrentItem()) {
+            case 0:
+                guias.remove(position);
+                ((PlaceholderFragment) mSectionsPagerAdapter.getItem(mViewPager.getCurrentItem())).guiaArrayAdapter.notifyDataSetChanged();
+                break;
+            case 1:
+                compras.remove(position);
+                ((PlaceholderFragment) mSectionsPagerAdapter.getItem(mViewPager.getCurrentItem())).compraArrayAdapter.notifyDataSetChanged();
+                break;
+            case 2:
+                licencias.remove(position);
+                ((PlaceholderFragment) mSectionsPagerAdapter.getItem(mViewPager.getCurrentItem())).licenciaArrayAdapter.notifyDataSetChanged();
+                break;
+        }
+    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -327,6 +350,7 @@ public class FragmentMainActivity extends AppCompatActivity {
                     auxView = view;
                     // Start the CAB using the ActionMode.Callback defined above
                     mActionMode = ((AppCompatActivity) getActivity()).startSupportActionMode(mActionModeCallback);
+                    mActionMode.setTitle("Opciones");
                     mActionMode.setTag(position);
                     return true;
                 }
@@ -379,7 +403,6 @@ public class FragmentMainActivity extends AppCompatActivity {
             }
             return null;
         }
-
     }
 }
 
