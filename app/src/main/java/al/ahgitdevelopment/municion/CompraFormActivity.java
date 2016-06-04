@@ -47,6 +47,8 @@ public class CompraFormActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.form_compra);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setIcon(R.mipmap.ic_launcher_4_transparent);
 
         calibre1 = (EditText) findViewById(R.id.form_calibre1);
         checkSegundoCalibre = (CheckBox) findViewById(R.id.form_check_segundo_calibre);
@@ -86,6 +88,7 @@ public class CompraFormActivity extends AppCompatActivity {
             }
         });
 
+        // Evento que saca el calendario al recibir el foco en el campo fecha
         fecha.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {

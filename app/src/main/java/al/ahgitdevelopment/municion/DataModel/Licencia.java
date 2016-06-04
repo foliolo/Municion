@@ -6,7 +6,7 @@ import android.os.Parcelable;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.Calendar;
 
 /**
  * Created by Alberto on 13/05/2016.
@@ -24,29 +24,31 @@ public class Licencia implements Parcelable {
         }
     };
     private int id;
-    private String tipo;
+    private int tipo;
     private int numLicencia;
-    private Date fechaExpedicion;
-    private Date fechaCaducidad;
+    private Calendar fechaExpedicion;
+    private Calendar fechaCaducidad;
 
     public Licencia() {
     }
 
     protected Licencia(Parcel in) {
-        id = in.readInt();
-        tipo = in.readString();
-        numLicencia = in.readInt();
+        this.id = in.readInt();
+        this.tipo = in.readInt();
+        this.numLicencia = in.readInt();
+        try {
+            this.setFechaExpedicion(in.readString());
+            this.setFechaCaducidad(in.readString());
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+        }
     }
 
     public Licencia(Bundle extras) {
-        tipo = extras.getString("tipo");
-        numLicencia = extras.getInt("num_licencia");
-        try {
-            fechaExpedicion = new SimpleDateFormat("dd/MM/yyyy").parse(extras.getString("fecha_expedicion", ""));
-            fechaCaducidad = new SimpleDateFormat("dd/MM/yyyy").parse(extras.getString("fecha_caducidad", ""));
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
+        this.tipo = extras.getInt("tipo");
+        this.numLicencia = extras.getInt("num_licencia");
+        this.setFechaExpedicion(extras.getString("fecha_expedicion", ""));
+        this.setFechaCaducidad(extras.getString("fecha_caducidad", ""));
     }
 
     public Licencia(Licencia licencia) {
@@ -65,11 +67,11 @@ public class Licencia implements Parcelable {
         this.id = id;
     }
 
-    public String getTipo() {
+    public int getTipo() {
         return tipo;
     }
 
-    public void setTipo(String tipo) {
+    public void setTipo(int tipo) {
         this.tipo = tipo;
     }
 
@@ -81,20 +83,46 @@ public class Licencia implements Parcelable {
         this.numLicencia = numLicencia;
     }
 
-    public Date getFechaExpedicion() {
+    public Calendar getFechaExpedicion() {
         return fechaExpedicion;
     }
 
-    public void setFechaExpedicion(Date fechaExpedicion) {
+    public void setFechaExpedicion(Calendar fechaExpedicion) {
         this.fechaExpedicion = fechaExpedicion;
     }
 
-    public Date getFechaCaducidad() {
+    public void setFechaExpedicion(String fechaExpedicion) {
+        Calendar fecha = Calendar.getInstance();
+        try {
+            fecha.setTime(new SimpleDateFormat("dd/MM/yyyy").parse(fechaExpedicion));
+            if (this.fechaExpedicion == null)
+                this.fechaExpedicion = Calendar.getInstance();
+            this.fechaExpedicion = fecha;
+        } catch (ParseException e) {
+            e.printStackTrace();
+            this.fechaExpedicion = fecha;
+        }
+    }
+
+    public Calendar getFechaCaducidad() {
         return fechaCaducidad;
     }
 
-    public void setFechaCaducidad(Date fechaCaducidad) {
+    public void setFechaCaducidad(Calendar fechaCaducidad) {
         this.fechaCaducidad = fechaCaducidad;
+    }
+
+    public void setFechaCaducidad(String fechaCaducidad) {
+        Calendar fecha = Calendar.getInstance();
+        try {
+            fecha.setTime(new SimpleDateFormat("dd/MM/yyyy").parse(fechaCaducidad));
+            if (this.fechaCaducidad == null)
+                this.fechaCaducidad = Calendar.getInstance();
+            this.fechaCaducidad = fecha;
+        } catch (ParseException e) {
+            e.printStackTrace();
+            this.fechaCaducidad = fecha;
+        }
     }
 
     @Override
@@ -105,7 +133,14 @@ public class Licencia implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeInt(id);
-        dest.writeString(tipo);
+        dest.writeInt(tipo);
         dest.writeInt(numLicencia);
+        try {
+            dest.writeString(new SimpleDateFormat("dd/MM/yyyy").format(getFechaExpedicion().getTime()));
+            dest.writeString(new SimpleDateFormat("dd/MM/yyyy").format(getFechaCaducidad().getTime()));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
+
 }

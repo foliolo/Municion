@@ -43,6 +43,8 @@ public class GuiaFormActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.form_guia);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setIcon(R.mipmap.ic_launcher_4_transparent);
 
         marca = (EditText) findViewById(R.id.form_marca);
         modelo = (EditText) findViewById(R.id.form_modelo);

@@ -35,17 +35,17 @@ import al.ahgitdevelopment.municion.DataModel.Licencia;
 
 public class FragmentMainActivity extends AppCompatActivity {
 
+    public static View auxView = null;
+    public static ActionMode mActionMode = null;
+    public static ActionMode.Callback mActionModeCallback = null;
     private static DataBaseSQLiteHelper dbSqlHelper;
     private static ArrayList<Guia> guias;
     private static ArrayList<Compra> compras;
     private static ArrayList<Licencia> licencias;
-
     private final int GUIA_COMPLETED = 1;
     private final int COMPRA_COMPLETED = 2;
     private final int LICENCIA_COMPLETED = 3;
-
-    public static View auxView = null;
-
+    public Toolbar toolbar;
     /**
      * The {@link PagerAdapter} that will provide
      * fragments for each of the sections. We use a
@@ -59,10 +59,6 @@ public class FragmentMainActivity extends AppCompatActivity {
      * The {@link ViewPager} that will host the section contents.
      */
     private ViewPager mViewPager;
-    public static Toolbar toolbar;
-
-    public static ActionMode mActionMode = null;
-    public static ActionMode.Callback mActionModeCallback = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,14 +86,13 @@ public class FragmentMainActivity extends AppCompatActivity {
                 // Respond to clicks on the actions in the CAB
                 switch (item.getItemId()) {
                     case R.id.item_menu_modify:
-//                            openForm();
                         Toast.makeText(FragmentMainActivity.this, "Modify item: " + (int) mActionMode.getTag(), Toast.LENGTH_SHORT).show();
+                        openForm((int) mActionMode.getTag());
                         mode.finish(); // Action picked, so close the CAB
                         return true;
                     case R.id.item_menu_delete:
-                        deleteSelectedItems((int) mActionMode.getTag());
-
                         Toast.makeText(FragmentMainActivity.this, "Delete item" + (int) mActionMode.getTag(), Toast.LENGTH_SHORT).show();
+                        deleteSelectedItems((int) mActionMode.getTag());
                         mode.finish(); // Action picked, so close the CAB
                         return true;
                     default:
@@ -119,8 +114,7 @@ public class FragmentMainActivity extends AppCompatActivity {
         toolbar.setCollapsible(false);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
-        getSupportActionBar().setIcon(R.mipmap.ic_launcher_2);
-
+        getSupportActionBar().setIcon(R.mipmap.ic_launcher_4_transparent);
 
         // Instanciamos la base de datos
         dbSqlHelper = new DataBaseSQLiteHelper(getApplicationContext());
@@ -195,6 +189,28 @@ public class FragmentMainActivity extends AppCompatActivity {
                     }
                 }
             });
+        }
+    }
+
+    private void openForm(int position) {
+        Intent form = null;
+        Bundle data = new Bundle();
+        switch (mViewPager.getCurrentItem()) {
+            case 0:
+                form = new Intent(FragmentMainActivity.this, GuiaFormActivity.class);
+                form.putExtra("modify_guia", guias.get(position));
+                startActivityForResult(form, GUIA_COMPLETED);
+                break;
+            case 1:
+                form = new Intent(FragmentMainActivity.this, CompraFormActivity.class);
+                form.putExtra("modify_compra", compras.get(position));
+                startActivityForResult(form, GUIA_COMPLETED);
+                break;
+            case 2:
+                form = new Intent(FragmentMainActivity.this, LicenciaFormActivity.class);
+                form.putExtra("modify_licencia", licencias.get(position));
+                startActivityForResult(form, LICENCIA_COMPLETED);
+                break;
         }
     }
 
@@ -294,10 +310,6 @@ public class FragmentMainActivity extends AppCompatActivity {
         public static LicenciaArrayAdapter licenciaArrayAdapter = null;
         private static ListView listView = null;
 
-        public ListView getListView() {
-            return listView;
-        }
-
         /**
          * Returns a new instance of this fragment for the given section
          * number.
@@ -309,6 +321,10 @@ public class FragmentMainActivity extends AppCompatActivity {
             fragment.setArguments(args);
 
             return fragment;
+        }
+
+        public ListView getListView() {
+            return listView;
         }
 
         @Override
@@ -348,9 +364,10 @@ public class FragmentMainActivity extends AppCompatActivity {
 
                     view.setSelected(true);
                     auxView = view;
+
                     // Start the CAB using the ActionMode.Callback defined above
                     mActionMode = ((AppCompatActivity) getActivity()).startSupportActionMode(mActionModeCallback);
-                    mActionMode.setTitle("Opciones");
+                    mActionMode.setTitle("Opciones"); //TODO: Hacer @string
                     mActionMode.setTag(position);
                     return true;
                 }

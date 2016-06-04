@@ -19,6 +19,13 @@ import al.ahgitdevelopment.municion.DataModel.Licencia;
  * Created by Alberto on 12/04/2016.
  */
 public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
+    // Logcat tag
+    private static final String LOG = "DatabaseHelper";
+    // Database Version
+    private static final int DATABASE_VERSION = 10;
+    // Database Name
+    private static final String DATABASE_NAME = "DBMunicion.db";
+
     // Table Names
     public static final String TABLE_GUIAS = "guias";
     public static final String TABLE_COMPRAS = "compras";
@@ -61,12 +68,6 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
     public static final String KEY_LICENCIAS_FECHA_EXPEDICION = "fecha_expedicion";
     public static final String KEY_LICENCIAS_FECHA_CADUCIDAD = "fecha_caducidad";
 
-    // Logcat tag
-    private static final String LOG = "DatabaseHelper";
-    // Database Version
-    private static final int DATABASE_VERSION = 9;
-    // Database Name
-    private static final String DATABASE_NAME = "DBMunicion.db";
     // Table Create Statements
     // Guias table create statement
     private static final String CREATE_TABLE_GUIA = "CREATE TABLE " + TABLE_GUIAS + "("
@@ -107,7 +108,7 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
     // Licencias table create statement
     private static final String CREATE_TABLE_LICENCIAS = "CREATE TABLE " + TABLE_LICENCIAS + "("
             + KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,"
-            + KEY_LICENCIAS_TIPO + " TEXT NOT NULL,"
+            + KEY_LICENCIAS_TIPO + " INTEGER NOT NULL,"
             + KEY_LICENCIAS_NUM_LICENCIA + " INTEGER NOT NULL,"
             + KEY_LICENCIAS_FECHA_EXPEDICION + " TEXT NOT NULL,"
             + KEY_LICENCIAS_FECHA_CADUCIDAD + " TEXT NOT NULL"
@@ -239,7 +240,7 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
                 "'A - Profesionales, agentes de la autoridad' , " +
                 "'192834' , " +
                 "'18/05/2015' , " +
-                "'18/05/2017'" +
+                "'18/05/2020'" +
                 ");");
     }
 
@@ -361,16 +362,16 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
                 do {
                     Licencia licencia = new Licencia();
                     licencia.setId(cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_ID)));
-                    licencia.setTipo(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_LICENCIAS_TIPO)));
+                    licencia.setTipo(cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_LICENCIAS_TIPO)));
                     licencia.setNumLicencia(cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_LICENCIAS_NUM_LICENCIA)));
-                    licencia.setFechaExpedicion(new SimpleDateFormat("dd/MM/yyyy").parse(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_LICENCIAS_FECHA_EXPEDICION))));
-                    licencia.setFechaCaducidad(new SimpleDateFormat("dd/MM/yyyy").parse(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_LICENCIAS_FECHA_CADUCIDAD))));
+                    licencia.setFechaExpedicion(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_LICENCIAS_FECHA_EXPEDICION)));
+                    licencia.setFechaCaducidad(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_LICENCIAS_FECHA_CADUCIDAD)));
 
                     // Adding contact to list
                     licencias.add(licencia);
                 } while (cursor.moveToNext());
             }
-        } catch (ParseException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 

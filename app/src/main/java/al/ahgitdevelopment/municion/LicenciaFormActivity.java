@@ -25,15 +25,17 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
+import al.ahgitdevelopment.municion.DataModel.Licencia;
+
 /**
  * Created by Alberto on 24/05/2016.
  */
 public class LicenciaFormActivity extends AppCompatActivity {
-    public static EditText fechaExpedicion;
     private TextInputLayout layoutFechaExpedicion;
     private TextInputLayout layoutFechaCaducidad;
     private AppCompatSpinner tipoLicencia;
     private EditText numLicencia;
+    public static EditText fechaExpedicion;
     private EditText fechaCaducidad;
 
     /**
@@ -45,6 +47,8 @@ public class LicenciaFormActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.form_licencia);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setIcon(R.mipmap.ic_launcher_4_transparent);
 
         tipoLicencia = (AppCompatSpinner) findViewById(R.id.form_tipo_licencia);
         numLicencia = (EditText) findViewById(R.id.form_num_licencia);
@@ -53,6 +57,35 @@ public class LicenciaFormActivity extends AppCompatActivity {
         layoutFechaCaducidad = (TextInputLayout) findViewById(R.id.layout_form_fecha_caducidad);
         fechaCaducidad = (EditText) findViewById(R.id.form_fecha_caducidad);
 
+        //Carga de datos (en caso de modificacion)
+        if (getIntent().getExtras() != null) {
+            try {
+                Licencia licencia = getIntent().getExtras().getParcelable("modify_licencia");
+                tipoLicencia.setSelection(licencia.getTipo());
+                numLicencia.setText(String.valueOf(licencia.getNumLicencia()));
+                fechaExpedicion.setText(new SimpleDateFormat("dd/MM/yyyy").format(licencia.getFechaExpedicion().getTime()));
+            } catch (NullPointerException e) {
+                e.printStackTrace();
+            }
+        }
+
+
+        layoutFechaExpedicion.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                callDatePickerFragment();
+            }
+        });
+        layoutFechaExpedicion.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus) {
+                    callDatePickerFragment();
+                }
+            }
+        });
+
+        // Evento que saca el calendario al recibir el foco en el campo fecha
         fechaExpedicion.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
@@ -63,13 +96,6 @@ public class LicenciaFormActivity extends AppCompatActivity {
         });
 
         fechaExpedicion.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                callDatePickerFragment();
-            }
-        });
-
-        layoutFechaExpedicion.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 callDatePickerFragment();
@@ -98,12 +124,12 @@ public class LicenciaFormActivity extends AppCompatActivity {
 
                 switch (tipoLicencia.getSelectedItemPosition()) {
                     // Sumamos 3 año
-                    case 1:
-                    case 5:
+                    case 1: // Licencia B
+                    case 5: // Licencia F
                         calendar.add(Calendar.YEAR, 3);
                         fechaCaducidad.setText(simpleDate.format(calendar.getTime()));
                         break;
-                    // Sumamos 5 años
+                    // Sumamos 5 años (Resto de licencias)
                     case 0:
                     case 2:
                     case 3:
@@ -185,7 +211,7 @@ public class LicenciaFormActivity extends AppCompatActivity {
                 Intent result = new Intent(this, FragmentMainActivity.class);
 
                 Bundle bundle = new Bundle();
-                bundle.putString("tipo", tipoLicencia.getSelectedItem().toString());
+                bundle.putInt("tipo", tipoLicencia.getSelectedItemPosition());
                 bundle.putInt("num_licencia", Integer.parseInt(numLicencia.getText().toString()));
                 bundle.putString("fecha_expedicion", fechaExpedicion.getText().toString());
                 bundle.putString("fecha_caducidad", fechaCaducidad.getText().toString());

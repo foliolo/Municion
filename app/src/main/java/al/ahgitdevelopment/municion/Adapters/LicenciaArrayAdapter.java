@@ -42,14 +42,15 @@ public class LicenciaArrayAdapter extends ArrayAdapter<Licencia> {
 
         // El último elemento es el libro de coleccionista y no tiene "-"
         int lengthArrayLicencias = getContext().getResources().getTextArray(R.array.tipo_licencias).length - 1;
-        if (licencia.getTipo().equals(getContext().getResources().getTextArray(R.array.tipo_licencias)[lengthArrayLicencias])) {
-            tipo.setText(licencia.getTipo());
+
+        if (licencia.getTipo() == lengthArrayLicencias) {
+            tipo.setText(getContext().getResources().getTextArray(R.array.tipo_licencias)[licencia.getTipo()].toString());
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
                 tipo.setTextAppearance(android.R.style.TextAppearance_Medium);
             else
                 tipo.setTextAppearance(getContext(), android.R.style.TextAppearance_Medium);
         } else {
-            tipo.setText(licencia.getTipo().split("-")[0].trim());
+            tipo.setText(getContext().getResources().getTextArray(R.array.tipo_licencias)[licencia.getTipo()].toString().split("-")[0].trim());
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
                 tipo.setTextAppearance(android.R.style.TextAppearance_Large);
             else
@@ -58,10 +59,9 @@ public class LicenciaArrayAdapter extends ArrayAdapter<Licencia> {
         numLicencia.setText(licencia.getNumLicencia() + "");
 
         if (licencia.getFechaCaducidad() != null)
-            caducidad.setText(new SimpleDateFormat("dd/MM/yyyy").format(licencia.getFechaCaducidad()).toString());
+            caducidad.setText(new SimpleDateFormat("dd/MM/yyyy").format(licencia.getFechaCaducidad().getTime()));
         if (licencia.getFechaExpedicion() != null)
-            expedicion.setText(new SimpleDateFormat("dd/MM/yyyy").format(licencia.getFechaExpedicion()).toString());
-//            expedicion.setText(licencia.getFechaExpedicion());
+            expedicion.setText(new SimpleDateFormat("dd/MM/yyyy").format(licencia.getFechaExpedicion().getTime()));
 
         // Return the completed view to render on screen
         return convertView;

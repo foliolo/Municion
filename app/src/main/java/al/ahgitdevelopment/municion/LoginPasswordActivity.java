@@ -39,9 +39,8 @@ public class LoginPasswordActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-
         getSupportActionBar().setDisplayShowHomeEnabled(true);
-        getSupportActionBar().setIcon(R.mipmap.ic_launcher_2);
+        getSupportActionBar().setIcon(R.mipmap.ic_launcher_4_transparent);
 
         final SharedPreferences prefs = getSharedPreferences("Preferences", Context.MODE_PRIVATE);
 

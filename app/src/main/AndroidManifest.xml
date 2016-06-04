@@ -5,14 +5,14 @@
     <application
         android:allowBackup="true"
         android:fullBackupContent="true"
-        android:icon="@mipmap/ic_launcher_2"
+        android:icon="@mipmap/ic_launcher_3_light"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
             android:name=".LoginPasswordActivity"
-            android:windowSoftInputMode="stateVisible"
-            android:theme="@style/LoginTheme">
+            android:theme="@style/BarTheme"
+            android:windowSoftInputMode="stateVisible">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
@@ -22,7 +22,6 @@
         <activity
             android:name=".FragmentMainActivity"
             android:label="@string/title_activity_fragment_main">
-
             <!--<intent-filter>-->
             <!--<action android:name="android.intent.action.MAIN"/>-->
             <!--<category android:name="android.intent.category.LAUNCHER"/>-->
@@ -32,16 +31,19 @@
         <activity
             android:name=".GuiaFormActivity"
             android:label="@string/title_nueva_guia"
+            android:theme="@style/BarTheme"
             android:windowSoftInputMode="stateHidden"/>
 
         <activity
             android:name=".CompraFormActivity"
             android:label="@string/title_nueva_compra"
+            android:theme="@style/BarTheme"
             android:windowSoftInputMode="stateHidden"/>
 
         <activity
             android:name=".LicenciaFormActivity"
             android:label="@string/title_nueva_licencia"
+            android:theme="@style/BarTheme"
             android:windowSoftInputMode="stateHidden"/>
 
         <activity
