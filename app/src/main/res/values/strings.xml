@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Municion</string>
+    <string name="app_name">Munición</string>
     <string name="lbl_password">Guarda una contraseña</string>
     <string name="lbl_insert_password">Introduce tu contraseña</string>
     <string name="lbl2_insert_password">Introduce tu contraseña de nuevo</string>

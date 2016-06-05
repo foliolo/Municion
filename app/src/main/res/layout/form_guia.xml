@@ -14,7 +14,7 @@
 
         <!--Mensaje de error formulario-->
         <TextView
-            android:id="@+id/form_mensaje"
+            android:id="@+id/form_mensaje_guia"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:visibility="gone" />

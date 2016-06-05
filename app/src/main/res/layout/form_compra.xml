@@ -12,6 +12,13 @@
         android:paddingRight="@dimen/activity_horizontal_margin"
         android:paddingTop="@dimen/activity_vertical_margin">
 
+        <!--Mensaje de error formulario-->
+        <TextView
+            android:id="@+id/form_mensaje_compra"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone" />
+
         <!--CALIBRE 1-->
         <android.support.design.widget.TextInputLayout
             android:layout_width="match_parent"

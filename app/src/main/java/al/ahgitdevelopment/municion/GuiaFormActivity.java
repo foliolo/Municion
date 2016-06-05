@@ -59,7 +59,7 @@ public class GuiaFormActivity extends AppCompatActivity {
         numArma = (EditText) findViewById(R.id.form_num_arma);
         cupo = (EditText) findViewById(R.id.form_cupo_anual);
         gastado = (EditText) findViewById(R.id.form_cartuchos_gastados);
-        mensajeError = (TextView) findViewById(R.id.form_mensaje);
+        mensajeError = (TextView) findViewById(R.id.form_mensaje_guia);
 
         //Carga de datos (en caso de modificacion)
         if (getIntent().getExtras() != null) {
