@@ -30,11 +30,11 @@ public class Compra implements Parcelable {
     private int unidades;
     private double precio;
     private Date fecha;
-    private int tipo;
-    private String peso;
+    private String tipo;
+    private int peso;
     private String marca;
     private String tienda;
-    private double valoracion;
+    private float valoracion;
     private Bitmap imagen;
 
     public Compra() {
@@ -46,10 +46,17 @@ public class Compra implements Parcelable {
         calibre2 = in.readString();
         unidades = in.readInt();
         precio = in.readDouble();
-        tipo = in.readInt();
-        peso = in.readString();
+        try {
+            fecha = new SimpleDateFormat("dd/MM/yyyy").parse(in.readString());
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        tipo = in.readString();
+        peso = in.readInt();
         marca = in.readString();
         tienda = in.readString();
+        valoracion = in.readFloat();
+//        imagen = in.readString();
     }
 
     public Compra(Bundle extras) {
@@ -62,11 +69,12 @@ public class Compra implements Parcelable {
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        tipo = extras.getInt("tipo");
-        peso = extras.getString("peso");
+        tipo = extras.getString("tipo");
+        peso = extras.getInt("peso");
         marca = extras.getString("marca");
         tienda = extras.getString("tienda");
         valoracion = extras.getInt("valoracion");
+//        imagen = new Bitmap(extras.getString(""));
     }
 
     public int getId() {
@@ -125,19 +133,19 @@ public class Compra implements Parcelable {
         }
     }
 
-    public int getTipo() {
+    public String getTipo() {
         return tipo;
     }
 
-    public void setTipo(int tipo) {
+    public void setTipo(String tipo) {
         this.tipo = tipo;
     }
 
-    public String getPeso() {
+    public int getPeso() {
         return peso;
     }
 
-    public void setPeso(String peso) {
+    public void setPeso(int peso) {
         this.peso = peso;
     }
 
@@ -157,11 +165,11 @@ public class Compra implements Parcelable {
         this.tienda = tienda;
     }
 
-    public double getValoracion() {
+    public float getValoracion() {
         return valoracion;
     }
 
-    public void setValoracion(double valoracion) {
+    public void setValoracion(float valoracion) {
         this.valoracion = valoracion;
     }
 
@@ -185,9 +193,12 @@ public class Compra implements Parcelable {
         dest.writeString(calibre2);
         dest.writeInt(unidades);
         dest.writeDouble(precio);
-        dest.writeInt(tipo);
-        dest.writeString(peso);
+        dest.writeString(new SimpleDateFormat("dd/MM/yyyy").format(fecha));
+        dest.writeString(tipo);
+        dest.writeInt(peso);
         dest.writeString(marca);
         dest.writeString(tienda);
+        dest.writeFloat(valoracion);
+//        dest.writeString(Base64.encodeToString(imagen)); //String de la ruta en memoria
     }
 }

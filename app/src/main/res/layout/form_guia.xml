@@ -148,10 +148,10 @@
             android:layout_height="wrap_content">
 
             <EditText
-                android:id="@+id/form_cartuchos_totales"
+                android:id="@+id/form_cupo_anual"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/cupo_actual"
+                android:hint="@string/cupo_anual"
                 android:inputType="number"
                 android:enabled="true"/>
         </android.support.design.widget.TextInputLayout>

@@ -19,21 +19,12 @@ import al.ahgitdevelopment.municion.DataModel.Licencia;
  * Created by Alberto on 12/04/2016.
  */
 public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
-    // Logcat tag
-    private static final String LOG = "DatabaseHelper";
-    // Database Version
-    private static final int DATABASE_VERSION = 10;
-    // Database Name
-    private static final String DATABASE_NAME = "DBMunicion.db";
-
     // Table Names
     public static final String TABLE_GUIAS = "guias";
     public static final String TABLE_COMPRAS = "compras";
     public static final String TABLE_LICENCIAS = "licencias";
-
     // Common column names
     public static final String KEY_ID = "_id";
-
     // Table GUIAS  - column names
     public static final String KEY_GUIA_ID_COMPRA = "id_compra";
     public static final String KEY_GUIA_ID_LICENCIA = "id_licencia";
@@ -48,7 +39,6 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
     public static final String KEY_GUIA_IMAGEN = "imagen";
     public static final String KEY_GUIA_CUPO = "cupo";
     public static final String KEY_GUIA_GASTADO = "gastado";
-
     // Table COMPRAS  - column names
     public static final String KEY_COMPRA_CALIBRE1 = "calibre1";
     public static final String KEY_COMPRA_CALIBRE2 = "calibre2";
@@ -58,16 +48,20 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
     public static final String KEY_COMPRA_TIPO = "tipo";
     public static final String KEY_COMPRA_PESO = "peso";
     public static final String KEY_COMPRA_MARCA = "marca";
-    public static final String KEY_COMPRA_MODELO = "modelo";
     public static final String KEY_COMPRA_TIENDA = "tienda";
+    public static final String KEY_COMPRA_IMAGEN = "imagen";
     public static final String KEY_COMPRA_VALORACION = "valoracion";
-
     // Table LICENCIAS  - column names
     public static final String KEY_LICENCIAS_TIPO = "tipo";
     public static final String KEY_LICENCIAS_NUM_LICENCIA = "num_licencia";
     public static final String KEY_LICENCIAS_FECHA_EXPEDICION = "fecha_expedicion";
     public static final String KEY_LICENCIAS_FECHA_CADUCIDAD = "fecha_caducidad";
-
+    // Logcat tag
+    private static final String LOG = "DatabaseHelper";
+    // Database Version
+    private static final int DATABASE_VERSION = 10;
+    // Database Name
+    private static final String DATABASE_NAME = "DBMunicion.db";
     // Table Create Statements
     // Guias table create statement
     private static final String CREATE_TABLE_GUIA = "CREATE TABLE " + TABLE_GUIAS + "("
@@ -100,8 +94,8 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
             + KEY_COMPRA_TIPO + " TEXT,"
             + KEY_COMPRA_PESO + " TEXT,"
             + KEY_COMPRA_MARCA + " TEXT,"
-            + KEY_COMPRA_MODELO + " TEXT,"
             + KEY_COMPRA_TIENDA + " TEXT,"
+            + KEY_COMPRA_IMAGEN + " BLOB,"
             + KEY_COMPRA_VALORACION + " INTEGER"
             + ")";
 
@@ -143,7 +137,7 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
     /**
      * Metodo para insertar Guias de prueba en la BBDD
      */
-    public void addGuias() {
+    public void addDummyGuias() {
         SQLiteDatabase db = this.getWritableDatabase();
         db.execSQL("INSERT INTO " + TABLE_GUIAS + " (" +
                 KEY_GUIA_ID_COMPRA + ", " +
@@ -173,9 +167,9 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
         db.execSQL("INSERT INTO " + TABLE_GUIAS + " (" +
                 KEY_GUIA_ID_COMPRA + ", " +
                 KEY_GUIA_ID_LICENCIA + ", " +
-                KEY_GUIA_APODO + ", " +
                 KEY_GUIA_MARCA + ", " +
                 KEY_GUIA_MODELO + ", " +
+                KEY_GUIA_APODO + ", " +
                 KEY_GUIA_TIPO_ARMA + ", " +
                 KEY_GUIA_CALIBRE1 + ", " +
                 KEY_GUIA_NUM_GUIA + ", " +
@@ -200,7 +194,7 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
     /**
      * Metodo para insertar Conmpras de prueba en la BBDD
      */
-    public void addCompras() {
+    public void addDummyCompras() {
         SQLiteDatabase db = this.getWritableDatabase();
         db.execSQL("INSERT INTO " + TABLE_COMPRAS + " (" +
                 KEY_COMPRA_CALIBRE1 + ", " +
@@ -229,7 +223,7 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
     /**
      * Metodo para insertar Licencias de prueba en la BBDD
      */
-    public void addLicencias() {
+    public void addDummyLicencias() {
         SQLiteDatabase db = this.getWritableDatabase();
         db.execSQL("INSERT INTO " + TABLE_LICENCIAS + " (" +
                 KEY_LICENCIAS_TIPO + ", " +
@@ -333,11 +327,12 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
                     compra.setUnidades(cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_COMPRA_UNIDADES)));
                     compra.setPrecio(cursor.getDouble(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_COMPRA_PRECIO)));
                     compra.setFecha(new SimpleDateFormat("dd/MM/yyyy").parse(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_COMPRA_FECHA))));
-                    compra.setTipo(cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_COMPRA_TIPO)));
-                    compra.setPeso(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_COMPRA_PESO)));
+                    compra.setTipo(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_COMPRA_TIPO)));
+                    compra.setPeso(cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_COMPRA_PESO)));
                     compra.setMarca(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_COMPRA_MARCA)));
                     compra.setTienda(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_COMPRA_TIENDA)));
-                    compra.setValoracion(cursor.getDouble(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_COMPRA_VALORACION)));
+                    compra.setImagen(getImageFromBlob(cursor.getBlob(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_COMPRA_IMAGEN)))); // TODO; GESTION LA IMAGEN
+                    compra.setValoracion(cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_COMPRA_VALORACION)));
 
                     // Adding contact to list
                     compras.add(compra);
@@ -380,15 +375,95 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
     }
 
     public void saveListGuias(ArrayList<Guia> guias) {
-        //TODO: Guardado la lista en la BBDD
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(TABLE_GUIAS, null, null); // No elimina la tabla, solo elimina las filas
+        if (guias.size() > 0) {
+            for (Guia guia : guias) {
+                db.execSQL("INSERT INTO " + TABLE_GUIAS + " (" +
+                        KEY_GUIA_ID_COMPRA + ", " +
+                        KEY_GUIA_ID_LICENCIA + ", " +
+                        KEY_GUIA_APODO + ", " +
+                        KEY_GUIA_MARCA + ", " +
+                        KEY_GUIA_MODELO + ", " +
+                        KEY_GUIA_TIPO_ARMA + ", " +
+                        KEY_GUIA_CALIBRE1 + ", " +
+                        KEY_GUIA_CALIBRE2 + ", " +
+                        KEY_GUIA_NUM_GUIA + ", " +
+                        KEY_GUIA_NUM_ARMA + ", " +
+//                        KEY_GUIA_IMAGEN + ", " + //TODO incluir imagen
+                        KEY_GUIA_CUPO + ", " +
+                        KEY_GUIA_GASTADO +
+                        ") VALUES (" +
+                        "'" + guia.getIdCompra() + "' , " +
+                        "'" + guia.getIdLicencia() + "' , " +
+                        "'" + guia.getApodo() + "' , " +
+                        "'" + guia.getMarca() + "' , " +
+                        "'" + guia.getModelo() + "' , " +
+                        "'" + guia.getTipoArma() + "' , " +
+                        "'" + guia.getCalibre1() + "' , " +
+                        "'" + guia.getCalibre2() + "' , " +
+                        "'" + guia.getNumGuia() + "' , " +
+                        "'" + guia.getNumArma() + "' , " +
+//                        "'" + guia.getImagen() + "' , " +
+                        "'" + guia.getCupo() + "' , " +
+                        "'" + guia.getGastado() + "'" +
+                        ");");
+            }
+        }
     }
 
     public void saveListCompras(ArrayList<Compra> compras) {
-        //TODO: Guardado la lista en la BBDD
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(TABLE_COMPRAS, null, null); // No elimina la tabla, solo elimina las filas
+        if (compras.size() > 0) {
+            for (Compra compra : compras) {
+                db.execSQL("INSERT INTO " + TABLE_COMPRAS + " (" +
+                        KEY_COMPRA_CALIBRE1 + ", " +
+                        KEY_COMPRA_CALIBRE2 + ", " +
+                        KEY_COMPRA_UNIDADES + ", " +
+                        KEY_COMPRA_PRECIO + ", " +
+                        KEY_COMPRA_FECHA + ", " +
+                        KEY_COMPRA_TIPO + ", " +
+                        KEY_COMPRA_PESO + ", " +
+                        KEY_COMPRA_MARCA + ", " +
+                        KEY_COMPRA_TIENDA + ", " +
+//                        KEY_COMPRA_IMAGEN+ ", " + // //TODO incluir imagen
+                        KEY_COMPRA_VALORACION +
+                        ") VALUES (" +
+                        "'" + compra.getCalibre1() + "' , " +
+                        "'" + compra.getCalibre2() + "' , " +
+                        "'" + compra.getUnidades() + "' , " +
+                        "'" + compra.getPrecio() + "' , " +
+                        "'" + compra.getFecha() + "' , " +
+                        "'" + compra.getTipo() + "' , " +
+                        "'" + compra.getPeso() + "' , " +
+                        "'" + compra.getMarca() + "' , " +
+                        "'" + compra.getTienda() + "' , " +
+//                        "'" + compra.getImagen() + "' , " +
+                        "'" + compra.getValoracion() + "'" +
+                        ");");
+            }
+        }
     }
 
     public void saveListLicencias(ArrayList<Licencia> licencias) {
-        //TODO: Guardado la lista en la BBDD
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(TABLE_LICENCIAS, null, null); // No elimina la tabla, solo elimina las filas
+        if (licencias.size() > 0) {
+            for (Licencia licencia : licencias) {
+                db.execSQL("INSERT INTO " + TABLE_LICENCIAS + " (" +
+                        KEY_LICENCIAS_TIPO + ", " +
+                        KEY_LICENCIAS_NUM_LICENCIA + ", " +
+                        KEY_LICENCIAS_FECHA_EXPEDICION + ", " +
+                        KEY_LICENCIAS_FECHA_CADUCIDAD +
+                        ") VALUES (" +
+                        "'" + licencia.getTipo() + "' , " +
+                        "'" + licencia.getNumLicencia() + "' , " +
+                        "'" + licencia.getFechaExpedicion() + "' , " +
+                        "'" + licencia.getFechaCaducidad() + "'" +
+                        ");");
+            }
+        }
     }
 
     /**

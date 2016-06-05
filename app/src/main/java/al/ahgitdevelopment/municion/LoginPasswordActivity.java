@@ -220,11 +220,11 @@ public class LoginPasswordActivity extends AppCompatActivity {
         DataBaseSQLiteHelper dbSqlHelper = new DataBaseSQLiteHelper(getApplicationContext());
 
         // Inicialización de datos fake
-        if (dbSqlHelper.getCursorGuias().getCount() == 0) {
-            dbSqlHelper.addCompras();
-            dbSqlHelper.addLicencias();
-            dbSqlHelper.addGuias();
-        }
+//        if (dbSqlHelper.getCursorGuias().getCount() == 0) {
+//            dbSqlHelper.addDummyCompras();
+//            dbSqlHelper.addDummyLicencias();
+//            dbSqlHelper.addDummyGuias();
+//        }
 
         //Lanzamiento del Intent
         Intent intent = new Intent(LoginPasswordActivity.this, FragmentMainActivity.class);

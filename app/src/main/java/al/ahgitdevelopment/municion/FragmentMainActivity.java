@@ -45,6 +45,9 @@ public class FragmentMainActivity extends AppCompatActivity {
     private final int GUIA_COMPLETED = 1;
     private final int COMPRA_COMPLETED = 2;
     private final int LICENCIA_COMPLETED = 3;
+    private final int GUIA_UPDATED = 4;
+    private final int COMPRA_UPDATED = 5;
+    private final int LICENCIA_UPDATED = 6;
     public Toolbar toolbar;
     /**
      * The {@link PagerAdapter} that will provide
@@ -86,12 +89,12 @@ public class FragmentMainActivity extends AppCompatActivity {
                 // Respond to clicks on the actions in the CAB
                 switch (item.getItemId()) {
                     case R.id.item_menu_modify:
-                        Toast.makeText(FragmentMainActivity.this, "Modify item: " + (int) mActionMode.getTag(), Toast.LENGTH_SHORT).show();
+//                        Toast.makeText(FragmentMainActivity.this, "Modify item: " + (int) mActionMode.getTag(), Toast.LENGTH_SHORT).show();
                         openForm((int) mActionMode.getTag());
                         mode.finish(); // Action picked, so close the CAB
                         return true;
                     case R.id.item_menu_delete:
-                        Toast.makeText(FragmentMainActivity.this, "Delete item" + (int) mActionMode.getTag(), Toast.LENGTH_SHORT).show();
+//                        Toast.makeText(FragmentMainActivity.this, "Delete item" + (int) mActionMode.getTag(), Toast.LENGTH_SHORT).show();
                         deleteSelectedItems((int) mActionMode.getTag());
                         mode.finish(); // Action picked, so close the CAB
                         return true;
@@ -187,6 +190,8 @@ public class FragmentMainActivity extends AppCompatActivity {
                             startActivityForResult(form, LICENCIA_COMPLETED);
                             break;
                     }
+
+                    mActionModeCallback.onDestroyActionMode(mActionMode);
                 }
             });
         }
@@ -199,17 +204,20 @@ public class FragmentMainActivity extends AppCompatActivity {
             case 0:
                 form = new Intent(FragmentMainActivity.this, GuiaFormActivity.class);
                 form.putExtra("modify_guia", guias.get(position));
-                startActivityForResult(form, GUIA_COMPLETED);
+                form.putExtra("position", position);
+                startActivityForResult(form, GUIA_UPDATED);
                 break;
             case 1:
                 form = new Intent(FragmentMainActivity.this, CompraFormActivity.class);
                 form.putExtra("modify_compra", compras.get(position));
-                startActivityForResult(form, GUIA_COMPLETED);
+                form.putExtra("position", position);
+                startActivityForResult(form, COMPRA_UPDATED);
                 break;
             case 2:
                 form = new Intent(FragmentMainActivity.this, LicenciaFormActivity.class);
                 form.putExtra("modify_licencia", licencias.get(position));
-                startActivityForResult(form, LICENCIA_COMPLETED);
+                form.putExtra("position", position);
+                startActivityForResult(form, LICENCIA_UPDATED);
                 break;
         }
     }
@@ -230,7 +238,6 @@ public class FragmentMainActivity extends AppCompatActivity {
                 break;
         }
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -282,7 +289,60 @@ public class FragmentMainActivity extends AppCompatActivity {
                     licencias.add(new Licencia(data.getExtras()));
                     ((PlaceholderFragment) mSectionsPagerAdapter.getItem(mViewPager.getCurrentItem())).licenciaArrayAdapter.notifyDataSetChanged();
                     break;
+                case GUIA_UPDATED:
+                    updateGuia(data);
+                    break;
+                case COMPRA_UPDATED:
+                    updateCompra(data);
+                    break;
+                case LICENCIA_UPDATED:
+//                    updateLicencia(data);
+                    break;
             }
+        }
+    }
+
+    private void updateGuia(Intent data) {
+        if (data.getExtras() != null) {
+            int position = data.getExtras().getInt("position", -1);
+            Guia guia = guias.get(position);
+
+//            guia.setIdCompra(data.getExtras().getInt(""));
+//            guia.setIdLicencia(data.getExtras().getInt(""));
+            guia.setMarca(data.getExtras().getString("marca"));
+            guia.setModelo(data.getExtras().getString("modelo"));
+            guia.setApodo(data.getExtras().getString("apodo"));
+            guia.setTipoArma(data.getExtras().getInt("tipoArma"));
+            guia.setCalibre1(data.getExtras().getString("calibre1"));
+            guia.setCalibre2(data.getExtras().getString("calibre2"));
+            guia.setNumGuia(data.getExtras().getInt("numGuia"));
+            guia.setNumArma(data.getExtras().getInt("numArma"));
+//            guia.setImagen(data.getExtras().getString("imagen"));
+            guia.setCupo(data.getExtras().getInt("cupo"));
+            guia.setGastado(data.getExtras().getInt("gastado"));
+
+            ((PlaceholderFragment) mSectionsPagerAdapter.getItem(mViewPager.getCurrentItem())).guiaArrayAdapter.notifyDataSetChanged();
+        }
+    }
+
+    private void updateCompra(Intent data) {
+        if (data.getExtras() != null) {
+            int position = data.getExtras().getInt("position", -1);
+            Compra compra = compras.get(position);
+
+            compra.setCalibre1(data.getExtras().getString("calibre1"));
+            compra.setCalibre2(data.getExtras().getString("calibre2"));
+            compra.setUnidades(data.getExtras().getInt("unidades"));
+            compra.setPrecio(data.getExtras().getDouble("precio"));
+            compra.setFecha(data.getExtras().getString("fecha"));
+            compra.setTipo(data.getExtras().getString("tipo"));
+            compra.setPeso(data.getExtras().getInt("peso"));
+            compra.setMarca(data.getExtras().getString("marca"));
+            compra.setTienda(data.getExtras().getString("tienda"));
+            compra.setValoracion(data.getExtras().getFloat("valoracion"));
+//            compra.setImagen(data.getExtras().getString("imagen"));
+
+            ((PlaceholderFragment) mSectionsPagerAdapter.getItem(mViewPager.getCurrentItem())).compraArrayAdapter.notifyDataSetChanged();
         }
     }
 
@@ -293,8 +353,20 @@ public class FragmentMainActivity extends AppCompatActivity {
         dbSqlHelper.saveListCompras(compras);
         dbSqlHelper.saveListLicencias(licencias);
         dbSqlHelper.close();
+
+        Toast.makeText(FragmentMainActivity.this, R.string.guardadoBBDD, Toast.LENGTH_LONG).show();
     }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+//        dbSqlHelper.saveListGuias(guias);
+//        dbSqlHelper.saveListCompras(compras);
+//        dbSqlHelper.saveListLicencias(licencias);
+//        dbSqlHelper.close();
+//
+        Toast.makeText(FragmentMainActivity.this, "OnStop", Toast.LENGTH_SHORT).show();
+    }
 
     /**
      * A placeholder fragment containing a simple view.
@@ -356,8 +428,6 @@ public class FragmentMainActivity extends AppCompatActivity {
             listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
                 @Override
                 public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                    Toast.makeText(getActivity(), "Elemento pulsado", Toast.LENGTH_SHORT).show();
-
                     if (mActionMode != null) {
                         return false;
                     }

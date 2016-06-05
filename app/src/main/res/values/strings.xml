@@ -34,7 +34,7 @@
     <string name="numGuia">Numero de guia</string>
     <string name="num_arma">Numero de arma</string>
     <string name="cupo">Cupo de la guia</string>
-    <string name="cupo_actual">Cupo Actual: 100</string>
+    <string name="cupo_anual">Cupo Anual</string>
     <string name="cartuchos_gastados">Cartuchos gastados</string>
     <string name="error_before_save">Este campo es obligatorio</string>
     <string name="error_mensaje_cabecera">Antes de guardar debe rellenar los campos obligatorios</string>
@@ -51,7 +51,7 @@
     <string name="check_segundo_calibre">Tiene segundo calibre</string>
 
     <!--String Compras Form-->
-    <string name="title_nueva_compra">Nueva compra de municion este año</string>
+    <string name="title_nueva_compra">Nueva compra</string>
     <string name="labelInfoCompra">Información de la nueva compra</string>
 
     <string name="precio">Precio</string>
@@ -61,7 +61,7 @@
     <string name="unidades">Unidades</string>
     <string name="fecha">Fecha</string>
     <string name="tipo_municion">Tipo de munición</string>
-    <string name="peso_municion">Peso de munición</string>
+    <string name="peso_municion">Peso (grains)</string>
     <string name="tienda">Ubicacion de la tienda</string>
     <string name="valoracion">Valoracion</string>
 
@@ -131,5 +131,6 @@
     <!--MENU-->
     <string name="modify">Modifciar</string>
     <string name="delete">Eliminar</string>
+    <string name="guardadoBBDD">Base de datos actualizada</string>
 
 </resources>

@@ -93,14 +93,6 @@ public class Guia implements Parcelable {
         this.idLicencia = idLicencia;
     }
 
-    public String getApodo() {
-        return apodo;
-    }
-
-    public void setApodo(String apodo) {
-        this.apodo = apodo;
-    }
-
     public String getMarca() {
         return marca;
     }
@@ -115,6 +107,14 @@ public class Guia implements Parcelable {
 
     public void setModelo(String modelo) {
         this.modelo = modelo;
+    }
+
+    public String getApodo() {
+        return apodo;
+    }
+
+    public void setApodo(String apodo) {
+        this.apodo = apodo;
     }
 
     public int getTipoArma() {
@@ -191,9 +191,9 @@ public class Guia implements Parcelable {
         dest.writeInt(id);
         dest.writeInt(idCompra);
         dest.writeInt(idLicencia);
-        dest.writeString(apodo);
         dest.writeString(marca);
         dest.writeString(modelo);
+        dest.writeString(apodo);
         dest.writeInt(tipoArma);
         dest.writeString(calibre1);
         dest.writeString(calibre2);

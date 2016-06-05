@@ -18,15 +18,18 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.RatingBar;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+
+import al.ahgitdevelopment.municion.DataModel.Compra;
 
 /**
  * Created by ahidalgog on 11/04/2016.
  */
 public class CompraFormActivity extends AppCompatActivity {
-    private TextInputLayout layoutFecha;
     public static EditText fecha;
+    private TextInputLayout layoutFecha;
     private EditText calibre1;
     private EditText calibre2;
     private CheckBox checkSegundoCalibre;
@@ -37,6 +40,7 @@ public class CompraFormActivity extends AppCompatActivity {
     private EditText marcaMunicion;
     private EditText tienda;
     private RatingBar valoracion;
+    //TODO: GESTIONAR LA IMAGEN
 
     /**
      * Inicializa la actividad
@@ -62,6 +66,37 @@ public class CompraFormActivity extends AppCompatActivity {
         marcaMunicion = (EditText) findViewById(R.id.form_marca_municion);
         tienda = (EditText) findViewById(R.id.form_tienda);
         valoracion = (RatingBar) findViewById(R.id.form_ratingBar_valoracion);
+//        imagen =
+
+        //Carga de datos (en caso de modificacion)
+        if (getIntent().getExtras() != null) {
+            try {
+                Compra compra = getIntent().getExtras().getParcelable("modify_compra");
+
+                calibre1.setText(compra.getCalibre1());
+                if (compra.getCalibre2() != null) {
+                    if (!"".equals(compra.getCalibre2().toString())) {
+                        checkSegundoCalibre.setChecked(true);
+                        calibre2.setVisibility(View.VISIBLE);
+                    } else {
+                        checkSegundoCalibre.setChecked(false);
+                        calibre2.setVisibility(View.GONE);
+                    }
+                    calibre2.setText(compra.getCalibre2().toString());
+                }
+                unidades.setText(String.valueOf(compra.getUnidades()));
+                precio.setText(String.valueOf(compra.getPrecio() + "€"));
+                fecha.setText(new SimpleDateFormat("dd/MM/yyyy").format(compra.getFecha()));
+                tipoMunicion.setText(compra.getTipo());
+                pesoMunicion.setText(String.valueOf(compra.getPeso()));
+                marcaMunicion.setText(compra.getMarca());
+                tienda.setText(compra.getTienda());
+                valoracion.setRating(compra.getValoracion());
+//                imagen.set
+            } catch (NullPointerException e) {
+                e.printStackTrace();
+            }
+        }
 
         checkSegundoCalibre.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -96,6 +131,14 @@ public class CompraFormActivity extends AppCompatActivity {
                     callDatePickerFragment();
             }
         });
+
+        pesoMunicion.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus && pesoMunicion.getText().equals("0"))
+                    pesoMunicion.setText("");
+            }
+        });
     }
 
     private void callDatePickerFragment() {
@@ -125,14 +168,17 @@ public class CompraFormActivity extends AppCompatActivity {
             bundle.putString("calibre1", calibre1.getText().toString());
             bundle.putString("calibre2", calibre2.getText().toString());
             bundle.putInt("unidades", Integer.parseInt(unidades.getText().toString()));
-            bundle.putString("precio", precio.getText().toString());
+            bundle.putDouble("precio", Double.parseDouble(precio.getText().toString().replace("€", "")));
             bundle.putString("fecha", fecha.getText().toString());
             bundle.putString("tipo", tipoMunicion.getText().toString());
-            bundle.putString("peso", pesoMunicion.getText().toString());
+            bundle.putInt("peso", Integer.parseInt(pesoMunicion.getText().toString()));
             bundle.putString("marca", marcaMunicion.getText().toString());
             bundle.putString("tienda", tienda.getText().toString());
-            bundle.putInt("valoracion", valoracion.getNumStars());
+            bundle.putFloat("valoracion", valoracion.getRating());
 
+            //Paso de vuelta de la posicion del item en el array
+            if (getIntent().getExtras() != null)
+                bundle.putInt("position", getIntent().getExtras().getInt("position", -1));
             result.putExtras(bundle);
 
             setResult(Activity.RESULT_OK, result);
@@ -145,8 +191,7 @@ public class CompraFormActivity extends AppCompatActivity {
     /**
      * DatePickerFragment para seleccionar la fecha de compra
      */
-    public static class DatePickerFragment extends DialogFragment
-            implements DatePickerDialog.OnDateSetListener {
+    public static class DatePickerFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener {
 
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
