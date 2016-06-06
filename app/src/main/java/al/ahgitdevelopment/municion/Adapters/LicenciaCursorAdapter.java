@@ -23,7 +23,7 @@ public class LicenciaCursorAdapter extends CursorAdapter {
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
         TextView tipo = (TextView) view.findViewById(R.id.item_tipo_licencia);
-        TextView numLicencia = (TextView) view.findViewById(R.id.item_num_licencia);
+        TextView numLicencia = (TextView) view.findViewById(R.id.item_num_guia);
         TextView expedicion = (TextView) view.findViewById(R.id.item_expedicion_licencia);
         TextView caducidad = (TextView) view.findViewById(R.id.item_caducidad_licencia);
 

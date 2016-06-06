@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:orientation="horizontal">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal">
 
     <ImageView
         android:id="@+id/imageArma"
@@ -10,7 +10,7 @@
         android:layout_height="100dp"
         android:clickable="true"
         android:scaleType="centerCrop"
-        android:src="@drawable/pistola"/>
+        android:src="@drawable/pistola" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -18,81 +18,112 @@
         android:orientation="vertical">
 
         <LinearLayout
-            android:orientation="horizontal"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
 
             <TextView
                 android:id="@+id/label_apodo_guia"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:paddingLeft="@dimen/item_margin_left"
+                android:gravity="center"
                 android:text="@string/label_apodo"
-                android:textAppearance="?android:attr/textAppearanceSmall"/>
+                android:textAppearance="?android:attr/textAppearanceSmall" />
 
             <TextView
                 android:id="@+id/item_apodo_guia"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center"
+                android:layout_weight="1"
+                android:gravity="left"
                 android:text="@string/item_apodo_guia"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:textStyle="bold"/>
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textStyle="bold" />
 
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/label_num_guia"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:paddingLeft="@dimen/item_margin_left"
+                android:gravity="center"
+                android:text="@string/label_num_guia"
+                android:textAppearance="?android:attr/textAppearanceSmall" />
+
+            <TextView
+                android:id="@+id/item_form_num_guia"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="left"
+                android:text="@string/item_num_guia"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
             android:gravity="center"
             android:orientation="horizontal">
 
-            <LinearLayout
+            <TextView
+                android:id="@+id/label_cupo_guia"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:paddingLeft="@dimen/item_margin_left"
                 android:gravity="center"
-                android:orientation="vertical">
+                android:text="@string/label_cupo"
+                android:textAppearance="?android:attr/textAppearanceSmall" />
 
-                <TextView
-                    android:id="@+id/label_cupo_guia"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/label_cupo"
-                    android:textAppearance="?android:attr/textAppearanceSmall"/>
-
-                <TextView
-                    android:id="@+id/item_cupo_guia"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="1000"
-                    android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:textStyle="bold"/>
-            </LinearLayout>
-
-            <LinearLayout
+            <TextView
+                android:id="@+id/item_cupo_guia"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:gravity="left"
+                android:text="1000"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+
+            <TextView
+                android:id="@+id/label_gastados_guia"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:paddingLeft="@dimen/item_margin_left"
                 android:gravity="center"
-                android:orientation="vertical">
+                android:text="@string/label_gastado"
+                android:textAppearance="?android:attr/textAppearanceSmall" />
 
-
-                <TextView
-                    android:id="@+id/label_gastados_guia"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/label_gastado"
-                    android:textAppearance="?android:attr/textAppearanceSmall"/>
-
-                <TextView
-                    android:id="@+id/item_gastados_guia"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="15%"
-                    android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:textStyle="bold"/>
-            </LinearLayout>
+            <TextView
+                android:id="@+id/item_gastados_guia"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="left"
+                android:text="15%"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textStyle="bold" />
         </LinearLayout>
 
     </LinearLayout>

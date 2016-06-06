@@ -50,6 +50,8 @@
     <string name="lbl_caducidad_licencia">Caducidad</string>
     <string name="item_apodo_guia">Apodo</string>
     <string name="check_segundo_calibre">Tiene segundo calibre</string>
+    <string name="item_num_guia">12345</string>
+    <string name="label_num_guia">Nº guia</string>
 
     <!--String Compras Form-->
     <string name="title_nueva_compra">Nueva compra</string>

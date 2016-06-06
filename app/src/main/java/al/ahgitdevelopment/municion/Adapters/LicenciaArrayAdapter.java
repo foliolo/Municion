@@ -36,7 +36,7 @@ public class LicenciaArrayAdapter extends ArrayAdapter<Licencia> {
         }
 
         TextView tipo = (TextView) convertView.findViewById(R.id.item_tipo_licencia);
-        TextView numLicencia = (TextView) convertView.findViewById(R.id.item_num_licencia);
+        TextView numLicencia = (TextView) convertView.findViewById(R.id.item_num_guia);
         TextView expedicion = (TextView) convertView.findViewById(R.id.item_expedicion_licencia);
         TextView caducidad = (TextView) convertView.findViewById(R.id.item_caducidad_licencia);
 

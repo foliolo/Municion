@@ -36,6 +36,7 @@ public class GuiaArrayAdapter extends ArrayAdapter<Guia> {
 
         ImageView imagen = (ImageView) convertView.findViewById(R.id.imageArma);
         TextView apodo = (TextView) convertView.findViewById(R.id.item_apodo_guia);
+        TextView numGuia = (TextView) convertView.findViewById(R.id.item_form_num_guia);
         TextView cupo = (TextView) convertView.findViewById(R.id.item_cupo_guia);
         TextView gastado = (TextView) convertView.findViewById(R.id.item_gastados_guia);
 
@@ -44,7 +45,8 @@ public class GuiaArrayAdapter extends ArrayAdapter<Guia> {
         else
             imagen.setImageResource(R.drawable.pistola);
         apodo.setText(guia.getApodo());
-        cupo.setText(guia.getGastado() + "/" + guia.getCupo());
+        numGuia.setText(String.valueOf(guia.getNumGuia()));
+        cupo.setText(guia.getGastado() + " / " + guia.getCupo());
         gastado.setText(String.format("%.2f", (1.0 * guia.getGastado() / guia.getCupo() * 100)) + "%");
 
         // Return the completed view to render on screen
