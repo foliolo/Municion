@@ -96,6 +96,7 @@ public class GuiaFormActivity extends AppCompatActivity {
                 }
             }
         });
+
         // Validaciones de campos obligatorios antes de guardar
         // Marca
         marca.addTextChangedListener(new TextWatcher() {

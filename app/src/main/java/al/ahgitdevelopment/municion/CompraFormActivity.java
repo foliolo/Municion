@@ -10,20 +10,24 @@ import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
+import android.text.TextWatcher;
 import android.text.format.DateFormat;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.RatingBar;
-import android.text.TextWatcher;
+import android.widget.TextView;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+
+import al.ahgitdevelopment.municion.DataModel.Compra;
 
 /**
  * Created by ahidalgog on 11/04/2016.
@@ -69,8 +73,40 @@ public class CompraFormActivity extends AppCompatActivity {
         pesoMunicion = (EditText) findViewById(R.id.form_peso_municion);
         marcaMunicion = (EditText) findViewById(R.id.form_marca_municion);
         tienda = (EditText) findViewById(R.id.form_tienda);
-        valoracion = (RatingBar) findViewById(R.id.form_ratingBar_valoracion);// Mensaje de error antes de guardar
+        valoracion = (RatingBar) findViewById(R.id.form_ratingBar_valoracion);
+//        imagen =
+        // Mensaje de error antes de guardar
         mensajeError = (TextView) findViewById(R.id.form_mensaje_compra);
+
+        //Carga de datos (en caso de modificacion)
+        if (getIntent().getExtras() != null) {
+            try {
+                Compra compra = getIntent().getExtras().getParcelable("modify_compra");
+
+                calibre1.setText(compra.getCalibre1());
+                if (compra.getCalibre2() != null) {
+                    if (!"".equals(compra.getCalibre2().toString())) {
+                        checkSegundoCalibre.setChecked(true);
+                        calibre2.setVisibility(View.VISIBLE);
+                    } else {
+                        checkSegundoCalibre.setChecked(false);
+                        calibre2.setVisibility(View.GONE);
+                    }
+                    calibre2.setText(compra.getCalibre2().toString());
+                }
+                unidades.setText(String.valueOf(compra.getUnidades()));
+                precio.setText(String.valueOf(compra.getPrecio() + "€"));
+                fecha.setText(new SimpleDateFormat("dd/MM/yyyy").format(compra.getFecha().getTime()));
+                tipoMunicion.setText(compra.getTipo());
+                pesoMunicion.setText(String.valueOf(compra.getPeso()));
+                marcaMunicion.setText(compra.getMarca());
+                tienda.setText(compra.getTienda());
+                valoracion.setRating(compra.getValoracion());
+//                imagen.set
+            } catch (NullPointerException e) {
+                e.printStackTrace();
+            }
+        }
 
         checkSegundoCalibre.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -90,12 +126,23 @@ public class CompraFormActivity extends AppCompatActivity {
             }
         });
 
-        fecha.setOnClickListener(new View.OnClickListener() {
+        fecha.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
-            public void onClick(View v) {
-                callDatePickerFragment();
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus) {
+                    getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+                }
             }
         });
+
+//        //Para permitir la edicion
+//        fecha.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                callDatePickerFragment();
+//            }
+//        });
+
 
         // Evento que saca el calendario al recibir el foco en el campo fecha
         fecha.setOnFocusChangeListener(new View.OnFocusChangeListener() {
@@ -244,7 +291,34 @@ public class CompraFormActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    private boolean validateForm() {
+        boolean retorno = true;
+        // Validaciones campos formularios
+        // Calibre1
+        if (calibre1.getText().toString().length() < 1) {
+            calibre1.setError(getString(R.string.error_before_save));
+            retorno = false;
+        }
+        // Unidades
+        if (unidades.getText().toString().length() < 1) {
+            unidades.setError(getString(R.string.error_before_save));
+            retorno = false;
+        }
+        // Precio
+        if (precio.getText().toString().length() < 1) {
+            precio.setError(getString(R.string.error_before_save));
+            retorno = false;
+        }
+        if (!retorno) {
+            mensajeError.setVisibility(View.VISIBLE);
+            mensajeError.setText(getString(R.string.error_mensaje_cabecera));
+            mensajeError.setTextColor(Color.parseColor("#0000ff"));
+        }
+        return retorno;
+    }
+
     /**
+     * Created by ahidalgog
      * DatePickerFragment para seleccionar la fecha de compra
      */
     public static class DatePickerFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener {
@@ -272,31 +346,5 @@ public class CompraFormActivity extends AppCompatActivity {
             String f = new DateFormat().format("dd/MM/yyyy", date).toString();
             fecha.setText(f);
         }
-    }
-
-    private boolean validateForm() {
-        boolean retorno = true;
-        // Validaciones campos formularios
-        // Calibre1
-        if (calibre1.getText().toString().length() < 1) {
-            calibre1.setError(getString(R.string.error_before_save));
-            retorno = false;
-        }
-        // Unidades
-        if (unidades.getText().toString().length() < 1) {
-            unidades.setError(getString(R.string.error_before_save));
-            retorno = false;
-        }
-        // Precio
-        if (precio.getText().toString().length() < 1) {
-            precio.setError(getString(R.string.error_before_save));
-            retorno = false;
-        }
-        if (!retorno) {
-            mensajeError.setVisibility(View.VISIBLE);
-            mensajeError.setText(getString(R.string.error_mensaje_cabecera));
-            mensajeError.setTextColor(Color.parseColor("#0000ff"));
-        }
-        return retorno;
     }
 }

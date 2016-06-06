@@ -17,14 +17,28 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/item_apodo_guia"
+        <LinearLayout
+            android:orientation="horizontal"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="@string/item_apodo_guia"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textStyle="bold"/>
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/label_apodo_guia"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/label_apodo"
+                android:textAppearance="?android:attr/textAppearanceSmall"/>
+
+            <TextView
+                android:id="@+id/item_apodo_guia"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/item_apodo_guia"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textStyle="bold"/>
+
+        </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -80,5 +94,6 @@
                     android:textStyle="bold"/>
             </LinearLayout>
         </LinearLayout>
+
     </LinearLayout>
 </LinearLayout>

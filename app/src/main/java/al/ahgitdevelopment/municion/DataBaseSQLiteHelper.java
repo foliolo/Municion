@@ -6,9 +6,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.util.Log;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 import al.ahgitdevelopment.municion.DataModel.Compra;
@@ -59,7 +58,7 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
     // Logcat tag
     private static final String LOG = "DatabaseHelper";
     // Database Version
-    private static final int DATABASE_VERSION = 10;
+    private static final int DATABASE_VERSION = 12;
     // Database Name
     private static final String DATABASE_NAME = "DBMunicion.db";
     // Table Create Statements
@@ -96,7 +95,7 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
             + KEY_COMPRA_MARCA + " TEXT,"
             + KEY_COMPRA_TIENDA + " TEXT,"
             + KEY_COMPRA_IMAGEN + " BLOB,"
-            + KEY_COMPRA_VALORACION + " INTEGER"
+            + KEY_COMPRA_VALORACION + " REAL"
             + ")";
 
     // Licencias table create statement
@@ -125,6 +124,11 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        // Guardado previo de la BBDD
+        ArrayList<Guia> guias = getListGuias(db);
+        ArrayList<Compra> compras = getListCompras(db);
+        ArrayList<Licencia> licencias = getListLicencias(db);
+
         // On upgrade drop older tables
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_GUIAS);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_COMPRAS);
@@ -132,6 +136,12 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
 
         // Create new tables
         onCreate(db);
+
+        // Load older data
+        saveListGuias(db, guias);
+        saveListCompras(db, compras);
+        saveListLicencias(db, licencias);
+        Log.i(context.getPackageName(), "Upgrade Done");
     }
 
     /**
@@ -238,8 +248,9 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
                 ");");
     }
 
-    public Cursor getCursorGuias() {
-        SQLiteDatabase db = this.getWritableDatabase();
+    public Cursor getCursorGuias(SQLiteDatabase db) {
+        if (db == null)
+            db = this.getWritableDatabase();
         return db.query(
                 DataBaseSQLiteHelper.TABLE_GUIAS,  //Nombre de la tabla
                 null,  //Lista de Columnas a consultar
@@ -251,8 +262,9 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
         );
     }
 
-    public Cursor getCursorCompras() {
-        SQLiteDatabase db = this.getWritableDatabase();
+    public Cursor getCursorCompras(SQLiteDatabase db) {
+        if (db == null)
+            db = this.getWritableDatabase();
         return db.query(
                 DataBaseSQLiteHelper.TABLE_COMPRAS,  //Nombre de la tabla
                 null,  //Lista de Columnas a consultar
@@ -264,8 +276,9 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
         );
     }
 
-    public Cursor getCursorLicencias() {
-        SQLiteDatabase db = this.getWritableDatabase();
+    public Cursor getCursorLicencias(SQLiteDatabase db) {
+        if (db == null)
+            db = this.getWritableDatabase();
         return db.query(
                 DataBaseSQLiteHelper.TABLE_LICENCIAS,  //Nombre de la tabla
                 null,  //Lista de Columnas a consultar
@@ -277,10 +290,11 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
         );
     }
 
-    public ArrayList<Guia> getListGuias() {
-        SQLiteDatabase db = this.getWritableDatabase();
+    public ArrayList<Guia> getListGuias(SQLiteDatabase db) {
+        if (db == null)
+            db = this.getWritableDatabase();
         ArrayList<Guia> guias = new ArrayList<Guia>();
-        Cursor cursor = getCursorGuias();
+        Cursor cursor = getCursorGuias(db);
 
         // Looping through all rows and adding to list
         if (cursor.moveToFirst()) {
@@ -311,10 +325,11 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
         return guias;
     }
 
-    public ArrayList<Compra> getListCompras() {
-        SQLiteDatabase db = this.getWritableDatabase();
+    public ArrayList<Compra> getListCompras(SQLiteDatabase db) {
+        if (db == null)
+            db = this.getWritableDatabase();
         ArrayList<Compra> compras = new ArrayList<Compra>();
-        Cursor cursor = getCursorCompras();
+        Cursor cursor = getCursorCompras(db);
 
         // Looping through all rows and adding to list
         try {
@@ -326,7 +341,7 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
                     compra.setCalibre2(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_COMPRA_CALIBRE2)));
                     compra.setUnidades(cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_COMPRA_UNIDADES)));
                     compra.setPrecio(cursor.getDouble(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_COMPRA_PRECIO)));
-                    compra.setFecha(new SimpleDateFormat("dd/MM/yyyy").parse(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_COMPRA_FECHA))));
+                    compra.setFecha(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_COMPRA_FECHA)));
                     compra.setTipo(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_COMPRA_TIPO)));
                     compra.setPeso(cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_COMPRA_PESO)));
                     compra.setMarca(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_COMPRA_MARCA)));
@@ -338,7 +353,7 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
                     compras.add(compra);
                 } while (cursor.moveToNext());
             }
-        } catch (ParseException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -346,10 +361,11 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
         return compras;
     }
 
-    public ArrayList<Licencia> getListLicencias() {
-        SQLiteDatabase db = this.getWritableDatabase();
+    public ArrayList<Licencia> getListLicencias(SQLiteDatabase db) {
+        if (db == null)
+            db = this.getWritableDatabase();
         ArrayList<Licencia> licencias = new ArrayList<Licencia>();
-        Cursor cursor = getCursorLicencias();
+        Cursor cursor = getCursorLicencias(db);
 
         // Looping through all rows and adding to list
         try {
@@ -374,8 +390,9 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
         return licencias;
     }
 
-    public void saveListGuias(ArrayList<Guia> guias) {
-        SQLiteDatabase db = this.getWritableDatabase();
+    public void saveListGuias(SQLiteDatabase db, ArrayList<Guia> guias) {
+        if (db == null)
+            db = this.getWritableDatabase();
         db.delete(TABLE_GUIAS, null, null); // No elimina la tabla, solo elimina las filas
         if (guias.size() > 0) {
             for (Guia guia : guias) {
@@ -410,10 +427,12 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
                         ");");
             }
         }
+        Log.d(context.getPackageName(), "Guia actualizada en BBDD");
     }
 
-    public void saveListCompras(ArrayList<Compra> compras) {
-        SQLiteDatabase db = this.getWritableDatabase();
+    public void saveListCompras(SQLiteDatabase db, ArrayList<Compra> compras) {
+        if (db == null)
+            db = this.getWritableDatabase();
         db.delete(TABLE_COMPRAS, null, null); // No elimina la tabla, solo elimina las filas
         if (compras.size() > 0) {
             for (Compra compra : compras) {
@@ -444,10 +463,12 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
                         ");");
             }
         }
+        Log.d(context.getPackageName(), "Compra actualizada en BBDD");
     }
 
-    public void saveListLicencias(ArrayList<Licencia> licencias) {
-        SQLiteDatabase db = this.getWritableDatabase();
+    public void saveListLicencias(SQLiteDatabase db, ArrayList<Licencia> licencias) {
+        if (db == null)
+            db = this.getWritableDatabase();
         db.delete(TABLE_LICENCIAS, null, null); // No elimina la tabla, solo elimina las filas
         if (licencias.size() > 0) {
             for (Licencia licencia : licencias) {
@@ -464,6 +485,7 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
                         ");");
             }
         }
+        Log.d(context.getPackageName(), "Licencia actualizada en BBDD");
     }
 
     /**

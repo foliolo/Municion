@@ -7,7 +7,7 @@ import android.os.Parcelable;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.Calendar;
 
 /**
  * Created by Alberto on 12/05/2016.
@@ -29,7 +29,7 @@ public class Compra implements Parcelable {
     private String calibre2;
     private int unidades;
     private double precio;
-    private Date fecha;
+    private Calendar fecha;
     private String tipo;
     private int peso;
     private String marca;
@@ -47,8 +47,8 @@ public class Compra implements Parcelable {
         unidades = in.readInt();
         precio = in.readDouble();
         try {
-            fecha = new SimpleDateFormat("dd/MM/yyyy").parse(in.readString());
-        } catch (ParseException e) {
+            this.setFecha(in.readString());
+        } catch (NullPointerException e) {
             e.printStackTrace();
         }
         tipo = in.readString();
@@ -64,16 +64,12 @@ public class Compra implements Parcelable {
         calibre2 = extras.getString("calibre2", "");
         unidades = extras.getInt("unidades");
         precio = extras.getDouble("precio");
-        try {
-            fecha = new SimpleDateFormat("dd/MM/yyyy").parse(extras.getString("fecha", ""));
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
+        this.setFecha(extras.getString("fecha", ""));
         tipo = extras.getString("tipo");
         peso = extras.getInt("peso");
         marca = extras.getString("marca");
         tienda = extras.getString("tienda");
-        valoracion = extras.getInt("valoracion");
+        valoracion = extras.getFloat("valoracion");
 //        imagen = new Bitmap(extras.getString(""));
     }
 
@@ -117,19 +113,24 @@ public class Compra implements Parcelable {
         this.precio = precio;
     }
 
-    public Date getFecha() {
+    public Calendar getFecha() {
         return fecha;
     }
 
-    public void setFecha(Date fecha) {
+    public void setFecha(Calendar fecha) {
         this.fecha = fecha;
     }
 
     public void setFecha(String fecha) {
+        Calendar auxFecha = Calendar.getInstance();
         try {
-            this.fecha = new SimpleDateFormat("dd/MM/yyyy").parse(fecha);
+            auxFecha.setTime(new SimpleDateFormat("dd/MM/yyyy").parse(fecha));
+            if (this.fecha == null)
+                this.fecha = Calendar.getInstance();
+            this.fecha = auxFecha;
         } catch (ParseException e) {
             e.printStackTrace();
+            this.fecha = auxFecha;
         }
     }
 
@@ -193,12 +194,18 @@ public class Compra implements Parcelable {
         dest.writeString(calibre2);
         dest.writeInt(unidades);
         dest.writeDouble(precio);
-        dest.writeString(new SimpleDateFormat("dd/MM/yyyy").format(fecha));
+        try {
+            dest.writeString(new SimpleDateFormat("dd/MM/yyyy").format(getFecha().getTime()));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         dest.writeString(tipo);
         dest.writeInt(peso);
         dest.writeString(marca);
         dest.writeString(tienda);
         dest.writeFloat(valoracion);
 //        dest.writeString(Base64.encodeToString(imagen)); //String de la ruta en memoria
+
+
     }
 }

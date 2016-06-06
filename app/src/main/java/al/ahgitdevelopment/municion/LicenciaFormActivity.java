@@ -31,11 +31,11 @@ import al.ahgitdevelopment.municion.DataModel.Licencia;
  * Created by Alberto on 24/05/2016.
  */
 public class LicenciaFormActivity extends AppCompatActivity {
+    public static EditText fechaExpedicion;
     private TextInputLayout layoutFechaExpedicion;
     private TextInputLayout layoutFechaCaducidad;
     private AppCompatSpinner tipoLicencia;
     private EditText numLicencia;
-    public static EditText fechaExpedicion;
     private EditText fechaCaducidad;
 
     /**
@@ -215,6 +215,10 @@ public class LicenciaFormActivity extends AppCompatActivity {
                 bundle.putInt("num_licencia", Integer.parseInt(numLicencia.getText().toString()));
                 bundle.putString("fecha_expedicion", fechaExpedicion.getText().toString());
                 bundle.putString("fecha_caducidad", fechaCaducidad.getText().toString());
+
+                //Paso de vuelta de la posicion del item en el array
+                if (getIntent().getExtras() != null)
+                    bundle.putInt("position", getIntent().getExtras().getInt("position", -1));
 
                 result.putExtras(bundle);
 

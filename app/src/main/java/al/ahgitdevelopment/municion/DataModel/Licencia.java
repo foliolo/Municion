@@ -95,6 +95,7 @@ public class Licencia implements Parcelable {
         Calendar fecha = Calendar.getInstance();
         try {
             fecha.setTime(new SimpleDateFormat("dd/MM/yyyy").parse(fechaExpedicion));
+            fecha.setTime(new SimpleDateFormat("dd/MM/yyyy").parse(fechaExpedicion));
             if (this.fechaExpedicion == null)
                 this.fechaExpedicion = Calendar.getInstance();
             this.fechaExpedicion = fecha;
@@ -142,5 +143,4 @@ public class Licencia implements Parcelable {
             e.printStackTrace();
         }
     }
-
 }

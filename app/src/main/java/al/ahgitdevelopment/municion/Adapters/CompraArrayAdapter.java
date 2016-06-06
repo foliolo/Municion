@@ -50,7 +50,7 @@ public class CompraArrayAdapter extends ArrayAdapter<Compra> {
             calibre.setText(compra.getCalibre1() + " / " + compra.getCalibre2());
 
         unidades.setText(compra.getUnidades() + "");
-        precio.setText(compra.getPrecio() + "€");
+        precio.setText(String.format("%.2f€", compra.getPrecio()));
 
         // Return the completed view to render on screen
         return convertView;

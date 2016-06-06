@@ -228,9 +228,9 @@ public class LoginPasswordActivity extends AppCompatActivity {
 
         //Lanzamiento del Intent
         Intent intent = new Intent(LoginPasswordActivity.this, FragmentMainActivity.class);
-        intent.putParcelableArrayListExtra("guias", dbSqlHelper.getListGuias());
-        intent.putParcelableArrayListExtra("compras", dbSqlHelper.getListCompras());
-        intent.putParcelableArrayListExtra("licencias", dbSqlHelper.getListLicencias());
+        intent.putParcelableArrayListExtra("guias", dbSqlHelper.getListGuias(null));
+        intent.putParcelableArrayListExtra("compras", dbSqlHelper.getListCompras(null));
+        intent.putParcelableArrayListExtra("licencias", dbSqlHelper.getListLicencias(null));
 
         startActivity(intent);
         dbSqlHelper.close();

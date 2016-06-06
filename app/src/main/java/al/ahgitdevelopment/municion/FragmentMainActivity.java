@@ -296,7 +296,7 @@ public class FragmentMainActivity extends AppCompatActivity {
                     updateCompra(data);
                     break;
                 case LICENCIA_UPDATED:
-//                    updateLicencia(data);
+                    updateLicencia(data);
                     break;
             }
         }
@@ -346,27 +346,32 @@ public class FragmentMainActivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        dbSqlHelper.saveListGuias(guias);
-        dbSqlHelper.saveListCompras(compras);
-        dbSqlHelper.saveListLicencias(licencias);
-        dbSqlHelper.close();
+    private void updateLicencia(Intent data) {
+        if (data.getExtras() != null) {
+            int position = data.getExtras().getInt("position", -1);
+            Licencia licencia = licencias.get(position);
 
-        Toast.makeText(FragmentMainActivity.this, R.string.guardadoBBDD, Toast.LENGTH_LONG).show();
+            licencia.setTipo(data.getExtras().getInt("tipo"));
+            licencia.setNumLicencia(data.getExtras().getInt("num_licencia"));
+            licencia.setFechaExpedicion(data.getExtras().getString("fecha_expedicion"));
+            licencia.setFechaCaducidad(data.getExtras().getString("fecha_caducidad"));
+
+            ((PlaceholderFragment) mSectionsPagerAdapter.getItem(mViewPager.getCurrentItem())).licenciaArrayAdapter.notifyDataSetChanged();
+        }
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-//        dbSqlHelper.saveListGuias(guias);
-//        dbSqlHelper.saveListCompras(compras);
-//        dbSqlHelper.saveListLicencias(licencias);
-//        dbSqlHelper.close();
-//
-        Toast.makeText(FragmentMainActivity.this, "OnStop", Toast.LENGTH_SHORT).show();
+        dbSqlHelper.saveListGuias(null, guias);
+        dbSqlHelper.saveListCompras(null, compras);
+        dbSqlHelper.saveListLicencias(null, licencias);
+        dbSqlHelper.close();
+
+        Toast.makeText(FragmentMainActivity.this, R.string.guardadoBBDD, Toast.LENGTH_SHORT).show();
     }
+
+
 
     /**
      * A placeholder fragment containing a simple view.
@@ -437,7 +442,7 @@ public class FragmentMainActivity extends AppCompatActivity {
 
                     // Start the CAB using the ActionMode.Callback defined above
                     mActionMode = ((AppCompatActivity) getActivity()).startSupportActionMode(mActionModeCallback);
-                    mActionMode.setTitle("Opciones"); //TODO: Hacer @string
+                    mActionMode.setTitle(R.string.menu_cab_title);
                     mActionMode.setTag(position);
                     return true;
                 }

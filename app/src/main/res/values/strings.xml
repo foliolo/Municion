@@ -32,7 +32,7 @@
     <string name="calibre">Calibre</string>
     <string name="calibre2">Calibre2</string>
     <string name="numGuia">Numero de guia</string>
-    <string name="num_arma">Numero de arma</string>
+    <string name="num_arma">Numero de serie del arma</string>
     <string name="cupo">Cupo de la guia</string>
     <string name="cupo_anual">Cupo Anual</string>
     <string name="cartuchos_gastados">Cartuchos gastados</string>
@@ -40,8 +40,9 @@
     <string name="error_mensaje_cabecera">Antes de guardar debe rellenar los campos obligatorios</string>
 
     <!--String Guias Item-->
+    <string name="label_apodo">Apodo</string>
     <string name="label_cupo">Cupo</string>
-    <string name="label_gastado">Gastgado</string>
+    <string name="label_gastado">Gastado</string>
     <string name="form_lbl_tipo_arma">Tipo de arma</string>
     <string name="lbl_tipo_licencia">Tipo de licencia</string>
     <string name="lbl_num_licencia">Nº de licencia</string>
@@ -129,6 +130,7 @@
     <string name="aumento_cupo">Aumento de cupo</string>
 
     <!--MENU-->
+    <string name="menu_cab_title">Opciones</string>
     <string name="modify">Modifciar</string>
     <string name="delete">Eliminar</string>
     <string name="guardadoBBDD">Base de datos actualizada</string>

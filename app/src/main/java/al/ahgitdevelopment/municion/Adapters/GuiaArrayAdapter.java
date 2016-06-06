@@ -45,7 +45,7 @@ public class GuiaArrayAdapter extends ArrayAdapter<Guia> {
             imagen.setImageResource(R.drawable.pistola);
         apodo.setText(guia.getApodo());
         cupo.setText(guia.getGastado() + "/" + guia.getCupo());
-        gastado.setText(new StringBuilder().append((1.0 * guia.getGastado() / guia.getCupo()) * 100 + "%"));
+        gastado.setText(String.format("%.2f", (1.0 * guia.getGastado() / guia.getCupo() * 100)) + "%");
 
         // Return the completed view to render on screen
         return convertView;
