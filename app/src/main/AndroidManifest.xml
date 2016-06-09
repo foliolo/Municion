@@ -2,6 +2,13 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           package="al.ahgitdevelopment.municion">
 
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="true"/>
+
+    <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+
     <application
         android:allowBackup="true"
         android:fullBackupContent="true"
@@ -11,9 +18,9 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".LoginPasswordActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/BarTheme"
-            android:windowSoftInputMode="stateVisible"
-            android:screenOrientation="portrait">
+            android:windowSoftInputMode="stateVisible">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
@@ -22,7 +29,8 @@
 
         <activity
             android:name=".FragmentMainActivity"
-            android:label="@string/title_activity_fragment_main">
+            android:label="@string/title_activity_fragment_main"
+            android:launchMode="singleTop">
             <!--<intent-filter>-->
             <!--<action android:name="android.intent.action.MAIN"/>-->
             <!--<category android:name="android.intent.category.LAUNCHER"/>-->
@@ -51,6 +59,9 @@
             android:name=".SettingsActivity"
             android:label="@string/title_activity_settings"/>
 
+        <activity
+            android:name=".CameraActivity"
+            android:label="@string/app_camara"/>
     </application>
 
 </manifest>

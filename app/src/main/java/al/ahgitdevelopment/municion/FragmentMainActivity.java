@@ -1,7 +1,9 @@
 package al.ahgitdevelopment.municion;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -13,6 +15,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -35,6 +38,14 @@ import al.ahgitdevelopment.municion.DataModel.Licencia;
 
 public class FragmentMainActivity extends AppCompatActivity {
 
+    private static final int REQUEST_IMAGE_CAPTURE = 0;
+    private final int GUIA_COMPLETED = 1;
+    private final int COMPRA_COMPLETED = 2;
+    private final int LICENCIA_COMPLETED = 3;
+    private final int GUIA_UPDATED = 4;
+    private final int COMPRA_UPDATED = 5;
+    private final int LICENCIA_UPDATED = 6;
+
     public static View auxView = null;
     public static ActionMode mActionMode = null;
     public static ActionMode.Callback mActionModeCallback = null;
@@ -42,12 +53,8 @@ public class FragmentMainActivity extends AppCompatActivity {
     private static ArrayList<Guia> guias;
     private static ArrayList<Compra> compras;
     private static ArrayList<Licencia> licencias;
-    private final int GUIA_COMPLETED = 1;
-    private final int COMPRA_COMPLETED = 2;
-    private final int LICENCIA_COMPLETED = 3;
-    private final int GUIA_UPDATED = 4;
-    private final int COMPRA_UPDATED = 5;
-    private final int LICENCIA_UPDATED = 6;
+    public static int imagePosition;
+
     public Toolbar toolbar;
     /**
      * The {@link PagerAdapter} that will provide
@@ -277,6 +284,13 @@ public class FragmentMainActivity extends AppCompatActivity {
         // Check which request we're responding to
         if (resultCode == RESULT_OK) {
             switch (requestCode) {
+                case REQUEST_IMAGE_CAPTURE:
+                    if (data != null) {
+                        Bitmap imageBitmap = (Bitmap) data.getExtras().get(MediaStore.EXTRA_OUTPUT);
+                        updateImage(imageBitmap);
+                    } else
+                        Log.i(getPackageName(), "Intent sin informacion");
+                    break;
                 case GUIA_COMPLETED:
                     guias.add(new Guia(data.getExtras()));
                     ((PlaceholderFragment) mSectionsPagerAdapter.getItem(mViewPager.getCurrentItem())).guiaArrayAdapter.notifyDataSetChanged();
@@ -299,6 +313,21 @@ public class FragmentMainActivity extends AppCompatActivity {
                     updateLicencia(data);
                     break;
             }
+        } else if (resultCode == RESULT_CANCELED) {
+            Log.e(getPackageName(), "Resultado de la camara cancelada");
+        }
+    }
+
+    private void updateImage(Bitmap imageBitmap) {
+        switch (mViewPager.getCurrentItem()) {
+            case 0:
+                guias.get(imagePosition).setImagen(imageBitmap);
+                ((PlaceholderFragment) mSectionsPagerAdapter.getItem(mViewPager.getCurrentItem())).guiaArrayAdapter.notifyDataSetChanged();
+                break;
+            case 1:
+                compras.get(imagePosition).setImagen(imageBitmap);
+                ((PlaceholderFragment) mSectionsPagerAdapter.getItem(mViewPager.getCurrentItem())).compraArrayAdapter.notifyDataSetChanged();
+                break;
         }
     }
 
@@ -370,7 +399,6 @@ public class FragmentMainActivity extends AppCompatActivity {
 
         Toast.makeText(FragmentMainActivity.this, R.string.guardadoBBDD, Toast.LENGTH_SHORT).show();
     }
-
 
 
     /**
