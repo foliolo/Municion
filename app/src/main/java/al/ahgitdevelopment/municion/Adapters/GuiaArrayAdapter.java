@@ -29,7 +29,7 @@ import al.ahgitdevelopment.municion.R;
  * Created by Alberto on 28/05/2016.
  */
 public class GuiaArrayAdapter extends ArrayAdapter<Guia> {
-    private static final int REQUEST_IMAGE_CAPTURE = 0;
+
     private Context context;
     private String mCurrentPhotoPath;
 
@@ -68,8 +68,12 @@ public class GuiaArrayAdapter extends ArrayAdapter<Guia> {
         imagen.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                if()
-                dispatchTakePictureIntent(position);
+                FragmentMainActivity.imagePosition = position;
+
+                if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+                    dispatchTakePictureCamera2Intent();
+                else
+                    dispatchTakePictureIntent();
             }
         });
 
@@ -77,8 +81,7 @@ public class GuiaArrayAdapter extends ArrayAdapter<Guia> {
         return convertView;
     }
 
-    private void dispatchTakePictureIntent(int position) {
-//        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE_SECURE);
+    private void dispatchTakePictureCamera2Intent() {
         Intent takePictureIntent = new Intent(context, CameraActivity.class);
 
         // Ensure that there's a camera activity to handle the intent
@@ -92,9 +95,28 @@ public class GuiaArrayAdapter extends ArrayAdapter<Guia> {
             }
             // Continue only if the File was successfully created
             if (photoFile != null) {
+                ((AppCompatActivity) context).startActivityForResult(takePictureIntent, FragmentMainActivity.REQUEST_IMAGE_CAPTURE);
+            }
+        }
+    }
+
+    private void dispatchTakePictureIntent() {
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+
+        // Ensure that there's a camera activity to handle the intent
+        if (takePictureIntent.resolveActivity(context.getPackageManager()) != null) {
+            // Create the File where the photo should go
+            File photoFile = null;
+            try {
+                photoFile = createImageFile();
+            } catch (IOException ex) {
+                Log.e(context.getPackageName(), "IOException");
+            }
+            // Continue only if the File was successfully created
+            if (photoFile != null) {
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(photoFile));
-                FragmentMainActivity.imagePosition = position;
-                ((AppCompatActivity) context).startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+//                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoFile);
+                ((AppCompatActivity) context).startActivityForResult(takePictureIntent, FragmentMainActivity.REQUEST_IMAGE_CAPTURE);
             }
         }
     }
@@ -105,7 +127,7 @@ public class GuiaArrayAdapter extends ArrayAdapter<Guia> {
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         String imageFileName = "JPEG_" + timeStamp;
 //        File storageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
-        File storageDir = context.getFilesDir() /*+ File.separator + "Armas")*/;
+        File storageDir = context.getCacheDir() /*+ File.separator + "Armas")*/;
 
         if (!storageDir.exists()) {
             storageDir.mkdir();

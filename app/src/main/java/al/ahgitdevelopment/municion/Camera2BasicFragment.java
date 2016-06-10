@@ -78,8 +78,7 @@ import java.util.concurrent.TimeUnit;
 public class Camera2BasicFragment extends Fragment
         implements View.OnClickListener, FragmentCompat.OnRequestPermissionsResultCallback {
 
-    public CameraCaptureCallback cameraCaptureCallback;
-
+    private OnCameraCaptureListener onCameraCaptureListener;
 
     /**
      * Conversion from screen rotation to JPEG orientation.
@@ -362,21 +361,8 @@ public class Camera2BasicFragment extends Fragment
                 @Override
                 public void run() {
                     Toast.makeText(activity, text, Toast.LENGTH_SHORT).show();
-
-//                    cameraCaptureCallback = new CameraCaptureCallback() {
-//                        @Override
-//                        public void OnreturnCameraCaputer(File mFile) {
-//                            Toast.makeText(activity, "Form Activity: " + mFile, Toast.LENGTH_SHORT).show();
-//                        }
-//                    };
                 }
             });
-            cameraCaptureCallback = new CameraCaptureCallback() {
-                @Override
-                public void OnreturnCameraCaputer(File mFile) {
-                    Toast.makeText(activity, "Form Activity: " + mFile, Toast.LENGTH_SHORT).show();
-                }
-            };
         }
     }
 
@@ -466,6 +452,8 @@ public class Camera2BasicFragment extends Fragment
         } else {
             mTextureView.setSurfaceTextureListener(mSurfaceTextureListener);
         }
+
+        onCameraCaptureListener = (OnCameraCaptureListener) getActivity();
     }
 
     @Override
@@ -850,16 +838,18 @@ public class Camera2BasicFragment extends Fragment
                 public void onCaptureCompleted(@NonNull CameraCaptureSession session,
                                                @NonNull CaptureRequest request,
                                                @NonNull TotalCaptureResult result) {
-                    showToast("Saved: " + mFile);
+//                    showToast("Saved: " + mFile);
                     Log.d(TAG, mFile.toString());
                     unlockFocus();
-
-
                 }
             };
 
             mCaptureSession.stopRepeating();
             mCaptureSession.capture(captureBuilder.build(), CaptureCallback, null);
+
+
+            onCameraCaptureListener.onReturnCameraCapture(mFile);
+            closeCamera();
         } catch (CameraAccessException e) {
             e.printStackTrace();
         }
@@ -1034,7 +1024,8 @@ public class Camera2BasicFragment extends Fragment
         }
     }
 
-    interface CameraCaptureCallback {
-        void OnreturnCameraCaputer(File mFile);
+    public interface OnCameraCaptureListener {
+        void onReturnCameraCapture(File mFile);
     }
 }
+

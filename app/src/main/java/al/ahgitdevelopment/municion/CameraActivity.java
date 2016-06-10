@@ -17,14 +17,17 @@
 package al.ahgitdevelopment.municion;
 
 import android.app.Activity;
+import android.app.Fragment;
+import android.app.FragmentTransaction;
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Toast;
 
 import java.io.File;
 
-public class CameraActivity extends Activity implements Camera2BasicFragment.CameraCaptureCallback {
+public class CameraActivity extends Activity implements Camera2BasicFragment.OnCameraCaptureListener {
 
-    public File mFile;
+    private static final int REQUEST_IMAGE_CAPTURE = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,14 +35,36 @@ public class CameraActivity extends Activity implements Camera2BasicFragment.Cam
         setContentView(R.layout.activity_camera);
         if (null == savedInstanceState) {
             getFragmentManager().beginTransaction()
-                    .replace(R.id.container, Camera2BasicFragment.newInstance())
+                    .replace(R.id.container, Camera2BasicFragment.newInstance(), "camera")
                     .commit();
         }
+
+
     }
 
     @Override
-    public void OnreturnCameraCaputer(File mFile) {
-        this.mFile = mFile;
-        Toast.makeText(this, "Form Activity: " + mFile, Toast.LENGTH_SHORT).show();
+    public void onReturnCameraCapture(File mFile) {
+        Toast.makeText(CameraActivity.this, "File saved: " + mFile, Toast.LENGTH_SHORT).show();
+        unpopFragment(getFragmentManager().findFragmentByTag("camera"));
+
+        // Retorno de la camara al fragment activity principal
+        Intent resultIntent = new Intent();
+        Bundle data = new Bundle();
+        resultIntent.putExtra("imageFile", mFile);
+        setResult(REQUEST_IMAGE_CAPTURE, resultIntent);
+        finish();
     }
+
+    public void popFragment(int idContenedor, Fragment pFragment) {
+        FragmentTransaction myTrans = getFragmentManager().beginTransaction();
+        myTrans.replace(idContenedor, pFragment);
+        myTrans.commit();
+    }
+
+    public void unpopFragment(Fragment pFragment) {
+        FragmentTransaction myTrans = getFragmentManager().beginTransaction();
+        myTrans.remove(pFragment).commit();
+    }
+
+
 }

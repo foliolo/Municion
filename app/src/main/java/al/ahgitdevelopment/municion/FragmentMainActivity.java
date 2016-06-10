@@ -2,6 +2,7 @@ package al.ahgitdevelopment.municion;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
@@ -27,6 +28,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import java.io.File;
 import java.util.ArrayList;
 
 import al.ahgitdevelopment.municion.Adapters.CompraArrayAdapter;
@@ -38,7 +40,7 @@ import al.ahgitdevelopment.municion.DataModel.Licencia;
 
 public class FragmentMainActivity extends AppCompatActivity {
 
-    private static final int REQUEST_IMAGE_CAPTURE = 0;
+    public static final int REQUEST_IMAGE_CAPTURE = 100;
     private final int GUIA_COMPLETED = 1;
     private final int COMPRA_COMPLETED = 2;
     private final int LICENCIA_COMPLETED = 3;
@@ -281,12 +283,18 @@ public class FragmentMainActivity extends AppCompatActivity {
      */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Bitmap imageBitmap = null;
         // Check which request we're responding to
         if (resultCode == RESULT_OK) {
             switch (requestCode) {
                 case REQUEST_IMAGE_CAPTURE:
                     if (data != null) {
-                        Bitmap imageBitmap = (Bitmap) data.getExtras().get(MediaStore.EXTRA_OUTPUT);
+                        if (data.hasExtra(MediaStore.EXTRA_OUTPUT))
+                            imageBitmap = (Bitmap) data.getExtras().get(MediaStore.EXTRA_OUTPUT);
+                        else if (data.hasExtra("imageFile")) {
+                            File file = (File) data.getSerializableExtra("imageFile");
+                            imageBitmap = BitmapFactory.decodeFile(file.getAbsolutePath());
+                        }
                         updateImage(imageBitmap);
                     } else
                         Log.i(getPackageName(), "Intent sin informacion");
@@ -319,16 +327,19 @@ public class FragmentMainActivity extends AppCompatActivity {
     }
 
     private void updateImage(Bitmap imageBitmap) {
-        switch (mViewPager.getCurrentItem()) {
-            case 0:
-                guias.get(imagePosition).setImagen(imageBitmap);
-                ((PlaceholderFragment) mSectionsPagerAdapter.getItem(mViewPager.getCurrentItem())).guiaArrayAdapter.notifyDataSetChanged();
-                break;
-            case 1:
-                compras.get(imagePosition).setImagen(imageBitmap);
-                ((PlaceholderFragment) mSectionsPagerAdapter.getItem(mViewPager.getCurrentItem())).compraArrayAdapter.notifyDataSetChanged();
-                break;
-        }
+        if (imageBitmap != null) {
+            switch (mViewPager.getCurrentItem()) {
+                case 0:
+                    guias.get(imagePosition).setImagen(imageBitmap);
+                    ((PlaceholderFragment) mSectionsPagerAdapter.getItem(mViewPager.getCurrentItem())).guiaArrayAdapter.notifyDataSetChanged();
+                    break;
+                case 1:
+                    compras.get(imagePosition).setImagen(imageBitmap);
+                    ((PlaceholderFragment) mSectionsPagerAdapter.getItem(mViewPager.getCurrentItem())).compraArrayAdapter.notifyDataSetChanged();
+                    break;
+            }
+        } else
+            Log.e(getPackageName(), "Error en la devolucion de la imagens");
     }
 
     private void updateGuia(Intent data) {
