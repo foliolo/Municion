@@ -4,12 +4,14 @@ package al.ahgitdevelopment.municion;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.EditTextPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
@@ -19,6 +21,7 @@ import android.preference.RingtonePreference;
 import android.support.v7.app.ActionBar;
 import android.text.TextUtils;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 import java.util.List;
 
@@ -34,6 +37,7 @@ import java.util.List;
  * API Guide</a> for more information on developing a Settings UI.
  */
 public class SettingsActivity extends AppCompatPreferenceActivity {
+
     /**
      * A preference value change listener that updates the preference's summary
      * to reflect its new value.
@@ -124,6 +128,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
 
     /**
      * Set up the {@link android.app.ActionBar}, if the API is available.
+     *
      */
     private void setupActionBar() {
         ActionBar actionBar = getSupportActionBar();
@@ -167,18 +172,41 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
      */
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     public static class GeneralPreferenceFragment extends PreferenceFragment {
+        private EditTextPreference password1;
+        private EditTextPreference password2;
+        private Preference button;
+        private Preference mensaje;
+        private SharedPreferences preferences;
+
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             addPreferencesFromResource(R.xml.pref_general);
+            preferences = this.getActivity().getSharedPreferences("Preferences", Context.MODE_PRIVATE);
+            password1 = (EditTextPreference) findPreference("kPasswordNew");
+            password2 = (EditTextPreference)  findPreference("kPasswordOld");
+            button = findPreference("kButton");
+            mensaje = findPreference("kText");
             setHasOptionsMenu(true);
+            // Al  pulsar sobre el pseuodo botoon se realizan las comprobaciones de la nueva password
+            button.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+
+                    if (savePassword()) {
+                        bindPreferenceSummaryToValue(findPreference("kPasswordNew"));
+                    }
+                    return false;
+                }
+            });
 
             // Bind the summaries of EditText/List/Dialog/Ringtone preferences
             // to their values. When their values change, their summaries are
             // updated to reflect the new value, per the Android Design
             // guidelines.
-            bindPreferenceSummaryToValue(findPreference("example_text"));
-            bindPreferenceSummaryToValue(findPreference("example_list"));
+
+//            bindPreferenceSummaryToValue(findPreference("kPasswordNew"));
+//            bindPreferenceSummaryToValue(findPreference("example_list"));
         }
 
         @Override
@@ -190,8 +218,47 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             }
             return super.onOptionsItemSelected(item);
         }
-    }
 
+        /**
+         * Guarda el password introducido por el usuario para cambiar la contraseña
+         *
+         * @return flag
+         */
+        private boolean savePassword() {
+            boolean flag = false;
+                if (password1.getText().toString().length() >= 4) {
+                    if (checkPassword()) {
+                        SharedPreferences.Editor editor = preferences.edit();
+                        editor.putString("password", password1.getText().toString());
+                        editor.commit();
+                        password1.setText("");
+                        mensaje.setTitle(R.string.password_save);
+                        flag = true;
+                    } else {
+                        password2.setText(getString(R.string.password_equal_actual));
+                    }
+                } else {
+                    password1.setText(getString(R.string.password_short_fail));
+                }
+            return flag;
+        }
+
+        /**
+         * Valida la contraseña introducida por el usuario frente a la guardada en el sharedPreferences
+         *
+         * @return Contraseña valida o invalida
+         */
+        private boolean checkPassword() {
+            boolean isPassCorrect = false;
+                String pass = preferences.getString("password", "");
+                if (pass.equals(password2.getText().toString())) {
+                    isPassCorrect = true;
+                } else {
+                    password2.setText(getString(R.string.password_equal_fail));
+                }
+            return isPassCorrect;
+        }
+    }
     /**
      * This fragment shows notification preferences only. It is used when the
      * activity is showing a two-pane settings UI.

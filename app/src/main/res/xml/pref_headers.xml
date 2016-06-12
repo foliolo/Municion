@@ -7,14 +7,14 @@
         android:icon="@drawable/ic_info_black_24dp"
         android:title="@string/pref_header_general" />
 
-    <header
-        android:fragment="al.ahgitdevelopment.municion.SettingsActivity$NotificationPreferenceFragment"
-        android:icon="@drawable/ic_notifications_black_24dp"
-        android:title="@string/pref_header_notifications" />
+    <!--<header-->
+        <!--android:fragment="al.ahgitdevelopment.municion.SettingsActivity$NotificationPreferenceFragment"-->
+        <!--android:icon="@drawable/ic_notifications_black_24dp"-->
+        <!--android:title="@string/pref_header_notifications" />-->
 
-    <header
-        android:fragment="al.ahgitdevelopment.municion.SettingsActivity$DataSyncPreferenceFragment"
-        android:icon="@drawable/ic_sync_black_24dp"
-        android:title="@string/pref_header_data_sync" />
+    <!--<header-->
+        <!--android:fragment="al.ahgitdevelopment.municion.SettingsActivity$DataSyncPreferenceFragment"-->
+        <!--android:icon="@drawable/ic_sync_black_24dp"-->
+        <!--android:title="@string/pref_header_data_sync" />-->
 
 </preference-headers>

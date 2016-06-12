@@ -16,8 +16,6 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import al.ahgitdevelopment.municion.DataModel.Guia;
-
 /**
  * Created by Alberto on 25/03/2016.
  */
@@ -45,8 +43,6 @@ public class GuiaFormActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.form_guia);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
-        getSupportActionBar().setIcon(R.mipmap.ic_launcher_4_transparent);
 
         marca = (EditText) findViewById(R.id.form_marca);
         modelo = (EditText) findViewById(R.id.form_modelo);
@@ -57,34 +53,10 @@ public class GuiaFormActivity extends AppCompatActivity {
         calibre2 = (EditText) findViewById(R.id.form_calibre2);
         numGuia = (EditText) findViewById(R.id.form_num_guia);
         numArma = (EditText) findViewById(R.id.form_num_arma);
-        cupo = (EditText) findViewById(R.id.form_cupo_anual);
         gastado = (EditText) findViewById(R.id.form_cartuchos_gastados);
+        // Revisar Layout relacionado
+        cupo = (EditText) findViewById(R.id.form_cartuchos_gastados);
         mensajeError = (TextView) findViewById(R.id.form_mensaje_guia);
-
-        //Carga de datos (en caso de modificacion)
-        if (getIntent().getExtras() != null) {
-            try {
-                Guia guia = getIntent().getExtras().getParcelable("modify_guia");
-                marca.setText(guia.getMarca());
-                modelo.setText(guia.getModelo());
-                apodo.setText(guia.getApodo());
-                tipoArma.setSelection(guia.getTipoArma());
-                calibre1.setText(guia.getCalibre1());
-
-                if ("".equals(guia.getCalibre2()))
-                    segundoCalibre.setChecked(true);
-                else
-                    segundoCalibre.setChecked(false);
-
-                calibre2.setText(guia.getCalibre2());
-                numGuia.setText(String.valueOf(guia.getNumGuia()));
-                numArma.setText(String.valueOf(guia.getNumArma()));
-                gastado.setText(String.valueOf(guia.getGastado()));
-                cupo.setText(String.valueOf(guia.getCupo()));
-            } catch (NullPointerException e) {
-                e.printStackTrace();
-            }
-        }
 
         segundoCalibre.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -111,7 +83,7 @@ public class GuiaFormActivity extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
-                if (marca.getText().toString().length() < 1) {
+                if(marca.getText().toString().length() < 1) {
                     marca.setError(getString(R.string.error_before_save));
                 }
             }
@@ -128,7 +100,7 @@ public class GuiaFormActivity extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
-                if (modelo.getText().toString().length() < 1) {
+                if(modelo.getText().toString().length() < 1) {
                     modelo.setError(getString(R.string.error_before_save));
                 }
             }
@@ -145,7 +117,7 @@ public class GuiaFormActivity extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
-                if (calibre1.getText().toString().length() < 1) {
+                if(calibre1.getText().toString().length() < 1) {
                     calibre1.setError(getString(R.string.error_before_save));
                 }
             }
@@ -162,7 +134,7 @@ public class GuiaFormActivity extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
-                if (numGuia.getText().toString().length() < 1) {
+                if(numGuia.getText().toString().length() < 1) {
                     numGuia.setError(getString(R.string.error_before_save));
                 }
             }
@@ -179,7 +151,7 @@ public class GuiaFormActivity extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
-                if (numArma.getText().toString().length() < 1) {
+                if(numArma.getText().toString().length() < 1) {
                     numArma.setError(getString(R.string.error_before_save));
                 }
             }
@@ -196,7 +168,7 @@ public class GuiaFormActivity extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
-                if (cupo.getText().toString().length() < 1) {
+                if(cupo.getText().toString().length() < 1) {
                     cupo.setError(getString(R.string.error_before_save));
                 }
             }
@@ -213,7 +185,7 @@ public class GuiaFormActivity extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
-                if (gastado.getText().toString().length() < 1) {
+                if(gastado.getText().toString().length() < 1) {
                     gastado.setError(getString(R.string.error_before_save));
                 }
             }
@@ -229,11 +201,14 @@ public class GuiaFormActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
         if (id == R.id.action_save) {
             // Validación formulario
-            if (!validateForm()) {
+            if(!validateForm()) {
                 return false;
             }
 
@@ -243,8 +218,8 @@ public class GuiaFormActivity extends AppCompatActivity {
             Bundle bundle = new Bundle();
             bundle.putString("marca", marca.getText().toString());
             bundle.putString("modelo", modelo.getText().toString());
-            // Control error. He metido vacio porque el campo en BBDD no puede ser  nulo
-            if (apodo.getText().toString().isEmpty()) {
+            // Control error. He metido vacio porque el campo en BBDD no puede ser nulo
+            if(apodo.getText().toString().isEmpty()) {
                 apodo.setText("");
             }
             bundle.putString("apodo", apodo.getText().toString());
@@ -252,19 +227,15 @@ public class GuiaFormActivity extends AppCompatActivity {
             bundle.putString("calibre1", calibre1.getText().toString());
             if (segundoCalibre.isChecked()) {
                 // Control error. He metido vacio porque el campo en BBDD no puede ser  nulo
-                if (calibre2.getText().toString().isEmpty()) {
+                if(calibre2.getText().toString().isEmpty()) {
                     calibre2.setText("");
                 }
                 bundle.putString("calibre2", calibre2.getText().toString());
             }
             bundle.putInt("numGuia", Integer.parseInt(numGuia.getText().toString()));
             bundle.putInt("numArma", Integer.parseInt(numArma.getText().toString()));
-            bundle.putInt("cupo", Integer.parseInt(cupo.getText().toString()));
+            bundle.putInt("cupo", Integer.parseInt(cupo.getText().toString().split(":")[1].trim()));
             bundle.putInt("gastado", Integer.parseInt(gastado.getText().toString()));
-
-            //Paso de vuelta de la posicion del item en el array
-            if (getIntent().getExtras() != null)
-                bundle.putInt("position", getIntent().getExtras().getInt("position", -1));
             result.putExtras(bundle);
 
             setResult(Activity.RESULT_OK, result);
@@ -278,41 +249,41 @@ public class GuiaFormActivity extends AppCompatActivity {
         boolean retorno = true;
         // Validaciones campos formularios
         // Marca
-        if (marca.getText().toString().length() < 1) {
+        if(marca.getText().toString().length() < 1) {
             marca.setError(getString(R.string.error_before_save));
             retorno = false;
         }
         // Modelo
-        if (modelo.getText().toString().length() < 1) {
+        if(modelo.getText().toString().length() < 1) {
             modelo.setError(getString(R.string.error_before_save));
             retorno = false;
         }
         // Calibre1
-        if (calibre1.getText().toString().length() < 1) {
+        if(calibre1.getText().toString().length() < 1) {
             calibre1.setError(getString(R.string.error_before_save));
             retorno = false;
         }
         // Num Guia
-        if (numGuia.getText().toString().length() < 1) {
+        if(numGuia.getText().toString().length() < 1) {
             numGuia.setError(getString(R.string.error_before_save));
             retorno = false;
         }
         // Num Arma
-        if (numArma.getText().toString().length() < 1) {
+        if(numArma.getText().toString().length() < 1) {
             numArma.setError(getString(R.string.error_before_save));
             retorno = false;
         }
         // Cupo
-        if (cupo.getText().toString().length() < 1) {
+        if(cupo.getText().toString().length() < 1) {
             cupo.setError(getString(R.string.error_before_save));
             retorno = false;
         }
         // Gastado
-        if (gastado.getText().toString().length() < 1) {
+        if(gastado.getText().toString().length() < 1) {
             gastado.setError(getString(R.string.error_before_save));
             retorno = false;
         }
-        if (!retorno) {
+        if(!retorno) {
             mensajeError.setVisibility(View.VISIBLE);
             mensajeError.setText(getString(R.string.error_mensaje_cabecera));
             mensajeError.setTextColor(Color.parseColor("#0000ff"));
