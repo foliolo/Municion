@@ -24,6 +24,7 @@
         android:singleLine="true"
         android:title="@string/pref_password_new" />
 
+<!--Pseudo boton-->
     <Preference
         android:key="kButton"
         android:title="@string/pref_boton" />
