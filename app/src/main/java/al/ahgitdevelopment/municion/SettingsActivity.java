@@ -21,7 +21,6 @@ import android.preference.RingtonePreference;
 import android.support.v7.app.ActionBar;
 import android.text.TextUtils;
 import android.view.MenuItem;
-import android.widget.TextView;
 
 import java.util.List;
 
@@ -232,13 +231,14 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                         editor.putString("password", password1.getText().toString());
                         editor.commit();
                         password1.setText("");
+                        password2.setText("");
                         mensaje.setTitle(R.string.password_save);
                         flag = true;
                     } else {
-                        password2.setText(getString(R.string.password_equal_actual));
+                        mensaje.setTitle(getString(R.string.password_equal_actual));
                     }
                 } else {
-                    password1.setText(getString(R.string.password_short_fail));
+                    mensaje.setTitle(getString(R.string.password_short_fail));
                 }
             return flag;
         }
@@ -246,7 +246,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         /**
          * Valida la contraseña introducida por el usuario frente a la guardada en el sharedPreferences
          *
-         * @return Contraseña valida o invalida
+         * @return password valido o invalido
          */
         private boolean checkPassword() {
             boolean isPassCorrect = false;
@@ -254,7 +254,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                 if (pass.equals(password2.getText().toString())) {
                     isPassCorrect = true;
                 } else {
-                    password2.setText(getString(R.string.password_equal_fail));
+                    mensaje.setTitle(getString(R.string.password_equal_fail));
                 }
             return isPassCorrect;
         }
