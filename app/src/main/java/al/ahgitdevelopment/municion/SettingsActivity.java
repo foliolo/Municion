@@ -18,9 +18,11 @@ import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.preference.RingtonePreference;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.ActionBar;
 import android.text.TextUtils;
 import android.view.MenuItem;
+import android.view.View;
 
 import java.util.List;
 
@@ -127,7 +129,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
 
     /**
      * Set up the {@link android.app.ActionBar}, if the API is available.
-     *
      */
     private void setupActionBar() {
         ActionBar actionBar = getSupportActionBar();
@@ -165,11 +166,23 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                 || NotificationPreferenceFragment.class.getName().equals(fragmentName);
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                getFragmentManager().popBackStackImmediate();
+                finish();
+                break;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
     /**
      * This fragment shows general preferences only. It is used when the
      * activity is showing a two-pane settings UI.
      */
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+//    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     public static class GeneralPreferenceFragment extends PreferenceFragment {
         private EditTextPreference password1;
         private EditTextPreference password2;
@@ -183,7 +196,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             addPreferencesFromResource(R.xml.pref_general);
             preferences = this.getActivity().getSharedPreferences("Preferences", Context.MODE_PRIVATE);
             password1 = (EditTextPreference) findPreference("kPasswordNew");
-            password2 = (EditTextPreference)  findPreference("kPasswordOld");
+            password2 = (EditTextPreference) findPreference("kPasswordOld");
             button = findPreference("kButton");
             mensaje = findPreference("kText");
             setHasOptionsMenu(true);
@@ -225,21 +238,42 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
          */
         private boolean savePassword() {
             boolean flag = false;
-                if (password1.getText().toString().length() >= 4) {
-                    if (checkPassword()) {
-                        SharedPreferences.Editor editor = preferences.edit();
-                        editor.putString("password", password1.getText().toString());
-                        editor.commit();
-                        password1.setText("");
-                        password2.setText("");
-                        mensaje.setTitle(R.string.password_save);
-                        flag = true;
-                    } else {
-                        mensaje.setTitle(getString(R.string.password_equal_actual));
-                    }
+            if (password1.getText().toString().length() >= 4) {
+                if (checkPassword()) {
+                    SharedPreferences.Editor editor = preferences.edit();
+                    editor.putString("password", password1.getText().toString());
+                    editor.commit();
+                    password1.setText("");
+                    password2.setText("");
+                    mensaje.setTitle(R.string.password_save);
+                    Snackbar.make(getView(), R.string.password_save, Snackbar.LENGTH_INDEFINITE)
+                            .setAction(android.R.string.ok, new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                }
+                            })
+                            .show();
+                    flag = true;
                 } else {
-                    mensaje.setTitle(getString(R.string.password_short_fail));
+                    mensaje.setTitle(R.string.password_equal_actual);
+                    Snackbar.make(getView(), R.string.password_equal_actual, Snackbar.LENGTH_INDEFINITE)
+                            .setAction(android.R.string.ok, new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                }
+                            })
+                            .show();
                 }
+            } else {
+                mensaje.setTitle(R.string.password_short_fail);
+                Snackbar.make(getView(), R.string.password_short_fail, Snackbar.LENGTH_INDEFINITE)
+                        .setAction(android.R.string.ok, new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                            }
+                        })
+                        .show();
+            }
             return flag;
         }
 
@@ -250,15 +284,16 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
          */
         private boolean checkPassword() {
             boolean isPassCorrect = false;
-                String pass = preferences.getString("password", "");
-                if (pass.equals(password2.getText().toString())) {
-                    isPassCorrect = true;
-                } else {
-                    mensaje.setTitle(getString(R.string.password_equal_fail));
-                }
+            String pass = preferences.getString("password", "");
+            if (pass.equals(password2.getText().toString())) {
+                isPassCorrect = true;
+            } else {
+                mensaje.setTitle(getString(R.string.password_equal_fail));
+            }
             return isPassCorrect;
         }
     }
+
     /**
      * This fragment shows notification preferences only. It is used when the
      * activity is showing a two-pane settings UI.
