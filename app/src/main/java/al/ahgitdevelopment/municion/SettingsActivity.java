@@ -187,7 +187,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         private EditTextPreference password1;
         private EditTextPreference password2;
         private Preference button;
-        private Preference mensaje;
         private SharedPreferences preferences;
 
         @Override
@@ -198,7 +197,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             password1 = (EditTextPreference) findPreference("kPasswordNew");
             password2 = (EditTextPreference) findPreference("kPasswordOld");
             button = findPreference("kButton");
-            mensaje = findPreference("kText");
             setHasOptionsMenu(true);
             // Al  pulsar sobre el pseuodo botoon se realizan las comprobaciones de la nueva password
             button.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
@@ -245,7 +243,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                     editor.commit();
                     password1.setText("");
                     password2.setText("");
-                    mensaje.setTitle(R.string.password_save);
                     Snackbar.make(getView(), R.string.password_save, Snackbar.LENGTH_INDEFINITE)
                             .setAction(android.R.string.ok, new View.OnClickListener() {
                                 @Override
@@ -255,7 +252,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                             .show();
                     flag = true;
                 } else {
-                    mensaje.setTitle(R.string.password_equal_actual);
                     Snackbar.make(getView(), R.string.password_equal_actual, Snackbar.LENGTH_INDEFINITE)
                             .setAction(android.R.string.ok, new View.OnClickListener() {
                                 @Override
@@ -265,7 +261,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                             .show();
                 }
             } else {
-                mensaje.setTitle(R.string.password_short_fail);
                 Snackbar.make(getView(), R.string.password_short_fail, Snackbar.LENGTH_INDEFINITE)
                         .setAction(android.R.string.ok, new View.OnClickListener() {
                             @Override
@@ -288,7 +283,13 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             if (pass.equals(password2.getText().toString())) {
                 isPassCorrect = true;
             } else {
-                mensaje.setTitle(getString(R.string.password_equal_fail));
+                Snackbar.make(getView(), R.string.password_equal_fail, Snackbar.LENGTH_INDEFINITE)
+                        .setAction(android.R.string.ok, new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                            }
+                        })
+                        .show();
             }
             return isPassCorrect;
         }
