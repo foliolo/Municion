@@ -1,6 +1,5 @@
 package al.ahgitdevelopment.municion.DataModel;
 
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -31,7 +30,7 @@ public class Guia implements Parcelable {
     private String calibre2;
     private int numGuia;
     private int numArma;
-    private Bitmap imagen;
+    private String imagePath;
     private int cupo;
     private int gastado;
 
@@ -51,6 +50,7 @@ public class Guia implements Parcelable {
         numGuia = in.readInt();
         numArma = in.readInt();
 //        imagen = in.readParcelable(Bitmap.class.getClassLoader());
+        imagePath = in.readString();
         cupo = in.readInt();
         gastado = in.readInt();
     }
@@ -64,7 +64,8 @@ public class Guia implements Parcelable {
         calibre2 = extras.getString("calibre2");
         numGuia = extras.getInt("numGuia");
         numArma = extras.getInt("numArma");
-//        imagen = i(Bitmap.class.getClassLoader());
+//        imagen = extras.getParcelable("imagen");
+        imagePath = extras.getString("imagePath");
         gastado = extras.getInt("gastado");
         cupo = extras.getInt("cupo");
     }
@@ -157,12 +158,12 @@ public class Guia implements Parcelable {
         this.numArma = numArma;
     }
 
-    public Bitmap getImagen() {
-        return imagen;
+    public String getImagePath() {
+        return imagePath;
     }
 
-    public void setImagen(Bitmap imagen) {
-        this.imagen = imagen;
+    public void setImagePath(String imagePath) {
+        this.imagePath = imagePath;
     }
 
     public int getCupo() {
@@ -199,7 +200,8 @@ public class Guia implements Parcelable {
         dest.writeString(calibre2);
         dest.writeInt(numGuia);
         dest.writeInt(numArma);
-//        dest.writeParcelable(imagen, flags);
+//        dest.writeParcelable(imagen,Parcelable.PARCELABLE_WRITE_RETURN_VALUE);
+        dest.writeString(imagePath);
         dest.writeInt(cupo);
         dest.writeInt(gastado);
     }

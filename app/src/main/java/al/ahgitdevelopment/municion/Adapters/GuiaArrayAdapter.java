@@ -2,7 +2,8 @@ package al.ahgitdevelopment.municion.Adapters;
 
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
@@ -15,6 +16,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -56,9 +58,10 @@ public class GuiaArrayAdapter extends ArrayAdapter<Guia> {
         TextView cupo = (TextView) convertView.findViewById(R.id.item_cupo_guia);
         TextView gastado = (TextView) convertView.findViewById(R.id.item_gastados_guia);
 
-        if (guia.getImagen() != null)
-            imagen.setImageBitmap(guia.getImagen());
-        else
+//        if (guia.getImagen() != null)
+        if (guia.getImagePath() != null) {
+            imagen.setImageBitmap(getImageFromFile(guia.getImagePath()));
+        } else
             imagen.setImageResource(R.drawable.pistola);
         apodo.setText(guia.getApodo());
         numGuia.setText(String.valueOf(guia.getNumGuia()));
@@ -69,11 +72,10 @@ public class GuiaArrayAdapter extends ArrayAdapter<Guia> {
             @Override
             public void onClick(View v) {
                 FragmentMainActivity.imagePosition = position;
-
-                if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-                    dispatchTakePictureCamera2Intent();
-                else
-                    dispatchTakePictureIntent();
+//                if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+//                    dispatchTakePictureCamera2Intent();
+//                else
+                dispatchTakePictureIntent();
             }
         });
 
@@ -114,8 +116,8 @@ public class GuiaArrayAdapter extends ArrayAdapter<Guia> {
             }
             // Continue only if the File was successfully created
             if (photoFile != null) {
-                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(photoFile));
-//                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoFile);
+//                FragmentMainActivity.fileImagePath = mCurrentPhotoPath;
+                FragmentMainActivity.fileImagePath = photoFile;
                 ((AppCompatActivity) context).startActivityForResult(takePictureIntent, FragmentMainActivity.REQUEST_IMAGE_CAPTURE);
             }
         }
@@ -127,7 +129,9 @@ public class GuiaArrayAdapter extends ArrayAdapter<Guia> {
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         String imageFileName = "JPEG_" + timeStamp;
 //        File storageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
-        File storageDir = context.getCacheDir() /*+ File.separator + "Armas")*/;
+//        File storageDir = context.getCacheDir() /*+ File.separator + "Armas")*/;
+        File storageDir = context.getFilesDir() /*+ File.separator + "Armas")*/;
+//        File storageDir = context.getExternalCacheDir(); /*+ File.separator + "Armas")*/
 
         if (!storageDir.exists()) {
             storageDir.mkdir();
@@ -140,9 +144,31 @@ public class GuiaArrayAdapter extends ArrayAdapter<Guia> {
                 ".jpg",         /* suffix */
                 storageDir      /* directory */
         );
+        image.setWritable(true, false); //Da permisos para que otra aplicacion pueda escribir en el fichero temporal de la memoria cache reservada
 
         // Save a file: path for use with ACTION_VIEW intents
         mCurrentPhotoPath = "file:" + image.getAbsolutePath();
         return image;
+    }
+
+    private Bitmap getImageFromFile(String imageUri) {
+//        return BitmapFactory.decodeFile(imageUri);
+//        return BitmapFactory.decodeFile(new File(imageUri).getAbsolutePath());
+
+        Bitmap bitmap = null;
+        try {
+            File f = new File(imageUri);
+
+            FileInputStream fis = new FileInputStream(f);
+//            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
+
+//            FileInputStream fis = new FileInputStream(new File(imageUri));
+            bitmap = BitmapFactory.decodeStream(fis);
+            fis.close();
+        } catch (Exception e) {
+            bitmap = null;
+        }
+
+        return bitmap;
     }
 }

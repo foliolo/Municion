@@ -35,7 +35,7 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
     public static final String KEY_GUIA_CALIBRE2 = "calibre2";
     public static final String KEY_GUIA_NUM_GUIA = "num_guia";
     public static final String KEY_GUIA_NUM_ARMA = "num_arma";
-    public static final String KEY_GUIA_IMAGEN = "imagen";
+    public static final String KEY_GUIA_IMAGEN = "imagen_uri";
     public static final String KEY_GUIA_CUPO = "cupo";
     public static final String KEY_GUIA_GASTADO = "gastado";
     // Table COMPRAS  - column names
@@ -48,7 +48,7 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
     public static final String KEY_COMPRA_PESO = "peso";
     public static final String KEY_COMPRA_MARCA = "marca";
     public static final String KEY_COMPRA_TIENDA = "tienda";
-    public static final String KEY_COMPRA_IMAGEN = "imagen";
+    public static final String KEY_COMPRA_IMAGEN = "imagen_uri";
     public static final String KEY_COMPRA_VALORACION = "valoracion";
     // Table LICENCIAS  - column names
     public static final String KEY_LICENCIAS_TIPO = "tipo";
@@ -58,7 +58,7 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
     // Logcat tag
     private static final String LOG = "DatabaseHelper";
     // Database Version
-    private static final int DATABASE_VERSION = 12;
+    private static final int DATABASE_VERSION = 1;
     // Database Name
     private static final String DATABASE_NAME = "DBMunicion.db";
     // Table Create Statements
@@ -75,7 +75,7 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
             + KEY_GUIA_CALIBRE2 + " TEXT,"
             + KEY_GUIA_NUM_GUIA + " INTEGER NOT NULL,"
             + KEY_GUIA_NUM_ARMA + " INTEGER NOT NULL,"
-            + KEY_GUIA_IMAGEN + " BLOB,"
+            + KEY_GUIA_IMAGEN + " TEXT,"
             + KEY_GUIA_CUPO + " INTEGER NOT NULL,"
             + KEY_GUIA_GASTADO + " INTEGER NOT NULL,"
             + " FOREIGN KEY (" + KEY_GUIA_ID_COMPRA + ") REFERENCES " + TABLE_COMPRAS + "(" + KEY_ID + ")"
@@ -94,7 +94,7 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
             + KEY_COMPRA_PESO + " TEXT,"
             + KEY_COMPRA_MARCA + " TEXT,"
             + KEY_COMPRA_TIENDA + " TEXT,"
-            + KEY_COMPRA_IMAGEN + " BLOB,"
+            + KEY_COMPRA_IMAGEN + " TEXT,"
             + KEY_COMPRA_VALORACION + " REAL"
             + ")";
 
@@ -312,7 +312,8 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
                 guia.setNumGuia(cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_GUIA_NUM_GUIA)));
                 guia.setNumArma(cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_GUIA_NUM_ARMA)));
                 guia.setNumArma(cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_GUIA_NUM_ARMA)));
-                guia.setImagen(getImageFromBlob(cursor.getBlob(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_GUIA_IMAGEN))));
+//                guia.setImagen(getImageFromUri(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_GUIA_IMAGEN))));
+                guia.setImagePath(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_GUIA_IMAGEN)));
                 guia.setCupo(cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_GUIA_CUPO)));
                 guia.setGastado(cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_GUIA_GASTADO)));
 
@@ -407,7 +408,7 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
                         KEY_GUIA_CALIBRE2 + ", " +
                         KEY_GUIA_NUM_GUIA + ", " +
                         KEY_GUIA_NUM_ARMA + ", " +
-//                        KEY_GUIA_IMAGEN + ", " + //TODO incluir imagen
+                        KEY_GUIA_IMAGEN + ", " +
                         KEY_GUIA_CUPO + ", " +
                         KEY_GUIA_GASTADO +
                         ") VALUES (" +
@@ -421,7 +422,7 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
                         "'" + guia.getCalibre2() + "' , " +
                         "'" + guia.getNumGuia() + "' , " +
                         "'" + guia.getNumArma() + "' , " +
-//                        "'" + guia.getImagen() + "' , " +
+                        "'" + guia.getImagePath() + "' , " +
                         "'" + guia.getCupo() + "' , " +
                         "'" + guia.getGastado() + "'" +
                         ");");
@@ -499,6 +500,13 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
             return BitmapFactory.decodeByteArray(img, 0, img.length);
         else
 //            return BitmapFactory.decodeResource(Resources.getSystem(), R.drawable.pistola);
+            return BitmapFactory.decodeResource(context.getResources(), R.drawable.pistola);
+    }
+
+    private Bitmap getImageFromUri(String imageUri) {
+        if (!imageUri.equals("null"))
+            return BitmapFactory.decodeFile(imageUri);
+        else
             return BitmapFactory.decodeResource(context.getResources(), R.drawable.pistola);
     }
 }

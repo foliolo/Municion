@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -29,6 +28,8 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import al.ahgitdevelopment.municion.Adapters.CompraArrayAdapter;
@@ -41,22 +42,21 @@ import al.ahgitdevelopment.municion.DataModel.Licencia;
 public class FragmentMainActivity extends AppCompatActivity {
 
     public static final int REQUEST_IMAGE_CAPTURE = 100;
+    public static File fileImagePath = null;
+    public static View auxView = null;
+    public static ActionMode mActionMode = null;
+    public static ActionMode.Callback mActionModeCallback = null;
+    public static int imagePosition;
+    private static DataBaseSQLiteHelper dbSqlHelper;
+    private static ArrayList<Guia> guias;
+    private static ArrayList<Compra> compras;
+    private static ArrayList<Licencia> licencias;
     private final int GUIA_COMPLETED = 1;
     private final int COMPRA_COMPLETED = 2;
     private final int LICENCIA_COMPLETED = 3;
     private final int GUIA_UPDATED = 4;
     private final int COMPRA_UPDATED = 5;
     private final int LICENCIA_UPDATED = 6;
-
-    public static View auxView = null;
-    public static ActionMode mActionMode = null;
-    public static ActionMode.Callback mActionModeCallback = null;
-    private static DataBaseSQLiteHelper dbSqlHelper;
-    private static ArrayList<Guia> guias;
-    private static ArrayList<Compra> compras;
-    private static ArrayList<Licencia> licencias;
-    public static int imagePosition;
-
     public Toolbar toolbar;
     /**
      * The {@link PagerAdapter} that will provide
@@ -288,13 +288,16 @@ public class FragmentMainActivity extends AppCompatActivity {
         if (resultCode == RESULT_OK) {
             switch (requestCode) {
                 case REQUEST_IMAGE_CAPTURE:
+//                    if (data != null) {
+//                        Bundle extras = data.getExtras();
+//                        imageBitmap = (Bitmap) extras.get("data");
+//                        updateImage(imageBitmap, extras.getParcelable(MediaStore.EXTRA_OUTPUT));
+//                    } else
+//                        Log.i(getPackageName(), "Intent sin informacion");
+
+
                     if (data != null) {
-                        if (data.hasExtra(MediaStore.EXTRA_OUTPUT))
-                            imageBitmap = (Bitmap) data.getExtras().get(MediaStore.EXTRA_OUTPUT);
-                        else if (data.hasExtra("imageFile")) {
-                            File file = (File) data.getSerializableExtra("imageFile");
-                            imageBitmap = BitmapFactory.decodeFile(file.getAbsolutePath());
-                        }
+                        imageBitmap = (Bitmap) data.getExtras().get("data");
                         updateImage(imageBitmap);
                     } else
                         Log.i(getPackageName(), "Intent sin informacion");
@@ -330,7 +333,10 @@ public class FragmentMainActivity extends AppCompatActivity {
         if (imageBitmap != null) {
             switch (mViewPager.getCurrentItem()) {
                 case 0:
-                    guias.get(imagePosition).setImagen(imageBitmap);
+//                    guias.get(imagePosition).setImagen(getImageFromUri(imageBitmap.toString()));
+//                    guias.get(imagePosition).setImagen(imageBitmap);
+                    saveBitmapToFile(imageBitmap);
+                    guias.get(imagePosition).setImagePath(fileImagePath.getAbsolutePath());
                     ((PlaceholderFragment) mSectionsPagerAdapter.getItem(mViewPager.getCurrentItem())).guiaArrayAdapter.notifyDataSetChanged();
                     break;
                 case 1:
@@ -340,6 +346,24 @@ public class FragmentMainActivity extends AppCompatActivity {
             }
         } else
             Log.e(getPackageName(), "Error en la devolucion de la imagens");
+    }
+
+    private void saveBitmapToFile(Bitmap imageBitmap) {
+        FileOutputStream out = null;
+        try {
+            out = new FileOutputStream(fileImagePath);
+            imageBitmap.compress(Bitmap.CompressFormat.JPEG, 100, out); // imageBitmap is your Bitmap instance
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (out != null) {
+                    out.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     private void updateGuia(Intent data) {
@@ -409,6 +433,13 @@ public class FragmentMainActivity extends AppCompatActivity {
         dbSqlHelper.close();
 
         Toast.makeText(FragmentMainActivity.this, R.string.guardadoBBDD, Toast.LENGTH_SHORT).show();
+    }
+
+    private Bitmap getImageFromUri(String imageUri) {
+        if (!imageUri.equals("null"))
+            return BitmapFactory.decodeFile(imageUri);
+        else
+            return BitmapFactory.decodeResource(getResources(), R.drawable.pistola);
     }
 
 
