@@ -8,7 +8,7 @@
     <string name="password_save_fail">Contraseña invalida</string>
     <string name="password_short_fail">Contraseña demasiado corta</string>
     <string name="password_equal_fail">Las contraseñas no coinciden</string>
-    <string name="title_activity_fragment_main">Menú Principal</string>
+    <string name="title_activity_fragment_main">Munición</string>
     <string name="action_settings">Configuración</string>
     <string name="section_format">Hello World from section: %1$d</string>
     <string name="guardar">Guardar</string>

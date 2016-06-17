@@ -4,8 +4,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -312,7 +310,6 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
                 guia.setNumGuia(cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_GUIA_NUM_GUIA)));
                 guia.setNumArma(cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_GUIA_NUM_ARMA)));
                 guia.setNumArma(cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_GUIA_NUM_ARMA)));
-//                guia.setImagen(getImageFromUri(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_GUIA_IMAGEN))));
                 guia.setImagePath(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_GUIA_IMAGEN)));
                 guia.setCupo(cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_GUIA_CUPO)));
                 guia.setGastado(cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_GUIA_GASTADO)));
@@ -347,7 +344,7 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
                     compra.setPeso(cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_COMPRA_PESO)));
                     compra.setMarca(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_COMPRA_MARCA)));
                     compra.setTienda(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_COMPRA_TIENDA)));
-                    compra.setImagen(getImageFromBlob(cursor.getBlob(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_COMPRA_IMAGEN)))); // TODO; GESTION LA IMAGEN
+                    compra.setImagePath(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_COMPRA_IMAGEN)));
                     compra.setValoracion(cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_COMPRA_VALORACION)));
 
                     // Adding contact to list
@@ -447,7 +444,7 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
                         KEY_COMPRA_PESO + ", " +
                         KEY_COMPRA_MARCA + ", " +
                         KEY_COMPRA_TIENDA + ", " +
-//                        KEY_COMPRA_IMAGEN+ ", " + // //TODO incluir imagen
+                        KEY_COMPRA_IMAGEN + ", " +
                         KEY_COMPRA_VALORACION +
                         ") VALUES (" +
                         "'" + compra.getCalibre1() + "' , " +
@@ -459,7 +456,7 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
                         "'" + compra.getPeso() + "' , " +
                         "'" + compra.getMarca() + "' , " +
                         "'" + compra.getTienda() + "' , " +
-//                        "'" + compra.getImagen() + "' , " +
+                        "'" + compra.getImagePath() + "' , " +
                         "'" + compra.getValoracion() + "'" +
                         ");");
             }
@@ -487,27 +484,6 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
             }
         }
         Log.d(context.getPackageName(), "Licencia actualizada en BBDD");
-    }
-
-    /**
-     * Convierte un Blob de la BBDD en Imagen. Los Blob son byte[].
-     *
-     * @param img Imagen en byte[]
-     * @return El bitmap con la imagen
-     */
-    private Bitmap getImageFromBlob(byte[] img) {
-        if (img != null)
-            return BitmapFactory.decodeByteArray(img, 0, img.length);
-        else
-//            return BitmapFactory.decodeResource(Resources.getSystem(), R.drawable.pistola);
-            return BitmapFactory.decodeResource(context.getResources(), R.drawable.pistola);
-    }
-
-    private Bitmap getImageFromUri(String imageUri) {
-        if (!imageUri.equals("null"))
-            return BitmapFactory.decodeFile(imageUri);
-        else
-            return BitmapFactory.decodeResource(context.getResources(), R.drawable.pistola);
     }
 }
 

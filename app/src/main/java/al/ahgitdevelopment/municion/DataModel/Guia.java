@@ -64,7 +64,6 @@ public class Guia implements Parcelable {
         calibre2 = extras.getString("calibre2");
         numGuia = extras.getInt("numGuia");
         numArma = extras.getInt("numArma");
-//        imagen = extras.getParcelable("imagen");
         imagePath = extras.getString("imagePath");
         gastado = extras.getInt("gastado");
         cupo = extras.getInt("cupo");
@@ -200,7 +199,6 @@ public class Guia implements Parcelable {
         dest.writeString(calibre2);
         dest.writeInt(numGuia);
         dest.writeInt(numArma);
-//        dest.writeParcelable(imagen,Parcelable.PARCELABLE_WRITE_RETURN_VALUE);
         dest.writeString(imagePath);
         dest.writeInt(cupo);
         dest.writeInt(gastado);

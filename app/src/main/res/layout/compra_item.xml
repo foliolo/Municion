@@ -6,12 +6,13 @@
 
     <ImageView
         android:id="@+id/imageMunicion"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
+        android:layout_width="90dp"
+        android:layout_height="90dp"
         android:clickable="true"
-        android:scaleType="fitCenter"
+        android:scaleType="centerCrop"
         android:src="@drawable/municion1"
-        android:cropToPadding="false"/>
+        android:cropToPadding="false"
+        android:layout_margin="8dp"/>
 
 
     <LinearLayout

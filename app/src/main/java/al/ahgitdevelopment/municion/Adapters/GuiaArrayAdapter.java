@@ -22,7 +22,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
-import al.ahgitdevelopment.municion.CameraActivity;
 import al.ahgitdevelopment.municion.DataModel.Guia;
 import al.ahgitdevelopment.municion.FragmentMainActivity;
 import al.ahgitdevelopment.municion.R;
@@ -58,7 +57,6 @@ public class GuiaArrayAdapter extends ArrayAdapter<Guia> {
         TextView cupo = (TextView) convertView.findViewById(R.id.item_cupo_guia);
         TextView gastado = (TextView) convertView.findViewById(R.id.item_gastados_guia);
 
-//        if (guia.getImagen() != null)
         if (guia.getImagePath() != null) {
             imagen.setImageBitmap(getImageFromFile(guia.getImagePath()));
         } else
@@ -72,34 +70,12 @@ public class GuiaArrayAdapter extends ArrayAdapter<Guia> {
             @Override
             public void onClick(View v) {
                 FragmentMainActivity.imagePosition = position;
-//                if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-//                    dispatchTakePictureCamera2Intent();
-//                else
                 dispatchTakePictureIntent();
             }
         });
 
         // Return the completed view to render on screen
         return convertView;
-    }
-
-    private void dispatchTakePictureCamera2Intent() {
-        Intent takePictureIntent = new Intent(context, CameraActivity.class);
-
-        // Ensure that there's a camera activity to handle the intent
-        if (takePictureIntent.resolveActivity(context.getPackageManager()) != null) {
-            // Create the File where the photo should go
-            File photoFile = null;
-            try {
-                photoFile = createImageFile();
-            } catch (IOException ex) {
-                Log.e(context.getPackageName(), "IOException");
-            }
-            // Continue only if the File was successfully created
-            if (photoFile != null) {
-                ((AppCompatActivity) context).startActivityForResult(takePictureIntent, FragmentMainActivity.REQUEST_IMAGE_CAPTURE);
-            }
-        }
     }
 
     private void dispatchTakePictureIntent() {
@@ -116,7 +92,6 @@ public class GuiaArrayAdapter extends ArrayAdapter<Guia> {
             }
             // Continue only if the File was successfully created
             if (photoFile != null) {
-//                FragmentMainActivity.fileImagePath = mCurrentPhotoPath;
                 FragmentMainActivity.fileImagePath = photoFile;
                 ((AppCompatActivity) context).startActivityForResult(takePictureIntent, FragmentMainActivity.REQUEST_IMAGE_CAPTURE);
             }
@@ -152,17 +127,11 @@ public class GuiaArrayAdapter extends ArrayAdapter<Guia> {
     }
 
     private Bitmap getImageFromFile(String imageUri) {
-//        return BitmapFactory.decodeFile(imageUri);
-//        return BitmapFactory.decodeFile(new File(imageUri).getAbsolutePath());
-
         Bitmap bitmap = null;
         try {
             File f = new File(imageUri);
 
             FileInputStream fis = new FileInputStream(f);
-//            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
-
-//            FileInputStream fis = new FileInputStream(new File(imageUri));
             bitmap = BitmapFactory.decodeStream(fis);
             fis.close();
         } catch (Exception e) {

@@ -2,10 +2,11 @@ package al.ahgitdevelopment.municion.Adapters;
 
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
+import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,7 +28,6 @@ import al.ahgitdevelopment.municion.R;
  * Created by Alberto on 28/05/2016.
  */
 public class CompraArrayAdapter extends ArrayAdapter<Compra> {
-    private static final int REQUEST_IMAGE_CAPTURE = 0;
     private Context context;
     private String mCurrentPhotoPath;
 
@@ -53,8 +53,8 @@ public class CompraArrayAdapter extends ArrayAdapter<Compra> {
         TextView unidades = (TextView) convertView.findViewById(R.id.item_unidades_compra);
         TextView precio = (TextView) convertView.findViewById(R.id.item_precio_compra);
 
-        if (compra.getImagen() != null)
-            imagen.setImageBitmap(compra.getImagen());
+        if (compra.getImagePath() != null)
+            imagen.setImageBitmap(BitmapFactory.decodeFile(compra.getImagePath()));
         else
             imagen.setImageResource(R.drawable.municion1);
 
@@ -69,17 +69,18 @@ public class CompraArrayAdapter extends ArrayAdapter<Compra> {
         imagen.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                dispatchTakePictureIntent(position);
+                FragmentMainActivity.imagePosition = position;
+                dispatchTakePictureIntent();
             }
         });
-
 
         // Return the completed view to render on screen
         return convertView;
     }
 
-    private void dispatchTakePictureIntent(int position) {
+    private void dispatchTakePictureIntent() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+
         // Ensure that there's a camera activity to handle the intent
         if (takePictureIntent.resolveActivity(context.getPackageManager()) != null) {
             // Create the File where the photo should go
@@ -87,13 +88,12 @@ public class CompraArrayAdapter extends ArrayAdapter<Compra> {
             try {
                 photoFile = createImageFile();
             } catch (IOException ex) {
-                // Error occurred while creating the File
+                Log.e(context.getPackageName(), "IOException");
             }
             // Continue only if the File was successfully created
             if (photoFile != null) {
-                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(photoFile));
-                FragmentMainActivity.imagePosition = position;
-                ((AppCompatActivity) context).startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+                FragmentMainActivity.fileImagePath = photoFile;
+                ((AppCompatActivity) context).startActivityForResult(takePictureIntent, FragmentMainActivity.REQUEST_IMAGE_CAPTURE);
             }
         }
     }
@@ -101,14 +101,22 @@ public class CompraArrayAdapter extends ArrayAdapter<Compra> {
     private File createImageFile() throws IOException {
         // Create an image file name
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String imageFileName = "JPEG_" + timeStamp + "_";
-        File storageDir = new File(context.getFilesDir() + File.separator + "Armas");
+        String imageFileName = "JPEG_" + timeStamp;
+//        File storageDir = new File(context.getFilesDir() + File.separator + "Municion");
+        File storageDir = context.getFilesDir() /*+ File.separator + "Municion")*/;
+
+        if (!storageDir.exists()) {
+            storageDir.mkdir();
+            Log.d(context.getPackageName(), "Directory created");
+        } else
+            Log.d(context.getPackageName(), "Directory exist");
 
         File image = File.createTempFile(
                 imageFileName,  /* prefix */
                 ".jpg",         /* suffix */
                 storageDir      /* directory */
         );
+        image.setWritable(true, false); //Da permisos para que otra aplicacion pueda escribir en el fichero temporal de la memoria cache reservada
 
         // Save a file: path for use with ACTION_VIEW intents
         mCurrentPhotoPath = "file:" + image.getAbsolutePath();

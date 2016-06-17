@@ -330,17 +330,18 @@ public class FragmentMainActivity extends AppCompatActivity {
     }
 
     private void updateImage(Bitmap imageBitmap) {
+        //Guardado en disco de la imagen tomada con la foto
+        saveBitmapToFile(imageBitmap);
+
+        //Actualizacion de las listas para mostrar las nuevas imagenes
         if (imageBitmap != null) {
             switch (mViewPager.getCurrentItem()) {
                 case 0:
-//                    guias.get(imagePosition).setImagen(getImageFromUri(imageBitmap.toString()));
-//                    guias.get(imagePosition).setImagen(imageBitmap);
-                    saveBitmapToFile(imageBitmap);
                     guias.get(imagePosition).setImagePath(fileImagePath.getAbsolutePath());
                     ((PlaceholderFragment) mSectionsPagerAdapter.getItem(mViewPager.getCurrentItem())).guiaArrayAdapter.notifyDataSetChanged();
                     break;
                 case 1:
-                    compras.get(imagePosition).setImagen(imageBitmap);
+                    compras.get(imagePosition).setImagePath(fileImagePath.getAbsolutePath());
                     ((PlaceholderFragment) mSectionsPagerAdapter.getItem(mViewPager.getCurrentItem())).compraArrayAdapter.notifyDataSetChanged();
                     break;
             }
@@ -381,7 +382,7 @@ public class FragmentMainActivity extends AppCompatActivity {
             guia.setCalibre2(data.getExtras().getString("calibre2"));
             guia.setNumGuia(data.getExtras().getInt("numGuia"));
             guia.setNumArma(data.getExtras().getInt("numArma"));
-//            guia.setImagen(data.getExtras().getString("imagen"));
+            guia.setImagePath(data.getExtras().getString("imagePath"));
             guia.setCupo(data.getExtras().getInt("cupo"));
             guia.setGastado(data.getExtras().getInt("gastado"));
 
@@ -404,7 +405,7 @@ public class FragmentMainActivity extends AppCompatActivity {
             compra.setMarca(data.getExtras().getString("marca"));
             compra.setTienda(data.getExtras().getString("tienda"));
             compra.setValoracion(data.getExtras().getFloat("valoracion"));
-//            compra.setImagen(data.getExtras().getString("imagen"));
+            compra.setImagePath(data.getExtras().getString("imagePath"));
 
             ((PlaceholderFragment) mSectionsPagerAdapter.getItem(mViewPager.getCurrentItem())).compraArrayAdapter.notifyDataSetChanged();
         }

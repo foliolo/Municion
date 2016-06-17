@@ -1,6 +1,5 @@
 package al.ahgitdevelopment.municion.DataModel;
 
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -35,7 +34,7 @@ public class Compra implements Parcelable {
     private String marca;
     private String tienda;
     private float valoracion;
-    private Bitmap imagen;
+    private String imagePath;
 
     public Compra() {
     }
@@ -56,7 +55,7 @@ public class Compra implements Parcelable {
         marca = in.readString();
         tienda = in.readString();
         valoracion = in.readFloat();
-//        imagen = in.readString();
+        imagePath = in.readString();
     }
 
     public Compra(Bundle extras) {
@@ -70,7 +69,7 @@ public class Compra implements Parcelable {
         marca = extras.getString("marca");
         tienda = extras.getString("tienda");
         valoracion = extras.getFloat("valoracion");
-//        imagen = new Bitmap(extras.getString(""));
+        imagePath = extras.getString("imagePath");
     }
 
     public int getId() {
@@ -117,10 +116,6 @@ public class Compra implements Parcelable {
         return fecha;
     }
 
-    public void setFecha(Calendar fecha) {
-        this.fecha = fecha;
-    }
-
     public void setFecha(String fecha) {
         Calendar auxFecha = Calendar.getInstance();
         try {
@@ -132,6 +127,10 @@ public class Compra implements Parcelable {
             e.printStackTrace();
             this.fecha = auxFecha;
         }
+    }
+
+    public void setFecha(Calendar fecha) {
+        this.fecha = fecha;
     }
 
     public String getTipo() {
@@ -174,12 +173,12 @@ public class Compra implements Parcelable {
         this.valoracion = valoracion;
     }
 
-    public Bitmap getImagen() {
-        return imagen;
+    public String getImagePath() {
+        return imagePath;
     }
 
-    public void setImagen(Bitmap imagen) {
-        this.imagen = imagen;
+    public void setImagePath(String imagePath) {
+        this.imagePath = imagePath;
     }
 
     @Override
@@ -204,8 +203,6 @@ public class Compra implements Parcelable {
         dest.writeString(marca);
         dest.writeString(tienda);
         dest.writeFloat(valoracion);
-//        dest.writeString(Base64.encodeToString(imagen)); //String de la ruta en memoria
-
-
+        dest.writeString(imagePath);
     }
 }
