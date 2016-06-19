@@ -8,8 +8,7 @@
               android:paddingLeft="@dimen/activity_horizontal_margin"
               android:paddingRight="@dimen/activity_horizontal_margin"
               android:paddingTop="@dimen/activity_vertical_margin"
-              tools:context=".LoginPasswordActivity"
-    >
+              tools:context=".LoginPasswordActivity">
 
     <android.support.design.widget.TextInputLayout
         android:id="@+id/text_input_layout1"
@@ -21,8 +20,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/lbl_insert_password"
-            android:inputType="numberPassword"
-            android:text="1234"/>
+            android:inputType="numberPassword" />
     </android.support.design.widget.TextInputLayout>
 
     <android.support.design.widget.TextInputLayout
@@ -36,7 +34,7 @@
             android:layout_height="wrap_content"
             android:ems="15"
             android:hint="@string/lbl2_insert_password"
-            android:inputType="numberPassword"/>
+            android:inputType="numberPassword" />
     </android.support.design.widget.TextInputLayout>
 
     <Button
