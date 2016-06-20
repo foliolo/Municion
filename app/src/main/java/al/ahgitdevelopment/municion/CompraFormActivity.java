@@ -45,10 +45,11 @@ public class CompraFormActivity extends AppCompatActivity {
     private EditText marcaMunicion;
     private EditText tienda;
     private RatingBar valoracion;
+    //    private ImageView imagen;
     // Mensaje de error antes de guardar
     private TextView mensajeError;
+    private String imagePath;
 
-    //TODO: GESTIONAR LA IMAGEN
 
     /**
      * Inicializa la actividad
@@ -74,9 +75,9 @@ public class CompraFormActivity extends AppCompatActivity {
         marcaMunicion = (EditText) findViewById(R.id.form_marca_municion);
         tienda = (EditText) findViewById(R.id.form_tienda);
         valoracion = (RatingBar) findViewById(R.id.form_ratingBar_valoracion);
-//        imagen =
-        // Mensaje de error antes de guardar
+//        imagen = (ImageView) findViewById(R.id.imagen);
         mensajeError = (TextView) findViewById(R.id.form_mensaje_compra);
+        imagePath = null;
 
         //Carga de datos (en caso de modificacion)
         if (getIntent().getExtras() != null) {
@@ -102,7 +103,8 @@ public class CompraFormActivity extends AppCompatActivity {
                 marcaMunicion.setText(compra.getMarca());
                 tienda.setText(compra.getTienda());
                 valoracion.setRating(compra.getValoracion());
-//                imagen.set
+//                imagen.setImageBitmap(BitmapFactory.decodeFile(compra.getImagePath()));
+                imagePath = compra.getImagePath();
             } catch (NullPointerException e) {
                 e.printStackTrace();
             }
@@ -134,15 +136,6 @@ public class CompraFormActivity extends AppCompatActivity {
                 }
             }
         });
-
-//        //Para permitir la edicion
-//        fecha.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                callDatePickerFragment();
-//            }
-//        });
-
 
         // Evento que saca el calendario al recibir el foco en el campo fecha
         fecha.setOnFocusChangeListener(new View.OnFocusChangeListener() {
@@ -252,36 +245,46 @@ public class CompraFormActivity extends AppCompatActivity {
                 calibre2.setText(null);
             }
             bundle.putString("calibre2", calibre2.getText().toString());
+
             if (unidades.getText().toString().isEmpty()) {
                 unidades.setText("0");
             }
             bundle.putInt("unidades", Integer.parseInt(unidades.getText().toString()));
+
             bundle.putDouble("precio", Double.parseDouble(precio.getText().toString().replace("€", "")));
             if (fecha.getText().toString().isEmpty()) {
                 fecha.setText("");
             }
             bundle.putString("fecha", fecha.getText().toString());
+
             if (tipoMunicion.getText().toString().isEmpty()) {
                 tipoMunicion.setText("");
             }
             bundle.putString("tipo", tipoMunicion.getText().toString());
+
             if (pesoMunicion.getText().toString().isEmpty()) {
                 pesoMunicion.setText("0");
             }
             bundle.putInt("peso", Integer.parseInt(pesoMunicion.getText().toString()));
+
             if (marcaMunicion.getText().toString().isEmpty()) {
                 marcaMunicion.setText(null);
             }
             bundle.putString("marca", marcaMunicion.getText().toString());
+
             if (tienda.getText().toString().isEmpty()) {
                 tienda.setText(null);
             }
             bundle.putString("tienda", tienda.getText().toString());
+
             bundle.putFloat("valoracion", valoracion.getRating());
+
+            bundle.putString("imagePath", imagePath);
 
             //Paso de vuelta de la posicion del item en el array
             if (getIntent().getExtras() != null)
                 bundle.putInt("position", getIntent().getExtras().getInt("position", -1));
+
             result.putExtras(bundle);
 
             setResult(Activity.RESULT_OK, result);

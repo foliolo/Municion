@@ -67,6 +67,7 @@ public class Guia implements Parcelable {
         imagePath = extras.getString("imagePath");
         gastado = extras.getInt("gastado");
         cupo = extras.getInt("cupo");
+        imagePath = extras.getString("imagePath");
     }
 
     public int getId() {

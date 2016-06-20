@@ -2,7 +2,6 @@ package al.ahgitdevelopment.municion.Adapters;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.provider.MediaStore;
@@ -16,7 +15,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -58,7 +56,7 @@ public class GuiaArrayAdapter extends ArrayAdapter<Guia> {
         TextView gastado = (TextView) convertView.findViewById(R.id.item_gastados_guia);
 
         if (guia.getImagePath() != null) {
-            imagen.setImageBitmap(getImageFromFile(guia.getImagePath()));
+            imagen.setImageBitmap(BitmapFactory.decodeFile(guia.getImagePath()));
         } else
             imagen.setImageResource(R.drawable.pistola);
         apodo.setText(guia.getApodo());
@@ -124,20 +122,5 @@ public class GuiaArrayAdapter extends ArrayAdapter<Guia> {
         // Save a file: path for use with ACTION_VIEW intents
         mCurrentPhotoPath = "file:" + image.getAbsolutePath();
         return image;
-    }
-
-    private Bitmap getImageFromFile(String imageUri) {
-        Bitmap bitmap = null;
-        try {
-            File f = new File(imageUri);
-
-            FileInputStream fis = new FileInputStream(f);
-            bitmap = BitmapFactory.decodeStream(fis);
-            fis.close();
-        } catch (Exception e) {
-            bitmap = null;
-        }
-
-        return bitmap;
     }
 }

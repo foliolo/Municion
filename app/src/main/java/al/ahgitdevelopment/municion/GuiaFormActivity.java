@@ -35,6 +35,7 @@ public class GuiaFormActivity extends AppCompatActivity {
     private EditText gastado;
     // Mensaje de error antes de guardar
     private TextView mensajeError;
+    private String imagePath;
 
     /**
      * Inicializa la actividad
@@ -60,6 +61,7 @@ public class GuiaFormActivity extends AppCompatActivity {
         cupo = (EditText) findViewById(R.id.form_cupo_anual);
         gastado = (EditText) findViewById(R.id.form_cartuchos_gastados);
         mensajeError = (TextView) findViewById(R.id.form_mensaje_guia);
+        imagePath = null;
 
         //Carga de datos (en caso de modificacion)
         if (getIntent().getExtras() != null) {
@@ -82,6 +84,7 @@ public class GuiaFormActivity extends AppCompatActivity {
                 numArma.setText(String.valueOf(guia.getNumArma()));
                 gastado.setText(String.valueOf(guia.getGastado()));
                 cupo.setText(String.valueOf(guia.getCupo()));
+                imagePath = guia.getImagePath();
             } catch (NullPointerException e) {
                 e.printStackTrace();
             }
@@ -266,6 +269,9 @@ public class GuiaFormActivity extends AppCompatActivity {
             //Paso de vuelta de la posicion del item en el array
             if (getIntent().getExtras() != null)
                 bundle.putInt("position", getIntent().getExtras().getInt("position", -1));
+
+            bundle.putString("imagePath", imagePath);
+
             result.putExtras(bundle);
 
             setResult(Activity.RESULT_OK, result);
