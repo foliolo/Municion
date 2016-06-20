@@ -19,4 +19,56 @@
         <item>AER - Autorización especial replicas</item>
         <item>Libro de coleccionista</item>
     </string-array>
+
+
+    <string-array name="A">
+        <item>Pistola</item>
+        <item>Escopeta</item>
+        <item>Rifle</item>
+        <item>Revolver</item>
+        <item>Avancarga</item>
+    </string-array>
+
+    <string-array name="B">
+        <item>Pistola</item>
+        <item>Revolver</item>
+    </string-array>
+
+    <string-array name="C">
+        <item>Revolver</item>
+    </string-array>
+
+    <string-array name="D">
+        <item>Rifle</item>
+    </string-array>
+
+    <string-array name="E">
+        <item>Escopeta</item>
+        <item>Rifle</item>
+    </string-array>
+
+    <string-array name="F">
+        <item>Pistola</item>
+        <item>Escopeta</item>
+        <item>Rifle</item>
+        <item>Revolver</item>
+    </string-array>
+
+    <string-array name="AE">
+        <item>Avancarga</item>
+    </string-array>
+
+    <string-array name="AER">
+        <item>Pistola</item>
+        <item>Rifle</item>
+        <item>Revolver</item>
+    </string-array>
+
+    <string-array name="Libro">
+        <item>Pistola</item>
+        <item>Escopeta</item>
+        <item>Rifle</item>
+        <item>Revolver</item>
+        <item>Avancarga</item>
+    </string-array>
 </resources>

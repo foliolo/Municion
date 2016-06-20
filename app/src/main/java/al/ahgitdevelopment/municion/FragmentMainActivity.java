@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -48,9 +49,9 @@ public class FragmentMainActivity extends AppCompatActivity {
     public static ActionMode.Callback mActionModeCallback = null;
     public static int imagePosition;
     private static DataBaseSQLiteHelper dbSqlHelper;
-    private static ArrayList<Guia> guias;
-    private static ArrayList<Compra> compras;
-    private static ArrayList<Licencia> licencias;
+    public static ArrayList<Guia> guias;
+    public static ArrayList<Compra> compras;
+    public static ArrayList<Licencia> licencias;
     private final int GUIA_COMPLETED = 1;
     private final int COMPRA_COMPLETED = 2;
     private final int LICENCIA_COMPLETED = 3;
@@ -180,21 +181,36 @@ public class FragmentMainActivity extends AppCompatActivity {
                     Intent form = null;
                     switch (mViewPager.getCurrentItem()) {
                         case 0:
-//                            Snackbar.make(view, "Introduce una guía", Snackbar.LENGTH_LONG)
-//                                    .setAction("Action", null).show();
-                            form = new Intent(FragmentMainActivity.this, GuiaFormActivity.class);
-                            startActivityForResult(form, GUIA_COMPLETED);
+                            if (licencias.size() > 0) {
+                                form = new Intent(FragmentMainActivity.this, GuiaFormActivity.class);
+                                startActivityForResult(form, GUIA_COMPLETED);
+                            } else {
+                                Snackbar.make(view, "Debe introducir una licencia primero", Snackbar.LENGTH_INDEFINITE)
+                                        .setAction(android.R.string.ok, new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View view) {
+                                            }
+                                        })
+                                        .show();
+                            }
+
                             break;
                         case 1:
-//                            Snackbar.make(view, "Introduce una compra", Snackbar.LENGTH_LONG)
-//                                    .setAction("Action", null).show();
-                            form = new Intent(FragmentMainActivity.this, CompraFormActivity.class);
-                            startActivityForResult(form, COMPRA_COMPLETED);
+                            if (guias.size() > 0) {
+                                form = new Intent(FragmentMainActivity.this, CompraFormActivity.class);
+                                startActivityForResult(form, COMPRA_COMPLETED);
+                            } else {
+                                Snackbar.make(view, "Debe introducir una guia primero", Snackbar.LENGTH_INDEFINITE)
+                                        .setAction(android.R.string.ok, new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View view) {
+                                            }
+                                        })
+                                        .show();
+                            }
 
                             break;
                         case 2:
-//                            Snackbar.make(view, "Introduce una licencia", Snackbar.LENGTH_LONG)
-//                                    .setAction("Action", null).show();
                             form = new Intent(FragmentMainActivity.this, LicenciaFormActivity.class);
                             startActivityForResult(form, LICENCIA_COMPLETED);
                             break;
@@ -288,14 +304,6 @@ public class FragmentMainActivity extends AppCompatActivity {
         if (resultCode == RESULT_OK) {
             switch (requestCode) {
                 case REQUEST_IMAGE_CAPTURE:
-//                    if (data != null) {
-//                        Bundle extras = data.getExtras();
-//                        imageBitmap = (Bitmap) extras.get("data");
-//                        updateImage(imageBitmap, extras.getParcelable(MediaStore.EXTRA_OUTPUT));
-//                    } else
-//                        Log.i(getPackageName(), "Intent sin informacion");
-
-
                     if (data != null) {
                         imageBitmap = (Bitmap) data.getExtras().get("data");
                         updateImage(imageBitmap);

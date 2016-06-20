@@ -11,12 +11,16 @@ import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+
 import al.ahgitdevelopment.municion.DataModel.Guia;
+import al.ahgitdevelopment.municion.DataModel.Licencia;
 
 /**
  * Created by Alberto on 25/03/2016.
@@ -62,6 +66,10 @@ public class GuiaFormActivity extends AppCompatActivity {
         gastado = (EditText) findViewById(R.id.form_cartuchos_gastados);
         mensajeError = (TextView) findViewById(R.id.form_mensaje_guia);
         imagePath = null;
+
+
+        //Mostrar la lista de tipos de armas en funcion de la licencia
+        tipoArmasDisponibles();
 
         //Carga de datos (en caso de modificacion)
         if (getIntent().getExtras() != null) {
@@ -325,5 +333,26 @@ public class GuiaFormActivity extends AppCompatActivity {
             mensajeError.setTextColor(Color.parseColor("#0000ff"));
         }
         return retorno;
+    }
+
+    private void tipoArmasDisponibles() {
+        ArrayList<String> finalWeapons = new ArrayList<>();
+        ArrayAdapter<String> armas = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, android.R.id.text1);
+        armas.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        tipoArma.setAdapter(armas);
+
+        armas.clear();
+        for (Licencia licencia : FragmentMainActivity.licencias) {
+            String nombreLicencia = getResources().getStringArray(R.array.tipo_licencias)[licencia.getTipo()];
+            String idNombreLicenia = nombreLicencia.split(" ")[0];
+
+            for (String armaAAñadir : getResources().getStringArray(getResources().getIdentifier(idNombreLicenia, "array", getPackageName()))) {
+                if (!finalWeapons.contains(armaAAñadir)) {
+                    finalWeapons.add(armaAAñadir);
+                }
+            }
+        }
+        armas.addAll(finalWeapons);
+        armas.notifyDataSetChanged();
     }
 }
