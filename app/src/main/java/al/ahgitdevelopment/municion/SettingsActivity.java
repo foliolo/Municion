@@ -2,8 +2,9 @@ package al.ahgitdevelopment.municion;
 
 
 import android.annotation.TargetApi;
+import android.app.DialogFragment;
 import android.content.Context;
-import android.content.Intent;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.media.Ringtone;
@@ -11,7 +12,6 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.preference.EditTextPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
@@ -19,10 +19,18 @@ import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.preference.RingtonePreference;
 import android.support.design.widget.Snackbar;
+import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.ActionBar;
 import android.text.TextUtils;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+
+import com.google.android.gms.appindexing.Action;
+import com.google.android.gms.appindexing.AppIndex;
+import com.google.android.gms.common.api.GoogleApiClient;
 
 import java.util.List;
 
@@ -39,11 +47,13 @@ import java.util.List;
  */
 public class SettingsActivity extends AppCompatPreferenceActivity {
 
+
     /**
      * A preference value change listener that updates the preference's summary
      * to reflect its new value.
      */
-    private static Preference.OnPreferenceChangeListener sBindPreferenceSummaryToValueListener = new Preference.OnPreferenceChangeListener() {
+
+    public static Preference.OnPreferenceChangeListener sBindPreferenceSummaryToValueListener = new Preference.OnPreferenceChangeListener() {
         @Override
         public boolean onPreferenceChange(Preference preference, Object value) {
             String stringValue = value.toString();
@@ -90,6 +100,11 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             return true;
         }
     };
+    /**
+     * ATTENTION: This was auto-generated to implement the App Indexing API.
+     * See https://g.co/AppIndexing/AndroidStudio for more information.
+     */
+    private GoogleApiClient client;
 
     /**
      * Helper method to determine if the device has an extra-large screen. For
@@ -125,6 +140,9 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setupActionBar();
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
     }
 
     /**
@@ -161,9 +179,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
      */
     protected boolean isValidFragment(String fragmentName) {
         return PreferenceFragment.class.getName().equals(fragmentName)
-                || GeneralPreferenceFragment.class.getName().equals(fragmentName)
-                || DataSyncPreferenceFragment.class.getName().equals(fragmentName)
-                || NotificationPreferenceFragment.class.getName().equals(fragmentName);
+                || DialogChangePassword.class.getName().equals(fragmentName);
     }
 
     @Override
@@ -178,56 +194,93 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        client.connect();
+        Action viewAction = Action.newAction(
+                Action.TYPE_VIEW, // TODO: choose an action type.
+                "Settings Page", // TODO: Define a title for the content shown.
+                // TODO: If you have web page content that matches this app activity's content,
+                // make sure this auto-generated web page URL is correct.
+                // Otherwise, set the URL to null.
+                Uri.parse("http://host/path"),
+                // TODO: Make sure this auto-generated app URL is correct.
+                Uri.parse("android-app://al.ahgitdevelopment.municion/http/host/path")
+        );
+        AppIndex.AppIndexApi.start(client, viewAction);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        Action viewAction = Action.newAction(
+                Action.TYPE_VIEW, // TODO: choose an action type.
+                "Settings Page", // TODO: Define a title for the content shown.
+                // TODO: If you have web page content that matches this app activity's content,
+                // make sure this auto-generated web page URL is correct.
+                // Otherwise, set the URL to null.
+                Uri.parse("http://host/path"),
+                // TODO: Make sure this auto-generated app URL is correct.
+                Uri.parse("android-app://al.ahgitdevelopment.municion/http/host/path")
+        );
+        AppIndex.AppIndexApi.end(client, viewAction);
+        client.disconnect();
+    }
+
     /**
      * This fragment shows general preferences only. It is used when the
      * activity is showing a two-pane settings UI.
      */
 //    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-    public static class GeneralPreferenceFragment extends PreferenceFragment {
-        private EditTextPreference password1;
-        private EditTextPreference password2;
-        private Preference button;
+    public static class DialogChangePassword extends DialogFragment implements android.app.AlertDialog.OnClickListener {
         private SharedPreferences preferences;
+        private TextInputEditText passwordOld;
+        private TextInputEditText passwordNew1;
+        private TextInputEditText passwordNew2;
+        private Button cancelar;
+        private Button guardar;
 
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
-            addPreferencesFromResource(R.xml.pref_general);
             preferences = this.getActivity().getSharedPreferences("Preferences", Context.MODE_PRIVATE);
-            password1 = (EditTextPreference) findPreference("kPasswordNew");
-            password2 = (EditTextPreference) findPreference("kPasswordOld");
-            button = findPreference("kButton");
-            setHasOptionsMenu(true);
-            // Al  pulsar sobre el pseuodo botoon se realizan las comprobaciones de la nueva password
-            button.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-                @Override
-                public boolean onPreferenceClick(Preference preference) {
-
-                    if (savePassword()) {
-                        bindPreferenceSummaryToValue(findPreference("kPasswordNew"));
-                    }
-                    return false;
-                }
-            });
-
-            // Bind the summaries of EditText/List/Dialog/Ringtone preferences
-            // to their values. When their values change, their summaries are
-            // updated to reflect the new value, per the Android Design
-            // guidelines.
-
-//            bindPreferenceSummaryToValue(findPreference("kPasswordNew"));
-//            bindPreferenceSummaryToValue(findPreference("example_list"));
+            setStyle(DialogFragment.STYLE_NO_TITLE, android.R.style.Theme_Material_Dialog);
         }
 
         @Override
-        public boolean onOptionsItemSelected(MenuItem item) {
-            int id = item.getItemId();
-            if (id == android.R.id.home) {
-                startActivity(new Intent(getActivity(), SettingsActivity.class));
-                return true;
-            }
-            return super.onOptionsItemSelected(item);
+        public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
+            final View view = inflater.inflate(R.layout.settings_items, container, false);
+            passwordOld = (TextInputEditText) view.findViewById(R.id.passwordOld);
+            passwordNew1 = (TextInputEditText) view.findViewById(R.id.passwordNew);
+            passwordNew2 = (TextInputEditText) view.findViewById(R.id.passwordNew2);
+            cancelar = (Button) view.findViewById(R.id.button1);
+            guardar = (Button) view.findViewById(R.id.button2);
+
+            cancelar.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    getActivity().finish();
+                }
+            });
+
+            guardar.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    savePassword();
+                }
+            });
+
+            return view;
         }
+
 
         /**
          * Guarda el password introducido por el usuario para cambiar la contraseña
@@ -236,13 +289,12 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
          */
         private boolean savePassword() {
             boolean flag = false;
-            if (password1.getText().toString().length() >= 4) {
-                if (checkPassword()) {
+            if (passwordOld.getText() != null && passwordOld.getText().toString().length() >= 4
+                    && passwordNew1.getText().toString().length() >= 4 && passwordNew2.getText().toString().length() >= 4) {
+                if (checkPasswordOld() && checkPasswordNew()) {
                     SharedPreferences.Editor editor = preferences.edit();
-                    editor.putString("password", password1.getText().toString());
+                    editor.putString("password", passwordNew1.getText().toString());
                     editor.commit();
-                    password1.setText("");
-                    password2.setText("");
                     Snackbar.make(getView(), R.string.password_save, Snackbar.LENGTH_INDEFINITE)
                             .setAction(android.R.string.ok, new View.OnClickListener() {
                                 @Override
@@ -277,10 +329,18 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
          *
          * @return password valido o invalido
          */
-        private boolean checkPassword() {
+        private boolean checkPasswordOld() {
             boolean isPassCorrect = false;
             String pass = preferences.getString("password", "");
-            if (pass.equals(password2.getText().toString())) {
+            if ("".equals(pass)) {
+                Snackbar.make(getView(), R.string.settings_password_unlogin, Snackbar.LENGTH_INDEFINITE)
+                        .setAction(android.R.string.ok, new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                            }
+                        })
+                        .show();
+            } else if (pass.equals(passwordOld.getText().toString())) {
                 isPassCorrect = true;
             } else {
                 Snackbar.make(getView(), R.string.password_equal_fail, Snackbar.LENGTH_INDEFINITE)
@@ -293,65 +353,44 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             }
             return isPassCorrect;
         }
-    }
 
-    /**
-     * This fragment shows notification preferences only. It is used when the
-     * activity is showing a two-pane settings UI.
-     */
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-    public static class NotificationPreferenceFragment extends PreferenceFragment {
-        @Override
-        public void onCreate(Bundle savedInstanceState) {
-            super.onCreate(savedInstanceState);
-            addPreferencesFromResource(R.xml.pref_notification);
-            setHasOptionsMenu(true);
-
-            // Bind the summaries of EditText/List/Dialog/Ringtone preferences
-            // to their values. When their values change, their summaries are
-            // updated to reflect the new value, per the Android Design
-            // guidelines.
-            bindPreferenceSummaryToValue(findPreference("notifications_new_message_ringtone"));
-        }
-
-        @Override
-        public boolean onOptionsItemSelected(MenuItem item) {
-            int id = item.getItemId();
-            if (id == android.R.id.home) {
-                startActivity(new Intent(getActivity(), SettingsActivity.class));
-                return true;
+        /**
+         * Valida que la contraseña nueva sea correcta, se introduce en dos campos
+         *
+         * @return password valido o invalido
+         */
+        private boolean checkPasswordNew() {
+            boolean isPassCorrect = false;
+            if ("".equals(passwordNew1.getText().toString()) || "".equals(passwordNew2.getText().toString())) {
+                Snackbar.make(getView(), R.string.settings_password_empty, Snackbar.LENGTH_INDEFINITE)
+                        .setAction(android.R.string.ok, new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                            }
+                        })
+                        .show();
+            } else if (passwordNew1.getText().toString().equals(passwordNew2.getText().toString())) {
+                isPassCorrect = true;
+            } else {
+                Snackbar.make(getView(), R.string.password_equal_fail, Snackbar.LENGTH_INDEFINITE)
+                        .setAction(android.R.string.ok, new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                            }
+                        })
+                        .show();
             }
-            return super.onOptionsItemSelected(item);
-        }
-    }
-
-    /**
-     * This fragment shows data and sync preferences only. It is used when the
-     * activity is showing a two-pane settings UI.
-     */
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-    public static class DataSyncPreferenceFragment extends PreferenceFragment {
-        @Override
-        public void onCreate(Bundle savedInstanceState) {
-            super.onCreate(savedInstanceState);
-            addPreferencesFromResource(R.xml.pref_data_sync);
-            setHasOptionsMenu(true);
-
-            // Bind the summaries of EditText/List/Dialog/Ringtone preferences
-            // to their values. When their values change, their summaries are
-            // updated to reflect the new value, per the Android Design
-            // guidelines.
-            bindPreferenceSummaryToValue(findPreference("sync_frequency"));
+            return isPassCorrect;
         }
 
         @Override
-        public boolean onOptionsItemSelected(MenuItem item) {
-            int id = item.getItemId();
-            if (id == android.R.id.home) {
-                startActivity(new Intent(getActivity(), SettingsActivity.class));
-                return true;
-            }
-            return super.onOptionsItemSelected(item);
+        public void onClick(DialogInterface dialog, int which) {
+
         }
     }
+    public void close() {
+        finish();
+    }
+
+
 }

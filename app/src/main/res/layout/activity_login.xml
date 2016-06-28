@@ -43,5 +43,5 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:elevation="8dp"
-        android:text="New Button"/>
+        android:text="@string/login"/>
 </LinearLayout>

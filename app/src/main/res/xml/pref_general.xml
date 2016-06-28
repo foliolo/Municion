@@ -3,26 +3,12 @@
     <!-- NOTE: EditTextPreference's summary should be set to its value by the activity code. -->
 
     <EditTextPreference
-        android:key="kPasswordOld"
         android:capitalize="words"
         android:inputType="numberPassword"
-        android:maxLines="1"
-        android:selectAllOnFocus="true"
-        android:singleLine="true"
-        android:title="@string/pref_password_old" />
-
-    <EditTextPreference
-        android:key="kPasswordNew"
-        android:capitalize="words"
-        android:inputType="numberPassword"
+        android:key="keyPassword"
         android:maxLines="1"
         android:selectAllOnFocus="true"
         android:singleLine="true"
         android:title="@string/pref_password_new" />
-
-<!--Pseudo boton-->
-    <Preference
-        android:key="kButton"
-        android:title="@string/pref_boton" />
 
 </PreferenceScreen>
