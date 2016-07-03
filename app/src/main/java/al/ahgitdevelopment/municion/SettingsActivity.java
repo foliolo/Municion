@@ -289,13 +289,13 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
          */
         private boolean savePassword() {
             boolean flag = false;
-            if (passwordOld.getText() != null && passwordOld.getText().toString().length() >= 4
-                    && passwordNew1.getText().toString().length() >= 4 && passwordNew2.getText().toString().length() >= 4) {
+            if (passwordOld.getText() != null && passwordOld.getText().toString().length() >= 4) {
                 if (checkPasswordOld() && checkPasswordNew()) {
+                    // Ha ido correcto
                     SharedPreferences.Editor editor = preferences.edit();
                     editor.putString("password", passwordNew1.getText().toString());
                     editor.commit();
-                    Snackbar.make(getView(), R.string.password_save, Snackbar.LENGTH_INDEFINITE)
+                    Snackbar.make(getView(), R.string.password_update, Snackbar.LENGTH_INDEFINITE)
                             .setAction(android.R.string.ok, new View.OnClickListener() {
                                 @Override
                                 public void onClick(View view) {
@@ -303,23 +303,9 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                             })
                             .show();
                     flag = true;
-                } else {
-                    Snackbar.make(getView(), R.string.password_equal_actual, Snackbar.LENGTH_INDEFINITE)
-                            .setAction(android.R.string.ok, new View.OnClickListener() {
-                                @Override
-                                public void onClick(View view) {
-                                }
-                            })
-                            .show();
                 }
             } else {
-                Snackbar.make(getView(), R.string.password_short_fail, Snackbar.LENGTH_INDEFINITE)
-                        .setAction(android.R.string.ok, new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                            }
-                        })
-                        .show();
+                passwordOld.setError(getString(R.string.password_short_fail));
             }
             return flag;
         }
@@ -333,23 +319,11 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             boolean isPassCorrect = false;
             String pass = preferences.getString("password", "");
             if ("".equals(pass)) {
-                Snackbar.make(getView(), R.string.settings_password_unlogin, Snackbar.LENGTH_INDEFINITE)
-                        .setAction(android.R.string.ok, new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                            }
-                        })
-                        .show();
+                passwordOld.setError(getString(R.string.settings_password_unlogin));
             } else if (pass.equals(passwordOld.getText().toString())) {
                 isPassCorrect = true;
             } else {
-                Snackbar.make(getView(), R.string.password_equal_fail, Snackbar.LENGTH_INDEFINITE)
-                        .setAction(android.R.string.ok, new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                            }
-                        })
-                        .show();
+                passwordOld.setError(getString(R.string.password_equal_fail));
             }
             return isPassCorrect;
         }
@@ -361,36 +335,25 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
          */
         private boolean checkPasswordNew() {
             boolean isPassCorrect = false;
-            if ("".equals(passwordNew1.getText().toString()) || "".equals(passwordNew2.getText().toString())) {
-                Snackbar.make(getView(), R.string.settings_password_empty, Snackbar.LENGTH_INDEFINITE)
-                        .setAction(android.R.string.ok, new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                            }
-                        })
-                        .show();
+            if ("".equals(passwordNew1.getText().toString())) {
+                passwordNew1.setError(getString(R.string.settings_password_empty));
+            } else if("".equals(passwordNew2.getText().toString())) {
+                passwordNew2.setError(getString(R.string.settings_password_empty));
+            } else if (passwordNew1.getText().toString().length() < 4) {
+                passwordNew1.setError(getString(R.string.password_short_fail));
+            } else if (passwordNew2.getText().toString().length() < 4) {
+                passwordNew2.setError(getString(R.string.password_short_fail));
+            } else if (!passwordNew1.getText().toString().equals(passwordNew2.getText().toString())){
+                passwordNew2.setError(getString(R.string.password_equal_fail));
             } else if (passwordNew1.getText().toString().equals(passwordNew2.getText().toString())) {
                 isPassCorrect = true;
-            } else {
-                Snackbar.make(getView(), R.string.password_equal_fail, Snackbar.LENGTH_INDEFINITE)
-                        .setAction(android.R.string.ok, new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                            }
-                        })
-                        .show();
             }
             return isPassCorrect;
         }
-
         @Override
         public void onClick(DialogInterface dialog, int which) {
 
         }
     }
-    public void close() {
-        finish();
-    }
-
 
 }

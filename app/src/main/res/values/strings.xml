@@ -41,7 +41,7 @@
     <string name="cupo_anual">Cupo Anual</string>
     <string name="cartuchos_gastados">Cartuchos gastados</string>
     <string name="error_before_save">Este campo es obligatorio</string>
-    <string name="error_mensaje_cabecera">Antes de guardar debe rellenar los campos obligatorios</string>
+    <string name="error_mensaje_cabecera">Antes de guardar debes rellenar los campos obligatorios</string>
 
     <!--String Guias Item-->
     <string name="label_apodo">Apodo</string>
@@ -69,7 +69,7 @@
     <string name="fecha">Fecha</string>
     <string name="tipo_municion">Tipo de munición</string>
     <string name="peso_municion">Peso (grains)</string>
-    <string name="tienda">Ubicacion de la tienda</string>
+    <string name="tienda">Ubicación de la tienda</string>
     <string name="valoracion">Valoracion</string>
 
     <!--String Licencias Form-->
@@ -83,19 +83,15 @@
 
     <!-- Example General settings -->
     <string name="pref_header_general">Gestión contraseñas</string>
-    <string name="password_equal_actual">Las contraseña no es correcta, vuelva a escribirla</string>
+    <string name="password_equal_actual">Las contraseña no es correcta, vuelve a escribirla</string>
     <string name="settings_password_save">Contraseña modificada correctamente</string>
-    <string name="settings_password_unlogin">Primero debe registrar su contraseña</string>
-    <string name="settings_password_empty">Debe rellenar la nueva contraseña</string>
-
-    <string name="pref_title_social_recommendations">Enable social recommendations</string>
-    <string name="pref_description_sociagl_recommendations">Recommendations for people to contact
-        based on your message history
-    </string>
+    <string name="settings_password_unlogin">Primero debes registrar tu contraseña</string>
+    <string name="settings_password_empty">Debes rellenar la nueva contraseña</string>
+    <string name="password_update">Contraseña actualizada</string>
 
     <string name="pref_password_old">Modificar contraseña</string>
-    <string name="pref_password_new">Escriba su nueva contraseña</string>
-    <string name="pref_boton">Guardar contraseña</string>uarda
+    <string name="pref_password_new">Escribe tu nueva contraseña</string>
+    <string name="pref_boton">Guardar contraseña</string>
 
     <string name="pref_title_add_friends_to_messages">Add friends to messages</string>
     <string-array name="pref_example_list_titles">
