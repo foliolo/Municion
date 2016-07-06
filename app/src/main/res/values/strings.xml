@@ -82,7 +82,7 @@
     <!-- Strings related to Settings -->
 
     <!-- Example General settings -->
-    <string name="pref_header_general">Gestión contraseñas</string>
+    <string name="pref_header_general">Gestión de contraseñas</string>
     <string name="password_equal_actual">Las contraseña no es correcta, vuelve a escribirla</string>
     <string name="settings_password_save">Contraseña modificada correctamente</string>
     <string name="settings_password_unlogin">Primero debes registrar tu contraseña</string>
