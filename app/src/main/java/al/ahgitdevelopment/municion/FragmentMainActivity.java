@@ -1,18 +1,23 @@
 package al.ahgitdevelopment.municion;
 
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.Toolbar;
@@ -48,11 +53,11 @@ public class FragmentMainActivity extends AppCompatActivity {
     public static ActionMode mActionMode = null;
     public static ActionMode.Callback mActionModeCallback = null;
     public static int imagePosition;
-    private static DataBaseSQLiteHelper dbSqlHelper;
     public static ArrayList<Guia> guias;
     public static ArrayList<Compra> compras;
     public static ArrayList<Licencia> licencias;
-    private final int GUIA_COMPLETED = 1;
+    private static DataBaseSQLiteHelper dbSqlHelper;
+    private static final int GUIA_COMPLETED = 1;
     private final int COMPRA_COMPLETED = 2;
     private final int LICENCIA_COMPLETED = 3;
     private final int GUIA_UPDATED = 4;
@@ -151,7 +156,6 @@ public class FragmentMainActivity extends AppCompatActivity {
         mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
             }
 
             @Override
@@ -163,7 +167,6 @@ public class FragmentMainActivity extends AppCompatActivity {
 
             @Override
             public void onPageScrollStateChanged(int state) {
-
             }
         });
 
@@ -182,8 +185,9 @@ public class FragmentMainActivity extends AppCompatActivity {
                     switch (mViewPager.getCurrentItem()) {
                         case 0:
                             if (licencias.size() > 0) {
-                                form = new Intent(FragmentMainActivity.this, GuiaFormActivity.class);
-                                startActivityForResult(form, GUIA_COMPLETED);
+                                // Seleccion de licencia a la que asociar la guia
+                                DialogFragment dialog = new GuiaDialogFragment();
+                                dialog.show(getSupportFragmentManager(), "NewGuiaDialogFragment");
                             } else {
                                 Snackbar.make(view, "Debe introducir una licencia primero", Snackbar.LENGTH_INDEFINITE)
                                         .setAction(android.R.string.ok, new View.OnClickListener() {
@@ -541,6 +545,54 @@ public class FragmentMainActivity extends AppCompatActivity {
     }
 
     /**
+     * Dialog para la seleccion de la licencia qu
+     */
+    public static class GuiaDialogFragment extends DialogFragment {
+        //https://developer.android.com/guide/topics/ui/dialogs.html
+        private int selectedLicense;
+
+        @NonNull
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+
+            // Set title
+            builder.setTitle(R.string.select_licencia)
+                    // Set items
+                    .setSingleChoiceItems(getLicenseName(), 0, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+//                            Toast.makeText(getActivity(), "Seleccionado: " + (String) getLicenseName()[i], Toast.LENGTH_SHORT).show();
+                            selectedLicense = i;
+                        }
+                    })
+                    // Add action buttons
+                    .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int pos) {
+                            Intent form = new Intent(getActivity(), GuiaFormActivity.class);
+                            getActivity().startActivityForResult(form, FragmentMainActivity.GUIA_COMPLETED);
+                        }
+                    })
+                    .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            GuiaDialogFragment.this.getDialog().cancel();
+                        }
+                    });
+            return builder.create();
+        }
+
+        private CharSequence[] getLicenseName() {
+            ArrayList<String> list = new ArrayList<>();
+            for (Licencia licencia : licencias) {
+                list.add(Utils.getStringLicenseFromId(getActivity(), licencia.getTipo()));
+            }
+
+            return list.toArray(new CharSequence[list.size()]);
+        }
+    }
+
+    /**
      * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
      * one of the sections/tabs/pages.
      */
@@ -575,6 +627,7 @@ public class FragmentMainActivity extends AppCompatActivity {
             return null;
         }
     }
+
 }
 
 //http://stackoverflow.com/questions/17207366/creating-a-menu-after-a-long-click-event-on-a-list-view

@@ -67,7 +67,6 @@ public class GuiaFormActivity extends AppCompatActivity {
         mensajeError = (TextView) findViewById(R.id.form_mensaje_guia);
         imagePath = null;
 
-
         //Mostrar la lista de tipos de armas en funcion de la licencia
         tipoArmasDisponibles();
 
@@ -114,7 +113,6 @@ public class GuiaFormActivity extends AppCompatActivity {
         marca.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
             }
 
             @Override

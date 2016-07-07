@@ -84,11 +84,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             return true;
         }
     };
-    /**
-     * ATTENTION: This was auto-generated to implement the App Indexing API.
-     * See https://g.co/AppIndexing/AndroidStudio for more information.
-     */
-//    private GoogleApiClient client;
 
     /**
      * Helper method to determine if the device has an extra-large screen. For
@@ -124,11 +119,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setupActionBar();
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
-//        client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
-
-
     }
 
     /**
@@ -159,14 +149,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         loadHeadersFromResource(R.xml.pref_headers, target);
     }
 
-    /**
-     * This method stops fragment injection in malicious applications.
-     * Make sure to deny any unknown fragments here.
-     */
-//    protected boolean isValidFragment(String fragmentName) {
-//        return PreferenceFragment.class.getName().equals(fragmentName)
-//                || ChangePasswordDialog.class.getName().equals(fragmentName);
-//    }
+
     @Override
     public void onHeaderClick(Header header, int position) {
         super.onHeaderClick(header, position);
@@ -187,189 +170,4 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
 
         return super.onOptionsItemSelected(item);
     }
-
-//    @Override
-//    public void onStart() {
-//        super.onStart();
-//
-//        // ATTENTION: This was auto-generated to implement the App Indexing API.
-//        // See https://g.co/AppIndexing/AndroidStudio for more information.
-//        client.connect();
-//        Action viewAction = Action.newAction(
-//                Action.TYPE_VIEW, // TODO: choose an action type.
-//                "Settings Page", // TODO: Define a title for the content shown.
-//                // TODO: If you have web page content that matches this app activity's content,
-//                // make sure this auto-generated web page URL is correct.
-//                // Otherwise, set the URL to null.
-//                Uri.parse("http://host/path"),
-//                // TODO: Make sure this auto-generated app URL is correct.
-//                Uri.parse("android-app://al.ahgitdevelopment.municion/http/host/path")
-//        );
-//        AppIndex.AppIndexApi.start(client, viewAction);
-//    }
-
-//    @Override
-//    public void onStop() {
-//        super.onStop();
-//
-//        // ATTENTION: This was auto-generated to implement the App Indexing API.
-//        // See https://g.co/AppIndexing/AndroidStudio for more information.
-//        Action viewAction = Action.newAction(
-//                Action.TYPE_VIEW, // TODO: choose an action type.
-//                "Settings Page", // TODO: Define a title for the content shown.
-//                // TODO: If you have web page content that matches this app activity's content,
-//                // make sure this auto-generated web page URL is correct.
-//                // Otherwise, set the URL to null.
-//                Uri.parse("http://host/path"),
-//                // TODO: Make sure this auto-generated app URL is correct.
-//                Uri.parse("android-app://al.ahgitdevelopment.municion/http/host/path")
-//        );
-//        AppIndex.AppIndexApi.end(client, viewAction);
-//        client.disconnect();
-//    }
-
-
-//    public static class DialogChangePassword extends DialogFragment {
-//        private SharedPreferences preferences;
-//        private TextInputEditText passwordOld;
-//        private TextInputEditText passwordNew1;
-//        private TextInputEditText passwordNew2;
-//        private Button cancelar;
-//        private Button guardar;
-//
-//        @Override
-//        public void onCreate(Bundle savedInstanceState) {
-//            super.onCreate(savedInstanceState);
-//            preferences = this.getActivity().getSharedPreferences("Preferences", Context.MODE_PRIVATE);
-//            setStyle(DialogFragment.STYLE_NO_TITLE, android.R.style.Theme_Material_Dialog);
-//        }
-//
-//        @Override
-//        public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-//            final View view = inflater.inflate(R.layout.settings_items, container, false);
-//            passwordOld = (TextInputEditText) view.findViewById(R.id.passwordOld);
-//            passwordNew1 = (TextInputEditText) view.findViewById(R.id.passwordNew);
-//            passwordNew2 = (TextInputEditText) view.findViewById(R.id.passwordNew2);
-//            cancelar = (Button) view.findViewById(R.id.button1);
-//            guardar = (Button) view.findViewById(R.id.button2);
-//
-//            cancelar.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//                    getActivity().finish();
-//                }
-//            });
-//
-//            guardar.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//                    savePassword();
-//                }
-//            });
-//
-//            return view;
-//        }
-//
-////        @Override
-////        public Dialog onCreateDialog(Bundle savedInstanceState) {
-//////            preferences = this.getActivity().getSharedPreferences("Preferences", Context.MODE_PRIVATE);
-////            final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-////
-////            // Get the layout inflater
-////            LayoutInflater inflater = getActivity().getLayoutInflater();
-////            View view = inflater.inflate(R.layout.settings_items, null);
-////
-////            passwordOld = (TextInputEditText) view.findViewById(R.id.passwordOld);
-////            passwordNew1 = (TextInputEditText) view.findViewById(R.id.passwordNew);
-////            passwordNew2 = (TextInputEditText) view.findViewById(R.id.passwordNew2);
-////
-////
-////            // Set custom view
-////            builder.setView(view)
-////                    // Add action buttons
-////                    .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-////                        @Override
-////                        public void onClick(DialogInterface dialog, int id) {
-////                            savePassword();
-////                        }
-////                    })
-////                    .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
-////                        public void onClick(DialogInterface dialog, int id) {
-////                            DialogChangePassword.this.getDialog().cancel();
-////                        }
-////                    });
-////
-////            return builder.create();
-////        }
-//
-//
-//        /**
-//         * Guarda el password introducido por el usuario para cambiar la contraseña
-//         *
-//         * @return flag
-//         */
-//        private boolean savePassword() {
-//            boolean flag = false;
-//            if (passwordOld.getText() != null && passwordOld.getText().toString().length() >= 4) {
-//                if (checkPasswordOld() && checkPasswordNew()) {
-//                    // Ha ido correcto
-//                    SharedPreferences.Editor editor = preferences.edit();
-//                    editor.putString("password", passwordNew1.getText().toString());
-//                    editor.commit();
-//                    Snackbar.make(getView(), R.string.password_update, Snackbar.LENGTH_INDEFINITE)
-//                            .setAction(android.R.string.ok, new View.OnClickListener() {
-//                                @Override
-//                                public void onClick(View view) {
-//                                }
-//                            })
-//                            .show();
-//                    flag = true;
-//                }
-//            } else {
-//                passwordOld.setError(getString(R.string.password_short_fail));
-//            }
-//            return flag;
-//        }
-//
-//        /**
-//         * Valida la contraseña introducida por el usuario frente a la guardada en el sharedPreferences
-//         *
-//         * @return password valido o invalido
-//         */
-//        private boolean checkPasswordOld() {
-//            boolean isPassCorrect = false;
-//            String pass = preferences.getString("password", "");
-//            if ("".equals(pass)) {
-//                passwordOld.setError(getString(R.string.settings_password_unlogin));
-//            } else if (pass.equals(passwordOld.getText().toString())) {
-//                isPassCorrect = true;
-//            } else {
-//                passwordOld.setError(getString(R.string.password_equal_fail));
-//            }
-//            return isPassCorrect;
-//        }
-//
-//        /**
-//         * Valida que la contraseña nueva sea correcta, se introduce en dos campos
-//         *
-//         * @return password valido o invalido
-//         */
-//        private boolean checkPasswordNew() {
-//            boolean isPassCorrect = false;
-//            if ("".equals(passwordNew1.getText().toString())) {
-//                passwordNew1.setError(getString(R.string.settings_password_empty));
-//            } else if ("".equals(passwordNew2.getText().toString())) {
-//                passwordNew2.setError(getString(R.string.settings_password_empty));
-//            } else if (passwordNew1.getText().toString().length() < 4) {
-//                passwordNew1.setError(getString(R.string.password_short_fail));
-//            } else if (passwordNew2.getText().toString().length() < 4) {
-//                passwordNew2.setError(getString(R.string.password_short_fail));
-//            } else if (!passwordNew1.getText().toString().equals(passwordNew2.getText().toString())) {
-//                passwordNew2.setError(getString(R.string.password_equal_fail));
-//            } else if (passwordNew1.getText().toString().equals(passwordNew2.getText().toString())) {
-//                isPassCorrect = true;
-//            }
-//            return isPassCorrect;
-//        }
-//    }
 }

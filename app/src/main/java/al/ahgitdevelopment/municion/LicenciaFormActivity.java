@@ -69,7 +69,6 @@ public class LicenciaFormActivity extends AppCompatActivity {
             }
         }
 
-
         layoutFechaExpedicion.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
