@@ -288,6 +288,10 @@ public class LicenciaFormActivity extends AppCompatActivity {
             layoutFechaCaducidad.setError("Introdce la fecha de caducidad");
             flag = false;
         }
+        if (numAbonado.getVisibility() == View.VISIBLE && numAbonado.getText().toString().equals("")) {
+            numAbonado.setError("Introduce el número de abonado", ResourcesCompat.getDrawable(getResources(), android.R.drawable.stat_notify_error, getTheme()));
+            flag = false;
+        }
 
         return flag;
     }
