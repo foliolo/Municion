@@ -42,6 +42,20 @@
                 android:inputType="number"/>
         </android.support.design.widget.TextInputLayout>
 
+        <!--NUMERO DE ABONADO-->
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <EditText
+                android:id="@+id/form_num_abonado"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/lbl_num_abonado"
+                android:visibility="gone"
+                android:inputType="number"/>
+        </android.support.design.widget.TextInputLayout>
+
         <!--FECHA EXPEDICION-->
         <android.support.design.widget.TextInputLayout
             android:id="@+id/layout_form_fecha_expedicion"
@@ -74,6 +88,25 @@
                 android:hint="@string/fecha_caducidad"
                 android:inputType="none"/>
         </android.support.design.widget.TextInputLayout>
+
+        <!--Comunidad Autonoma-->
+        <TextView
+            android:id="@+id/form_lbl_ccaa"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/lbl_ccaa"
+            android:visibility="gone"
+            android:textAppearance="?android:attr/textAppearanceSmall"/>
+
+        <android.support.v7.widget.AppCompatSpinner
+            android:id="@+id/form_ccaa"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:entries="@array/ccaa"
+            android:hint="@string/ccaa"
+            android:inputType="text"
+            android:visibility="gone"
+            android:spinnerMode="dropdown"/>
 
     </LinearLayout>
 </ScrollView>

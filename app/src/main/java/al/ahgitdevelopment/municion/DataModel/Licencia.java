@@ -28,6 +28,8 @@ public class Licencia implements Parcelable {
     private int numLicencia;
     private Calendar fechaExpedicion;
     private Calendar fechaCaducidad;
+    private int numAbonado;
+    private int autonomia;
 
     public Licencia() {
     }
@@ -42,6 +44,8 @@ public class Licencia implements Parcelable {
         } catch (NullPointerException e) {
             e.printStackTrace();
         }
+        this.numAbonado = in.readInt();
+        this.autonomia = in.readInt();
     }
 
     public Licencia(Bundle extras) {
@@ -49,6 +53,8 @@ public class Licencia implements Parcelable {
         this.numLicencia = extras.getInt("num_licencia");
         this.setFechaExpedicion(extras.getString("fecha_expedicion", ""));
         this.setFechaCaducidad(extras.getString("fecha_caducidad", ""));
+        this.numAbonado = extras.getInt("num_abonado");
+        this.autonomia  = extras.getInt("autonomia");
     }
 
     public Licencia(Licencia licencia) {
@@ -57,6 +63,8 @@ public class Licencia implements Parcelable {
         this.setNumLicencia(licencia.getNumLicencia());
         this.setFechaExpedicion(licencia.getFechaExpedicion());
         this.setFechaCaducidad(licencia.getFechaCaducidad());
+        this.setNumAbonado(licencia.getNumAbonado());
+        this.setAutonomia(licencia.getAutonomia());
     }
 
     public int getId() {
@@ -91,6 +99,21 @@ public class Licencia implements Parcelable {
         this.fechaExpedicion = fechaExpedicion;
     }
 
+    public int getNumAbonado() {
+        return numAbonado;
+    }
+
+    public void setNumAbonado(int numAbonado) {
+        this.numAbonado = numAbonado;
+    }
+
+    public int getAutonomia() {
+        return autonomia;
+    }
+
+    public void setAutonomia(int autonomia) {
+        this.autonomia = autonomia;
+    }
     public void setFechaExpedicion(String fechaExpedicion) {
         Calendar fecha = Calendar.getInstance();
         try {
@@ -142,5 +165,7 @@ public class Licencia implements Parcelable {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        dest.writeInt(numAbonado);
+        dest.writeInt(autonomia);
     }
 }

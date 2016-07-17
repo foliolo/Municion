@@ -19,6 +19,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -35,8 +36,12 @@ public class LicenciaFormActivity extends AppCompatActivity {
     private TextInputLayout layoutFechaExpedicion;
     private TextInputLayout layoutFechaCaducidad;
     private AppCompatSpinner tipoLicencia;
+    private AppCompatSpinner autonomia;
     private EditText numLicencia;
     private EditText fechaCaducidad;
+    private EditText numAbonado;
+    private TextView lblAutonomia;
+
 
     /**
      * Inicializa la actividad
@@ -56,6 +61,9 @@ public class LicenciaFormActivity extends AppCompatActivity {
         fechaExpedicion = (EditText) findViewById(R.id.form_fecha_expedicion);
         layoutFechaCaducidad = (TextInputLayout) findViewById(R.id.layout_form_fecha_caducidad);
         fechaCaducidad = (EditText) findViewById(R.id.form_fecha_caducidad);
+        lblAutonomia = (TextView) findViewById(R.id.form_lbl_ccaa);
+        numAbonado = (EditText) findViewById(R.id.form_num_abonado);
+        autonomia = (AppCompatSpinner) findViewById(R.id.form_ccaa);
 
         //Carga de datos (en caso de modificacion)
         if (getIntent().getExtras() != null) {
@@ -64,6 +72,8 @@ public class LicenciaFormActivity extends AppCompatActivity {
                 tipoLicencia.setSelection(licencia.getTipo());
                 numLicencia.setText(String.valueOf(licencia.getNumLicencia()));
                 fechaExpedicion.setText(new SimpleDateFormat("dd/MM/yyyy").format(licencia.getFechaExpedicion().getTime()));
+                numAbonado.setText(String.valueOf(licencia.getNumAbonado()));
+                autonomia.setSelection(licencia.getAutonomia());
             } catch (NullPointerException e) {
                 e.printStackTrace();
             }
@@ -120,12 +130,16 @@ public class LicenciaFormActivity extends AppCompatActivity {
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
-
+                // Las federativas de tiro y caza estan adaptadas, faltaria adaptar pesca y conducir
                 switch (tipoLicencia.getSelectedItemPosition()) {
                     // Sumamos 3 año
                     case 1: // Licencia B
-                    case 5: // Licencia F
                         calendar.add(Calendar.YEAR, 3);
+                        fechaCaducidad.setText(simpleDate.format(calendar.getTime()));
+                        break;
+                    case 5: // Licencia F-Tiro
+                    case 6: // Licencia F-Caza
+                        calendar.set(calendar.get(Calendar.YEAR), 11, 31);
                         fechaCaducidad.setText(simpleDate.format(calendar.getTime()));
                         break;
                     // Sumamos 5 años (Resto de licencias)
@@ -133,9 +147,11 @@ public class LicenciaFormActivity extends AppCompatActivity {
                     case 2:
                     case 3:
                     case 4:
-                    case 6:
                     case 7:
                     case 8:
+                    case 9:
+                    case 10:
+                    case 11:
                         calendar.add(Calendar.YEAR, 5);
                         fechaCaducidad.setText(simpleDate.format(calendar.getTime()));
                         break;
@@ -155,12 +171,16 @@ public class LicenciaFormActivity extends AppCompatActivity {
                     } catch (ParseException e) {
                         e.printStackTrace();
                     }
-
+                    // Las federativas de tiro y caza estan adaptadas, faltaria adaptar pesca y conducir
                     switch (tipoLicencia.getSelectedItemPosition()) {
                         // Sumamos 3 año
                         case 1:
-                        case 5:
                             calendar.add(Calendar.YEAR, 3);
+                            fechaCaducidad.setText(simpleDate.format(calendar.getTime()));
+                            break;
+                        case 5: // Licencia F-Tiro
+                        case 6: // Licencia F-Caza
+                            calendar.set(calendar.get(Calendar.YEAR), 11, 31);
                             fechaCaducidad.setText(simpleDate.format(calendar.getTime()));
                             break;
                         // Sumamos 5 años
@@ -168,13 +188,29 @@ public class LicenciaFormActivity extends AppCompatActivity {
                         case 2:
                         case 3:
                         case 4:
-                        case 6:
                         case 7:
                         case 8:
+                        case 9:
+                        case 10:
+                        case 11:
                             calendar.add(Calendar.YEAR, 5);
                             fechaCaducidad.setText(simpleDate.format(calendar.getTime()));
                             break;
                     }
+                }
+                // Para mostrar campos de formulario si es licencia federativa de tiro o caza
+                if(tipoLicencia.getSelectedItemPosition() == 5) {
+                    lblAutonomia.setVisibility(View.VISIBLE);
+                    numAbonado.setVisibility(View.VISIBLE);
+                    autonomia.setVisibility(View.VISIBLE);
+                } else if(tipoLicencia.getSelectedItemPosition() == 6) {
+                    lblAutonomia.setVisibility(View.VISIBLE);
+                    autonomia.setVisibility(View.VISIBLE);
+                    numAbonado.setVisibility(View.GONE);
+                } else {
+                    lblAutonomia.setVisibility(View.GONE);
+                    numAbonado.setVisibility(View.GONE);
+                    autonomia.setVisibility(View.GONE);
                 }
             }
 
@@ -214,6 +250,10 @@ public class LicenciaFormActivity extends AppCompatActivity {
                 bundle.putInt("num_licencia", Integer.parseInt(numLicencia.getText().toString()));
                 bundle.putString("fecha_expedicion", fechaExpedicion.getText().toString());
                 bundle.putString("fecha_caducidad", fechaCaducidad.getText().toString());
+                if(numAbonado.getText().toString() != null && !numAbonado.getText().toString().matches("")) {
+                    bundle.putInt("num_abonado", Integer.parseInt(numAbonado.getText().toString()));
+                }
+                bundle.putInt("autonomia", autonomia.getSelectedItemPosition());
 
                 //Paso de vuelta de la posicion del item en el array
                 if (getIntent().getExtras() != null)

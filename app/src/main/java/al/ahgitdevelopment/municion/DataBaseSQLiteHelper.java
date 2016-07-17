@@ -53,6 +53,8 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
     public static final String KEY_LICENCIAS_NUM_LICENCIA = "num_licencia";
     public static final String KEY_LICENCIAS_FECHA_EXPEDICION = "fecha_expedicion";
     public static final String KEY_LICENCIAS_FECHA_CADUCIDAD = "fecha_caducidad";
+    public static final String KEY_LICENCIAS_NUM_ABONADO = "num_abonado";
+    public static final String KEY_LICENCIAS_AUTONOMIA = "autonomia";
     // Logcat tag
     private static final String LOG = "DatabaseHelper";
     // Database Version
@@ -102,7 +104,9 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
             + KEY_LICENCIAS_TIPO + " INTEGER NOT NULL,"
             + KEY_LICENCIAS_NUM_LICENCIA + " INTEGER NOT NULL,"
             + KEY_LICENCIAS_FECHA_EXPEDICION + " TEXT NOT NULL,"
-            + KEY_LICENCIAS_FECHA_CADUCIDAD + " TEXT NOT NULL"
+            + KEY_LICENCIAS_FECHA_CADUCIDAD + " TEXT NOT NULL,"
+            + KEY_LICENCIAS_NUM_ABONADO + " INTEGER,"
+            + KEY_LICENCIAS_AUTONOMIA + " INTEGER  "
             + ")";
 
     public Context context;
@@ -236,13 +240,18 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
         db.execSQL("INSERT INTO " + TABLE_LICENCIAS + " (" +
                 KEY_LICENCIAS_TIPO + ", " +
                 KEY_LICENCIAS_NUM_LICENCIA + ", " +
-                KEY_LICENCIAS_FECHA_EXPEDICION + ", " +
-                KEY_LICENCIAS_FECHA_CADUCIDAD +
+                KEY_LICENCIAS_FECHA_EXPEDICION + ", "  +
+                KEY_LICENCIAS_FECHA_CADUCIDAD + ", "  +
+                KEY_LICENCIAS_NUM_ABONADO + ", "  +
+                KEY_LICENCIAS_AUTONOMIA +
                 ") VALUES (" +
                 "'A - Profesionales, agentes de la autoridad' , " +
                 "'192834' , " +
+                "'45632' , " +
                 "'18/05/2015' , " +
-                "'18/05/2020'" +
+                "'18/05/2020' , " +
+                "'1111' , " +
+                "'Madrid'" +
                 ");");
     }
 
@@ -375,7 +384,8 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
                     licencia.setNumLicencia(cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_LICENCIAS_NUM_LICENCIA)));
                     licencia.setFechaExpedicion(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_LICENCIAS_FECHA_EXPEDICION)));
                     licencia.setFechaCaducidad(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_LICENCIAS_FECHA_CADUCIDAD)));
-
+                    licencia.setNumAbonado(cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_LICENCIAS_NUM_ABONADO)));
+                    licencia.setAutonomia(cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_LICENCIAS_AUTONOMIA)));
                     // Adding contact to list
                     licencias.add(licencia);
                 } while (cursor.moveToNext());
@@ -474,12 +484,16 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
                         KEY_LICENCIAS_TIPO + ", " +
                         KEY_LICENCIAS_NUM_LICENCIA + ", " +
                         KEY_LICENCIAS_FECHA_EXPEDICION + ", " +
-                        KEY_LICENCIAS_FECHA_CADUCIDAD +
+                        KEY_LICENCIAS_FECHA_CADUCIDAD + ", " +
+                        KEY_LICENCIAS_NUM_ABONADO + ", " +
+                        KEY_LICENCIAS_AUTONOMIA +
                         ") VALUES (" +
                         "'" + licencia.getTipo() + "' , " +
                         "'" + licencia.getNumLicencia() + "' , " +
                         "'" + licencia.getFechaExpedicion() + "' , " +
-                        "'" + licencia.getFechaCaducidad() + "'" +
+                        "'" + licencia.getFechaCaducidad() + "' , " +
+                        "'" + licencia.getNumAbonado() + "' , " +
+                        "'" + licencia.getAutonomia() + "'" +
                         ");");
             }
         }

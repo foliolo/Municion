@@ -15,11 +15,35 @@
         <item>D - Caza mayor</item>
         <item>E - Escopeta</item>
         <item>F - Tiro olimpico</item>
+        <item>F - Caza</item>
+        <item>G - Pesca</item>
         <item>AE - Autorización especial</item>
         <item>AER - Autorización especial replicas</item>
+        <item>PC - Permiso Conducir</item>
         <item>Libro de coleccionista</item>
     </string-array>
 
+    <string-array name="ccaa">
+        <item>Andalucía</item>
+        <item>Aragón</item>
+        <item>Asturias</item>
+        <item>Baleares</item>
+        <item>Canarias</item>
+        <item>Cantabria</item>
+        <item>Castilla y León</item>
+        <item>Castilla-La Mancha</item>
+        <item>Cataluña</item>
+        <item>Ceuta</item>
+        <item>Extremadura</item>
+        <item>Galicia</item>
+        <item>La Rioja</item>
+        <item>Madrid</item>
+        <item>Melilla</item>
+        <item>Murcia</item>
+        <item>Navarra</item>
+        <item>País Vasco</item>
+        <item>Valencia</item>
+    </string-array>
 
     <string-array name="A">
         <item>Pistola</item>

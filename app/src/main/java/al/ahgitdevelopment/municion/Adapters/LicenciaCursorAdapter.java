@@ -26,11 +26,15 @@ public class LicenciaCursorAdapter extends CursorAdapter {
         TextView numLicencia = (TextView) view.findViewById(R.id.item_num_guia);
         TextView expedicion = (TextView) view.findViewById(R.id.item_expedicion_licencia);
         TextView caducidad = (TextView) view.findViewById(R.id.item_caducidad_licencia);
+        TextView numAbonado = (TextView) view.findViewById(R.id.item_num_abonado);
+        TextView autonomia = (TextView) view.findViewById(R.id.item_ccaa);
 
         tipo.setText(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_LICENCIAS_TIPO)));
         numLicencia.setText(String.valueOf(cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_LICENCIAS_NUM_LICENCIA))));
         expedicion.setText(String.valueOf(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_LICENCIAS_FECHA_EXPEDICION))));
         caducidad.setText(String.valueOf(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_LICENCIAS_FECHA_CADUCIDAD))));
+        numAbonado.setText(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_LICENCIAS_NUM_ABONADO)));
+        autonomia.setText(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_LICENCIAS_AUTONOMIA)));
     }
 
     @Override

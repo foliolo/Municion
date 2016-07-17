@@ -39,11 +39,14 @@ public class LicenciaArrayAdapter extends ArrayAdapter<Licencia> {
         TextView numLicencia = (TextView) convertView.findViewById(R.id.item_num_guia);
         TextView expedicion = (TextView) convertView.findViewById(R.id.item_expedicion_licencia);
         TextView caducidad = (TextView) convertView.findViewById(R.id.item_caducidad_licencia);
+        TextView lblAbonado = (TextView) convertView.findViewById(R.id.lbl_num_abonado);
+        TextView numAbonado = (TextView) convertView.findViewById(R.id.item_num_abonado);
+        TextView autonomia = (TextView) convertView.findViewById(R.id.item_ccaa);
 
         // El último elemento es el libro de coleccionista y no tiene "-"
         int lengthArrayLicencias = getContext().getResources().getTextArray(R.array.tipo_licencias).length - 1;
 
-        if (licencia.getTipo() == lengthArrayLicencias) {
+        if (licencia.getTipo() == lengthArrayLicencias) { 
             tipo.setText(getContext().getResources().getTextArray(R.array.tipo_licencias)[licencia.getTipo()].toString());
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
                 tipo.setTextAppearance(android.R.style.TextAppearance_Medium);
@@ -51,13 +54,19 @@ public class LicenciaArrayAdapter extends ArrayAdapter<Licencia> {
                 tipo.setTextAppearance(getContext(), android.R.style.TextAppearance_Medium);
         } else {
             tipo.setText(getContext().getResources().getTextArray(R.array.tipo_licencias)[licencia.getTipo()].toString().split("-")[0].trim());
+            autonomia.setText(getContext().getResources().getTextArray(R.array.ccaa)[licencia.getAutonomia()].toString());
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
                 tipo.setTextAppearance(android.R.style.TextAppearance_Large);
             else
                 tipo.setTextAppearance(getContext(), android.R.style.TextAppearance_Large);
         }
         numLicencia.setText(licencia.getNumLicencia() + "");
-
+        if(licencia.getNumAbonado() != 0) {
+            numAbonado.setText(licencia.getNumAbonado() + "");
+        } else {
+            numAbonado.setVisibility(View.GONE);
+            lblAbonado.setVisibility(View.GONE);
+        }
         if (licencia.getFechaCaducidad() != null)
             caducidad.setText(new SimpleDateFormat("dd/MM/yyyy").format(licencia.getFechaCaducidad().getTime()));
         if (licencia.getFechaExpedicion() != null)

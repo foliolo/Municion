@@ -432,6 +432,8 @@ public class FragmentMainActivity extends AppCompatActivity {
             licencia.setNumLicencia(data.getExtras().getInt("num_licencia"));
             licencia.setFechaExpedicion(data.getExtras().getString("fecha_expedicion"));
             licencia.setFechaCaducidad(data.getExtras().getString("fecha_caducidad"));
+            licencia.setNumAbonado(data.getExtras().getInt("num_abonado"));
+            licencia.setAutonomia(data.getExtras().getInt("autonomia"));
 
             ((PlaceholderFragment) mSectionsPagerAdapter.getItem(mViewPager.getCurrentItem())).licenciaArrayAdapter.notifyDataSetChanged();
         }
