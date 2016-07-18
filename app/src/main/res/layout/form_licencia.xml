@@ -29,6 +29,26 @@
             android:inputType="text"
             android:spinnerMode="dropdown"/>
 
+
+        <!--TIPO PERMISO CONDUCIR-->
+        <TextView
+            android:id="@+id/form_lbl_tipo_permiso_conducir"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/lbl_tipo_permiso_conducir"
+            android:visibility="gone"
+            android:textAppearance="?android:attr/textAppearanceSmall"/>
+
+        <android.support.v7.widget.AppCompatSpinner
+            android:id="@+id/form_tipo_permiso_conducir"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:entries="@array/tipo_permiso_conducir"
+            android:hint="@string/tipo_permiso_conducir"
+            android:inputType="text"
+            android:visibility="gone"
+            android:spinnerMode="dropdown"/>
+
         <!--NUMERO DE LICENCIA-->
         <android.support.design.widget.TextInputLayout
             android:layout_width="match_parent"
@@ -54,6 +74,20 @@
                 android:hint="@string/lbl_num_abonado"
                 android:visibility="gone"
                 android:inputType="number"/>
+        </android.support.design.widget.TextInputLayout>
+
+        <!--NUMERO DE POLIZA-->
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <EditText
+                android:id="@+id/form_num_poliza"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/lbl_num_poliza"
+                android:visibility="gone"
+                android:inputType="text"/>
         </android.support.design.widget.TextInputLayout>
 
         <!--FECHA EXPEDICION-->
@@ -95,7 +129,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/lbl_ccaa"
-            android:visibility="gone"
             android:textAppearance="?android:attr/textAppearanceSmall"/>
 
         <android.support.v7.widget.AppCompatSpinner
@@ -105,7 +138,6 @@
             android:entries="@array/ccaa"
             android:hint="@string/ccaa"
             android:inputType="text"
-            android:visibility="gone"
             android:spinnerMode="dropdown"/>
 
     </LinearLayout>

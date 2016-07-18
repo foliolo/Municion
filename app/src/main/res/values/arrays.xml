@@ -45,6 +45,23 @@
         <item>Valencia</item>
     </string-array>
 
+    <string-array name="tipo_permiso_conducir">
+        <item>AM</item>
+        <item>A1</item>
+        <item>A2</item>
+        <item>A</item>
+        <item>B</item>
+        <item>C1</item>
+        <item>C</item>
+        <item>D1</item>
+        <item>D</item>
+        <item>BE</item>
+        <item>C1E</item>
+        <item>CE</item>
+        <item>D1E</item>
+        <item>DE</item>
+    </string-array>
+
     <string-array name="A">
         <item>Pistola</item>
         <item>Escopeta</item>

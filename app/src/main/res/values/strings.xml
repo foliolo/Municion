@@ -49,8 +49,11 @@
     <string name="label_gastado">Gastado</string>
     <string name="form_lbl_tipo_arma">Tipo de arma</string>
     <string name="lbl_tipo_licencia">Tipo de licencia</string>
+    <string name="lbl_tipo_permiso_conducir">Tipo de permiso de conducción</string>
     <string name="lbl_num_licencia">Nº de licencia</string>
+    <string name="lbl_num_dni">Nº de DNI sin letra</string>
     <string name="lbl_num_abonado">Nº de abonado</string>
+    <string name="lbl_num_poliza">Nº de Poliza Seguro</string>
     <string name="lbl_ccaa">Comunidad Autónoma</string>
     <string name="lbl_expedicion_licencia">Expedicion</string>
     <string name="lbl_caducidad_licencia">Caducidad</string>
@@ -77,6 +80,7 @@
     <!--String Licencias Form-->
     <string name="title_nueva_licencia">Nueva Licencia</string>
     <string name="tipo_licencia">Tipo de licencia</string>
+    <string name="tipo_permiso_conducir">Tipo de permiso</string>
     <string name="ccaa">Comunidad Autónoma</string>
     <string name="fecha_expedicion">Fecha de expedición</string>
     <string name="fecha_caducidad">Fecha de caducidad</string>

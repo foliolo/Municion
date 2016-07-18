@@ -26,10 +26,11 @@ public class Licencia implements Parcelable {
     private int id;
     private int tipo;
     private int numLicencia;
-    private Calendar fechaExpedicion;
-    private Calendar fechaCaducidad;
     private int numAbonado;
     private int autonomia;
+    private Calendar fechaExpedicion;
+    private Calendar fechaCaducidad;
+    private String numSeguro;
 
     public Licencia() {
     }
@@ -45,6 +46,7 @@ public class Licencia implements Parcelable {
             e.printStackTrace();
         }
         this.numAbonado = in.readInt();
+        this.numSeguro = in.readString();
         this.autonomia = in.readInt();
     }
 
@@ -54,6 +56,7 @@ public class Licencia implements Parcelable {
         this.setFechaExpedicion(extras.getString("fecha_expedicion", ""));
         this.setFechaCaducidad(extras.getString("fecha_caducidad", ""));
         this.numAbonado = extras.getInt("num_abonado");
+        this.numSeguro = extras.getString("num_seguro", "");
         this.autonomia  = extras.getInt("autonomia");
     }
 
@@ -64,6 +67,7 @@ public class Licencia implements Parcelable {
         this.setFechaExpedicion(licencia.getFechaExpedicion());
         this.setFechaCaducidad(licencia.getFechaCaducidad());
         this.setNumAbonado(licencia.getNumAbonado());
+        this.setNumSeguro(licencia.getNumSeguro());
         this.setAutonomia(licencia.getAutonomia());
     }
 
@@ -111,6 +115,13 @@ public class Licencia implements Parcelable {
         return autonomia;
     }
 
+    public String getNumSeguro() {
+        return numSeguro;
+    }
+
+    public void setNumSeguro(String numSeguro) {
+        this.numSeguro = numSeguro;
+    }
     public void setAutonomia(int autonomia) {
         this.autonomia = autonomia;
     }
@@ -166,6 +177,7 @@ public class Licencia implements Parcelable {
             e.printStackTrace();
         }
         dest.writeInt(numAbonado);
+        dest.writeString(numSeguro);
         dest.writeInt(autonomia);
     }
 }

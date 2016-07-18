@@ -54,6 +54,7 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
     public static final String KEY_LICENCIAS_FECHA_EXPEDICION = "fecha_expedicion";
     public static final String KEY_LICENCIAS_FECHA_CADUCIDAD = "fecha_caducidad";
     public static final String KEY_LICENCIAS_NUM_ABONADO = "num_abonado";
+    public static final String KEY_LICENCIAS_NUM_SEGURO = "num_seguro";
     public static final String KEY_LICENCIAS_AUTONOMIA = "autonomia";
     // Logcat tag
     private static final String LOG = "DatabaseHelper";
@@ -106,6 +107,7 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
             + KEY_LICENCIAS_FECHA_EXPEDICION + " TEXT NOT NULL,"
             + KEY_LICENCIAS_FECHA_CADUCIDAD + " TEXT NOT NULL,"
             + KEY_LICENCIAS_NUM_ABONADO + " INTEGER,"
+            + KEY_LICENCIAS_NUM_SEGURO + " TEXT,"
             + KEY_LICENCIAS_AUTONOMIA + " INTEGER  "
             + ")";
 
@@ -385,6 +387,7 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
                     licencia.setFechaExpedicion(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_LICENCIAS_FECHA_EXPEDICION)));
                     licencia.setFechaCaducidad(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_LICENCIAS_FECHA_CADUCIDAD)));
                     licencia.setNumAbonado(cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_LICENCIAS_NUM_ABONADO)));
+                    licencia.setNumSeguro(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_LICENCIAS_NUM_SEGURO)));
                     licencia.setAutonomia(cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_LICENCIAS_AUTONOMIA)));
                     // Adding contact to list
                     licencias.add(licencia);
@@ -486,6 +489,7 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
                         KEY_LICENCIAS_FECHA_EXPEDICION + ", " +
                         KEY_LICENCIAS_FECHA_CADUCIDAD + ", " +
                         KEY_LICENCIAS_NUM_ABONADO + ", " +
+                        KEY_LICENCIAS_NUM_SEGURO + ", " +
                         KEY_LICENCIAS_AUTONOMIA +
                         ") VALUES (" +
                         "'" + licencia.getTipo() + "' , " +
@@ -493,6 +497,7 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
                         "'" + licencia.getFechaExpedicion() + "' , " +
                         "'" + licencia.getFechaCaducidad() + "' , " +
                         "'" + licencia.getNumAbonado() + "' , " +
+                        "'" + licencia.getNumSeguro() + "' , " +
                         "'" + licencia.getAutonomia() + "'" +
                         ");");
             }

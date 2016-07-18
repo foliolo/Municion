@@ -41,7 +41,10 @@ public class LicenciaArrayAdapter extends ArrayAdapter<Licencia> {
         TextView caducidad = (TextView) convertView.findViewById(R.id.item_caducidad_licencia);
         TextView lblAbonado = (TextView) convertView.findViewById(R.id.lbl_num_abonado);
         TextView numAbonado = (TextView) convertView.findViewById(R.id.item_num_abonado);
+        TextView lblNumSeguro = (TextView) convertView.findViewById(R.id.lbl_num_poliza);
+        TextView numSeguro = (TextView) convertView.findViewById(R.id.item_num_poliza);
         TextView autonomia = (TextView) convertView.findViewById(R.id.item_ccaa);
+        TextView lblAutonomia = (TextView) convertView.findViewById(R.id.form_lbl_ccaa);
 
         // El último elemento es el libro de coleccionista y no tiene "-"
         int lengthArrayLicencias = getContext().getResources().getTextArray(R.array.tipo_licencias).length - 1;
@@ -66,6 +69,16 @@ public class LicenciaArrayAdapter extends ArrayAdapter<Licencia> {
         } else {
             numAbonado.setVisibility(View.GONE);
             lblAbonado.setVisibility(View.GONE);
+        }
+        if (licencia.getNumSeguro() != null && !licencia.getNumSeguro().isEmpty()) {
+            numSeguro.setText(licencia.getNumSeguro() + "");
+        } else {
+            numSeguro.setVisibility(View.GONE);
+            lblNumSeguro.setVisibility(View.GONE);
+        }
+        if (licencia.getAutonomia() == 0) {
+            autonomia.setVisibility(View.GONE);
+            lblAutonomia.setVisibility(View.GONE);
         }
         if (licencia.getFechaCaducidad() != null)
             caducidad.setText(new SimpleDateFormat("dd/MM/yyyy").format(licencia.getFechaCaducidad().getTime()));

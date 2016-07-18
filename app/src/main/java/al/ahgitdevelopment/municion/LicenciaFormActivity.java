@@ -37,11 +37,13 @@ public class LicenciaFormActivity extends AppCompatActivity {
     private TextInputLayout layoutFechaCaducidad;
     private AppCompatSpinner tipoLicencia;
     private AppCompatSpinner autonomia;
+    private AppCompatSpinner permisoConducir;
     private EditText numLicencia;
     private EditText fechaCaducidad;
     private EditText numAbonado;
+    private EditText numSeguro;
     private TextView lblAutonomia;
-
+    private TextView lblPermiso;
 
     /**
      * Inicializa la actividad
@@ -63,7 +65,10 @@ public class LicenciaFormActivity extends AppCompatActivity {
         fechaCaducidad = (EditText) findViewById(R.id.form_fecha_caducidad);
         lblAutonomia = (TextView) findViewById(R.id.form_lbl_ccaa);
         numAbonado = (EditText) findViewById(R.id.form_num_abonado);
+        numSeguro = (EditText) findViewById(R.id.form_num_poliza);
         autonomia = (AppCompatSpinner) findViewById(R.id.form_ccaa);
+        permisoConducir = (AppCompatSpinner) findViewById(R.id.form_tipo_permiso_conducir);
+        lblPermiso = (TextView) findViewById(R.id.form_lbl_tipo_permiso_conducir);
 
         //Carga de datos (en caso de modificacion)
         if (getIntent().getExtras() != null) {
@@ -73,6 +78,7 @@ public class LicenciaFormActivity extends AppCompatActivity {
                 numLicencia.setText(String.valueOf(licencia.getNumLicencia()));
                 fechaExpedicion.setText(new SimpleDateFormat("dd/MM/yyyy").format(licencia.getFechaExpedicion().getTime()));
                 numAbonado.setText(String.valueOf(licencia.getNumAbonado()));
+                numSeguro.setText(String.valueOf(licencia.getNumLicencia()));
                 autonomia.setSelection(licencia.getAutonomia());
             } catch (NullPointerException e) {
                 e.printStackTrace();
@@ -130,7 +136,6 @@ public class LicenciaFormActivity extends AppCompatActivity {
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
-                // Las federativas de tiro y caza estan adaptadas, faltaria adaptar pesca y conducir
                 switch (tipoLicencia.getSelectedItemPosition()) {
                     // Sumamos 3 año
                     case 1: // Licencia B
@@ -171,7 +176,6 @@ public class LicenciaFormActivity extends AppCompatActivity {
                     } catch (ParseException e) {
                         e.printStackTrace();
                     }
-                    // Las federativas de tiro y caza estan adaptadas, faltaria adaptar pesca y conducir
                     switch (tipoLicencia.getSelectedItemPosition()) {
                         // Sumamos 3 año
                         case 1:
@@ -198,19 +202,38 @@ public class LicenciaFormActivity extends AppCompatActivity {
                             break;
                     }
                 }
-                // Para mostrar campos de formulario si es licencia federativa de tiro o caza
-                if(tipoLicencia.getSelectedItemPosition() == 5) {
+                // Para mostrar campos de formulario si es licencia de caza mayor, federativa de tiro, caza
+                if (tipoLicencia.getSelectedItemPosition() == 3 || tipoLicencia.getSelectedItemPosition() == 7) {
+                    lblAutonomia.setVisibility(View.VISIBLE);
+                    numAbonado.setVisibility(View.GONE);
+                    autonomia.setVisibility(View.VISIBLE);
+                    numSeguro.setVisibility(View.VISIBLE);
+                    lblPermiso.setVisibility(View.GONE);
+                    permisoConducir.setVisibility(View.GONE);
+                } else if(tipoLicencia.getSelectedItemPosition() == 5) {
                     lblAutonomia.setVisibility(View.VISIBLE);
                     numAbonado.setVisibility(View.VISIBLE);
                     autonomia.setVisibility(View.VISIBLE);
+                    numSeguro.setVisibility(View.GONE);
+                    lblPermiso.setVisibility(View.GONE);
+                    permisoConducir.setVisibility(View.GONE);
                 } else if(tipoLicencia.getSelectedItemPosition() == 6) {
                     lblAutonomia.setVisibility(View.VISIBLE);
                     autonomia.setVisibility(View.VISIBLE);
                     numAbonado.setVisibility(View.GONE);
+                    numSeguro.setVisibility(View.GONE);
+                    lblPermiso.setVisibility(View.GONE);
+                    permisoConducir.setVisibility(View.GONE);
+                }else if(tipoLicencia.getSelectedItemPosition() == 10) {
+                    lblPermiso.setVisibility(View.VISIBLE);
+                    permisoConducir.setVisibility(View.VISIBLE);
                 } else {
                     lblAutonomia.setVisibility(View.GONE);
                     numAbonado.setVisibility(View.GONE);
                     autonomia.setVisibility(View.GONE);
+                    numSeguro.setVisibility(View.GONE);
+                    lblPermiso.setVisibility(View.GONE);
+                    permisoConducir.setVisibility(View.GONE);
                 }
             }
 
@@ -253,6 +276,9 @@ public class LicenciaFormActivity extends AppCompatActivity {
                 if(numAbonado.getText().toString() != null && !numAbonado.getText().toString().matches("")) {
                     bundle.putInt("num_abonado", Integer.parseInt(numAbonado.getText().toString()));
                 }
+                if(numSeguro.getText().toString() != null && !numSeguro.getText().toString().matches("")) {
+                    bundle.putString("num_seguro", numSeguro.getText().toString());
+                }
                 bundle.putInt("autonomia", autonomia.getSelectedItemPosition());
 
                 //Paso de vuelta de la posicion del item en el array
@@ -277,7 +303,7 @@ public class LicenciaFormActivity extends AppCompatActivity {
         boolean flag = true;
 
         if (numLicencia.getText().toString().equals("")) {
-            numLicencia.setError("Introdce el número de licencia", ResourcesCompat.getDrawable(getResources(), android.R.drawable.stat_notify_error, getTheme()));
+            numLicencia.setError("Introduce el número de licencia", ResourcesCompat.getDrawable(getResources(), android.R.drawable.stat_notify_error, getTheme()));
             flag = false;
         }
         if (fechaExpedicion.getText().toString().equals("")) {
@@ -290,6 +316,10 @@ public class LicenciaFormActivity extends AppCompatActivity {
         }
         if (numAbonado.getVisibility() == View.VISIBLE && numAbonado.getText().toString().equals("")) {
             numAbonado.setError("Introduce el número de abonado", ResourcesCompat.getDrawable(getResources(), android.R.drawable.stat_notify_error, getTheme()));
+            flag = false;
+        }
+        if (numSeguro.getVisibility() == View.VISIBLE && numSeguro.getText().toString().equals("")) {
+            numSeguro.setError("Introduce el número de la poliza del seguro", ResourcesCompat.getDrawable(getResources(), android.R.drawable.stat_notify_error, getTheme()));
             flag = false;
         }
 
