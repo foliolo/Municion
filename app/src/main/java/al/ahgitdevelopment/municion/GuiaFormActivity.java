@@ -12,6 +12,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
@@ -30,7 +31,7 @@ public class GuiaFormActivity extends AppCompatActivity {
     private EditText modelo;
     private EditText apodo;
     private AppCompatSpinner tipoArma;
-    private EditText calibre1;
+    private AutoCompleteTextView calibre1;
     private CheckBox segundoCalibre;
     private EditText calibre2;
     private EditText numGuia;
@@ -57,7 +58,7 @@ public class GuiaFormActivity extends AppCompatActivity {
         modelo = (EditText) findViewById(R.id.form_modelo);
         apodo = (EditText) findViewById(R.id.form_apodo_arma);
         tipoArma = (AppCompatSpinner) findViewById(R.id.form_tipo_arma);
-        calibre1 = (EditText) findViewById(R.id.form_calibre1);
+        calibre1 = (AutoCompleteTextView) findViewById(R.id.form_calibre1);
         segundoCalibre = (CheckBox) findViewById(R.id.form_check_segundo_calibre);
         calibre2 = (EditText) findViewById(R.id.form_calibre2);
         numGuia = (EditText) findViewById(R.id.form_num_guia);
@@ -66,6 +67,13 @@ public class GuiaFormActivity extends AppCompatActivity {
         gastado = (EditText) findViewById(R.id.form_cartuchos_gastados);
         mensajeError = (TextView) findViewById(R.id.form_mensaje_guia);
         imagePath = null;
+
+        //Carga de calibres
+        ArrayAdapter<String> adapter =
+                new ArrayAdapter<String>(GuiaFormActivity.this,
+                        android.R.layout.simple_dropdown_item_1line,
+                        getResources().getStringArray(R.array.calibres));
+        calibre1.setAdapter(adapter);
 
         //Mostrar la lista de tipos de armas en funcion de la licencia
         tipoArmasDisponibles();

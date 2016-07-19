@@ -17,7 +17,7 @@
             android:id="@+id/form_mensaje_guia"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:visibility="gone" />
+            android:visibility="gone"/>
 
         <!--MARCA-->
         <android.support.design.widget.TextInputLayout
@@ -29,7 +29,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/marca"
-                android:inputType="text" />
+                android:inputType="text"/>
         </android.support.design.widget.TextInputLayout>
 
         <!--MODELO-->
@@ -42,7 +42,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/modelo"
-                android:inputType="text" />
+                android:inputType="text"/>
         </android.support.design.widget.TextInputLayout>
 
         <!--APODO-->
@@ -55,7 +55,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/apodo"
-                android:inputType="text" />
+                android:inputType="text"/>
         </android.support.design.widget.TextInputLayout>
 
         <!--TIPO ARMA-->
@@ -64,7 +64,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/form_lbl_tipo_arma"
-            android:textAppearance="?android:attr/textAppearanceSmall" />
+            android:textAppearance="?android:attr/textAppearanceSmall"/>
 
         <android.support.v7.widget.AppCompatSpinner
             android:id="@+id/form_tipo_arma"
@@ -73,20 +73,28 @@
             android:entries="@array/tipo_armas"
             android:hint="@string/tipoArma"
             android:inputType="text"
-            android:spinnerMode="dropdown" />
+            android:spinnerMode="dropdown"/>
 
         <!--CALIBRE 1-->
-        <android.support.design.widget.TextInputLayout
+        <AutoCompleteTextView
+            android:id="@+id/form_calibre1"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:hint="@string/calibre"
+            android:inputType="text"
+            android:maxLines="1"
+            android:singleLine="true"/>
+        <!--<android.support.design.widget.TextInputLayout-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content">-->
 
-            <EditText
-                android:id="@+id/form_calibre1"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/calibre"
-                android:inputType="text" />
-        </android.support.design.widget.TextInputLayout>
+        <!--<EditText-->
+        <!--android:id="@+id/form_calibre1"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:hint="@string/calibre"-->
+        <!--android:inputType="text" />-->
+        <!--</android.support.design.widget.TextInputLayout>-->
 
         <!--CHECK BOX CALIBRE 2-->
         <CheckBox
@@ -94,7 +102,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:checked="false"
-            android:text="@string/check_segundo_calibre" />
+            android:text="@string/check_segundo_calibre"/>
         <!--CALIBRE 2-->
         <android.support.design.widget.TextInputLayout
             android:layout_width="match_parent"
@@ -106,7 +114,7 @@
                 android:layout_height="wrap_content"
                 android:hint="@string/calibre2"
                 android:inputType="text"
-                android:visibility="gone" />
+                android:visibility="gone"/>
         </android.support.design.widget.TextInputLayout>
 
         <!--NUMERO DE GUIA-->
@@ -119,7 +127,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/numGuia"
-                android:inputType="number" />
+                android:inputType="number"/>
         </android.support.design.widget.TextInputLayout>
 
         <!--NUMERO DE ARMA-->
@@ -132,7 +140,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/num_arma"
-                android:inputType="number" />
+                android:inputType="number"/>
         </android.support.design.widget.TextInputLayout>
 
         <!--CHECK BOX AUMENTO DE CUPO-->
@@ -151,9 +159,9 @@
                 android:id="@+id/form_cupo_anual"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:enabled="true"
                 android:hint="@string/cupo_anual"
-                android:inputType="number"
-                android:enabled="true"/>
+                android:inputType="number"/>
         </android.support.design.widget.TextInputLayout>
 
         <!--CARTUCHOS GASTADOS-->
