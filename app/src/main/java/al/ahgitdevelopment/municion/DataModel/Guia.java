@@ -21,7 +21,7 @@ public class Guia implements Parcelable {
     };
     private int id;
     private int idCompra;
-    private int idLicencia;
+    private int tipoLicencia;
     private String marca;
     private String modelo;
     private String apodo;
@@ -40,7 +40,7 @@ public class Guia implements Parcelable {
     protected Guia(Parcel in) {
         id = in.readInt();
         idCompra = in.readInt();
-        idLicencia = in.readInt();
+        tipoLicencia = in.readInt();
         marca = in.readString();
         modelo = in.readString();
         apodo = in.readString();
@@ -56,6 +56,7 @@ public class Guia implements Parcelable {
     }
 
     public Guia(Bundle extras) {
+        tipoLicencia = extras.getInt("tipoLicencia");
         marca = extras.getString("marca");
         modelo = extras.getString("modelo");
         apodo = extras.getString("apodo");
@@ -86,12 +87,12 @@ public class Guia implements Parcelable {
         this.idCompra = idCompra;
     }
 
-    public int getIdLicencia() {
-        return idLicencia;
+    public int getTipoLicencia() {
+        return tipoLicencia;
     }
 
-    public void setIdLicencia(int idLicencia) {
-        this.idLicencia = idLicencia;
+    public void setTipoLicencia(int tipoLicencia) {
+        this.tipoLicencia = tipoLicencia;
     }
 
     public String getMarca() {
@@ -191,7 +192,7 @@ public class Guia implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeInt(id);
         dest.writeInt(idCompra);
-        dest.writeInt(idLicencia);
+        dest.writeInt(tipoLicencia);
         dest.writeString(marca);
         dest.writeString(modelo);
         dest.writeString(apodo);

@@ -33,7 +33,8 @@
         android:layout_width="130dp"
         android:layout_height="match_parent"
         android:gravity="center"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:visibility="gone">
 
         <TextView
             android:id="@+id/form_lbl_tipo_permiso_conducir"
@@ -201,11 +202,12 @@
 
             <TextView
                 android:id="@+id/item_ccaa"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center"
+                android:gravity="left"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:layout_weight="1"/>
         </LinearLayout>
     </LinearLayout>
 

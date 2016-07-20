@@ -2,12 +2,14 @@ package al.ahgitdevelopment.municion;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatSpinner;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -17,16 +19,17 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
 import al.ahgitdevelopment.municion.DataModel.Guia;
-import al.ahgitdevelopment.municion.DataModel.Licencia;
 
 /**
  * Created by Alberto on 25/03/2016.
  */
 public class GuiaFormActivity extends AppCompatActivity {
+    private int tipoLicencia;
     private EditText marca;
     private EditText modelo;
     private EditText apodo;
@@ -80,28 +83,30 @@ public class GuiaFormActivity extends AppCompatActivity {
 
         //Carga de datos (en caso de modificacion)
         if (getIntent().getExtras() != null) {
-            try {
-                Guia guia = getIntent().getExtras().getParcelable("modify_guia");
-                assert guia != null;
-                marca.setText(guia.getMarca());
-                modelo.setText(guia.getModelo());
-                apodo.setText(guia.getApodo());
-                tipoArma.setSelection(guia.getTipoArma());
-                calibre1.setText(guia.getCalibre1());
+            if (getIntent().getExtras().get("tipo_licencia") == null) {
+                try {
+                    Guia guia = getIntent().getExtras().getParcelable("modify_guia");
+                    assert guia != null;
+                    tipoLicencia = guia.getTipoLicencia();
+                    marca.setText(guia.getMarca());
+                    modelo.setText(guia.getModelo());
+                    apodo.setText(guia.getApodo());
+                    calibre1.setText(guia.getCalibre1());
+                    tipoArma.setSelection(guia.getTipoArma());
+                    if ("".equals(guia.getCalibre2()))
+                        segundoCalibre.setChecked(true);
+                    else
+                        segundoCalibre.setChecked(false);
 
-                if ("".equals(guia.getCalibre2()))
-                    segundoCalibre.setChecked(true);
-                else
-                    segundoCalibre.setChecked(false);
-
-                calibre2.setText(guia.getCalibre2());
-                numGuia.setText(String.valueOf(guia.getNumGuia()));
-                numArma.setText(String.valueOf(guia.getNumArma()));
-                gastado.setText(String.valueOf(guia.getGastado()));
-                cupo.setText(String.valueOf(guia.getCupo()));
-                imagePath = guia.getImagePath();
-            } catch (NullPointerException e) {
-                e.printStackTrace();
+                    calibre2.setText(guia.getCalibre2());
+                    numGuia.setText(String.valueOf(guia.getNumGuia()));
+                    numArma.setText(String.valueOf(guia.getNumArma()));
+                    gastado.setText(String.valueOf(guia.getGastado()));
+                    cupo.setText(String.valueOf(guia.getCupo()));
+                    imagePath = guia.getImagePath();
+                } catch (NullPointerException e) {
+                    e.printStackTrace();
+                }
             }
         }
 
@@ -259,6 +264,11 @@ public class GuiaFormActivity extends AppCompatActivity {
             Intent result = new Intent(this, FragmentMainActivity.class);
 
             Bundle bundle = new Bundle();
+            if (getIntent().getExtras().getString("tipo_licencia") != null)
+                tipoLicencia = Utils.getLicenciaTipoFromString(GuiaFormActivity.this, getIntent().getExtras().getString("tipo_licencia"));
+            else
+                tipoLicencia = ((Guia) getIntent().getExtras().getParcelable("modify_guia")).getTipoLicencia();
+            bundle.putInt("tipoLicencia", tipoLicencia);
             bundle.putString("marca", marca.getText().toString());
             bundle.putString("modelo", modelo.getText().toString());
             // Control error. He metido vacio porque el campo en BBDD no puede ser  nulo
@@ -341,24 +351,33 @@ public class GuiaFormActivity extends AppCompatActivity {
         return retorno;
     }
 
-    private void tipoArmasDisponibles() {
+    private void tipoArmasDisponibles() throws Resources.NotFoundException {
         ArrayList<String> finalWeapons = new ArrayList<>();
         ArrayAdapter<String> armas = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, android.R.id.text1);
         armas.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         tipoArma.setAdapter(armas);
-
         armas.clear();
-        for (Licencia licencia : FragmentMainActivity.licencias) {
-            String nombreLicencia = getResources().getStringArray(R.array.tipo_licencias)[licencia.getTipo()];
-            String idNombreLicenia = nombreLicencia.split(" ")[0];
 
-            for (String armaAAñadir : getResources().getStringArray(getResources().getIdentifier(idNombreLicenia, "array", getPackageName()))) {
-                if (!finalWeapons.contains(armaAAñadir)) {
-                    finalWeapons.add(armaAAñadir);
+        if (getIntent().getExtras() != null) {
+            if (getIntent().getExtras().get("tipo_licencia") != null) {
+                String nombreLicencia = getIntent().getExtras().get("tipo_licencia").toString();
+                String idNombreLicenia = nombreLicencia.split(" ")[0];
+                armas.addAll(getResources().getStringArray(getResources().getIdentifier(idNombreLicenia, "array", getPackageName())));
+
+            } else { //Deberia entrar en la modificacion de un arma
+                try {
+                    Guia guia = getIntent().getExtras().getParcelable("modify_guia");
+                    String nombreLicencia = Utils.getStringLicenseFromId(GuiaFormActivity.this, guia.getTipoLicencia());
+                    String idNombreLicenia = nombreLicencia.split(" ")[0];
+                    armas.addAll(getResources().getStringArray(getResources().getIdentifier(idNombreLicenia, "array", getPackageName())));
+                } catch (ArrayIndexOutOfBoundsException ex) {
+                    Log.e(getPackageName(), "Fallo obteniendo licencia");
                 }
             }
+        } else {
+            Toast.makeText(GuiaFormActivity.this, "Error - No se muestran armas!!!", Toast.LENGTH_SHORT).show();
         }
-        armas.addAll(finalWeapons);
         armas.notifyDataSetChanged();
+
     }
 }

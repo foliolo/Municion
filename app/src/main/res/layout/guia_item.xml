@@ -9,7 +9,7 @@
         android:layout_width="90dp"
         android:layout_height="90dp"
         android:clickable="true"
-        android:scaleType="centerCrop"
+        android:scaleType="fitCenter"
         android:src="@drawable/pistola"
         android:layout_margin="8dp"/>
 
@@ -84,7 +84,7 @@
                 android:layout_weight="1"
                 android:paddingLeft="@dimen/item_margin_left"
                 android:gravity="center"
-                android:text="@string/label_cupo"
+                android:text="@string/cupo_anual"
                 android:textAppearance="?android:attr/textAppearanceSmall" />
 
             <TextView

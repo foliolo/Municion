@@ -57,7 +57,7 @@ public class FragmentMainActivity extends AppCompatActivity {
     public static ArrayList<Compra> compras;
     public static ArrayList<Licencia> licencias;
     private static DataBaseSQLiteHelper dbSqlHelper;
-    private static final int GUIA_COMPLETED = 1;
+    public static final int GUIA_COMPLETED = 1;
     private final int COMPRA_COMPLETED = 2;
     private final int LICENCIA_COMPLETED = 3;
     private final int GUIA_UPDATED = 4;
@@ -385,7 +385,7 @@ public class FragmentMainActivity extends AppCompatActivity {
             Guia guia = guias.get(position);
 
 //            guia.setIdCompra(data.getExtras().getInt(""));
-//            guia.setIdLicencia(data.getExtras().getInt(""));
+            guia.setTipoLicencia(data.getExtras().getInt("tipoLicencia"));
             guia.setMarca(data.getExtras().getString("marca"));
             guia.setModelo(data.getExtras().getString("modelo"));
             guia.setApodo(data.getExtras().getString("apodo"));
@@ -548,54 +548,6 @@ public class FragmentMainActivity extends AppCompatActivity {
     }
 
     /**
-     * Dialog para la seleccion de la licencia qu
-     */
-    public static class GuiaDialogFragment extends DialogFragment {
-        //https://developer.android.com/guide/topics/ui/dialogs.html
-        private int selectedLicense;
-
-        @NonNull
-        @Override
-        public Dialog onCreateDialog(Bundle savedInstanceState) {
-            final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-
-            // Set title
-            builder.setTitle(R.string.select_licencia)
-                    // Set items
-                    .setSingleChoiceItems(getLicenseName(), 0, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-//                            Toast.makeText(getActivity(), "Seleccionado: " + (String) getLicenseName()[i], Toast.LENGTH_SHORT).show();
-                            selectedLicense = i;
-                        }
-                    })
-                    // Add action buttons
-                    .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int pos) {
-                            Intent form = new Intent(getActivity(), GuiaFormActivity.class);
-                            getActivity().startActivityForResult(form, FragmentMainActivity.GUIA_COMPLETED);
-                        }
-                    })
-                    .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            GuiaDialogFragment.this.getDialog().cancel();
-                        }
-                    });
-            return builder.create();
-        }
-
-        private CharSequence[] getLicenseName() {
-            ArrayList<String> list = new ArrayList<>();
-            for (Licencia licencia : licencias) {
-                list.add(Utils.getStringLicenseFromId(getActivity(), licencia.getTipo()));
-            }
-
-            return list.toArray(new CharSequence[list.size()]);
-        }
-    }
-
-    /**
      * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
      * one of the sections/tabs/pages.
      */
@@ -630,6 +582,60 @@ public class FragmentMainActivity extends AppCompatActivity {
             return null;
         }
     }
+
+
+    /**
+     * Dialog para la seleccion de la licencia qu
+     */
+    public static class GuiaDialogFragment extends DialogFragment {
+        //https://developer.android.com/guide/topics/ui/dialogs.html
+
+        private int selectedLicense;
+        @NonNull
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+
+            // Set title
+            builder.setTitle(R.string.dialog_licencia_title)
+                    // Set items
+                    .setSingleChoiceItems(getLicenseName(), 0, new DialogInterface.OnClickListener() {
+
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+//                            Toast.makeText(getActivity(), "Seleccionado: " + (String) getLicenseName()[i], Toast.LENGTH_SHORT).show();
+                            selectedLicense = i;
+                        }
+                    })
+                    // Add action buttons
+                    .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int pos) {
+                            Intent form = new Intent(getActivity(), GuiaFormActivity.class);
+                            form.putExtra("tipo_licencia", (String) getLicenseName()[selectedLicense]);
+                            getActivity().startActivityForResult(form, FragmentMainActivity.GUIA_COMPLETED);
+                        }
+                    })
+                    .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            GuiaDialogFragment.this.getDialog().cancel();
+                        }
+                    });
+            return builder.create();
+        }
+
+        private CharSequence[] getLicenseName() {
+            ArrayList<String> list = new ArrayList<>();
+            for (Licencia licencia : licencias) {
+                String licenseName = Utils.getStringLicenseFromId(getActivity(), licencia.getTipo());
+                if (!licenseName.equals("Autonómica de Caza") && !licenseName.equals("Autonómica de Pesca") && !licenseName.equals("Permiso Conducir"))
+                    list.add(licenseName);
+            }
+
+            return list.toArray(new CharSequence[list.size()]);
+        }
+    }
+
 
 }
 

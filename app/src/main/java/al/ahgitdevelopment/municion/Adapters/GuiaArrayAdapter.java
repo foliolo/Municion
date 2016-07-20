@@ -55,7 +55,7 @@ public class GuiaArrayAdapter extends ArrayAdapter<Guia> {
         TextView cupo = (TextView) convertView.findViewById(R.id.item_cupo_guia);
         TextView gastado = (TextView) convertView.findViewById(R.id.item_gastados_guia);
 
-        if (guia.getImagePath() != null) {
+        if (guia.getImagePath() != null && !guia.getImagePath().equals("null")) {
             imagen.setImageBitmap(BitmapFactory.decodeFile(guia.getImagePath()));
         } else
             imagen.setImageResource(R.drawable.pistola);

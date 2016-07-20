@@ -59,7 +59,7 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
     // Logcat tag
     private static final String LOG = "DatabaseHelper";
     // Database Version
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 14;
     // Database Name
     private static final String DATABASE_NAME = "DBMunicion.db";
     // Table Create Statements
@@ -311,7 +311,7 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
                 Guia guia = new Guia();
                 guia.setId(cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_ID)));
                 guia.setIdCompra(cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_GUIA_ID_COMPRA)));
-                guia.setIdLicencia(cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_GUIA_ID_LICENCIA)));
+                guia.setTipoLicencia(cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_GUIA_ID_LICENCIA)));
                 guia.setApodo(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_GUIA_APODO)));
                 guia.setMarca(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_GUIA_MARCA)));
                 guia.setModelo(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_GUIA_MODELO)));
@@ -423,7 +423,7 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
                         KEY_GUIA_GASTADO +
                         ") VALUES (" +
                         "'" + guia.getIdCompra() + "' , " +
-                        "'" + guia.getIdLicencia() + "' , " +
+                        "'" + guia.getTipoLicencia() + "' , " +
                         "'" + guia.getApodo() + "' , " +
                         "'" + guia.getMarca() + "' , " +
                         "'" + guia.getModelo() + "' , " +

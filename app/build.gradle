@@ -8,7 +8,7 @@ android {
         minSdkVersion 15
         targetSdkVersion 24
         versionCode 1
-        versionName "1.0"
+        versionName '0.1.5'
     }
     buildTypes {
         release {
@@ -18,18 +18,17 @@ android {
     }
     productFlavors {
     }
-    buildToolsVersion '24.0.0'
+    buildToolsVersion '24.0.0 rc4'
 }
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    //    androidTestCompile 'org.testng:testng:6.9.6'
-    //    testCompile 'junit:junit:4.12'
-    //    testCompile 'org.mockito:mockito-core:1.10.19'
-    compile 'com.android.support:design:24.0.0'
-    compile 'com.android.support:support-v4:24.0.0'
-    compile 'com.android.support:support-v13:24.0.0'
-    compile 'com.android.support:support-annotations:24.0.0'
-    compile 'com.android.support:appcompat-v7:24.0.0'
-//    compile 'com.google.android.gms:play-services:9.2.0'
+    compile 'com.android.support:design:24.1.0'
+    compile 'com.android.support:support-v4:24.1.0'
+    compile 'com.android.support:support-v13:24.1.0'
+    compile 'com.android.support:support-annotations:24.1.0'
+    compile 'com.android.support:appcompat-v7:24.1.0'
+//    compile 'com.android.support:recyclerview-v7:24.1.0'
+//    compile 'com.android.support:cardview-v7:24.1.0'
+    //    compile 'com.google.android.gms:play-services:9.2.0'
 }

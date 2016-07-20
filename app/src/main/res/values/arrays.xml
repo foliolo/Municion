@@ -15,12 +15,12 @@
         <item>D - Caza mayor</item>
         <item>E - Escopeta</item>
         <item>F - Tiro olimpico</item>
-        <item>F - Caza</item>
-        <item>G - Pesca</item>
         <item>AE - Autorización especial</item>
         <item>AER - Autorización especial replicas</item>
-        <item>PC - Permiso Conducir</item>
         <item>Libro de coleccionista</item>
+        <item>Autonómica de Caza</item>
+        <item>Autonómica de Pesca</item>
+        <item>Permiso Conducir</item>
     </string-array>
 
     <string-array name="ccaa">
@@ -2540,6 +2540,5 @@
         <item>.58 US Musket RF Long</item>
         <item>Cal. 16 Béringer RF</item>
         <item>18 mm Milbank Amsler</item>
-        <item>Industriales</item>
     </string-array>
 </resources>
