@@ -50,17 +50,17 @@
     <string name="form_lbl_tipo_arma">Tipo de arma</string>
     <string name="lbl_tipo_licencia">Tipo de licencia</string>
     <string name="lbl_tipo_permiso_conducir">Tipo de permiso de conducción</string>
-    <string name="lbl_num_licencia">Nº de licencia</string>
-    <string name="lbl_num_dni">Nº de DNI sin letra</string>
-    <string name="lbl_num_abonado">Nº de abonado</string>
-    <string name="lbl_num_poliza">Nº de Poliza Seguro</string>
+    <string name="lbl_num_licencia">Num licencia</string>
+    <string name="lbl_num_dni">Num DNI sin letra</string>
+    <string name="lbl_num_abonado">Num abonado</string>
+    <string name="lbl_num_poliza">Poliza Seguro</string>
     <string name="lbl_ccaa">CCAA</string>
     <string name="lbl_expedicion_licencia">Expedicion</string>
     <string name="lbl_caducidad_licencia">Caducidad</string>
     <string name="item_apodo_guia">Apodo</string>
     <string name="check_segundo_calibre">Tiene segundo calibre</string>
     <string name="item_num_guia">12345</string>
-    <string name="label_num_guia">Nº guia</string>
+    <string name="label_num_guia">Num guia</string>
 
     <!--String Compras Form-->
     <string name="title_nueva_compra">Nueva compra</string>

@@ -19,6 +19,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.text.ParseException;
@@ -33,6 +34,7 @@ import al.ahgitdevelopment.municion.DataModel.Licencia;
  */
 public class LicenciaFormActivity extends AppCompatActivity {
     public static EditText fechaExpedicion;
+    private TextInputLayout textInputLayoutLicencia;
     private TextInputLayout layoutFechaExpedicion;
     private TextInputLayout layoutFechaCaducidad;
     private AppCompatSpinner tipoLicencia;
@@ -42,6 +44,7 @@ public class LicenciaFormActivity extends AppCompatActivity {
     private EditText fechaCaducidad;
     private EditText numAbonado;
     private EditText numSeguro;
+    private LinearLayout layoutCCAA;
     private TextView lblAutonomia;
     private TextView lblPermiso;
 
@@ -58,17 +61,19 @@ public class LicenciaFormActivity extends AppCompatActivity {
         getSupportActionBar().setIcon(R.mipmap.ic_launcher_4_transparent);
 
         tipoLicencia = (AppCompatSpinner) findViewById(R.id.form_tipo_licencia);
+        textInputLayoutLicencia = (TextInputLayout) findViewById(R.id.text_input_layout_licencia);
         numLicencia = (EditText) findViewById(R.id.form_num_licencia);
         layoutFechaExpedicion = (TextInputLayout) findViewById(R.id.layout_form_fecha_expedicion);
         fechaExpedicion = (EditText) findViewById(R.id.form_fecha_expedicion);
         layoutFechaCaducidad = (TextInputLayout) findViewById(R.id.layout_form_fecha_caducidad);
         fechaCaducidad = (EditText) findViewById(R.id.form_fecha_caducidad);
-        lblAutonomia = (TextView) findViewById(R.id.form_lbl_ccaa);
         numAbonado = (EditText) findViewById(R.id.form_num_abonado);
         numSeguro = (EditText) findViewById(R.id.form_num_poliza);
+        layoutCCAA = (LinearLayout) findViewById(R.id.layout_ccaa);
+        lblAutonomia = (TextView) findViewById(R.id.form_lbl_ccaa);
         autonomia = (AppCompatSpinner) findViewById(R.id.form_ccaa);
-        permisoConducir = (AppCompatSpinner) findViewById(R.id.form_tipo_permiso_conducir);
         lblPermiso = (TextView) findViewById(R.id.form_lbl_tipo_permiso_conducir);
+        permisoConducir = (AppCompatSpinner) findViewById(R.id.form_tipo_permiso_conducir);
 
         //Carga de datos (en caso de modificacion)
         if (getIntent().getExtras() != null) {
@@ -139,25 +144,30 @@ public class LicenciaFormActivity extends AppCompatActivity {
                 switch (tipoLicencia.getSelectedItemPosition()) {
                     // Sumamos 3 año
                     case 1: // Licencia B
+                    case 5: // Licencia F
                         calendar.add(Calendar.YEAR, 3);
                         fechaCaducidad.setText(simpleDate.format(calendar.getTime()));
                         break;
-                    case 5: // Licencia F-Tiro
-                    case 6: // Licencia F-Caza
+                    // Sumamos 5 años
+                    case 0: // Licencia A
+                    case 2: // Licencia C
+                    case 3: // Licencia D
+                    case 4: // Licencia E
+                    case 6: // Licencia AE
+                    case 7: // Licencia AER
+                    case 8: // Licencia Libero Coleccionesta
+                        calendar.add(Calendar.YEAR, 5);
+                        fechaCaducidad.setText(simpleDate.format(calendar.getTime()));
+                        break;
+                    // Ajustamos al final de año
+                    case 9: // Autonomica Caza
+                    case 10: // Autonomica Pesca
                         calendar.set(calendar.get(Calendar.YEAR), 11, 31);
                         fechaCaducidad.setText(simpleDate.format(calendar.getTime()));
                         break;
-                    // Sumamos 5 años (Resto de licencias)
-                    case 0:
-                    case 2:
-                    case 3:
-                    case 4:
-                    case 7:
-                    case 8:
-                    case 9:
-                    case 10:
-                    case 11:
-                        calendar.add(Calendar.YEAR, 5);
+                    // Sumamos 10 años
+                    case 11: // Persmiso de Conducir
+                        calendar.add(Calendar.YEAR, 10);
                         fechaCaducidad.setText(simpleDate.format(calendar.getTime()));
                         break;
                 }
@@ -176,65 +186,40 @@ public class LicenciaFormActivity extends AppCompatActivity {
                     } catch (ParseException e) {
                         e.printStackTrace();
                     }
+
                     switch (tipoLicencia.getSelectedItemPosition()) {
                         // Sumamos 3 año
-                        case 1:
+                        case 1: // Licencia B
+                        case 5: // Licencia F
                             calendar.add(Calendar.YEAR, 3);
                             fechaCaducidad.setText(simpleDate.format(calendar.getTime()));
                             break;
-                        case 5: // Licencia F-Tiro
-                        case 6: // Licencia F-Caza
+                        // Sumamos 5 años
+                        case 0: // Licencia A
+                        case 2: // Licencia C
+                        case 3: // Licencia D
+                        case 4: // Licencia E
+                        case 6: // Licencia AE
+                        case 7: // Licencia AER
+                        case 8: // Licencia Libero Coleccionesta
+                            calendar.add(Calendar.YEAR, 5);
+                            fechaCaducidad.setText(simpleDate.format(calendar.getTime()));
+                            break;
+                        // Ajustamos al final de año
+                        case 9: // Autonomica Caza
+                        case 10: // Autonomica Pesca
                             calendar.set(calendar.get(Calendar.YEAR), 11, 31);
                             fechaCaducidad.setText(simpleDate.format(calendar.getTime()));
                             break;
-                        // Sumamos 5 años
-                        case 0:
-                        case 2:
-                        case 3:
-                        case 4:
-                        case 7:
-                        case 8:
-                        case 9:
-                        case 10:
-                        case 11:
-                            calendar.add(Calendar.YEAR, 5);
+                        // Sumamos 10 años
+                        case 11: // Persmiso de Conducir
+                            calendar.add(Calendar.YEAR, 10);
                             fechaCaducidad.setText(simpleDate.format(calendar.getTime()));
                             break;
                     }
                 }
-                // Para mostrar campos de formulario si es licencia de caza mayor, federativa de tiro, caza
-                if (tipoLicencia.getSelectedItemPosition() == 3 || tipoLicencia.getSelectedItemPosition() == 7) {
-                    lblAutonomia.setVisibility(View.VISIBLE);
-                    numAbonado.setVisibility(View.GONE);
-                    autonomia.setVisibility(View.VISIBLE);
-                    numSeguro.setVisibility(View.VISIBLE);
-                    lblPermiso.setVisibility(View.GONE);
-                    permisoConducir.setVisibility(View.GONE);
-                } else if(tipoLicencia.getSelectedItemPosition() == 5) {
-                    lblAutonomia.setVisibility(View.VISIBLE);
-                    numAbonado.setVisibility(View.VISIBLE);
-                    autonomia.setVisibility(View.VISIBLE);
-                    numSeguro.setVisibility(View.GONE);
-                    lblPermiso.setVisibility(View.GONE);
-                    permisoConducir.setVisibility(View.GONE);
-                } else if(tipoLicencia.getSelectedItemPosition() == 6) {
-                    lblAutonomia.setVisibility(View.VISIBLE);
-                    autonomia.setVisibility(View.VISIBLE);
-                    numAbonado.setVisibility(View.GONE);
-                    numSeguro.setVisibility(View.GONE);
-                    lblPermiso.setVisibility(View.GONE);
-                    permisoConducir.setVisibility(View.GONE);
-                }else if(tipoLicencia.getSelectedItemPosition() == 10) {
-                    lblPermiso.setVisibility(View.VISIBLE);
-                    permisoConducir.setVisibility(View.VISIBLE);
-                } else {
-                    lblAutonomia.setVisibility(View.GONE);
-                    numAbonado.setVisibility(View.GONE);
-                    autonomia.setVisibility(View.GONE);
-                    numSeguro.setVisibility(View.GONE);
-                    lblPermiso.setVisibility(View.GONE);
-                    permisoConducir.setVisibility(View.GONE);
-                }
+
+                SetVisibilityFields(tipoLicencia.getSelectedItemPosition());
             }
 
             @Override
@@ -273,10 +258,10 @@ public class LicenciaFormActivity extends AppCompatActivity {
                 bundle.putInt("num_licencia", Integer.parseInt(numLicencia.getText().toString()));
                 bundle.putString("fecha_expedicion", fechaExpedicion.getText().toString());
                 bundle.putString("fecha_caducidad", fechaCaducidad.getText().toString());
-                if(numAbonado.getText().toString() != null && !numAbonado.getText().toString().matches("")) {
+                if (numAbonado.getText().toString() != null && !numAbonado.getText().toString().matches("")) {
                     bundle.putInt("num_abonado", Integer.parseInt(numAbonado.getText().toString()));
                 }
-                if(numSeguro.getText().toString() != null && !numSeguro.getText().toString().matches("")) {
+                if (numSeguro.getText().toString() != null && !numSeguro.getText().toString().matches("")) {
                     bundle.putString("num_seguro", numSeguro.getText().toString());
                 }
                 bundle.putInt("autonomia", autonomia.getSelectedItemPosition());
@@ -327,6 +312,50 @@ public class LicenciaFormActivity extends AppCompatActivity {
     }
 
     /**
+     * Método para modificar la visibilidad de los campos en función del tipo de licencia seleccionado
+     * @param tipoLicencia Licencia seleccionada
+     */
+    private void SetVisibilityFields(int tipoLicencia) {
+        switch (tipoLicencia) {
+            case 0:
+            case 1:
+            case 2:
+            case 3:
+            case 4:
+            case 5:
+            case 6:
+            case 7:
+            case 8:
+                textInputLayoutLicencia.setHint(getResources().getString(R.string.lbl_num_licencia));
+                numAbonado.setVisibility(View.GONE);
+                numSeguro.setVisibility(View.GONE);
+                layoutCCAA.setVisibility(View.GONE);
+                lblPermiso.setVisibility(View.GONE);
+                permisoConducir.setVisibility(View.GONE);
+                break;
+
+            case 9:
+            case 10:
+                textInputLayoutLicencia.setHint(getResources().getString(R.string.lbl_num_licencia));
+                numAbonado.setVisibility(View.VISIBLE);
+                numSeguro.setVisibility(View.VISIBLE);
+                layoutCCAA.setVisibility(View.VISIBLE);
+                lblPermiso.setVisibility(View.GONE);
+                permisoConducir.setVisibility(View.GONE);
+                break;
+
+            case 11:
+                textInputLayoutLicencia.setHint(getResources().getString(R.string.lbl_num_dni));
+                numAbonado.setVisibility(View.GONE);
+                numSeguro.setVisibility(View.GONE);
+                layoutCCAA.setVisibility(View.GONE);
+                lblPermiso.setVisibility(View.VISIBLE);
+                permisoConducir.setVisibility(View.VISIBLE);
+                break;
+        }
+    }
+
+    /**
      * DatePickerFragment para seleccionar la fecha de expedicion
      */
     public static class DatePickerFragment extends DialogFragment
@@ -355,5 +384,6 @@ public class LicenciaFormActivity extends AppCompatActivity {
             String fecha = new DateFormat().format("dd/MM/yyyy", date).toString();
             fechaExpedicion.setText(fecha);
         }
+
     }
 }
