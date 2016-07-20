@@ -18,7 +18,7 @@ android {
     }
     productFlavors {
     }
-    buildToolsVersion '24.0.0 rc4'
+    buildToolsVersion '24.0.1'
 }
 
 dependencies {
@@ -28,7 +28,5 @@ dependencies {
     compile 'com.android.support:support-v13:24.1.0'
     compile 'com.android.support:support-annotations:24.1.0'
     compile 'com.android.support:appcompat-v7:24.1.0'
-//    compile 'com.android.support:recyclerview-v7:24.1.0'
-//    compile 'com.android.support:cardview-v7:24.1.0'
     //    compile 'com.google.android.gms:play-services:9.2.0'
 }

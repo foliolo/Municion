@@ -165,8 +165,12 @@
 
         ]]>
     </string>
+
     <string name="dialog_licencia_title">Selecciona una licencia</string>
     <string name="select_licencia">Selecciona una licencia</string>
+
+    <string name="dialog_guia_title">Selecciona una guía</string>
+    <!--<string name="select_guia">Selecciona una guía</string>-->
 
     <!--google_api_key for Google Places API-->
     <string name="google_api_key">AIzaSyB5EUq9C9taMGE5EpJSRjNafzTvhkaxsSc</string>

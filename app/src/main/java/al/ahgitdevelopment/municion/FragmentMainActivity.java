@@ -4,7 +4,6 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
@@ -48,6 +47,13 @@ import al.ahgitdevelopment.municion.DataModel.Licencia;
 public class FragmentMainActivity extends AppCompatActivity {
 
     public static final int REQUEST_IMAGE_CAPTURE = 100;
+    public static final int GUIA_COMPLETED = 1;
+    public static final int COMPRA_COMPLETED = 2;
+    private final int LICENCIA_COMPLETED = 3;
+    private final int GUIA_UPDATED = 4;
+    private final int COMPRA_UPDATED = 5;
+    private final int LICENCIA_UPDATED = 6;
+
     public static File fileImagePath = null;
     public static View auxView = null;
     public static ActionMode mActionMode = null;
@@ -57,12 +63,6 @@ public class FragmentMainActivity extends AppCompatActivity {
     public static ArrayList<Compra> compras;
     public static ArrayList<Licencia> licencias;
     private static DataBaseSQLiteHelper dbSqlHelper;
-    public static final int GUIA_COMPLETED = 1;
-    private final int COMPRA_COMPLETED = 2;
-    private final int LICENCIA_COMPLETED = 3;
-    private final int GUIA_UPDATED = 4;
-    private final int COMPRA_UPDATED = 5;
-    private final int LICENCIA_UPDATED = 6;
     public Toolbar toolbar;
     /**
      * The {@link PagerAdapter} that will provide
@@ -201,8 +201,10 @@ public class FragmentMainActivity extends AppCompatActivity {
                             break;
                         case 1:
                             if (guias.size() > 0) {
-                                form = new Intent(FragmentMainActivity.this, CompraFormActivity.class);
-                                startActivityForResult(form, COMPRA_COMPLETED);
+//                                form = new Intent(FragmentMainActivity.this, CompraFormActivity.class);
+//                                startActivityForResult(form, COMPRA_COMPLETED);
+                                DialogFragment dialog = new CompraDialogFragment();
+                                dialog.show(getSupportFragmentManager(), "NewCompraDialogFragment");
                             } else {
                                 Snackbar.make(view, "Debe introducir una guia primero", Snackbar.LENGTH_INDEFINITE)
                                         .setAction(android.R.string.ok, new View.OnClickListener() {
@@ -258,8 +260,16 @@ public class FragmentMainActivity extends AppCompatActivity {
                 ((PlaceholderFragment) mSectionsPagerAdapter.getItem(mViewPager.getCurrentItem())).guiaArrayAdapter.notifyDataSetChanged();
                 break;
             case 1:
+                //Actualizar cupo de la guia correspondiente
+                Guia guia = guias.get(compras.get(position).getIdPosGuia());
+                int unidadesComprada = compras.get(position).getUnidades();
+                guia.setCupo(guia.getCupo() - unidadesComprada);
+
+                //Borrado de la compra
                 compras.remove(position);
                 ((PlaceholderFragment) mSectionsPagerAdapter.getItem(mViewPager.getCurrentItem())).compraArrayAdapter.notifyDataSetChanged();
+                ((PlaceholderFragment) mSectionsPagerAdapter.getItem(mViewPager.getCurrentItem())).guiaArrayAdapter.notifyDataSetChanged();
+
                 break;
             case 2:
                 licencias.remove(position);
@@ -314,18 +324,31 @@ public class FragmentMainActivity extends AppCompatActivity {
                     } else
                         Log.i(getPackageName(), "Intent sin informacion");
                     break;
+
                 case GUIA_COMPLETED:
                     guias.add(new Guia(data.getExtras()));
                     ((PlaceholderFragment) mSectionsPagerAdapter.getItem(mViewPager.getCurrentItem())).guiaArrayAdapter.notifyDataSetChanged();
                     break;
+
                 case COMPRA_COMPLETED:
-                    compras.add(new Compra(data.getExtras()));
+                    Compra newCompra = new Compra(data.getExtras());
+                    compras.add(newCompra);
                     ((PlaceholderFragment) mSectionsPagerAdapter.getItem(mViewPager.getCurrentItem())).compraArrayAdapter.notifyDataSetChanged();
+
+                    //Actualizamos el cupo de la guia a la que pertence la compra
+                    int posGuia = newCompra.getIdPosGuia();
+                    if (posGuia != -1) {
+                        int cupoActual = guias.get(posGuia).getCupo();
+                        guias.get(posGuia).setCupo(cupoActual + newCompra.getUnidades());
+                    }
+                    ((PlaceholderFragment) mSectionsPagerAdapter.getItem(mViewPager.getCurrentItem())).guiaArrayAdapter.notifyDataSetChanged();
                     break;
+
                 case LICENCIA_COMPLETED:
                     licencias.add(new Licencia(data.getExtras()));
                     ((PlaceholderFragment) mSectionsPagerAdapter.getItem(mViewPager.getCurrentItem())).licenciaArrayAdapter.notifyDataSetChanged();
                     break;
+
                 case GUIA_UPDATED:
                     updateGuia(data);
                     break;
@@ -451,14 +474,6 @@ public class FragmentMainActivity extends AppCompatActivity {
         Toast.makeText(FragmentMainActivity.this, R.string.guardadoBBDD, Toast.LENGTH_SHORT).show();
     }
 
-    private Bitmap getImageFromUri(String imageUri) {
-        if (!imageUri.equals("null"))
-            return BitmapFactory.decodeFile(imageUri);
-        else
-            return BitmapFactory.decodeResource(getResources(), R.drawable.pistola);
-    }
-
-
     /**
      * A placeholder fragment containing a simple view.
      */
@@ -548,6 +563,111 @@ public class FragmentMainActivity extends AppCompatActivity {
     }
 
     /**
+     * Dialog para la seleccion de la licencia qu
+     */
+    public static class GuiaDialogFragment extends DialogFragment {
+        //https://developer.android.com/guide/topics/ui/dialogs.html
+
+        private int selectedLicense;
+
+        @NonNull
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+
+            // Set title
+            builder.setTitle(R.string.dialog_licencia_title)
+                    // Set items
+                    .setSingleChoiceItems(getLicenseName(), 0, new DialogInterface.OnClickListener() {
+
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+//                            Toast.makeText(getActivity(), "Seleccionado: " + (String) getGuiaName()[i], Toast.LENGTH_SHORT).show();
+                            selectedLicense = i;
+                        }
+                    })
+                    // Add action buttons
+                    .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int pos) {
+                            Intent form = new Intent(getActivity(), GuiaFormActivity.class);
+                            form.putExtra("tipo_licencia", (String) getLicenseName()[selectedLicense]);
+                            getActivity().startActivityForResult(form, FragmentMainActivity.GUIA_COMPLETED);
+                        }
+                    })
+                    .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            GuiaDialogFragment.this.getDialog().cancel();
+                        }
+                    });
+            return builder.create();
+        }
+
+        private CharSequence[] getLicenseName() {
+            ArrayList<String> list = new ArrayList<>();
+            for (Licencia licencia : licencias) {
+                String licenseName = Utils.getStringLicenseFromId(getActivity(), licencia.getTipo());
+                if (!licenseName.equals("Autonómica de Caza") && !licenseName.equals("Autonómica de Pesca") && !licenseName.equals("Permiso Conducir"))
+                    list.add(licenseName);
+            }
+
+            return list.toArray(new CharSequence[list.size()]);
+        }
+    }
+
+    /**
+     * Dialog para la seleccion de la licencia qu
+     */
+    public static class CompraDialogFragment extends DialogFragment {
+        //https://developer.android.com/guide/topics/ui/dialogs.html
+
+        private int selectedGuia;
+
+        @NonNull
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+
+            // Set title
+            builder.setTitle(R.string.dialog_guia_title)
+                    // Set items
+                    .setSingleChoiceItems(getGuiaName(), 0, new DialogInterface.OnClickListener() {
+
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+//                            Toast.makeText(getActivity(), "Seleccionado: " + (String) getGuiaName()[i], Toast.LENGTH_SHORT).show();
+                            selectedGuia = i;
+                        }
+                    })
+                    // Add action buttons
+                    .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int pos) {
+                            Intent form = new Intent(getActivity(), CompraFormActivity.class);
+                            form.putExtra("position_guia", selectedGuia);
+                            form.putExtra("guia", guias.get(selectedGuia));
+                            getActivity().startActivityForResult(form, FragmentMainActivity.COMPRA_COMPLETED);
+                        }
+                    })
+                    .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            CompraDialogFragment.this.getDialog().cancel();
+                        }
+                    });
+            return builder.create();
+        }
+
+        private CharSequence[] getGuiaName() {
+            ArrayList<String> list = new ArrayList<>();
+            for (Guia guia : guias) {
+                list.add(guia.getApodo());
+            }
+
+            return list.toArray(new CharSequence[list.size()]);
+        }
+    }
+
+    /**
      * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
      * one of the sections/tabs/pages.
      */
@@ -580,59 +700,6 @@ public class FragmentMainActivity extends AppCompatActivity {
                     return getResources().getString(R.string.section_licencias_title);
             }
             return null;
-        }
-    }
-
-
-    /**
-     * Dialog para la seleccion de la licencia qu
-     */
-    public static class GuiaDialogFragment extends DialogFragment {
-        //https://developer.android.com/guide/topics/ui/dialogs.html
-
-        private int selectedLicense;
-        @NonNull
-        @Override
-        public Dialog onCreateDialog(Bundle savedInstanceState) {
-            final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-
-            // Set title
-            builder.setTitle(R.string.dialog_licencia_title)
-                    // Set items
-                    .setSingleChoiceItems(getLicenseName(), 0, new DialogInterface.OnClickListener() {
-
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-//                            Toast.makeText(getActivity(), "Seleccionado: " + (String) getLicenseName()[i], Toast.LENGTH_SHORT).show();
-                            selectedLicense = i;
-                        }
-                    })
-                    // Add action buttons
-                    .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int pos) {
-                            Intent form = new Intent(getActivity(), GuiaFormActivity.class);
-                            form.putExtra("tipo_licencia", (String) getLicenseName()[selectedLicense]);
-                            getActivity().startActivityForResult(form, FragmentMainActivity.GUIA_COMPLETED);
-                        }
-                    })
-                    .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            GuiaDialogFragment.this.getDialog().cancel();
-                        }
-                    });
-            return builder.create();
-        }
-
-        private CharSequence[] getLicenseName() {
-            ArrayList<String> list = new ArrayList<>();
-            for (Licencia licencia : licencias) {
-                String licenseName = Utils.getStringLicenseFromId(getActivity(), licencia.getTipo());
-                if (!licenseName.equals("Autonómica de Caza") && !licenseName.equals("Autonómica de Pesca") && !licenseName.equals("Permiso Conducir"))
-                    list.add(licenseName);
-            }
-
-            return list.toArray(new CharSequence[list.size()]);
         }
     }
 

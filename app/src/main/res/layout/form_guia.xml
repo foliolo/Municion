@@ -75,26 +75,23 @@
             android:inputType="text"
             android:spinnerMode="dropdown"/>
 
-        <!--CALIBRE 1-->
-        <AutoCompleteTextView
-            android:id="@+id/form_calibre1"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/calibre"
-            android:inputType="text"
-            android:maxLines="1"
-            android:singleLine="true"/>
-        <!--<android.support.design.widget.TextInputLayout-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content">-->
 
-        <!--<EditText-->
-        <!--android:id="@+id/form_calibre1"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:hint="@string/calibre"-->
-        <!--android:inputType="text" />-->
-        <!--</android.support.design.widget.TextInputLayout>-->
+        <!--CALIBRE 1-->
+
+
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <AutoCompleteTextView
+                android:id="@+id/form_calibre1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/calibre"
+                android:inputType="text"
+                android:maxLines="1"
+                android:singleLine="true"/>
+        </android.support.design.widget.TextInputLayout>
 
         <!--CHECK BOX CALIBRE 2-->
         <CheckBox
@@ -108,13 +105,15 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <EditText
+            <AutoCompleteTextView
                 android:id="@+id/form_calibre2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/calibre2"
                 android:inputType="text"
-                android:visibility="gone"/>
+                android:maxLines="1"
+                android:visibility="gone"
+                android:singleLine="true"/>
         </android.support.design.widget.TextInputLayout>
 
         <!--NUMERO DE GUIA-->
@@ -161,7 +160,7 @@
                 android:layout_height="wrap_content"
                 android:enabled="true"
                 android:hint="@string/cupo_anual"
-                android:inputType="number"/>
+                android:inputType="number|none"/>
         </android.support.design.widget.TextInputLayout>
 
         <!--CARTUCHOS GASTADOS-->

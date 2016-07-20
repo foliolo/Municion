@@ -1,7 +1,6 @@
 package al.ahgitdevelopment.municion;
 
 import android.content.Context;
-import android.support.v4.app.FragmentActivity;
 
 /**
  * Created by ahidalgog on 07/07/2016.
@@ -26,13 +25,23 @@ public final class Utils {
     }
 
     /**
-     * Método que devuelve el string de la licencia introduciendo el id (posicion en el array de licencias)
-     *
-     * @param activity
+     * Método que devuelve el string de la licencia introduciendo el id (posicion en el array de licencias).
+     * @param context
      * @param tipo
      * @return
      */
-    public static String getStringLicenseFromId(FragmentActivity activity, int tipo) {
-        return activity.getResources().getStringArray(R.array.tipo_licencias)[tipo];
+    public static String getStringLicenseFromId(Context context, int tipo) {
+        return context.getResources().getStringArray(R.array.tipo_licencias)[tipo];
+    }
+
+    /**
+     * Método que devuelve el string del tipo de arma introduciendo el id (posicion en el array de tipos de arma).
+     *
+     * @param context
+     * @param selectedItemPosition
+     * @return
+     */
+    public static String getStringArmaFromId(Context context, int selectedItemPosition) {
+        return context.getResources().getStringArray(R.array.tipo_armas)[selectedItemPosition];
     }
 }

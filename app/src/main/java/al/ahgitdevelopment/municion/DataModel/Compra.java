@@ -24,6 +24,7 @@ public class Compra implements Parcelable {
         }
     };
     private int id;
+    private int idPosGuia;
     private String calibre1;
     private String calibre2;
     private int unidades;
@@ -41,6 +42,7 @@ public class Compra implements Parcelable {
 
     protected Compra(Parcel in) {
         id = in.readInt();
+        idPosGuia = in.readInt();
         calibre1 = in.readString();
         calibre2 = in.readString();
         unidades = in.readInt();
@@ -59,6 +61,7 @@ public class Compra implements Parcelable {
     }
 
     public Compra(Bundle extras) {
+        idPosGuia = extras.getInt("idPosGuia");
         calibre1 = extras.getString("calibre1");
         calibre2 = extras.getString("calibre2", "");
         unidades = extras.getInt("unidades");
@@ -70,6 +73,14 @@ public class Compra implements Parcelable {
         tienda = extras.getString("tienda");
         valoracion = extras.getFloat("valoracion");
         imagePath = extras.getString("imagePath");
+    }
+
+    public int getIdPosGuia() {
+        return idPosGuia;
+    }
+
+    public void setIdPosGuia(int idPosGuia) {
+        this.idPosGuia = idPosGuia;
     }
 
     public int getId() {
@@ -188,6 +199,7 @@ public class Compra implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(idPosGuia);
         dest.writeInt(id);
         dest.writeString(calibre1);
         dest.writeString(calibre2);

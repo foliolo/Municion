@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatSpinner;
 import android.text.Editable;
+import android.text.InputType;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Menu;
@@ -36,9 +37,10 @@ public class GuiaFormActivity extends AppCompatActivity {
     private AppCompatSpinner tipoArma;
     private AutoCompleteTextView calibre1;
     private CheckBox segundoCalibre;
-    private EditText calibre2;
+    private AutoCompleteTextView calibre2;
     private EditText numGuia;
     private EditText numArma;
+    private CheckBox aumentoCupo;
     private EditText cupo;
     private EditText gastado;
     // Mensaje de error antes de guardar
@@ -63,9 +65,10 @@ public class GuiaFormActivity extends AppCompatActivity {
         tipoArma = (AppCompatSpinner) findViewById(R.id.form_tipo_arma);
         calibre1 = (AutoCompleteTextView) findViewById(R.id.form_calibre1);
         segundoCalibre = (CheckBox) findViewById(R.id.form_check_segundo_calibre);
-        calibre2 = (EditText) findViewById(R.id.form_calibre2);
+        calibre2 = (AutoCompleteTextView) findViewById(R.id.form_calibre2);
         numGuia = (EditText) findViewById(R.id.form_num_guia);
         numArma = (EditText) findViewById(R.id.form_num_arma);
+        aumentoCupo = (CheckBox) findViewById(R.id.form_check_aumento_cupo);
         cupo = (EditText) findViewById(R.id.form_cupo_anual);
         gastado = (EditText) findViewById(R.id.form_cartuchos_gastados);
         mensajeError = (TextView) findViewById(R.id.form_mensaje_guia);
@@ -77,9 +80,13 @@ public class GuiaFormActivity extends AppCompatActivity {
                         android.R.layout.simple_dropdown_item_1line,
                         getResources().getStringArray(R.array.calibres));
         calibre1.setAdapter(adapter);
+        calibre2.setAdapter(adapter);
 
         //Mostrar la lista de tipos de armas en funcion de la licencia
         tipoArmasDisponibles();
+
+        //Inicializacion del cupo por defecto
+        cupo.setText(getDefaultCupo().toString());
 
         //Carga de datos (en caso de modificacion)
         if (getIntent().getExtras() != null) {
@@ -93,10 +100,15 @@ public class GuiaFormActivity extends AppCompatActivity {
                     apodo.setText(guia.getApodo());
                     calibre1.setText(guia.getCalibre1());
                     tipoArma.setSelection(guia.getTipoArma());
-                    if ("".equals(guia.getCalibre2()))
-                        segundoCalibre.setChecked(true);
-                    else
+                    if (guia.getCalibre2() == null || "".equals(guia.getCalibre2())) {
                         segundoCalibre.setChecked(false);
+                        calibre2.setVisibility(View.GONE);
+                        calibre2.setText("");
+                        guia.setCalibre2("");
+                    } else {
+                        segundoCalibre.setChecked(true);
+                        calibre2.setVisibility(View.VISIBLE);
+                    }
 
                     calibre2.setText(guia.getCalibre2());
                     numGuia.setText(String.valueOf(guia.getNumGuia()));
@@ -117,6 +129,18 @@ public class GuiaFormActivity extends AppCompatActivity {
                     calibre2.setVisibility(View.VISIBLE);
                 } else {
                     calibre2.setVisibility(View.GONE);
+                    calibre2.setText("");
+                }
+            }
+        });
+
+        aumentoCupo.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+                if (isChecked) {
+                    cupo.setInputType(InputType.TYPE_CLASS_NUMBER);
+                } else {
+                    cupo.setInputType(InputType.TYPE_NULL);
                 }
             }
         });
@@ -318,6 +342,11 @@ public class GuiaFormActivity extends AppCompatActivity {
             modelo.setError(getString(R.string.error_before_save));
             retorno = false;
         }
+        // Apodo
+        if (apodo.getText().toString().length() < 1) {
+            apodo.setError(getString(R.string.error_before_save));
+            retorno = false;
+        }
         // Calibre1
         if (calibre1.getText().toString().length() < 1) {
             calibre1.setError(getString(R.string.error_before_save));
@@ -378,6 +407,39 @@ public class GuiaFormActivity extends AppCompatActivity {
             Toast.makeText(GuiaFormActivity.this, "Error - No se muestran armas!!!", Toast.LENGTH_SHORT).show();
         }
         armas.notifyDataSetChanged();
+        tipoArma.setSelection(0, true); // Default Value
+    }
 
+    private Integer getDefaultCupo() {
+        Integer defaultCupo;
+        String nombreArma = Utils.getStringArmaFromId(GuiaFormActivity.this, tipoArma.getSelectedItemPosition());
+        switch (nombreArma) {
+            case "Pistola":
+                defaultCupo = 100;
+                cupo.setInputType(InputType.TYPE_NULL);
+                break;
+            case "Escopeta":
+                defaultCupo = 5000;
+                cupo.setInputType(InputType.TYPE_NULL);
+                break;
+            case "Rifle":
+                defaultCupo = 1000;
+                cupo.setInputType(InputType.TYPE_NULL);
+                break;
+            case "Revolver":
+                defaultCupo = 100;
+                cupo.setInputType(InputType.TYPE_NULL);
+                break;
+            case "Avancarga":
+                defaultCupo = 1000;
+                cupo.setInputType(InputType.TYPE_NULL);
+                break;
+            default:
+                defaultCupo = 0;
+                aumentoCupo.setChecked(true);
+                cupo.setInputType(InputType.TYPE_CLASS_NUMBER);
+        }
+
+        return defaultCupo;
     }
 }

@@ -28,6 +28,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 import al.ahgitdevelopment.municion.DataModel.Compra;
+import al.ahgitdevelopment.municion.DataModel.Guia;
 
 /**
  * Created by ahidalgog on 11/04/2016.
@@ -49,6 +50,8 @@ public class CompraFormActivity extends AppCompatActivity {
     // Mensaje de error antes de guardar
     private TextView mensajeError;
     private String imagePath;
+
+    private int posicionGuia;
 
 
     /**
@@ -79,34 +82,49 @@ public class CompraFormActivity extends AppCompatActivity {
         mensajeError = (TextView) findViewById(R.id.form_mensaje_compra);
         imagePath = null;
 
-        //Carga de datos (en caso de modificacion)
         if (getIntent().getExtras() != null) {
-            try {
-                Compra compra = getIntent().getExtras().getParcelable("modify_compra");
+            //Carga de datos (en caso de modificacion)
+            if (getIntent().getExtras().get("position_guia") == null) {
+                try {
+                    Compra compra = getIntent().getExtras().getParcelable("modify_compra");
 
-                calibre1.setText(compra.getCalibre1());
-                if (compra.getCalibre2() != null) {
-                    if (!"".equals(compra.getCalibre2().toString())) {
+                    calibre1.setText(compra.getCalibre1());
+                    if (compra.getCalibre2() != null) {
+                        if (!"".equals(compra.getCalibre2().toString())) {
+                            checkSegundoCalibre.setChecked(true);
+                            calibre2.setVisibility(View.VISIBLE);
+                        } else {
+                            checkSegundoCalibre.setChecked(false);
+                            calibre2.setVisibility(View.GONE);
+                        }
+                        calibre2.setText(compra.getCalibre2().toString());
+                    }
+                    unidades.setText(String.valueOf(compra.getUnidades()));
+                    precio.setText(String.valueOf(compra.getPrecio() + "€"));
+                    fecha.setText(new SimpleDateFormat("dd/MM/yyyy").format(compra.getFecha().getTime()));
+                    tipoMunicion.setText(compra.getTipo());
+                    pesoMunicion.setText(String.valueOf(compra.getPeso()));
+                    marcaMunicion.setText(compra.getMarca());
+                    tienda.setText(compra.getTienda());
+                    valoracion.setRating(compra.getValoracion());
+//                imagen.setImageBitmap(BitmapFactory.decodeFile(compra.getImagePath()));
+                    imagePath = compra.getImagePath();
+                } catch (NullPointerException e) {
+                    e.printStackTrace();
+                }
+            }
+            //Carga de datos de la guia seleccionada
+            else {
+                posicionGuia = getIntent().getExtras().getInt("position_guia", -1);
+                if (posicionGuia != -1) {
+                    Guia guia = getIntent().getExtras().getParcelable("guia");
+                    calibre1.setText(guia.getCalibre1());
+                    if (guia.getCalibre2() != null && !guia.getCalibre2().equals("")) {
                         checkSegundoCalibre.setChecked(true);
                         calibre2.setVisibility(View.VISIBLE);
-                    } else {
-                        checkSegundoCalibre.setChecked(false);
-                        calibre2.setVisibility(View.GONE);
+                        calibre2.setText(guia.getCalibre2());
                     }
-                    calibre2.setText(compra.getCalibre2().toString());
                 }
-                unidades.setText(String.valueOf(compra.getUnidades()));
-                precio.setText(String.valueOf(compra.getPrecio() + "€"));
-                fecha.setText(new SimpleDateFormat("dd/MM/yyyy").format(compra.getFecha().getTime()));
-                tipoMunicion.setText(compra.getTipo());
-                pesoMunicion.setText(String.valueOf(compra.getPeso()));
-                marcaMunicion.setText(compra.getMarca());
-                tienda.setText(compra.getTienda());
-                valoracion.setRating(compra.getValoracion());
-//                imagen.setImageBitmap(BitmapFactory.decodeFile(compra.getImagePath()));
-                imagePath = compra.getImagePath();
-            } catch (NullPointerException e) {
-                e.printStackTrace();
             }
         }
 
@@ -117,6 +135,7 @@ public class CompraFormActivity extends AppCompatActivity {
                     calibre2.setVisibility(View.VISIBLE);
                 } else {
                     calibre2.setVisibility(View.GONE);
+                    calibre2.setText("");
                 }
             }
         });
@@ -282,8 +301,11 @@ public class CompraFormActivity extends AppCompatActivity {
             bundle.putString("imagePath", imagePath);
 
             //Paso de vuelta de la posicion del item en el array
-            if (getIntent().getExtras() != null)
+//            if (getIntent().getExtras().getInt("position", -1) != -1)
+            if (getIntent().getExtras().get("position_guia") == null)
                 bundle.putInt("position", getIntent().getExtras().getInt("position", -1));
+            else
+                bundle.putInt("idPosGuia", getIntent().getExtras().getInt("position_guia"));
 
             result.putExtras(bundle);
 
