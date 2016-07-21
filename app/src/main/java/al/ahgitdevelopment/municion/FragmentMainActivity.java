@@ -49,11 +49,6 @@ public class FragmentMainActivity extends AppCompatActivity {
     public static final int REQUEST_IMAGE_CAPTURE = 100;
     public static final int GUIA_COMPLETED = 1;
     public static final int COMPRA_COMPLETED = 2;
-    private final int LICENCIA_COMPLETED = 3;
-    private final int GUIA_UPDATED = 4;
-    private final int COMPRA_UPDATED = 5;
-    private final int LICENCIA_UPDATED = 6;
-
     public static File fileImagePath = null;
     public static View auxView = null;
     public static ActionMode mActionMode = null;
@@ -63,6 +58,10 @@ public class FragmentMainActivity extends AppCompatActivity {
     public static ArrayList<Compra> compras;
     public static ArrayList<Licencia> licencias;
     private static DataBaseSQLiteHelper dbSqlHelper;
+    private final int LICENCIA_COMPLETED = 3;
+    private final int GUIA_UPDATED = 4;
+    private final int COMPRA_UPDATED = 5;
+    private final int LICENCIA_UPDATED = 6;
     public Toolbar toolbar;
     /**
      * The {@link PagerAdapter} that will provide
@@ -184,12 +183,12 @@ public class FragmentMainActivity extends AppCompatActivity {
                     Intent form = null;
                     switch (mViewPager.getCurrentItem()) {
                         case 0:
-                            if (licencias.size() > 0) {
+                            if (Utils.getLicenseName(FragmentMainActivity.this).length > 0) {
                                 // Seleccion de licencia a la que asociar la guia
                                 DialogFragment dialog = new GuiaDialogFragment();
                                 dialog.show(getSupportFragmentManager(), "NewGuiaDialogFragment");
                             } else {
-                                Snackbar.make(view, "Debe introducir una licencia primero", Snackbar.LENGTH_INDEFINITE)
+                                Snackbar.make(view, R.string.dialog_guia_fail, Snackbar.LENGTH_INDEFINITE)
                                         .setAction(android.R.string.ok, new View.OnClickListener() {
                                             @Override
                                             public void onClick(View view) {
@@ -260,20 +259,28 @@ public class FragmentMainActivity extends AppCompatActivity {
                 ((PlaceholderFragment) mSectionsPagerAdapter.getItem(mViewPager.getCurrentItem())).guiaArrayAdapter.notifyDataSetChanged();
                 break;
             case 1:
-                //Actualizar cupo de la guia correspondiente
-                Guia guia = guias.get(compras.get(position).getIdPosGuia());
-                int unidadesComprada = compras.get(position).getUnidades();
-                guia.setCupo(guia.getCupo() - unidadesComprada);
+                try {
+                    //Actualizar cupo de la guia correspondiente
+                    Guia guia = guias.get(compras.get(position).getIdPosGuia());
+                    int unidadesComprada = compras.get(position).getUnidades();
+                    guia.setGastado(guia.getGastado() - unidadesComprada);
 
-                //Borrado de la compra
-                compras.remove(position);
-                ((PlaceholderFragment) mSectionsPagerAdapter.getItem(mViewPager.getCurrentItem())).compraArrayAdapter.notifyDataSetChanged();
-                ((PlaceholderFragment) mSectionsPagerAdapter.getItem(mViewPager.getCurrentItem())).guiaArrayAdapter.notifyDataSetChanged();
-
+                    //Borrado de la compra
+                    compras.remove(position);
+                    ((PlaceholderFragment) mSectionsPagerAdapter.getItem(mViewPager.getCurrentItem())).compraArrayAdapter.notifyDataSetChanged();
+                    ((PlaceholderFragment) mSectionsPagerAdapter.getItem(mViewPager.getCurrentItem())).guiaArrayAdapter.notifyDataSetChanged();
+                } catch (IndexOutOfBoundsException ex) {
+                    Log.e(getPackageName(), "Fallo con los index al borrar una compra", ex);
+                }
                 break;
             case 2:
-                licencias.remove(position);
-                ((PlaceholderFragment) mSectionsPagerAdapter.getItem(mViewPager.getCurrentItem())).licenciaArrayAdapter.notifyDataSetChanged();
+                //Si existe alguna conexion, no se podra eliminar la licencia
+                if (Utils.licenseCanBeDeleted(position)) {
+                    Toast.makeText(FragmentMainActivity.this, R.string.delete_license_fail, Toast.LENGTH_LONG).show();
+                } else {
+                    licencias.remove(position);
+                    ((PlaceholderFragment) mSectionsPagerAdapter.getItem(mViewPager.getCurrentItem())).licenciaArrayAdapter.notifyDataSetChanged();
+                }
                 break;
         }
     }
@@ -338,14 +345,14 @@ public class FragmentMainActivity extends AppCompatActivity {
                     //Actualizamos el cupo de la guia a la que pertence la compra
                     int posGuia = newCompra.getIdPosGuia();
                     if (posGuia != -1) {
-                        int cupoActual = guias.get(posGuia).getCupo();
-                        guias.get(posGuia).setCupo(cupoActual + newCompra.getUnidades());
+                        int gastoActual = guias.get(posGuia).getGastado();
+                        guias.get(posGuia).setGastado(gastoActual + newCompra.getUnidades());
                     }
                     ((PlaceholderFragment) mSectionsPagerAdapter.getItem(mViewPager.getCurrentItem())).guiaArrayAdapter.notifyDataSetChanged();
                     break;
 
                 case LICENCIA_COMPLETED:
-                    licencias.add(new Licencia(data.getExtras()));
+                    licencias.add(new Licencia(FragmentMainActivity.this, data.getExtras()));
                     ((PlaceholderFragment) mSectionsPagerAdapter.getItem(mViewPager.getCurrentItem())).licenciaArrayAdapter.notifyDataSetChanged();
                     break;
 
@@ -578,7 +585,7 @@ public class FragmentMainActivity extends AppCompatActivity {
             // Set title
             builder.setTitle(R.string.dialog_licencia_title)
                     // Set items
-                    .setSingleChoiceItems(getLicenseName(), 0, new DialogInterface.OnClickListener() {
+                    .setSingleChoiceItems(Utils.getLicenseName(getActivity()), 0, new DialogInterface.OnClickListener() {
 
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
@@ -591,7 +598,7 @@ public class FragmentMainActivity extends AppCompatActivity {
                         @Override
                         public void onClick(DialogInterface dialog, int pos) {
                             Intent form = new Intent(getActivity(), GuiaFormActivity.class);
-                            form.putExtra("tipo_licencia", (String) getLicenseName()[selectedLicense]);
+                            form.putExtra("tipo_licencia", (String) Utils.getLicenseName(getActivity())[selectedLicense]);
                             getActivity().startActivityForResult(form, FragmentMainActivity.GUIA_COMPLETED);
                         }
                     })
@@ -601,17 +608,6 @@ public class FragmentMainActivity extends AppCompatActivity {
                         }
                     });
             return builder.create();
-        }
-
-        private CharSequence[] getLicenseName() {
-            ArrayList<String> list = new ArrayList<>();
-            for (Licencia licencia : licencias) {
-                String licenseName = Utils.getStringLicenseFromId(getActivity(), licencia.getTipo());
-                if (!licenseName.equals("Autonómica de Caza") && !licenseName.equals("Autonómica de Pesca") && !licenseName.equals("Permiso Conducir"))
-                    list.add(licenseName);
-            }
-
-            return list.toArray(new CharSequence[list.size()]);
         }
     }
 

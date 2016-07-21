@@ -51,10 +51,9 @@
     <string name="lbl_tipo_licencia">Tipo de licencia</string>
     <string name="lbl_tipo_permiso_conducir">Tipo de permiso de conducción</string>
     <string name="lbl_num_licencia">Num licencia</string>
-    <string name="lbl_num_dni">Num DNI sin letra</string>
+    <string name="lbl_num_dni">Num dni sin letra</string>
     <string name="lbl_num_abonado">Num abonado</string>
-    <string name="lbl_num_poliza">Poliza Seguro</string>
-    <string name="lbl_ccaa">CCAA</string>
+    <string name="lbl_num_poliza">Póliza seguro</string>
     <string name="lbl_expedicion_licencia">Expedicion</string>
     <string name="lbl_caducidad_licencia">Caducidad</string>
     <string name="item_apodo_guia">Apodo</string>
@@ -81,7 +80,7 @@
     <string name="title_nueva_licencia">Nueva Licencia</string>
     <string name="tipo_licencia">Tipo de licencia</string>
     <string name="tipo_permiso_conducir">Tipo de permiso</string>
-    <string name="ccaa">CCAA</string>
+    <string name="lbl_ccaa">Com. Autónoma</string>
     <string name="fecha_expedicion">Fecha de expedición</string>
     <string name="fecha_caducidad">Fecha de caducidad</string>
 
@@ -174,5 +173,7 @@
 
     <!--google_api_key for Google Places API-->
     <string name="google_api_key">AIzaSyB5EUq9C9taMGE5EpJSRjNafzTvhkaxsSc</string>
+    <string name="delete_license_fail">Primero deben borrarse las guias asociadas a esta licencia</string>
+    <string name="dialog_guia_fail">Debe introducir una licencia de armas primero</string>
 
 </resources>

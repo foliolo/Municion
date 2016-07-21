@@ -43,7 +43,8 @@
             android:layout_height="wrap_content"
             android:text="@string/lbl_tipo_permiso_conducir"
             android:textAppearance="?android:attr/textAppearanceSmall"
-            android:visibility="gone"/>
+            android:visibility="gone"
+            android:layout_marginTop="15dp"/>
 
         <android.support.v7.widget.AppCompatSpinner
             android:id="@+id/form_tipo_permiso_conducir"
@@ -152,7 +153,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:entries="@array/ccaa"
-                android:hint="@string/ccaa"
+                android:hint="@string/lbl_ccaa"
                 android:inputType="text"
 
                 android:spinnerMode="dropdown"

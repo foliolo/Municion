@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.CheckBox;
@@ -30,6 +31,7 @@ import al.ahgitdevelopment.municion.DataModel.Guia;
  * Created by Alberto on 25/03/2016.
  */
 public class GuiaFormActivity extends AppCompatActivity {
+    private ArrayList<String> finalWeapons = new ArrayList<>();
     private int tipoLicencia;
     private EditText marca;
     private EditText modelo;
@@ -85,8 +87,10 @@ public class GuiaFormActivity extends AppCompatActivity {
         //Mostrar la lista de tipos de armas en funcion de la licencia
         tipoArmasDisponibles();
 
+
         //Inicializacion del cupo por defecto
-        cupo.setText(getDefaultCupo().toString());
+        tipoArma.setSelection(0);
+        cupo.setText(getDefaultCupo(finalWeapons.get(tipoArma.getSelectedItemPosition())).toString());
 
         //Carga de datos (en caso de modificacion)
         if (getIntent().getExtras() != null) {
@@ -142,6 +146,17 @@ public class GuiaFormActivity extends AppCompatActivity {
                 } else {
                     cupo.setInputType(InputType.TYPE_NULL);
                 }
+            }
+        });
+
+        tipoArma.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                cupo.setText(String.valueOf(getDefaultCupo(finalWeapons.get(tipoArma.getSelectedItemPosition()))));
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
             }
         });
 
@@ -381,7 +396,7 @@ public class GuiaFormActivity extends AppCompatActivity {
     }
 
     private void tipoArmasDisponibles() throws Resources.NotFoundException {
-        ArrayList<String> finalWeapons = new ArrayList<>();
+        finalWeapons.clear();
         ArrayAdapter<String> armas = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, android.R.id.text1);
         armas.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         tipoArma.setAdapter(armas);
@@ -392,7 +407,6 @@ public class GuiaFormActivity extends AppCompatActivity {
                 String nombreLicencia = getIntent().getExtras().get("tipo_licencia").toString();
                 String idNombreLicenia = nombreLicencia.split(" ")[0];
                 armas.addAll(getResources().getStringArray(getResources().getIdentifier(idNombreLicenia, "array", getPackageName())));
-
             } else { //Deberia entrar en la modificacion de un arma
                 try {
                     Guia guia = getIntent().getExtras().getParcelable("modify_guia");
@@ -408,38 +422,51 @@ public class GuiaFormActivity extends AppCompatActivity {
         }
         armas.notifyDataSetChanged();
         tipoArma.setSelection(0, true); // Default Value
+
+        for (int i = 0; i < armas.getCount(); i++)
+            finalWeapons.add(armas.getItem(i));
     }
 
-    private Integer getDefaultCupo() {
+    /**
+     * Este método retorno el cupo por defecto para el arma seleccionada en el desplegable.
+     * En caso de estar seleccionado el aumento de cupo, retornamos el valor que tenga el campo (no el de por defecto)
+     *
+     * @return Retorna el cupo por defecto
+     */
+    private Integer getDefaultCupo(String arma) {
         Integer defaultCupo;
-        String nombreArma = Utils.getStringArmaFromId(GuiaFormActivity.this, tipoArma.getSelectedItemPosition());
-        switch (nombreArma) {
-            case "Pistola":
-                defaultCupo = 100;
-                cupo.setInputType(InputType.TYPE_NULL);
-                break;
-            case "Escopeta":
-                defaultCupo = 5000;
-                cupo.setInputType(InputType.TYPE_NULL);
-                break;
-            case "Rifle":
-                defaultCupo = 1000;
-                cupo.setInputType(InputType.TYPE_NULL);
-                break;
-            case "Revolver":
-                defaultCupo = 100;
-                cupo.setInputType(InputType.TYPE_NULL);
-                break;
-            case "Avancarga":
-                defaultCupo = 1000;
-                cupo.setInputType(InputType.TYPE_NULL);
-                break;
-            default:
-                defaultCupo = 0;
-                aumentoCupo.setChecked(true);
-                cupo.setInputType(InputType.TYPE_CLASS_NUMBER);
-        }
 
+        if (!aumentoCupo.isChecked()) {
+//            String nombreArma = Utils.getStringArmaFromId(GuiaFormActivity.this, tipoArma.getSelectedItemPosition());
+            switch (arma) {
+                case "Pistola":
+                    defaultCupo = 100;
+                    cupo.setInputType(InputType.TYPE_NULL);
+                    break;
+                case "Escopeta":
+                    defaultCupo = 5000;
+                    cupo.setInputType(InputType.TYPE_NULL);
+                    break;
+                case "Rifle":
+                    defaultCupo = 1000;
+                    cupo.setInputType(InputType.TYPE_NULL);
+                    break;
+                case "Revolver":
+                    defaultCupo = 100;
+                    cupo.setInputType(InputType.TYPE_NULL);
+                    break;
+                case "Avancarga":
+                    defaultCupo = 1000;
+                    cupo.setInputType(InputType.TYPE_NULL);
+                    break;
+                default:
+                    defaultCupo = 0;
+                    aumentoCupo.setChecked(true);
+                    cupo.setInputType(InputType.TYPE_CLASS_NUMBER);
+            }
+        } else {
+            defaultCupo = Integer.parseInt(cupo.getText().toString());
+        }
         return defaultCupo;
     }
 }

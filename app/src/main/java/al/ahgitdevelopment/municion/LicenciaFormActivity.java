@@ -33,20 +33,19 @@ import al.ahgitdevelopment.municion.DataModel.Licencia;
  * Created by Alberto on 24/05/2016.
  */
 public class LicenciaFormActivity extends AppCompatActivity {
-    public static EditText fechaExpedicion;
     private TextInputLayout textInputLayoutLicencia;
     private TextInputLayout layoutFechaExpedicion;
     private TextInputLayout layoutFechaCaducidad;
     private AppCompatSpinner tipoLicencia;
-    private AppCompatSpinner autonomia;
-    private AppCompatSpinner permisoConducir;
+    private TextView lblPermiso;
+    private AppCompatSpinner tipoPermisoConducir;
     private EditText numLicencia;
+    public static EditText fechaExpedicion;
     private EditText fechaCaducidad;
     private EditText numAbonado;
     private EditText numSeguro;
     private LinearLayout layoutCCAA;
-    private TextView lblAutonomia;
-    private TextView lblPermiso;
+    private AppCompatSpinner autonomia;
 
     /**
      * Inicializa la actividad
@@ -70,10 +69,9 @@ public class LicenciaFormActivity extends AppCompatActivity {
         numAbonado = (EditText) findViewById(R.id.form_num_abonado);
         numSeguro = (EditText) findViewById(R.id.form_num_poliza);
         layoutCCAA = (LinearLayout) findViewById(R.id.layout_ccaa);
-        lblAutonomia = (TextView) findViewById(R.id.form_lbl_ccaa);
         autonomia = (AppCompatSpinner) findViewById(R.id.form_ccaa);
         lblPermiso = (TextView) findViewById(R.id.form_lbl_tipo_permiso_conducir);
-        permisoConducir = (AppCompatSpinner) findViewById(R.id.form_tipo_permiso_conducir);
+        tipoPermisoConducir = (AppCompatSpinner) findViewById(R.id.form_tipo_permiso_conducir);
 
         //Carga de datos (en caso de modificacion)
         if (getIntent().getExtras() != null) {
@@ -255,20 +253,31 @@ public class LicenciaFormActivity extends AppCompatActivity {
 
                 Bundle bundle = new Bundle();
                 bundle.putInt("tipo", tipoLicencia.getSelectedItemPosition());
+                if (tipoPermisoConducir.getVisibility() == View.VISIBLE) {
+                    bundle.putInt("tipo_permiso_conduccion", tipoPermisoConducir.getSelectedItemPosition());
+                } else {
+                    bundle.putInt("tipo_permiso_conduccion", -1); // Mandamos -1 para que el array adapter no muestre este campo
+                }
                 bundle.putInt("num_licencia", Integer.parseInt(numLicencia.getText().toString()));
                 bundle.putString("fecha_expedicion", fechaExpedicion.getText().toString());
                 bundle.putString("fecha_caducidad", fechaCaducidad.getText().toString());
-                if (numAbonado.getText().toString() != null && !numAbonado.getText().toString().matches("")) {
+                if (numAbonado.getVisibility() == View.VISIBLE) {
                     bundle.putInt("num_abonado", Integer.parseInt(numAbonado.getText().toString()));
                 }
-                if (numSeguro.getText().toString() != null && !numSeguro.getText().toString().matches("")) {
+                if (numSeguro.getVisibility() == View.VISIBLE) {
                     bundle.putString("num_seguro", numSeguro.getText().toString());
                 }
-                bundle.putInt("autonomia", autonomia.getSelectedItemPosition());
+                if (layoutCCAA.getVisibility() == View.VISIBLE) {
+                    bundle.putInt("autonomia", autonomia.getSelectedItemPosition());
+                } else {
+                    bundle.putInt("autonomia", -1); // Mandamos -1 para que el array adapter no muestre este campo
+                }
+
 
                 //Paso de vuelta de la posicion del item en el array
                 if (getIntent().getExtras() != null)
                     bundle.putInt("position", getIntent().getExtras().getInt("position", -1));
+
 
                 result.putExtras(bundle);
 
@@ -331,7 +340,7 @@ public class LicenciaFormActivity extends AppCompatActivity {
                 numSeguro.setVisibility(View.GONE);
                 layoutCCAA.setVisibility(View.GONE);
                 lblPermiso.setVisibility(View.GONE);
-                permisoConducir.setVisibility(View.GONE);
+                tipoPermisoConducir.setVisibility(View.GONE);
                 break;
 
             case 9:
@@ -341,7 +350,7 @@ public class LicenciaFormActivity extends AppCompatActivity {
                 numSeguro.setVisibility(View.VISIBLE);
                 layoutCCAA.setVisibility(View.VISIBLE);
                 lblPermiso.setVisibility(View.GONE);
-                permisoConducir.setVisibility(View.GONE);
+                tipoPermisoConducir.setVisibility(View.GONE);
                 break;
 
             case 11:
@@ -350,7 +359,7 @@ public class LicenciaFormActivity extends AppCompatActivity {
                 numSeguro.setVisibility(View.GONE);
                 layoutCCAA.setVisibility(View.GONE);
                 lblPermiso.setVisibility(View.VISIBLE);
-                permisoConducir.setVisibility(View.VISIBLE);
+                tipoPermisoConducir.setVisibility(View.VISIBLE);
                 break;
         }
     }

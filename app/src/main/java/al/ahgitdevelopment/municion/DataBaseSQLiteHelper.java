@@ -50,16 +50,19 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
     public static final String KEY_COMPRA_VALORACION = "valoracion";
     // Table LICENCIAS  - column names
     public static final String KEY_LICENCIAS_TIPO = "tipo";
-    public static final String KEY_LICENCIAS_NUM_LICENCIA = "num_licencia";
+    public static final String KEY_LICENCIAS_NOMBRE = "nombre";
+    public static final String KEY_LICENCIAS_TIPO_PERMISO_CONDUCCION = "tipo_permiso_conduccion";
     public static final String KEY_LICENCIAS_FECHA_EXPEDICION = "fecha_expedicion";
     public static final String KEY_LICENCIAS_FECHA_CADUCIDAD = "fecha_caducidad";
+    public static final String KEY_LICENCIAS_NUM_LICENCIA = "num_licencia";
     public static final String KEY_LICENCIAS_NUM_ABONADO = "num_abonado";
     public static final String KEY_LICENCIAS_NUM_SEGURO = "num_seguro";
     public static final String KEY_LICENCIAS_AUTONOMIA = "autonomia";
+
     // Logcat tag
     private static final String LOG = "DatabaseHelper";
     // Database Version
-    private static final int DATABASE_VERSION = 14;
+    private static final int DATABASE_VERSION = 16;
     // Database Name
     private static final String DATABASE_NAME = "DBMunicion.db";
     // Table Create Statements
@@ -103,12 +106,14 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
     private static final String CREATE_TABLE_LICENCIAS = "CREATE TABLE " + TABLE_LICENCIAS + "("
             + KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,"
             + KEY_LICENCIAS_TIPO + " INTEGER NOT NULL,"
-            + KEY_LICENCIAS_NUM_LICENCIA + " INTEGER NOT NULL,"
+            + KEY_LICENCIAS_NOMBRE + " TEXT,"
+            + KEY_LICENCIAS_TIPO_PERMISO_CONDUCCION + " INTEGER,"
             + KEY_LICENCIAS_FECHA_EXPEDICION + " TEXT NOT NULL,"
             + KEY_LICENCIAS_FECHA_CADUCIDAD + " TEXT NOT NULL,"
+            + KEY_LICENCIAS_NUM_LICENCIA + " INTEGER NOT NULL,"
             + KEY_LICENCIAS_NUM_ABONADO + " INTEGER,"
             + KEY_LICENCIAS_NUM_SEGURO + " TEXT,"
-            + KEY_LICENCIAS_AUTONOMIA + " INTEGER  "
+            + KEY_LICENCIAS_AUTONOMIA + " INTEGER"
             + ")";
 
     public Context context;
@@ -320,7 +325,6 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
                 guia.setCalibre2(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_GUIA_CALIBRE2)));
                 guia.setNumGuia(cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_GUIA_NUM_GUIA)));
                 guia.setNumArma(cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_GUIA_NUM_ARMA)));
-                guia.setNumArma(cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_GUIA_NUM_ARMA)));
                 guia.setImagePath(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_GUIA_IMAGEN)));
                 guia.setCupo(cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_GUIA_CUPO)));
                 guia.setGastado(cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_GUIA_GASTADO)));
@@ -383,12 +387,15 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
                     Licencia licencia = new Licencia();
                     licencia.setId(cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_ID)));
                     licencia.setTipo(cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_LICENCIAS_TIPO)));
-                    licencia.setNumLicencia(cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_LICENCIAS_NUM_LICENCIA)));
+                    licencia.setNombre(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_LICENCIAS_NOMBRE)));
+                    licencia.setTipoPermisoConduccion(cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_LICENCIAS_TIPO_PERMISO_CONDUCCION)));
                     licencia.setFechaExpedicion(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_LICENCIAS_FECHA_EXPEDICION)));
                     licencia.setFechaCaducidad(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_LICENCIAS_FECHA_CADUCIDAD)));
+                    licencia.setNumLicencia(cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_LICENCIAS_NUM_LICENCIA)));
                     licencia.setNumAbonado(cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_LICENCIAS_NUM_ABONADO)));
                     licencia.setNumSeguro(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_LICENCIAS_NUM_SEGURO)));
                     licencia.setAutonomia(cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_LICENCIAS_AUTONOMIA)));
+
                     // Adding contact to list
                     licencias.add(licencia);
                 } while (cursor.moveToNext());
@@ -485,6 +492,8 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
             for (Licencia licencia : licencias) {
                 db.execSQL("INSERT INTO " + TABLE_LICENCIAS + " (" +
                         KEY_LICENCIAS_TIPO + ", " +
+                        KEY_LICENCIAS_NOMBRE + ", " +
+                        KEY_LICENCIAS_TIPO_PERMISO_CONDUCCION + ", " +
                         KEY_LICENCIAS_NUM_LICENCIA + ", " +
                         KEY_LICENCIAS_FECHA_EXPEDICION + ", " +
                         KEY_LICENCIAS_FECHA_CADUCIDAD + ", " +
@@ -493,6 +502,8 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
                         KEY_LICENCIAS_AUTONOMIA +
                         ") VALUES (" +
                         "'" + licencia.getTipo() + "' , " +
+                        "'" + licencia.getNombre() + "' , " +
+                        "'" + licencia.getTipoPermisoConduccion() + "' , " +
                         "'" + licencia.getNumLicencia() + "' , " +
                         "'" + licencia.getFechaExpedicion() + "' , " +
                         "'" + licencia.getFechaCaducidad() + "' , " +

@@ -16,6 +16,7 @@
             android:id="@+id/lbl_tipo_licencia"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:gravity="center"
             android:text="@string/lbl_tipo_licencia"
             android:textAppearance="?android:attr/textAppearanceSmall"/>
 
@@ -27,6 +28,26 @@
             android:text="Libro de coleccionista"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textStyle="bold"/>
+
+        <TextView
+            android:id="@+id/lbl_tipo_permiso_conducir"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/tipo_permiso_conducir"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:visibility="gone"
+            android:layout_marginTop="15dp"/>
+
+        <TextView
+            android:id="@+id/item_tipo_permiso_conducir"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="A"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textStyle="bold"
+            android:visibility="gone"/>
     </LinearLayout>
 
 
@@ -162,9 +183,11 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/layout_ccaa"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:visibility="gone">
 
             <TextView
                 android:id="@+id/form_lbl_ccaa"

@@ -8,3 +8,6 @@
 /build
 /captures
 /.idea/vcs.xml
+/.idea/gradle.xml
+app/libs/
+app/src/test/
