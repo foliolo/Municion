@@ -155,9 +155,7 @@
                 android:entries="@array/ccaa"
                 android:hint="@string/lbl_ccaa"
                 android:inputType="text"
-
-                android:spinnerMode="dropdown"
-                />
+                android:spinnerMode="dropdown" />
         </LinearLayout>
     </LinearLayout>
 </ScrollView>

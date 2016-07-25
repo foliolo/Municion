@@ -19,6 +19,7 @@
     <string name="login">Login</string>
     <string name="login_ok">Login correcto</string>
     <string name="title_activity_settings">Configuración</string>
+    <string name="title_activity_notifications">Notificaciones</string>
 
     <!--String sections-->
     <string name="section_guias_title">Guías</string>

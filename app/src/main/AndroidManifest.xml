@@ -56,12 +56,23 @@
             android:name=".LicenciaFormActivity"
             android:label="@string/title_nueva_licencia"
             android:theme="@style/BarTheme"
-            android:windowSoftInputMode="stateHidden"/>
+            android:windowSoftInputMode="stateHidden">
+        <intent-filter>
+            <action android:name="android.intent.action.MAIN" />
+            <category android:name="android.intent.category.LAUNCHER" />
+        </intent-filter>
+    </activity>
 
         <activity
             android:name=".SettingsActivity"
             android:label="@string/title_activity_settings"
             android:theme="@style/BarTheme"/>
+
+        <service android:name=".AlarmService"
+            android:enabled="true" />
+
+        <receiver android:name=".ReceiverBroad"/>
+
     </application>
 
 </manifest>

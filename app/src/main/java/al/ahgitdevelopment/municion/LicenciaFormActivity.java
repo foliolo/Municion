@@ -1,8 +1,10 @@
 package al.ahgitdevelopment.municion;
 
 import android.app.Activity;
+import android.app.AlarmManager;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
+import android.app.PendingIntent;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.TextInputLayout;
@@ -46,6 +48,9 @@ public class LicenciaFormActivity extends AppCompatActivity {
     private EditText numSeguro;
     private LinearLayout layoutCCAA;
     private AppCompatSpinner autonomia;
+//    private Button button1;
+//    private NotificationManager manager;
+    private PendingIntent pendingIntent;
 
     /**
      * Inicializa la actividad
@@ -72,6 +77,8 @@ public class LicenciaFormActivity extends AppCompatActivity {
         autonomia = (AppCompatSpinner) findViewById(R.id.form_ccaa);
         lblPermiso = (TextView) findViewById(R.id.form_lbl_tipo_permiso_conducir);
         tipoPermisoConducir = (AppCompatSpinner) findViewById(R.id.form_tipo_permiso_conducir);
+//      button1 = (Button) findViewById(R.id.button1);
+//      manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 
         //Carga de datos (en caso de modificacion)
         if (getIntent().getExtras() != null) {
@@ -225,6 +232,60 @@ public class LicenciaFormActivity extends AppCompatActivity {
 
             }
         });
+        // FIXME Cambiar por la lógica que corresponda para las fechas de las notificaciones
+        //  Se envía la notificación cuando el sistema llegue a la fecha indicada
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.MONTH, 6);
+        calendar.set(Calendar.YEAR, 2016);
+        calendar.set(Calendar.DAY_OF_MONTH, 25);
+        calendar.set(Calendar.HOUR_OF_DAY, 18);
+        calendar.set(Calendar.MINUTE, 32);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.AM_PM,Calendar.PM);
+
+        Intent intent = new Intent(LicenciaFormActivity.this, ReceiverBroad.class);
+        pendingIntent = PendingIntent.getBroadcast(LicenciaFormActivity.this, 0, intent,0);
+
+        AlarmManager alarmManager = (AlarmManager)getSystemService(ALARM_SERVICE);
+        alarmManager.set(AlarmManager.RTC, calendar.getTimeInMillis(), pendingIntent);
+
+        // Para lanzar la notificacion con un boton
+//        button1.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                // API level 11
+//                Intent intent = new Intent(LicenciaFormActivity.this, NotificationView.class);
+//
+//                PendingIntent pendingIntent = PendingIntent.getActivity(LicenciaFormActivity.this, 1, intent, 0);
+//
+//                Notification.Builder builder = new Notification.Builder(LicenciaFormActivity.this);
+//
+//                builder.setAutoCancel(true);
+//                builder.setContentTitle("WhatsApp Notification");
+//                builder.setContentText("You have a new message");
+//                builder.setSmallIcon(R.drawable.ic_notifications_black_24dp);
+//                builder.setContentIntent(pendingIntent);
+//                builder.setOngoing(true);
+//                builder.setNumber(100);
+//                // API level 16
+////                builder.setSubText("This is subtext...");
+////                builder.build();
+//
+//                myNotication = builder.getNotification();
+//                manager.notify(11, myNotication);
+//
+//                /*
+//                //API level 8
+//                Notification myNotification8 = new Notification(R.drawable.ic_launcher, "this is ticker text 8", System.currentTimeMillis());
+//
+//                Intent intent2 = new Intent(MainActivity.this, SecActivity.class);
+//                PendingIntent pendingIntent2 = PendingIntent.getActivity(getApplicationContext(), 2, intent2, 0);
+//                myNotification8.setLatestEventInfo(getApplicationContext(), "API level 8", "this is api 8 msg", pendingIntent2);
+//                manager.notify(11, myNotification8);
+//                */
+//
+//            }
+//        });
     }
 
     private void callDatePickerFragment() {
