@@ -466,6 +466,7 @@ public class GuiaFormActivity extends AppCompatActivity {
             }
         } else {
             defaultCupo = Integer.parseInt(cupo.getText().toString());
+            cupo.setInputType(InputType.TYPE_CLASS_NUMBER);
         }
         return defaultCupo;
     }

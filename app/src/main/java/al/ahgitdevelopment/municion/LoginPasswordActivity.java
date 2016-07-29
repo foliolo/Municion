@@ -163,6 +163,7 @@ public class LoginPasswordActivity extends AppCompatActivity {
                 finish();
             } else { // Password incorrecta
                 textInputLayout1.setError(getString(R.string.password_fail));
+                password1.setText("");
             }
         }
     }

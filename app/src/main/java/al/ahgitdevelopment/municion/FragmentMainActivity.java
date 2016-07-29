@@ -188,12 +188,13 @@ public class FragmentMainActivity extends AppCompatActivity {
                                 DialogFragment dialog = new GuiaDialogFragment();
                                 dialog.show(getSupportFragmentManager(), "NewGuiaDialogFragment");
                             } else {
-                                Snackbar.make(view, R.string.dialog_guia_fail, Snackbar.LENGTH_INDEFINITE)
-                                        .setAction(android.R.string.ok, new View.OnClickListener() {
-                                            @Override
-                                            public void onClick(View view) {
-                                            }
-                                        })
+                                Snackbar.make(view, R.string.dialog_guia_fail, Snackbar.LENGTH_LONG)
+//                                        .setAction(android.R.string.ok, new View.OnClickListener() {
+//                                            @Override
+//                                            public void onClick(View view) {
+//                                            }
+//                                        })
+                                        .setAction(android.R.string.ok, null)
                                         .show();
                             }
 
@@ -205,12 +206,13 @@ public class FragmentMainActivity extends AppCompatActivity {
                                 DialogFragment dialog = new CompraDialogFragment();
                                 dialog.show(getSupportFragmentManager(), "NewCompraDialogFragment");
                             } else {
-                                Snackbar.make(view, "Debe introducir una guia primero", Snackbar.LENGTH_INDEFINITE)
-                                        .setAction(android.R.string.ok, new View.OnClickListener() {
-                                            @Override
-                                            public void onClick(View view) {
-                                            }
-                                        })
+                                Snackbar.make(view, "Debe introducir una guia primero", Snackbar.LENGTH_LONG)
+//                                        .setAction(android.R.string.ok, new View.OnClickListener() {
+//                                            @Override
+//                                            public void onClick(View view) {
+//                                            }
+//                                        })
+                                        .setAction(android.R.string.ok, null)
                                         .show();
                             }
 
@@ -465,6 +467,7 @@ public class FragmentMainActivity extends AppCompatActivity {
             licencia.setNumAbonado(data.getExtras().getInt("num_abonado"));
             licencia.setNumSeguro(data.getExtras().getString("num_seguro"));
             licencia.setAutonomia(data.getExtras().getInt("autonomia"));
+            licencia.setEscala(data.getExtras().getInt("escala"));
 
             ((PlaceholderFragment) mSectionsPagerAdapter.getItem(mViewPager.getCurrentItem())).licenciaArrayAdapter.notifyDataSetChanged();
         }
@@ -478,7 +481,7 @@ public class FragmentMainActivity extends AppCompatActivity {
         dbSqlHelper.saveListLicencias(null, licencias);
         dbSqlHelper.close();
 
-        Toast.makeText(FragmentMainActivity.this, R.string.guardadoBBDD, Toast.LENGTH_SHORT).show();
+//        Toast.makeText(FragmentMainActivity.this, R.string.guardadoBBDD, Toast.LENGTH_SHORT).show();
     }
 
     /**

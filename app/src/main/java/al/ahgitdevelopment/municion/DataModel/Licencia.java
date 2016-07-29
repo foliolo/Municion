@@ -37,6 +37,7 @@ public class Licencia implements Parcelable {
     private int numAbonado;
     private String numSeguro;
     private int autonomia;
+    private int escala;
 
     public Licencia() {
     }
@@ -56,6 +57,7 @@ public class Licencia implements Parcelable {
         this.numAbonado = in.readInt();
         this.numSeguro = in.readString();
         this.autonomia = in.readInt();
+        this.escala = in.readInt();
     }
 
     public Licencia(Context context, Bundle extras) {
@@ -68,6 +70,7 @@ public class Licencia implements Parcelable {
         this.numAbonado = extras.getInt("num_abonado", -1);
         this.numSeguro = extras.getString("num_seguro", "");
         this.autonomia = extras.getInt("autonomia", -1);
+        this.escala = extras.getInt("escala", -1);
     }
 
     public Licencia(Licencia licencia) {
@@ -80,6 +83,7 @@ public class Licencia implements Parcelable {
         this.setNumAbonado(licencia.getNumAbonado());
         this.setNumSeguro(licencia.getNumSeguro());
         this.setAutonomia(licencia.getAutonomia());
+        this.setEscala(licencia.getEscala());
     }
 
     public int getId() {
@@ -133,7 +137,6 @@ public class Licencia implements Parcelable {
     public void setFechaExpedicion(String fechaExpedicion) {
         Calendar fecha = Calendar.getInstance();
         try {
-            fecha.setTime(new SimpleDateFormat("dd/MM/yyyy").parse(fechaExpedicion));
             fecha.setTime(new SimpleDateFormat("dd/MM/yyyy").parse(fechaExpedicion));
             if (this.fechaExpedicion == null)
                 this.fechaExpedicion = Calendar.getInstance();
@@ -193,6 +196,18 @@ public class Licencia implements Parcelable {
         this.fechaCaducidad = fechaCaducidad;
     }
 
+    public int getEscala() {
+        return escala;
+    }
+
+    public void setEscala(int escala) {
+        this.escala = escala;
+    }
+
+    public String getStringEscala(Context context) {
+        return context.getResources().getTextArray(R.array.tipo_escala)[getEscala()].toString();
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -214,5 +229,6 @@ public class Licencia implements Parcelable {
         dest.writeInt(numAbonado);
         dest.writeString(numSeguro);
         dest.writeInt(autonomia);
+        dest.writeInt(escala);
     }
 }

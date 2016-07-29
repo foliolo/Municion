@@ -84,6 +84,7 @@
     <string name="lbl_ccaa">Com. Autónoma</string>
     <string name="fecha_expedicion">Fecha de expedición</string>
     <string name="fecha_caducidad">Fecha de caducidad</string>
+    <string name="lbl_escala">Escala</string>
 
 
     <!-- Strings related to Settings -->
@@ -149,23 +150,6 @@
     <string name="delete">Eliminar</string>
     <string name="guardadoBBDD">Base de datos actualizada</string>
 
-    <!--CAMERA2-->
-    <string name="picture">Picture</string>
-    <string name="description_info">Info</string>
-    <string name="request_permission">This sample needs camera permission.</string>
-    <string name="camera_error">This device doesn\'t support Camera2 API.</string>
-    <string name="app_camara">Camara</string>
-    <string name="intro_message">
-        <![CDATA[
-
-
-            This sample demonstrates the basic use of Camera2 API. Check the source code to see how
-            you can display camera preview and take pictures.
-
-
-        ]]>
-    </string>
-
     <string name="dialog_licencia_title">Selecciona una licencia</string>
     <string name="select_licencia">Selecciona una licencia</string>
 
@@ -176,5 +160,7 @@
     <string name="google_api_key">AIzaSyB5EUq9C9taMGE5EpJSRjNafzTvhkaxsSc</string>
     <string name="delete_license_fail">Primero deben borrarse las guias asociadas a esta licencia</string>
     <string name="dialog_guia_fail">Debe introducir una licencia de armas primero</string>
+    <string name="lbl_tipo_escala">Escala</string>
+    <string name="tipo_escala">Selecciona la escala del agente</string>
 
 </resources>

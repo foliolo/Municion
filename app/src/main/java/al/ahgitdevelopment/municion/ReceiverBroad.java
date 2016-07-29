@@ -12,7 +12,9 @@ public class ReceiverBroad extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         Intent service = new Intent(context, AlarmService.class);
+        if (intent.getExtras() != null) {
+            service.putExtra("licencia", intent.getExtras().getString("licencia", ""));
+        }
         context.startService(service);
-
     }
 }

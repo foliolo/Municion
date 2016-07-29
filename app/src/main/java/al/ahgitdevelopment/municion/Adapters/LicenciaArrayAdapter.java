@@ -25,6 +25,7 @@ public class LicenciaArrayAdapter extends ArrayAdapter<Licencia> {
     TextView tipoPermisoConduccion;
     TextView numLicencia;
     TextView expedicion;
+    LinearLayout layoutFechaCaducidad;
     TextView caducidad;
     TextView lblAbonado;
     TextView numAbonado;
@@ -33,6 +34,8 @@ public class LicenciaArrayAdapter extends ArrayAdapter<Licencia> {
     LinearLayout layoutCCAA;
     TextView autonomia;
     TextView lblAutonomia;
+    LinearLayout layoutEscala;
+    TextView escala;
 
     public LicenciaArrayAdapter(Context context, int resource, List<Licencia> licencias) {
         super(context, resource, licencias);
@@ -55,6 +58,7 @@ public class LicenciaArrayAdapter extends ArrayAdapter<Licencia> {
         tipoPermisoConduccion = (TextView) convertView.findViewById(R.id.item_tipo_permiso_conducir);
         numLicencia = (TextView) convertView.findViewById(R.id.item_num_guia);
         expedicion = (TextView) convertView.findViewById(R.id.item_expedicion_licencia);
+        layoutFechaCaducidad = (LinearLayout) convertView.findViewById(R.id.layout_fecha_caducidad);
         caducidad = (TextView) convertView.findViewById(R.id.item_caducidad_licencia);
         lblAbonado = (TextView) convertView.findViewById(R.id.lbl_num_abonado);
         numAbonado = (TextView) convertView.findViewById(R.id.item_num_abonado);
@@ -63,6 +67,8 @@ public class LicenciaArrayAdapter extends ArrayAdapter<Licencia> {
         layoutCCAA = (LinearLayout) convertView.findViewById(R.id.layout_ccaa);
         autonomia = (TextView) convertView.findViewById(R.id.item_ccaa);
         lblAutonomia = (TextView) convertView.findViewById(R.id.form_lbl_ccaa);
+        layoutEscala = (LinearLayout) convertView.findViewById(R.id.layout_escala);
+        escala = (TextView) convertView.findViewById(R.id.item_escala);
 
 //        // El último elemento es el libro de coleccionista y no tiene "-"
 //        int lengthArrayLicencias = getContext().getResources().getTextArray(R.array.tipo_licencias).length - 1;
@@ -101,21 +107,23 @@ public class LicenciaArrayAdapter extends ArrayAdapter<Licencia> {
             tipoPermisoConduccion.setVisibility(View.GONE);
         }
 
-//        if (licencia.getTipoPermisoConduccion() >= 0) {
-//            tipoPermisoConduccion.setText(getContext().getResources().getStringArray(R.array.tipo_permiso_conducir)[licencia.getTipoPermisoConduccion()]);
-//            lblTipoPermisoConduccion.setVisibility(View.VISIBLE);
-//            tipoPermisoConduccion.setVisibility(View.VISIBLE);
-//        } else {
-//            lblTipoPermisoConduccion.setVisibility(View.GONE);
-//            tipoPermisoConduccion.setVisibility(View.GONE);
-//        }
-
         numLicencia.setText(String.valueOf(licencia.getNumLicencia()));
 
         if (licencia.getFechaExpedicion() != null)
             expedicion.setText(new SimpleDateFormat("dd/MM/yyyy").format(licencia.getFechaExpedicion().getTime()));
-        if (licencia.getFechaCaducidad() != null)
-            caducidad.setText(new SimpleDateFormat("dd/MM/yyyy").format(licencia.getFechaCaducidad().getTime()));
+
+        //La licencia A no tiene fecha de caducidad pero si escala del agente
+        if (licencia.getTipo() == 0) {
+            layoutFechaCaducidad.setVisibility(View.GONE);
+            layoutEscala.setVisibility(View.VISIBLE);
+            escala.setText(licencia.getStringEscala(getContext()));
+        } else {
+            layoutFechaCaducidad.setVisibility(View.VISIBLE);
+            layoutEscala.setVisibility(View.GONE);
+            escala.setText("");
+            if (licencia.getFechaCaducidad() != null)
+                caducidad.setText(new SimpleDateFormat("dd/MM/yyyy").format(licencia.getFechaCaducidad().getTime()));
+        }
 
         if (licencia.getNumAbonado() > 0) {
             numAbonado.setText(licencia.getNumAbonado() + "");
@@ -126,12 +134,13 @@ public class LicenciaArrayAdapter extends ArrayAdapter<Licencia> {
             numAbonado.setVisibility(View.GONE);
         }
 
-        if (licencia.getNumSeguro() != null && !licencia.getNumSeguro().isEmpty()) {
-            numSeguro.setText(licencia.getNumSeguro() + "");
+        if (licencia.getNumSeguro() != null && !licencia.getNumSeguro().isEmpty() && !licencia.getNumSeguro().equals("null")) {
             lblNumSeguro.setVisibility(View.VISIBLE);
+            numSeguro.setText(licencia.getNumSeguro() + "");
             numSeguro.setVisibility(View.VISIBLE);
         } else {
             lblNumSeguro.setVisibility(View.GONE);
+            numSeguro.setText("");
             numSeguro.setVisibility(View.GONE);
         }
 

@@ -15,6 +15,7 @@ import android.support.v7.widget.AppCompatSpinner;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.text.format.DateFormat;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -23,6 +24,7 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -35,6 +37,7 @@ import al.ahgitdevelopment.municion.DataModel.Licencia;
  * Created by Alberto on 24/05/2016.
  */
 public class LicenciaFormActivity extends AppCompatActivity {
+    public static EditText fechaExpedicion;
     private TextInputLayout textInputLayoutLicencia;
     private TextInputLayout layoutFechaExpedicion;
     private TextInputLayout layoutFechaCaducidad;
@@ -42,14 +45,14 @@ public class LicenciaFormActivity extends AppCompatActivity {
     private TextView lblPermiso;
     private AppCompatSpinner tipoPermisoConducir;
     private EditText numLicencia;
-    public static EditText fechaExpedicion;
     private EditText fechaCaducidad;
     private EditText numAbonado;
     private EditText numSeguro;
     private LinearLayout layoutCCAA;
     private AppCompatSpinner autonomia;
-//    private Button button1;
-//    private NotificationManager manager;
+    private LinearLayout layoutEscala;
+    private AppCompatSpinner tipoEscala;
+
     private PendingIntent pendingIntent;
 
     /**
@@ -77,6 +80,8 @@ public class LicenciaFormActivity extends AppCompatActivity {
         autonomia = (AppCompatSpinner) findViewById(R.id.form_ccaa);
         lblPermiso = (TextView) findViewById(R.id.form_lbl_tipo_permiso_conducir);
         tipoPermisoConducir = (AppCompatSpinner) findViewById(R.id.form_tipo_permiso_conducir);
+        layoutEscala = (LinearLayout) findViewById(R.id.layout_escala);
+        tipoEscala = (AppCompatSpinner) findViewById(R.id.form_tipo_escala);
 //      button1 = (Button) findViewById(R.id.button1);
 //      manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 
@@ -90,6 +95,7 @@ public class LicenciaFormActivity extends AppCompatActivity {
                 numAbonado.setText(String.valueOf(licencia.getNumAbonado()));
                 numSeguro.setText(String.valueOf(licencia.getNumLicencia()));
                 autonomia.setSelection(licencia.getAutonomia());
+                tipoEscala.setSelection(licencia.getEscala());
             } catch (NullPointerException e) {
                 e.printStackTrace();
             }
@@ -232,22 +238,23 @@ public class LicenciaFormActivity extends AppCompatActivity {
 
             }
         });
-        // FIXME Cambiar por la lógica que corresponda para las fechas de las notificaciones
-        //  Se envía la notificación cuando el sistema llegue a la fecha indicada
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.MONTH, 6);
-        calendar.set(Calendar.YEAR, 2016);
-        calendar.set(Calendar.DAY_OF_MONTH, 25);
-        calendar.set(Calendar.HOUR_OF_DAY, 18);
-        calendar.set(Calendar.MINUTE, 32);
-        calendar.set(Calendar.SECOND, 0);
-        calendar.set(Calendar.AM_PM,Calendar.PM);
 
-        Intent intent = new Intent(LicenciaFormActivity.this, ReceiverBroad.class);
-        pendingIntent = PendingIntent.getBroadcast(LicenciaFormActivity.this, 0, intent,0);
-
-        AlarmManager alarmManager = (AlarmManager)getSystemService(ALARM_SERVICE);
-        alarmManager.set(AlarmManager.RTC, calendar.getTimeInMillis(), pendingIntent);
+//        // FIXME Cambiar por la lógica que corresponda para las fechas de las notificaciones
+//        //  Se envía la notificación cuando el sistema llegue a la fecha indicada
+//        Calendar calendar = Calendar.getInstance();
+//        calendar.set(Calendar.MONTH, 6);
+//        calendar.set(Calendar.YEAR, 2016);
+//        calendar.set(Calendar.DAY_OF_MONTH, 25);
+//        calendar.set(Calendar.HOUR_OF_DAY, 18);
+//        calendar.set(Calendar.MINUTE, 32);
+//        calendar.set(Calendar.SECOND, 0);
+//        calendar.set(Calendar.AM_PM,Calendar.PM);
+//
+//        Intent intent = new Intent(LicenciaFormActivity.this, ReceiverBroad.class);
+//        pendingIntent = PendingIntent.getBroadcast(LicenciaFormActivity.this, 0, intent,0);
+//
+//        AlarmManager alarmManager = (AlarmManager)getSystemService(ALARM_SERVICE);
+//        alarmManager.set(AlarmManager.RTC, calendar.getTimeInMillis(), pendingIntent);
 
         // Para lanzar la notificacion con un boton
 //        button1.setOnClickListener(new View.OnClickListener() {
@@ -333,11 +340,18 @@ public class LicenciaFormActivity extends AppCompatActivity {
                 } else {
                     bundle.putInt("autonomia", -1); // Mandamos -1 para que el array adapter no muestre este campo
                 }
-
+                if (layoutEscala.getVisibility() == View.VISIBLE) {
+                    bundle.putInt("escala", tipoEscala.getSelectedItemPosition());
+                } else {
+                    bundle.putInt("escala", -1); // Mandamos -1 para que el array adapter no muestre este campo
+                }
 
                 //Paso de vuelta de la posicion del item en el array
                 if (getIntent().getExtras() != null)
                     bundle.putInt("position", getIntent().getExtras().getInt("position", -1));
+
+                //Agregar notificacion
+                setNotification();
 
 
                 result.putExtras(bundle);
@@ -347,6 +361,25 @@ public class LicenciaFormActivity extends AppCompatActivity {
             }
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void setNotification() {
+        //  Se envía la notificación cuando el sistema llegue a la fecha indicada
+        try {
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(new SimpleDateFormat("dd/MM/yyyy").parse(fechaCaducidad.getText().toString()));
+
+            Intent intent = new Intent(LicenciaFormActivity.this, ReceiverBroad.class);
+            intent.putExtra("licencia", getResources().getStringArray(R.array.tipo_licencias)[tipoLicencia.getSelectedItemPosition()]);
+            pendingIntent = PendingIntent.getBroadcast(LicenciaFormActivity.this, 0, intent, 0);
+
+            AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+            alarmManager.set(AlarmManager.RTC, calendar.getTimeInMillis(), pendingIntent);
+
+            Toast.makeText(LicenciaFormActivity.this, "Notificacion creada para el día: " + fechaCaducidad.getText().toString(), Toast.LENGTH_LONG).show();
+        } catch (ParseException ex) {
+            Log.e(getPackageName(), "Fallo al crear la notificacion", ex);
+        }
     }
 
     /**
@@ -383,9 +416,19 @@ public class LicenciaFormActivity extends AppCompatActivity {
 
     /**
      * Método para modificar la visibilidad de los campos en función del tipo de licencia seleccionado
+     *
      * @param tipoLicencia Licencia seleccionada
      */
     private void SetVisibilityFields(int tipoLicencia) {
+        //La licencia A no tiene fecha de caducidad
+        if (tipoLicencia == 0) {
+            layoutFechaCaducidad.setVisibility(View.GONE);
+            layoutEscala.setVisibility(View.VISIBLE);
+        } else {
+            layoutFechaCaducidad.setVisibility(View.VISIBLE);
+            layoutEscala.setVisibility(View.GONE);
+        }
+
         switch (tipoLicencia) {
             case 0:
             case 1:

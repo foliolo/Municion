@@ -11,7 +11,7 @@
     <string-array name="tipo_licencias">
         <item>A - Profesionales, agentes de la autoridad</item>
         <item>B - Defensa</item>
-        <item>C - Vigilante de seguridad</item>
+        <item>C - Vigilante de seguridad / Escoltas</item>
         <item>D - Caza mayor</item>
         <item>E - Escopeta</item>
         <item>F - Tiro olimpico</item>
@@ -43,6 +43,12 @@
         <item>Navarra</item>
         <item>País Vasco</item>
         <item>Valencia</item>
+    </string-array>
+
+    <string-array name="tipo_escala">
+        <item>Tropa</item>
+        <item>Suboficiales</item>
+        <item>Oficilales</item>
     </string-array>
 
     <string-array name="tipo_permiso_conducir">
