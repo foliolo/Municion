@@ -467,6 +467,8 @@ public class FragmentMainActivity extends AppCompatActivity {
             licencia.setNumAbonado(data.getExtras().getInt("num_abonado"));
             licencia.setNumSeguro(data.getExtras().getString("num_seguro"));
             licencia.setAutonomia(data.getExtras().getInt("autonomia"));
+            licencia.setTipoPermisoConduccion(data.getExtras().getInt("tipo_permiso_conduccion"));
+            licencia.setEdad(data.getExtras().getInt("edad"));
             licencia.setEscala(data.getExtras().getInt("escala"));
 
             ((PlaceholderFragment) mSectionsPagerAdapter.getItem(mViewPager.getCurrentItem())).licenciaArrayAdapter.notifyDataSetChanged();
@@ -573,7 +575,7 @@ public class FragmentMainActivity extends AppCompatActivity {
     }
 
     /**
-     * Dialog para la seleccion de la licencia qu
+     * Dialog para la seleccion de la licencia
      */
     public static class GuiaDialogFragment extends DialogFragment {
         //https://developer.android.com/guide/topics/ui/dialogs.html

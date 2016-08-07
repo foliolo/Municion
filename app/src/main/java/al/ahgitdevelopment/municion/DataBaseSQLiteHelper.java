@@ -52,6 +52,7 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
     public static final String KEY_LICENCIAS_TIPO = "tipo";
     public static final String KEY_LICENCIAS_NOMBRE = "nombre";
     public static final String KEY_LICENCIAS_TIPO_PERMISO_CONDUCCION = "tipo_permiso_conduccion";
+    public static final String KEY_LICENCIAS_EDAD = "edad";
     public static final String KEY_LICENCIAS_FECHA_EXPEDICION = "fecha_expedicion";
     public static final String KEY_LICENCIAS_FECHA_CADUCIDAD = "fecha_caducidad";
     public static final String KEY_LICENCIAS_NUM_LICENCIA = "num_licencia";
@@ -109,6 +110,7 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
             + KEY_LICENCIAS_TIPO + " INTEGER NOT NULL,"
             + KEY_LICENCIAS_NOMBRE + " TEXT,"
             + KEY_LICENCIAS_TIPO_PERMISO_CONDUCCION + " INTEGER,"
+            + KEY_LICENCIAS_EDAD + " INTEGER,"
             + KEY_LICENCIAS_FECHA_EXPEDICION + " TEXT NOT NULL,"
             + KEY_LICENCIAS_FECHA_CADUCIDAD + " TEXT NOT NULL,"
             + KEY_LICENCIAS_NUM_LICENCIA + " INTEGER NOT NULL,"
@@ -391,6 +393,7 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
                     licencia.setTipo(cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_LICENCIAS_TIPO)));
                     licencia.setNombre(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_LICENCIAS_NOMBRE)));
                     licencia.setTipoPermisoConduccion(cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_LICENCIAS_TIPO_PERMISO_CONDUCCION)));
+                    licencia.setEdad(cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_LICENCIAS_EDAD)));
                     licencia.setFechaExpedicion(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_LICENCIAS_FECHA_EXPEDICION)));
                     licencia.setFechaCaducidad(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_LICENCIAS_FECHA_CADUCIDAD)));
                     licencia.setNumLicencia(cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_LICENCIAS_NUM_LICENCIA)));
@@ -497,6 +500,7 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
                         KEY_LICENCIAS_TIPO + ", " +
                         KEY_LICENCIAS_NOMBRE + ", " +
                         KEY_LICENCIAS_TIPO_PERMISO_CONDUCCION + ", " +
+                        KEY_LICENCIAS_EDAD + ", " +
                         KEY_LICENCIAS_NUM_LICENCIA + ", " +
                         KEY_LICENCIAS_FECHA_EXPEDICION + ", " +
                         KEY_LICENCIAS_FECHA_CADUCIDAD + ", " +
@@ -508,6 +512,7 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
                         "'" + licencia.getTipo() + "' , " +
                         "'" + licencia.getNombre() + "' , " +
                         "'" + licencia.getTipoPermisoConduccion() + "' , " +
+                        "'" + licencia.getEdad() + "' , " +
                         "'" + licencia.getNumLicencia() + "' , " +
                         "'" + licencia.getFechaExpedicion() + "' , " +
                         "'" + licencia.getFechaCaducidad() + "' , " +

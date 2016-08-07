@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:orientation="horizontal"
-              android:paddingBottom="8dp"
-              android:paddingTop="7dp">
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:paddingBottom="8dp"
+    android:paddingTop="7dp">
 
     <LinearLayout
         android:layout_width="130dp"
@@ -18,7 +18,7 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:text="@string/lbl_tipo_licencia"
-            android:textAppearance="?android:attr/textAppearanceSmall"/>
+            android:textAppearance="?android:attr/textAppearanceSmall" />
 
         <TextView
             android:id="@+id/item_tipo_licencia"
@@ -27,7 +27,7 @@
             android:gravity="center"
             android:text="Libro de coleccionista"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textStyle="bold"/>
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/lbl_tipo_permiso_conducir"
@@ -37,17 +37,17 @@
             android:gravity="center"
             android:text="@string/tipo_permiso_conducir"
             android:textAppearance="?android:attr/textAppearanceSmall"
-            android:visibility="gone"/>
+            android:visibility="gone" />
 
         <TextView
             android:id="@+id/item_tipo_permiso_conducir"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:text="A"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textStyle="bold"
-            android:visibility="gone"/>
+            android:visibility="gone" />
+
     </LinearLayout>
 
 
@@ -69,7 +69,7 @@
                 android:layout_weight="1"
                 android:gravity="center"
                 android:text="@string/lbl_num_licencia"
-                android:textAppearance="?android:attr/textAppearanceSmall"/>
+                android:textAppearance="?android:attr/textAppearanceSmall" />
 
             <TextView
                 android:id="@+id/item_num_guia"
@@ -79,7 +79,34 @@
                 android:gravity="left"
                 android:text="1234"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textStyle="bold"/>
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/lbl_edad"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="@string/lbl_edad"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/item_edad"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="left"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textStyle="bold"
+                android:visibility="gone" />
+
         </LinearLayout>
 
         <LinearLayout
@@ -94,7 +121,7 @@
                 android:layout_weight="1"
                 android:gravity="center"
                 android:text="@string/lbl_expedicion_licencia"
-                android:textAppearance="?android:attr/textAppearanceSmall"/>
+                android:textAppearance="?android:attr/textAppearanceSmall" />
 
             <TextView
                 android:id="@+id/item_expedicion_licencia"
@@ -104,7 +131,7 @@
                 android:gravity="left"
                 android:text="15/05/2016"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textStyle="bold"/>
+                android:textStyle="bold" />
         </LinearLayout>
 
         <LinearLayout
@@ -120,7 +147,7 @@
                 android:layout_weight="1"
                 android:gravity="center"
                 android:text="@string/lbl_caducidad_licencia"
-                android:textAppearance="?android:attr/textAppearanceSmall"/>
+                android:textAppearance="?android:attr/textAppearanceSmall" />
 
             <TextView
                 android:id="@+id/item_caducidad_licencia"
@@ -130,7 +157,7 @@
                 android:gravity="left"
                 android:text="15/05/2017"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textStyle="bold"/>
+                android:textStyle="bold" />
         </LinearLayout>
 
 
@@ -146,7 +173,7 @@
                 android:layout_weight="1"
                 android:gravity="center"
                 android:text="@string/lbl_num_abonado"
-                android:textAppearance="?android:attr/textAppearanceSmall"/>
+                android:textAppearance="?android:attr/textAppearanceSmall" />
 
             <TextView
                 android:id="@+id/item_num_abonado"
@@ -155,14 +182,13 @@
                 android:layout_weight="1"
                 android:gravity="left"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textStyle="bold"/>
+                android:textStyle="bold" />
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            >
+            android:orientation="horizontal">
 
             <TextView
                 android:id="@+id/lbl_num_poliza"
@@ -171,7 +197,7 @@
                 android:layout_weight="1"
                 android:gravity="center"
                 android:text="@string/lbl_num_poliza"
-                android:textAppearance="?android:attr/textAppearanceSmall"/>
+                android:textAppearance="?android:attr/textAppearanceSmall" />
 
             <TextView
                 android:id="@+id/item_num_poliza"
@@ -180,7 +206,7 @@
                 android:layout_weight="1"
                 android:gravity="left"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textStyle="bold"/>
+                android:textStyle="bold" />
         </LinearLayout>
 
         <LinearLayout
@@ -197,7 +223,7 @@
                 android:layout_weight="1"
                 android:gravity="center"
                 android:text="@string/lbl_ccaa"
-                android:textAppearance="?android:attr/textAppearanceSmall"/>
+                android:textAppearance="?android:attr/textAppearanceSmall" />
 
             <TextView
                 android:id="@+id/item_ccaa"
@@ -206,7 +232,7 @@
                 android:layout_weight="1"
                 android:gravity="left"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textStyle="bold"/>
+                android:textStyle="bold" />
         </LinearLayout>
 
         <LinearLayout
@@ -223,7 +249,7 @@
                 android:layout_weight="1"
                 android:gravity="center"
                 android:text="@string/lbl_escala"
-                android:textAppearance="?android:attr/textAppearanceSmall"/>
+                android:textAppearance="?android:attr/textAppearanceSmall" />
 
             <TextView
                 android:id="@+id/item_escala"
@@ -232,7 +258,7 @@
                 android:layout_weight="1"
                 android:gravity="left"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textStyle="bold"/>
+                android:textStyle="bold" />
         </LinearLayout>
     </LinearLayout>
 

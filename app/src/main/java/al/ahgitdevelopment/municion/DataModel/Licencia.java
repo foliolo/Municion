@@ -31,6 +31,7 @@ public class Licencia implements Parcelable {
     private int tipo;
     private String nombre;
     private int tipoPermisoConduccion;
+    private int edad;
     private Calendar fechaExpedicion;
     private Calendar fechaCaducidad;
     private int numLicencia;
@@ -47,6 +48,7 @@ public class Licencia implements Parcelable {
         this.tipo = in.readInt();
         this.nombre = in.readString();
         this.tipoPermisoConduccion = in.readInt();
+        this.edad = in.readInt();
         try {
             this.setFechaExpedicion(in.readString());
             this.setFechaCaducidad(in.readString());
@@ -64,6 +66,7 @@ public class Licencia implements Parcelable {
         this.tipo = extras.getInt("tipo");
         this.nombre = getNombre(context);
         this.tipoPermisoConduccion = extras.getInt("tipo_permiso_conduccion", -1);
+        this.edad = extras.getInt("edad");
         this.numLicencia = extras.getInt("num_licencia", -1);
         this.setFechaExpedicion(extras.getString("fecha_expedicion", ""));
         this.setFechaCaducidad(extras.getString("fecha_caducidad", ""));
@@ -77,6 +80,8 @@ public class Licencia implements Parcelable {
         this.setId(licencia.getId());
         this.setTipo(licencia.getTipo());
         this.setNombre(licencia.getNombre());
+        this.setTipoPermisoConduccion(licencia.getTipoPermisoConduccion());
+        this.setEdad(licencia.getEdad());
         this.setNumLicencia(licencia.getNumLicencia());
         this.setFechaExpedicion(licencia.getFechaExpedicion());
         this.setFechaCaducidad(licencia.getFechaCaducidad());
@@ -120,6 +125,14 @@ public class Licencia implements Parcelable {
 
     public void setTipoPermisoConduccion(int tipoPermisoConduccion) {
         this.tipoPermisoConduccion = tipoPermisoConduccion;
+    }
+
+    public int getEdad() {
+        return edad;
+    }
+
+    public void setEdad(int edad) {
+        this.edad = edad;
     }
 
     public int getNumLicencia() {
@@ -219,6 +232,7 @@ public class Licencia implements Parcelable {
         dest.writeInt(tipo);
         dest.writeString(nombre);
         dest.writeInt(tipoPermisoConduccion);
+        dest.writeInt(edad);
         try {
             dest.writeString(new SimpleDateFormat("dd/MM/yyyy").format(getFechaExpedicion().getTime()));
             dest.writeString(new SimpleDateFormat("dd/MM/yyyy").format(getFechaCaducidad().getTime()));

@@ -52,6 +52,7 @@
     <string name="lbl_tipo_licencia">Tipo de licencia</string>
     <string name="lbl_tipo_permiso_conducir">Tipo de permiso de conducción</string>
     <string name="lbl_num_licencia">Num licencia</string>
+    <string name="lbl_edad">Edad</string>
     <string name="lbl_num_dni">Num dni sin letra</string>
     <string name="lbl_num_abonado">Num abonado</string>
     <string name="lbl_num_poliza">Póliza seguro</string>

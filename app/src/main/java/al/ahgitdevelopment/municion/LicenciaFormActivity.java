@@ -1,3 +1,4 @@
+
 package al.ahgitdevelopment.municion;
 
 import android.app.Activity;
@@ -44,6 +45,7 @@ public class LicenciaFormActivity extends AppCompatActivity {
     private AppCompatSpinner tipoLicencia;
     private TextView lblPermiso;
     private AppCompatSpinner tipoPermisoConducir;
+    private EditText edad;
     private EditText numLicencia;
     private EditText fechaCaducidad;
     private EditText numAbonado;
@@ -80,9 +82,9 @@ public class LicenciaFormActivity extends AppCompatActivity {
         autonomia = (AppCompatSpinner) findViewById(R.id.form_ccaa);
         lblPermiso = (TextView) findViewById(R.id.form_lbl_tipo_permiso_conducir);
         tipoPermisoConducir = (AppCompatSpinner) findViewById(R.id.form_tipo_permiso_conducir);
+        edad = (EditText) findViewById(R.id.form_edad);
         layoutEscala = (LinearLayout) findViewById(R.id.layout_escala);
         tipoEscala = (AppCompatSpinner) findViewById(R.id.form_tipo_escala);
-//      button1 = (Button) findViewById(R.id.button1);
 //      manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 
         //Carga de datos (en caso de modificacion)
@@ -95,6 +97,8 @@ public class LicenciaFormActivity extends AppCompatActivity {
                 numAbonado.setText(String.valueOf(licencia.getNumAbonado()));
                 numSeguro.setText(String.valueOf(licencia.getNumLicencia()));
                 autonomia.setSelection(licencia.getAutonomia());
+                tipoPermisoConducir.setSelection(licencia.getTipoPermisoConduccion());
+                edad.setText(String.valueOf(licencia.getEdad()));
                 tipoEscala.setSelection(licencia.getEscala());
             } catch (NullPointerException e) {
                 e.printStackTrace();
@@ -161,6 +165,9 @@ public class LicenciaFormActivity extends AppCompatActivity {
                         break;
                     // Sumamos 5 años
                     case 0: // Licencia A
+                        calendar.set(3000, 11, 31);
+                        fechaCaducidad.setText(simpleDate.format(calendar.getTime()));
+                        break;
                     case 2: // Licencia C
                     case 3: // Licencia D
                     case 4: // Licencia E
@@ -175,11 +182,57 @@ public class LicenciaFormActivity extends AppCompatActivity {
                     case 10: // Autonomica Pesca
                         calendar.set(calendar.get(Calendar.YEAR), 11, 31);
                         fechaCaducidad.setText(simpleDate.format(calendar.getTime()));
-                        break;
                     // Sumamos 10 años
                     case 11: // Persmiso de Conducir
-                        calendar.add(Calendar.YEAR, 10);
-                        fechaCaducidad.setText(simpleDate.format(calendar.getTime()));
+                        if (Integer.parseInt(edad.getText().toString()) < 65) {
+                            switch (tipoPermisoConducir.getSelectedItemPosition()) {
+                                case 0: // AM
+                                case 1: // A1
+                                case 2: // A2
+                                case 3: // A
+                                case 4: // B
+                                    calendar.add(Calendar.YEAR, 10);
+                                    fechaCaducidad.setText(simpleDate.format(calendar.getTime()));
+                                    break;
+                                case 5: // C1
+                                case 6: // C
+                                case 7: // D1
+                                case 8: // D
+                                case 9: // BE
+                                case 10: // C1E
+                                case 11: // CE
+                                case 12: // D1E
+                                case 13: // DE
+                                case 14: // BTP
+                                    calendar.add(Calendar.YEAR, 5);
+                                    fechaCaducidad.setText(simpleDate.format(calendar.getTime()));
+                                    break;
+                            }
+                        } else {
+                            switch (tipoPermisoConducir.getSelectedItemPosition()) {
+                                case 0: // AM
+                                case 1: // A1
+                                case 2: // A2
+                                case 3: // A
+                                case 4: // B
+                                    calendar.add(Calendar.YEAR, 5);
+                                    fechaCaducidad.setText(simpleDate.format(calendar.getTime()));
+                                    break;
+                                case 5: // C1
+                                case 6: // C
+                                case 7: // D1
+                                case 8: // D
+                                case 9: // BE
+                                case 10: // C1E
+                                case 11: // CE
+                                case 12: // D1E
+                                case 13: // DE
+                                case 14: // BTP
+                                    calendar.add(Calendar.YEAR, 3);
+                                    fechaCaducidad.setText(simpleDate.format(calendar.getTime()));
+                                    break;
+                            }
+                        }
                         break;
                 }
             }
@@ -207,12 +260,15 @@ public class LicenciaFormActivity extends AppCompatActivity {
                             break;
                         // Sumamos 5 años
                         case 0: // Licencia A
+                            calendar.set(3000, 11, 31);
+                            fechaCaducidad.setText(simpleDate.format(calendar.getTime()));
+                            break;
                         case 2: // Licencia C
                         case 3: // Licencia D
                         case 4: // Licencia E
                         case 6: // Licencia AE
                         case 7: // Licencia AER
-                        case 8: // Licencia Libero Coleccionesta
+                        case 8: // Licencia Libro Coleccionista
                             calendar.add(Calendar.YEAR, 5);
                             fechaCaducidad.setText(simpleDate.format(calendar.getTime()));
                             break;
@@ -224,8 +280,55 @@ public class LicenciaFormActivity extends AppCompatActivity {
                             break;
                         // Sumamos 10 años
                         case 11: // Persmiso de Conducir
-                            calendar.add(Calendar.YEAR, 10);
-                            fechaCaducidad.setText(simpleDate.format(calendar.getTime()));
+                            if (Integer.parseInt(edad.getText().toString()) < 65) {
+                                switch (tipoPermisoConducir.getSelectedItemPosition()) {
+                                    case 0: // AM
+                                    case 1: // A1
+                                    case 2: // A2
+                                    case 3: // A
+                                    case 4: // B
+                                        calendar.add(Calendar.YEAR, 10);
+                                        fechaCaducidad.setText(simpleDate.format(calendar.getTime()));
+                                        break;
+                                    case 5: // C1
+                                    case 6: // C
+                                    case 7: // D1
+                                    case 8: // D
+                                    case 9: // BE
+                                    case 10: // C1E
+                                    case 11: // CE
+                                    case 12: // D1E
+                                    case 13: // DE
+                                    case 14: // BTP
+                                        calendar.add(Calendar.YEAR, 5);
+                                        fechaCaducidad.setText(simpleDate.format(calendar.getTime()));
+                                        break;
+                                }
+                            } else {
+                                switch (tipoPermisoConducir.getSelectedItemPosition()) {
+                                    case 0: // AM
+                                    case 1: // A1
+                                    case 2: // A2
+                                    case 3: // A
+                                    case 4: // B
+                                        calendar.add(Calendar.YEAR, 5);
+                                        fechaCaducidad.setText(simpleDate.format(calendar.getTime()));
+                                        break;
+                                    case 5: // C1
+                                    case 6: // C
+                                    case 7: // D1
+                                    case 8: // D
+                                    case 9: // BE
+                                    case 10: // C1E
+                                    case 11: // CE
+                                    case 12: // D1E
+                                    case 13: // DE
+                                    case 14: // BTP
+                                        calendar.add(Calendar.YEAR, 3);
+                                        fechaCaducidad.setText(simpleDate.format(calendar.getTime()));
+                                        break;
+                                }
+                            }
                             break;
                     }
                 }
@@ -239,7 +342,6 @@ public class LicenciaFormActivity extends AppCompatActivity {
             }
         });
 
-//        // FIXME Cambiar por la lógica que corresponda para las fechas de las notificaciones
 //        //  Se envía la notificación cuando el sistema llegue a la fecha indicada
 //        Calendar calendar = Calendar.getInstance();
 //        calendar.set(Calendar.MONTH, 6);
@@ -326,6 +428,9 @@ public class LicenciaFormActivity extends AppCompatActivity {
                 } else {
                     bundle.putInt("tipo_permiso_conduccion", -1); // Mandamos -1 para que el array adapter no muestre este campo
                 }
+                if (edad.getVisibility() == View.VISIBLE) {
+                    bundle.putInt("edad", Integer.parseInt(edad.getText().toString()));
+                }
                 bundle.putInt("num_licencia", Integer.parseInt(numLicencia.getText().toString()));
                 bundle.putString("fecha_expedicion", fechaExpedicion.getText().toString());
                 bundle.putString("fecha_caducidad", fechaCaducidad.getText().toString());
@@ -410,6 +515,10 @@ public class LicenciaFormActivity extends AppCompatActivity {
             numSeguro.setError("Introduce el número de la poliza del seguro", ResourcesCompat.getDrawable(getResources(), android.R.drawable.stat_notify_error, getTheme()));
             flag = false;
         }
+        if (edad.getVisibility() == View.VISIBLE && edad.getText().toString().equals("")) {
+            edad.setError("Introduce la edad", ResourcesCompat.getDrawable(getResources(), android.R.drawable.stat_notify_error, getTheme()));
+            flag = false;
+        }
 
         return flag;
     }
@@ -445,6 +554,7 @@ public class LicenciaFormActivity extends AppCompatActivity {
                 layoutCCAA.setVisibility(View.GONE);
                 lblPermiso.setVisibility(View.GONE);
                 tipoPermisoConducir.setVisibility(View.GONE);
+                edad.setVisibility(View.GONE);
                 break;
 
             case 9:
@@ -455,6 +565,7 @@ public class LicenciaFormActivity extends AppCompatActivity {
                 layoutCCAA.setVisibility(View.VISIBLE);
                 lblPermiso.setVisibility(View.GONE);
                 tipoPermisoConducir.setVisibility(View.GONE);
+                edad.setVisibility(View.GONE);
                 break;
 
             case 11:
@@ -464,6 +575,7 @@ public class LicenciaFormActivity extends AppCompatActivity {
                 layoutCCAA.setVisibility(View.GONE);
                 lblPermiso.setVisibility(View.VISIBLE);
                 tipoPermisoConducir.setVisibility(View.VISIBLE);
+                edad.setVisibility(View.VISIBLE);
                 break;
         }
     }

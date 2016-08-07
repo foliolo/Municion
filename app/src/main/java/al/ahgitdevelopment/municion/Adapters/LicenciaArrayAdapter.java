@@ -23,6 +23,9 @@ public class LicenciaArrayAdapter extends ArrayAdapter<Licencia> {
     TextView tipo;
     TextView lblTipoPermisoConduccion;
     TextView tipoPermisoConduccion;
+    TextView lblEdad;
+    TextView edad;
+    TextView lblNumLicencia;
     TextView numLicencia;
     TextView expedicion;
     LinearLayout layoutFechaCaducidad;
@@ -56,6 +59,9 @@ public class LicenciaArrayAdapter extends ArrayAdapter<Licencia> {
         tipo = (TextView) convertView.findViewById(R.id.item_tipo_licencia);
         lblTipoPermisoConduccion = (TextView) convertView.findViewById(R.id.lbl_tipo_permiso_conducir);
         tipoPermisoConduccion = (TextView) convertView.findViewById(R.id.item_tipo_permiso_conducir);
+        lblEdad = (TextView) convertView.findViewById(R.id.lbl_edad);
+        edad = (TextView) convertView.findViewById(R.id.item_edad);
+        lblNumLicencia = (TextView) convertView.findViewById(R.id.lbl_num_licencia);
         numLicencia = (TextView) convertView.findViewById(R.id.item_num_guia);
         expedicion = (TextView) convertView.findViewById(R.id.item_expedicion_licencia);
         layoutFechaCaducidad = (LinearLayout) convertView.findViewById(R.id.layout_fecha_caducidad);
@@ -102,9 +108,16 @@ public class LicenciaArrayAdapter extends ArrayAdapter<Licencia> {
             tipoPermisoConduccion.setText(getContext().getResources().getStringArray(R.array.tipo_permiso_conducir)[licencia.getTipoPermisoConduccion()]);
             lblTipoPermisoConduccion.setVisibility(View.VISIBLE);
             tipoPermisoConduccion.setVisibility(View.VISIBLE);
+            edad.setText(licencia.getEdad() + "");
+            lblEdad.setVisibility(View.VISIBLE);
+            edad.setVisibility(View.VISIBLE);
+            lblNumLicencia.setText(R.string.lbl_num_dni);
         } else {
             lblTipoPermisoConduccion.setVisibility(View.GONE);
             tipoPermisoConduccion.setVisibility(View.GONE);
+            lblEdad.setVisibility(View.GONE);
+            edad.setVisibility(View.GONE);
+            lblNumLicencia.setText(R.string.lbl_num_licencia);
         }
 
         numLicencia.setText(String.valueOf(licencia.getNumLicencia()));

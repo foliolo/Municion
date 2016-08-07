@@ -29,6 +29,8 @@ public class LicenciaCursorAdapter extends CursorAdapter {
         TextView numAbonado = (TextView) view.findViewById(R.id.item_num_abonado);
         TextView numSeguro = (TextView) view.findViewById(R.id.item_num_poliza);
         TextView autonomia = (TextView) view.findViewById(R.id.item_ccaa);
+        TextView tipoPermisoConducir = (TextView) view.findViewById(R.id.item_tipo_permiso_conducir);
+        TextView edad = (TextView) view.findViewById(R.id.item_edad);
 
         tipo.setText(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_LICENCIAS_TIPO)));
         numLicencia.setText(String.valueOf(cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_LICENCIAS_NUM_LICENCIA))));
@@ -37,6 +39,9 @@ public class LicenciaCursorAdapter extends CursorAdapter {
         numAbonado.setText(String.valueOf(cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_LICENCIAS_NUM_ABONADO))));
         numSeguro.setText(String.valueOf(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_LICENCIAS_NUM_SEGURO))));
         autonomia.setText(String.valueOf(cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_LICENCIAS_AUTONOMIA))));
+        tipoPermisoConducir.setText(String.valueOf(cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_LICENCIAS_TIPO_PERMISO_CONDUCCION))));
+        edad.setText(String.valueOf(cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_LICENCIAS_EDAD))));
+
     }
 
     @Override
