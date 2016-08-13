@@ -1,15 +1,18 @@
-
 package al.ahgitdevelopment.municion;
 
 import android.app.Activity;
-import android.app.AlarmManager;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatSpinner;
@@ -42,6 +45,7 @@ public class LicenciaFormActivity extends AppCompatActivity {
     private TextInputLayout textInputLayoutLicencia;
     private TextInputLayout layoutFechaExpedicion;
     private TextInputLayout layoutFechaCaducidad;
+    private TextInputLayout layoutEdad;
     private AppCompatSpinner tipoLicencia;
     private TextView lblPermiso;
     private AppCompatSpinner tipoPermisoConducir;
@@ -82,10 +86,10 @@ public class LicenciaFormActivity extends AppCompatActivity {
         autonomia = (AppCompatSpinner) findViewById(R.id.form_ccaa);
         lblPermiso = (TextView) findViewById(R.id.form_lbl_tipo_permiso_conducir);
         tipoPermisoConducir = (AppCompatSpinner) findViewById(R.id.form_tipo_permiso_conducir);
+        layoutEdad = (TextInputLayout) findViewById(R.id.text_input_layout_edad);
         edad = (EditText) findViewById(R.id.form_edad);
         layoutEscala = (LinearLayout) findViewById(R.id.layout_escala);
         tipoEscala = (AppCompatSpinner) findViewById(R.id.form_tipo_escala);
-//      manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 
         //Carga de datos (en caso de modificacion)
         if (getIntent().getExtras() != null) {
@@ -105,6 +109,7 @@ public class LicenciaFormActivity extends AppCompatActivity {
             }
         }
 
+        // Eventos que sacan el calendario al recibir el foco en el campo fecha
         layoutFechaExpedicion.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -119,8 +124,6 @@ public class LicenciaFormActivity extends AppCompatActivity {
                 }
             }
         });
-
-        // Evento que saca el calendario al recibir el foco en el campo fecha
         fechaExpedicion.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
@@ -129,7 +132,6 @@ public class LicenciaFormActivity extends AppCompatActivity {
                 }
             }
         });
-
         fechaExpedicion.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -137,264 +139,7 @@ public class LicenciaFormActivity extends AppCompatActivity {
             }
         });
 
-        fechaExpedicion.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                //Calculamos al fecha de caducidad en función de fecha de expedición introducida
-                SimpleDateFormat simpleDate = new SimpleDateFormat("dd/MM/yyyy");
-                Calendar calendar = Calendar.getInstance();
-                try {
-                    calendar.setTime(simpleDate.parse(fechaExpedicion.getText().toString()));
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
-                switch (tipoLicencia.getSelectedItemPosition()) {
-                    // Sumamos 3 año
-                    case 1: // Licencia B
-                    case 5: // Licencia F
-                        calendar.add(Calendar.YEAR, 3);
-                        fechaCaducidad.setText(simpleDate.format(calendar.getTime()));
-                        break;
-                    // Sumamos 5 años
-                    case 0: // Licencia A
-                        calendar.set(3000, 11, 31);
-                        fechaCaducidad.setText(simpleDate.format(calendar.getTime()));
-                        break;
-                    case 2: // Licencia C
-                    case 3: // Licencia D
-                    case 4: // Licencia E
-                    case 6: // Licencia AE
-                    case 7: // Licencia AER
-                    case 8: // Licencia Libero Coleccionesta
-                        calendar.add(Calendar.YEAR, 5);
-                        fechaCaducidad.setText(simpleDate.format(calendar.getTime()));
-                        break;
-                    // Ajustamos al final de año
-                    case 9: // Autonomica Caza
-                    case 10: // Autonomica Pesca
-                        calendar.set(calendar.get(Calendar.YEAR), 11, 31);
-                        fechaCaducidad.setText(simpleDate.format(calendar.getTime()));
-                    // Sumamos 10 años
-                    case 11: // Persmiso de Conducir
-                        if (Integer.parseInt(edad.getText().toString()) < 65) {
-                            switch (tipoPermisoConducir.getSelectedItemPosition()) {
-                                case 0: // AM
-                                case 1: // A1
-                                case 2: // A2
-                                case 3: // A
-                                case 4: // B
-                                    calendar.add(Calendar.YEAR, 10);
-                                    fechaCaducidad.setText(simpleDate.format(calendar.getTime()));
-                                    break;
-                                case 5: // C1
-                                case 6: // C
-                                case 7: // D1
-                                case 8: // D
-                                case 9: // BE
-                                case 10: // C1E
-                                case 11: // CE
-                                case 12: // D1E
-                                case 13: // DE
-                                case 14: // BTP
-                                    calendar.add(Calendar.YEAR, 5);
-                                    fechaCaducidad.setText(simpleDate.format(calendar.getTime()));
-                                    break;
-                            }
-                        } else {
-                            switch (tipoPermisoConducir.getSelectedItemPosition()) {
-                                case 0: // AM
-                                case 1: // A1
-                                case 2: // A2
-                                case 3: // A
-                                case 4: // B
-                                    calendar.add(Calendar.YEAR, 5);
-                                    fechaCaducidad.setText(simpleDate.format(calendar.getTime()));
-                                    break;
-                                case 5: // C1
-                                case 6: // C
-                                case 7: // D1
-                                case 8: // D
-                                case 9: // BE
-                                case 10: // C1E
-                                case 11: // CE
-                                case 12: // D1E
-                                case 13: // DE
-                                case 14: // BTP
-                                    calendar.add(Calendar.YEAR, 3);
-                                    fechaCaducidad.setText(simpleDate.format(calendar.getTime()));
-                                    break;
-                            }
-                        }
-                        break;
-                }
-            }
-        });
-
-        tipoLicencia.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if (!fechaExpedicion.getText().toString().equals("")) {
-                    //Calculamos al fecha de caducidad en función de fecha de expedición introducida
-                    SimpleDateFormat simpleDate = new SimpleDateFormat("dd/MM/yyyy");
-                    Calendar calendar = Calendar.getInstance();
-                    try {
-                        calendar.setTime(simpleDate.parse(fechaExpedicion.getText().toString()));
-                    } catch (ParseException e) {
-                        e.printStackTrace();
-                    }
-
-                    switch (tipoLicencia.getSelectedItemPosition()) {
-                        // Sumamos 3 año
-                        case 1: // Licencia B
-                        case 5: // Licencia F
-                            calendar.add(Calendar.YEAR, 3);
-                            fechaCaducidad.setText(simpleDate.format(calendar.getTime()));
-                            break;
-                        // Sumamos 5 años
-                        case 0: // Licencia A
-                            calendar.set(3000, 11, 31);
-                            fechaCaducidad.setText(simpleDate.format(calendar.getTime()));
-                            break;
-                        case 2: // Licencia C
-                        case 3: // Licencia D
-                        case 4: // Licencia E
-                        case 6: // Licencia AE
-                        case 7: // Licencia AER
-                        case 8: // Licencia Libro Coleccionista
-                            calendar.add(Calendar.YEAR, 5);
-                            fechaCaducidad.setText(simpleDate.format(calendar.getTime()));
-                            break;
-                        // Ajustamos al final de año
-                        case 9: // Autonomica Caza
-                        case 10: // Autonomica Pesca
-                            calendar.set(calendar.get(Calendar.YEAR), 11, 31);
-                            fechaCaducidad.setText(simpleDate.format(calendar.getTime()));
-                            break;
-                        // Sumamos 10 años
-                        case 11: // Persmiso de Conducir
-                            if (Integer.parseInt(edad.getText().toString()) < 65) {
-                                switch (tipoPermisoConducir.getSelectedItemPosition()) {
-                                    case 0: // AM
-                                    case 1: // A1
-                                    case 2: // A2
-                                    case 3: // A
-                                    case 4: // B
-                                        calendar.add(Calendar.YEAR, 10);
-                                        fechaCaducidad.setText(simpleDate.format(calendar.getTime()));
-                                        break;
-                                    case 5: // C1
-                                    case 6: // C
-                                    case 7: // D1
-                                    case 8: // D
-                                    case 9: // BE
-                                    case 10: // C1E
-                                    case 11: // CE
-                                    case 12: // D1E
-                                    case 13: // DE
-                                    case 14: // BTP
-                                        calendar.add(Calendar.YEAR, 5);
-                                        fechaCaducidad.setText(simpleDate.format(calendar.getTime()));
-                                        break;
-                                }
-                            } else {
-                                switch (tipoPermisoConducir.getSelectedItemPosition()) {
-                                    case 0: // AM
-                                    case 1: // A1
-                                    case 2: // A2
-                                    case 3: // A
-                                    case 4: // B
-                                        calendar.add(Calendar.YEAR, 5);
-                                        fechaCaducidad.setText(simpleDate.format(calendar.getTime()));
-                                        break;
-                                    case 5: // C1
-                                    case 6: // C
-                                    case 7: // D1
-                                    case 8: // D
-                                    case 9: // BE
-                                    case 10: // C1E
-                                    case 11: // CE
-                                    case 12: // D1E
-                                    case 13: // DE
-                                    case 14: // BTP
-                                        calendar.add(Calendar.YEAR, 3);
-                                        fechaCaducidad.setText(simpleDate.format(calendar.getTime()));
-                                        break;
-                                }
-                            }
-                            break;
-                    }
-                }
-
-                SetVisibilityFields(tipoLicencia.getSelectedItemPosition());
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
-
-//        //  Se envía la notificación cuando el sistema llegue a la fecha indicada
-//        Calendar calendar = Calendar.getInstance();
-//        calendar.set(Calendar.MONTH, 6);
-//        calendar.set(Calendar.YEAR, 2016);
-//        calendar.set(Calendar.DAY_OF_MONTH, 25);
-//        calendar.set(Calendar.HOUR_OF_DAY, 18);
-//        calendar.set(Calendar.MINUTE, 32);
-//        calendar.set(Calendar.SECOND, 0);
-//        calendar.set(Calendar.AM_PM,Calendar.PM);
-//
-//        Intent intent = new Intent(LicenciaFormActivity.this, ReceiverBroad.class);
-//        pendingIntent = PendingIntent.getBroadcast(LicenciaFormActivity.this, 0, intent,0);
-//
-//        AlarmManager alarmManager = (AlarmManager)getSystemService(ALARM_SERVICE);
-//        alarmManager.set(AlarmManager.RTC, calendar.getTimeInMillis(), pendingIntent);
-
-        // Para lanzar la notificacion con un boton
-//        button1.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                // API level 11
-//                Intent intent = new Intent(LicenciaFormActivity.this, NotificationView.class);
-//
-//                PendingIntent pendingIntent = PendingIntent.getActivity(LicenciaFormActivity.this, 1, intent, 0);
-//
-//                Notification.Builder builder = new Notification.Builder(LicenciaFormActivity.this);
-//
-//                builder.setAutoCancel(true);
-//                builder.setContentTitle("WhatsApp Notification");
-//                builder.setContentText("You have a new message");
-//                builder.setSmallIcon(R.drawable.ic_notifications_black_24dp);
-//                builder.setContentIntent(pendingIntent);
-//                builder.setOngoing(true);
-//                builder.setNumber(100);
-//                // API level 16
-////                builder.setSubText("This is subtext...");
-////                builder.build();
-//
-//                myNotication = builder.getNotification();
-//                manager.notify(11, myNotication);
-//
-//                /*
-//                //API level 8
-//                Notification myNotification8 = new Notification(R.drawable.ic_launcher, "this is ticker text 8", System.currentTimeMillis());
-//
-//                Intent intent2 = new Intent(MainActivity.this, SecActivity.class);
-//                PendingIntent pendingIntent2 = PendingIntent.getActivity(getApplicationContext(), 2, intent2, 0);
-//                myNotification8.setLatestEventInfo(getApplicationContext(), "API level 8", "this is api 8 msg", pendingIntent2);
-//                manager.notify(11, myNotification8);
-//                */
-//
-//            }
-//        });
+        fieldsUpdateFechaCaducidad();
     }
 
     private void callDatePickerFragment() {
@@ -458,7 +203,6 @@ public class LicenciaFormActivity extends AppCompatActivity {
                 //Agregar notificacion
                 setNotification();
 
-
                 result.putExtras(bundle);
 
                 setResult(Activity.RESULT_OK, result);
@@ -468,18 +212,216 @@ public class LicenciaFormActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * Campos y eventos que actualizan la fecha de caducidad
+     */
+    private void fieldsUpdateFechaCaducidad() {
+
+        //Fecha de expedicion:
+        // - Cambio de texto
+        fechaExpedicion.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                updateFechaCaducidad();
+            }
+        });
+
+        //Tipo de licencia: cambio del tipo de licencia
+        tipoLicencia.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                updateFechaCaducidad();
+                SetVisibilityFields(tipoLicencia.getSelectedItemPosition());
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
+
+        //Tipo de permiso de conducir: cambio del tipo de permiso
+        tipoPermisoConducir.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                updateFechaCaducidad();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
+
+        //Edad:
+        // - Cambio de foco en el layout de la edad
+        // - Modificacion de la edad
+        layoutEdad.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean b) {
+                updateFechaCaducidad();
+            }
+        });
+        edad.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                updateFechaCaducidad();
+            }
+        });
+    }
+
+    /**
+     * Modificacion de la fecha de caducidad
+     */
+    private void updateFechaCaducidad() {
+        //Calculamos al fecha de caducidad en función de fecha de expedición introducida
+        SimpleDateFormat simpleDate = new SimpleDateFormat("dd/MM/yyyy");
+        Calendar calendar = Calendar.getInstance();
+        try {
+            calendar.setTime(simpleDate.parse(fechaExpedicion.getText().toString()));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        switch (tipoLicencia.getSelectedItemPosition()) {
+            // Esta licencia no caduca por lo que ponemos una fecha muy lejaana
+            case 0: // Licencia A
+                calendar.set(3000, 11, 31);
+                fechaCaducidad.setText(simpleDate.format(calendar.getTime()));
+                break;
+            // Sumamos 3 año
+            case 1: // Licencia B
+            case 5: // Licencia F
+                calendar.add(Calendar.YEAR, 3);
+                fechaCaducidad.setText(simpleDate.format(calendar.getTime()));
+                break;
+            // Sumamos 5 años
+            case 2: // Licencia C
+            case 3: // Licencia D
+            case 4: // Licencia E
+            case 6: // Licencia AE
+            case 7: // Licencia AER
+            case 8: // Licencia Libero Coleccionesta
+                calendar.add(Calendar.YEAR, 5);
+                fechaCaducidad.setText(simpleDate.format(calendar.getTime()));
+                break;
+            // Ajustamos al final de año
+            case 9: // Autonomica Caza
+            case 10: // Autonomica Pesca
+                calendar.set(calendar.get(Calendar.YEAR), 11, 31);
+                fechaCaducidad.setText(simpleDate.format(calendar.getTime()));
+                // Sumamos 10 años
+            case 11: // Persmiso de Conducir
+                if (!edad.getText().toString().equals("") && Integer.parseInt(edad.getText().toString()) < 65) {
+                    switch (tipoPermisoConducir.getSelectedItemPosition()) {
+                        case 0: // AM
+                        case 1: // A1
+                        case 2: // A2
+                        case 3: // A
+                        case 4: // B
+                            calendar.add(Calendar.YEAR, 10);
+                            fechaCaducidad.setText(simpleDate.format(calendar.getTime()));
+                            break;
+                        case 5: // C1
+                        case 6: // C
+                        case 7: // D1
+                        case 8: // D
+                        case 9: // BE
+                        case 10: // C1E
+                        case 11: // CE
+                        case 12: // D1E
+                        case 13: // DE
+                        case 14: // BTP
+                            calendar.add(Calendar.YEAR, 5);
+                            fechaCaducidad.setText(simpleDate.format(calendar.getTime()));
+                            break;
+                    }
+                } else {
+                    switch (tipoPermisoConducir.getSelectedItemPosition()) {
+                        case 0: // AM
+                        case 1: // A1
+                        case 2: // A2
+                        case 3: // A
+                        case 4: // B
+                            calendar.add(Calendar.YEAR, 5);
+                            fechaCaducidad.setText(simpleDate.format(calendar.getTime()));
+                            break;
+                        case 5: // C1
+                        case 6: // C
+                        case 7: // D1
+                        case 8: // D
+                        case 9: // BE
+                        case 10: // C1E
+                        case 11: // CE
+                        case 12: // D1E
+                        case 13: // DE
+                        case 14: // BTP
+                            calendar.add(Calendar.YEAR, 3);
+                            fechaCaducidad.setText(simpleDate.format(calendar.getTime()));
+                            break;
+                    }
+                }
+                break;
+        }
+    }
+
+    /**
+     * Metodo para crear o modifciar la notificación
+     */
     private void setNotification() {
         //  Se envía la notificación cuando el sistema llegue a la fecha indicada
         try {
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(new SimpleDateFormat("dd/MM/yyyy").parse(fechaCaducidad.getText().toString()));
 
-            Intent intent = new Intent(LicenciaFormActivity.this, ReceiverBroad.class);
-            intent.putExtra("licencia", getResources().getStringArray(R.array.tipo_licencias)[tipoLicencia.getSelectedItemPosition()]);
-            pendingIntent = PendingIntent.getBroadcast(LicenciaFormActivity.this, 0, intent, 0);
+            NotificationCompat.Builder mBuilder =
+                    new NotificationCompat.Builder(this)
+                            .setSmallIcon(R.mipmap.ic_launcher_4_transparent)
+                            .setContentTitle("Caducidad de Licencia")
+                            .setContentText("Tu licencia caduca hoy")
+                            .setSubText(Utils.getStringLicenseFromId(LicenciaFormActivity.this, tipoLicencia.getSelectedItemPosition()).toString() + ": " +
+                                    numLicencia.getText().toString());
 
-            AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
-            alarmManager.set(AlarmManager.RTC, calendar.getTimeInMillis(), pendingIntent);
+            // Creates an explicit intent for an Activity in your app
+            Intent resultIntent = new Intent(this, LicenciaFormActivity.class);
+
+            // The stack builder object will contain an artificial back stack for the started Activity.
+            // This ensures that navigating backward from the Activity leads out of your application to the Home screen.
+            TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+            // Adds the back stack for the Intent (but not the Intent itself)
+            stackBuilder.addParentStack(LicenciaFormActivity.class);
+            // Adds the Intent that starts the Activity to the top of the stack
+            stackBuilder.addNextIntent(resultIntent);
+            PendingIntent resultPendingIntent =
+                    stackBuilder.getPendingIntent(
+                            0,
+                            PendingIntent.FLAG_UPDATE_CURRENT
+                    );
+            mBuilder.setContentIntent(resultPendingIntent)
+                    .setAutoCancel(true)
+                    .setShowWhen(true)
+                    .setWhen(calendar.getTimeInMillis())
+                    .setLights(Color.GREEN, 500, 500);
+
+            NotificationManager mNotificationManager =
+                    (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+            // mId allows you to update the notification later on.
+            mNotificationManager.notify(Integer.parseInt(numLicencia.getText().toString()), mBuilder.build());
+
 
             Toast.makeText(LicenciaFormActivity.this, "Notificacion creada para el día: " + fechaCaducidad.getText().toString(), Toast.LENGTH_LONG).show();
         } catch (ParseException ex) {

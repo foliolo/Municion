@@ -55,23 +55,18 @@
         <activity
             android:name=".LicenciaFormActivity"
             android:label="@string/title_nueva_licencia"
+            android:parentActivityName=".FragmentMainActivity"
             android:theme="@style/BarTheme"
             android:windowSoftInputMode="stateHidden">
-        <intent-filter>
-            <action android:name="android.intent.action.MAIN" />
-            <category android:name="android.intent.category.LAUNCHER" />
-        </intent-filter>
-    </activity>
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".FragmentMainActivity"/>
+        </activity>
 
         <activity
             android:name=".SettingsActivity"
             android:label="@string/title_activity_settings"
             android:theme="@style/BarTheme"/>
-
-        <service android:name=".AlarmService"
-            android:enabled="true" />
-
-        <receiver android:name=".ReceiverBroad"/>
 
     </application>
 

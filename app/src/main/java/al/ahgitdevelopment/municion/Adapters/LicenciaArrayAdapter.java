@@ -2,6 +2,7 @@ package al.ahgitdevelopment.municion.Adapters;
 
 import android.content.Context;
 import android.os.Build;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -104,22 +105,26 @@ public class LicenciaArrayAdapter extends ArrayAdapter<Licencia> {
             tipo.setText(nombreLicencia);
         }
 
-        if (licencia.getNombre().equals("Permiso Conducir")) {
-            tipoPermisoConduccion.setText(getContext().getResources().getStringArray(R.array.tipo_permiso_conducir)[licencia.getTipoPermisoConduccion()]);
-            lblTipoPermisoConduccion.setVisibility(View.VISIBLE);
-            tipoPermisoConduccion.setVisibility(View.VISIBLE);
-            edad.setText(licencia.getEdad() + "");
-            lblEdad.setVisibility(View.VISIBLE);
-            edad.setVisibility(View.VISIBLE);
-            lblNumLicencia.setText(R.string.lbl_num_dni);
-        } else {
-            lblTipoPermisoConduccion.setVisibility(View.GONE);
-            tipoPermisoConduccion.setVisibility(View.GONE);
-            lblEdad.setVisibility(View.GONE);
-            edad.setVisibility(View.GONE);
-            lblNumLicencia.setText(R.string.lbl_num_licencia);
+        //Todo: Arreglar esta excepción. Ocurre al cambiar una licencia "Permiso de conducir" a cualquier otra
+        try {
+            if (licencia.getNombre().equals("Permiso Conducir")) {
+                tipoPermisoConduccion.setText(getContext().getResources().getStringArray(R.array.tipo_permiso_conducir)[licencia.getTipoPermisoConduccion()]);
+                lblTipoPermisoConduccion.setVisibility(View.VISIBLE);
+                tipoPermisoConduccion.setVisibility(View.VISIBLE);
+                edad.setText(licencia.getEdad() + "");
+                lblEdad.setVisibility(View.VISIBLE);
+                edad.setVisibility(View.VISIBLE);
+                lblNumLicencia.setText(R.string.lbl_num_dni);
+            } else {
+                lblTipoPermisoConduccion.setVisibility(View.GONE);
+                tipoPermisoConduccion.setVisibility(View.GONE);
+                lblEdad.setVisibility(View.GONE);
+                edad.setVisibility(View.GONE);
+                lblNumLicencia.setText(R.string.lbl_num_licencia);
+            }
+        } catch (ArrayIndexOutOfBoundsException ex) {
+            Log.e(getContext().getPackageName(), "Error al cambiar una permiso de conducir a otra licencia", ex);
         }
-
         numLicencia.setText(String.valueOf(licencia.getNumLicencia()));
 
         if (licencia.getFechaExpedicion() != null)

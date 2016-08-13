@@ -64,7 +64,7 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
     // Logcat tag
     private static final String LOG = "DatabaseHelper";
     // Database Version
-    private static final int DATABASE_VERSION = 17;
+    private static final int DATABASE_VERSION = 18;
     // Database Name
     private static final String DATABASE_NAME = "DBMunicion.db";
     // Table Create Statements

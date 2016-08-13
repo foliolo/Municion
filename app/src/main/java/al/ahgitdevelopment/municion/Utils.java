@@ -16,7 +16,9 @@ public final class Utils {
         ArrayList<String> list = new ArrayList<>();
         for (Licencia licencia : FragmentMainActivity.licencias) {
             String licenseName = Utils.getStringLicenseFromId(context, licencia.getTipo());
-            if (!licenseName.equals("Autonómica de Caza") && !licenseName.equals("Autonómica de Pesca") && !licenseName.equals("Permiso Conducir"))
+            if (!licenseName.equals("Autonómica de Caza") &&
+                    !licenseName.equals("Autonómica de Pesca") &&
+                    !licenseName.equals("Permiso Conducir"))
                 list.add(licenseName);
         }
 
