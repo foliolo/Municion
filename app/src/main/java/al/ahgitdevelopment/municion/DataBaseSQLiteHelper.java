@@ -60,6 +60,7 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
     public static final String KEY_LICENCIAS_NUM_SEGURO = "num_seguro";
     public static final String KEY_LICENCIAS_AUTONOMIA = "autonomia";
     public static final String KEY_LICENCIAS_ESCALA = "escala";
+    public static final String KEY_LICENCIAS_CATEGORIA = "categoria";
 
     // Logcat tag
     private static final String LOG = "DatabaseHelper";
@@ -117,7 +118,8 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
             + KEY_LICENCIAS_NUM_ABONADO + " INTEGER,"
             + KEY_LICENCIAS_NUM_SEGURO + " TEXT,"
             + KEY_LICENCIAS_AUTONOMIA + " INTEGER,"
-            + KEY_LICENCIAS_ESCALA + " INTEGER"
+            + KEY_LICENCIAS_ESCALA + " INTEGER,"
+            + KEY_LICENCIAS_CATEGORIA + " INTEGER"
             + ")";
 
     public Context context;
@@ -417,7 +419,7 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
                     licencia.setNumSeguro(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_LICENCIAS_NUM_SEGURO)));
                     licencia.setAutonomia(cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_LICENCIAS_AUTONOMIA)));
                     licencia.setEscala(cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_LICENCIAS_ESCALA)));
-
+                    licencia.setCategoria(cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_LICENCIAS_CATEGORIA)));
                     // Adding contact to list
                     licencias.add(licencia);
                 } while (cursor.moveToNext());
@@ -523,7 +525,8 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
                         KEY_LICENCIAS_NUM_ABONADO + ", " +
                         KEY_LICENCIAS_NUM_SEGURO + ", " +
                         KEY_LICENCIAS_AUTONOMIA + ", " +
-                        KEY_LICENCIAS_ESCALA +
+                        KEY_LICENCIAS_ESCALA + ", " +
+                        KEY_LICENCIAS_CATEGORIA +
                         ") VALUES (" +
                         "'" + licencia.getTipo() + "' , " +
                         "'" + licencia.getNombre() + "' , " +
@@ -535,7 +538,8 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
                         "'" + licencia.getNumAbonado() + "' , " +
                         "'" + licencia.getNumSeguro() + "' , " +
                         "'" + licencia.getAutonomia() + "' , " +
-                        "'" + licencia.getEscala() + "'" +
+                        "'" + licencia.getEscala() + "' , " +
+                        "'" + licencia.getCategoria() + "'" +
                         ");");
             }
         }

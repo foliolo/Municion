@@ -37,6 +37,24 @@
                 android:spinnerMode="dropdown"/>
         </LinearLayout>
 
+        <!--CATEGORIA FEDERATIVA-->
+            <TextView
+                android:id="@+id/form_lbl_categoria"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="10dp"
+                android:text="@string/lbl_categoria"
+                android:textAppearance="?android:attr/textAppearanceSmall"/>
+
+            <android.support.v7.widget.AppCompatSpinner
+                android:id="@+id/form_categoria"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:entries="@array/categorias"
+                android:hint="@string/lbl_categoria"
+                android:inputType="text"
+                android:spinnerMode="dropdown"/>
+
         <!--TIPO PERMISO CONDUCIR-->
         <TextView
             android:id="@+id/form_lbl_tipo_permiso_conducir"

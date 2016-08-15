@@ -18,6 +18,7 @@ public final class Utils {
             String licenseName = Utils.getStringLicenseFromId(context, licencia.getTipo());
             if (!licenseName.equals("Autonómica de Caza") &&
                     !licenseName.equals("Autonómica de Pesca") &&
+                    !licenseName.equals("Federativa de tiro") &&
                     !licenseName.equals("Permiso Conducir"))
                 list.add(licenseName);
         }

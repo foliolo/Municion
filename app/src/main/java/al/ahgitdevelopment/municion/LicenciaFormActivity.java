@@ -58,6 +58,8 @@ public class LicenciaFormActivity extends AppCompatActivity {
     private AppCompatSpinner autonomia;
     private LinearLayout layoutEscala;
     private AppCompatSpinner tipoEscala;
+    private AppCompatSpinner categoria;
+    private TextView lblCategoria;
 
     private PendingIntent pendingIntent;
 
@@ -90,6 +92,8 @@ public class LicenciaFormActivity extends AppCompatActivity {
         edad = (EditText) findViewById(R.id.form_edad);
         layoutEscala = (LinearLayout) findViewById(R.id.layout_escala);
         tipoEscala = (AppCompatSpinner) findViewById(R.id.form_tipo_escala);
+        categoria = (AppCompatSpinner) findViewById(R.id.form_categoria);
+        lblCategoria = (TextView) findViewById(R.id.form_lbl_categoria);
 
         //Carga de datos (en caso de modificacion)
         if (getIntent().getExtras() != null) {
@@ -104,6 +108,7 @@ public class LicenciaFormActivity extends AppCompatActivity {
                 tipoPermisoConducir.setSelection(licencia.getTipoPermisoConduccion());
                 edad.setText(String.valueOf(licencia.getEdad()));
                 tipoEscala.setSelection(licencia.getEscala());
+                categoria.setSelection(licencia.getCategoria());
             } catch (NullPointerException e) {
                 e.printStackTrace();
             }
@@ -194,6 +199,11 @@ public class LicenciaFormActivity extends AppCompatActivity {
                     bundle.putInt("escala", tipoEscala.getSelectedItemPosition());
                 } else {
                     bundle.putInt("escala", -1); // Mandamos -1 para que el array adapter no muestre este campo
+                }
+                if (categoria.getVisibility() == View.VISIBLE) {
+                    bundle.putInt("categoria", categoria.getSelectedItemPosition());
+                } else {
+                    bundle.putInt("categoria", -1); // Mandamos -1 para que el array adapter no muestre este campo
                 }
 
                 //Paso de vuelta de la posicion del item en el array
@@ -324,8 +334,12 @@ public class LicenciaFormActivity extends AppCompatActivity {
             case 10: // Autonomica Pesca
                 calendar.set(calendar.get(Calendar.YEAR), 11, 31);
                 fechaCaducidad.setText(simpleDate.format(calendar.getTime()));
+            case 11: // Licencia Federativa de tiro
+                calendar.add(Calendar.YEAR, 1);
+                fechaCaducidad.setText(simpleDate.format(calendar.getTime()));
+                break;
                 // Sumamos 10 años
-            case 11: // Persmiso de Conducir
+            case 12: // Persmiso de Conducir
                 if (!edad.getText().toString().equals("") && Integer.parseInt(edad.getText().toString()) < 65) {
                     switch (tipoPermisoConducir.getSelectedItemPosition()) {
                         case 0: // AM
@@ -497,6 +511,8 @@ public class LicenciaFormActivity extends AppCompatActivity {
                 lblPermiso.setVisibility(View.GONE);
                 tipoPermisoConducir.setVisibility(View.GONE);
                 edad.setVisibility(View.GONE);
+                lblCategoria.setVisibility(View.GONE);
+                categoria.setVisibility(View.GONE);
                 break;
 
             case 9:
@@ -508,9 +524,21 @@ public class LicenciaFormActivity extends AppCompatActivity {
                 lblPermiso.setVisibility(View.GONE);
                 tipoPermisoConducir.setVisibility(View.GONE);
                 edad.setVisibility(View.GONE);
+                lblCategoria.setVisibility(View.GONE);
+                categoria.setVisibility(View.GONE);
                 break;
-
             case 11:
+                textInputLayoutLicencia.setHint(getResources().getString(R.string.lbl_num_licencia));
+                numAbonado.setVisibility(View.VISIBLE);
+                numSeguro.setVisibility(View.GONE);
+                layoutCCAA.setVisibility(View.VISIBLE);
+                lblPermiso.setVisibility(View.GONE);
+                tipoPermisoConducir.setVisibility(View.GONE);
+                edad.setVisibility(View.GONE);
+                lblCategoria.setVisibility(View.VISIBLE);
+                categoria.setVisibility(View.VISIBLE);
+                break;
+            case 12:
                 textInputLayoutLicencia.setHint(getResources().getString(R.string.lbl_num_dni));
                 numAbonado.setVisibility(View.GONE);
                 numSeguro.setVisibility(View.GONE);
@@ -518,6 +546,8 @@ public class LicenciaFormActivity extends AppCompatActivity {
                 lblPermiso.setVisibility(View.VISIBLE);
                 tipoPermisoConducir.setVisibility(View.VISIBLE);
                 edad.setVisibility(View.VISIBLE);
+                lblCategoria.setVisibility(View.GONE);
+                categoria.setVisibility(View.GONE);
                 break;
         }
     }

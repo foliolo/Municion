@@ -40,6 +40,8 @@ public class LicenciaArrayAdapter extends ArrayAdapter<Licencia> {
     TextView lblAutonomia;
     LinearLayout layoutEscala;
     TextView escala;
+    TextView categoria;
+    TextView lblCategoria;
 
     public LicenciaArrayAdapter(Context context, int resource, List<Licencia> licencias) {
         super(context, resource, licencias);
@@ -74,6 +76,8 @@ public class LicenciaArrayAdapter extends ArrayAdapter<Licencia> {
         layoutCCAA = (LinearLayout) convertView.findViewById(R.id.layout_ccaa);
         autonomia = (TextView) convertView.findViewById(R.id.item_ccaa);
         lblAutonomia = (TextView) convertView.findViewById(R.id.form_lbl_ccaa);
+        categoria = (TextView) convertView.findViewById(R.id.item_categoria);
+        lblCategoria = (TextView) convertView.findViewById(R.id.form_lbl_categoria);
         layoutEscala = (LinearLayout) convertView.findViewById(R.id.layout_escala);
         escala = (TextView) convertView.findViewById(R.id.item_escala);
 
@@ -168,6 +172,15 @@ public class LicenciaArrayAdapter extends ArrayAdapter<Licencia> {
         } else {
             layoutCCAA.setVisibility(View.GONE);
         }
+        if (licencia.getCategoria() >= 0) {
+            lblCategoria.setVisibility(View.VISIBLE);
+            categoria.setVisibility(View.VISIBLE);
+            categoria.setText(getContext().getResources().getStringArray(R.array.categorias)[licencia.getCategoria()]);
+        } else {
+            lblCategoria.setVisibility(View.GONE);
+            categoria.setVisibility(View.GONE);
+        }
+
 
         // Return the completed view to render on screen
         return convertView;

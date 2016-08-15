@@ -83,6 +83,7 @@
     <string name="tipo_licencia">Tipo de licencia</string>
     <string name="tipo_permiso_conducir">Carnet de conducir</string>
     <string name="lbl_ccaa">Com. Autónoma</string>
+    <string name="lbl_categoria">Categoria</string>
     <string name="fecha_expedicion">Fecha de expedición</string>
     <string name="fecha_caducidad">Fecha de caducidad</string>
     <string name="lbl_escala">Escala</string>

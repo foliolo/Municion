@@ -20,6 +20,7 @@
         <item>Libro de coleccionista</item>
         <item>Autonómica de Caza</item>
         <item>Autonómica de Pesca</item>
+        <item>Federativa de tiro</item>
         <item>Permiso Conducir</item>
     </string-array>
 
@@ -118,6 +119,12 @@
         <item>Rifle</item>
         <item>Revolver</item>
         <item>Avancarga</item>
+    </string-array>
+
+    <string-array name="categorias">
+        <item>1º Categoría</item>
+        <item>2º Categoría</item>
+        <item>3º Categoría</item>
     </string-array>
 
     <string-array name="calibres">

@@ -39,6 +39,7 @@ public class Licencia implements Parcelable {
     private String numSeguro;
     private int autonomia;
     private int escala;
+    private int categoria;
 
     public Licencia() {
     }
@@ -60,6 +61,7 @@ public class Licencia implements Parcelable {
         this.numSeguro = in.readString();
         this.autonomia = in.readInt();
         this.escala = in.readInt();
+        this.categoria = in.readInt();
     }
 
     public Licencia(Context context, Bundle extras) {
@@ -74,6 +76,7 @@ public class Licencia implements Parcelable {
         this.numSeguro = extras.getString("num_seguro", "");
         this.autonomia = extras.getInt("autonomia", -1);
         this.escala = extras.getInt("escala", -1);
+        this.categoria = extras.getInt("categoria", -1);
     }
 
     public Licencia(Licencia licencia) {
@@ -89,6 +92,8 @@ public class Licencia implements Parcelable {
         this.setNumSeguro(licencia.getNumSeguro());
         this.setAutonomia(licencia.getAutonomia());
         this.setEscala(licencia.getEscala());
+        this.setCategoria(licencia.getCategoria());
+
     }
 
     public int getId() {
@@ -217,6 +222,14 @@ public class Licencia implements Parcelable {
         this.escala = escala;
     }
 
+    public int getCategoria() {
+        return categoria;
+    }
+
+    public void setCategoria(int categoria) {
+        this.categoria = categoria;
+    }
+
     public String getStringEscala(Context context) {
         return context.getResources().getTextArray(R.array.tipo_escala)[getEscala()].toString();
     }
@@ -243,6 +256,8 @@ public class Licencia implements Parcelable {
         dest.writeInt(numAbonado);
         dest.writeString(numSeguro);
         dest.writeInt(autonomia);
+        dest.writeInt(categoria);
         dest.writeInt(escala);
     }
+
 }
