@@ -159,8 +159,10 @@
 
     <!--google_api_key for Google Places API-->
     <string name="google_api_key">AIzaSyB5EUq9C9taMGE5EpJSRjNafzTvhkaxsSc</string>
+
     <string name="delete_license_fail">Primero deben borrarse las guias asociadas a esta licencia</string>
     <string name="dialog_guia_fail">Debe introducir una licencia de armas primero</string>
+    <string name="dialog_guia_licencia_tipoE">Para la licencia de tipo E el límite de guias es de 6</string>
     <string name="lbl_tipo_escala">Escala</string>
     <string name="tipo_escala">Selecciona la escala del agente</string>
 

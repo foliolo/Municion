@@ -57,8 +57,9 @@ public class GuiaArrayAdapter extends ArrayAdapter<Guia> {
 
         if (guia.getImagePath() != null && !guia.getImagePath().equals("null")) {
             imagen.setImageBitmap(BitmapFactory.decodeFile(guia.getImagePath()));
-        } else
+        } else {
             imagen.setImageResource(R.drawable.pistola);
+        }
         apodo.setText(guia.getApodo());
         numGuia.setText(String.valueOf(guia.getNumGuia()));
         cupo.setText(guia.getGastado() + " / " + guia.getCupo());

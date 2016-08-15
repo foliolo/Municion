@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatSpinner;
 import android.text.Editable;
@@ -48,6 +49,7 @@ public class GuiaFormActivity extends AppCompatActivity {
     // Mensaje de error antes de guardar
     private TextView mensajeError;
     private String imagePath;
+    private DataBaseSQLiteHelper dbSqlHelper;
 
     /**
      * Inicializa la actividad
@@ -303,10 +305,21 @@ public class GuiaFormActivity extends AppCompatActivity {
             Intent result = new Intent(this, FragmentMainActivity.class);
 
             Bundle bundle = new Bundle();
-            if (getIntent().getExtras().getString("tipo_licencia") != null)
+            if (getIntent().getExtras().getString("tipo_licencia") != null) {
                 tipoLicencia = Utils.getLicenciaTipoFromString(GuiaFormActivity.this, getIntent().getExtras().getString("tipo_licencia"));
-            else
+                if (tipoLicencia == 4) {  // E - Escopeta
+                    if(checkMaxGuiasForLicenciaTipoE(marca)) {
+                        return false;
+                    }
+                }
+            } else {
                 tipoLicencia = ((Guia) getIntent().getExtras().getParcelable("modify_guia")).getTipoLicencia();
+                if (tipoLicencia == 4) {  // E - Escopeta
+                    if(checkMaxGuiasForLicenciaTipoE(marca)) {
+                        return false;
+                    }
+                }
+            }
             bundle.putInt("tipoLicencia", tipoLicencia);
             bundle.putString("marca", marca.getText().toString());
             bundle.putString("modelo", modelo.getText().toString());
@@ -342,6 +355,17 @@ public class GuiaFormActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private boolean checkMaxGuiasForLicenciaTipoE(View view) {
+        dbSqlHelper = new DataBaseSQLiteHelper(getApplicationContext());
+        if(dbSqlHelper.getNumLicenciasTipoE() >= 6) {
+            Snackbar.make(view, R.string.dialog_guia_licencia_tipoE, Snackbar.LENGTH_LONG)
+                    .setAction(android.R.string.ok, null)
+                    .show();
+            return true;
+        }
+        return false;
     }
 
     private boolean validateForm() {

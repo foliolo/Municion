@@ -308,6 +308,22 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
         );
     }
 
+    public Cursor getCursorGuiasQueries(SQLiteDatabase db) {
+        String selection = KEY_GUIA_ID_LICENCIA + " = ?";
+        String[] selectionArgs = {"4"};
+        if (db == null)
+            db = this.getWritableDatabase();
+        return db.query(
+                DataBaseSQLiteHelper.TABLE_GUIAS,  //Nombre de la tabla
+                null,  //Lista de Columnas a consultar
+                selection,  //Columnas para la clausula WHERE
+                selectionArgs,  //Valores a comparar con las columnas del WHERE
+                null,  //Agrupar con GROUP BY
+                null,  //Condición HAVING para GROUP BY
+                null  //Clausula ORDER BY
+        );
+    }
+
     public ArrayList<Guia> getListGuias(SQLiteDatabase db) {
         if (db == null)
             db = this.getWritableDatabase();
@@ -524,6 +540,12 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
             }
         }
         Log.d(context.getPackageName(), "Licencia actualizada en BBDD");
+    }
+
+    public int getNumLicenciasTipoE() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        int result = getCursorGuiasQueries(db).getCount();
+        return result;
     }
 }
 

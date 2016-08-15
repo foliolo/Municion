@@ -239,7 +239,7 @@ public class LicenciaFormActivity extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 updateFechaCaducidad();
-                SetVisibilityFields(tipoLicencia.getSelectedItemPosition());
+                setVisibilityFields(tipoLicencia.getSelectedItemPosition());
             }
 
             @Override
@@ -380,7 +380,7 @@ public class LicenciaFormActivity extends AppCompatActivity {
     }
 
     /**
-     * Metodo para crear o modifciar la notificación
+     * Metodo para crear o modificar la notificación
      */
     private void setNotification() {
         //  Se envía la notificación cuando el sistema llegue a la fecha indicada
@@ -470,7 +470,7 @@ public class LicenciaFormActivity extends AppCompatActivity {
      *
      * @param tipoLicencia Licencia seleccionada
      */
-    private void SetVisibilityFields(int tipoLicencia) {
+    private void setVisibilityFields(int tipoLicencia) {
         //La licencia A no tiene fecha de caducidad
         if (tipoLicencia == 0) {
             layoutFechaCaducidad.setVisibility(View.GONE);
