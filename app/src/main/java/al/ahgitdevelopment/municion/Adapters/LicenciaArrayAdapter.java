@@ -111,7 +111,7 @@ public class LicenciaArrayAdapter extends ArrayAdapter<Licencia> {
 
         //Todo: Arreglar esta excepción. Ocurre al cambiar una licencia "Permiso de conducir" a cualquier otra
         try {
-            if (licencia.getNombre().equals("Permiso Conducir")) {
+            if (nombreLicencia.equals("Permiso Conducir")) {
                 tipoPermisoConduccion.setText(getContext().getResources().getStringArray(R.array.tipo_permiso_conducir)[licencia.getTipoPermisoConduccion()]);
                 lblTipoPermisoConduccion.setVisibility(View.VISIBLE);
                 tipoPermisoConduccion.setVisibility(View.VISIBLE);
@@ -172,6 +172,7 @@ public class LicenciaArrayAdapter extends ArrayAdapter<Licencia> {
         } else {
             layoutCCAA.setVisibility(View.GONE);
         }
+
         if (licencia.getCategoria() >= 0) {
             lblCategoria.setVisibility(View.VISIBLE);
             categoria.setVisibility(View.VISIBLE);
@@ -180,7 +181,6 @@ public class LicenciaArrayAdapter extends ArrayAdapter<Licencia> {
             lblCategoria.setVisibility(View.GONE);
             categoria.setVisibility(View.GONE);
         }
-
 
         // Return the completed view to render on screen
         return convertView;

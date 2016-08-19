@@ -68,6 +68,7 @@
             android:label="@string/title_activity_settings"
             android:theme="@style/BarTheme"/>
 
+        <receiver android:name=".NotificationPublisher"/>
     </application>
 
 </manifest>
