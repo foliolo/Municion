@@ -89,7 +89,6 @@ public class GuiaFormActivity extends AppCompatActivity {
         //Mostrar la lista de tipos de armas en funcion de la licencia
         tipoArmasDisponibles();
 
-
         //Inicializacion del cupo por defecto
         tipoArma.setSelection(0);
         cupo.setText(getDefaultCupo(finalWeapons.get(tipoArma.getSelectedItemPosition())).toString());
@@ -308,16 +307,21 @@ public class GuiaFormActivity extends AppCompatActivity {
             if (getIntent().getExtras().getString("tipo_licencia") != null) {
                 tipoLicencia = Utils.getLicenciaTipoFromString(GuiaFormActivity.this, getIntent().getExtras().getString("tipo_licencia"));
                 if (tipoLicencia == 4) {  // E - Escopeta
-                    if(checkMaxGuiasForLicenciaTipoE(marca)) {
+                    if(checkMaxGuiasForLicenciaTipoE(marca))
                         return false;
-                    }
-                }
+                } else if(tipoLicencia == 11) { //Federativa de tiro
+                    if(checkMaxGuiasCategoria(marca))
+                        return false;
+                  }
             } else {
                 tipoLicencia = ((Guia) getIntent().getExtras().getParcelable("modify_guia")).getTipoLicencia();
                 if (tipoLicencia == 4) {  // E - Escopeta
                     if(checkMaxGuiasForLicenciaTipoE(marca)) {
                         return false;
                     }
+                }else if(tipoLicencia == 11) { //Federativa de tiro
+                    if(checkMaxGuiasCategoria(marca))
+                        return false;
                 }
             }
             bundle.putInt("tipoLicencia", tipoLicencia);
@@ -365,6 +369,33 @@ public class GuiaFormActivity extends AppCompatActivity {
                     .show();
             return true;
         }
+        return false;
+    }
+
+    private boolean checkMaxGuiasCategoria(View view) {
+        dbSqlHelper = new DataBaseSQLiteHelper(getApplicationContext());
+        // 1ª Categoria
+        if(dbSqlHelper.getGuiasCategoria3() >= 1) {
+            Snackbar.make(view, R.string.dialog_guia_licencia_federativa_categoria3, Snackbar.LENGTH_LONG)
+                    .setAction(android.R.string.ok, null)
+                    .show();
+            return true;
+        }
+        // 2ª Categoria
+        else if(dbSqlHelper.getGuiasCategoria2() >= 6) {
+            Snackbar.make(view, R.string.dialog_guia_licencia_federativa_categoria2, Snackbar.LENGTH_LONG)
+                    .setAction(android.R.string.ok, null)
+                    .show();
+            return true;
+        }
+        // 3ª Categoria
+        else if(dbSqlHelper.getGuiasCategoria1() >= 10) {
+            Snackbar.make(view, R.string.dialog_guia_licencia_federativa_categoria1, Snackbar.LENGTH_LONG)
+                    .setAction(android.R.string.ok, null)
+                    .show();
+            return true;
+        }
+//        ArrayList<Guia> lista = dbSqlHelper.getListGuiasCategorias();
         return false;
     }
 
@@ -429,8 +460,8 @@ public class GuiaFormActivity extends AppCompatActivity {
         if (getIntent().getExtras() != null) {
             if (getIntent().getExtras().get("tipo_licencia") != null) {
                 String nombreLicencia = getIntent().getExtras().get("tipo_licencia").toString();
-                String idNombreLicenia = nombreLicencia.split(" ")[0];
-                armas.addAll(getResources().getStringArray(getResources().getIdentifier(idNombreLicenia, "array", getPackageName())));
+                String idNombreLicencia = nombreLicencia.split(" ")[0];
+                armas.addAll(getResources().getStringArray(getResources().getIdentifier(idNombreLicencia, "array", getPackageName())));
             } else { //Deberia entrar en la modificacion de un arma
                 try {
                     Guia guia = getIntent().getExtras().getParcelable("modify_guia");

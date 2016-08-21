@@ -326,6 +326,27 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
         );
     }
 
+    public Cursor getGuiasCategoria1(SQLiteDatabase db) {
+        if (db == null)
+            db = this.getWritableDatabase();
+        String query = "SELECT * FROM guias g INNER JOIN licencias l ON g.id_licencia=l.tipo WHERE l.categoria=?";
+        return db.rawQuery(query, new String[]{"0"});
+    }
+
+    public Cursor getGuiasCategoria2(SQLiteDatabase db) {
+        if (db == null)
+            db = this.getWritableDatabase();
+        String query = "SELECT * FROM guias g INNER JOIN licencias l ON g.id_licencia=l.tipo WHERE l.categoria=?";
+        return db.rawQuery(query, new String[]{"1"});
+    }
+
+    public Cursor getGuiasCategoria3(SQLiteDatabase db) {
+        if (db == null)
+            db = this.getWritableDatabase();
+        String query = "SELECT * FROM guias g INNER JOIN licencias l ON g.id_licencia=l.tipo WHERE l.categoria=?";
+        return db.rawQuery(query, new String[]{"2"});
+    }
+
     public ArrayList<Guia> getListGuias(SQLiteDatabase db) {
         if (db == null)
             db = this.getWritableDatabase();
@@ -551,6 +572,25 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
         int result = getCursorGuiasQueries(db).getCount();
         return result;
     }
+
+    public int getGuiasCategoria1() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        int result = getGuiasCategoria1(db).getCount();
+        return result;
+    }
+
+    public int getGuiasCategoria2() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        int result = getGuiasCategoria2(db).getCount();
+        return result;
+    }
+
+    public int getGuiasCategoria3() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        int result = getGuiasCategoria3(db).getCount();
+        return result;
+    }
+
 }
 
 //      android adb, retrieve database using run-as

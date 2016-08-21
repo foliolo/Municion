@@ -470,6 +470,7 @@ public class FragmentMainActivity extends AppCompatActivity {
             licencia.setTipoPermisoConduccion(data.getExtras().getInt("tipo_permiso_conduccion"));
             licencia.setEdad(data.getExtras().getInt("edad"));
             licencia.setEscala(data.getExtras().getInt("escala"));
+            licencia.setCategoria(data.getExtras().getInt("categoria"));
 
             ((PlaceholderFragment) mSectionsPagerAdapter.getItem(mViewPager.getCurrentItem())).licenciaArrayAdapter.notifyDataSetChanged();
         }

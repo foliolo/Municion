@@ -174,12 +174,12 @@ public class LicenciaArrayAdapter extends ArrayAdapter<Licencia> {
         }
 
         if (licencia.getCategoria() >= 0) {
+            categoria.setText(getContext().getResources().getStringArray(R.array.categorias)[licencia.getCategoria()]);
             lblCategoria.setVisibility(View.VISIBLE);
             categoria.setVisibility(View.VISIBLE);
-            categoria.setText(getContext().getResources().getStringArray(R.array.categorias)[licencia.getCategoria()]);
         } else {
             lblCategoria.setVisibility(View.GONE);
-            categoria.setVisibility(View.GONE);
+               categoria.setVisibility(View.GONE);
         }
 
         // Return the completed view to render on screen
