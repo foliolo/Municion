@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+          xmlns:tools="http://schemas.android.com/tools"
           package="al.ahgitdevelopment.municion">
 
     <uses-feature
@@ -11,12 +12,12 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
 
+    <!--android:supportsRtl="true"-->
     <application
         android:allowBackup="true"
         android:fullBackupContent="true"
         android:icon="@mipmap/ic_launcher_3_light"
         android:label="@string/app_name"
-        android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
             android:name=".LoginPasswordActivity"
@@ -33,11 +34,6 @@
             android:name=".FragmentMainActivity"
             android:exported="true"
             android:label="@string/title_activity_fragment_main">
-            <!--android:launchMode="singleTop">-->
-            <!--<intent-filter>-->
-            <!--<action android:name="android.intent.action.MAIN"/>-->
-            <!--<category android:name="android.intent.category.LAUNCHER"/>-->
-            <!--</intent-filter>-->
         </activity>
 
         <activity
@@ -57,7 +53,8 @@
             android:label="@string/title_nueva_licencia"
             android:parentActivityName=".FragmentMainActivity"
             android:theme="@style/BarTheme"
-            android:windowSoftInputMode="stateHidden">
+            android:windowSoftInputMode="stateHidden"
+            tools:targetApi="jelly_bean">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".FragmentMainActivity"/>

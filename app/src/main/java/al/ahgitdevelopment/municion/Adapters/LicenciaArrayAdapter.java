@@ -142,7 +142,6 @@ public class LicenciaArrayAdapter extends ArrayAdapter<Licencia> {
         } else {
             layoutFechaCaducidad.setVisibility(View.VISIBLE);
             layoutEscala.setVisibility(View.GONE);
-            escala.setText("");
             if (licencia.getFechaCaducidad() != null)
                 caducidad.setText(new SimpleDateFormat("dd/MM/yyyy").format(licencia.getFechaCaducidad().getTime()));
         }
@@ -179,7 +178,7 @@ public class LicenciaArrayAdapter extends ArrayAdapter<Licencia> {
             categoria.setVisibility(View.VISIBLE);
         } else {
             lblCategoria.setVisibility(View.GONE);
-               categoria.setVisibility(View.GONE);
+            categoria.setVisibility(View.GONE);
         }
 
         // Return the completed view to render on screen

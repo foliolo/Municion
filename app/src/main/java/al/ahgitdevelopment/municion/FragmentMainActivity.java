@@ -354,7 +354,7 @@ public class FragmentMainActivity extends AppCompatActivity {
                     break;
 
                 case LICENCIA_COMPLETED:
-                    licencias.add(new Licencia(FragmentMainActivity.this, data.getExtras()));
+                    licencias.add(new Licencia((Licencia) data.getExtras().getParcelable("modify_licencia")));
                     ((PlaceholderFragment) mSectionsPagerAdapter.getItem(mViewPager.getCurrentItem())).licenciaArrayAdapter.notifyDataSetChanged();
                     break;
 
@@ -416,6 +416,7 @@ public class FragmentMainActivity extends AppCompatActivity {
             int position = data.getExtras().getInt("position", -1);
             Guia guia = guias.get(position);
 
+            //TODO: Refactorizar y cambiar esto como en licencias. Hacer que el intent devuelva un objeto Guia y no los campos individualizados.
 //            guia.setIdCompra(data.getExtras().getInt(""));
             guia.setTipoLicencia(data.getExtras().getInt("tipoLicencia"));
             guia.setMarca(data.getExtras().getString("marca"));
@@ -439,6 +440,7 @@ public class FragmentMainActivity extends AppCompatActivity {
             int position = data.getExtras().getInt("position", -1);
             Compra compra = compras.get(position);
 
+            //TODO: Refactorizar y cambiar esto como en licencias. Hacer que el intent devuelva un objeto Compra y no los campos individualizados.
             compra.setCalibre1(data.getExtras().getString("calibre1"));
             compra.setCalibre2(data.getExtras().getString("calibre2"));
             compra.setUnidades(data.getExtras().getInt("unidades"));
@@ -458,19 +460,21 @@ public class FragmentMainActivity extends AppCompatActivity {
     private void updateLicencia(Intent data) {
         if (data.getExtras() != null) {
             int position = data.getExtras().getInt("position", -1);
-            Licencia licencia = licencias.get(position);
 
-            licencia.setTipo(data.getExtras().getInt("tipo"));
-            licencia.setNumLicencia(data.getExtras().getInt("num_licencia"));
-            licencia.setFechaExpedicion(data.getExtras().getString("fecha_expedicion"));
-            licencia.setFechaCaducidad(data.getExtras().getString("fecha_caducidad"));
-            licencia.setNumAbonado(data.getExtras().getInt("num_abonado"));
-            licencia.setNumSeguro(data.getExtras().getString("num_seguro"));
-            licencia.setAutonomia(data.getExtras().getInt("autonomia"));
-            licencia.setTipoPermisoConduccion(data.getExtras().getInt("tipo_permiso_conduccion"));
-            licencia.setEdad(data.getExtras().getInt("edad"));
-            licencia.setEscala(data.getExtras().getInt("escala"));
-            licencia.setCategoria(data.getExtras().getInt("categoria"));
+//            Licencia licencia = licencias.get(position);
+//            licencia.setTipo(data.getExtras().getInt("tipo"));
+//            licencia.setNumLicencia(data.getExtras().getInt("num_licencia"));
+//            licencia.setFechaExpedicion(data.getExtras().getString("fecha_expedicion"));
+//            licencia.setFechaCaducidad(data.getExtras().getString("fecha_caducidad"));
+//            licencia.setNumAbonado(data.getExtras().getInt("num_abonado"));
+//            licencia.setNumSeguro(data.getExtras().getString("num_seguro"));
+//            licencia.setAutonomia(data.getExtras().getInt("autonomia"));
+//            licencia.setTipoPermisoConduccion(data.getExtras().getInt("tipo_permiso_conduccion"));
+//            licencia.setEdad(data.getExtras().getInt("edad"));
+//            licencia.setEscala(data.getExtras().getInt("escala"));
+
+            Licencia licencia = new Licencia((Licencia) data.getExtras().get("modify_licencia"));
+            licencias.set(position, licencia);
 
             ((PlaceholderFragment) mSectionsPagerAdapter.getItem(mViewPager.getCurrentItem())).licenciaArrayAdapter.notifyDataSetChanged();
         }

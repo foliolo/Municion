@@ -93,7 +93,6 @@ public class Licencia implements Parcelable {
         this.setAutonomia(licencia.getAutonomia());
         this.setEscala(licencia.getEscala());
         this.setCategoria(licencia.getCategoria());
-
     }
 
     public int getId() {
@@ -256,8 +255,7 @@ public class Licencia implements Parcelable {
         dest.writeInt(numAbonado);
         dest.writeString(numSeguro);
         dest.writeInt(autonomia);
-        dest.writeInt(categoria);
         dest.writeInt(escala);
+        dest.writeInt(categoria);
     }
-
 }

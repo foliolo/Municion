@@ -59,8 +59,9 @@ public class LicenciaFormActivity extends AppCompatActivity {
     private AppCompatSpinner autonomia;
     private LinearLayout layoutEscala;
     private AppCompatSpinner tipoEscala;
-    private AppCompatSpinner categoria;
+    private LinearLayout layoutCategoria;
     private TextView lblCategoria;
+    private AppCompatSpinner categoria;
 
     /**
      * Inicializa la actividad
@@ -91,13 +92,14 @@ public class LicenciaFormActivity extends AppCompatActivity {
         edad = (EditText) findViewById(R.id.form_edad);
         layoutEscala = (LinearLayout) findViewById(R.id.layout_escala);
         tipoEscala = (AppCompatSpinner) findViewById(R.id.form_tipo_escala);
-        categoria = (AppCompatSpinner) findViewById(R.id.form_categoria);
+        layoutCategoria = (LinearLayout) findViewById(R.id.layout_categoria);
         lblCategoria = (TextView) findViewById(R.id.form_lbl_categoria);
+        categoria = (AppCompatSpinner) findViewById(R.id.form_categoria);
 
         //Carga de datos (en caso de modificacion)
         if (getIntent().getExtras() != null) {
             try {
-                Licencia licencia = getIntent().getExtras().getParcelable("modify_licencia");
+                Licencia licencia = new Licencia((Licencia) getIntent().getExtras().getParcelable("modify_licencia"));
                 assert licencia != null;
                 tipoLicencia.setSelection(licencia.getTipo());
                 numLicencia.setText(String.valueOf(licencia.getNumLicencia()));
@@ -108,7 +110,6 @@ public class LicenciaFormActivity extends AppCompatActivity {
                 tipoPermisoConducir.setSelection(licencia.getTipoPermisoConduccion());
                 edad.setText(String.valueOf(licencia.getEdad()));
                 tipoEscala.setSelection(licencia.getEscala());
-                categoria.setSelection(licencia.getCategoria());
             } catch (NullPointerException e) {
                 e.printStackTrace();
             }
@@ -157,6 +158,13 @@ public class LicenciaFormActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_form, menu);
+
+        if (getIntent().hasExtra("notification_call")) {
+            menu.getItem(0).setVisible(false);
+        } else {
+            menu.getItem(0).setVisible(true);
+        }
+
         return true;
     }
 
@@ -173,6 +181,9 @@ public class LicenciaFormActivity extends AppCompatActivity {
                 Intent result = new Intent(this, FragmentMainActivity.class);
 
                 Bundle bundle = new Bundle();
+                bundle.putParcelable("modify_licencia", getCurrenteLicense());
+
+/* Extraido a la funcion: getCurrentLicencse()
                 bundle.putInt("tipo", tipoLicencia.getSelectedItemPosition());
                 if (tipoPermisoConducir.getVisibility() == View.VISIBLE) {
                     bundle.putInt("tipo_permiso_conduccion", tipoPermisoConducir.getSelectedItemPosition());
@@ -206,15 +217,15 @@ public class LicenciaFormActivity extends AppCompatActivity {
                 } else {
                     bundle.putInt("categoria", -1); // Mandamos -1 para que el array adapter no muestre este campo
                 }
-
+*/
                 //Paso de vuelta de la posicion del item en el array
                 if (getIntent().getExtras() != null)
                     bundle.putInt("position", getIntent().getExtras().getInt("position", -1));
 
+                result.putExtras(bundle);
+
                 //Agregar notificacion
                 publishNotification();
-
-                result.putExtras(bundle);
 
                 setResult(Activity.RESULT_OK, result);
                 finish();
@@ -435,13 +446,27 @@ public class LicenciaFormActivity extends AppCompatActivity {
      */
     private Notification getNotification() {
 
+        Intent resultIntent = new Intent(this, LicenciaFormActivity.class);
+        resultIntent.putExtra("modify_licencia", getCurrenteLicense());
+
+        //Creamos el intent con la posicion del vector del que viene (por si al abrir la licencia desde la notificacion, se modifica
+        //y en caso de que sea una licencia nueva, le pasamos el tamaño del array de licencias (sin el -1) ya que esa sera la posicion que ocupara.
+        //FIXME: No se puede añadir al TaskStackBuilder un setResult para que pase por onActivityResult del FragmentMainActivity,
+        //a si que las modificaciones que se hagan en la actividad abierta por la notificacion, no se verán reflejadas!
+        //Para solucionarlo podemos quitar el boton de guardar si abrimos la activity desde una notificacion
+        resultIntent.putExtra("notification_call", true);
+//        if (getIntent().getExtras() != null)
+//            resultIntent.putExtra("position", getIntent().getExtras().getInt("position", -1));
+//        else
+//            resultIntent.putExtra("position", FragmentMainActivity.licencias.size());
+
         // The stack builder object will contain an artificial back stack for the started Activity.
         // This ensures that navigating backward from the Activity leads out of your application to the Home screen.
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
         // Adds the back stack for the Intent (but not the Intent itself)
         stackBuilder.addParentStack(LicenciaFormActivity.class);
         // Adds the Intent that starts the Activity to the top of the stack
-        stackBuilder.addNextIntent(new Intent(this, LicenciaFormActivity.class));
+        stackBuilder.addNextIntent(resultIntent);
 
         PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
 
@@ -450,14 +475,58 @@ public class LicenciaFormActivity extends AppCompatActivity {
                         .setSmallIcon(R.mipmap.ic_launcher_4_transparent)
                         .setContentTitle("Caducidad de Licencia")
                         .setContentText("Tu licencia caduca hoy")
-                        .setSubText(Utils.getStringLicenseFromId(LicenciaFormActivity.this, tipoLicencia.getSelectedItemPosition()).toString() + ": " +
-                                numLicencia.getText().toString())
+                        .setSubText(Utils.getStringLicenseFromId(
+                                LicenciaFormActivity.this,
+                                tipoLicencia.getSelectedItemPosition()).toString() + ": " + numLicencia.getText().toString())
                         .setContentIntent(resultPendingIntent)
                         .setAutoCancel(true)
                         .setPriority(Notification.PRIORITY_LOW)
                         .setLights(Color.GREEN, 500, 500);
 
         return mBuilder.build();
+    }
+
+    /**
+     * Devuelve los datos de la interfaz en un objeto licencia
+     *
+     * @return
+     */
+    private Licencia getCurrenteLicense() {
+        Licencia licencia = new Licencia();
+        try {
+            licencia.setTipo(tipoLicencia.getSelectedItemPosition());
+            if (layoutPermisoConducir.getVisibility() == View.VISIBLE) {
+                licencia.setTipoPermisoConduccion(tipoPermisoConducir.getSelectedItemPosition());
+            } else
+                licencia.setTipoPermisoConduccion(-1);
+            licencia.setNumLicencia(Integer.parseInt(String.valueOf(numLicencia.getText())));
+            licencia.setFechaExpedicion(fechaExpedicion.getText().toString());
+            licencia.setFechaCaducidad(fechaCaducidad.getText().toString());
+            if (numAbonado.getVisibility() == View.VISIBLE) {
+                licencia.setNumAbonado(Integer.parseInt(String.valueOf(numAbonado.getText())));
+            }
+            if (numSeguro.getVisibility() == View.VISIBLE) {
+                licencia.setNumSeguro(String.valueOf(numSeguro.getText()));
+            }
+            if (layoutCCAA.getVisibility() == View.VISIBLE) {
+                licencia.setAutonomia(autonomia.getSelectedItemPosition());
+            } else
+                licencia.setAutonomia(-1);
+            if (edad.getVisibility() == View.VISIBLE)
+                licencia.setEdad(Integer.parseInt(String.valueOf(edad.getText())));
+            if (layoutEscala.getVisibility() == View.VISIBLE) {
+                licencia.setEscala(tipoEscala.getSelectedItemPosition());
+            } else
+                licencia.setEscala(-1);
+            if (layoutCategoria.getVisibility() == View.VISIBLE) {
+                licencia.setCategoria(categoria.getSelectedItemPosition());
+            } else
+                licencia.setCategoria(-1);
+
+        } catch (Exception ex) {
+            Log.e(getPackageName(), "Fallo en el empaquetado de la licencia para la notificación", ex);
+        }
+        return licencia;
     }
 
     /**
@@ -528,8 +597,7 @@ public class LicenciaFormActivity extends AppCompatActivity {
                 layoutCCAA.setVisibility(View.GONE);
                 layoutPermisoConducir.setVisibility(View.GONE);
                 edad.setVisibility(View.GONE);
-                lblCategoria.setVisibility(View.GONE);
-                categoria.setVisibility(View.GONE);
+                layoutCategoria.setVisibility(View.GONE);
                 break;
 
             case 9:
@@ -541,30 +609,27 @@ public class LicenciaFormActivity extends AppCompatActivity {
                 layoutCCAA.setVisibility(View.VISIBLE);
                 layoutPermisoConducir.setVisibility(View.GONE);
                 edad.setVisibility(View.GONE);
-                lblCategoria.setVisibility(View.GONE);
-                categoria.setVisibility(View.GONE);
+                layoutCategoria.setVisibility(View.GONE);
                 break;
             case 11:
                 textInputLayoutLicencia.setHint(getResources().getString(R.string.lbl_num_licencia));
                 ((LinearLayout.LayoutParams) textInputLayoutLicencia.getLayoutParams()).setMargins(0, 10, 0, 0);
-                lblCategoria.setVisibility(View.VISIBLE);
-                categoria.setVisibility(View.VISIBLE);
                 numAbonado.setVisibility(View.VISIBLE);
                 numSeguro.setVisibility(View.GONE);
                 layoutCCAA.setVisibility(View.VISIBLE);
                 layoutPermisoConducir.setVisibility(View.GONE);
                 edad.setVisibility(View.GONE);
+                layoutCategoria.setVisibility(View.VISIBLE);
                 break;
             case 12:
                 textInputLayoutLicencia.setHint(getResources().getString(R.string.lbl_num_dni));
                 ((LinearLayout.LayoutParams) textInputLayoutLicencia.getLayoutParams()).setMargins(0, 10, 0, 0);
-                lblCategoria.setVisibility(View.GONE);
-                categoria.setVisibility(View.GONE);
                 numAbonado.setVisibility(View.GONE);
                 numSeguro.setVisibility(View.GONE);
                 layoutCCAA.setVisibility(View.GONE);
                 layoutPermisoConducir.setVisibility(View.VISIBLE);
                 edad.setVisibility(View.VISIBLE);
+                layoutCategoria.setVisibility(View.GONE);
                 break;
         }
     }

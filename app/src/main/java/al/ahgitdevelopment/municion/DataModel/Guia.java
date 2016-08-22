@@ -15,7 +15,7 @@ public class Guia implements Parcelable {
         }
 
         @Override
-          public Guia[] newArray(int size) {
+        public Guia[] newArray(int size) {
             return new Guia[size];
         }
     };
