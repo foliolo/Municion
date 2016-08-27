@@ -373,6 +373,17 @@ public class FragmentMainActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+        dbSqlHelper.saveListGuias(null, guias);
+        dbSqlHelper.saveListCompras(null, compras);
+        dbSqlHelper.saveListLicencias(null, licencias);
+        dbSqlHelper.close();
+
+        Toast.makeText(FragmentMainActivity.this, R.string.guardadoBBDD, Toast.LENGTH_SHORT).show();
+    }
+
     private void updateImage(Bitmap imageBitmap) {
         //Guardado en disco de la imagen tomada con la foto
         saveBitmapToFile(imageBitmap);
@@ -461,34 +472,11 @@ public class FragmentMainActivity extends AppCompatActivity {
         if (data.getExtras() != null) {
             int position = data.getExtras().getInt("position", -1);
 
-//            Licencia licencia = licencias.get(position);
-//            licencia.setTipo(data.getExtras().getInt("tipo"));
-//            licencia.setNumLicencia(data.getExtras().getInt("num_licencia"));
-//            licencia.setFechaExpedicion(data.getExtras().getString("fecha_expedicion"));
-//            licencia.setFechaCaducidad(data.getExtras().getString("fecha_caducidad"));
-//            licencia.setNumAbonado(data.getExtras().getInt("num_abonado"));
-//            licencia.setNumSeguro(data.getExtras().getString("num_seguro"));
-//            licencia.setAutonomia(data.getExtras().getInt("autonomia"));
-//            licencia.setTipoPermisoConduccion(data.getExtras().getInt("tipo_permiso_conduccion"));
-//            licencia.setEdad(data.getExtras().getInt("edad"));
-//            licencia.setEscala(data.getExtras().getInt("escala"));
-
             Licencia licencia = new Licencia((Licencia) data.getExtras().get("modify_licencia"));
             licencias.set(position, licencia);
 
             ((PlaceholderFragment) mSectionsPagerAdapter.getItem(mViewPager.getCurrentItem())).licenciaArrayAdapter.notifyDataSetChanged();
         }
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        dbSqlHelper.saveListGuias(null, guias);
-        dbSqlHelper.saveListCompras(null, compras);
-        dbSqlHelper.saveListLicencias(null, licencias);
-        dbSqlHelper.close();
-
-//        Toast.makeText(FragmentMainActivity.this, R.string.guardadoBBDD, Toast.LENGTH_SHORT).show();
     }
 
     /**
@@ -708,8 +696,6 @@ public class FragmentMainActivity extends AppCompatActivity {
             return null;
         }
     }
-
-
 }
 
 //http://stackoverflow.com/questions/17207366/creating-a-menu-after-a-long-click-event-on-a-list-view

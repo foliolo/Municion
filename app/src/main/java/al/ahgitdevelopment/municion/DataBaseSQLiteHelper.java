@@ -135,6 +135,8 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
         db.execSQL(CREATE_TABLE_GUIA);
         db.execSQL(CREATE_TABLE_COMPRA);
         db.execSQL(CREATE_TABLE_LICENCIAS);
+
+        db.close();
     }
 
     @Override
@@ -156,6 +158,8 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
         saveListGuias(db, guias);
         saveListCompras(db, compras);
         saveListLicencias(db, licencias);
+
+        db.close();
         Log.i(context.getPackageName(), "Upgrade Done");
     }
 
@@ -214,6 +218,7 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
                 "'100' , " +
                 "'20'" +
                 ");");
+        db.close();
     }
 
     /**
@@ -243,6 +248,7 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
                 "'40' , " +
                 "'18/05/2016'" +
                 ");");
+        db.close();
     }
 
     /**
@@ -253,9 +259,9 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
         db.execSQL("INSERT INTO " + TABLE_LICENCIAS + " (" +
                 KEY_LICENCIAS_TIPO + ", " +
                 KEY_LICENCIAS_NUM_LICENCIA + ", " +
-                KEY_LICENCIAS_FECHA_EXPEDICION + ", "  +
-                KEY_LICENCIAS_FECHA_CADUCIDAD + ", "  +
-                KEY_LICENCIAS_NUM_ABONADO + ", "  +
+                KEY_LICENCIAS_FECHA_EXPEDICION + ", " +
+                KEY_LICENCIAS_FECHA_CADUCIDAD + ", " +
+                KEY_LICENCIAS_NUM_ABONADO + ", " +
                 KEY_LICENCIAS_AUTONOMIA +
                 ") VALUES (" +
                 "'A - Profesionales, agentes de la autoridad' , " +
@@ -266,12 +272,13 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
                 "'1111' , " +
                 "'Madrid'" +
                 ");");
+        db.close();
     }
 
     public Cursor getCursorGuias(SQLiteDatabase db) {
         if (db == null)
             db = this.getWritableDatabase();
-        return db.query(
+        Cursor cursor = db.query(
                 DataBaseSQLiteHelper.TABLE_GUIAS,  //Nombre de la tabla
                 null,  //Lista de Columnas a consultar
                 null,  //Columnas para la clausula WHERE
@@ -280,12 +287,13 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
                 null,  //Condición HAVING para GROUP BY
                 null  //Clausula ORDER BY
         );
+        return cursor;
     }
 
     public Cursor getCursorCompras(SQLiteDatabase db) {
         if (db == null)
             db = this.getWritableDatabase();
-        return db.query(
+        Cursor cursor = db.query(
                 DataBaseSQLiteHelper.TABLE_COMPRAS,  //Nombre de la tabla
                 null,  //Lista de Columnas a consultar
                 null,  //Columnas para la clausula WHERE
@@ -294,12 +302,13 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
                 null,  //Condición HAVING para GROUP BY
                 null  //Clausula ORDER BY
         );
+        return cursor;
     }
 
     public Cursor getCursorLicencias(SQLiteDatabase db) {
         if (db == null)
             db = this.getWritableDatabase();
-        return db.query(
+        Cursor cursor = db.query(
                 DataBaseSQLiteHelper.TABLE_LICENCIAS,  //Nombre de la tabla
                 null,  //Lista de Columnas a consultar
                 null,  //Columnas para la clausula WHERE
@@ -308,6 +317,7 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
                 null,  //Condición HAVING para GROUP BY
                 null  //Clausula ORDER BY
         );
+        return cursor;
     }
 
     public Cursor getCursorGuiasQueries(SQLiteDatabase db) {
@@ -315,7 +325,7 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
         String[] selectionArgs = {"4"};
         if (db == null)
             db = this.getWritableDatabase();
-        return db.query(
+        Cursor cursor = db.query(
                 DataBaseSQLiteHelper.TABLE_GUIAS,  //Nombre de la tabla
                 null,  //Lista de Columnas a consultar
                 selection,  //Columnas para la clausula WHERE
@@ -324,27 +334,35 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
                 null,  //Condición HAVING para GROUP BY
                 null  //Clausula ORDER BY
         );
+        db.close();
+        return cursor;
     }
 
     public Cursor getGuiasCategoria1(SQLiteDatabase db) {
         if (db == null)
             db = this.getWritableDatabase();
         String query = "SELECT * FROM guias g INNER JOIN licencias l ON g.id_licencia=l.tipo WHERE l.categoria=?";
-        return db.rawQuery(query, new String[]{"0"});
+        Cursor cursor = db.rawQuery(query, new String[]{"0"});
+        db.close();
+        return cursor;
     }
 
     public Cursor getGuiasCategoria2(SQLiteDatabase db) {
         if (db == null)
             db = this.getWritableDatabase();
         String query = "SELECT * FROM guias g INNER JOIN licencias l ON g.id_licencia=l.tipo WHERE l.categoria=?";
-        return db.rawQuery(query, new String[]{"1"});
+        Cursor cursor = db.rawQuery(query, new String[]{"1"});
+        db.close();
+        return cursor;
     }
 
     public Cursor getGuiasCategoria3(SQLiteDatabase db) {
         if (db == null)
             db = this.getWritableDatabase();
         String query = "SELECT * FROM guias g INNER JOIN licencias l ON g.id_licencia=l.tipo WHERE l.categoria=?";
-        return db.rawQuery(query, new String[]{"2"});
+        Cursor cursor = db.rawQuery(query, new String[]{"2"});
+        db.close();
+        return cursor;
     }
 
     public ArrayList<Guia> getListGuias(SQLiteDatabase db) {
@@ -375,6 +393,8 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
                 // Adding contact to list
                 guias.add(guia);
             } while (cursor.moveToNext());
+
+            db.close();
         }
 
         // return contact list
@@ -408,6 +428,8 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
                     // Adding contact to list
                     compras.add(compra);
                 } while (cursor.moveToNext());
+
+                db.close();
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -443,7 +465,16 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
                     licencia.setCategoria(cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_LICENCIAS_CATEGORIA)));
                     // Adding contact to list
                     licencias.add(licencia);
+
+                    Log.d(context.getPackageName(), "F. Expedicion: " + licencia.getFechaExpedicion());
+                    Log.d(context.getPackageName(), "F. Expedicion: " + licencia.getFechaExpedicion());
+                    if (String.valueOf(licencia.getFechaExpedicion()).equals(String.valueOf(licencia.getFechaCaducidad())))
+                        Log.wtf(context.getPackageName(), "Error de fechas");
+
+
                 } while (cursor.moveToNext());
+
+                db.close();
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -489,6 +520,7 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
                         "'" + guia.getGastado() + "'" +
                         ");");
             }
+            db.close();
         }
         Log.d(context.getPackageName(), "Guia actualizada en BBDD");
     }
@@ -525,6 +557,7 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
                         "'" + compra.getValoracion() + "'" +
                         ");");
             }
+            db.close();
         }
         Log.d(context.getPackageName(), "Compra actualizada en BBDD");
     }
@@ -563,6 +596,7 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
                         "'" + licencia.getCategoria() + "'" +
                         ");");
             }
+            db.close();
         }
         Log.d(context.getPackageName(), "Licencia actualizada en BBDD");
     }
@@ -570,24 +604,28 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
     public int getNumLicenciasTipoE() {
         SQLiteDatabase db = this.getReadableDatabase();
         int result = getCursorGuiasQueries(db).getCount();
+        db.close();
         return result;
     }
 
     public int getGuiasCategoria1() {
         SQLiteDatabase db = this.getReadableDatabase();
         int result = getGuiasCategoria1(db).getCount();
+        db.close();
         return result;
     }
 
     public int getGuiasCategoria2() {
         SQLiteDatabase db = this.getReadableDatabase();
         int result = getGuiasCategoria2(db).getCount();
+        db.close();
         return result;
     }
 
     public int getGuiasCategoria3() {
         SQLiteDatabase db = this.getReadableDatabase();
         int result = getGuiasCategoria3(db).getCount();
+        db.close();
         return result;
     }
 

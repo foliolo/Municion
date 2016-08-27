@@ -5,10 +5,6 @@ import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-
 import al.ahgitdevelopment.municion.R;
 
 /**
@@ -32,8 +28,8 @@ public class Licencia implements Parcelable {
     private String nombre;
     private int tipoPermisoConduccion;
     private int edad;
-    private Calendar fechaExpedicion;
-    private Calendar fechaCaducidad;
+    private String fechaExpedicion;
+    private String fechaCaducidad;
     private int numLicencia;
     private int numAbonado;
     private String numSeguro;
@@ -115,12 +111,12 @@ public class Licencia implements Parcelable {
         return nombre;
     }
 
-    public String getNombre(Context context) {
-        return context.getResources().getTextArray(R.array.tipo_licencias)[getTipo()].toString();
-    }
-
     public void setNombre(String nombre) {
         this.nombre = nombre;
+    }
+
+    public String getNombre(Context context) {
+        return context.getResources().getTextArray(R.array.tipo_licencias)[getTipo()].toString();
     }
 
     public int getTipoPermisoConduccion() {
@@ -147,24 +143,11 @@ public class Licencia implements Parcelable {
         this.numLicencia = numLicencia;
     }
 
-    public Calendar getFechaExpedicion() {
+    public String getFechaExpedicion() {
         return fechaExpedicion;
     }
 
     public void setFechaExpedicion(String fechaExpedicion) {
-        Calendar fecha = Calendar.getInstance();
-        try {
-            fecha.setTime(new SimpleDateFormat("dd/MM/yyyy").parse(fechaExpedicion));
-            if (this.fechaExpedicion == null)
-                this.fechaExpedicion = Calendar.getInstance();
-            this.fechaExpedicion = fecha;
-        } catch (ParseException e) {
-            e.printStackTrace();
-            this.fechaExpedicion = fecha;
-        }
-    }
-
-    public void setFechaExpedicion(Calendar fechaExpedicion) {
         this.fechaExpedicion = fechaExpedicion;
     }
 
@@ -192,24 +175,11 @@ public class Licencia implements Parcelable {
         this.numSeguro = numSeguro;
     }
 
-    public Calendar getFechaCaducidad() {
+    public String getFechaCaducidad() {
         return fechaCaducidad;
     }
 
     public void setFechaCaducidad(String fechaCaducidad) {
-        Calendar fecha = Calendar.getInstance();
-        try {
-            fecha.setTime(new SimpleDateFormat("dd/MM/yyyy").parse(fechaCaducidad));
-            if (this.fechaCaducidad == null)
-                this.fechaCaducidad = Calendar.getInstance();
-            this.fechaCaducidad = fecha;
-        } catch (ParseException e) {
-            e.printStackTrace();
-            this.fechaCaducidad = fecha;
-        }
-    }
-
-    public void setFechaCaducidad(Calendar fechaCaducidad) {
         this.fechaCaducidad = fechaCaducidad;
     }
 
@@ -245,12 +215,8 @@ public class Licencia implements Parcelable {
         dest.writeString(nombre);
         dest.writeInt(tipoPermisoConduccion);
         dest.writeInt(edad);
-        try {
-            dest.writeString(new SimpleDateFormat("dd/MM/yyyy").format(getFechaExpedicion().getTime()));
-            dest.writeString(new SimpleDateFormat("dd/MM/yyyy").format(getFechaCaducidad().getTime()));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        dest.writeString(getFechaExpedicion());
+        dest.writeString(getFechaCaducidad());
         dest.writeInt(numLicencia);
         dest.writeInt(numAbonado);
         dest.writeString(numSeguro);

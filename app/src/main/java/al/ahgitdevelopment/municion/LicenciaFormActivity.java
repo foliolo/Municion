@@ -103,13 +103,14 @@ public class LicenciaFormActivity extends AppCompatActivity {
                 assert licencia != null;
                 tipoLicencia.setSelection(licencia.getTipo());
                 numLicencia.setText(String.valueOf(licencia.getNumLicencia()));
-                fechaExpedicion.setText(new SimpleDateFormat("dd/MM/yyyy").format(licencia.getFechaExpedicion().getTime()));
+                fechaExpedicion.setText(licencia.getFechaExpedicion());
                 numAbonado.setText(String.valueOf(licencia.getNumAbonado()));
                 numSeguro.setText(String.valueOf(licencia.getNumLicencia()));
                 autonomia.setSelection(licencia.getAutonomia());
                 tipoPermisoConducir.setSelection(licencia.getTipoPermisoConduccion());
                 edad.setText(String.valueOf(licencia.getEdad()));
                 tipoEscala.setSelection(licencia.getEscala());
+                categoria.setSelection(licencia.getCategoria());
             } catch (NullPointerException e) {
                 e.printStackTrace();
             }
@@ -427,6 +428,7 @@ public class LicenciaFormActivity extends AppCompatActivity {
             Intent notificationIntent = new Intent(this, NotificationPublisher.class);
             notificationIntent.putExtra(NotificationPublisher.NOTIFICATION_ID, Integer.parseInt(numLicencia.getText().toString()));
             notificationIntent.putExtra(NotificationPublisher.NOTIFICATION, getNotification());
+
             PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
             long futureInMillis = caducidad.getTimeInMillis() - Calendar.getInstance().getTimeInMillis();
@@ -447,18 +449,11 @@ public class LicenciaFormActivity extends AppCompatActivity {
     private Notification getNotification() {
 
         Intent resultIntent = new Intent(this, LicenciaFormActivity.class);
-        resultIntent.putExtra("modify_licencia", getCurrenteLicense());
+        Bundle bundle = new Bundle();
+        bundle.putParcelable("modify_licencia", getCurrenteLicense());
+        resultIntent.putExtras(bundle);
 
-        //Creamos el intent con la posicion del vector del que viene (por si al abrir la licencia desde la notificacion, se modifica
-        //y en caso de que sea una licencia nueva, le pasamos el tamaño del array de licencias (sin el -1) ya que esa sera la posicion que ocupara.
-        //FIXME: No se puede añadir al TaskStackBuilder un setResult para que pase por onActivityResult del FragmentMainActivity,
-        //a si que las modificaciones que se hagan en la actividad abierta por la notificacion, no se verán reflejadas!
-        //Para solucionarlo podemos quitar el boton de guardar si abrimos la activity desde una notificacion
         resultIntent.putExtra("notification_call", true);
-//        if (getIntent().getExtras() != null)
-//            resultIntent.putExtra("position", getIntent().getExtras().getInt("position", -1));
-//        else
-//            resultIntent.putExtra("position", FragmentMainActivity.licencias.size());
 
         // The stack builder object will contain an artificial back stack for the started Activity.
         // This ensures that navigating backward from the Activity leads out of your application to the Home screen.

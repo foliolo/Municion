@@ -10,7 +10,6 @@ import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import java.text.SimpleDateFormat;
 import java.util.List;
 
 import al.ahgitdevelopment.municion.DataModel.Licencia;
@@ -20,6 +19,7 @@ import al.ahgitdevelopment.municion.R;
  * Created by Alberto on 28/05/2016.
  */
 public class LicenciaArrayAdapter extends ArrayAdapter<Licencia> {
+    Context context;
 
     TextView tipo;
     TextView lblTipoPermisoConduccion;
@@ -45,12 +45,14 @@ public class LicenciaArrayAdapter extends ArrayAdapter<Licencia> {
 
     public LicenciaArrayAdapter(Context context, int resource, List<Licencia> licencias) {
         super(context, resource, licencias);
+        this.context = context;
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         // Get the data item for this position
         Licencia licencia = getItem(position);
+
         // Check if an existing view is being reused, otherwise inflate the view
         if (convertView == null) {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.licencia_item, parent, false);
@@ -109,7 +111,7 @@ public class LicenciaArrayAdapter extends ArrayAdapter<Licencia> {
             tipo.setText(nombreLicencia);
         }
 
-        //Todo: Arreglar esta excepción. Ocurre al cambiar una licencia "Permiso de conducir" a cualquier otra
+        //FIXME: Arreglar esta excepción. Ocurre al cambiar una licencia "Permiso de conducir" a cualquier otra
         try {
             if (nombreLicencia.equals("Permiso Conducir")) {
                 tipoPermisoConduccion.setText(getContext().getResources().getStringArray(R.array.tipo_permiso_conducir)[licencia.getTipoPermisoConduccion()]);
@@ -132,7 +134,7 @@ public class LicenciaArrayAdapter extends ArrayAdapter<Licencia> {
         numLicencia.setText(String.valueOf(licencia.getNumLicencia()));
 
         if (licencia.getFechaExpedicion() != null)
-            expedicion.setText(new SimpleDateFormat("dd/MM/yyyy").format(licencia.getFechaExpedicion().getTime()));
+            expedicion.setText(licencia.getFechaExpedicion());
 
         //La licencia A no tiene fecha de caducidad pero si escala del agente
         if (licencia.getTipo() == 0) {
@@ -143,7 +145,7 @@ public class LicenciaArrayAdapter extends ArrayAdapter<Licencia> {
             layoutFechaCaducidad.setVisibility(View.VISIBLE);
             layoutEscala.setVisibility(View.GONE);
             if (licencia.getFechaCaducidad() != null)
-                caducidad.setText(new SimpleDateFormat("dd/MM/yyyy").format(licencia.getFechaCaducidad().getTime()));
+                caducidad.setText(licencia.getFechaCaducidad());
         }
 
         if (licencia.getNumAbonado() > 0) {

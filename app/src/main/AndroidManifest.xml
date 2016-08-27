@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          xmlns:tools="http://schemas.android.com/tools"
           package="al.ahgitdevelopment.municion">
 
     <uses-feature
@@ -53,8 +52,7 @@
             android:label="@string/title_nueva_licencia"
             android:parentActivityName=".FragmentMainActivity"
             android:theme="@style/BarTheme"
-            android:windowSoftInputMode="stateHidden"
-            tools:targetApi="jelly_bean">
+            android:windowSoftInputMode="stateHidden">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".FragmentMainActivity"/>
