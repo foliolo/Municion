@@ -1,16 +1,27 @@
 package al.ahgitdevelopment.municion;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 
 import al.ahgitdevelopment.municion.DataModel.Guia;
 import al.ahgitdevelopment.municion.DataModel.Licencia;
+import al.ahgitdevelopment.municion.DataModel.NotificationData;
 
 /**
  * Created by ahidalgog on 07/07/2016.
  */
 public final class Utils {
+    public static final String NOTIFICATION_PREFERENCES_FILE = "Notifications";
+    public static NotificationData notificationData = new NotificationData();
+    public static ArrayList<NotificationData> listNotificationData = new ArrayList<NotificationData>();
+    private static SharedPreferences prefs;
+
 
     public static CharSequence[] getLicenseName(Context context) {
         ArrayList<String> list = new ArrayList<>();
@@ -24,6 +35,7 @@ public final class Utils {
 
         return list.toArray(new CharSequence[list.size()]);
     }
+
     /**
      * Método que devuelve el id (posicion en el Array) de la licencia introducida como parámetro.
      *
@@ -71,10 +83,6 @@ public final class Utils {
      * @return
      */
     public static boolean licenseCanBeDeleted(int position) {
-//        // Si no existen guias, podemos eliminar la licencia sin problemas
-//        if(FragmentMainActivity.guias.size() == 0)
-//            return false;
-
         // Si alguna guía tiene el id de la licencia que queremos borrar, no se podra eliminar la licencia
         for (Guia guia : FragmentMainActivity.guias) {
             if (guia.getTipoLicencia() == FragmentMainActivity.licencias.get(position).getTipo()) {
@@ -83,5 +91,70 @@ public final class Utils {
         }
 
         return false;
+    }
+
+    /**
+     * Metodo que comprueba si la preferencia existe o no para añadir o modificar la notificacion en Shared Preferences
+     */
+    public static void addNotificationToSharedPreferences(Context context, int position) {
+        //Inicializacion
+        prefs = context.getSharedPreferences(NOTIFICATION_PREFERENCES_FILE, Context.MODE_PRIVATE);
+
+        SharedPreferences.Editor editor = prefs.edit();
+
+        //Comprobar si la licencia a añadir es nueva o ya existe
+        loadNotificationData(context);
+        if (position != -1 && listNotificationData.size() > 0) {
+            listNotificationData.get(position).setLicencia(notificationData.getLicencia());
+            listNotificationData.get(position).setId(notificationData.getId());
+            listNotificationData.get(position).setFecha(notificationData.getFecha());
+//            Toast.makeText(context, "Modificada notificacion existente", Toast.LENGTH_SHORT).show();
+        } else {
+            listNotificationData.add(notificationData);
+//            Toast.makeText(context, "Añadida notificacion nueva", Toast.LENGTH_SHORT).show();
+        }
+
+        editor.clear().commit();
+        editor.putString("notification_data", new Gson().toJson(listNotificationData));
+        editor.commit();
+    }
+
+    /**
+     * Carga la lista de notificaciones del fichero de Shared Preferences a la lista
+     */
+    public static void loadNotificationData(Context context) {
+        if (prefs == null)
+            prefs = context.getSharedPreferences(NOTIFICATION_PREFERENCES_FILE, Context.MODE_PRIVATE);
+
+        Gson gson = new Gson();
+        if (prefs.contains("notification_data") && !prefs.getString("notification_data", "").equals("")) {
+            Type type = new TypeToken<ArrayList<NotificationData>>() {
+            }.getType();
+            listNotificationData = gson.fromJson(prefs.getString("notification_data", ""), type);
+        }
+    }
+
+
+    /**
+     * Método que elimina una notificacion del Shared Preferences
+     *
+     * @param context Contexto de la actividad
+     * @param id      Identificador de la notificacion
+     */
+    public static void removeNotificationFromSharedPreference(Context context, int id) {
+        if (prefs == null)
+            prefs = context.getSharedPreferences(NOTIFICATION_PREFERENCES_FILE, Context.MODE_PRIVATE);
+
+        SharedPreferences.Editor editor = prefs.edit();
+
+        for (int i = 0; i < listNotificationData.size(); i++) {
+            if (listNotificationData.get(i).getId().equals(String.valueOf(id))) {
+                listNotificationData.remove(i);
+            }
+        }
+
+        editor.clear().commit();
+        editor.putString("notification_data", new Gson().toJson(listNotificationData));
+        editor.commit();
     }
 }

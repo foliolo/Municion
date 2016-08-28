@@ -280,6 +280,11 @@ public class FragmentMainActivity extends AppCompatActivity {
                 if (Utils.licenseCanBeDeleted(position)) {
                     Toast.makeText(FragmentMainActivity.this, R.string.delete_license_fail, Toast.LENGTH_LONG).show();
                 } else {
+                    try {
+                        Utils.removeNotificationFromSharedPreference(this, licencias.get(position).getNumLicencia());
+                    } catch (Exception ex) {
+                        Log.wtf(getPackageName(), "Fallo al listar las notificaciones", ex);
+                    }
                     licencias.remove(position);
                     ((PlaceholderFragment) mSectionsPagerAdapter.getItem(mViewPager.getCurrentItem())).licenciaArrayAdapter.notifyDataSetChanged();
                 }

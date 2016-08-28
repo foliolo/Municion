@@ -136,7 +136,6 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
         db.execSQL(CREATE_TABLE_COMPRA);
         db.execSQL(CREATE_TABLE_LICENCIAS);
 
-        db.close();
     }
 
     @Override
@@ -159,7 +158,6 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
         saveListCompras(db, compras);
         saveListLicencias(db, licencias);
 
-        db.close();
         Log.i(context.getPackageName(), "Upgrade Done");
     }
 
@@ -218,7 +216,6 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
                 "'100' , " +
                 "'20'" +
                 ");");
-        db.close();
     }
 
     /**
@@ -248,7 +245,6 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
                 "'40' , " +
                 "'18/05/2016'" +
                 ");");
-        db.close();
     }
 
     /**
@@ -272,7 +268,6 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
                 "'1111' , " +
                 "'Madrid'" +
                 ");");
-        db.close();
     }
 
     public Cursor getCursorGuias(SQLiteDatabase db) {
@@ -334,7 +329,6 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
                 null,  //Condición HAVING para GROUP BY
                 null  //Clausula ORDER BY
         );
-        db.close();
         return cursor;
     }
 
@@ -343,7 +337,6 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
             db = this.getWritableDatabase();
         String query = "SELECT * FROM guias g INNER JOIN licencias l ON g.id_licencia=l.tipo WHERE l.categoria=?";
         Cursor cursor = db.rawQuery(query, new String[]{"0"});
-        db.close();
         return cursor;
     }
 
@@ -352,7 +345,6 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
             db = this.getWritableDatabase();
         String query = "SELECT * FROM guias g INNER JOIN licencias l ON g.id_licencia=l.tipo WHERE l.categoria=?";
         Cursor cursor = db.rawQuery(query, new String[]{"1"});
-        db.close();
         return cursor;
     }
 
@@ -361,7 +353,6 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
             db = this.getWritableDatabase();
         String query = "SELECT * FROM guias g INNER JOIN licencias l ON g.id_licencia=l.tipo WHERE l.categoria=?";
         Cursor cursor = db.rawQuery(query, new String[]{"2"});
-        db.close();
         return cursor;
     }
 
@@ -372,7 +363,7 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
         Cursor cursor = getCursorGuias(db);
 
         // Looping through all rows and adding to list
-        if (cursor.moveToFirst()) {
+        if (cursor != null && cursor.getCount() >= 0 && cursor.moveToFirst()) {
             do {
                 Guia guia = new Guia();
                 guia.setId(cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_ID)));
@@ -393,8 +384,6 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
                 // Adding contact to list
                 guias.add(guia);
             } while (cursor.moveToNext());
-
-            db.close();
         }
 
         // return contact list
@@ -409,7 +398,7 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
 
         // Looping through all rows and adding to list
         try {
-            if (cursor.moveToFirst()) {
+            if (cursor != null && cursor.getCount() >= 0 && cursor.moveToFirst()) {
                 do {
                     Compra compra = new Compra();
                     compra.setId(cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_ID)));
@@ -428,8 +417,6 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
                     // Adding contact to list
                     compras.add(compra);
                 } while (cursor.moveToNext());
-
-                db.close();
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -447,7 +434,7 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
 
         // Looping through all rows and adding to list
         try {
-            if (cursor.moveToFirst()) {
+            if (cursor != null && cursor.getCount() >= 0 && cursor.moveToFirst()) {
                 do {
                     Licencia licencia = new Licencia();
                     licencia.setId(cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_ID)));
@@ -473,8 +460,6 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
 
 
                 } while (cursor.moveToNext());
-
-                db.close();
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -520,7 +505,6 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
                         "'" + guia.getGastado() + "'" +
                         ");");
             }
-            db.close();
         }
         Log.d(context.getPackageName(), "Guia actualizada en BBDD");
     }
@@ -557,7 +541,6 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
                         "'" + compra.getValoracion() + "'" +
                         ");");
             }
-            db.close();
         }
         Log.d(context.getPackageName(), "Compra actualizada en BBDD");
     }
@@ -596,7 +579,6 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
                         "'" + licencia.getCategoria() + "'" +
                         ");");
             }
-            db.close();
         }
         Log.d(context.getPackageName(), "Licencia actualizada en BBDD");
     }
@@ -604,31 +586,26 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
     public int getNumLicenciasTipoE() {
         SQLiteDatabase db = this.getReadableDatabase();
         int result = getCursorGuiasQueries(db).getCount();
-        db.close();
         return result;
     }
 
     public int getGuiasCategoria1() {
         SQLiteDatabase db = this.getReadableDatabase();
         int result = getGuiasCategoria1(db).getCount();
-        db.close();
         return result;
     }
 
     public int getGuiasCategoria2() {
         SQLiteDatabase db = this.getReadableDatabase();
         int result = getGuiasCategoria2(db).getCount();
-        db.close();
         return result;
     }
 
     public int getGuiasCategoria3() {
         SQLiteDatabase db = this.getReadableDatabase();
         int result = getGuiasCategoria3(db).getCount();
-        db.close();
         return result;
     }
-
 }
 
 //      android adb, retrieve database using run-as

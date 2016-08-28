@@ -42,6 +42,7 @@ import al.ahgitdevelopment.municion.DataModel.Licencia;
  * Created by Alberto on 24/05/2016.
  */
 public class LicenciaFormActivity extends AppCompatActivity {
+
     public static EditText fechaExpedicion;
     private LinearLayout layoutPermisoConducir;
     private TextInputLayout textInputLayoutLicencia;
@@ -100,7 +101,6 @@ public class LicenciaFormActivity extends AppCompatActivity {
         if (getIntent().getExtras() != null) {
             try {
                 Licencia licencia = new Licencia((Licencia) getIntent().getExtras().getParcelable("modify_licencia"));
-                assert licencia != null;
                 tipoLicencia.setSelection(licencia.getTipo());
                 numLicencia.setText(String.valueOf(licencia.getNumLicencia()));
                 fechaExpedicion.setText(licencia.getFechaExpedicion());
@@ -435,6 +435,14 @@ public class LicenciaFormActivity extends AppCompatActivity {
             AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
             alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, futureInMillis, pendingIntent);
 
+            //Gestion de las notificaciones
+            int pos;
+            if (getIntent() != null && getIntent().hasExtra("position"))
+                pos = getIntent().getExtras().getInt("position", -1);
+            else
+                pos = -1;
+            Utils.addNotificationToSharedPreferences(this, pos);
+
             Toast.makeText(LicenciaFormActivity.this, "Notificacion creada para el día: " + fechaCaducidad.getText().toString(), Toast.LENGTH_LONG).show();
         } catch (ParseException ex) {
             Log.e(getPackageName(), "Fallo al crear la notificacion", ex);
@@ -490,6 +498,8 @@ public class LicenciaFormActivity extends AppCompatActivity {
         Licencia licencia = new Licencia();
         try {
             licencia.setTipo(tipoLicencia.getSelectedItemPosition());
+            if (licencia.getNombre() == null || licencia.getNombre().equals(""))
+                licencia.setNombre(Utils.getStringLicenseFromId(this, licencia.getTipo()));
             if (layoutPermisoConducir.getVisibility() == View.VISIBLE) {
                 licencia.setTipoPermisoConduccion(tipoPermisoConducir.getSelectedItemPosition());
             } else
@@ -521,6 +531,12 @@ public class LicenciaFormActivity extends AppCompatActivity {
         } catch (Exception ex) {
             Log.e(getPackageName(), "Fallo en el empaquetado de la licencia para la notificación", ex);
         }
+
+        //Guardado de la información de la notificacion
+        Utils.notificationData.setLicencia(licencia.getNombre());
+        Utils.notificationData.setId(String.valueOf(licencia.getNumLicencia()));
+        Utils.notificationData.setFecha(licencia.getFechaCaducidad());
+
         return licencia;
     }
 
