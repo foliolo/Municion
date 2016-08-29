@@ -49,7 +49,7 @@ public class ListNotificationDialog extends DialogFragment {
             // Set custom view and custom adapter
             builder.setView(view)
                     .setAdapter(adapter, null)
-                    .setTitle(R.string.pref_list_notification)
+                    .setTitle(getString(R.string.pref_list_notification))
                     .setPositiveButton(android.R.string.ok, null);
 
         } catch (Exception ex) {

@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -19,16 +20,21 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.firebase.analytics.FirebaseAnalytics;
+
 public class LoginPasswordActivity extends AppCompatActivity {
+    private FirebaseAnalytics mFirebaseAnalytics;
 
-    ActionBar actionBar;
-    SharedPreferences prefs;
+    private ActionBar actionBar;
+    private SharedPreferences prefs;
 
-    TextInputLayout textInputLayout1;
-    TextInputEditText password1;
-    TextInputLayout textInputLayout2;
-    TextInputEditText password2;
-    Button button;
+    private TextInputLayout textInputLayout1;
+    private TextInputEditText password1;
+    private TextInputLayout textInputLayout2;
+    private TextInputEditText password2;
+    private Button button;
 
     /**
      * Inicializa la actividad
@@ -41,6 +47,13 @@ public class LoginPasswordActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setIcon(R.mipmap.ic_launcher_4_transparent);
+
+        // Obtain the FirebaseAnalytics instance.
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
+        Bundle bundle = new Bundle();
+        bundle.putString(FirebaseAnalytics.Param.VALUE, "Inicio de aplicacion");
+        mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.APP_OPEN, bundle);
+
 
         final SharedPreferences prefs = getSharedPreferences("Preferences", Context.MODE_PRIVATE);
 
@@ -120,6 +133,11 @@ public class LoginPasswordActivity extends AppCompatActivity {
             public void afterTextChanged(Editable s) {
             }
         });
+
+        //Admob
+        AdView mAdView = (AdView) findViewById(R.id.adView);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        mAdView.loadAd(adRequest);
     }
 
     @Override
@@ -220,13 +238,6 @@ public class LoginPasswordActivity extends AppCompatActivity {
     private void launchActivity() {
         DataBaseSQLiteHelper dbSqlHelper = new DataBaseSQLiteHelper(getApplicationContext());
 
-        // Inicialización de datos fake
-//        if (dbSqlHelper.getCursorGuias().getCount() == 0) {
-//            dbSqlHelper.addDummyCompras();
-//            dbSqlHelper.addDummyLicencias();
-//            dbSqlHelper.addDummyGuias();
-//        }
-
         //Lanzamiento del Intent
         Intent intent = new Intent(LoginPasswordActivity.this, FragmentMainActivity.class);
         intent.putParcelableArrayListExtra("guias", dbSqlHelper.getListGuias(null));
@@ -235,5 +246,11 @@ public class LoginPasswordActivity extends AppCompatActivity {
 
         startActivity(intent);
         dbSqlHelper.close();
+
+        // Registrar Login - Analytics
+        String android_id = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
+        Bundle bundle = new Bundle();
+        bundle.putString(FirebaseAnalytics.Param.SIGN_UP_METHOD, android_id);
+        mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.LOGIN, bundle);
     }
 }

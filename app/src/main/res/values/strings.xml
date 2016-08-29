@@ -164,7 +164,7 @@
     <!--<string name="select_guia">Selecciona una guía</string>-->
 
     <!--google_api_key for Google Places API-->
-    <string name="google_api_key">AIzaSyB5EUq9C9taMGE5EpJSRjNafzTvhkaxsSc</string>
+    <!--<string name="google_api_key">AIzaSyB5EUq9C9taMGE5EpJSRjNafzTvhkaxsSc</string>-->
 
     <string name="delete_license_fail">Primero deben borrarse las guias asociadas a esta licencia</string>
     <string name="dialog_guia_fail">Debe introducir una licencia de armas primero</string>
@@ -175,5 +175,9 @@
     <string name="lbl_tipo_escala">Escala</string>
     <string name="tipo_escala">Selecciona la escala del agente</string>
     <string name="pref_list_notification">Lista de notificaciones</string>
+
+
+    <!--ADMOB ID ANUNCIOS-->
+    <string name="banner_login_id">ca-app-pub-8582752139018186/6275130957</string>
 
 </resources>

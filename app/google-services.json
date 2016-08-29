@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "522449412724",
+    "firebase_url": "https://municion-95caa.firebaseio.com",
+    "project_id": "municion-95caa",
+    "storage_bucket": "municion-95caa.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:522449412724:android:a9d004db04673b19",
+        "android_client_info": {
+          "package_name": "al.ahgitdevelopment.municion"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "522449412724-df6thllr7iiorvq53d09caj13biq7l1r.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "al.ahgitdevelopment.municion",
+            "certificate_hash": "61AD716736D50048D38BE3FD7F730888026AA6A4"
+          }
+        },
+        {
+          "client_id": "522449412724-ftj1mud85espm6cn6idkg4l2kpk1h4nt.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD-XAEXmgI0sVKt_F0whCIt8S_dz3Xb4G8"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "522449412724-ftj1mud85espm6cn6idkg4l2kpk1h4nt.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
