@@ -180,7 +180,7 @@ public class FragmentMainActivity extends AppCompatActivity {
                 public void onClick(View view) {
                     //                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                     //                        .setAction("Action", null).show();
-                    Intent form = null;
+                    Intent form;
                     switch (mViewPager.getCurrentItem()) {
                         case 0:
                             if (Utils.getLicenseName(FragmentMainActivity.this).length > 0) {
@@ -231,7 +231,7 @@ public class FragmentMainActivity extends AppCompatActivity {
 
     private void openForm(int position) {
         Intent form;
-        Bundle data = new Bundle();
+
         switch (mViewPager.getCurrentItem()) {
             case 0:
                 form = new Intent(FragmentMainActivity.this, GuiaFormActivity.class);
@@ -258,7 +258,7 @@ public class FragmentMainActivity extends AppCompatActivity {
         switch (mViewPager.getCurrentItem()) {
             case 0:
                 guias.remove(position);
-                ((PlaceholderFragment) mSectionsPagerAdapter.getItem(mViewPager.getCurrentItem())).guiaArrayAdapter.notifyDataSetChanged();
+                PlaceholderFragment.guiaArrayAdapter.notifyDataSetChanged();
                 break;
             case 1:
                 try {
@@ -269,8 +269,8 @@ public class FragmentMainActivity extends AppCompatActivity {
 
                     //Borrado de la compra
                     compras.remove(position);
-                    ((PlaceholderFragment) mSectionsPagerAdapter.getItem(mViewPager.getCurrentItem())).compraArrayAdapter.notifyDataSetChanged();
-                    ((PlaceholderFragment) mSectionsPagerAdapter.getItem(mViewPager.getCurrentItem())).guiaArrayAdapter.notifyDataSetChanged();
+                    PlaceholderFragment.compraArrayAdapter.notifyDataSetChanged();
+                    PlaceholderFragment.guiaArrayAdapter.notifyDataSetChanged();
                 } catch (IndexOutOfBoundsException ex) {
                     Log.e(getPackageName(), "Fallo con los index al borrar una compra", ex);
                 }
@@ -286,7 +286,7 @@ public class FragmentMainActivity extends AppCompatActivity {
                         Log.wtf(getPackageName(), "Fallo al listar las notificaciones", ex);
                     }
                     licencias.remove(position);
-                    ((PlaceholderFragment) mSectionsPagerAdapter.getItem(mViewPager.getCurrentItem())).licenciaArrayAdapter.notifyDataSetChanged();
+                    PlaceholderFragment.licenciaArrayAdapter.notifyDataSetChanged();
                 }
                 break;
         }
@@ -321,9 +321,9 @@ public class FragmentMainActivity extends AppCompatActivity {
     /**
      * Recepción de los datos del formulario
      *
-     * @param requestCode
-     * @param resultCode
-     * @param data
+     * @param requestCode Código de peticion
+     * @param resultCode Código de resultado de la operacion
+     * @param data Intent con los datos de respuesta
      */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {

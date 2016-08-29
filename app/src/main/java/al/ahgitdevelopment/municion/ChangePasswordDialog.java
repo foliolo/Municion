@@ -100,7 +100,7 @@ public class ChangePasswordDialog extends DialogFragment {
                 // Ha ido correcto
                 SharedPreferences.Editor editor = preferences.edit();
                 editor.putString("password", passwordNew1.getText().toString());
-                editor.commit();
+                editor.apply();
                 flag = true;
             }
         } else {

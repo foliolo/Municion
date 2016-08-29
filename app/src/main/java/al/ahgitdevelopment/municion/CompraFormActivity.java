@@ -6,6 +6,7 @@ import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
@@ -168,7 +169,7 @@ public class CompraFormActivity extends AppCompatActivity {
         pesoMunicion.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
-                if (hasFocus && pesoMunicion.getText().equals("0"))
+                if (hasFocus && pesoMunicion.getText().toString().equals("0"))
                     pesoMunicion.setText("");
             }
         });
@@ -348,6 +349,7 @@ public class CompraFormActivity extends AppCompatActivity {
      */
     public static class DatePickerFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener {
 
+        @NonNull
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
             // Use the current date as the default date in the picker

@@ -136,7 +136,10 @@ public class LoginPasswordActivity extends AppCompatActivity {
 
         //Admob
         AdView mAdView = (AdView) findViewById(R.id.adView);
-        AdRequest adRequest = new AdRequest.Builder().build();
+        AdRequest adRequest = new AdRequest.Builder()
+                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)        // All emulators
+                .addTestDevice("19DFD6D99DFA16A1568E51C0698B3E2F")  // An example device ID
+                .build();
         mAdView.loadAd(adRequest);
     }
 

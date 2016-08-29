@@ -91,7 +91,7 @@ public class GuiaFormActivity extends AppCompatActivity {
 
         //Inicializacion del cupo por defecto
         tipoArma.setSelection(0);
-        cupo.setText(getDefaultCupo(finalWeapons.get(tipoArma.getSelectedItemPosition())).toString());
+        cupo.setText(String.valueOf(getDefaultCupo(finalWeapons.get(tipoArma.getSelectedItemPosition()))));
 
         //Carga de datos (en caso de modificacion)
         if (getIntent().getExtras() != null) {

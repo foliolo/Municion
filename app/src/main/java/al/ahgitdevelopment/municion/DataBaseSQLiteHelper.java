@@ -16,6 +16,11 @@ import al.ahgitdevelopment.municion.DataModel.Licencia;
  * Created by Alberto on 12/04/2016.
  */
 public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
+    // Database Version
+    private static final int DATABASE_VERSION = 19;
+    // Database Name
+    private static final String DATABASE_NAME = "DBMunicion.db";
+
     // Table Names
     public static final String TABLE_GUIAS = "guias";
     public static final String TABLE_COMPRAS = "compras";
@@ -62,12 +67,6 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
     public static final String KEY_LICENCIAS_ESCALA = "escala";
     public static final String KEY_LICENCIAS_CATEGORIA = "categoria";
 
-    // Logcat tag
-    private static final String LOG = "DatabaseHelper";
-    // Database Version
-    private static final int DATABASE_VERSION = 19;
-    // Database Name
-    private static final String DATABASE_NAME = "DBMunicion.db";
     // Table Create Statements
     // Guias table create statement
     private static final String CREATE_TABLE_GUIA = "CREATE TABLE " + TABLE_GUIAS + "("
@@ -273,7 +272,7 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
     public Cursor getCursorGuias(SQLiteDatabase db) {
         if (db == null)
             db = this.getWritableDatabase();
-        Cursor cursor = db.query(
+        return db.query(
                 DataBaseSQLiteHelper.TABLE_GUIAS,  //Nombre de la tabla
                 null,  //Lista de Columnas a consultar
                 null,  //Columnas para la clausula WHERE
@@ -282,13 +281,12 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
                 null,  //Condición HAVING para GROUP BY
                 null  //Clausula ORDER BY
         );
-        return cursor;
     }
 
     public Cursor getCursorCompras(SQLiteDatabase db) {
         if (db == null)
             db = this.getWritableDatabase();
-        Cursor cursor = db.query(
+        return db.query(
                 DataBaseSQLiteHelper.TABLE_COMPRAS,  //Nombre de la tabla
                 null,  //Lista de Columnas a consultar
                 null,  //Columnas para la clausula WHERE
@@ -297,13 +295,12 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
                 null,  //Condición HAVING para GROUP BY
                 null  //Clausula ORDER BY
         );
-        return cursor;
     }
 
     public Cursor getCursorLicencias(SQLiteDatabase db) {
         if (db == null)
             db = this.getWritableDatabase();
-        Cursor cursor = db.query(
+        return db.query(
                 DataBaseSQLiteHelper.TABLE_LICENCIAS,  //Nombre de la tabla
                 null,  //Lista de Columnas a consultar
                 null,  //Columnas para la clausula WHERE
@@ -312,7 +309,6 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
                 null,  //Condición HAVING para GROUP BY
                 null  //Clausula ORDER BY
         );
-        return cursor;
     }
 
     public Cursor getCursorGuiasQueries(SQLiteDatabase db) {
@@ -320,7 +316,7 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
         String[] selectionArgs = {"4"};
         if (db == null)
             db = this.getWritableDatabase();
-        Cursor cursor = db.query(
+        return db.query(
                 DataBaseSQLiteHelper.TABLE_GUIAS,  //Nombre de la tabla
                 null,  //Lista de Columnas a consultar
                 selection,  //Columnas para la clausula WHERE
@@ -329,37 +325,33 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
                 null,  //Condición HAVING para GROUP BY
                 null  //Clausula ORDER BY
         );
-        return cursor;
     }
 
     public Cursor getGuiasCategoria1(SQLiteDatabase db) {
         if (db == null)
             db = this.getWritableDatabase();
         String query = "SELECT * FROM guias g INNER JOIN licencias l ON g.id_licencia=l.tipo WHERE l.categoria=?";
-        Cursor cursor = db.rawQuery(query, new String[]{"0"});
-        return cursor;
+        return db.rawQuery(query, new String[]{"0"});
     }
 
     public Cursor getGuiasCategoria2(SQLiteDatabase db) {
         if (db == null)
             db = this.getWritableDatabase();
         String query = "SELECT * FROM guias g INNER JOIN licencias l ON g.id_licencia=l.tipo WHERE l.categoria=?";
-        Cursor cursor = db.rawQuery(query, new String[]{"1"});
-        return cursor;
+        return db.rawQuery(query, new String[]{"1"});
     }
 
     public Cursor getGuiasCategoria3(SQLiteDatabase db) {
         if (db == null)
             db = this.getWritableDatabase();
         String query = "SELECT * FROM guias g INNER JOIN licencias l ON g.id_licencia=l.tipo WHERE l.categoria=?";
-        Cursor cursor = db.rawQuery(query, new String[]{"2"});
-        return cursor;
+        return db.rawQuery(query, new String[]{"2"});
     }
 
     public ArrayList<Guia> getListGuias(SQLiteDatabase db) {
         if (db == null)
             db = this.getWritableDatabase();
-        ArrayList<Guia> guias = new ArrayList<Guia>();
+        ArrayList<Guia> guias = new ArrayList<>();
         Cursor cursor = getCursorGuias(db);
 
         // Looping through all rows and adding to list
@@ -393,7 +385,7 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
     public ArrayList<Compra> getListCompras(SQLiteDatabase db) {
         if (db == null)
             db = this.getWritableDatabase();
-        ArrayList<Compra> compras = new ArrayList<Compra>();
+        ArrayList<Compra> compras = new ArrayList<>();
         Cursor cursor = getCursorCompras(db);
 
         // Looping through all rows and adding to list
@@ -429,7 +421,7 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
     public ArrayList<Licencia> getListLicencias(SQLiteDatabase db) {
         if (db == null)
             db = this.getWritableDatabase();
-        ArrayList<Licencia> licencias = new ArrayList<Licencia>();
+        ArrayList<Licencia> licencias = new ArrayList<>();
         Cursor cursor = getCursorLicencias(db);
 
         // Looping through all rows and adding to list
@@ -585,26 +577,22 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
 
     public int getNumLicenciasTipoE() {
         SQLiteDatabase db = this.getReadableDatabase();
-        int result = getCursorGuiasQueries(db).getCount();
-        return result;
+        return getCursorGuiasQueries(db).getCount();
     }
 
     public int getGuiasCategoria1() {
         SQLiteDatabase db = this.getReadableDatabase();
-        int result = getGuiasCategoria1(db).getCount();
-        return result;
+        return getGuiasCategoria1(db).getCount();
     }
 
     public int getGuiasCategoria2() {
         SQLiteDatabase db = this.getReadableDatabase();
-        int result = getGuiasCategoria2(db).getCount();
-        return result;
+        return getGuiasCategoria2(db).getCount();
     }
 
     public int getGuiasCategoria3() {
         SQLiteDatabase db = this.getReadableDatabase();
-        int result = getGuiasCategoria3(db).getCount();
-        return result;
+        return getGuiasCategoria3(db).getCount();
     }
 }
 
