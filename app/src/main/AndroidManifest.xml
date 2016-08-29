@@ -31,7 +31,6 @@
 
         <activity
             android:name=".FragmentMainActivity"
-            android:exported="true"
             android:label="@string/title_activity_fragment_main">
         </activity>
 

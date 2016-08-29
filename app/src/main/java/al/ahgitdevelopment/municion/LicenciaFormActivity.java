@@ -184,41 +184,6 @@ public class LicenciaFormActivity extends AppCompatActivity {
                 Bundle bundle = new Bundle();
                 bundle.putParcelable("modify_licencia", getCurrenteLicense());
 
-/* Extraido a la funcion: getCurrentLicencse()
-                bundle.putInt("tipo", tipoLicencia.getSelectedItemPosition());
-                if (tipoPermisoConducir.getVisibility() == View.VISIBLE) {
-                    bundle.putInt("tipo_permiso_conduccion", tipoPermisoConducir.getSelectedItemPosition());
-                } else {
-                    bundle.putInt("tipo_permiso_conduccion", -1); // Mandamos -1 para que el array adapter no muestre este campo
-                }
-                if (edad.getVisibility() == View.VISIBLE) {
-                    bundle.putInt("edad", Integer.parseInt(edad.getText().toString()));
-                }
-                bundle.putInt("num_licencia", Integer.parseInt(numLicencia.getText().toString()));
-                bundle.putString("fecha_expedicion", fechaExpedicion.getText().toString());
-                bundle.putString("fecha_caducidad", fechaCaducidad.getText().toString());
-                if (numAbonado.getVisibility() == View.VISIBLE) {
-                    bundle.putInt("num_abonado", Integer.parseInt(numAbonado.getText().toString()));
-                }
-                if (numSeguro.getVisibility() == View.VISIBLE) {
-                    bundle.putString("num_seguro", numSeguro.getText().toString());
-                }
-                if (layoutCCAA.getVisibility() == View.VISIBLE) {
-                    bundle.putInt("autonomia", autonomia.getSelectedItemPosition());
-                } else {
-                    bundle.putInt("autonomia", -1); // Mandamos -1 para que el array adapter no muestre este campo
-                }
-                if (layoutEscala.getVisibility() == View.VISIBLE) {
-                    bundle.putInt("escala", tipoEscala.getSelectedItemPosition());
-                } else {
-                    bundle.putInt("escala", -1); // Mandamos -1 para que el array adapter no muestre este campo
-                }
-                if (categoria.getVisibility() == View.VISIBLE) {
-                    bundle.putInt("categoria", categoria.getSelectedItemPosition());
-                } else {
-                    bundle.putInt("categoria", -1); // Mandamos -1 para que el array adapter no muestre este campo
-                }
-*/
                 //Paso de vuelta de la posicion del item en el array
                 if (getIntent().getExtras() != null)
                     bundle.putInt("position", getIntent().getExtras().getInt("position", -1));
@@ -326,7 +291,7 @@ public class LicenciaFormActivity extends AppCompatActivity {
             switch (tipoLicencia.getSelectedItemPosition()) {
                 // Esta licencia no caduca por lo que ponemos una fecha muy lejaana
                 case 0: // Licencia A
-                    calendar.set(3000, 11, 31);
+                    calendar.set(3000, Calendar.DECEMBER, 31);
                     fechaCaducidad.setText(simpleDate.format(calendar.getTime()));
                     break;
                 // Sumamos 3 año
@@ -348,10 +313,11 @@ public class LicenciaFormActivity extends AppCompatActivity {
                 // Ajustamos al final de año
                 case 9: // Autonomica Caza
                 case 10: // Autonomica Pesca
-                    calendar.set(calendar.get(Calendar.YEAR), 11, 31);
+                    calendar.set(calendar.get(Calendar.YEAR), Calendar.DECEMBER, 31);
                     fechaCaducidad.setText(simpleDate.format(calendar.getTime()));
                 case 11: // Licencia Federativa de tiro
-                    calendar.add(Calendar.YEAR, 1);
+//                    calendar.add(Calendar.YEAR, 1);
+                    calendar.set(calendar.get(Calendar.YEAR), Calendar.DECEMBER, 31);
                     fechaCaducidad.setText(simpleDate.format(calendar.getTime()));
                     break;
                 // Sumamos 10 años
@@ -471,6 +437,7 @@ public class LicenciaFormActivity extends AppCompatActivity {
         // Adds the Intent that starts the Activity to the top of the stack
         stackBuilder.addNextIntent(resultIntent);
 
+
         PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
 
         NotificationCompat.Builder mBuilder =
@@ -508,7 +475,10 @@ public class LicenciaFormActivity extends AppCompatActivity {
             licencia.setFechaExpedicion(fechaExpedicion.getText().toString());
             licencia.setFechaCaducidad(fechaCaducidad.getText().toString());
             if (numAbonado.getVisibility() == View.VISIBLE) {
-                licencia.setNumAbonado(Integer.parseInt(String.valueOf(numAbonado.getText())));
+                if (numAbonado.getText().toString().equals(""))
+                    licencia.setNumAbonado(0);
+                else
+                    licencia.setNumAbonado(Integer.parseInt(String.valueOf(numAbonado.getText())));
             }
             if (numSeguro.getVisibility() == View.VISIBLE) {
                 licencia.setNumSeguro(String.valueOf(numSeguro.getText()));
@@ -549,27 +519,28 @@ public class LicenciaFormActivity extends AppCompatActivity {
         boolean flag = true;
 
         if (numLicencia.getText().toString().equals("")) {
-            numLicencia.setError("Introduce el número de licencia", ResourcesCompat.getDrawable(getResources(), android.R.drawable.stat_notify_error, getTheme()));
+            numLicencia.setError(getString(R.string.msg_err_num_licencia), ResourcesCompat.getDrawable(getResources(), android.R.drawable.stat_notify_error, getTheme()));
             flag = false;
         }
         if (fechaExpedicion.getText().toString().equals("")) {
-            layoutFechaExpedicion.setError("Introdce la fecha de expedición");
+            layoutFechaExpedicion.setError(getString(R.string.msg_err_fecha_exp));
             flag = false;
         }
         if (fechaCaducidad.getText().toString().equals("")) {
-            layoutFechaCaducidad.setError("Introdce la fecha de caducidad");
+            layoutFechaCaducidad.setError(getString(R.string.msg_err_fecha_cad));
             flag = false;
         }
-        if (numAbonado.getVisibility() == View.VISIBLE && numAbonado.getText().toString().equals("")) {
-            numAbonado.setError("Introduce el número de abonado", ResourcesCompat.getDrawable(getResources(), android.R.drawable.stat_notify_error, getTheme()));
-            flag = false;
-        }
+        //No obligatorio
+//        if (numAbonado.getVisibility() == View.VISIBLE && numAbonado.getText().toString().equals("")) {
+//            numAbonado.setError("Introduce el número de abonado", ResourcesCompat.getDrawable(getResources(), android.R.drawable.stat_notify_error, getTheme()));
+//            flag = false;
+//        }
         if (numSeguro.getVisibility() == View.VISIBLE && numSeguro.getText().toString().equals("")) {
-            numSeguro.setError("Introduce el número de la poliza del seguro", ResourcesCompat.getDrawable(getResources(), android.R.drawable.stat_notify_error, getTheme()));
+            numSeguro.setError(getString(R.string.msg_err_poliza_seg), ResourcesCompat.getDrawable(getResources(), android.R.drawable.stat_notify_error, getTheme()));
             flag = false;
         }
         if (edad.getVisibility() == View.VISIBLE && edad.getText().toString().equals("")) {
-            edad.setError("Introduce la edad", ResourcesCompat.getDrawable(getResources(), android.R.drawable.stat_notify_error, getTheme()));
+            edad.setError(getString(R.string.msg_err_edad), ResourcesCompat.getDrawable(getResources(), android.R.drawable.stat_notify_error, getTheme()));
             flag = false;
         }
 

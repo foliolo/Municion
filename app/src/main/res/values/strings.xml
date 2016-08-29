@@ -87,6 +87,11 @@
     <string name="fecha_expedicion">Fecha de expedición</string>
     <string name="fecha_caducidad">Fecha de caducidad</string>
     <string name="lbl_escala">Escala</string>
+    <string name="msg_err_num_licencia">Introduce el numero de licencia</string>
+    <string name="msg_err_fecha_exp">Introduce la fecha de expedición</string>
+    <string name="msg_err_fecha_cad">Introduce la fecha de caducidad</string>
+    <string name="msg_err_poliza_seg">Introduce el número de la poliza del seguro</string>
+    <string name="msg_err_edad">Introduce la edad</string>
 
 
     <!-- Strings related to Settings -->

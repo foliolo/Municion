@@ -230,7 +230,7 @@ public class FragmentMainActivity extends AppCompatActivity {
     }
 
     private void openForm(int position) {
-        Intent form = null;
+        Intent form;
         Bundle data = new Bundle();
         switch (mViewPager.getCurrentItem()) {
             case 0:
@@ -327,7 +327,7 @@ public class FragmentMainActivity extends AppCompatActivity {
      */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Bitmap imageBitmap = null;
+        Bitmap imageBitmap;
         // Check which request we're responding to
         if (resultCode == RESULT_OK) {
             switch (requestCode) {
@@ -341,13 +341,13 @@ public class FragmentMainActivity extends AppCompatActivity {
 
                 case GUIA_COMPLETED:
                     guias.add(new Guia(data.getExtras()));
-                    ((PlaceholderFragment) mSectionsPagerAdapter.getItem(mViewPager.getCurrentItem())).guiaArrayAdapter.notifyDataSetChanged();
+                    PlaceholderFragment.guiaArrayAdapter.notifyDataSetChanged();
                     break;
 
                 case COMPRA_COMPLETED:
                     Compra newCompra = new Compra(data.getExtras());
                     compras.add(newCompra);
-                    ((PlaceholderFragment) mSectionsPagerAdapter.getItem(mViewPager.getCurrentItem())).compraArrayAdapter.notifyDataSetChanged();
+                    PlaceholderFragment.compraArrayAdapter.notifyDataSetChanged();
 
                     //Actualizamos el cupo de la guia a la que pertence la compra
                     int posGuia = newCompra.getIdPosGuia();
@@ -355,12 +355,12 @@ public class FragmentMainActivity extends AppCompatActivity {
                         int gastoActual = guias.get(posGuia).getGastado();
                         guias.get(posGuia).setGastado(gastoActual + newCompra.getUnidades());
                     }
-                    ((PlaceholderFragment) mSectionsPagerAdapter.getItem(mViewPager.getCurrentItem())).guiaArrayAdapter.notifyDataSetChanged();
+                    PlaceholderFragment.guiaArrayAdapter.notifyDataSetChanged();
                     break;
 
                 case LICENCIA_COMPLETED:
                     licencias.add(new Licencia((Licencia) data.getExtras().getParcelable("modify_licencia")));
-                    ((PlaceholderFragment) mSectionsPagerAdapter.getItem(mViewPager.getCurrentItem())).licenciaArrayAdapter.notifyDataSetChanged();
+                    PlaceholderFragment.licenciaArrayAdapter.notifyDataSetChanged();
                     break;
 
                 case GUIA_UPDATED:
@@ -398,11 +398,11 @@ public class FragmentMainActivity extends AppCompatActivity {
             switch (mViewPager.getCurrentItem()) {
                 case 0:
                     guias.get(imagePosition).setImagePath(fileImagePath.getAbsolutePath());
-                    ((PlaceholderFragment) mSectionsPagerAdapter.getItem(mViewPager.getCurrentItem())).guiaArrayAdapter.notifyDataSetChanged();
+                    PlaceholderFragment.guiaArrayAdapter.notifyDataSetChanged();
                     break;
                 case 1:
                     compras.get(imagePosition).setImagePath(fileImagePath.getAbsolutePath());
-                    ((PlaceholderFragment) mSectionsPagerAdapter.getItem(mViewPager.getCurrentItem())).compraArrayAdapter.notifyDataSetChanged();
+                    PlaceholderFragment.compraArrayAdapter.notifyDataSetChanged();
                     break;
             }
         } else
@@ -447,7 +447,7 @@ public class FragmentMainActivity extends AppCompatActivity {
             guia.setCupo(data.getExtras().getInt("cupo"));
             guia.setGastado(data.getExtras().getInt("gastado"));
 
-            ((PlaceholderFragment) mSectionsPagerAdapter.getItem(mViewPager.getCurrentItem())).guiaArrayAdapter.notifyDataSetChanged();
+            PlaceholderFragment.guiaArrayAdapter.notifyDataSetChanged();
         }
     }
 
@@ -469,7 +469,7 @@ public class FragmentMainActivity extends AppCompatActivity {
             compra.setValoracion(data.getExtras().getFloat("valoracion"));
             compra.setImagePath(data.getExtras().getString("imagePath"));
 
-            ((PlaceholderFragment) mSectionsPagerAdapter.getItem(mViewPager.getCurrentItem())).compraArrayAdapter.notifyDataSetChanged();
+            PlaceholderFragment.compraArrayAdapter.notifyDataSetChanged();
         }
     }
 
@@ -480,7 +480,7 @@ public class FragmentMainActivity extends AppCompatActivity {
             Licencia licencia = new Licencia((Licencia) data.getExtras().get("modify_licencia"));
             licencias.set(position, licencia);
 
-            ((PlaceholderFragment) mSectionsPagerAdapter.getItem(mViewPager.getCurrentItem())).licenciaArrayAdapter.notifyDataSetChanged();
+            PlaceholderFragment.licenciaArrayAdapter.notifyDataSetChanged();
         }
     }
 
@@ -509,10 +509,6 @@ public class FragmentMainActivity extends AppCompatActivity {
             fragment.setArguments(args);
 
             return fragment;
-        }
-
-        public ListView getListView() {
-            return listView;
         }
 
         @Override
@@ -553,6 +549,7 @@ public class FragmentMainActivity extends AppCompatActivity {
 
                     // Start the CAB using the ActionMode.Callback defined above
                     mActionMode = ((AppCompatActivity) getActivity()).startSupportActionMode(mActionModeCallback);
+                    assert mActionMode != null;
                     mActionMode.setTitle(R.string.menu_cab_title);
                     mActionMode.setTag(position);
                     return true;
@@ -692,11 +689,11 @@ public class FragmentMainActivity extends AppCompatActivity {
         public CharSequence getPageTitle(int position) {
             switch (position) {
                 case 0:
-                    return getResources().getString(R.string.section_guias_title);
+                    return getString(R.string.section_guias_title);
                 case 1:
-                    return getResources().getString(R.string.section_compras_title);
+                    return getString(R.string.section_compras_title);
                 case 2:
-                    return getResources().getString(R.string.section_licencias_title);
+                    return getString(R.string.section_licencias_title);
             }
             return null;
         }
