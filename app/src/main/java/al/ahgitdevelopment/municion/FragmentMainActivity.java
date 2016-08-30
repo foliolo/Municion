@@ -597,9 +597,21 @@ public class FragmentMainActivity extends AppCompatActivity {
                     .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int pos) {
-                            Intent form = new Intent(getActivity(), GuiaFormActivity.class);
-                            form.putExtra("tipo_licencia", (String) Utils.getLicenseName(getActivity())[selectedLicense]);
-                            getActivity().startActivityForResult(form, FragmentMainActivity.GUIA_COMPLETED);
+                            String tipoLicencia = (String) Utils.getLicenseName(getActivity())[selectedLicense];
+                            if (tipoLicencia.equals("F - Tiro olimpico")) {
+                                if (Utils.isLicenciaFederativa(getActivity())) {
+                                    Intent form = new Intent(getActivity(), GuiaFormActivity.class);
+                                    form.putExtra("tipo_licencia", (String) Utils.getLicenseName(getActivity())[selectedLicense]);
+                                    getActivity().startActivityForResult(form, FragmentMainActivity.GUIA_COMPLETED);
+                                } else {
+                                    Toast.makeText(getActivity(), R.string.dialog_guia_licencia_federativa, Toast.LENGTH_SHORT).show();
+                                    GuiaDialogFragment.this.getDialog().dismiss();
+                                }
+                            } else {
+                                Intent form = new Intent(getActivity(), GuiaFormActivity.class);
+                                form.putExtra("tipo_licencia", (String) Utils.getLicenseName(getActivity())[selectedLicense]);
+                                getActivity().startActivityForResult(form, FragmentMainActivity.GUIA_COMPLETED);
+                            }
                         }
                     })
                     .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
@@ -609,6 +621,7 @@ public class FragmentMainActivity extends AppCompatActivity {
                     });
             return builder.create();
         }
+
     }
 
     /**
@@ -661,6 +674,7 @@ public class FragmentMainActivity extends AppCompatActivity {
 
             return list.toArray(new CharSequence[list.size()]);
         }
+
     }
 
     /**

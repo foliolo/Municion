@@ -8,6 +8,7 @@ import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Collections;
 
 import al.ahgitdevelopment.municion.DataModel.Guia;
 import al.ahgitdevelopment.municion.DataModel.Licencia;
@@ -29,7 +30,8 @@ public final class Utils {
             String licenseName = Utils.getStringLicenseFromId(context, licencia.getTipo());
             if (!licenseName.equals("Autonómica de Caza") &&
                     !licenseName.equals("Autonómica de Pesca") &&
-                    !licenseName.equals("Permiso Conducir"))
+                    !licenseName.equals("Permiso Conducir") &&
+                    !licenseName.equals("Federativa de tiro"))
                 list.add(licenseName);
         }
 
@@ -157,4 +159,54 @@ public final class Utils {
         editor.putString("notification_data", new Gson().toJson(listNotificationData));
         editor.commit();
     }
+
+    /**
+     * Método que comprueba si existe licencia Federativa de tiro
+     *
+     * @param context Contexto de la actividad
+     */
+    public static boolean isLicenciaFederativa(Context context) {
+        for (Licencia licencia : FragmentMainActivity.licencias) {
+            String licenseName = Utils.getStringLicenseFromId(context, licencia.getTipo());
+            if (licenseName.equals("Federativa de tiro")) {
+                return true;
+            }
+        }
+        return false;
+    }
+    /**
+     * Método que devuelve la categoria mas alta
+     *
+     * @param context Contexto de la actividad
+     */
+    public static int getMaxCategoria(Context context) {
+        ArrayList<Integer> list = new ArrayList<>();
+        for (Licencia licencia : FragmentMainActivity.licencias) {
+            int categoria = Utils.getCategoriaId(context, licencia.getCategoria());
+            if (categoria != -1) {
+                list.add(categoria);
+            }
+        } // Devuelve el numero menor que seria la licencia de mas categoria
+        return Collections.min(list);
+    }
+
+    /**
+     * Método que devuelve el id (posicion en el Array) de la categoria introducida como parametro.
+     *
+     * @param context Necesario para acceder a getResources
+     * @return El indice de la categoria en el array que corresponde con su tipo
+     */
+    public static int getCategoriaId(Context context, int cat) {
+        String[] categorias = context.getResources().getStringArray(R.array.categorias);
+        for (int i = 0; i < categorias.length; i++) {
+            if (i == cat) {
+                return cat;
+            }
+        }
+        return  -1;
+    }
+
+
+
+
 }

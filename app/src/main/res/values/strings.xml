@@ -172,6 +172,7 @@
     <string name="dialog_guia_licencia_federativa_categoria1">Para las licencias federativas de 1ª Categoría el límite de guias es de 10</string>
     <string name="dialog_guia_licencia_federativa_categoria2">Para las licencias federativas de 2ª Categoría el límite de guias es de 6</string>
     <string name="dialog_guia_licencia_federativa_categoria3">Para las licencias federativas de 3ª Categoría el límite de guias es de 1</string>
+    <string name="dialog_guia_licencia_federativa">Primero debe seleccionar una licencia Federativa con su respectiva Categoría</string>
     <string name="lbl_tipo_escala">Escala</string>
     <string name="tipo_escala">Selecciona la escala del agente</string>
     <string name="pref_list_notification">Lista de notificaciones</string>

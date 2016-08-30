@@ -327,26 +327,14 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
         );
     }
 
-    public Cursor getGuiasCategoria1(SQLiteDatabase db) {
-        if (db == null)
-            db = this.getWritableDatabase();
-        String query = "SELECT * FROM guias g INNER JOIN licencias l ON g.id_licencia=l.tipo WHERE l.categoria=?";
-        return db.rawQuery(query, new String[]{"0"});
-    }
-
-    public Cursor getGuiasCategoria2(SQLiteDatabase db) {
-        if (db == null)
-            db = this.getWritableDatabase();
-        String query = "SELECT * FROM guias g INNER JOIN licencias l ON g.id_licencia=l.tipo WHERE l.categoria=?";
-        return db.rawQuery(query, new String[]{"1"});
-    }
-
-    public Cursor getGuiasCategoria3(SQLiteDatabase db) {
-        if (db == null)
-            db = this.getWritableDatabase();
-        String query = "SELECT * FROM guias g INNER JOIN licencias l ON g.id_licencia=l.tipo WHERE l.categoria=?";
-        return db.rawQuery(query, new String[]{"2"});
-    }
+// TODO Queda contar el numero de guias guardadas en BBDD para la maxCategoria e ir actualizando el limite cada vez que se guarda una
+//    public Cursor getGuiasCategoria(SQLiteDatabase db) {
+//        if (db == null)
+//            db = this.getWritableDatabase();
+//        String query = "SELECT * FROM guias g INNER JOIN licencias l ON g.id_licencia=l.tipo WHERE l.categoria=?";
+//        return db.rawQuery(query, new String[]{"0"});
+//    }
+//
 
     public ArrayList<Guia> getListGuias(SQLiteDatabase db) {
         if (db == null)
@@ -580,20 +568,13 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
         return getCursorGuiasQueries(db).getCount();
     }
 
-    public int getGuiasCategoria1() {
-        SQLiteDatabase db = this.getReadableDatabase();
-        return getGuiasCategoria1(db).getCount();
-    }
+    // TODO Queda contar el numero de guias guardadas en BBDD para la maxCategoria e ir actualizando el limite cada vez que se guarda una
+//    public int getGuiasCategoria() {
+//        SQLiteDatabase db = this.getReadableDatabase();
+//        return getGuiasCategoria1(db).getCount();
+//    }
+//
 
-    public int getGuiasCategoria2() {
-        SQLiteDatabase db = this.getReadableDatabase();
-        return getGuiasCategoria2(db).getCount();
-    }
-
-    public int getGuiasCategoria3() {
-        SQLiteDatabase db = this.getReadableDatabase();
-        return getGuiasCategoria3(db).getCount();
-    }
 }
 
 //      android adb, retrieve database using run-as

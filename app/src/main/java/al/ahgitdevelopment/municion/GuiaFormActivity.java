@@ -309,19 +309,21 @@ public class GuiaFormActivity extends AppCompatActivity {
                 if (tipoLicencia == 4) {  // E - Escopeta
                     if(checkMaxGuiasForLicenciaTipoE(marca))
                         return false;
-                } else if(tipoLicencia == 11) { //Federativa de tiro
-                    if(checkMaxGuiasCategoria(marca))
-                        return false;
-                  }
+                } else if(tipoLicencia == 5) { // F - Tiro olimpico
+                    // TODO Queda contar el numero de guias guardadas en BBDD para la maxCategoria e ir actualizando el limite cada vez que se guarda una
+                    // TODO En funcion de la categoria, el nº de guias asocias a F
+                    int maxCategoria = Utils.getMaxCategoria(GuiaFormActivity.this);
+                }
             } else {
                 tipoLicencia = ((Guia) getIntent().getExtras().getParcelable("modify_guia")).getTipoLicencia();
                 if (tipoLicencia == 4) {  // E - Escopeta
                     if(checkMaxGuiasForLicenciaTipoE(marca)) {
                         return false;
                     }
-                }else if(tipoLicencia == 11) { //Federativa de tiro
-                    if(checkMaxGuiasCategoria(marca))
-                        return false;
+                }else if(tipoLicencia == 5) { // F - Tiro olimpico
+                    // TODO Queda contar el numero de guias guardadas en BBDD para la maxCategoria e ir actualizando el limite cada vez que se guarda una
+                    // TODO En funcion de la categoria, el nº de guias asocias a F
+                    int maxCategoria = Utils.getMaxCategoria(GuiaFormActivity.this);
                 }
             }
             bundle.putInt("tipoLicencia", tipoLicencia);
@@ -371,33 +373,33 @@ public class GuiaFormActivity extends AppCompatActivity {
         }
         return false;
     }
-
-    private boolean checkMaxGuiasCategoria(View view) {
-        dbSqlHelper = new DataBaseSQLiteHelper(getApplicationContext());
+    // TODO Queda contar el numero de guias guardadas en BBDD para la maxCategoria e ir actualizando el limite cada vez que se guarda una
+//    private boolean checkMaxGuiasCategoria(View view) {
+//        dbSqlHelper = new DataBaseSQLiteHelper(getApplicationContext());
         // 1ª Categoria
-        if(dbSqlHelper.getGuiasCategoria3() >= 1) {
-            Snackbar.make(view, R.string.dialog_guia_licencia_federativa_categoria3, Snackbar.LENGTH_LONG)
-                    .setAction(android.R.string.ok, null)
-                    .show();
-            return true;
-        }
-        // 2ª Categoria
-        else if(dbSqlHelper.getGuiasCategoria2() >= 6) {
-            Snackbar.make(view, R.string.dialog_guia_licencia_federativa_categoria2, Snackbar.LENGTH_LONG)
-                    .setAction(android.R.string.ok, null)
-                    .show();
-            return true;
-        }
+//        if(dbSqlHelper.getLicenciasFederativas() >= 1) {
+//            Snackbar.make(view, R.string.dialog_guia_licencia_federativa_categoria3, Snackbar.LENGTH_LONG)
+//                    .setAction(android.R.string.ok, null)
+//                    .show();
+//            return true;
+//        }
+//        // 2ª Categoria
+//        else if(dbSqlHelper.getLicenciasFederativas() >= 6) {
+//            Snackbar.make(view, R.string.dialog_guia_licencia_federativa_categoria2, Snackbar.LENGTH_LONG)
+//                    .setAction(android.R.string.ok, null)
+//                    .show();
+//            return true;
+//        }
         // 3ª Categoria
-        else if(dbSqlHelper.getGuiasCategoria1() >= 10) {
-            Snackbar.make(view, R.string.dialog_guia_licencia_federativa_categoria1, Snackbar.LENGTH_LONG)
-                    .setAction(android.R.string.ok, null)
-                    .show();
-            return true;
-        }
+//        else if(dbSqlHelper.getGuiasCategoria1() >= 10) {
+//            Snackbar.make(view, R.string.dialog_guia_licencia_federativa_categoria1, Snackbar.LENGTH_LONG)
+//                    .setAction(android.R.string.ok, null)
+//                    .show();
+//            return true;
+//        }
 //        ArrayList<Guia> lista = dbSqlHelper.getListGuiasCategorias();
-        return false;
-    }
+//        return false;
+//    }
 
     private boolean validateForm() {
         boolean retorno = true;
