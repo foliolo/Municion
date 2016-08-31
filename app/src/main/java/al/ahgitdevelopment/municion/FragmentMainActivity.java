@@ -232,7 +232,7 @@ public class FragmentMainActivity extends AppCompatActivity {
 
         //Admob
         AdView mAdView = (AdView) findViewById(R.id.adView);
-        mAdView.loadAd(Utils.getAdRequest());
+        mAdView.loadAd(Utils.getAdRequest(mAdView));
     }
 
     private void openForm(int position) {

@@ -2,8 +2,16 @@ package al.ahgitdevelopment.municion;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
+import android.view.View;
 
 import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -23,6 +31,8 @@ public final class Utils {
     public static NotificationData notificationData = new NotificationData();
     public static ArrayList<NotificationData> listNotificationData = new ArrayList<NotificationData>();
     private static SharedPreferences prefs;
+
+    private static FirebaseDatabase mFirebaseDatabase = FirebaseDatabase.getInstance();
 
     public static CharSequence[] getLicenseName(Context context) {
         ArrayList<String> list = new ArrayList<>();
@@ -208,7 +218,31 @@ public final class Utils {
     }
 
 
-    public static AdRequest getAdRequest() {
+    public static AdRequest getAdRequest(final View view) {
+        // Read from the database
+        DatabaseReference myRef = mFirebaseDatabase.getReference("settings/ads");
+
+        myRef.addValueEventListener(new ValueEventListener() {
+
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                // This method is called once with the initial value and again
+                // whenever data at this location is updated.
+                AdView mAdView = (AdView) view.findViewById(R.id.adView);
+                if (dataSnapshot.getValue(Boolean.class)) {
+                    mAdView.setVisibility(View.VISIBLE);
+                } else {
+                    mAdView.setVisibility(View.GONE);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError error) {
+                // Failed to read value
+                Log.w("Ads", "Failed to read value.", error.toException());
+            }
+        });
+
         return new AdRequest.Builder()
                 .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)        // All emulators
                 .addTestDevice("19DFD6D99DFA16A1568E51C0698B3E2F")  // An example device ID
