@@ -1,6 +1,5 @@
 package al.ahgitdevelopment.municion;
 
-import android.app.ActionBar;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -20,14 +19,13 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.firebase.analytics.FirebaseAnalytics;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class LoginPasswordActivity extends AppCompatActivity {
+    private FirebaseDatabase mFirebaseDatabase;
     private FirebaseAnalytics mFirebaseAnalytics;
-
-    private ActionBar actionBar;
     private SharedPreferences prefs;
 
     private TextInputLayout textInputLayout1;
@@ -47,6 +45,10 @@ public class LoginPasswordActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setIcon(R.mipmap.ic_launcher_4_transparent);
+
+        // Obtain the Firebase BBDD instance
+//        FirebaseDatabase database = FirebaseDatabase.getInstance().getReference("https://municion-95caa.firebaseio.com/");
+        mFirebaseDatabase = FirebaseDatabase.getInstance();
 
         // Obtain the FirebaseAnalytics instance.
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
@@ -135,12 +137,10 @@ public class LoginPasswordActivity extends AppCompatActivity {
         });
 
         //Admob
-        AdView mAdView = (AdView) findViewById(R.id.adView);
-        AdRequest adRequest = new AdRequest.Builder()
-                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)        // All emulators
-                .addTestDevice("19DFD6D99DFA16A1568E51C0698B3E2F")  // An example device ID
-                .build();
-        mAdView.loadAd(adRequest);
+        if (Boolean.parseBoolean(String.valueOf(mFirebaseDatabase.getReference("settings/ads")))) {
+            AdView mAdView = (AdView) findViewById(R.id.adView);
+            mAdView.loadAd(Utils.getAdRequest());
+        }
     }
 
     @Override

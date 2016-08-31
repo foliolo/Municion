@@ -27,13 +27,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-    <android.support.design.widget.TextInputEditText
-        android:id="@+id/passwordNew"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:hint="@string/lbl4_insert_password"
-        android:inputType="numberPassword"/>
+        <android.support.design.widget.TextInputEditText
+            android:id="@+id/passwordNew"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="@string/lbl4_insert_password"
+            android:inputType="numberPassword"/>
     </android.support.design.widget.TextInputLayout>
 
     <android.support.design.widget.TextInputLayout

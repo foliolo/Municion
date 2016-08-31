@@ -24,6 +24,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.ads.AdView;
+
 import java.util.ArrayList;
 
 import al.ahgitdevelopment.municion.DataModel.Guia;
@@ -281,6 +283,11 @@ public class GuiaFormActivity extends AppCompatActivity {
                 }
             }
         });
+
+
+        //Admob
+        AdView mAdView = (AdView) findViewById(R.id.adView);
+        mAdView.loadAd(Utils.getAdRequest());
     }
 
     @Override

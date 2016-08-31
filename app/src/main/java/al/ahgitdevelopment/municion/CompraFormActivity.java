@@ -24,6 +24,8 @@ import android.widget.EditText;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
+import com.google.android.gms.ads.AdView;
+
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -229,6 +231,10 @@ public class CompraFormActivity extends AppCompatActivity {
                 }
             }
         });
+
+        //Admob
+        AdView mAdView = (AdView) findViewById(R.id.adView);
+        mAdView.loadAd(Utils.getAdRequest());
     }
 
     private void callDatePickerFragment() {

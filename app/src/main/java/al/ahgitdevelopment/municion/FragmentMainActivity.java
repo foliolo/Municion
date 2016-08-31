@@ -32,6 +32,8 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.google.android.gms.ads.AdView;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -227,6 +229,10 @@ public class FragmentMainActivity extends AppCompatActivity {
                 }
             });
         }
+
+        //Admob
+        AdView mAdView = (AdView) findViewById(R.id.adView);
+        mAdView.loadAd(Utils.getAdRequest());
     }
 
     private void openForm(int position) {

@@ -3,6 +3,7 @@ package al.ahgitdevelopment.municion;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.google.android.gms.ads.AdRequest;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -22,7 +23,6 @@ public final class Utils {
     public static NotificationData notificationData = new NotificationData();
     public static ArrayList<NotificationData> listNotificationData = new ArrayList<NotificationData>();
     private static SharedPreferences prefs;
-
 
     public static CharSequence[] getLicenseName(Context context) {
         ArrayList<String> list = new ArrayList<>();
@@ -174,6 +174,7 @@ public final class Utils {
         }
         return false;
     }
+
     /**
      * Método que devuelve la categoria mas alta
      *
@@ -203,10 +204,14 @@ public final class Utils {
                 return cat;
             }
         }
-        return  -1;
+        return -1;
     }
 
 
-
-
+    public static AdRequest getAdRequest() {
+        return new AdRequest.Builder()
+                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)        // All emulators
+                .addTestDevice("19DFD6D99DFA16A1568E51C0698B3E2F")  // An example device ID
+                .build();
+    }
 }

@@ -59,9 +59,18 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        ads:adSize="BANNER"
+        ads:adSize="LARGE_BANNER"
         ads:adUnitId="@string/banner_login_id">
     </com.google.android.gms.ads.AdView>
 
 </RelativeLayout>
 
+    <!--
+        Tamaño (an x al)				Descripción							Disponibilidad					Constante de AdSize
+        320 x 50						Banner estándar						Teléfonos y tablets				BANNER
+        320 x 100						Banner grande						Teléfonos y tablets				LARGE_BANNER
+        300 x 250						Rectángulo mediano del IAB			Teléfonos y tablets				MEDIUM_RECTANGLE
+        468 x 60						Banner de tamaño completo del IAB	Tablets							FULL_BANNER
+        728 x 90						Tablas de posiciones del IAB		Tablets							LEADERBOARD
+        Ancho de pantalla x 32|50|90	Banner inteligente					Teléfonos y tablets				SMART_BANNER
+    -->

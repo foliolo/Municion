@@ -31,6 +31,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.ads.AdView;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -148,6 +150,11 @@ public class LicenciaFormActivity extends AppCompatActivity {
 
         setVisibilityFields(tipoLicencia.getSelectedItemPosition());
         fieldsUpdateFechaCaducidad();
+
+
+        //Admob
+        AdView mAdView = (AdView) findViewById(R.id.adView);
+        mAdView.loadAd(Utils.getAdRequest());
     }
 
     private void callDatePickerFragment() {
