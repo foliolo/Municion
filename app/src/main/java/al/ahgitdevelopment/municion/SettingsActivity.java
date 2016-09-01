@@ -157,6 +157,11 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             DialogFragment dialog = new ChangePasswordDialog();
             dialog.show(getFragmentManager(), "ChangePasswordDialog");
         }
+        if (header.id == R.id.list_notifications) {
+            Utils.loadNotificationData(this);
+            DialogFragment dialog = new ListNotificationDialog();
+            dialog.show(getFragmentManager(), "ListNotificationDialog");
+        }
     }
 
     @Override
