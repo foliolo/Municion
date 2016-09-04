@@ -610,7 +610,7 @@ public class FragmentMainActivity extends AppCompatActivity {
                                     form.putExtra("tipo_licencia", (String) Utils.getLicenseName(getActivity())[selectedLicense]);
                                     getActivity().startActivityForResult(form, FragmentMainActivity.GUIA_COMPLETED);
                                 } else {
-                                    Toast.makeText(getActivity(), R.string.dialog_guia_licencia_federativa, Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(getActivity(), R.string.dialog_guia_licencia_federativa, Toast.LENGTH_LONG).show();
                                     GuiaDialogFragment.this.getDialog().dismiss();
                                 }
                             } else {

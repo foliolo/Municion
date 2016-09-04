@@ -52,6 +52,14 @@ public class GuiaFormActivity extends AppCompatActivity {
     private TextView mensajeError;
     private String imagePath;
     private DataBaseSQLiteHelper dbSqlHelper;
+    // Constantes para guias maximas para Licencia E por arma
+    public static final int MAXIMO_GUIAS_LICENCIA_TIPO_E = 12;
+    public static final int MAXIMO_GUIAS_LICENCIA_TIPO_E_ESCOPETA = 6;
+    public static final int MAXIMO_GUIAS_LICENCIA_TIPO_E_RIFLE = 6;
+    // Constantes para guias maximas por categoria Licencia F
+    private final int GUIAS_MAXIMAS_PRIMERA_CATEGORIA = 10;
+    private final int GUIAS_MAXIMAS_SEGUNDA_CATEGORIA = 6;
+    private final int GUIAS_MAXIMAS_TERCERA_CATEGORIA = 1;
 
     /**
      * Inicializa la actividad
@@ -300,7 +308,6 @@ public class GuiaFormActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-
         if (id == R.id.action_save) {
             // Validación formulario
             if (!validateForm()) {
@@ -309,28 +316,41 @@ public class GuiaFormActivity extends AppCompatActivity {
 
             // Create intent to deliver some kind of result data
             Intent result = new Intent(this, FragmentMainActivity.class);
-
             Bundle bundle = new Bundle();
+
             if (getIntent().getExtras().getString("tipo_licencia") != null) {
                 tipoLicencia = Utils.getLicenciaTipoFromString(GuiaFormActivity.this, getIntent().getExtras().getString("tipo_licencia"));
                 if (tipoLicencia == 4) {  // E - Escopeta
-                    if(checkMaxGuiasForLicenciaTipoE(marca))
+                    if(checkMaxGuiasForLicenciaTipoE(marca)) { // Maximo: 12 guias
                         return false;
+                    }
+                    if (tipoArma.getSelectedItemPosition() == 0) { // Arma: escopeta
+                        if (checkMaxGuiasEscopeta(marca)) {
+                            return false;
+                        }
+                    } else if (tipoArma.getSelectedItemPosition() == 1) { // Arma: rifle
+                        if (checkMaxGuiasRifle(marca)) {
+                            return false;
+                        }
+                    }
                 } else if(tipoLicencia == 5) { // F - Tiro olimpico
-                    // TODO Queda contar el numero de guias guardadas en BBDD para la maxCategoria e ir actualizando el limite cada vez que se guarda una
-                    // TODO En funcion de la categoria, el nº de guias asocias a F
-                    int maxCategoria = Utils.getMaxCategoria(GuiaFormActivity.this);
+                    // Se revisa el numero de guias maximas en funcion de la categoria
+                    if(checkNumGuiasMaxLicenciaTipoF(marca, Utils.getMaxCategoria(GuiaFormActivity.this))) {
+                        return false;
+                    }
                 }
             } else {
                 tipoLicencia = ((Guia) getIntent().getExtras().getParcelable("modify_guia")).getTipoLicencia();
                 if (tipoLicencia == 4) {  // E - Escopeta
-                    if(checkMaxGuiasForLicenciaTipoE(marca)) {
-                        return false;
+                    if (tipoArma.getSelectedItemPosition() == 0) { // Arma: escopeta
+                        if (checkMaxGuiasEscopeta(marca)) {
+                            return false;
+                        }
+                    } else if (tipoArma.getSelectedItemPosition() == 1) { // Arma: rifle
+                        if (checkMaxGuiasRifle(marca)) {
+                            return false;
+                        }
                     }
-                }else if(tipoLicencia == 5) { // F - Tiro olimpico
-                    // TODO Queda contar el numero de guias guardadas en BBDD para la maxCategoria e ir actualizando el limite cada vez que se guarda una
-                    // TODO En funcion de la categoria, el nº de guias asocias a F
-                    int maxCategoria = Utils.getMaxCategoria(GuiaFormActivity.this);
                 }
             }
             bundle.putInt("tipoLicencia", tipoLicencia);
@@ -372,7 +392,7 @@ public class GuiaFormActivity extends AppCompatActivity {
 
     private boolean checkMaxGuiasForLicenciaTipoE(View view) {
         dbSqlHelper = new DataBaseSQLiteHelper(getApplicationContext());
-        if(dbSqlHelper.getNumLicenciasTipoE() >= 6) {
+        if(dbSqlHelper.getNumLicenciasTipoE() >= MAXIMO_GUIAS_LICENCIA_TIPO_E) {
             Snackbar.make(view, R.string.dialog_guia_licencia_tipoE, Snackbar.LENGTH_LONG)
                     .setAction(android.R.string.ok, null)
                     .show();
@@ -380,33 +400,52 @@ public class GuiaFormActivity extends AppCompatActivity {
         }
         return false;
     }
-    // TODO Queda contar el numero de guias guardadas en BBDD para la maxCategoria e ir actualizando el limite cada vez que se guarda una
-//    private boolean checkMaxGuiasCategoria(View view) {
-//        dbSqlHelper = new DataBaseSQLiteHelper(getApplicationContext());
-        // 1ª Categoria
-//        if(dbSqlHelper.getLicenciasFederativas() >= 1) {
-//            Snackbar.make(view, R.string.dialog_guia_licencia_federativa_categoria3, Snackbar.LENGTH_LONG)
-//                    .setAction(android.R.string.ok, null)
-//                    .show();
-//            return true;
-//        }
-//        // 2ª Categoria
-//        else if(dbSqlHelper.getLicenciasFederativas() >= 6) {
-//            Snackbar.make(view, R.string.dialog_guia_licencia_federativa_categoria2, Snackbar.LENGTH_LONG)
-//                    .setAction(android.R.string.ok, null)
-//                    .show();
-//            return true;
-//        }
+
+    private boolean checkMaxGuiasEscopeta(View view) {
+        dbSqlHelper = new DataBaseSQLiteHelper(getApplicationContext());
+        if(dbSqlHelper.getNumGuiasLicenciaTipoEscopeta() >= MAXIMO_GUIAS_LICENCIA_TIPO_E_ESCOPETA) {
+            Snackbar.make(view, R.string.dialog_guia_licencia_tipoE_escopeta, Snackbar.LENGTH_LONG)
+                    .setAction(android.R.string.ok, null)
+                    .show();
+            return true;
+        }
+        return false;
+    }
+
+    private boolean checkMaxGuiasRifle(View view) {
+        dbSqlHelper = new DataBaseSQLiteHelper(getApplicationContext());
+        if(dbSqlHelper.getNumGuiasLicenciaTipoRifle() >= MAXIMO_GUIAS_LICENCIA_TIPO_E_RIFLE) {
+            Snackbar.make(view, R.string.dialog_guia_licencia_tipoE_rifle, Snackbar.LENGTH_LONG)
+                    .setAction(android.R.string.ok, null)
+                    .show();
+            return true;
+        }
+        return false;
+    }
+    private boolean checkNumGuiasMaxLicenciaTipoF(View view, int maxCategoria) {
         // 3ª Categoria
-//        else if(dbSqlHelper.getGuiasCategoria1() >= 10) {
-//            Snackbar.make(view, R.string.dialog_guia_licencia_federativa_categoria1, Snackbar.LENGTH_LONG)
-//                    .setAction(android.R.string.ok, null)
-//                    .show();
-//            return true;
-//        }
-//        ArrayList<Guia> lista = dbSqlHelper.getListGuiasCategorias();
-//        return false;
-//    }
+        if(maxCategoria == 2 && Utils.getNumGuias(GuiaFormActivity.this) >= GUIAS_MAXIMAS_TERCERA_CATEGORIA) {
+            Snackbar.make(view, R.string.dialog_guia_licencia_federativa_categoria3, Snackbar.LENGTH_LONG)
+                    .setAction(android.R.string.ok, null)
+                    .show();
+            return true;
+        }
+        // 2ª Categoria
+        else if(maxCategoria == 1 && Utils.getNumGuias(GuiaFormActivity.this) >= GUIAS_MAXIMAS_SEGUNDA_CATEGORIA) {
+            Snackbar.make(view, R.string.dialog_guia_licencia_federativa_categoria2, Snackbar.LENGTH_LONG)
+                    .setAction(android.R.string.ok, null)
+                    .show();
+            return true;
+        }
+        // 1ª Categoria
+        else if(maxCategoria == 0 && Utils.getNumGuias(GuiaFormActivity.this) >= GUIAS_MAXIMAS_PRIMERA_CATEGORIA) {
+            Snackbar.make(view, R.string.dialog_guia_licencia_federativa_categoria1, Snackbar.LENGTH_LONG)
+                    .setAction(android.R.string.ok, null)
+                    .show();
+            return true;
+        }
+        return false;
+    }
 
     private boolean validateForm() {
         boolean retorno = true;

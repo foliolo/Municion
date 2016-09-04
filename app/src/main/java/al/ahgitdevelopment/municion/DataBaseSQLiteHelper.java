@@ -311,7 +311,7 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
         );
     }
 
-    public Cursor getCursorGuiasQueries(SQLiteDatabase db) {
+    public Cursor getCursorMaxGuiasLicenciaE(SQLiteDatabase db) {
         String selection = KEY_GUIA_ID_LICENCIA + " = ?";
         String[] selectionArgs = {"4"};
         if (db == null)
@@ -327,14 +327,37 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
         );
     }
 
-// TODO Queda contar el numero de guias guardadas en BBDD para la maxCategoria e ir actualizando el limite cada vez que se guarda una
-//    public Cursor getGuiasCategoria(SQLiteDatabase db) {
-//        if (db == null)
-//            db = this.getWritableDatabase();
-//        String query = "SELECT * FROM guias g INNER JOIN licencias l ON g.id_licencia=l.tipo WHERE l.categoria=?";
-//        return db.rawQuery(query, new String[]{"0"});
-//    }
-//
+    public Cursor getCursorMaxGuiasEscopeta(SQLiteDatabase db) {
+        String selection = KEY_GUIA_ID_LICENCIA + " = ?" + " AND " + KEY_GUIA_TIPO_ARMA + " = ?";
+        String[] selectionArgs = {"4", "0"};
+        if (db == null)
+            db = this.getWritableDatabase();
+        return db.query(
+                DataBaseSQLiteHelper.TABLE_GUIAS,  //Nombre de la tabla
+                null,  //Lista de Columnas a consultar
+                selection,  //Columnas para la clausula WHERE
+                selectionArgs,  //Valores a comparar con las columnas del WHERE
+                null,  //Agrupar con GROUP BY
+                null,  //Condición HAVING para GROUP BY
+                null  //Clausula ORDER BY
+        );
+    }
+
+    public Cursor getCursorMaxGuiasRifle(SQLiteDatabase db) {
+        String selection = KEY_GUIA_ID_LICENCIA + " = ?" + " AND " + KEY_GUIA_TIPO_ARMA + " = ?";
+        String[] selectionArgs = {"4", "1"};
+        if (db == null)
+            db = this.getWritableDatabase();
+        return db.query(
+                DataBaseSQLiteHelper.TABLE_GUIAS,  //Nombre de la tabla
+                null,  //Lista de Columnas a consultar
+                selection,  //Columnas para la clausula WHERE
+                selectionArgs,  //Valores a comparar con las columnas del WHERE
+                null,  //Agrupar con GROUP BY
+                null,  //Condición HAVING para GROUP BY
+                null  //Clausula ORDER BY
+        );
+    }
 
     public ArrayList<Guia> getListGuias(SQLiteDatabase db) {
         if (db == null)
@@ -565,15 +588,18 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
 
     public int getNumLicenciasTipoE() {
         SQLiteDatabase db = this.getReadableDatabase();
-        return getCursorGuiasQueries(db).getCount();
+        return getCursorMaxGuiasLicenciaE(db).getCount();
     }
 
-    // TODO Queda contar el numero de guias guardadas en BBDD para la maxCategoria e ir actualizando el limite cada vez que se guarda una
-//    public int getGuiasCategoria() {
-//        SQLiteDatabase db = this.getReadableDatabase();
-//        return getGuiasCategoria1(db).getCount();
-//    }
-//
+    public int getNumGuiasLicenciaTipoEscopeta() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        return getCursorMaxGuiasEscopeta(db).getCount();
+    }
+
+    public int getNumGuiasLicenciaTipoRifle() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        return getCursorMaxGuiasRifle(db).getCount();
+    }
 
 }
 

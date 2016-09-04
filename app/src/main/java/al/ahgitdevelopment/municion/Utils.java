@@ -44,7 +44,6 @@ public final class Utils {
                     !licenseName.equals("Federativa de tiro"))
                 list.add(licenseName);
         }
-
         return list.toArray(new CharSequence[list.size()]);
     }
 
@@ -217,6 +216,22 @@ public final class Utils {
         return -1;
     }
 
+    /**
+     * Metodo que devuelve el numero de guias de tipo F creadas
+     *
+     * @param context Necesario para acceder a getResources
+     * @return tamaño de la lista de guias
+     */
+    public static int getNumGuias(Context context) {
+        ArrayList<Integer> list = new ArrayList<Integer>();
+        for (Guia guia : FragmentMainActivity.guias) {
+            String licenseName = Utils.getStringLicenseFromId(context, guia.getTipoLicencia());
+            if (licenseName.equals("F - Tiro olimpico") ) {
+                list.add(guia.getNumGuia());
+            }
+        }
+        return list.size();
+    }
 
     public static AdRequest getAdRequest(final View view) {
         // Read from the database
