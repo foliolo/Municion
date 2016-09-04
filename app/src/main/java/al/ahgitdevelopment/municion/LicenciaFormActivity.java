@@ -29,7 +29,6 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.ads.AdView;
 
@@ -404,9 +403,10 @@ public class LicenciaFormActivity extends AppCompatActivity {
 
             PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-            long futureInMillis = caducidad.getTimeInMillis() - Calendar.getInstance().getTimeInMillis();
+//            long futureInMillis = caducidad.getTimeInMillis() - Calendar.getInstance().getTimeInMillis();
+
             AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-            alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, futureInMillis, pendingIntent);
+            alarmManager.set(AlarmManager.RTC_WAKEUP, caducidad.getTimeInMillis(), pendingIntent);
 
             //Gestion de las notificaciones
             int pos;
@@ -414,13 +414,14 @@ public class LicenciaFormActivity extends AppCompatActivity {
                 pos = getIntent().getExtras().getInt("position", -1);
             else
                 pos = -1;
+
             Utils.addNotificationToSharedPreferences(this, pos);
 
-            Toast.makeText(LicenciaFormActivity.this, "Notificacion creada para el día: " + fechaCaducidad.getText().toString(), Toast.LENGTH_LONG).show();
         } catch (ParseException ex) {
             Log.e(getPackageName(), "Fallo al crear la notificacion", ex);
         }
     }
+//    https://developer.android.com/training/scheduling/alarms.html
 
     /**
      * Creación de la notificación.
@@ -454,7 +455,7 @@ public class LicenciaFormActivity extends AppCompatActivity {
                         .setContentText("Tu licencia caduca hoy")
                         .setSubText(Utils.getStringLicenseFromId(
                                 LicenciaFormActivity.this,
-                                tipoLicencia.getSelectedItemPosition()).toString() + ": " + numLicencia.getText().toString())
+                                tipoLicencia.getSelectedItemPosition()) + ": " + numLicencia.getText().toString())
                         .setContentIntent(resultPendingIntent)
                         .setAutoCancel(true)
                         .setPriority(Notification.PRIORITY_LOW)
@@ -466,7 +467,7 @@ public class LicenciaFormActivity extends AppCompatActivity {
     /**
      * Devuelve los datos de la interfaz en un objeto licencia
      *
-     * @return
+     * @return Objeto licencia con todos los datos del formulario
      */
     private Licencia getCurrenteLicense() {
         Licencia licencia = new Licencia();

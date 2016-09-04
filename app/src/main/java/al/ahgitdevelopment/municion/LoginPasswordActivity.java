@@ -23,7 +23,6 @@ import com.google.android.gms.ads.AdView;
 import com.google.firebase.analytics.FirebaseAnalytics;
 
 public class LoginPasswordActivity extends AppCompatActivity {
-    //    private FirebaseDatabase mFirebaseDatabase;
     private FirebaseAnalytics mFirebaseAnalytics;
     private SharedPreferences prefs;
 
@@ -32,8 +31,6 @@ public class LoginPasswordActivity extends AppCompatActivity {
     private TextInputLayout textInputLayout2;
     private TextInputEditText password2;
     private Button button;
-
-    private Boolean value;
 
     /**
      * Inicializa la actividad
@@ -46,10 +43,6 @@ public class LoginPasswordActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setIcon(R.mipmap.ic_launcher_4_transparent);
-
-        // Obtain the Firebase BBDD instance
-//        FirebaseDatabase database = FirebaseDatabase.getInstance().getReference("https://municion-95caa.firebaseio.com/");
-//        mFirebaseDatabase = FirebaseDatabase.getInstance();
 
         // Obtain the FirebaseAnalytics instance.
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
@@ -136,32 +129,6 @@ public class LoginPasswordActivity extends AppCompatActivity {
             public void afterTextChanged(Editable s) {
             }
         });
-
-        //Admob
-//        value = false;
-//        DatabaseReference myRef = mFirebaseDatabase.getReference("settings/ads");
-//        // Read from the database
-//        myRef.addValueEventListener(new ValueEventListener() {
-//
-//            @Override
-//            public void onDataChange(DataSnapshot dataSnapshot) {
-//                // This method is called once with the initial value and again
-//                // whenever data at this location is updated.
-//                AdView mAdView = (AdView) findViewById(R.id.adView);
-//                if (dataSnapshot.getValue(Boolean.class)) {
-//                    mAdView.loadAd(Utils.getAdRequest());
-//                    mAdView.setVisibility(View.VISIBLE);
-//                } else {
-//                    mAdView.setVisibility(View.GONE);
-//                }
-//            }
-//
-//            @Override
-//            public void onCancelled(DatabaseError error) {
-//                // Failed to read value
-//                Log.w(getPackageName(), "Failed to read value.", error.toException());
-//            }
-//        });
 
         AdView mAdView = (AdView) findViewById(R.id.adView);
         mAdView.loadAd(Utils.getAdRequest(mAdView));
