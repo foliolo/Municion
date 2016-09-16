@@ -42,7 +42,9 @@ public class LoginPasswordActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
-        getSupportActionBar().setIcon(R.mipmap.ic_launcher_4_transparent);
+        getSupportActionBar().setIcon(R.drawable.ic_bullseye);
+        getSupportActionBar().setTitle(getString(R.string.app_name).toUpperCase());
+
 
         // Obtain the FirebaseAnalytics instance.
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
@@ -62,10 +64,10 @@ public class LoginPasswordActivity extends AppCompatActivity {
         // Registro de contraseña
         if (!prefs.contains("password")) {
             textInputLayout2.setVisibility(View.VISIBLE);
-            button.setText(R.string.guardar);
+//            button.setText(R.string.guardar);
         } else {
             textInputLayout2.setVisibility(View.GONE);
-            button.setText(R.string.login);
+//            button.setText(R.string.login);
         }
         //Añadimos la contraseña a las preferencias
         button.setOnClickListener(new View.OnClickListener() {

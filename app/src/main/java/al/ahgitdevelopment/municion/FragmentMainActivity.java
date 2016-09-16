@@ -133,7 +133,7 @@ public class FragmentMainActivity extends AppCompatActivity {
         toolbar.setCollapsible(false);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
-        getSupportActionBar().setIcon(R.mipmap.ic_launcher_4_transparent);
+        getSupportActionBar().setIcon(R.drawable.ic_bullseye);
 
         // Instanciamos la base de datos
         dbSqlHelper = new DataBaseSQLiteHelper(getApplicationContext());

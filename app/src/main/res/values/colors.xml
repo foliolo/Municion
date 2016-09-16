@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3f51b5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#FF4081</color>
+    <color name="colorPrimary">#ff13747d</color>
+    <color name="colorPrimaryDark">#ff29221f</color>
+    <color name="colorAccent">#fffc354c</color>
+    <color name="statusBarColor">#ff29221f</color>
+    <color name="navigation">#ff29221f</color>
+
     <color name="selected">#acb3b4</color>
     <color name="control_background">#cc4285f4</color>
 </resources>

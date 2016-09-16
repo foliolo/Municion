@@ -74,8 +74,7 @@ public class LicenciaFormActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.form_licencia);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
-        getSupportActionBar().setIcon(R.mipmap.ic_launcher_4_transparent);
+        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_bullseye);
 
         tipoLicencia = (AppCompatSpinner) findViewById(R.id.form_tipo_licencia);
         layoutPermisoConducir = (LinearLayout) findViewById(R.id.layout_permiso_conducir);

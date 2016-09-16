@@ -5,8 +5,9 @@
       tools:context="al.ahgitdevelopment.municion.FragmentMainActivity">
     <item
         android:id="@+id/action_settings"
-        android:icon="@android:drawable/ic_menu_manage"
+        android:icon="@drawable/ic_settings"
         android:orderInCategory="100"
         android:title="@string/action_settings"
         app:showAsAction="ifRoom"/>
+    <!--app:srcCompat="@drawable/ic_settings"-->
 </menu>

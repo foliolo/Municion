@@ -34,6 +34,14 @@ import al.ahgitdevelopment.municion.DataModel.Guia;
  * Created by Alberto on 25/03/2016.
  */
 public class GuiaFormActivity extends AppCompatActivity {
+    // Constantes para guias maximas para Licencia E por arma
+    public static final int MAXIMO_GUIAS_LICENCIA_TIPO_E = 12;
+    public static final int MAXIMO_GUIAS_LICENCIA_TIPO_E_ESCOPETA = 6;
+    public static final int MAXIMO_GUIAS_LICENCIA_TIPO_E_RIFLE = 6;
+    // Constantes para guias maximas por categoria Licencia F
+    private final int GUIAS_MAXIMAS_PRIMERA_CATEGORIA = 10;
+    private final int GUIAS_MAXIMAS_SEGUNDA_CATEGORIA = 6;
+    private final int GUIAS_MAXIMAS_TERCERA_CATEGORIA = 1;
     private ArrayList<String> finalWeapons = new ArrayList<>();
     private int tipoLicencia;
     private EditText marca;
@@ -52,14 +60,6 @@ public class GuiaFormActivity extends AppCompatActivity {
     private TextView mensajeError;
     private String imagePath;
     private DataBaseSQLiteHelper dbSqlHelper;
-    // Constantes para guias maximas para Licencia E por arma
-    public static final int MAXIMO_GUIAS_LICENCIA_TIPO_E = 12;
-    public static final int MAXIMO_GUIAS_LICENCIA_TIPO_E_ESCOPETA = 6;
-    public static final int MAXIMO_GUIAS_LICENCIA_TIPO_E_RIFLE = 6;
-    // Constantes para guias maximas por categoria Licencia F
-    private final int GUIAS_MAXIMAS_PRIMERA_CATEGORIA = 10;
-    private final int GUIAS_MAXIMAS_SEGUNDA_CATEGORIA = 6;
-    private final int GUIAS_MAXIMAS_TERCERA_CATEGORIA = 1;
 
     /**
      * Inicializa la actividad
@@ -70,8 +70,9 @@ public class GuiaFormActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.form_guia);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
-        getSupportActionBar().setIcon(R.mipmap.ic_launcher_4_transparent);
+//        getSupportActionBar().setDisplayShowHomeEnabled(true);
+//        getSupportActionBar().setIcon(R.mipmap.ic_launcher_4_transparent);
+        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_bullseye);
 
         marca = (EditText) findViewById(R.id.form_marca);
         modelo = (EditText) findViewById(R.id.form_modelo);

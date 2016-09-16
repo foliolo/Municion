@@ -66,8 +66,9 @@ public class CompraFormActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.form_compra);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
-        getSupportActionBar().setIcon(R.mipmap.ic_launcher_4_transparent);
+//        getSupportActionBar().setDisplayShowHomeEnabled(true);
+//        getSupportActionBar().setIcon(R.mipmap.ic_launcher_4_transparent);
+        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_bullseye);
 
         calibre1 = (EditText) findViewById(R.id.form_calibre1);
         checkSegundoCalibre = (CheckBox) findViewById(R.id.form_check_segundo_calibre);
