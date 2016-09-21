@@ -13,6 +13,7 @@
         android:layout_height="wrap_content"
         android:layout_above="@+id/adView"
         android:layout_alignParentTop="true"
+        android:layout_alignWithParentIfMissing="true"
         android:fitsSystemWindows="true">
 
         <android.support.design.widget.AppBarLayout
@@ -71,6 +72,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_gravity="end|bottom"
+        android:visibility="gone"
         app:adSize="SMART_BANNER"
         app:adUnitId="@string/banner_main_id">
     </com.google.android.gms.ads.AdView>
