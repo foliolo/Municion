@@ -19,7 +19,6 @@
         <activity
             android:name=".LoginPasswordActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/BarTheme"
             android:windowSoftInputMode="stateVisible">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
@@ -35,20 +34,17 @@
         <activity
             android:name=".GuiaFormActivity"
             android:label="@string/title_nueva_guia"
-            android:theme="@style/BarTheme"
             android:windowSoftInputMode="stateHidden"/>
 
         <activity
             android:name=".CompraFormActivity"
             android:label="@string/title_nueva_compra"
-            android:theme="@style/BarTheme"
             android:windowSoftInputMode="stateHidden"/>
 
         <activity
             android:name=".LicenciaFormActivity"
             android:label="@string/title_nueva_licencia"
             android:parentActivityName=".FragmentMainActivity"
-            android:theme="@style/BarTheme"
             android:windowSoftInputMode="stateHidden">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -57,8 +53,7 @@
 
         <activity
             android:name=".SettingsActivity"
-            android:label="@string/title_activity_settings"
-            android:theme="@style/BarTheme"/>
+            android:label="@string/title_activity_settings"/>
 
         <receiver android:name=".NotificationPublisher"/>
     </application>

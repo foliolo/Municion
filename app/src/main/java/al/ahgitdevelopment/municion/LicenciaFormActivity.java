@@ -17,6 +17,7 @@ import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatSpinner;
+import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.text.format.DateFormat;
@@ -49,6 +50,7 @@ public class LicenciaFormActivity extends AppCompatActivity {
     private TextInputLayout textInputLayoutLicencia;
     private TextInputLayout layoutFechaExpedicion;
     private TextInputLayout layoutFechaCaducidad;
+    private TextInputLayout layoutNumAbonado;
     private TextInputLayout layoutEdad;
     private AppCompatSpinner tipoLicencia;
     private AppCompatSpinner tipoPermisoConducir;
@@ -65,6 +67,8 @@ public class LicenciaFormActivity extends AppCompatActivity {
     private TextView lblCategoria;
     private AppCompatSpinner categoria;
 
+    private Toolbar toolbar;
+
     /**
      * Inicializa la actividad
      *
@@ -74,7 +78,14 @@ public class LicenciaFormActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.form_licencia);
-        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_bullseye);
+
+        // Toolbar
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setTitle(R.string.app_name);
+        toolbar.setSubtitle(R.string.title_nueva_licencia);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setIcon(R.drawable.ic_bullseye);
 
         tipoLicencia = (AppCompatSpinner) findViewById(R.id.form_tipo_licencia);
         layoutPermisoConducir = (LinearLayout) findViewById(R.id.layout_permiso_conducir);
@@ -84,6 +95,7 @@ public class LicenciaFormActivity extends AppCompatActivity {
         fechaExpedicion = (EditText) findViewById(R.id.form_fecha_expedicion);
         layoutFechaCaducidad = (TextInputLayout) findViewById(R.id.layout_form_fecha_caducidad);
         fechaCaducidad = (EditText) findViewById(R.id.form_fecha_caducidad);
+        layoutNumAbonado = (TextInputLayout) findViewById(R.id.layout_form_num_abonado);
         numAbonado = (EditText) findViewById(R.id.form_num_abonado);
         numSeguro = (EditText) findViewById(R.id.form_num_poliza);
         layoutCCAA = (LinearLayout) findViewById(R.id.layout_ccaa);
@@ -481,7 +493,7 @@ public class LicenciaFormActivity extends AppCompatActivity {
             licencia.setNumLicencia(Integer.parseInt(String.valueOf(numLicencia.getText())));
             licencia.setFechaExpedicion(fechaExpedicion.getText().toString());
             licencia.setFechaCaducidad(fechaCaducidad.getText().toString());
-            if (numAbonado.getVisibility() == View.VISIBLE) {
+            if (layoutNumAbonado.getVisibility() == View.VISIBLE) {
                 if (numAbonado.getText().toString().equals(""))
                     licencia.setNumAbonado(0);
                 else
@@ -581,7 +593,7 @@ public class LicenciaFormActivity extends AppCompatActivity {
             case 8:
                 textInputLayoutLicencia.setHint(getResources().getString(R.string.lbl_num_licencia));
                 ((LinearLayout.LayoutParams) textInputLayoutLicencia.getLayoutParams()).setMargins(0, 0, 0, 0);
-                numAbonado.setVisibility(View.GONE);
+                layoutNumAbonado.setVisibility(View.GONE);
                 numSeguro.setVisibility(View.GONE);
                 layoutCCAA.setVisibility(View.GONE);
                 layoutPermisoConducir.setVisibility(View.GONE);
@@ -593,7 +605,7 @@ public class LicenciaFormActivity extends AppCompatActivity {
             case 10:
                 textInputLayoutLicencia.setHint(getResources().getString(R.string.lbl_num_licencia));
                 ((LinearLayout.LayoutParams) textInputLayoutLicencia.getLayoutParams()).setMargins(0, 0, 0, 0);
-                numAbonado.setVisibility(View.VISIBLE);
+                layoutNumAbonado.setVisibility(View.VISIBLE);
                 numSeguro.setVisibility(View.VISIBLE);
                 layoutCCAA.setVisibility(View.VISIBLE);
                 layoutPermisoConducir.setVisibility(View.GONE);
@@ -603,7 +615,7 @@ public class LicenciaFormActivity extends AppCompatActivity {
             case 11:
                 textInputLayoutLicencia.setHint(getResources().getString(R.string.lbl_num_licencia));
                 ((LinearLayout.LayoutParams) textInputLayoutLicencia.getLayoutParams()).setMargins(0, 10, 0, 0);
-                numAbonado.setVisibility(View.VISIBLE);
+                layoutNumAbonado.setVisibility(View.VISIBLE);
                 numSeguro.setVisibility(View.GONE);
                 layoutCCAA.setVisibility(View.VISIBLE);
                 layoutPermisoConducir.setVisibility(View.GONE);
@@ -613,7 +625,7 @@ public class LicenciaFormActivity extends AppCompatActivity {
             case 12:
                 textInputLayoutLicencia.setHint(getResources().getString(R.string.lbl_num_dni));
                 ((LinearLayout.LayoutParams) textInputLayoutLicencia.getLayoutParams()).setMargins(0, 10, 0, 0);
-                numAbonado.setVisibility(View.GONE);
+                layoutNumAbonado.setVisibility(View.GONE);
                 numSeguro.setVisibility(View.GONE);
                 layoutCCAA.setVisibility(View.GONE);
                 layoutPermisoConducir.setVisibility(View.VISIBLE);

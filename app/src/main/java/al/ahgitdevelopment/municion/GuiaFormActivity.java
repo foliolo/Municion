@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatSpinner;
+import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
@@ -34,15 +35,19 @@ import al.ahgitdevelopment.municion.DataModel.Guia;
  * Created by Alberto on 25/03/2016.
  */
 public class GuiaFormActivity extends AppCompatActivity {
+
     // Constantes para guias maximas para Licencia E por arma
     public static final int MAXIMO_GUIAS_LICENCIA_TIPO_E = 12;
     public static final int MAXIMO_GUIAS_LICENCIA_TIPO_E_ESCOPETA = 6;
     public static final int MAXIMO_GUIAS_LICENCIA_TIPO_E_RIFLE = 6;
+
     // Constantes para guias maximas por categoria Licencia F
     private final int GUIAS_MAXIMAS_PRIMERA_CATEGORIA = 10;
     private final int GUIAS_MAXIMAS_SEGUNDA_CATEGORIA = 6;
     private final int GUIAS_MAXIMAS_TERCERA_CATEGORIA = 1;
+
     private ArrayList<String> finalWeapons = new ArrayList<>();
+
     private int tipoLicencia;
     private EditText marca;
     private EditText modelo;
@@ -56,10 +61,13 @@ public class GuiaFormActivity extends AppCompatActivity {
     private CheckBox aumentoCupo;
     private EditText cupo;
     private EditText gastado;
+
     // Mensaje de error antes de guardar
     private TextView mensajeError;
     private String imagePath;
+
     private DataBaseSQLiteHelper dbSqlHelper;
+    private Toolbar toolbar;
 
     /**
      * Inicializa la actividad
@@ -70,9 +78,14 @@ public class GuiaFormActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.form_guia);
-//        getSupportActionBar().setDisplayShowHomeEnabled(true);
-//        getSupportActionBar().setIcon(R.mipmap.ic_launcher_4_transparent);
-        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_bullseye);
+
+        // Toolbar
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setTitle(R.string.app_name);
+        toolbar.setSubtitle(R.string.title_nueva_guia);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setIcon(R.drawable.ic_bullseye);
 
         marca = (EditText) findViewById(R.id.form_marca);
         modelo = (EditText) findViewById(R.id.form_modelo);

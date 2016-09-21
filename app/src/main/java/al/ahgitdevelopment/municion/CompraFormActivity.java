@@ -10,6 +10,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.text.format.DateFormat;
@@ -55,6 +56,7 @@ public class CompraFormActivity extends AppCompatActivity {
     private String imagePath;
 
     private int posicionGuia;
+    private Toolbar toolbar;
 
 
     /**
@@ -66,9 +68,14 @@ public class CompraFormActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.form_compra);
-//        getSupportActionBar().setDisplayShowHomeEnabled(true);
-//        getSupportActionBar().setIcon(R.mipmap.ic_launcher_4_transparent);
-        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_bullseye);
+
+        // Toolbar
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setTitle(R.string.app_name);
+        toolbar.setSubtitle(R.string.title_nueva_compra);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setIcon(R.drawable.ic_bullseye);
 
         calibre1 = (EditText) findViewById(R.id.form_calibre1);
         checkSegundoCalibre = (CheckBox) findViewById(R.id.form_check_segundo_calibre);

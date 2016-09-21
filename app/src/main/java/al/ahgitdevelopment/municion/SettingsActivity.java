@@ -15,9 +15,11 @@ import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
 import android.preference.RingtonePreference;
-import android.support.v7.app.ActionBar;
+import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
+import android.widget.LinearLayout;
 
 import java.util.List;
 
@@ -85,6 +87,8 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         }
     };
 
+    private Toolbar toolbar;
+
     /**
      * Helper method to determine if the device has an extra-large screen. For
      * example, 10" tablets are extra-large.
@@ -125,11 +129,24 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
      * Set up the {@link android.app.ActionBar}, if the API is available.
      */
     private void setupActionBar() {
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            // Show the Up button in the action bar.
-            actionBar.setDisplayHomeAsUpEnabled(true);
-        }
+
+        LinearLayout root = (LinearLayout) findViewById(android.R.id.list).getParent().getParent().getParent();
+        LinearLayout llc = (LinearLayout) LayoutInflater.from(this).inflate(R.layout.basic_toolbar, root, false);
+        root.addView(llc, 0);
+
+
+        toolbar = (Toolbar) root.findViewById(R.id.toolbar);
+        toolbar.setTitle(R.string.app_name);
+        toolbar.setSubtitle(R.string.title_activity_settings);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setIcon(R.drawable.ic_bullseye);
+
+//        ActionBar actionBar = getSupportActionBar(toolbar);
+//        if (actionBar != null) {
+//            // Show the Up button in the action bar.
+//            actionBar.setDisplayHomeAsUpEnabled(true);
+//        }
     }
 
     /**

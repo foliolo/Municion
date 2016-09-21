@@ -129,8 +129,7 @@ public class FragmentMainActivity extends AppCompatActivity {
         };
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setTitle(R.string.title_activity_fragment_main);
-        toolbar.setCollapsible(false);
+        toolbar.setTitle(R.string.app_name);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setIcon(R.drawable.ic_bullseye);

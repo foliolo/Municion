@@ -11,13 +11,6 @@
         <item name="windowActionModeOverlay">true</item>
     </style>
 
-    <!--Login with Action Bar-->
-    <style name="BarTheme" parent="Theme.AppCompat.Light.DarkActionBar">
-        <item name="colorPrimary">@color/colorPrimaryDark</item>
-        <item name="colorPrimaryDark">@color/colorPrimary</item>
-        <item name="colorAccent">@color/colorAccent</item>
-    </style>
-
     <!--AppBarLayout-->
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
         <item name="colorPrimary">@color/colorPrimaryDark</item>

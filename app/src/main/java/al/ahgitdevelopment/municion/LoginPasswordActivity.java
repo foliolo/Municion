@@ -8,6 +8,7 @@ import android.provider.Settings;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
@@ -23,9 +24,9 @@ import com.google.android.gms.ads.AdView;
 import com.google.firebase.analytics.FirebaseAnalytics;
 
 public class LoginPasswordActivity extends AppCompatActivity {
+    public Toolbar toolbar;
     private FirebaseAnalytics mFirebaseAnalytics;
     private SharedPreferences prefs;
-
     private TextInputLayout textInputLayout1;
     private TextInputEditText password1;
     private TextInputLayout textInputLayout2;
@@ -41,10 +42,14 @@ public class LoginPasswordActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        // Toolbar
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setTitle(R.string.app_name);
+        toolbar.setSubtitle(R.string.login);
+        setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setIcon(R.drawable.ic_bullseye);
-        getSupportActionBar().setTitle(getString(R.string.app_name).toUpperCase());
-
 
         // Obtain the FirebaseAnalytics instance.
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
