@@ -10,7 +10,7 @@
         android:layout_height="wrap_content"
         android:background="@color/colorPrimary"
         android:orientation="vertical"
-        android:paddingTop="@dimen/appbar_padding_top"
+        android:paddingTop="@dimen/appbar_small_line"
         android:theme="@style/AppTheme.AppBarOverlay">
 
         <android.support.v7.widget.Toolbar

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#ff13747d</color>
+    <color name="colorPrimary">#13747d</color>
     <color name="colorPrimaryDark">#ff29221f</color>
     <color name="colorAccent">#fffc354c</color>
     <color name="statusBarColor">#ff29221f</color>

@@ -18,6 +18,7 @@ import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Random;
 
 import al.ahgitdevelopment.municion.DataModel.Guia;
 import al.ahgitdevelopment.municion.DataModel.Licencia;
@@ -263,5 +264,42 @@ public final class Utils {
                 .addTestDevice("19DFD6D99DFA16A1568E51C0698B3E2F")  // Alberto device ID
                 .addTestDevice("4C85A173A9AA2C069D16A40A1AA0CFBC")  // David device ID
                 .build();
+    }
+
+    public static int getRandomWeapon() {
+        Random r = new Random();
+        int num = (r.nextInt(80) + 6500);
+
+        switch (num % 5) {
+            case 0:
+                return R.drawable.ic_pistola;
+            case 1:
+                return R.drawable.ic_revolver;
+            case 2:
+                return R.drawable.ic_rifle;
+            case 3:
+                return R.drawable.ic_avancarga;
+            case 4:
+                return R.drawable.ic_shotgun;
+            default:
+                return -1;
+        }
+    }
+
+    public static int getResourceWeapon(int tipoArma) {
+        switch (tipoArma) {
+            case 0:
+                return R.drawable.ic_pistola;
+            case 1:
+                return R.drawable.ic_shotgun;
+            case 2:
+                return R.drawable.ic_rifle;
+            case 3:
+                return R.drawable.ic_revolver;
+            case 4:
+                return R.drawable.ic_avancarga;
+            default:
+                return -1;
+        }
     }
 }

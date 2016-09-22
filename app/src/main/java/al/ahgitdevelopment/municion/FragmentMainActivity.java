@@ -391,7 +391,7 @@ public class FragmentMainActivity extends AppCompatActivity {
         dbSqlHelper.saveListLicencias(null, licencias);
         dbSqlHelper.close();
 
-        Toast.makeText(FragmentMainActivity.this, R.string.guardadoBBDD, Toast.LENGTH_SHORT).show();
+//        Toast.makeText(FragmentMainActivity.this, R.string.guardadoBBDD, Toast.LENGTH_SHORT).show();
     }
 
     private void updateImage(Bitmap imageBitmap) {

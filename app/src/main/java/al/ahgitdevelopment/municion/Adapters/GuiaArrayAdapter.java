@@ -2,7 +2,6 @@ package al.ahgitdevelopment.municion.Adapters;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
@@ -23,6 +22,7 @@ import java.util.List;
 import al.ahgitdevelopment.municion.DataModel.Guia;
 import al.ahgitdevelopment.municion.FragmentMainActivity;
 import al.ahgitdevelopment.municion.R;
+import al.ahgitdevelopment.municion.Utils;
 
 /**
  * Created by Alberto on 28/05/2016.
@@ -55,23 +55,26 @@ public class GuiaArrayAdapter extends ArrayAdapter<Guia> {
         TextView cupo = (TextView) convertView.findViewById(R.id.item_cupo_guia);
         TextView gastado = (TextView) convertView.findViewById(R.id.item_gastados_guia);
 
-        if (guia.getImagePath() != null && !guia.getImagePath().equals("null")) {
-            imagen.setImageBitmap(BitmapFactory.decodeFile(guia.getImagePath()));
-        } else {
-            imagen.setImageResource(R.drawable.pistola);
-        }
+//        if (guia.getImagePath() != null && !guia.getImagePath().equals("null")) {
+//            imagen.setImageBitmap(BitmapFactory.decodeFile(guia.getImagePath()));
+//        } else {
+//            imagen.setImageResource(Utils.getRandomWeapon());
+//        }
+
+        imagen.setImageResource(Utils.getResourceWeapon(guia.getTipoArma()));
         apodo.setText(guia.getApodo());
         numGuia.setText(String.valueOf(guia.getNumGuia()));
         cupo.setText(guia.getGastado() + " / " + guia.getCupo());
         gastado.setText(String.format("%.2f", (1.0 * guia.getGastado() / guia.getCupo() * 100)) + "%");
 
-        imagen.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                FragmentMainActivity.imagePosition = position;
-                dispatchTakePictureIntent();
-            }
-        });
+        //FIXME: A veces borra la imagen (Eliminar funcionalidad)
+//        imagen.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                FragmentMainActivity.imagePosition = position;
+//                dispatchTakePictureIntent();
+//            }
+//        });
 
         // Return the completed view to render on screen
         return convertView;

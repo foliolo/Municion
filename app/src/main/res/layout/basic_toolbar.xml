@@ -2,7 +2,9 @@
               xmlns:app="http://schemas.android.com/apk/res-auto"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
-              android:elevation="@dimen/appbar_padding_top">
+              android:elevation="@dimen/appbar_padding_top"
+              android:orientation="vertical">
+
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/appbar"
@@ -10,7 +12,7 @@
         android:layout_height="wrap_content"
         android:background="@color/colorPrimary"
         android:orientation="vertical"
-        android:paddingTop="@dimen/appbar_padding_top"
+        android:paddingTop="@dimen/appbar_small_line"
         android:theme="@style/AppTheme.AppBarOverlay">
 
         <android.support.v7.widget.Toolbar
@@ -21,5 +23,11 @@
             app:layout_scrollFlags="enterAlways"
             app:popupTheme="@style/AppTheme.PopupOverlay"/>
     </android.support.design.widget.AppBarLayout>
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="@color/colorAccent"/>
 
 </LinearLayout>

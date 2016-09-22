@@ -3,6 +3,7 @@ package al.ahgitdevelopment.municion;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.design.widget.TextInputEditText;
@@ -16,7 +17,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
-import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,7 +32,7 @@ public class LoginPasswordActivity extends AppCompatActivity {
     private TextInputEditText password1;
     private TextInputLayout textInputLayout2;
     private TextInputEditText password2;
-    private Button button;
+    private ImageView button;
 
     /**
      * Inicializa la actividad
@@ -64,7 +65,7 @@ public class LoginPasswordActivity extends AppCompatActivity {
         password1 = (TextInputEditText) findViewById(R.id.password1);
         textInputLayout2 = (TextInputLayout) findViewById(R.id.text_input_layout2);
         password2 = (TextInputEditText) findViewById(R.id.password2);
-        button = (Button) findViewById(R.id.continuar);
+        button = (ImageView) findViewById(R.id.continuar);
 
         // Registro de contraseña
         if (!prefs.contains("password")) {
@@ -106,8 +107,13 @@ public class LoginPasswordActivity extends AppCompatActivity {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 String pass = prefs.getString("password", "");
-                if (!pass.equals("") && !password1.getText().toString().equals(pass) && textInputLayout1.getError() != null)
+                if (!pass.equals("") && !password1.getText().toString().equals(pass) && textInputLayout1.getError() != null) {
                     textInputLayout1.setError(getString(R.string.password_equal_fail));
+
+                    Typeface typeface = Typeface.createFromAsset(getAssets(), "fonts/Relaway-Thin.ttf");
+                    textInputLayout1.setTypeface(typeface);
+
+                }
 
                 if (password1.getText().toString().equals(pass) && password1.getText().toString().length() >= 4)
                     textInputLayout1.setError(null);
