@@ -9,6 +9,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.DialogFragment;
@@ -470,7 +471,9 @@ public class LicenciaFormActivity extends AppCompatActivity {
                         .setContentIntent(resultPendingIntent)
                         .setAutoCancel(true)
                         .setPriority(Notification.PRIORITY_LOW)
-                        .setLights(Color.GREEN, 500, 500);
+                        .setLights(Color.GREEN, 500, 500)
+                        .setVibrate(new long[]{150, 300, 150, 400})
+                        .setSound(Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.glitchy_language));
 
         return mBuilder.build();
     }

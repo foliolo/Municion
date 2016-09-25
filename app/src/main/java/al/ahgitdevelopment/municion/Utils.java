@@ -286,20 +286,56 @@ public final class Utils {
         }
     }
 
-    public static int getResourceWeapon(int tipoArma) {
-        switch (tipoArma) {
-            case 0:
-                return R.drawable.ic_pistola;
-            case 1:
-                return R.drawable.ic_shotgun;
-            case 2:
-                return R.drawable.ic_rifle;
-            case 3:
-                return R.drawable.ic_revolver;
-            case 4:
-                return R.drawable.ic_avancarga;
-            default:
-                return -1;
+    public static int getResourceWeapon(int tipoLicencia, int tipoArma) {
+        if(tipoLicencia == 1) { // B - Defensa
+            switch (tipoArma) {
+                case 0:
+                    return R.drawable.ic_pistola;
+                case 1:
+                    return R.drawable.ic_revolver;
+            }
         }
+        else if(tipoLicencia == 2) { // C - Vigilante de seguridad / Escoltas
+            return R.drawable.ic_revolver;
+        }
+        else if(tipoLicencia == 3) { // D - Caza mayor
+            return R.drawable.ic_rifle;
+        }
+        else if(tipoLicencia == 4) { // E - Escopeta
+            switch (tipoArma) {
+                case 0:
+                    return R.drawable.ic_shotgun;
+                case 1:
+                    return R.drawable.ic_rifle;
+            }
+        }
+        else if(tipoLicencia == 6) { // AE - Autorización especial
+            return R.drawable.ic_avancarga;
+        }
+        else if(tipoLicencia == 7) { // AER - Autorización especial replicas
+            switch (tipoArma) {
+                case 0:
+                    return R.drawable.ic_pistola;
+                case 1:
+                    return R.drawable.ic_rifle;
+                case 2:
+                    return R.drawable.ic_revolver;
+            }
+        }
+        else { // Resto Licencias
+            switch (tipoArma) {
+                case 0:
+                    return R.drawable.ic_pistola;
+                case 1:
+                    return R.drawable.ic_shotgun;
+                case 2:
+                    return R.drawable.ic_rifle;
+                case 3:
+                    return R.drawable.ic_revolver;
+                case 4:
+                    return R.drawable.ic_avancarga;
+            }
+        }
+        return -1;
     }
 }

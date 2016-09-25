@@ -61,7 +61,7 @@ public class GuiaArrayAdapter extends ArrayAdapter<Guia> {
 //            imagen.setImageResource(Utils.getRandomWeapon());
 //        }
 
-        imagen.setImageResource(Utils.getResourceWeapon(guia.getTipoArma()));
+        imagen.setImageResource(Utils.getResourceWeapon(guia.getTipoLicencia(), guia.getTipoArma()));
         apodo.setText(guia.getApodo());
         numGuia.setText(String.valueOf(guia.getNumGuia()));
         cupo.setText(guia.getGastado() + " / " + guia.getCupo());

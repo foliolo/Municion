@@ -1,15 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="al.ahgitdevelopment.municion">
+    package="al.ahgitdevelopment.municion">
 
     <uses-feature
         android:name="android.hardware.camera"
-        android:required="true"/>
+        android:required="true" />
 
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permissison.ACCESS_NETWORK_STATE"/>
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permissison.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <!--android:supportsRtl="true"-->
     <application
@@ -21,25 +24,24 @@
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateVisible">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
-                <category android:name="android.intent.category.LAUNCHER"/>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
         <activity
             android:name=".FragmentMainActivity"
-            android:label="@string/title_activity_fragment_main">
-        </activity>
+            android:label="@string/title_activity_fragment_main"></activity>
 
         <activity
             android:name=".GuiaFormActivity"
             android:label="@string/title_nueva_guia"
-            android:windowSoftInputMode="stateHidden"/>
+            android:windowSoftInputMode="stateHidden" />
 
         <activity
             android:name=".CompraFormActivity"
             android:label="@string/title_nueva_compra"
-            android:windowSoftInputMode="stateHidden"/>
+            android:windowSoftInputMode="stateHidden" />
 
         <activity
             android:name=".LicenciaFormActivity"
@@ -48,14 +50,20 @@
             android:windowSoftInputMode="stateHidden">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".FragmentMainActivity"/>
+                android:value=".FragmentMainActivity" />
         </activity>
 
         <activity
             android:name=".SettingsActivity"
-            android:label="@string/title_activity_settings"/>
+            android:label="@string/title_activity_settings" />
 
-        <receiver android:name=".NotificationPublisher"/>
+        <receiver android:name=".NotificationPublisher"
+                  android:label="BroadcastReceiverAux">
+            <intent-filter>
+                <action android:name="ALARM" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>
