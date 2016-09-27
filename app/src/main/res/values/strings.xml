@@ -185,6 +185,7 @@
     <string name="banner_main_id">ca-app-pub-8582752139018186/4700666152</string>
     <string name="banner_formularios_id">ca-app-pub-8582752139018186/6177399356</string>
     <string name="banner_configuracion_id">ca-app-pub-8582752139018186/7654132558</string>
+
     <string name="guia_empty_list">Crea una LICENCIA de armas antes de añadir una GUIA</string>
     <string name="compra_empty_list">Crea una GUIA a la que asociar la COMPRA</string>
     <string name="licencia_empty_list">¿A qué esperas? Crea tu primera licencia</string>

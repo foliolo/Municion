@@ -66,6 +66,8 @@ public class FragmentMainActivity extends AppCompatActivity {
     private final int COMPRA_UPDATED = 5;
     private final int LICENCIA_UPDATED = 6;
     public Toolbar toolbar;
+    private TextView textEmptyList = null;
+
     /**
      * The {@link PagerAdapter} that will provide
      * fragments for each of the sections. We use a
@@ -135,6 +137,8 @@ public class FragmentMainActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setIcon(R.drawable.ic_bullseye);
 
+        textEmptyList = (TextView) findViewById(R.id.textEmptyList);
+
         // Instanciamos la base de datos
         dbSqlHelper = new DataBaseSQLiteHelper(getApplicationContext());
 
@@ -164,6 +168,31 @@ public class FragmentMainActivity extends AppCompatActivity {
                 if (mActionMode != null)
                     mActionMode.finish();
                 mActionMode = null;
+
+                textEmptyList.setVisibility(View.GONE);
+
+                //En caso de estar la lista vacía, indicamos un texto por defecto.
+                switch (position) {
+                    case 0:
+                        if (guias.size() == 0) {
+                            textEmptyList.setVisibility(View.VISIBLE);
+                            textEmptyList.setText(R.string.guia_empty_list);
+                        }
+                        break;
+
+                    case 1:
+                        if (compras.size() == 0) {
+                            textEmptyList.setVisibility(View.VISIBLE);
+                            textEmptyList.setText(R.string.compra_empty_list);
+                        }
+                        break;
+                    case 2:
+                        if (licencias.size() == 0) {
+                            textEmptyList.setVisibility(View.VISIBLE);
+                            textEmptyList.setText(R.string.licencia_empty_list);
+                        }
+                        break;
+                }
             }
 
             @Override
@@ -175,8 +204,40 @@ public class FragmentMainActivity extends AppCompatActivity {
         if (mViewPager != null)
             tabLayout.setupWithViewPager(mViewPager);
 
+
+        textEmptyList.setVisibility(View.GONE);
+
+        //En caso de estar la lista vacía, indicamos un texto por defecto.
+        switch (mViewPager.getCurrentItem()) {
+            case 0:
+                if (guias.size() == 0) {
+                    textEmptyList.setVisibility(View.VISIBLE);
+                    textEmptyList.setText(R.string.guia_empty_list);
+                }
+                break;
+
+            case 1:
+                if (compras.size() == 0) {
+                    textEmptyList.setVisibility(View.VISIBLE);
+                    textEmptyList.setText(R.string.compra_empty_list);
+                }
+                break;
+
+            case 2:
+                if (licencias.size() == 0) {
+                    textEmptyList.setVisibility(View.VISIBLE);
+                    textEmptyList.setText(R.string.licencia_empty_list);
+                }
+                break;
+
+            default:
+                textEmptyList.setVisibility(View.GONE);
+        }
+
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        if (fab != null) {
+        if (fab != null)
+
+        {
             fab.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -230,9 +291,46 @@ public class FragmentMainActivity extends AppCompatActivity {
             });
         }
 
-        //Admob
+        //Admob - TODO
         AdView mAdView = (AdView) findViewById(R.id.adView);
         mAdView.loadAd(Utils.getAdRequest(mAdView));
+    }
+
+    /**
+     * Dispatch onPause() to fragments.
+     */
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        textEmptyList.setVisibility(View.GONE);
+
+        //En caso de estar la lista vacía, indicamos un texto por defecto.
+        switch (mViewPager.getCurrentItem()) {
+            case 0:
+                if (guias.size() == 0) {
+                    textEmptyList.setVisibility(View.VISIBLE);
+                    textEmptyList.setText(R.string.guia_empty_list);
+                }
+                break;
+
+            case 1:
+                if (compras.size() == 0) {
+                    textEmptyList.setVisibility(View.VISIBLE);
+                    textEmptyList.setText(R.string.compra_empty_list);
+                }
+                break;
+
+            case 2:
+                if (licencias.size() == 0) {
+                    textEmptyList.setVisibility(View.VISIBLE);
+                    textEmptyList.setText(R.string.licencia_empty_list);
+                }
+                break;
+
+            default:
+                textEmptyList.setVisibility(View.GONE);
+        }
     }
 
     private void openForm(int position) {
@@ -506,7 +604,6 @@ public class FragmentMainActivity extends AppCompatActivity {
         public static CompraArrayAdapter compraArrayAdapter = null;
         public static LicenciaArrayAdapter licenciaArrayAdapter = null;
         private static ListView listView = null;
-        private static TextView textEmptyList = null;
 
         /**
          * Returns a new instance of this fragment for the given section
@@ -525,7 +622,6 @@ public class FragmentMainActivity extends AppCompatActivity {
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.list_view_pager, container, false);
 
-            textEmptyList = (TextView) rootView.findViewById(R.id.textEmptyList);
 
             switch (getArguments().getInt(ARG_SECTION_NUMBER)) {
                 case 0: // Lista de las guias
@@ -533,54 +629,18 @@ public class FragmentMainActivity extends AppCompatActivity {
                     guiaArrayAdapter = new GuiaArrayAdapter(getActivity(), R.layout.guia_item, guias);
                     listView = (ListView) rootView.findViewById(R.id.ListView);
                     listView.setAdapter(guiaArrayAdapter);
-
-                    try {
-                        //En caso de estar la lista vacía, indicamo un texto por defecto.
-                        if (guias.size() == 0) {
-                            textEmptyList.setVisibility(View.VISIBLE);
-                            textEmptyList.setText(R.string.guia_empty_list);
-                        } else {
-                            textEmptyList.setVisibility(View.GONE);
-                        }
-                    } catch (Exception ex) {
-                        Log.e(getContext().getPackageName(), "Error en el mensaje de guias por defecto");
-                    }
                     break;
 
                 case 1: // Lista de las compras
                     compraArrayAdapter = new CompraArrayAdapter(getActivity(), R.layout.compra_item, compras);
                     listView = (ListView) rootView.findViewById(R.id.ListView);
                     listView.setAdapter(compraArrayAdapter);
-
-                    try {
-                        //En caso de estar la lista vacía, indicamo un texto por defecto.
-                        if (compras.size() == 0) {
-                            textEmptyList.setVisibility(View.VISIBLE);
-                            textEmptyList.setText(R.string.compra_empty_list);
-                        } else {
-                            textEmptyList.setVisibility(View.GONE);
-                        }
-                    } catch (Exception ex) {
-                        Log.e(getContext().getPackageName(), "Error en el mensaje de compras por defecto");
-                    }
                     break;
 
                 case 2: // Lista de las licencias
                     licenciaArrayAdapter = new LicenciaArrayAdapter(getActivity(), R.layout.licencia_item, licencias);
                     listView = (ListView) rootView.findViewById(R.id.ListView);
                     listView.setAdapter(licenciaArrayAdapter);
-
-                    try {
-                        //En caso de estar la lista vacía, indicamo un texto por defecto.
-                        if (licencias.size() == 0) {
-                            textEmptyList.setVisibility(View.VISIBLE);
-                            textEmptyList.setText(R.string.licencia_empty_list);
-                        } else {
-                            textEmptyList.setVisibility(View.GONE);
-                        }
-                    } catch (Exception ex) {
-                        Log.e(getContext().getPackageName(), "Error en el mensaje de licencias por defecto");
-                    }
                     break;
             }
 

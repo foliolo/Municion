@@ -100,7 +100,7 @@ public class CompraFormActivity extends AppCompatActivity {
                     Compra compra = getIntent().getExtras().getParcelable("modify_compra");
 
                     calibre1.setText(compra.getCalibre1());
-                    if (compra.getCalibre2() != null) {
+                    if (compra.getCalibre2() != null && !"null".equals(compra.getCalibre2())) {
                         if (!"".equals(compra.getCalibre2().toString())) {
                             checkSegundoCalibre.setChecked(true);
                             calibre2.setVisibility(View.VISIBLE);
@@ -130,7 +130,7 @@ public class CompraFormActivity extends AppCompatActivity {
                 if (posicionGuia != -1) {
                     Guia guia = getIntent().getExtras().getParcelable("guia");
                     calibre1.setText(guia.getCalibre1());
-                    if (guia.getCalibre2() != null && !guia.getCalibre2().equals("")) {
+                    if (guia.getCalibre2() != null && !guia.getCalibre2().equals("") && !"null".equals(guia.getCalibre2())) {
                         checkSegundoCalibre.setChecked(true);
                         calibre2.setVisibility(View.VISIBLE);
                         calibre2.setText(guia.getCalibre2());
