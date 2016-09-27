@@ -5,8 +5,8 @@
         android:icon="@drawable/ic_info_black_24dp"
         android:title="@string/pref_header_general"/>
 
-    <header
-        android:id="@+id/list_notifications"
-        android:icon="@drawable/ic_notifications_black_24dp"
-        android:title="@string/pref_list_notification"/>
+    <!--<header-->
+    <!--android:id="@+id/list_notifications"-->
+    <!--android:icon="@drawable/ic_notifications_black_24dp"-->
+    <!--android:title="@string/pref_list_notification"/>-->
 </preference-headers>

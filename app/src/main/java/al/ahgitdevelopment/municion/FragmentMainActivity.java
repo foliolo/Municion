@@ -169,30 +169,7 @@ public class FragmentMainActivity extends AppCompatActivity {
                     mActionMode.finish();
                 mActionMode = null;
 
-                textEmptyList.setVisibility(View.GONE);
-
-                //En caso de estar la lista vacía, indicamos un texto por defecto.
-                switch (position) {
-                    case 0:
-                        if (guias.size() == 0) {
-                            textEmptyList.setVisibility(View.VISIBLE);
-                            textEmptyList.setText(R.string.guia_empty_list);
-                        }
-                        break;
-
-                    case 1:
-                        if (compras.size() == 0) {
-                            textEmptyList.setVisibility(View.VISIBLE);
-                            textEmptyList.setText(R.string.compra_empty_list);
-                        }
-                        break;
-                    case 2:
-                        if (licencias.size() == 0) {
-                            textEmptyList.setVisibility(View.VISIBLE);
-                            textEmptyList.setText(R.string.licencia_empty_list);
-                        }
-                        break;
-                }
+                ShowTextEmptyList();
             }
 
             @Override
@@ -203,36 +180,6 @@ public class FragmentMainActivity extends AppCompatActivity {
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         if (mViewPager != null)
             tabLayout.setupWithViewPager(mViewPager);
-
-
-        textEmptyList.setVisibility(View.GONE);
-
-        //En caso de estar la lista vacía, indicamos un texto por defecto.
-        switch (mViewPager.getCurrentItem()) {
-            case 0:
-                if (guias.size() == 0) {
-                    textEmptyList.setVisibility(View.VISIBLE);
-                    textEmptyList.setText(R.string.guia_empty_list);
-                }
-                break;
-
-            case 1:
-                if (compras.size() == 0) {
-                    textEmptyList.setVisibility(View.VISIBLE);
-                    textEmptyList.setText(R.string.compra_empty_list);
-                }
-                break;
-
-            case 2:
-                if (licencias.size() == 0) {
-                    textEmptyList.setVisibility(View.VISIBLE);
-                    textEmptyList.setText(R.string.licencia_empty_list);
-                }
-                break;
-
-            default:
-                textEmptyList.setVisibility(View.GONE);
-        }
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         if (fab != null)
@@ -303,6 +250,13 @@ public class FragmentMainActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
 
+        ShowTextEmptyList();
+    }
+
+    /**
+     *
+     */
+    private void ShowTextEmptyList() {
         textEmptyList.setVisibility(View.GONE);
 
         //En caso de estar la lista vacía, indicamos un texto por defecto.
@@ -773,6 +727,7 @@ public class FragmentMainActivity extends AppCompatActivity {
                     });
             return builder.create();
         }
+
 
         private CharSequence[] getGuiaName() {
             ArrayList<String> list = new ArrayList<>();
