@@ -48,9 +48,6 @@
             android:name=".LicenciaFormActivity"
             android:label="@string/title_nueva_licencia"
             android:windowSoftInputMode="stateHidden">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".FragmentMainActivity"/>
         </activity>
 
         <activity

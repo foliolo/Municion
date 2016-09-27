@@ -57,7 +57,6 @@ public class LoginPasswordActivity extends AppCompatActivity {
         bundle.putString(FirebaseAnalytics.Param.VALUE, "Inicio de aplicacion");
         mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.APP_OPEN, bundle);
 
-
         final SharedPreferences prefs = getSharedPreferences("Preferences", Context.MODE_PRIVATE);
 
         textInputLayout1 = (TextInputLayout) findViewById(R.id.text_input_layout1);
@@ -208,7 +207,7 @@ public class LoginPasswordActivity extends AppCompatActivity {
             if (password1.getText().toString().equals(password2.getText().toString())) {
                 SharedPreferences.Editor editor = prefs.edit();
                 editor.putString("password", password1.getText().toString());
-                editor.commit();
+                editor.apply();
                 flag = true;
             } else {
                 textInputLayout2.setError(getString(R.string.password_equal_fail));

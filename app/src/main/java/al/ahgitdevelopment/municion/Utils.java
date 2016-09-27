@@ -2,6 +2,7 @@ package al.ahgitdevelopment.municion;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.View;
 
@@ -34,6 +35,7 @@ public final class Utils {
 
     private static FirebaseDatabase mFirebaseDatabase = FirebaseDatabase.getInstance();
 
+    @NonNull
     public static CharSequence[] getLicenseName(Context context) {
         ArrayList<String> list = new ArrayList<>();
         for (Licencia licencia : FragmentMainActivity.licencias) {
@@ -250,7 +252,7 @@ public final class Utils {
                 // This method is called once with the initial value and again
                 // whenever data at this location is updated.
                 AdView mAdView = (AdView) view.findViewById(R.id.adView);
-                if (dataSnapshot.getValue(Boolean.class)) {
+                if (dataSnapshot.getValue() == null ? false : Boolean.valueOf(dataSnapshot.getValue().toString())) {
                     mAdView.setVisibility(View.VISIBLE);
                 } else {
                     mAdView.setVisibility(View.GONE);

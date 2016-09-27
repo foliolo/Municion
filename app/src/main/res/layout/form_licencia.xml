@@ -150,7 +150,6 @@
                     android:id="@+id/form_fecha_expedicion"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:editable="false"
                     android:hint="@string/fecha_expedicion"
                     android:inputType="none"/>
             </android.support.design.widget.TextInputLayout>

@@ -61,9 +61,13 @@ public class CompraArrayAdapter extends ArrayAdapter<Compra> {
 //            int tipoArma = FragmentMainActivity.guias.get(compra.getIdPosGuia()).getTipoArma();
 //            imagen.setImageResource(Utils.getResourceCartucho(tipoArma));
 //        }
-        imagen.setImageResource(Utils.getResourceCartucho(
-                FragmentMainActivity.guias.get(compra.getIdPosGuia()).getTipoLicencia(),
-                FragmentMainActivity.guias.get(compra.getIdPosGuia()).getTipoArma()));
+        try {
+            imagen.setImageResource(Utils.getResourceCartucho(
+                    FragmentMainActivity.guias.get(compra.getIdPosGuia()).getTipoLicencia(),
+                    FragmentMainActivity.guias.get(compra.getIdPosGuia()).getTipoArma()));
+        } catch (Exception ex) {
+            Log.e(context.getPackageName(), "Fallo en la carga de imagen de los cartuchos");
+        }
 
         if (compra.getCalibre2() == null || "".equals(compra.getCalibre2()))
             calibre.setText(compra.getCalibre1());

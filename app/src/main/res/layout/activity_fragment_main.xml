@@ -40,6 +40,7 @@
                 android:layout_height="wrap_content"
                 android:background="?attr/colorPrimaryDark"/>
 
+
         </android.support.design.widget.AppBarLayout>
 
         <android.support.v4.view.ViewPager
@@ -75,4 +76,20 @@
         app:adSize="SMART_BANNER"
         app:adUnitId="@string/banner_main_id">
     </com.google.android.gms.ads.AdView>
+
+    <TextView
+        android:id="@+id/textEmptyList"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="@string/compra_empty_list"
+        android:fontFamily="cursive"
+        android:textSize="36sp"
+        android:textStyle="normal|bold"
+        android:gravity="center"
+        android:rotation="-35"
+        android:layout_marginTop="250dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginBottom="491dp"/>
 </RelativeLayout>

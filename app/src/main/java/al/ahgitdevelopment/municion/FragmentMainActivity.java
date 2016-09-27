@@ -30,6 +30,7 @@ import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.ads.AdView;
@@ -328,8 +329,8 @@ public class FragmentMainActivity extends AppCompatActivity {
      * Recepción de los datos del formulario
      *
      * @param requestCode Código de peticion
-     * @param resultCode Código de resultado de la operacion
-     * @param data Intent con los datos de respuesta
+     * @param resultCode  Código de resultado de la operacion
+     * @param data        Intent con los datos de respuesta
      */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -505,6 +506,7 @@ public class FragmentMainActivity extends AppCompatActivity {
         public static CompraArrayAdapter compraArrayAdapter = null;
         public static LicenciaArrayAdapter licenciaArrayAdapter = null;
         private static ListView listView = null;
+        private static TextView textEmptyList = null;
 
         /**
          * Returns a new instance of this fragment for the given section
@@ -523,24 +525,62 @@ public class FragmentMainActivity extends AppCompatActivity {
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.list_view_pager, container, false);
 
+            textEmptyList = (TextView) rootView.findViewById(R.id.textEmptyList);
+
             switch (getArguments().getInt(ARG_SECTION_NUMBER)) {
                 case 0: // Lista de las guias
                     //Abrimos la base de datos 'DBUMunicion' en modo escritura
                     guiaArrayAdapter = new GuiaArrayAdapter(getActivity(), R.layout.guia_item, guias);
                     listView = (ListView) rootView.findViewById(R.id.ListView);
                     listView.setAdapter(guiaArrayAdapter);
+
+                    try {
+                        //En caso de estar la lista vacía, indicamo un texto por defecto.
+                        if (guias.size() == 0) {
+                            textEmptyList.setVisibility(View.VISIBLE);
+                            textEmptyList.setText(R.string.guia_empty_list);
+                        } else {
+                            textEmptyList.setVisibility(View.GONE);
+                        }
+                    } catch (Exception ex) {
+                        Log.e(getContext().getPackageName(), "Error en el mensaje de guias por defecto");
+                    }
                     break;
 
                 case 1: // Lista de las compras
                     compraArrayAdapter = new CompraArrayAdapter(getActivity(), R.layout.compra_item, compras);
                     listView = (ListView) rootView.findViewById(R.id.ListView);
                     listView.setAdapter(compraArrayAdapter);
+
+                    try {
+                        //En caso de estar la lista vacía, indicamo un texto por defecto.
+                        if (compras.size() == 0) {
+                            textEmptyList.setVisibility(View.VISIBLE);
+                            textEmptyList.setText(R.string.compra_empty_list);
+                        } else {
+                            textEmptyList.setVisibility(View.GONE);
+                        }
+                    } catch (Exception ex) {
+                        Log.e(getContext().getPackageName(), "Error en el mensaje de compras por defecto");
+                    }
                     break;
 
                 case 2: // Lista de las licencias
                     licenciaArrayAdapter = new LicenciaArrayAdapter(getActivity(), R.layout.licencia_item, licencias);
                     listView = (ListView) rootView.findViewById(R.id.ListView);
                     listView.setAdapter(licenciaArrayAdapter);
+
+                    try {
+                        //En caso de estar la lista vacía, indicamo un texto por defecto.
+                        if (licencias.size() == 0) {
+                            textEmptyList.setVisibility(View.VISIBLE);
+                            textEmptyList.setText(R.string.licencia_empty_list);
+                        } else {
+                            textEmptyList.setVisibility(View.GONE);
+                        }
+                    } catch (Exception ex) {
+                        Log.e(getContext().getPackageName(), "Error en el mensaje de licencias por defecto");
+                    }
                     break;
             }
 
