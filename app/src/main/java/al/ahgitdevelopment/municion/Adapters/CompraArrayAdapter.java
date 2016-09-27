@@ -2,7 +2,6 @@ package al.ahgitdevelopment.municion.Adapters;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
@@ -23,6 +22,7 @@ import java.util.List;
 import al.ahgitdevelopment.municion.DataModel.Compra;
 import al.ahgitdevelopment.municion.FragmentMainActivity;
 import al.ahgitdevelopment.municion.R;
+import al.ahgitdevelopment.municion.Utils;
 
 /**
  * Created by Alberto on 28/05/2016.
@@ -53,10 +53,17 @@ public class CompraArrayAdapter extends ArrayAdapter<Compra> {
         TextView unidades = (TextView) convertView.findViewById(R.id.item_unidades_compra);
         TextView precio = (TextView) convertView.findViewById(R.id.item_precio_compra);
 
-        if (compra.getImagePath() != null)
-            imagen.setImageBitmap(BitmapFactory.decodeFile(compra.getImagePath()));
-        else
-            imagen.setImageResource(R.drawable.municion1);
+//        if (compra.getImagePath() != null)
+//            imagen.setImageBitmap(BitmapFactory.decodeFile(compra.getImagePath()));
+//        else
+//            imagen.setImageResource(R.drawable.municion1);
+//        if (compra.getImagePath() == null) {
+//            int tipoArma = FragmentMainActivity.guias.get(compra.getIdPosGuia()).getTipoArma();
+//            imagen.setImageResource(Utils.getResourceCartucho(tipoArma));
+//        }
+        imagen.setImageResource(Utils.getResourceCartucho(
+                FragmentMainActivity.guias.get(compra.getIdPosGuia()).getTipoLicencia(),
+                FragmentMainActivity.guias.get(compra.getIdPosGuia()).getTipoArma()));
 
         if (compra.getCalibre2() == null || "".equals(compra.getCalibre2()))
             calibre.setText(compra.getCalibre1());
@@ -66,13 +73,14 @@ public class CompraArrayAdapter extends ArrayAdapter<Compra> {
         unidades.setText(compra.getUnidades() + "");
         precio.setText(String.format("%.2f€", compra.getPrecio()));
 
-        imagen.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                FragmentMainActivity.imagePosition = position;
-                dispatchTakePictureIntent();
-            }
-        });
+        //FIXME: Falla el control de las imagenes guardas en disco, por eso lo he eliminado.
+//        imagen.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                FragmentMainActivity.imagePosition = position;
+//                dispatchTakePictureIntent();
+//            }
+//        });
 
         // Return the completed view to render on screen
         return convertView;

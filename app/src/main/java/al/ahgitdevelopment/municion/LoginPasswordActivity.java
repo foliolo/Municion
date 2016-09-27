@@ -3,7 +3,6 @@ package al.ahgitdevelopment.municion;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.design.widget.TextInputEditText;
@@ -110,8 +109,9 @@ public class LoginPasswordActivity extends AppCompatActivity {
                 if (!pass.equals("") && !password1.getText().toString().equals(pass) && textInputLayout1.getError() != null) {
                     textInputLayout1.setError(getString(R.string.password_equal_fail));
 
-                    Typeface typeface = Typeface.createFromAsset(getAssets(), "fonts/Relaway-Thin.ttf");
-                    textInputLayout1.setTypeface(typeface);
+//Todo: Borrar lo de las tipografias.
+//                    Typeface typeface = Typeface.createFromAsset(getAssets(), "fonts/Relaway-Thin.ttf");
+//                    textInputLayout1.setTypeface(typeface);
 
                 }
 

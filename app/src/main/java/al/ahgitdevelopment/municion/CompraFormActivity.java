@@ -315,12 +315,15 @@ public class CompraFormActivity extends AppCompatActivity {
 
             bundle.putString("imagePath", imagePath);
 
-            //Paso de vuelta de la posicion del item en el array
-//            if (getIntent().getExtras().getInt("position", -1) != -1)
-            if (getIntent().getExtras().get("position_guia") == null)
-                bundle.putInt("position", getIntent().getExtras().getInt("position", -1));
-            else
+            //Paso de vuelta la posicion de la guía en el array
+            // Modificacion de elemento
+            if (getIntent().getExtras().get("position_guia") == null) {
+                int pos = getIntent().getExtras().getInt("position", -1);
+                bundle.putInt("position", pos);
+                bundle.putInt("idPosGuia", FragmentMainActivity.compras.get(pos).getIdPosGuia());
+            } else { // Nuevo elemento
                 bundle.putInt("idPosGuia", getIntent().getExtras().getInt("position_guia"));
+            }
 
             result.putExtras(bundle);
 

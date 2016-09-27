@@ -28,7 +28,7 @@ public class CompraCursorAdapter extends CursorAdapter {
         TextView unidades = (TextView) view.findViewById(R.id.item_unidades_compra);
         TextView precio = (TextView) view.findViewById(R.id.item_precio_compra);
 
-        imagen.setImageResource(R.drawable.municion1);
+//        imagen.setImageResource(R.drawable.municion1);
         calibre.setText(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_COMPRA_CALIBRE1)));
         unidades.setText(String.valueOf(cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_COMPRA_UNIDADES))));
         precio.setText(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_COMPRA_PRECIO)) + "€");

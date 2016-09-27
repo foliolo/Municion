@@ -266,6 +266,7 @@ public class FragmentMainActivity extends AppCompatActivity {
                 PlaceholderFragment.guiaArrayAdapter.notifyDataSetChanged();
                 break;
             case 1:
+                //Fixme: Falla en la posicion de las guias por eso no guarda las imagenes a veces y no borra lo que debe!
                 try {
                     //Actualizar cupo de la guia correspondiente
                     Guia guia = guias.get(compras.get(position).getIdPosGuia());
@@ -453,6 +454,7 @@ public class FragmentMainActivity extends AppCompatActivity {
             guia.setGastado(data.getExtras().getInt("gastado"));
 
             PlaceholderFragment.guiaArrayAdapter.notifyDataSetChanged();
+            PlaceholderFragment.compraArrayAdapter.notifyDataSetChanged();
         }
     }
 
@@ -462,6 +464,7 @@ public class FragmentMainActivity extends AppCompatActivity {
             Compra compra = compras.get(position);
 
             //TODO: Refactorizar y cambiar esto como en licencias. Hacer que el intent devuelva un objeto Compra y no los campos individualizados.
+            compra.setIdPosGuia(data.getExtras().getInt("idPosGuia"));
             compra.setCalibre1(data.getExtras().getString("calibre1"));
             compra.setCalibre2(data.getExtras().getString("calibre2"));
             compra.setUnidades(data.getExtras().getInt("unidades"));

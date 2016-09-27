@@ -18,7 +18,6 @@ import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Random;
 
 import al.ahgitdevelopment.municion.DataModel.Guia;
 import al.ahgitdevelopment.municion.DataModel.Licencia;
@@ -227,13 +226,19 @@ public final class Utils {
         ArrayList<Integer> list = new ArrayList<Integer>();
         for (Guia guia : FragmentMainActivity.guias) {
             String licenseName = Utils.getStringLicenseFromId(context, guia.getTipoLicencia());
-            if (licenseName.equals("F - Tiro olimpico") ) {
+            if (licenseName.equals("F - Tiro olimpico")) {
                 list.add(guia.getNumGuia());
             }
         }
         return list.size();
     }
 
+    /**
+     * Método para obtener un anuncion en función de la variable de firebase database.
+     *
+     * @param view Vista donde se localiza el anuncio
+     * @return Retorna el AdRequest done se encuentra que se visualizará en la view en caso de estar activa
+     */
     public static AdRequest getAdRequest(final View view) {
         // Read from the database
         DatabaseReference myRef = mFirebaseDatabase.getReference("settings/ads");
@@ -266,53 +271,34 @@ public final class Utils {
                 .build();
     }
 
-    public static int getRandomWeapon() {
-        Random r = new Random();
-        int num = (r.nextInt(80) + 6500);
-
-        switch (num % 5) {
-            case 0:
-                return R.drawable.ic_pistola;
-            case 1:
-                return R.drawable.ic_revolver;
-            case 2:
-                return R.drawable.ic_rifle;
-            case 3:
-                return R.drawable.ic_avancarga;
-            case 4:
-                return R.drawable.ic_shotgun;
-            default:
-                return -1;
-        }
-    }
-
+    /**
+     * Metodo para obtener los recursos de las armas en funcion del tipo de licencia y su tipo de arma.
+     * @param tipoLicencia Tipo de licencia
+     * @param tipoArma Tipo de arma
+     * @return Retorna el número entero perteneciente al recurso en cuestión.
+     */
     public static int getResourceWeapon(int tipoLicencia, int tipoArma) {
-        if(tipoLicencia == 1) { // B - Defensa
+        if (tipoLicencia == 1) { // B - Defensa
             switch (tipoArma) {
                 case 0:
                     return R.drawable.ic_pistola;
                 case 1:
                     return R.drawable.ic_revolver;
             }
-        }
-        else if(tipoLicencia == 2) { // C - Vigilante de seguridad / Escoltas
+        } else if (tipoLicencia == 2) { // C - Vigilante de seguridad / Escoltas
             return R.drawable.ic_revolver;
-        }
-        else if(tipoLicencia == 3) { // D - Caza mayor
+        } else if (tipoLicencia == 3) { // D - Caza mayor
             return R.drawable.ic_rifle;
-        }
-        else if(tipoLicencia == 4) { // E - Escopeta
+        } else if (tipoLicencia == 4) { // E - Escopeta
             switch (tipoArma) {
                 case 0:
                     return R.drawable.ic_shotgun;
                 case 1:
                     return R.drawable.ic_rifle;
             }
-        }
-        else if(tipoLicencia == 6) { // AE - Autorización especial
+        } else if (tipoLicencia == 6) { // AE - Autorización especial
             return R.drawable.ic_avancarga;
-        }
-        else if(tipoLicencia == 7) { // AER - Autorización especial replicas
+        } else if (tipoLicencia == 7) { // AER - Autorización especial replicas
             switch (tipoArma) {
                 case 0:
                     return R.drawable.ic_pistola;
@@ -321,8 +307,7 @@ public final class Utils {
                 case 2:
                     return R.drawable.ic_revolver;
             }
-        }
-        else { // Resto Licencias
+        } else { // Resto Licencias
             switch (tipoArma) {
                 case 0:
                     return R.drawable.ic_pistola;
@@ -334,6 +319,60 @@ public final class Utils {
                     return R.drawable.ic_revolver;
                 case 4:
                     return R.drawable.ic_avancarga;
+            }
+        }
+        return -1;
+    }
+
+    /**
+     * Método para obtener los recursos de los cartuchos en función del tipo de licencia y el tipo de armas.
+     *
+     * @param tipoLicencia Tipo de licencia
+     * @param tipoArma     Tipo de arma
+     * @return Retorna el número entero perteneciente al tipo de licencia y el tipo de arma.
+     */
+    public static int getResourceCartucho(int tipoLicencia, int tipoArma) {
+        if (tipoLicencia == 1) { // B - Defensa
+            switch (tipoArma) {
+                case 0:
+                    return R.drawable.ic_balas;
+                case 1:
+                    return R.drawable.ic_balas;
+            }
+        } else if (tipoLicencia == 2) { // C - Vigilante de seguridad / Escoltas
+            return R.drawable.ic_balas;
+        } else if (tipoLicencia == 3) { // D - Caza mayor
+            return R.drawable.ic_balas_rifle;
+        } else if (tipoLicencia == 4) { // E - Escopeta
+            switch (tipoArma) {
+                case 0:
+                    return R.drawable.ic_cartuchos;
+                case 1:
+                    return R.drawable.ic_balas_rifle;
+            }
+        } else if (tipoLicencia == 6) { // AE - Autorización especial
+            return R.drawable.ic_balas;
+        } else if (tipoLicencia == 7) { // AER - Autorización especial replicas
+            switch (tipoArma) {
+                case 0:
+                    return R.drawable.ic_balas;
+                case 1:
+                    return R.drawable.ic_balas_rifle;
+                case 2:
+                    return R.drawable.ic_balas;
+            }
+        } else { // Resto Licencias
+            switch (tipoArma) {
+                case 0:
+                    return R.drawable.ic_balas;
+                case 1:
+                    return R.drawable.ic_cartuchos;
+                case 2:
+                    return R.drawable.ic_balas_rifle;
+                case 3:
+                    return R.drawable.ic_balas;
+                case 4:
+                    return R.drawable.ic_balas;
             }
         }
         return -1;
