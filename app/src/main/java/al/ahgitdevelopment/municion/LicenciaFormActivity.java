@@ -6,12 +6,17 @@ import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.Notification;
 import android.app.PendingIntent;
+import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.CalendarContract;
 import android.support.design.widget.TextInputLayout;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
@@ -212,12 +217,67 @@ public class LicenciaFormActivity extends AppCompatActivity {
 
                 //Agregar notificacion
                 publishNotification();
+                // Agregar fecha al Calendar Provider
+                addEventToCalendar();
 
                 setResult(Activity.RESULT_OK, result);
                 finish();
             }
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void addEventToCalendar() {
+        long calID = 3;
+        long startMillis = 0;
+        long endMillis = 0;
+        try {
+            Calendar beginTime = Calendar.getInstance();
+            beginTime.setTime(new SimpleDateFormat("dd/MM/yyyy").parse(fechaCaducidad.getText().toString()));
+            beginTime.set(Calendar.HOUR_OF_DAY, Calendar.getInstance().get(Calendar.HOUR_OF_DAY));
+            beginTime.set(Calendar.MINUTE, Calendar.getInstance().get(Calendar.MINUTE));
+            beginTime.set(Calendar.SECOND, Calendar.getInstance().get(Calendar.SECOND));
+            startMillis = beginTime.getTimeInMillis();
+            Calendar endTime = Calendar.getInstance();
+            endTime.setTime(new SimpleDateFormat("dd/MM/yyyy").parse(fechaCaducidad.getText().toString()));
+            endTime.set(Calendar.HOUR_OF_DAY, Calendar.getInstance().get(Calendar.HOUR_OF_DAY) + 1);
+            endTime.set(Calendar.MINUTE, Calendar.getInstance().get(Calendar.MINUTE));
+            endTime.set(Calendar.SECOND, Calendar.getInstance().get(Calendar.SECOND));
+            endMillis = endTime.getTimeInMillis();
+        } catch (ParseException ex) {
+            Log.e(getPackageName(), "Fallo al crear la notificacion", ex);
+        }
+        ContentResolver cr = getContentResolver();
+        ContentValues values = new ContentValues();
+        values.put(CalendarContract.Events.DTSTART, startMillis);
+        values.put(CalendarContract.Events.DTEND, endMillis);
+        values.put(CalendarContract.Events.TITLE, "Tu licencia caduca hoy");
+        values.put(CalendarContract.Events.DESCRIPTION, Utils.getStringLicenseFromId(
+                LicenciaFormActivity.this,
+                tipoLicencia.getSelectedItemPosition()) + ": " + numLicencia.getText().toString());
+        values.put(CalendarContract.Events.CALENDAR_ID, calID);
+        values.put(CalendarContract.Events.EVENT_TIMEZONE, "Europe/Madrid");
+
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.WRITE_CALENDAR) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+        }
+        Uri uri = cr.insert(CalendarContract.Events.CONTENT_URI, values);
+
+//                Calendar cal = Calendar.getInstance();
+//                Intent intent = new Intent(Intent.ACTION_EDIT);
+//                intent.setType("vnd.android.cursor.item/event");
+//                intent.putExtra(CalendarContract.Events.DTSTART, cal.getTimeInMillis());
+//                intent.putExtra("allDay", true);
+//                intent.putExtra("rrule", "FREQ=YEARLY");
+//                intent.putExtra("endTime", cal.getTimeInMillis()+60*60*1000);
+//                intent.putExtra(CalendarContract.Events.TITLE, "A Test Event from android app");
+//                startActivity(intent);
     }
 
     /**
