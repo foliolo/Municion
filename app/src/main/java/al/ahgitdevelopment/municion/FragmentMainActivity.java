@@ -319,7 +319,7 @@ public class FragmentMainActivity extends AppCompatActivity {
                 PlaceholderFragment.guiaArrayAdapter.notifyDataSetChanged();
                 break;
             case 1:
-                //Fixme: Falla en la posicion de las guias por eso no guarda las imagenes a veces y no borra lo que debe!
+                //FIXME: Falla en la posicion de las guias por eso no guarda las imagenes a veces y no borra lo que debe!
                 try {
                     //Actualizar cupo de la guia correspondiente
                     Guia guia = guias.get(compras.get(position).getIdPosGuia());
@@ -705,15 +705,17 @@ public class FragmentMainActivity extends AppCompatActivity {
                     .setSingleChoiceItems(getGuiaName(), 0, new DialogInterface.OnClickListener() {
 
                         @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-//                            Toast.makeText(getActivity(), "Seleccionado: " + (String) getGuiaName()[i], Toast.LENGTH_SHORT).show();
-                            selectedGuia = i;
+                        public void onClick(DialogInterface dialogInterface, int pos) {
+                            selectedGuia = pos;
                         }
                     })
                     // Add action buttons
                     .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int pos) {
+                            if (pos >= 0)
+                                Toast.makeText(getActivity(), "Seleccionado: " + getGuiaName()[pos].toString(), Toast.LENGTH_SHORT).show();
+
                             Intent form = new Intent(getActivity(), CompraFormActivity.class);
                             form.putExtra("position_guia", selectedGuia);
                             form.putExtra("guia", guias.get(selectedGuia));

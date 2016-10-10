@@ -127,6 +127,10 @@ public class Compra implements Parcelable {
         return fecha;
     }
 
+    public void setFecha(Calendar fecha) {
+        this.fecha = fecha;
+    }
+
     public void setFecha(String fecha) {
         Calendar auxFecha = Calendar.getInstance();
         try {
@@ -138,10 +142,6 @@ public class Compra implements Parcelable {
             e.printStackTrace();
             this.fecha = auxFecha;
         }
-    }
-
-    public void setFecha(Calendar fecha) {
-        this.fecha = fecha;
     }
 
     public String getTipo() {
@@ -199,8 +199,8 @@ public class Compra implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeInt(idPosGuia);
         dest.writeInt(id);
+        dest.writeInt(idPosGuia);
         dest.writeString(calibre1);
         dest.writeString(calibre2);
         dest.writeInt(unidades);

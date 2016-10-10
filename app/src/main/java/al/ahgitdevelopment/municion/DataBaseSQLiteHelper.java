@@ -16,11 +16,6 @@ import al.ahgitdevelopment.municion.DataModel.Licencia;
  * Created by Alberto on 12/04/2016.
  */
 public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
-    // Database Version
-    private static final int DATABASE_VERSION = 19;
-    // Database Name
-    private static final String DATABASE_NAME = "DBMunicion.db";
-
     // Table Names
     public static final String TABLE_GUIAS = "guias";
     public static final String TABLE_COMPRAS = "compras";
@@ -42,6 +37,7 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
     public static final String KEY_GUIA_CUPO = "cupo";
     public static final String KEY_GUIA_GASTADO = "gastado";
     // Table COMPRAS  - column names
+    public static final String KEY_COMPRA_ID_POS_GUIA = "idPosGuia";
     public static final String KEY_COMPRA_CALIBRE1 = "calibre1";
     public static final String KEY_COMPRA_CALIBRE2 = "calibre2";
     public static final String KEY_COMPRA_UNIDADES = "unidades";
@@ -66,7 +62,10 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
     public static final String KEY_LICENCIAS_AUTONOMIA = "autonomia";
     public static final String KEY_LICENCIAS_ESCALA = "escala";
     public static final String KEY_LICENCIAS_CATEGORIA = "categoria";
-
+    // Database Version
+    private static final int DATABASE_VERSION = 20;
+    // Database Name
+    private static final String DATABASE_NAME = "DBMunicion.db";
     // Table Create Statements
     // Guias table create statement
     private static final String CREATE_TABLE_GUIA = "CREATE TABLE " + TABLE_GUIAS + "("
@@ -91,6 +90,7 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
     // Compras table create statement
     private static final String CREATE_TABLE_COMPRA = "CREATE TABLE " + TABLE_COMPRAS + "("
             + KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,"
+            + KEY_COMPRA_ID_POS_GUIA + " INTEGER NOT NULL, "
             + KEY_COMPRA_CALIBRE1 + " TEXT NOT NULL, "
             + KEY_COMPRA_CALIBRE2 + " TEXT,"
             + KEY_COMPRA_UNIDADES + " INTEGER NOT NULL,"
@@ -405,6 +405,7 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
                 do {
                     Compra compra = new Compra();
                     compra.setId(cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_ID)));
+                    compra.setIdPosGuia(cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_COMPRA_ID_POS_GUIA)));
                     compra.setCalibre1(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_COMPRA_CALIBRE1)));
                     compra.setCalibre2(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_COMPRA_CALIBRE2)));
                     compra.setUnidades(cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_COMPRA_UNIDADES)));
@@ -519,6 +520,7 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
         if (compras.size() > 0) {
             for (Compra compra : compras) {
                 db.execSQL("INSERT INTO " + TABLE_COMPRAS + " (" +
+                        KEY_COMPRA_ID_POS_GUIA + ", " +
                         KEY_COMPRA_CALIBRE1 + ", " +
                         KEY_COMPRA_CALIBRE2 + ", " +
                         KEY_COMPRA_UNIDADES + ", " +
@@ -531,6 +533,7 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
                         KEY_COMPRA_IMAGEN + ", " +
                         KEY_COMPRA_VALORACION +
                         ") VALUES (" +
+                        "'" + compra.getIdPosGuia() + "' , " +
                         "'" + compra.getCalibre1() + "' , " +
                         "'" + compra.getCalibre2() + "' , " +
                         "'" + compra.getUnidades() + "' , " +

@@ -174,8 +174,7 @@
                 android:gravity="end"
                 android:paddingRight="@dimen/activity_vertical_margin"
                 android:text="@string/lbl_caducidad_licencia"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                />
+                android:textAppearance="?android:attr/textAppearanceSmall"/>
 
             <TextView
                 android:id="@+id/item_caducidad_licencia"
@@ -202,8 +201,7 @@
                 android:gravity="end"
                 android:paddingRight="@dimen/activity_vertical_margin"
                 android:text="@string/lbl_num_abonado"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                />
+                android:textAppearance="?android:attr/textAppearanceSmall"/>
 
             <TextView
                 android:id="@+id/item_num_abonado"
@@ -228,8 +226,7 @@
                 android:gravity="end"
                 android:paddingRight="@dimen/activity_vertical_margin"
                 android:text="@string/lbl_num_poliza"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                />
+                android:textAppearance="?android:attr/textAppearanceSmall"/>
 
             <TextView
                 android:id="@+id/item_num_poliza"
@@ -256,8 +253,7 @@
                 android:gravity="end"
                 android:paddingRight="@dimen/activity_vertical_margin"
                 android:text="@string/lbl_ccaa"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                />
+                android:textAppearance="?android:attr/textAppearanceSmall"/>
 
             <TextView
                 android:id="@+id/item_ccaa"
@@ -284,8 +280,7 @@
                 android:gravity="end"
                 android:paddingRight="@dimen/activity_vertical_margin"
                 android:text="@string/lbl_escala"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                />
+                android:textAppearance="?android:attr/textAppearanceSmall"/>
 
             <TextView
                 android:id="@+id/item_escala"
