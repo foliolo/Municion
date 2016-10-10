@@ -15,6 +15,7 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.CalendarContract;
+import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.DialogFragment;
@@ -201,7 +202,7 @@ public class LicenciaFormActivity extends AppCompatActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        if (controlCampos()) {
+        if (controlCampos() && addEventToCalendar()) { // Agregar fecha al Calendar Provider
             if (id == R.id.action_save) {
                 // Create intent to deliver some kind of result data
                 Intent result = new Intent(this, FragmentMainActivity.class);
@@ -217,8 +218,6 @@ public class LicenciaFormActivity extends AppCompatActivity {
 
                 //Agregar notificacion
                 publishNotification();
-                // Agregar fecha al Calendar Provider
-                addEventToCalendar();
 
                 setResult(Activity.RESULT_OK, result);
                 finish();
@@ -227,7 +226,14 @@ public class LicenciaFormActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void addEventToCalendar() {
+    private boolean addEventToCalendar() {
+        // Comprobacion permiso de escritura en el calendario del dispositivo
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.WRITE_CALENDAR) != PackageManager.PERMISSION_GRANTED) {
+            Snackbar.make(numLicencia, R.string.dialog_licencia_no_permiso, Snackbar.LENGTH_LONG)
+                    .setAction(android.R.string.ok, null)
+                    .show();
+            return false;
+        }
         long calID = 3;
         long startMillis = 0;
         long endMillis = 0;
@@ -245,7 +251,7 @@ public class LicenciaFormActivity extends AppCompatActivity {
             endTime.set(Calendar.SECOND, Calendar.getInstance().get(Calendar.SECOND));
             endMillis = endTime.getTimeInMillis();
         } catch (ParseException ex) {
-            Log.e(getPackageName(), "Fallo al crear la notificacion", ex);
+            Log.e(getPackageName(), "Fallo al crear el evento del calendario", ex);
         }
         ContentResolver cr = getContentResolver();
         ContentValues values = new ContentValues();
@@ -258,15 +264,6 @@ public class LicenciaFormActivity extends AppCompatActivity {
         values.put(CalendarContract.Events.CALENDAR_ID, calID);
         values.put(CalendarContract.Events.EVENT_TIMEZONE, "Europe/Madrid");
 
-        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.WRITE_CALENDAR) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-        }
         Uri uri = cr.insert(CalendarContract.Events.CONTENT_URI, values);
 
 //                Calendar cal = Calendar.getInstance();
@@ -278,6 +275,7 @@ public class LicenciaFormActivity extends AppCompatActivity {
 //                intent.putExtra("endTime", cal.getTimeInMillis()+60*60*1000);
 //                intent.putExtra(CalendarContract.Events.TITLE, "A Test Event from android app");
 //                startActivity(intent);
+        return true;
     }
 
     /**
