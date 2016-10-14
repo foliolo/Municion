@@ -17,7 +17,7 @@ import android.os.Bundle;
 import android.provider.CalendarContract;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputLayout;
-import android.support.v4.app.ActivityCompat;
+import android.support.v13.app.ActivityCompat;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
@@ -29,8 +29,6 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.text.format.DateFormat;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.DatePicker;
@@ -170,7 +168,6 @@ public class LicenciaFormActivity extends AppCompatActivity {
         setVisibilityFields(tipoLicencia.getSelectedItemPosition());
         fieldsUpdateFechaCaducidad();
 
-
         //Admob
         AdView mAdView = (AdView) findViewById(R.id.adView);
         mAdView.loadAd(Utils.getAdRequest(mAdView));
@@ -181,49 +178,26 @@ public class LicenciaFormActivity extends AppCompatActivity {
         newFragment.show(getSupportFragmentManager(), "datePicker");
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_form, menu);
-
-        if (getIntent().hasExtra("notification_call")) {
-            menu.getItem(0).setVisible(false);
-        } else {
-            menu.getItem(0).setVisible(true);
-        }
-
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
+    public void fabSaveOnClick(View view) {
         if (controlCampos() && addEventToCalendar()) { // Agregar fecha al Calendar Provider
-            if (id == R.id.action_save) {
-                // Create intent to deliver some kind of result data
-                Intent result = new Intent(this, FragmentMainActivity.class);
+            // Create intent to deliver some kind of result data
+            Intent result = new Intent(this, FragmentMainActivity.class);
 
-                Bundle bundle = new Bundle();
-                bundle.putParcelable("modify_licencia", getCurrenteLicense());
+            Bundle bundle = new Bundle();
+            bundle.putParcelable("modify_licencia", getCurrenteLicense());
 
-                //Paso de vuelta de la posicion del item en el array
-                if (getIntent().getExtras() != null)
-                    bundle.putInt("position", getIntent().getExtras().getInt("position", -1));
+            //Paso de vuelta de la posicion del item en el array
+            if (getIntent().getExtras() != null)
+                bundle.putInt("position", getIntent().getExtras().getInt("position", -1));
 
-                result.putExtras(bundle);
+            result.putExtras(bundle);
 
-                //Agregar notificacion
-                publishNotification();
+            //Agregar notificacion
+            publishNotification();
 
-                setResult(Activity.RESULT_OK, result);
-                finish();
-            }
+            setResult(Activity.RESULT_OK, result);
+            finish();
         }
-        return super.onOptionsItemSelected(item);
     }
 
     private boolean addEventToCalendar() {
@@ -465,8 +439,8 @@ public class LicenciaFormActivity extends AppCompatActivity {
             Calendar caducidad = Calendar.getInstance();
             caducidad.setTime(new SimpleDateFormat("dd/MM/yyyy").parse(fechaCaducidad.getText().toString()));
             caducidad.set(Calendar.HOUR_OF_DAY, Calendar.getInstance().get(Calendar.HOUR_OF_DAY));
-            caducidad.set(Calendar.MINUTE, Calendar.getInstance().get(Calendar.MINUTE) + 1);
-            caducidad.set(Calendar.SECOND, Calendar.getInstance().get(Calendar.SECOND));
+            caducidad.set(Calendar.MINUTE, Calendar.getInstance().get(Calendar.MINUTE));
+            caducidad.set(Calendar.SECOND, Calendar.getInstance().get(Calendar.SECOND) + 30);
 
             // Creates an explicit intent for an Activity in your app
             Intent notificationIntent = new Intent(this, NotificationPublisher.class);
@@ -696,6 +670,7 @@ public class LicenciaFormActivity extends AppCompatActivity {
                 layoutEdad.setVisibility(View.GONE);
                 layoutCategoria.setVisibility(View.GONE);
                 break;
+
             case 11:
                 textInputLayoutLicencia.setHint(getResources().getString(R.string.lbl_num_licencia));
                 ((LinearLayout.LayoutParams) textInputLayoutLicencia.getLayoutParams()).setMargins(0, 10, 0, 0);
@@ -706,6 +681,7 @@ public class LicenciaFormActivity extends AppCompatActivity {
                 layoutEdad.setVisibility(View.GONE);
                 layoutCategoria.setVisibility(View.VISIBLE);
                 break;
+
             case 12:
                 textInputLayoutLicencia.setHint(getResources().getString(R.string.lbl_num_dni));
                 ((LinearLayout.LayoutParams) textInputLayoutLicencia.getLayoutParams()).setMargins(0, 10, 0, 0);

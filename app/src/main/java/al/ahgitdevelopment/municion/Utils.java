@@ -2,6 +2,8 @@ package al.ahgitdevelopment.municion;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.View;
@@ -244,7 +246,6 @@ public final class Utils {
     public static AdRequest getAdRequest(final View view) {
         // Read from the database
         DatabaseReference myRef = mFirebaseDatabase.getReference("settings/ads");
-
         myRef.addValueEventListener(new ValueEventListener() {
 
             @Override
@@ -378,5 +379,20 @@ public final class Utils {
             }
         }
         return -1;
+    }
+
+    public static String getAppVersion(Context context) {
+        String versionName = "";
+        final PackageManager packageManager = context.getPackageManager();
+        if (packageManager != null) {
+            try {
+                PackageInfo packageInfo = packageManager.getPackageInfo(context.getPackageName(), 0);
+                versionName = packageInfo.versionName;
+            } catch (PackageManager.NameNotFoundException e) {
+                e.printStackTrace();
+                versionName = "";
+            }
+        }
+        return versionName;
     }
 }

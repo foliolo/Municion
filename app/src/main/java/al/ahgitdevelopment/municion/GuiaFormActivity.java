@@ -6,6 +6,7 @@ import android.content.res.Resources;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
+import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatSpinner;
 import android.support.v7.widget.Toolbar;
@@ -13,8 +14,6 @@ import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -59,6 +58,7 @@ public class GuiaFormActivity extends AppCompatActivity {
     private EditText numGuia;
     private EditText numArma;
     private CheckBox aumentoCupo;
+    private TextInputLayout layoutCupo;
     private EditText cupo;
     private EditText gastado;
 
@@ -97,9 +97,11 @@ public class GuiaFormActivity extends AppCompatActivity {
         numGuia = (EditText) findViewById(R.id.form_num_guia);
         numArma = (EditText) findViewById(R.id.form_num_arma);
         aumentoCupo = (CheckBox) findViewById(R.id.form_check_aumento_cupo);
+        layoutCupo = (TextInputLayout) findViewById(R.id.layout_cupo);
         cupo = (EditText) findViewById(R.id.form_cupo_anual);
         gastado = (EditText) findViewById(R.id.form_cartuchos_gastados);
         mensajeError = (TextView) findViewById(R.id.form_mensaje_guia);
+
         imagePath = null;
 
         //Carga de calibres
@@ -168,8 +170,10 @@ public class GuiaFormActivity extends AppCompatActivity {
             public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
                 if (isChecked) {
                     cupo.setInputType(InputType.TYPE_CLASS_NUMBER);
+                    layoutCupo.setEnabled(true);
                 } else {
                     cupo.setInputType(InputType.TYPE_NULL);
+                    layoutCupo.setEnabled(false);
                 }
             }
         });
@@ -311,7 +315,7 @@ public class GuiaFormActivity extends AppCompatActivity {
         AdView mAdView = (AdView) findViewById(R.id.adView);
         mAdView.loadAd(Utils.getAdRequest(mAdView));
     }
-
+/*
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -403,10 +407,90 @@ public class GuiaFormActivity extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
+*/
+
+    public void fabSaveOnClick(View view) {
+        // Validación formulario
+        if (!validateForm()) {
+            return;
+        }
+
+        // Create intent to deliver some kind of result data
+        Intent result = new Intent(this, FragmentMainActivity.class);
+        Bundle bundle = new Bundle();
+
+        if (getIntent().getExtras().getString("tipo_licencia") != null) {
+            tipoLicencia = Utils.getLicenciaTipoFromString(GuiaFormActivity.this, getIntent().getExtras().getString("tipo_licencia"));
+            if (tipoLicencia == 4) {  // E - Escopeta
+                if (checkMaxGuiasForLicenciaTipoE(marca)) { // Maximo: 12 guias
+                    return;
+                }
+                if (tipoArma.getSelectedItemPosition() == 0) { // Arma: escopeta
+                    if (checkMaxGuiasEscopeta(marca)) {
+                        return;
+                    }
+                } else if (tipoArma.getSelectedItemPosition() == 1) { // Arma: rifle
+                    if (checkMaxGuiasRifle(marca)) {
+                        return;
+                    }
+                }
+            } else if (tipoLicencia == 5) { // F - Tiro olimpico
+                // Se revisa el numero de guias maximas en funcion de la categoria
+                if (checkNumGuiasMaxLicenciaTipoF(marca, Utils.getMaxCategoria(GuiaFormActivity.this))) {
+                    return;
+                }
+            }
+        } else {
+            tipoLicencia = ((Guia) getIntent().getExtras().getParcelable("modify_guia")).getTipoLicencia();
+            if (tipoLicencia == 4) {  // E - Escopeta
+                if (tipoArma.getSelectedItemPosition() == 0) { // Arma: escopeta
+                    if (checkMaxGuiasEscopeta(marca)) {
+                        return;
+                    }
+                } else if (tipoArma.getSelectedItemPosition() == 1) { // Arma: rifle
+                    if (checkMaxGuiasRifle(marca)) {
+                        return;
+                    }
+                }
+            }
+        }
+        bundle.putInt("tipoLicencia", tipoLicencia);
+        bundle.putString("marca", marca.getText().toString());
+        bundle.putString("modelo", modelo.getText().toString());
+        // Control error. He metido vacio porque el campo en BBDD no puede ser  nulo
+        if (apodo.getText().toString().isEmpty()) {
+            apodo.setText("");
+        }
+        bundle.putString("apodo", apodo.getText().toString());
+        bundle.putInt("tipoArma", tipoArma.getSelectedItemPosition());
+        bundle.putString("calibre1", calibre1.getText().toString());
+        if (segundoCalibre.isChecked()) {
+            // Control error. He metido vacio porque el campo en BBDD no puede ser  nulo
+            if (calibre2.getText().toString().isEmpty()) {
+                calibre2.setText("");
+            }
+            bundle.putString("calibre2", calibre2.getText().toString());
+        }
+        bundle.putInt("numGuia", Integer.parseInt(numGuia.getText().toString()));
+        bundle.putInt("numArma", Integer.parseInt(numArma.getText().toString()));
+        bundle.putInt("cupo", Integer.parseInt(cupo.getText().toString()));
+        bundle.putInt("gastado", Integer.parseInt(gastado.getText().toString()));
+
+        //Paso de vuelta de la posicion del item en el array
+        if (getIntent().getExtras() != null)
+            bundle.putInt("position", getIntent().getExtras().getInt("position", -1));
+
+        bundle.putString("imagePath", imagePath);
+
+        result.putExtras(bundle);
+
+        setResult(Activity.RESULT_OK, result);
+        finish();
+    }
 
     private boolean checkMaxGuiasForLicenciaTipoE(View view) {
         dbSqlHelper = new DataBaseSQLiteHelper(getApplicationContext());
-        if(dbSqlHelper.getNumLicenciasTipoE() >= MAXIMO_GUIAS_LICENCIA_TIPO_E) {
+        if (dbSqlHelper.getNumLicenciasTipoE() >= MAXIMO_GUIAS_LICENCIA_TIPO_E) {
             Snackbar.make(view, R.string.dialog_guia_licencia_tipoE, Snackbar.LENGTH_LONG)
                     .setAction(android.R.string.ok, null)
                     .show();
@@ -417,7 +501,7 @@ public class GuiaFormActivity extends AppCompatActivity {
 
     private boolean checkMaxGuiasEscopeta(View view) {
         dbSqlHelper = new DataBaseSQLiteHelper(getApplicationContext());
-        if(dbSqlHelper.getNumGuiasLicenciaTipoEscopeta() >= MAXIMO_GUIAS_LICENCIA_TIPO_E_ESCOPETA) {
+        if (dbSqlHelper.getNumGuiasLicenciaTipoEscopeta() >= MAXIMO_GUIAS_LICENCIA_TIPO_E_ESCOPETA) {
             Snackbar.make(view, R.string.dialog_guia_licencia_tipoE_escopeta, Snackbar.LENGTH_LONG)
                     .setAction(android.R.string.ok, null)
                     .show();
@@ -428,7 +512,7 @@ public class GuiaFormActivity extends AppCompatActivity {
 
     private boolean checkMaxGuiasRifle(View view) {
         dbSqlHelper = new DataBaseSQLiteHelper(getApplicationContext());
-        if(dbSqlHelper.getNumGuiasLicenciaTipoRifle() >= MAXIMO_GUIAS_LICENCIA_TIPO_E_RIFLE) {
+        if (dbSqlHelper.getNumGuiasLicenciaTipoRifle() >= MAXIMO_GUIAS_LICENCIA_TIPO_E_RIFLE) {
             Snackbar.make(view, R.string.dialog_guia_licencia_tipoE_rifle, Snackbar.LENGTH_LONG)
                     .setAction(android.R.string.ok, null)
                     .show();
@@ -436,23 +520,24 @@ public class GuiaFormActivity extends AppCompatActivity {
         }
         return false;
     }
+
     private boolean checkNumGuiasMaxLicenciaTipoF(View view, int maxCategoria) {
         // 3ª Categoria
-        if(maxCategoria == 2 && Utils.getNumGuias(GuiaFormActivity.this) >= GUIAS_MAXIMAS_TERCERA_CATEGORIA) {
+        if (maxCategoria == 2 && Utils.getNumGuias(GuiaFormActivity.this) >= GUIAS_MAXIMAS_TERCERA_CATEGORIA) {
             Snackbar.make(view, R.string.dialog_guia_licencia_federativa_categoria3, Snackbar.LENGTH_LONG)
                     .setAction(android.R.string.ok, null)
                     .show();
             return true;
         }
         // 2ª Categoria
-        else if(maxCategoria == 1 && Utils.getNumGuias(GuiaFormActivity.this) >= GUIAS_MAXIMAS_SEGUNDA_CATEGORIA) {
+        else if (maxCategoria == 1 && Utils.getNumGuias(GuiaFormActivity.this) >= GUIAS_MAXIMAS_SEGUNDA_CATEGORIA) {
             Snackbar.make(view, R.string.dialog_guia_licencia_federativa_categoria2, Snackbar.LENGTH_LONG)
                     .setAction(android.R.string.ok, null)
                     .show();
             return true;
         }
         // 1ª Categoria
-        else if(maxCategoria == 0 && Utils.getNumGuias(GuiaFormActivity.this) >= GUIAS_MAXIMAS_PRIMERA_CATEGORIA) {
+        else if (maxCategoria == 0 && Utils.getNumGuias(GuiaFormActivity.this) >= GUIAS_MAXIMAS_PRIMERA_CATEGORIA) {
             Snackbar.make(view, R.string.dialog_guia_licencia_federativa_categoria1, Snackbar.LENGTH_LONG)
                     .setAction(android.R.string.ok, null)
                     .show();

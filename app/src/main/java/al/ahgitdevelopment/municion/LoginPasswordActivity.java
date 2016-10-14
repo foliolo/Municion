@@ -32,6 +32,7 @@ public class LoginPasswordActivity extends AppCompatActivity {
     private TextInputLayout textInputLayout2;
     private TextInputEditText password2;
     private ImageView button;
+    private TextView versionLabel;
 
     /**
      * Inicializa la actividad
@@ -64,6 +65,9 @@ public class LoginPasswordActivity extends AppCompatActivity {
         textInputLayout2 = (TextInputLayout) findViewById(R.id.text_input_layout2);
         password2 = (TextInputEditText) findViewById(R.id.password2);
         button = (ImageView) findViewById(R.id.continuar);
+        versionLabel = (TextView) findViewById(R.id.login_version_label);
+
+        versionLabel.setText("Versión: " + Utils.getAppVersion(this));
 
         // Registro de contraseña
         if (!prefs.contains("password")) {

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:ads="http://schemas.android.com/apk/res-auto"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
@@ -260,7 +260,6 @@
             </LinearLayout>
 
         </LinearLayout>
-
     </ScrollView>
 
     <com.google.android.gms.ads.AdView
@@ -269,8 +268,23 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        ads:adSize="SMART_BANNER"
-        ads:adUnitId="@string/banner_formularios_id">
+        android:visibility="gone"
+        app:adSize="SMART_BANNER"
+        app:adUnitId="@string/banner_formularios_id">
     </com.google.android.gms.ads.AdView>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab_form_save"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/adView"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignWithParentIfMissing="true"
+        android:layout_margin="12dp"
+        android:clickable="true"
+        android:onClick="fabSaveOnClick"
+        app:fabSize="normal"
+        app:srcCompat="@android:drawable/ic_menu_save"/>
 
 </RelativeLayout>

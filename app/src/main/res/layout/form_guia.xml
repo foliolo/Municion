@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:ads="http://schemas.android.com/apk/res-auto"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
@@ -97,8 +97,7 @@
                     android:layout_height="wrap_content"
                     android:hint="@string/calibre"
                     android:inputType="text"
-                    android:maxLines="1"
-                    android:singleLine="true"/>
+                    android:maxLines="1"/>
             </android.support.design.widget.TextInputLayout>
 
             <!--CHECK BOX CALIBRE 2-->
@@ -120,7 +119,6 @@
                     android:hint="@string/calibre2"
                     android:inputType="text"
                     android:maxLines="1"
-                    android:singleLine="true"
                     android:visibility="gone"/>
             </android.support.design.widget.TextInputLayout>
 
@@ -157,8 +155,10 @@
                 android:layout_height="wrap_content"
                 android:checked="false"
                 android:text="@string/aumento_cupo"/>
+
             <!--CUPO-->
             <android.support.design.widget.TextInputLayout
+                android:id="@+id/layout_cupo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
@@ -185,7 +185,6 @@
             </android.support.design.widget.TextInputLayout>
 
         </LinearLayout>
-
     </ScrollView>
 
     <com.google.android.gms.ads.AdView
@@ -194,8 +193,23 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        ads:adSize="SMART_BANNER"
-        ads:adUnitId="@string/banner_formularios_id">
+        android:visibility="gone"
+        app:adSize="SMART_BANNER"
+        app:adUnitId="@string/banner_formularios_id">
     </com.google.android.gms.ads.AdView>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab_form_save"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/adView"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignWithParentIfMissing="true"
+        android:layout_margin="12dp"
+        android:clickable="true"
+        android:onClick="fabSaveOnClick"
+        app:fabSize="normal"
+        app:srcCompat="@android:drawable/ic_menu_save"/>
 
 </RelativeLayout>
