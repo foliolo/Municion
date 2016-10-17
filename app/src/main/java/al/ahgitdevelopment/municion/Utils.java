@@ -1,5 +1,7 @@
 package al.ahgitdevelopment.municion;
 
+import android.accounts.Account;
+import android.accounts.AccountManager;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
@@ -26,6 +28,8 @@ import al.ahgitdevelopment.municion.DataModel.Guia;
 import al.ahgitdevelopment.municion.DataModel.Licencia;
 import al.ahgitdevelopment.municion.DataModel.NotificationData;
 
+import static al.ahgitdevelopment.municion.DataBases.FirebaseDBHelper.mFirebaseDatabase;
+
 /**
  * Created by ahidalgog on 07/07/2016.
  */
@@ -34,8 +38,6 @@ public final class Utils {
     public static NotificationData notificationData = new NotificationData();
     public static ArrayList<NotificationData> listNotificationData = new ArrayList<NotificationData>();
     private static SharedPreferences prefs;
-
-    private static FirebaseDatabase mFirebaseDatabase = FirebaseDatabase.getInstance();
 
     @NonNull
     public static CharSequence[] getLicenseName(Context context) {
@@ -149,7 +151,6 @@ public final class Utils {
         }
     }
 
-
     /**
      * Método que elimina una notificacion del Shared Preferences
      *
@@ -245,7 +246,10 @@ public final class Utils {
      */
     public static AdRequest getAdRequest(final View view) {
         // Read from the database
-        DatabaseReference myRef = mFirebaseDatabase.getReference("settings/ads");
+        if (mFirebaseDatabase == null)
+            mFirebaseDatabase = FirebaseDatabase.getInstance();
+
+        DatabaseReference myRef = mFirebaseDatabase.getReference("global_settings/ads");
         myRef.addValueEventListener(new ValueEventListener() {
 
             @Override
@@ -276,8 +280,9 @@ public final class Utils {
 
     /**
      * Metodo para obtener los recursos de las armas en funcion del tipo de licencia y su tipo de arma.
+     *
      * @param tipoLicencia Tipo de licencia
-     * @param tipoArma Tipo de arma
+     * @param tipoArma     Tipo de arma
      * @return Retorna el número entero perteneciente al recurso en cuestión.
      */
     public static int getResourceWeapon(int tipoLicencia, int tipoArma) {
@@ -394,5 +399,30 @@ public final class Utils {
             }
         }
         return versionName;
+    }
+
+    /**
+     * Obtención de la cuenta principal del dispositivo para usarlo como usuario
+     *
+     * @param context
+     * @return Email de la primera cuenta de google registrada en el dispositivo
+     */
+    public static String getUserEmail(Context context) {
+        String email = "";
+        try {
+            Account[] accounts = AccountManager.get(context).getAccountsByType("com.google");
+            if (accounts.length > 0) {
+                email = accounts[0].name;
+                for (Account account : accounts) {
+                    Log.i("Email_accounts", "Type => Account Name: " + account.name + " - Account Type: " + account.type);
+                }
+            }
+        } catch (SecurityException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return email;
     }
 }

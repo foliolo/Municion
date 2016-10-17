@@ -175,7 +175,7 @@
     <string name="dialog_guia_licencia_federativa_categoria2">Para las licencias federativas de 2ª Categoría el máximo de guias permitidas es de 6</string>
     <string name="dialog_guia_licencia_federativa_categoria3">Para las licencias federativas de 3ª Categoría el máximo de guias permitidas es de 1</string>
     <string name="dialog_guia_licencia_federativa">Primero debe seleccionar una licencia Federativa con su respectiva Categoría</string>
-    <string name="dialog_licencia_no_permiso">Para guardar la Licencia es necesario permiso de escritura en el Calendario del dispositivo</string>
+    <string name="dialog_licencia_no_permiso">Para guardar la Licencia es necesario permiso de lectory/escritura en el Calendario del dispositivo</string>
     <string name="lbl_tipo_escala">Escala</string>
     <string name="tipo_escala">Selecciona la escala del agente</string>
     <string name="pref_list_notification">Lista de notificaciones</string>
@@ -190,5 +190,8 @@
     <string name="guia_empty_list">Crea una LICENCIA de armas antes de añadir una GUIA</string>
     <string name="compra_empty_list">Crea una GUIA a la que asociar la COMPRA</string>
     <string name="licencia_empty_list">¿A qué esperas? Crea tu primera licencia</string>
+
+    <string name="auth_usuario_existente">Usuario ya existente</string>
+    <string name="auth_usuario_logado">El usuario ya esta logado</string>
 
 </resources>

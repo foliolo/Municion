@@ -1,0 +1,99 @@
+{
+  "global_settings": {
+    "ads": true
+  },
+  "users": [
+    {
+      "AuthUid": {
+        "email": "",
+        "pass": "",
+        "ads": "",
+        "db": {
+          "guias": [
+            {
+              "_id": "",
+              "id_compra": "",
+              "id_licencia": "",
+              "apodo": "",
+              "marca": "",
+              "modelo": "",
+              "tipo_arma": "",
+              "calibre1": "",
+              "calibre2": "",
+              "num_guia": "",
+              "num_arma": "",
+              "imagen_uri": "",
+              "cupo": "",
+              "gastado": ""
+            },
+            {
+              "_id": "",
+              "id_compra": "",
+              "id_licencia": "",
+              "apodo": "",
+              "marca": "",
+              "modelo": "",
+              "tipo_arma": "",
+              "calibre1": "",
+              "calibre2": "",
+              "num_guia": "",
+              "num_arma": "",
+              "imagen_uri": "",
+              "cupo": "",
+              "gastado": ""
+            }
+          ],
+          "compras": [
+            {
+              "_id": "",
+              "idPosGuia": "",
+              "calibre1": "",
+              "calibre2": "",
+              "unidades": "",
+              "precio": "",
+              "fecha": "",
+              "tipo": "",
+              "peso": "",
+              "marca": "",
+              "tienda": "",
+              "imagen_uri": "",
+              "valoracion": ""
+            },
+            {
+              "_id": "",
+              "idPosGuia": "",
+              "calibre1": "",
+              "calibre2": "",
+              "unidades": "",
+              "precio": "",
+              "fecha": "",
+              "tipo": "",
+              "peso": "",
+              "marca": "",
+              "tienda": "",
+              "imagen_uri": "",
+              "valoracion": ""
+            }
+          ],
+          "licencias": [
+            {
+              "_id": "",
+              "tipo": "",
+              "nombre": "",
+              "tipo_permiso_conduccion": "",
+              "edad": "",
+              "fecha_expedicion": "",
+              "fecha_caducidad": "",
+              "num_licencia": "",
+              "num_abonado": "",
+              "num_seguro": "",
+              "autonomia": "",
+              "escala": "",
+              "categoria": ""
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

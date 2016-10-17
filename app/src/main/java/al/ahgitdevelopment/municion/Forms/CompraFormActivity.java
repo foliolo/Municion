@@ -1,4 +1,4 @@
-package al.ahgitdevelopment.municion;
+package al.ahgitdevelopment.municion.Forms;
 
 import android.app.Activity;
 import android.app.DatePickerDialog;
@@ -31,6 +31,9 @@ import java.util.Date;
 
 import al.ahgitdevelopment.municion.DataModel.Compra;
 import al.ahgitdevelopment.municion.DataModel.Guia;
+import al.ahgitdevelopment.municion.FragmentMainActivity;
+import al.ahgitdevelopment.municion.R;
+import al.ahgitdevelopment.municion.Utils;
 
 /**
  * Created by ahidalgog on 11/04/2016.

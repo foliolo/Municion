@@ -7,14 +7,17 @@
         android:required="true"/>l
 
     <uses-permission android:name="android.permission.INTERNET"/>
-    <!--<uses-permission android:name="android.permissison.ACCESS_NETWORK_STATE"/>-->
-    <!--<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>-->
-    <!--<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>-->
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
     <uses-permission android:name="android.permission.VIBRATE"/>
     <uses-permission android:name="android.permission.WAKE_LOCK"/>
-    <!--<uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>-->
     <uses-permission android:name="android.permission.READ_CALENDAR" />
     <uses-permission android:name="android.permission.WRITE_CALENDAR" />
+    <uses-permission android:name="android.permission.GET_ACCOUNTS"/>
+    <!--<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>-->
+    <!--<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>-->
+    <!--<uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>-->
+
 
     <!--android:supportsRtl="true"-->
     <application
@@ -37,17 +40,17 @@
         </activity>
 
         <activity
-            android:name=".GuiaFormActivity"
+            android:name=".Forms.GuiaFormActivity"
             android:label="@string/title_nueva_guia"
             android:windowSoftInputMode="stateHidden"/>
 
         <activity
-            android:name=".CompraFormActivity"
+            android:name=".Forms.CompraFormActivity"
             android:label="@string/title_nueva_compra"
             android:windowSoftInputMode="stateHidden"/>
 
         <activity
-            android:name=".LicenciaFormActivity"
+            android:name=".Forms.LicenciaFormActivity"
             android:label="@string/title_nueva_licencia"
             android:windowSoftInputMode="stateHidden">
         </activity>

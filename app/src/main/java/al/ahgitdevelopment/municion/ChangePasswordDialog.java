@@ -95,7 +95,7 @@ public class ChangePasswordDialog extends DialogFragment {
      */
     private boolean savePassword() {
         boolean flag = false;
-        if (passwordOld.getText() != null && passwordOld.getText().toString().length() >= 4) {
+        if (passwordOld.getText() != null && passwordOld.getText().toString().length() >= LoginPasswordActivity.MIN_PASS_LENGTH) {
             if (checkPasswordOld() && checkPasswordNew()) {
                 // Ha ido correcto
                 SharedPreferences.Editor editor = preferences.edit();
@@ -138,9 +138,9 @@ public class ChangePasswordDialog extends DialogFragment {
             passwordNew1.setError(getString(R.string.settings_password_empty));
         } else if ("".equals(passwordNew2.getText().toString())) {
             passwordNew2.setError(getString(R.string.settings_password_empty));
-        } else if (passwordNew1.getText().toString().length() < 4) {
+        } else if (passwordNew1.getText().toString().length() < LoginPasswordActivity.MIN_PASS_LENGTH) {
             passwordNew1.setError(getString(R.string.password_short_fail));
-        } else if (passwordNew2.getText().toString().length() < 4) {
+        } else if (passwordNew2.getText().toString().length() < LoginPasswordActivity.MIN_PASS_LENGTH) {
             passwordNew2.setError(getString(R.string.password_short_fail));
         } else if (!passwordNew1.getText().toString().equals(passwordNew2.getText().toString())) {
             passwordNew2.setError(getString(R.string.password_equal_fail));

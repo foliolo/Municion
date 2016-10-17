@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 import android.widget.CursorAdapter;
 import android.widget.TextView;
 
-import al.ahgitdevelopment.municion.DataBaseSQLiteHelper;
+import al.ahgitdevelopment.municion.DataBases.DataBaseSQLiteHelper;
 import al.ahgitdevelopment.municion.R;
 
 /**

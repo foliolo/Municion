@@ -1,5 +1,6 @@
-package al.ahgitdevelopment.municion;
+package al.ahgitdevelopment.municion.Forms;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.DatePickerDialog;
@@ -15,9 +16,9 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.CalendarContract;
+import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputLayout;
-import android.support.v13.app.ActivityCompat;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
@@ -44,6 +45,10 @@ import java.util.Calendar;
 import java.util.Date;
 
 import al.ahgitdevelopment.municion.DataModel.Licencia;
+import al.ahgitdevelopment.municion.FragmentMainActivity;
+import al.ahgitdevelopment.municion.NotificationPublisher;
+import al.ahgitdevelopment.municion.R;
+import al.ahgitdevelopment.municion.Utils;
 
 /**
  * Created by Alberto on 24/05/2016.
@@ -179,7 +184,9 @@ public class LicenciaFormActivity extends AppCompatActivity {
     }
 
     public void fabSaveOnClick(View view) {
-        if (controlCampos() && addEventToCalendar()) { // Agregar fecha al Calendar Provider
+
+        if (controlCampos()) { // Agregar fecha al Calendar Provider
+
             // Create intent to deliver some kind of result data
             Intent result = new Intent(this, FragmentMainActivity.class);
 
@@ -194,62 +201,105 @@ public class LicenciaFormActivity extends AppCompatActivity {
 
             //Agregar notificacion
             publishNotification();
+            //Añadir fechaq de caducidad al calendario
+            checkCalendarPermission();
 
             setResult(Activity.RESULT_OK, result);
             finish();
         }
     }
 
-    private boolean addEventToCalendar() {
-        // Comprobacion permiso de escritura en el calendario del dispositivo
-        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.WRITE_CALENDAR) != PackageManager.PERMISSION_GRANTED) {
-            Snackbar.make(numLicencia, R.string.dialog_licencia_no_permiso, Snackbar.LENGTH_LONG)
-                    .setAction(android.R.string.ok, null)
-                    .show();
-            return false;
+    /**
+     * Metodo para agregar la fecha de caducidad de las licencias al calendario de google
+     * comprobando los permisos de forma dinámica para las versiones de android superiores
+     * a la M
+     */
+    private void checkCalendarPermission() {
+        int readPermission = PackageManager.PERMISSION_GRANTED;
+        int writePermission = PackageManager.PERMISSION_GRANTED;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+            readPermission = checkSelfPermission(Manifest.permission.READ_CALENDAR);
+            writePermission = checkSelfPermission(Manifest.permission.WRITE_CALENDAR);
+            if (readPermission != PackageManager.PERMISSION_GRANTED || writePermission != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(
+                        new String[]{
+                                Manifest.permission.READ_CALENDAR,
+                                Manifest.permission.WRITE_CALENDAR
+                        },
+                        100 //Codigo de respuesta de
+                );
+            }
+        } else {
+            addEventToCalendar();
         }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if (requestCode == 100) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+                addEventToCalendar();
+                finish();
+            } else {
+                Snackbar.make(numLicencia, R.string.dialog_licencia_no_permiso, Snackbar.LENGTH_LONG)
+                        .setAction(android.R.string.ok, null)
+                        .show();
+            }
+        }
+    }
+
+    /**
+     * Proceso de añadir la fecha de cducidad al calendario
+     */
+    private void addEventToCalendar() {
+
         long calID = 3;
         long startMillis = 0;
         long endMillis = 0;
+
         try {
+            //Fecha inicial
             Calendar beginTime = Calendar.getInstance();
-            beginTime.setTime(new SimpleDateFormat("dd/MM/yyyy").parse(fechaCaducidad.getText().toString()));
-            beginTime.set(Calendar.HOUR_OF_DAY, Calendar.getInstance().get(Calendar.HOUR_OF_DAY));
-            beginTime.set(Calendar.MINUTE, Calendar.getInstance().get(Calendar.MINUTE));
-            beginTime.set(Calendar.SECOND, Calendar.getInstance().get(Calendar.SECOND));
+//            beginTime.setTime(new SimpleDateFormat("dd/MM/yyyy").parse(fechaCaducidad.getText().toString()));
+//            beginTime.set(Calendar.HOUR_OF_DAY, Calendar.getInstance().get(Calendar.HOUR_OF_DAY));
+//            beginTime.set(Calendar.MINUTE, Calendar.getInstance().get(Calendar.MINUTE));
+//            beginTime.set(Calendar.SECOND, Calendar.getInstance().get(Calendar.SECOND));
             startMillis = beginTime.getTimeInMillis();
+
+            //Fecha de caducidad
             Calendar endTime = Calendar.getInstance();
             endTime.setTime(new SimpleDateFormat("dd/MM/yyyy").parse(fechaCaducidad.getText().toString()));
-            endTime.set(Calendar.HOUR_OF_DAY, Calendar.getInstance().get(Calendar.HOUR_OF_DAY) + 1);
-            endTime.set(Calendar.MINUTE, Calendar.getInstance().get(Calendar.MINUTE));
-            endTime.set(Calendar.SECOND, Calendar.getInstance().get(Calendar.SECOND));
+            endTime.add(Calendar.SECOND, 30);
+//            endTime.set(Calendar.HOUR_OF_DAY, Calendar.getInstance().get(Calendar.HOUR_OF_DAY) + 1);
+//            endTime.set(Calendar.MINUTE, Calendar.getInstance().get(Calendar.MINUTE));
+//            endTime.set(Calendar.SECOND, Calendar.getInstance().get(Calendar.SECOND));
             endMillis = endTime.getTimeInMillis();
+
+            ContentResolver cr = getContentResolver();
+            ContentValues values = new ContentValues();
+            values.put(CalendarContract.Events.DTSTART, startMillis);
+            values.put(CalendarContract.Events.DTEND, endMillis);
+            values.put(CalendarContract.Events.TITLE, "Tu licencia caduca hoy");
+            values.put(CalendarContract.Events.DESCRIPTION, Utils.getStringLicenseFromId(
+                    LicenciaFormActivity.this,
+                    tipoLicencia.getSelectedItemPosition()) + ": " + numLicencia.getText().toString());
+            values.put(CalendarContract.Events.CALENDAR_ID, calID);
+            values.put(CalendarContract.Events.EVENT_TIMEZONE, "Europe/Madrid");
+
+            Uri uri = cr.insert(CalendarContract.Events.CONTENT_URI, values);
+
+        } catch (SecurityException ex) {
+            ex.printStackTrace();
+            Log.e(getPackageName(), "Fallo en los permisos del calendario", ex);
         } catch (ParseException ex) {
+            ex.printStackTrace();
             Log.e(getPackageName(), "Fallo al crear el evento del calendario", ex);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            Log.e(getPackageName(), "Excepcion generica", ex);
         }
-        ContentResolver cr = getContentResolver();
-        ContentValues values = new ContentValues();
-        values.put(CalendarContract.Events.DTSTART, startMillis);
-        values.put(CalendarContract.Events.DTEND, endMillis);
-        values.put(CalendarContract.Events.TITLE, "Tu licencia caduca hoy");
-        values.put(CalendarContract.Events.DESCRIPTION, Utils.getStringLicenseFromId(
-                LicenciaFormActivity.this,
-                tipoLicencia.getSelectedItemPosition()) + ": " + numLicencia.getText().toString());
-        values.put(CalendarContract.Events.CALENDAR_ID, calID);
-        values.put(CalendarContract.Events.EVENT_TIMEZONE, "Europe/Madrid");
-
-        Uri uri = cr.insert(CalendarContract.Events.CONTENT_URI, values);
-
-//                Calendar cal = Calendar.getInstance();
-//                Intent intent = new Intent(Intent.ACTION_EDIT);
-//                intent.setType("vnd.android.cursor.item/event");
-//                intent.putExtra(CalendarContract.Events.DTSTART, cal.getTimeInMillis());
-//                intent.putExtra("allDay", true);
-//                intent.putExtra("rrule", "FREQ=YEARLY");
-//                intent.putExtra("endTime", cal.getTimeInMillis()+60*60*1000);
-//                intent.putExtra(CalendarContract.Events.TITLE, "A Test Event from android app");
-//                startActivity(intent);
-        return true;
     }
 
     /**
@@ -499,8 +549,7 @@ public class LicenciaFormActivity extends AppCompatActivity {
         stackBuilder.addNextIntent(resultIntent);
         PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_ONE_SHOT);
 
-        NotificationCompat.Builder mBuilder =
-                null;
+        NotificationCompat.Builder mBuilder;
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN) {
             mBuilder = new NotificationCompat.Builder(this)
                     .setSmallIcon(R.mipmap.ic_launcher_4_transparent)
@@ -701,14 +750,27 @@ public class LicenciaFormActivity extends AppCompatActivity {
     public static class DatePickerFragment extends DialogFragment
             implements DatePickerDialog.OnDateSetListener {
 
+        @NonNull
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
-            // Use the current date as the default date in the picker
             final Calendar c = Calendar.getInstance();
-            int year = c.get(Calendar.YEAR);
-            int month = c.get(Calendar.MONTH);
-            int day = c.get(Calendar.DAY_OF_MONTH);
+            int year = 0, month = 0, day = 0;
 
+            if (fechaExpedicion.getText().toString().equals("")) {
+                // Use the current date as the default date in the picker
+                year = c.get(Calendar.YEAR);
+                month = c.get(Calendar.MONTH);
+                day = c.get(Calendar.DAY_OF_MONTH);
+            } else {
+                try {
+                    c.setTime(new SimpleDateFormat("dd/MM/yyyy").parse(fechaExpedicion.getText().toString()));
+                    year = c.get(Calendar.YEAR);
+                    month = c.get(Calendar.MONTH);
+                    day = c.get(Calendar.DAY_OF_MONTH);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+            }
             // Create a new instance of DatePickerDialog and return it
             return new DatePickerDialog(getActivity(), this, year, month, day);
         }

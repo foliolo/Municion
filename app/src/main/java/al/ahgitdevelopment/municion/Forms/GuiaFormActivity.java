@@ -1,4 +1,4 @@
-package al.ahgitdevelopment.municion;
+package al.ahgitdevelopment.municion.Forms;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -28,7 +28,11 @@ import com.google.android.gms.ads.AdView;
 
 import java.util.ArrayList;
 
+import al.ahgitdevelopment.municion.DataBases.DataBaseSQLiteHelper;
 import al.ahgitdevelopment.municion.DataModel.Guia;
+import al.ahgitdevelopment.municion.FragmentMainActivity;
+import al.ahgitdevelopment.municion.R;
+import al.ahgitdevelopment.municion.Utils;
 
 /**
  * Created by Alberto on 25/03/2016.
@@ -145,6 +149,17 @@ public class GuiaFormActivity extends AppCompatActivity {
                     numGuia.setText(String.valueOf(guia.getNumGuia()));
                     numArma.setText(String.valueOf(guia.getNumArma()));
                     gastado.setText(String.valueOf(guia.getGastado()));
+                    if (aumentoCupo.isChecked()) {
+                        cupo.setInputType(InputType.TYPE_CLASS_NUMBER);
+                        layoutCupo.setClickable(true);
+                        layoutCupo.setEnabled(true);
+                        layoutCupo.setFocusable(true);
+                    } else {
+                        cupo.setInputType(InputType.TYPE_NULL);
+                        layoutCupo.setClickable(false);
+                        layoutCupo.setEnabled(false);
+                        layoutCupo.setFocusable(false);
+                    }
                     cupo.setText(String.valueOf(guia.getCupo()));
                     imagePath = guia.getImagePath();
                 } catch (NullPointerException e) {
@@ -170,10 +185,14 @@ public class GuiaFormActivity extends AppCompatActivity {
             public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
                 if (isChecked) {
                     cupo.setInputType(InputType.TYPE_CLASS_NUMBER);
+                    layoutCupo.setClickable(true);
                     layoutCupo.setEnabled(true);
+                    layoutCupo.setFocusable(true);
                 } else {
                     cupo.setInputType(InputType.TYPE_NULL);
+                    layoutCupo.setClickable(false);
                     layoutCupo.setEnabled(false);
+                    layoutCupo.setFocusable(false);
                 }
             }
         });

@@ -1,9 +1,11 @@
 package al.ahgitdevelopment.municion;
 
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
@@ -43,16 +45,29 @@ import java.util.ArrayList;
 import al.ahgitdevelopment.municion.Adapters.CompraArrayAdapter;
 import al.ahgitdevelopment.municion.Adapters.GuiaArrayAdapter;
 import al.ahgitdevelopment.municion.Adapters.LicenciaArrayAdapter;
+import al.ahgitdevelopment.municion.DataBases.DataBaseSQLiteHelper;
+import al.ahgitdevelopment.municion.DataBases.FirebaseDBHelper;
 import al.ahgitdevelopment.municion.DataModel.Compra;
 import al.ahgitdevelopment.municion.DataModel.Guia;
 import al.ahgitdevelopment.municion.DataModel.Licencia;
+import al.ahgitdevelopment.municion.Forms.CompraFormActivity;
+import al.ahgitdevelopment.municion.Forms.GuiaFormActivity;
+import al.ahgitdevelopment.municion.Forms.LicenciaFormActivity;
+
+import static al.ahgitdevelopment.municion.DataBases.FirebaseDBHelper.mAuth;
+import static al.ahgitdevelopment.municion.DataBases.FirebaseDBHelper.mAuthListener;
+import static al.ahgitdevelopment.municion.FragmentMainActivity.PlaceholderFragment.compraArrayAdapter;
+import static al.ahgitdevelopment.municion.FragmentMainActivity.PlaceholderFragment.guiaArrayAdapter;
+import static al.ahgitdevelopment.municion.FragmentMainActivity.PlaceholderFragment.licenciaArrayAdapter;
 
 public class FragmentMainActivity extends AppCompatActivity {
 
     public static final int REQUEST_IMAGE_CAPTURE = 100;
     public static final int GUIA_COMPLETED = 1;
     public static final int COMPRA_COMPLETED = 2;
+
     public static File fileImagePath = null;
+
     public static View auxView = null;
     public static ActionMode mActionMode = null;
     public static ActionMode.Callback mActionModeCallback = null;
@@ -60,14 +75,13 @@ public class FragmentMainActivity extends AppCompatActivity {
     public static ArrayList<Guia> guias;
     public static ArrayList<Compra> compras;
     public static ArrayList<Licencia> licencias;
+    public static TextView textEmptyList = null;
     private static DataBaseSQLiteHelper dbSqlHelper;
     private final int LICENCIA_COMPLETED = 3;
     private final int GUIA_UPDATED = 4;
     private final int COMPRA_UPDATED = 5;
     private final int LICENCIA_UPDATED = 6;
     public Toolbar toolbar;
-    private TextView textEmptyList = null;
-
     /**
      * The {@link PagerAdapter} that will provide
      * fragments for each of the sections. We use a
@@ -141,14 +155,13 @@ public class FragmentMainActivity extends AppCompatActivity {
 
         // Instanciamos la base de datos
         dbSqlHelper = new DataBaseSQLiteHelper(getApplicationContext());
+        // Obtain the FirebaseDatabase instance.
+        FirebaseDBHelper.initFirebaseDBHelper(this);
 
-        // Obtenemos las estructuras de datos
-        if (guias == null)
-            guias = getIntent().getParcelableArrayListExtra("guias");
-        if (compras == null)
-            compras = getIntent().getParcelableArrayListExtra("compras");
-        if (licencias == null)
-            licencias = getIntent().getParcelableArrayListExtra("licencias");
+        // Carga de las listas en funcion de la conectividad:
+        // - Con conexion: Firebase
+        // - Sin conexion: DDBB local
+        loadLists();
 
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
@@ -244,6 +257,24 @@ public class FragmentMainActivity extends AppCompatActivity {
     }
 
     /**
+     * Metodo para cargar las listas en función de su conectividad.
+     * En caso de tener, se cargarán las listas de internet.
+     * En caso contrario, se cargarán de la BBDD local
+     */
+    private void loadLists() {
+        // Obtenemos las estructuras de datos
+        if (guias == null) {
+            guias = getIntent().getParcelableArrayListExtra("guias");
+        }
+        if (compras == null) {
+            compras = getIntent().getParcelableArrayListExtra("compras");
+        }
+        if (licencias == null) {
+            licencias = getIntent().getParcelableArrayListExtra("licencias");
+        }
+    }
+
+    /**
      * Dispatch onPause() to fragments.
      */
     @Override
@@ -251,11 +282,37 @@ public class FragmentMainActivity extends AppCompatActivity {
         super.onStart();
 
         ShowTextEmptyList();
+
+        mAuth.addAuthStateListener(mAuthListener);
     }
 
-    /**
-     *
-     */
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+        // Guardado en la BBDD local de las estructuras de datos
+        dbSqlHelper.saveListGuias(null, guias);
+        dbSqlHelper.saveListCompras(null, compras);
+        dbSqlHelper.saveListLicencias(null, licencias);
+        dbSqlHelper.close();
+
+        if (mAuthListener != null) {
+            mAuth.removeAuthStateListener(mAuthListener);
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (cm.getActiveNetworkInfo() != null && cm.getActiveNetworkInfo().isConnected()) {
+            FirebaseDBHelper.saveLists(guias, compras, licencias); //Sin Toast
+//            if (FirebaseDBHelper.saveLists(guias, compras, licencias))
+//                Toast.makeText(this, "Listas guardadas en Firebase", Toast.LENGTH_LONG).show();
+        }
+    }
+
     private void ShowTextEmptyList() {
         textEmptyList.setVisibility(View.GONE);
 
@@ -265,21 +322,25 @@ public class FragmentMainActivity extends AppCompatActivity {
                 if (guias.size() == 0) {
                     textEmptyList.setVisibility(View.VISIBLE);
                     textEmptyList.setText(R.string.guia_empty_list);
-                }
+                } else
+                    textEmptyList.setVisibility(View.GONE);
+
                 break;
 
             case 1:
                 if (compras.size() == 0) {
                     textEmptyList.setVisibility(View.VISIBLE);
                     textEmptyList.setText(R.string.compra_empty_list);
-                }
+                } else
+                    textEmptyList.setVisibility(View.GONE);
                 break;
 
             case 2:
                 if (licencias.size() == 0) {
                     textEmptyList.setVisibility(View.VISIBLE);
                     textEmptyList.setText(R.string.licencia_empty_list);
-                }
+                } else
+                    textEmptyList.setVisibility(View.GONE);
                 break;
 
             default:
@@ -316,10 +377,9 @@ public class FragmentMainActivity extends AppCompatActivity {
         switch (mViewPager.getCurrentItem()) {
             case 0:
                 guias.remove(position);
-                PlaceholderFragment.guiaArrayAdapter.notifyDataSetChanged();
+                guiaArrayAdapter.notifyDataSetChanged();
                 break;
             case 1:
-                //FIXME: Falla en la posicion de las guias por eso no guarda las imagenes a veces y no borra lo que debe!
                 try {
                     //Actualizar cupo de la guia correspondiente
                     Guia guia = guias.get(compras.get(position).getIdPosGuia());
@@ -328,8 +388,8 @@ public class FragmentMainActivity extends AppCompatActivity {
 
                     //Borrado de la compra
                     compras.remove(position);
-                    PlaceholderFragment.compraArrayAdapter.notifyDataSetChanged();
-                    PlaceholderFragment.guiaArrayAdapter.notifyDataSetChanged();
+                    compraArrayAdapter.notifyDataSetChanged();
+                    guiaArrayAdapter.notifyDataSetChanged();
                 } catch (IndexOutOfBoundsException ex) {
                     Log.e(getPackageName(), "Fallo con los index al borrar una compra", ex);
                 }
@@ -345,7 +405,7 @@ public class FragmentMainActivity extends AppCompatActivity {
                         Log.wtf(getPackageName(), "Fallo al listar las notificaciones", ex);
                     }
                     licencias.remove(position);
-                    PlaceholderFragment.licenciaArrayAdapter.notifyDataSetChanged();
+                    licenciaArrayAdapter.notifyDataSetChanged();
                 }
                 break;
         }
@@ -400,13 +460,13 @@ public class FragmentMainActivity extends AppCompatActivity {
 
                 case GUIA_COMPLETED:
                     guias.add(new Guia(data.getExtras()));
-                    PlaceholderFragment.guiaArrayAdapter.notifyDataSetChanged();
+                    guiaArrayAdapter.notifyDataSetChanged();
                     break;
 
                 case COMPRA_COMPLETED:
                     Compra newCompra = new Compra(data.getExtras());
                     compras.add(newCompra);
-                    PlaceholderFragment.compraArrayAdapter.notifyDataSetChanged();
+                    compraArrayAdapter.notifyDataSetChanged();
 
                     //Actualizamos el cupo de la guia a la que pertence la compra
                     int posGuia = newCompra.getIdPosGuia();
@@ -414,12 +474,12 @@ public class FragmentMainActivity extends AppCompatActivity {
                         int gastoActual = guias.get(posGuia).getGastado();
                         guias.get(posGuia).setGastado(gastoActual + newCompra.getUnidades());
                     }
-                    PlaceholderFragment.guiaArrayAdapter.notifyDataSetChanged();
+                    guiaArrayAdapter.notifyDataSetChanged();
                     break;
 
                 case LICENCIA_COMPLETED:
                     licencias.add(new Licencia((Licencia) data.getExtras().getParcelable("modify_licencia")));
-                    PlaceholderFragment.licenciaArrayAdapter.notifyDataSetChanged();
+                    licenciaArrayAdapter.notifyDataSetChanged();
                     break;
 
                 case GUIA_UPDATED:
@@ -437,17 +497,6 @@ public class FragmentMainActivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    protected void onStop() {
-        super.onStop();
-        dbSqlHelper.saveListGuias(null, guias);
-        dbSqlHelper.saveListCompras(null, compras);
-        dbSqlHelper.saveListLicencias(null, licencias);
-        dbSqlHelper.close();
-
-//        Toast.makeText(FragmentMainActivity.this, R.string.guardadoBBDD, Toast.LENGTH_SHORT).show();
-    }
-
     private void updateImage(Bitmap imageBitmap) {
         //Guardado en disco de la imagen tomada con la foto
         saveBitmapToFile(imageBitmap);
@@ -457,11 +506,11 @@ public class FragmentMainActivity extends AppCompatActivity {
             switch (mViewPager.getCurrentItem()) {
                 case 0:
                     guias.get(imagePosition).setImagePath(fileImagePath.getAbsolutePath());
-                    PlaceholderFragment.guiaArrayAdapter.notifyDataSetChanged();
+                    guiaArrayAdapter.notifyDataSetChanged();
                     break;
                 case 1:
                     compras.get(imagePosition).setImagePath(fileImagePath.getAbsolutePath());
-                    PlaceholderFragment.compraArrayAdapter.notifyDataSetChanged();
+                    compraArrayAdapter.notifyDataSetChanged();
                     break;
             }
         } else
@@ -506,8 +555,8 @@ public class FragmentMainActivity extends AppCompatActivity {
             guia.setCupo(data.getExtras().getInt("cupo"));
             guia.setGastado(data.getExtras().getInt("gastado"));
 
-            PlaceholderFragment.guiaArrayAdapter.notifyDataSetChanged();
-            PlaceholderFragment.compraArrayAdapter.notifyDataSetChanged();
+            guiaArrayAdapter.notifyDataSetChanged();
+            compraArrayAdapter.notifyDataSetChanged();
         }
     }
 
@@ -530,7 +579,7 @@ public class FragmentMainActivity extends AppCompatActivity {
             compra.setValoracion(data.getExtras().getFloat("valoracion"));
             compra.setImagePath(data.getExtras().getString("imagePath"));
 
-            PlaceholderFragment.compraArrayAdapter.notifyDataSetChanged();
+            compraArrayAdapter.notifyDataSetChanged();
         }
     }
 
@@ -541,7 +590,7 @@ public class FragmentMainActivity extends AppCompatActivity {
             Licencia licencia = new Licencia((Licencia) data.getExtras().get("modify_licencia"));
             licencias.set(position, licencia);
 
-            PlaceholderFragment.licenciaArrayAdapter.notifyDataSetChanged();
+            licenciaArrayAdapter.notifyDataSetChanged();
         }
     }
 
@@ -576,56 +625,64 @@ public class FragmentMainActivity extends AppCompatActivity {
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.list_view_pager, container, false);
 
+            try {
+                switch (getArguments().getInt(ARG_SECTION_NUMBER)) {
+                    case 0: // Lista de las guias
+                        //Abrimos la base de datos 'DBUMunicion' en modo escritura
+                        guiaArrayAdapter = new GuiaArrayAdapter(getActivity(), R.layout.guia_item, guias);
+                        listView = (ListView) rootView.findViewById(R.id.ListView);
+                        listView.setAdapter(guiaArrayAdapter);
+                        break;
 
-            switch (getArguments().getInt(ARG_SECTION_NUMBER)) {
-                case 0: // Lista de las guias
-                    //Abrimos la base de datos 'DBUMunicion' en modo escritura
-                    guiaArrayAdapter = new GuiaArrayAdapter(getActivity(), R.layout.guia_item, guias);
-                    listView = (ListView) rootView.findViewById(R.id.ListView);
-                    listView.setAdapter(guiaArrayAdapter);
-                    break;
+                    case 1: // Lista de las compras
+                        compraArrayAdapter = new CompraArrayAdapter(getActivity(), R.layout.compra_item, compras);
+                        listView = (ListView) rootView.findViewById(R.id.ListView);
+                        listView.setAdapter(compraArrayAdapter);
+                        break;
 
-                case 1: // Lista de las compras
-                    compraArrayAdapter = new CompraArrayAdapter(getActivity(), R.layout.compra_item, compras);
-                    listView = (ListView) rootView.findViewById(R.id.ListView);
-                    listView.setAdapter(compraArrayAdapter);
-                    break;
+                    case 2: // Lista de las licencias
 
-                case 2: // Lista de las licencias
-                    licenciaArrayAdapter = new LicenciaArrayAdapter(getActivity(), R.layout.licencia_item, licencias);
-                    listView = (ListView) rootView.findViewById(R.id.ListView);
-                    listView.setAdapter(licenciaArrayAdapter);
-                    break;
-            }
+                        try {
+                            licenciaArrayAdapter = new LicenciaArrayAdapter(getActivity(), R.layout.licencia_item, licencias);
+                            listView = (ListView) rootView.findViewById(R.id.ListView);
+                            listView.setAdapter(licenciaArrayAdapter);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        break;
+                }
 
-            listView.setChoiceMode(AbsListView.CHOICE_MODE_SINGLE);
-            listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-                @Override
-                public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                    if (mActionMode != null) {
-                        return false;
+                listView.setChoiceMode(AbsListView.CHOICE_MODE_SINGLE);
+                listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+                    @Override
+                    public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                        if (mActionMode != null) {
+                            return false;
+                        }
+
+                        view.setSelected(true);
+                        auxView = view;
+
+                        // Start the CAB using the ActionMode.Callback defined above
+                        mActionMode = ((AppCompatActivity) getActivity()).startSupportActionMode(mActionModeCallback);
+                        assert mActionMode != null;
+                        mActionMode.setTitle(R.string.menu_cab_title);
+                        mActionMode.setTag(position);
+                        return true;
                     }
+                });
 
-                    view.setSelected(true);
-                    auxView = view;
-
-                    // Start the CAB using the ActionMode.Callback defined above
-                    mActionMode = ((AppCompatActivity) getActivity()).startSupportActionMode(mActionModeCallback);
-                    assert mActionMode != null;
-                    mActionMode.setTitle(R.string.menu_cab_title);
-                    mActionMode.setTag(position);
-                    return true;
-                }
-            });
-
-            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    if (mActionMode != null)
-                        mActionMode.finish();
-                    mActionMode = null;
-                }
-            });
+                listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        if (mActionMode != null)
+                            mActionMode.finish();
+                        mActionMode = null;
+                    }
+                });
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
 
             return rootView;
         }
@@ -713,8 +770,8 @@ public class FragmentMainActivity extends AppCompatActivity {
                     .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int pos) {
-                            if (pos >= 0)
-                                Toast.makeText(getActivity(), "Seleccionado: " + getGuiaName()[pos].toString(), Toast.LENGTH_SHORT).show();
+//                            if (pos >= 0)
+//                                Toast.makeText(getActivity(), "Seleccionado: " + getGuiaName()[pos].toString(), Toast.LENGTH_SHORT).show();
 
                             Intent form = new Intent(getActivity(), CompraFormActivity.class);
                             form.putExtra("position_guia", selectedGuia);

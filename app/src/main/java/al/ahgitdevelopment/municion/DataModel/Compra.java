@@ -127,10 +127,6 @@ public class Compra implements Parcelable {
         return fecha;
     }
 
-    public void setFecha(Calendar fecha) {
-        this.fecha = fecha;
-    }
-
     public void setFecha(String fecha) {
         Calendar auxFecha = Calendar.getInstance();
         try {

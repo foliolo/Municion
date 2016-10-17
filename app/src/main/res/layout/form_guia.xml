@@ -160,15 +160,18 @@
             <android.support.design.widget.TextInputLayout
                 android:id="@+id/layout_cupo"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:clickable="false"
+                android:focusable="false">
 
                 <EditText
                     android:id="@+id/form_cupo_anual"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:editable="true"
                     android:enabled="true"
                     android:hint="@string/cupo_anual"
-                    android:inputType="number"/>
+                    android:inputType="none"/>
             </android.support.design.widget.TextInputLayout>
 
             <!--CARTUCHOS GASTADOS-->
