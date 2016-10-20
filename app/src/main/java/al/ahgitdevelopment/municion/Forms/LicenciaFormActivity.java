@@ -17,6 +17,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.CalendarContract;
 import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.DialogFragment;
@@ -77,6 +78,7 @@ public class LicenciaFormActivity extends AppCompatActivity {
     private LinearLayout layoutCategoria;
     private TextView lblCategoria;
     private AppCompatSpinner categoria;
+    private FloatingActionButton fab;
 
     private Toolbar toolbar;
 
@@ -120,6 +122,14 @@ public class LicenciaFormActivity extends AppCompatActivity {
         layoutCategoria = (LinearLayout) findViewById(R.id.layout_categoria);
         lblCategoria = (TextView) findViewById(R.id.form_lbl_categoria);
         categoria = (AppCompatSpinner) findViewById(R.id.form_categoria);
+        fab = (FloatingActionButton) findViewById(R.id.fab_form_save);
+
+        //Gestion del boton de guardado en funcion de si se abre tras pulsar la notificacion
+        if (getIntent().hasExtra("notification_call")) {
+            fab.setVisibility(View.GONE);
+        } else {
+            fab.setVisibility(View.VISIBLE);
+        }
 
         //Carga de datos (en caso de modificacion)
         if (getIntent().getExtras() != null) {
@@ -262,19 +272,19 @@ public class LicenciaFormActivity extends AppCompatActivity {
         try {
             //Fecha inicial
             Calendar beginTime = Calendar.getInstance();
-//            beginTime.setTime(new SimpleDateFormat("dd/MM/yyyy").parse(fechaCaducidad.getText().toString()));
-//            beginTime.set(Calendar.HOUR_OF_DAY, Calendar.getInstance().get(Calendar.HOUR_OF_DAY));
-//            beginTime.set(Calendar.MINUTE, Calendar.getInstance().get(Calendar.MINUTE));
-//            beginTime.set(Calendar.SECOND, Calendar.getInstance().get(Calendar.SECOND));
+            beginTime.setTime(new SimpleDateFormat("dd/MM/yyyy").parse(fechaCaducidad.getText().toString()));
+            beginTime.set(Calendar.HOUR_OF_DAY, Calendar.getInstance().get(Calendar.HOUR_OF_DAY));
+            beginTime.set(Calendar.MINUTE, Calendar.getInstance().get(Calendar.MINUTE));
+            beginTime.set(Calendar.SECOND, Calendar.getInstance().get(Calendar.SECOND));
             startMillis = beginTime.getTimeInMillis();
 
             //Fecha de caducidad
             Calendar endTime = Calendar.getInstance();
             endTime.setTime(new SimpleDateFormat("dd/MM/yyyy").parse(fechaCaducidad.getText().toString()));
             endTime.add(Calendar.SECOND, 30);
-//            endTime.set(Calendar.HOUR_OF_DAY, Calendar.getInstance().get(Calendar.HOUR_OF_DAY) + 1);
-//            endTime.set(Calendar.MINUTE, Calendar.getInstance().get(Calendar.MINUTE));
-//            endTime.set(Calendar.SECOND, Calendar.getInstance().get(Calendar.SECOND));
+            endTime.set(Calendar.HOUR_OF_DAY, Calendar.getInstance().get(Calendar.HOUR_OF_DAY) + 1);
+            endTime.set(Calendar.MINUTE, Calendar.getInstance().get(Calendar.MINUTE));
+            endTime.set(Calendar.SECOND, Calendar.getInstance().get(Calendar.SECOND));
             endMillis = endTime.getTimeInMillis();
 
             ContentResolver cr = getContentResolver();
@@ -753,8 +763,8 @@ public class LicenciaFormActivity extends AppCompatActivity {
         @NonNull
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
-            final Calendar c = Calendar.getInstance();
             int year = 0, month = 0, day = 0;
+            final Calendar c = Calendar.getInstance();
 
             if (fechaExpedicion.getText().toString().equals("")) {
                 // Use the current date as the default date in the picker

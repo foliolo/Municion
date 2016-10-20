@@ -121,7 +121,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/lbl_num_licencia"
-                    android:inputType="number"/>
+                    android:inputType="number"
+                    android:maxLength="10"/>
             </android.support.design.widget.TextInputLayout>
 
             <!--EDAD CONDUCTOR-->
@@ -136,7 +137,7 @@
                     android:layout_height="wrap_content"
                     android:hint="@string/lbl_edad"
                     android:inputType="number"
-                    />
+                    android:maxLength="3"/>
             </android.support.design.widget.TextInputLayout>
 
             <!--FECHA EXPEDICION-->
@@ -183,6 +184,7 @@
                     android:layout_height="wrap_content"
                     android:hint="@string/lbl_num_abonado"
                     android:inputType="number"
+                    android:maxLength="@integer/max_num_abonado_guia"
                     />
             </android.support.design.widget.TextInputLayout>
 
@@ -198,6 +200,7 @@
                     android:layout_height="wrap_content"
                     android:hint="@string/lbl_num_poliza"
                     android:inputType="text"
+                    android:maxLength="@integer/max_poliza_seguro_licencia"
                     />
             </android.support.design.widget.TextInputLayout>
 

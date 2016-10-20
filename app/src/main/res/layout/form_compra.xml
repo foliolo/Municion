@@ -28,6 +28,7 @@
                 android:id="@+id/form_mensaje_compra"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:imeOptions="actionNext"
                 android:visibility="gone"/>
 
             <!--CALIBRE 1-->
@@ -40,6 +41,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/calibre"
+                    android:imeOptions="actionNext"
                     android:inputType="none"/>
             </android.support.design.widget.TextInputLayout>
 
@@ -61,6 +63,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/calibre2"
+                    android:imeOptions="actionNext"
                     android:inputType="none"
                     android:visibility="gone"/>
             </android.support.design.widget.TextInputLayout>
@@ -75,7 +78,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/unidades"
-                    android:inputType="number"/>
+                    android:imeOptions="actionNext"
+                    android:inputType="number"
+                    android:maxLength="@integer/max_unidades_compra_length"/>
             </android.support.design.widget.TextInputLayout>
 
             <!--PRECIO-->
@@ -88,7 +93,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/precio"
-                    android:inputType="numberDecimal"/>
+                    android:imeOptions="actionNext"
+                    android:inputType="numberDecimal"
+                    android:maxLength="@integer/max_unidades_precio_length"/>
             </android.support.design.widget.TextInputLayout>
 
             <!--FECHA-->
@@ -118,6 +125,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/tipo_municion"
+                    android:imeOptions="actionNext"
                     android:inputType="text"/>
             </android.support.design.widget.TextInputLayout>
 
@@ -131,7 +139,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/peso_municion"
-                    android:inputType="numberDecimal"/>
+                    android:imeOptions="actionNext"
+                    android:inputType="numberDecimal"
+                    android:maxLength="@integer/max_peso_municion_compra"/>
             </android.support.design.widget.TextInputLayout>
 
             <!--MARCA MUNICION-->
@@ -144,6 +154,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/marca"
+                    android:imeOptions="actionNext"
                     android:inputType="text"/>
             </android.support.design.widget.TextInputLayout>
 
@@ -157,6 +168,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/tienda"
+                    android:imeOptions="actionNext"
                     android:inputType="text"/>
             </android.support.design.widget.TextInputLayout>
 
@@ -165,6 +177,7 @@
                 android:id="@+id/textView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:imeOptions="actionDone"
                 android:text="@string/valoracion"
                 android:textAppearance="?android:attr/textAppearanceSmall"/>
 

@@ -193,5 +193,7 @@
 
     <string name="auth_usuario_existente">Usuario ya existente</string>
     <string name="auth_usuario_logado">El usuario ya esta logado</string>
+    <string name="login_text_info">Introduce 6 dígitos como mínimo</string>
+    <string name="description_login_button">Botón de login</string>
 
 </resources>

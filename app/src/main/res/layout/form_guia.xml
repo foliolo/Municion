@@ -28,6 +28,7 @@
                 android:id="@+id/form_mensaje_guia"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:imeOptions="actionNext"
                 android:visibility="gone"/>
 
             <!--MARCA-->
@@ -40,6 +41,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/marca"
+                    android:imeOptions="actionNext"
                     android:inputType="text"/>
             </android.support.design.widget.TextInputLayout>
 
@@ -53,6 +55,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/modelo"
+                    android:imeOptions="actionNext"
                     android:inputType="text"/>
             </android.support.design.widget.TextInputLayout>
 
@@ -66,6 +69,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/apodo"
+                    android:imeOptions="actionNext"
                     android:inputType="text"/>
             </android.support.design.widget.TextInputLayout>
 
@@ -96,6 +100,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/calibre"
+                    android:imeOptions="actionNext"
                     android:inputType="text"
                     android:maxLines="1"/>
             </android.support.design.widget.TextInputLayout>
@@ -117,6 +122,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/calibre2"
+                    android:imeOptions="actionNext"
                     android:inputType="text"
                     android:maxLines="1"
                     android:visibility="gone"/>
@@ -132,7 +138,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/numGuia"
-                    android:inputType="number"/>
+                    android:imeOptions="actionNext"
+                    android:inputType="number"
+                    android:maxLength="@integer/max_num_guia_form_guias"/>
             </android.support.design.widget.TextInputLayout>
 
             <!--NUMERO DE ARMA-->
@@ -145,7 +153,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/num_arma"
-                    android:inputType="number"/>
+                    android:imeOptions="actionNext"
+                    android:inputType="number"
+                    android:maxLength="@integer/max_num_arma_form_guias"/>
             </android.support.design.widget.TextInputLayout>
 
             <!--CHECK BOX AUMENTO DE CUPO-->
@@ -171,7 +181,9 @@
                     android:editable="true"
                     android:enabled="true"
                     android:hint="@string/cupo_anual"
-                    android:inputType="none"/>
+                    android:imeOptions="actionNext"
+                    android:inputType="none"
+                    android:maxLength="5"/>
             </android.support.design.widget.TextInputLayout>
 
             <!--CARTUCHOS GASTADOS-->
@@ -184,7 +196,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/cartuchos_comprados"
-                    android:inputType="number"/>
+                    android:imeOptions="actionDone"
+                    android:inputType="number"
+                    android:maxLength="5"/>
             </android.support.design.widget.TextInputLayout>
 
         </LinearLayout>

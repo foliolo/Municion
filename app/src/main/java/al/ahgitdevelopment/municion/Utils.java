@@ -274,7 +274,7 @@ public final class Utils {
         return new AdRequest.Builder()
                 .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)        // All emulators
                 .addTestDevice("19DFD6D99DFA16A1568E51C0698B3E2F")  // Alberto device ID
-                .addTestDevice("4C85A173A9AA2C069D16A40A1AA0CFBC")  // David device ID
+                .addTestDevice("01D5A4AECD505D328B19CE0B8D462CB4")  // David device ID
                 .build();
     }
 

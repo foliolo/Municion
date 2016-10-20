@@ -25,6 +25,7 @@ import android.widget.TextView;
 
 import com.google.android.gms.ads.AdView;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -440,10 +441,24 @@ public class CompraFormActivity extends AppCompatActivity {
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
             // Use the current date as the default date in the picker
+            int year = 0, month = 0, day = 0;
             final Calendar c = Calendar.getInstance();
-            int year = c.get(Calendar.YEAR);
-            int month = c.get(Calendar.MONTH);
-            int day = c.get(Calendar.DAY_OF_MONTH);
+
+            if (fecha.getText().toString().equals("")) {
+                // Use the current date as the default date in the picker
+                year = c.get(Calendar.YEAR);
+                month = c.get(Calendar.MONTH);
+                day = c.get(Calendar.DAY_OF_MONTH);
+            } else {
+                try {
+                    c.setTime(new SimpleDateFormat("dd/MM/yyyy").parse(fecha.getText().toString()));
+                    year = c.get(Calendar.YEAR);
+                    month = c.get(Calendar.MONTH);
+                    day = c.get(Calendar.DAY_OF_MONTH);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+            }
 
             // Create a new instance of DatePickerDialog and return it
             return new DatePickerDialog(getActivity(), this, year, month, day);

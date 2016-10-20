@@ -58,6 +58,7 @@ public final class FirebaseDBHelper {
      * Context
      */
     private static Context context;
+
     /**
      * Create a handler to handle the result of the authentication
      */
@@ -73,6 +74,7 @@ public final class FirebaseDBHelper {
                 userRef = mFirebaseDatabase.getReference().child("users").child(user.getUid());
                 userRef.child("email").setValue(user.getEmail());
                 userRef.child("pass").setValue(context.getSharedPreferences("Preferences", Context.MODE_PRIVATE).getString("password", ""));
+
             } else {
                 // User is signed out
                 Log.w(TAG, "onAuthStateChanged:signed_out");
@@ -119,22 +121,6 @@ public final class FirebaseDBHelper {
                             if (!task.isSuccessful()) {
                                 Log.w(TAG, "signInWithEmail:failed", task.getException());
 //                                Toast.makeText(context, R.string.auth_usuario_logado, Toast.LENGTH_SHORT).show();
-                            }
-                        }
-                    });
-        } else {
-            mAuth.signInAnonymously()
-                    .addOnCompleteListener((Activity) context, new OnCompleteListener<AuthResult>() {
-                        @Override
-                        public void onComplete(@NonNull Task<AuthResult> task) {
-                            Log.d(TAG, "signInAnonymously:onComplete:" + task.isSuccessful());
-
-                            // If sign in fails, display a message to the user. If sign in succeeds
-                            // the auth state listener will be notified and logic to handle the
-                            // signed in user can be handled in the listener.
-                            if (!task.isSuccessful()) {
-                                Log.w(TAG, "signInAnonymously", task.getException());
-//                                Toast.makeText(context, "Authentication failed.", Toast.LENGTH_SHORT).show();
                             }
                         }
                     });

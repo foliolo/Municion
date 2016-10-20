@@ -9,6 +9,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputEditText;
+import android.support.design.widget.TextInputLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -19,10 +20,12 @@ import android.widget.Toast;
  */
 public class ChangePasswordDialog extends DialogFragment {
     private SharedPreferences preferences;
+    private TextInputLayout layoutOld;
     private TextInputEditText passwordOld;
+    private TextInputLayout layoutPass1;
     private TextInputEditText passwordNew1;
+    private TextInputLayout layoutPass2;
     private TextInputEditText passwordNew2;
-    private boolean saveStatus = false;
 
     @Nullable
     @Override
@@ -35,8 +38,11 @@ public class ChangePasswordDialog extends DialogFragment {
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View view = inflater.inflate(R.layout.settings_items, null);
 
+        layoutOld = (TextInputLayout) view.findViewById(R.id.text_input_layout_old);
         passwordOld = (TextInputEditText) view.findViewById(R.id.passwordOld);
+        layoutPass1 = (TextInputLayout) view.findViewById(R.id.text_input_layout_new);
         passwordNew1 = (TextInputEditText) view.findViewById(R.id.passwordNew);
+        layoutPass2 = (TextInputLayout) view.findViewById(R.id.text_input_layout_new2);
         passwordNew2 = (TextInputEditText) view.findViewById(R.id.passwordNew2);
 
         // Set custom view
@@ -46,7 +52,6 @@ public class ChangePasswordDialog extends DialogFragment {
                 .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
-                        saveStatus = savePassword();
                         if (savePassword()) {
                             Toast.makeText(getActivity(), R.string.password_save, Toast.LENGTH_SHORT).show();
                             dismiss();
@@ -102,9 +107,10 @@ public class ChangePasswordDialog extends DialogFragment {
                 editor.putString("password", passwordNew1.getText().toString());
                 editor.apply();
                 flag = true;
+                layoutOld.setError(null);
             }
         } else {
-            passwordOld.setError(getString(R.string.password_short_fail));
+            layoutOld.setError(getString(R.string.password_short_fail));
         }
         return flag;
     }
@@ -118,11 +124,12 @@ public class ChangePasswordDialog extends DialogFragment {
         boolean isPassCorrect = false;
         String pass = preferences.getString("password", "");
         if ("".equals(pass)) {
-            passwordOld.setError(getString(R.string.settings_password_unlogin));
+            layoutOld.setError(getString(R.string.settings_password_unlogin));
         } else if (pass.equals(passwordOld.getText().toString())) {
             isPassCorrect = true;
+            layoutOld.setError(null);
         } else {
-            passwordOld.setError(getString(R.string.password_equal_fail));
+            layoutOld.setError(getString(R.string.password_equal_fail));
         }
         return isPassCorrect;
     }
@@ -135,15 +142,15 @@ public class ChangePasswordDialog extends DialogFragment {
     private boolean checkPasswordNew() {
         boolean isPassCorrect = false;
         if ("".equals(passwordNew1.getText().toString())) {
-            passwordNew1.setError(getString(R.string.settings_password_empty));
+            layoutPass1.setError(getString(R.string.settings_password_empty));
         } else if ("".equals(passwordNew2.getText().toString())) {
-            passwordNew2.setError(getString(R.string.settings_password_empty));
+            layoutPass2.setError(getString(R.string.settings_password_empty));
         } else if (passwordNew1.getText().toString().length() < LoginPasswordActivity.MIN_PASS_LENGTH) {
-            passwordNew1.setError(getString(R.string.password_short_fail));
+            layoutPass1.setError(getString(R.string.password_short_fail));
         } else if (passwordNew2.getText().toString().length() < LoginPasswordActivity.MIN_PASS_LENGTH) {
-            passwordNew2.setError(getString(R.string.password_short_fail));
+            layoutPass2.setError(getString(R.string.password_short_fail));
         } else if (!passwordNew1.getText().toString().equals(passwordNew2.getText().toString())) {
-            passwordNew2.setError(getString(R.string.password_equal_fail));
+            layoutPass2.setError(getString(R.string.password_equal_fail));
         } else if (passwordNew1.getText().toString().equals(passwordNew2.getText().toString())) {
             isPassCorrect = true;
         }
