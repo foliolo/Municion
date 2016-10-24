@@ -33,6 +33,7 @@
 
             <!--MARCA-->
             <android.support.design.widget.TextInputLayout
+                android:id="@+id/text_input_layout_marca"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
@@ -47,6 +48,7 @@
 
             <!--MODELO-->
             <android.support.design.widget.TextInputLayout
+                android:id="@+id/text_input_layout_modelo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
@@ -61,6 +63,7 @@
 
             <!--APODO-->
             <android.support.design.widget.TextInputLayout
+                android:id="@+id/text_input_layout_apodo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
@@ -130,6 +133,7 @@
 
             <!--NUMERO DE GUIA-->
             <android.support.design.widget.TextInputLayout
+                android:id="@+id/text_input_layout_num_guia"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
@@ -145,6 +149,7 @@
 
             <!--NUMERO DE ARMA-->
             <android.support.design.widget.TextInputLayout
+                android:id="@+id/text_input_layout_num_arma"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
@@ -188,6 +193,7 @@
 
             <!--CARTUCHOS GASTADOS-->
             <android.support.design.widget.TextInputLayout
+                android:id="@+id/text_input_layout_cartuchos_gastados"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 

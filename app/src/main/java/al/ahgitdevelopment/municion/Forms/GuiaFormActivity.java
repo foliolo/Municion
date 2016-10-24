@@ -20,7 +20,6 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -52,19 +51,18 @@ public class GuiaFormActivity extends AppCompatActivity {
     private ArrayList<String> finalWeapons = new ArrayList<>();
 
     private int tipoLicencia;
-    private EditText marca;
-    private EditText modelo;
-    private EditText apodo;
     private AppCompatSpinner tipoArma;
     private AutoCompleteTextView calibre1;
     private CheckBox segundoCalibre;
     private AutoCompleteTextView calibre2;
-    private EditText numGuia;
-    private EditText numArma;
     private CheckBox aumentoCupo;
+    private TextInputLayout layoutMarca;
+    private TextInputLayout layoutModelo;
+    private TextInputLayout layoutApodo;
+    private TextInputLayout layoutNumGuia;
+    private TextInputLayout layoutNumArma;
     private TextInputLayout layoutCupo;
-    private EditText cupo;
-    private EditText gastado;
+    private TextInputLayout layoutGastado;
 
     // Mensaje de error antes de guardar
     private TextView mensajeError;
@@ -91,20 +89,19 @@ public class GuiaFormActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setIcon(R.drawable.ic_bullseye);
 
-        marca = (EditText) findViewById(R.id.form_marca);
-        modelo = (EditText) findViewById(R.id.form_modelo);
-        apodo = (EditText) findViewById(R.id.form_apodo_arma);
         tipoArma = (AppCompatSpinner) findViewById(R.id.form_tipo_arma);
         calibre1 = (AutoCompleteTextView) findViewById(R.id.form_calibre1);
         segundoCalibre = (CheckBox) findViewById(R.id.form_check_segundo_calibre);
         calibre2 = (AutoCompleteTextView) findViewById(R.id.form_calibre2);
-        numGuia = (EditText) findViewById(R.id.form_num_guia);
-        numArma = (EditText) findViewById(R.id.form_num_arma);
         aumentoCupo = (CheckBox) findViewById(R.id.form_check_aumento_cupo);
-        layoutCupo = (TextInputLayout) findViewById(R.id.layout_cupo);
-        cupo = (EditText) findViewById(R.id.form_cupo_anual);
-        gastado = (EditText) findViewById(R.id.form_cartuchos_gastados);
         mensajeError = (TextView) findViewById(R.id.form_mensaje_guia);
+        layoutMarca = (TextInputLayout) findViewById(R.id.text_input_layout_marca);
+        layoutModelo = (TextInputLayout) findViewById(R.id.text_input_layout_modelo);
+        layoutApodo = (TextInputLayout) findViewById(R.id.text_input_layout_apodo);
+        layoutNumGuia = (TextInputLayout) findViewById(R.id.text_input_layout_num_guia);
+        layoutNumArma = (TextInputLayout) findViewById(R.id.text_input_layout_num_arma);
+        layoutCupo = (TextInputLayout) findViewById(R.id.layout_cupo);
+        layoutGastado = (TextInputLayout) findViewById(R.id.text_input_layout_cartuchos_gastados);
 
         imagePath = null;
 
@@ -121,7 +118,7 @@ public class GuiaFormActivity extends AppCompatActivity {
 
         //Inicializacion del cupo por defecto
         tipoArma.setSelection(0);
-        cupo.setText(String.valueOf(getDefaultCupo(finalWeapons.get(tipoArma.getSelectedItemPosition()))));
+        layoutCupo.getEditText().setText(String.valueOf(getDefaultCupo(finalWeapons.get(tipoArma.getSelectedItemPosition()))));
 
         //Carga de datos (en caso de modificacion)
         if (getIntent().getExtras() != null) {
@@ -130,9 +127,9 @@ public class GuiaFormActivity extends AppCompatActivity {
                     Guia guia = getIntent().getExtras().getParcelable("modify_guia");
                     assert guia != null;
                     tipoLicencia = guia.getTipoLicencia();
-                    marca.setText(guia.getMarca());
-                    modelo.setText(guia.getModelo());
-                    apodo.setText(guia.getApodo());
+                    layoutMarca.getEditText().setText(guia.getMarca());
+                    layoutModelo.getEditText().setText(guia.getModelo());
+                    layoutApodo.getEditText().setText(guia.getApodo());
                     calibre1.setText(guia.getCalibre1());
                     tipoArma.setSelection(guia.getTipoArma());
                     if (guia.getCalibre2() == null || "".equals(guia.getCalibre2())) {
@@ -146,21 +143,21 @@ public class GuiaFormActivity extends AppCompatActivity {
                     }
 
                     calibre2.setText(guia.getCalibre2());
-                    numGuia.setText(String.valueOf(guia.getNumGuia()));
-                    numArma.setText(String.valueOf(guia.getNumArma()));
-                    gastado.setText(String.valueOf(guia.getGastado()));
+                    layoutNumGuia.getEditText().setText(String.valueOf(guia.getNumGuia()));
+                    layoutNumArma.getEditText().setText(String.valueOf(guia.getNumArma()));
+                    layoutGastado.getEditText().setText(String.valueOf(guia.getGastado()));
                     if (aumentoCupo.isChecked()) {
-                        cupo.setInputType(InputType.TYPE_CLASS_NUMBER);
+                        layoutCupo.getEditText().setInputType(InputType.TYPE_CLASS_NUMBER);
                         layoutCupo.setClickable(true);
                         layoutCupo.setEnabled(true);
                         layoutCupo.setFocusable(true);
                     } else {
-                        cupo.setInputType(InputType.TYPE_NULL);
+                        layoutCupo.getEditText().setInputType(InputType.TYPE_NULL);
                         layoutCupo.setClickable(false);
                         layoutCupo.setEnabled(false);
                         layoutCupo.setFocusable(false);
                     }
-                    cupo.setText(String.valueOf(guia.getCupo()));
+                    layoutCupo.getEditText().setText(String.valueOf(guia.getCupo()));
                     imagePath = guia.getImagePath();
                 } catch (NullPointerException e) {
                     e.printStackTrace();
@@ -184,12 +181,12 @@ public class GuiaFormActivity extends AppCompatActivity {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
                 if (isChecked) {
-                    cupo.setInputType(InputType.TYPE_CLASS_NUMBER);
+                    layoutCupo.getEditText().setInputType(InputType.TYPE_CLASS_NUMBER);
                     layoutCupo.setClickable(true);
                     layoutCupo.setEnabled(true);
                     layoutCupo.setFocusable(true);
                 } else {
-                    cupo.setInputType(InputType.TYPE_NULL);
+                    layoutCupo.getEditText().setInputType(InputType.TYPE_NULL);
                     layoutCupo.setClickable(false);
                     layoutCupo.setEnabled(false);
                     layoutCupo.setFocusable(false);
@@ -200,7 +197,7 @@ public class GuiaFormActivity extends AppCompatActivity {
         tipoArma.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                cupo.setText(String.valueOf(getDefaultCupo(finalWeapons.get(tipoArma.getSelectedItemPosition()))));
+                layoutCupo.getEditText().setText(String.valueOf(getDefaultCupo(finalWeapons.get(tipoArma.getSelectedItemPosition()))));
             }
 
             @Override
@@ -210,7 +207,7 @@ public class GuiaFormActivity extends AppCompatActivity {
 
         // Validaciones de campos obligatorios antes de guardar
         // Marca
-        marca.addTextChangedListener(new TextWatcher() {
+        layoutMarca.getEditText().addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
             }
@@ -221,13 +218,13 @@ public class GuiaFormActivity extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
-                if (marca.getText().toString().length() < 1) {
-                    marca.setError(getString(R.string.error_before_save));
+                if (layoutMarca.getEditText().getText().toString().length() < 1) {
+                    layoutMarca.setError(getString(R.string.error_before_save));
                 }
             }
         });
         // Modelo
-        modelo.addTextChangedListener(new TextWatcher() {
+        layoutModelo.getEditText().addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
             }
@@ -238,8 +235,8 @@ public class GuiaFormActivity extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
-                if (modelo.getText().toString().length() < 1) {
-                    modelo.setError(getString(R.string.error_before_save));
+                if (layoutModelo.getEditText().getText().toString().length() < 1) {
+                    layoutModelo.setError(getString(R.string.error_before_save));
                 }
             }
         });
@@ -261,7 +258,7 @@ public class GuiaFormActivity extends AppCompatActivity {
             }
         });
         // Num Guia
-        numGuia.addTextChangedListener(new TextWatcher() {
+        layoutNumGuia.getEditText().addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
             }
@@ -272,13 +269,13 @@ public class GuiaFormActivity extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
-                if (numGuia.getText().toString().length() < 1) {
-                    numGuia.setError(getString(R.string.error_before_save));
+                if (layoutNumGuia.getEditText().getText().toString().length() < 1) {
+                    layoutNumGuia.setError(getString(R.string.error_before_save));
                 }
             }
         });
         // Num arma
-        numArma.addTextChangedListener(new TextWatcher() {
+        layoutNumArma.getEditText().addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
             }
@@ -289,13 +286,13 @@ public class GuiaFormActivity extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
-                if (numArma.getText().toString().length() < 1) {
-                    numArma.setError(getString(R.string.error_before_save));
+                if (layoutNumArma.getEditText().getText().toString().length() < 1) {
+                    layoutNumArma.setError(getString(R.string.error_before_save));
                 }
             }
         });
         // Cupo
-        cupo.addTextChangedListener(new TextWatcher() {
+        layoutCupo.getEditText().addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
             }
@@ -306,13 +303,13 @@ public class GuiaFormActivity extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
-                if (cupo.getText().toString().length() < 1) {
-                    cupo.setError(getString(R.string.error_before_save));
+                if (layoutCupo.getEditText().getText().toString().length() < 1) {
+                    layoutCupo.setError(getString(R.string.error_before_save));
                 }
             }
         });
         // Gastado
-        gastado.addTextChangedListener(new TextWatcher() {
+        layoutGastado.getEditText().addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
             }
@@ -323,8 +320,8 @@ public class GuiaFormActivity extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
-                if (gastado.getText().toString().length() < 1) {
-                    gastado.setError(getString(R.string.error_before_save));
+                if (layoutGastado.getEditText().getText().toString().length() < 1) {
+                    layoutGastado.setError(getString(R.string.error_before_save));
                 }
             }
         });
@@ -441,21 +438,21 @@ public class GuiaFormActivity extends AppCompatActivity {
         if (getIntent().getExtras().getString("tipo_licencia") != null) {
             tipoLicencia = Utils.getLicenciaTipoFromString(GuiaFormActivity.this, getIntent().getExtras().getString("tipo_licencia"));
             if (tipoLicencia == 4) {  // E - Escopeta
-                if (checkMaxGuiasForLicenciaTipoE(marca)) { // Maximo: 12 guias
+                if (checkMaxGuiasForLicenciaTipoE(layoutMarca.getEditText())) { // Maximo: 12 guias
                     return;
                 }
                 if (tipoArma.getSelectedItemPosition() == 0) { // Arma: escopeta
-                    if (checkMaxGuiasEscopeta(marca)) {
+                    if (checkMaxGuiasEscopeta(layoutMarca.getEditText())) {
                         return;
                     }
                 } else if (tipoArma.getSelectedItemPosition() == 1) { // Arma: rifle
-                    if (checkMaxGuiasRifle(marca)) {
+                    if (checkMaxGuiasRifle(layoutMarca.getEditText())) {
                         return;
                     }
                 }
             } else if (tipoLicencia == 5) { // F - Tiro olimpico
                 // Se revisa el numero de guias maximas en funcion de la categoria
-                if (checkNumGuiasMaxLicenciaTipoF(marca, Utils.getMaxCategoria(GuiaFormActivity.this))) {
+                if (checkNumGuiasMaxLicenciaTipoF(layoutMarca.getEditText(), Utils.getMaxCategoria(GuiaFormActivity.this))) {
                     return;
                 }
             }
@@ -463,24 +460,24 @@ public class GuiaFormActivity extends AppCompatActivity {
             tipoLicencia = ((Guia) getIntent().getExtras().getParcelable("modify_guia")).getTipoLicencia();
             if (tipoLicencia == 4) {  // E - Escopeta
                 if (tipoArma.getSelectedItemPosition() == 0) { // Arma: escopeta
-                    if (checkMaxGuiasEscopeta(marca)) {
+                    if (checkMaxGuiasEscopeta(layoutMarca.getEditText())) {
                         return;
                     }
                 } else if (tipoArma.getSelectedItemPosition() == 1) { // Arma: rifle
-                    if (checkMaxGuiasRifle(marca)) {
+                    if (checkMaxGuiasRifle(layoutMarca.getEditText())) {
                         return;
                     }
                 }
             }
         }
         bundle.putInt("tipoLicencia", tipoLicencia);
-        bundle.putString("marca", marca.getText().toString());
-        bundle.putString("modelo", modelo.getText().toString());
+        bundle.putString("marca", layoutMarca.getEditText().getText().toString());
+        bundle.putString("modelo", layoutModelo.getEditText().getText().toString());
         // Control error. He metido vacio porque el campo en BBDD no puede ser  nulo
-        if (apodo.getText().toString().isEmpty()) {
-            apodo.setText("");
+        if (layoutApodo.getEditText().getText().toString().isEmpty()) {
+            layoutApodo.getEditText().setText("");
         }
-        bundle.putString("apodo", apodo.getText().toString());
+        bundle.putString("apodo", layoutApodo.getEditText().getText().toString());
         bundle.putInt("tipoArma", tipoArma.getSelectedItemPosition());
         bundle.putString("calibre1", calibre1.getText().toString());
         if (segundoCalibre.isChecked()) {
@@ -490,12 +487,12 @@ public class GuiaFormActivity extends AppCompatActivity {
             }
             bundle.putString("calibre2", calibre2.getText().toString());
         }
-        bundle.putInt("numGuia", Integer.parseInt(numGuia.getText().toString()));
-        bundle.putInt("numArma", Integer.parseInt(numArma.getText().toString()));
-        bundle.putInt("cupo", Integer.parseInt(cupo.getText().toString()));
-        bundle.putInt("gastado", Integer.parseInt(gastado.getText().toString()));
+        bundle.putInt("numGuia", Integer.parseInt(layoutNumGuia.getEditText().getText().toString()));
+        bundle.putInt("numArma", Integer.parseInt(layoutNumArma.getEditText().getText().toString()));
+        bundle.putInt("cupo", Integer.parseInt(layoutCupo.getEditText().getText().toString()));
+        bundle.putInt("gastado", Integer.parseInt(layoutGastado.getEditText().getText().toString()));
 
-        //Paso de vuelta de la posicion del item en el array
+        //Paso de vuelta de la posicion del item en el arrayet
         if (getIntent().getExtras() != null)
             bundle.putInt("position", getIntent().getExtras().getInt("position", -1));
 
@@ -569,18 +566,18 @@ public class GuiaFormActivity extends AppCompatActivity {
         boolean retorno = true;
         // Validaciones campos formularios
         // Marca
-        if (marca.getText().toString().length() < 1) {
-            marca.setError(getString(R.string.error_before_save));
+        if (layoutMarca.getEditText().getText().toString().length() < 1) {
+            layoutMarca.setError(getString(R.string.error_before_save));
             retorno = false;
         }
         // Modelo
-        if (modelo.getText().toString().length() < 1) {
-            modelo.setError(getString(R.string.error_before_save));
+        if (layoutModelo.getEditText().getText().toString().length() < 1) {
+            layoutModelo.setError(getString(R.string.error_before_save));
             retorno = false;
         }
         // Apodo
-        if (apodo.getText().toString().length() < 1) {
-            apodo.setError(getString(R.string.error_before_save));
+        if (layoutApodo.getEditText().getText().toString().length() < 1) {
+            layoutApodo.setError(getString(R.string.error_before_save));
             retorno = false;
         }
         // Calibre1
@@ -589,23 +586,23 @@ public class GuiaFormActivity extends AppCompatActivity {
             retorno = false;
         }
         // Num Guia
-        if (numGuia.getText().toString().length() < 1) {
-            numGuia.setError(getString(R.string.error_before_save));
+        if (layoutNumGuia.getEditText().getText().toString().length() < 1) {
+            layoutNumGuia.setError(getString(R.string.error_before_save));
             retorno = false;
         }
         // Num Arma
-        if (numArma.getText().toString().length() < 1) {
-            numArma.setError(getString(R.string.error_before_save));
+        if (layoutNumArma.getEditText().getText().toString().length() < 1) {
+            layoutNumArma.setError(getString(R.string.error_before_save));
             retorno = false;
         }
         // Cupo
-        if (cupo.getText().toString().length() < 1) {
-            cupo.setError(getString(R.string.error_before_save));
+        if (layoutCupo.getEditText().getText().toString().length() < 1) {
+            layoutCupo.setError(getString(R.string.error_before_save));
             retorno = false;
         }
         // Gastado
-        if (gastado.getText().toString().length() < 1) {
-            gastado.setError(getString(R.string.error_before_save));
+        if (layoutGastado.getEditText().getText().toString().length() < 1) {
+            layoutGastado.setError(getString(R.string.error_before_save));
             retorno = false;
         }
         if (!retorno) {
@@ -662,32 +659,32 @@ public class GuiaFormActivity extends AppCompatActivity {
             switch (arma) {
                 case "Pistola":
                     defaultCupo = 100;
-                    cupo.setInputType(InputType.TYPE_NULL);
+                    layoutCupo.getEditText().setInputType(InputType.TYPE_NULL);
                     break;
                 case "Escopeta":
                     defaultCupo = 5000;
-                    cupo.setInputType(InputType.TYPE_NULL);
+                    layoutCupo.getEditText().setInputType(InputType.TYPE_NULL);
                     break;
                 case "Rifle":
                     defaultCupo = 1000;
-                    cupo.setInputType(InputType.TYPE_NULL);
+                    layoutCupo.getEditText().setInputType(InputType.TYPE_NULL);
                     break;
                 case "Revolver":
                     defaultCupo = 100;
-                    cupo.setInputType(InputType.TYPE_NULL);
+                    layoutCupo.getEditText().setInputType(InputType.TYPE_NULL);
                     break;
                 case "Avancarga":
                     defaultCupo = 1000;
-                    cupo.setInputType(InputType.TYPE_NULL);
+                    layoutCupo.getEditText().setInputType(InputType.TYPE_NULL);
                     break;
                 default:
                     defaultCupo = 0;
                     aumentoCupo.setChecked(true);
-                    cupo.setInputType(InputType.TYPE_CLASS_NUMBER);
+                    layoutCupo.getEditText().setInputType(InputType.TYPE_CLASS_NUMBER);
             }
         } else {
-            defaultCupo = Integer.parseInt(cupo.getText().toString());
-            cupo.setInputType(InputType.TYPE_CLASS_NUMBER);
+            defaultCupo = Integer.parseInt(layoutCupo.getEditText().getText().toString());
+            layoutCupo.getEditText().setInputType(InputType.TYPE_CLASS_NUMBER);
         }
         return defaultCupo;
     }

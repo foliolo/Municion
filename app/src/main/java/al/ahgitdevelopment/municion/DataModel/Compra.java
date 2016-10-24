@@ -4,10 +4,6 @@ import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-
 /**
  * Created by Alberto on 12/05/2016.
  */
@@ -29,7 +25,7 @@ public class Compra implements Parcelable {
     private String calibre2;
     private int unidades;
     private double precio;
-    private Calendar fecha;
+    private String fecha;
     private String tipo;
     private int peso;
     private String marca;
@@ -123,21 +119,12 @@ public class Compra implements Parcelable {
         this.precio = precio;
     }
 
-    public Calendar getFecha() {
+    public String getFecha() {
         return fecha;
     }
 
     public void setFecha(String fecha) {
-        Calendar auxFecha = Calendar.getInstance();
-        try {
-            auxFecha.setTime(new SimpleDateFormat("dd/MM/yyyy").parse(fecha));
-            if (this.fecha == null)
-                this.fecha = Calendar.getInstance();
-            this.fecha = auxFecha;
-        } catch (ParseException e) {
-            e.printStackTrace();
-            this.fecha = auxFecha;
-        }
+        this.fecha = fecha;
     }
 
     public String getTipo() {
@@ -201,11 +188,7 @@ public class Compra implements Parcelable {
         dest.writeString(calibre2);
         dest.writeInt(unidades);
         dest.writeDouble(precio);
-        try {
-            dest.writeString(new SimpleDateFormat("dd/MM/yyyy").format(getFecha().getTime()));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        dest.writeString(getFecha());
         dest.writeString(tipo);
         dest.writeInt(peso);
         dest.writeString(marca);

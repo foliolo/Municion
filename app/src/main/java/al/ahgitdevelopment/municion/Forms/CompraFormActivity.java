@@ -19,7 +19,6 @@ import android.view.WindowManager;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.DatePicker;
-import android.widget.EditText;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
@@ -40,27 +39,23 @@ import al.ahgitdevelopment.municion.Utils;
  * Created by ahidalgog on 11/04/2016.
  */
 public class CompraFormActivity extends AppCompatActivity {
-    public static EditText fecha;
-    private TextInputLayout layoutFecha;
-    private EditText calibre1;
-    private EditText calibre2;
     private CheckBox checkSegundoCalibre;
-    private EditText unidades;
-    private EditText precio;
-    private EditText tipoMunicion;
-    private EditText pesoMunicion;
-    private EditText marcaMunicion;
-    private EditText tienda;
     private RatingBar valoracion;
     //    private ImageView imagen;
     // Mensaje de error antes de guardar
     private TextView mensajeError;
     private String imagePath;
-
     private int posicionGuia;
     private Toolbar toolbar;
-
-
+    private static TextInputLayout layoutFecha;
+    private TextInputLayout layoutCalibre1;
+    private TextInputLayout layoutCalibre2;
+    private TextInputLayout layoutUnidades;
+    private TextInputLayout layoutPrecio;
+    private TextInputLayout layoutTipoMunicion;
+    private TextInputLayout layoutPesoMunicion;
+    private TextInputLayout layoutMarcaMunicion;
+    private TextInputLayout layoutTienda;
     /**
      * Inicializa la actividad
      *
@@ -79,46 +74,48 @@ public class CompraFormActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setIcon(R.drawable.ic_bullseye);
 
-        calibre1 = (EditText) findViewById(R.id.form_calibre1);
         checkSegundoCalibre = (CheckBox) findViewById(R.id.form_check_segundo_calibre);
-        calibre2 = (EditText) findViewById(R.id.form_calibre2);
-        unidades = (EditText) findViewById(R.id.form_unidades);
-        precio = (EditText) findViewById(R.id.form_precio);
-        layoutFecha = (TextInputLayout) findViewById(R.id.layout_form_fecha_compra);
-        fecha = (EditText) findViewById(R.id.form_fecha);
-        tipoMunicion = (EditText) findViewById(R.id.form_tipo_municion);
-        pesoMunicion = (EditText) findViewById(R.id.form_peso_municion);
-        marcaMunicion = (EditText) findViewById(R.id.form_marca_municion);
-        tienda = (EditText) findViewById(R.id.form_tienda);
         valoracion = (RatingBar) findViewById(R.id.form_ratingBar_valoracion);
 //        imagen = (ImageView) findViewById(R.id.imagen);
         mensajeError = (TextView) findViewById(R.id.form_mensaje_compra);
         imagePath = null;
+        layoutFecha = (TextInputLayout) findViewById(R.id.layout_form_fecha_compra);
+        layoutCalibre1 = (TextInputLayout) findViewById(R.id.text_input_layout_calibre1);
+        layoutCalibre2 = (TextInputLayout) findViewById(R.id.text_input_layout_calibre2);
+        layoutUnidades = (TextInputLayout) findViewById(R.id.text_input_layout_unidades);
+        layoutPrecio = (TextInputLayout) findViewById(R.id.text_input_layout_precio);
+        layoutTipoMunicion = (TextInputLayout) findViewById(R.id.text_input_layout_tipo_municion);
+        layoutPesoMunicion = (TextInputLayout) findViewById(R.id.text_input_layout_peso_municion);
+        layoutMarcaMunicion = (TextInputLayout) findViewById(R.id.text_input_layout_marca_municion);
+        layoutTienda = (TextInputLayout) findViewById(R.id.text_input_layout_tienda);
 
         if (getIntent().getExtras() != null) {
             //Carga de datos (en caso de modificacion)
             if (getIntent().getExtras().get("position_guia") == null) {
                 try {
                     Compra compra = getIntent().getExtras().getParcelable("modify_compra");
+                    // Para la fecha de compra
+                    SimpleDateFormat simpleDate = new SimpleDateFormat("dd/MM/yyyy");
+                    Calendar calendar = Calendar.getInstance();
 
-                    calibre1.setText(compra.getCalibre1());
+                    layoutCalibre1.getEditText().setText(compra.getCalibre1());
                     if (compra.getCalibre2() != null && !"null".equals(compra.getCalibre2())) {
                         if (!"".equals(compra.getCalibre2().toString())) {
                             checkSegundoCalibre.setChecked(true);
-                            calibre2.setVisibility(View.VISIBLE);
+                            layoutCalibre2.setVisibility(View.VISIBLE);
                         } else {
                             checkSegundoCalibre.setChecked(false);
-                            calibre2.setVisibility(View.GONE);
+                            layoutCalibre2.setVisibility(View.GONE);
                         }
-                        calibre2.setText(compra.getCalibre2().toString());
+                        layoutCalibre2.getEditText().setText(compra.getCalibre2().toString());
                     }
-                    unidades.setText(String.valueOf(compra.getUnidades()));
-                    precio.setText(String.valueOf(compra.getPrecio() + "€"));
-                    fecha.setText(new SimpleDateFormat("dd/MM/yyyy").format(compra.getFecha().getTime()));
-                    tipoMunicion.setText(compra.getTipo());
-                    pesoMunicion.setText(String.valueOf(compra.getPeso()));
-                    marcaMunicion.setText(compra.getMarca());
-                    tienda.setText(compra.getTienda());
+                    layoutUnidades.getEditText().setText(String.valueOf(compra.getUnidades()));
+                    layoutPrecio.getEditText().setText(String.valueOf(compra.getPrecio() + "€"));
+                    layoutFecha.getEditText().setText(simpleDate.format(calendar.getTime()));
+                    layoutTipoMunicion.getEditText().setText(compra.getTipo());
+                    layoutPesoMunicion.getEditText().setText(String.valueOf(compra.getPeso()));
+                    layoutMarcaMunicion.getEditText().setText(compra.getMarca());
+                    layoutTienda.getEditText().setText(compra.getTienda());
                     valoracion.setRating(compra.getValoracion());
 //                imagen.setImageBitmap(BitmapFactory.decodeFile(compra.getImagePath()));
                     imagePath = compra.getImagePath();
@@ -131,11 +128,11 @@ public class CompraFormActivity extends AppCompatActivity {
                 posicionGuia = getIntent().getExtras().getInt("position_guia", -1);
                 if (posicionGuia != -1) {
                     Guia guia = getIntent().getExtras().getParcelable("guia");
-                    calibre1.setText(guia.getCalibre1());
+                    layoutCalibre1.getEditText().setText(guia.getCalibre1());
                     if (guia.getCalibre2() != null && !guia.getCalibre2().equals("") && !"null".equals(guia.getCalibre2())) {
                         checkSegundoCalibre.setChecked(true);
-                        calibre2.setVisibility(View.VISIBLE);
-                        calibre2.setText(guia.getCalibre2());
+                        layoutCalibre2.setVisibility(View.VISIBLE);
+                        layoutCalibre2.getEditText().setText(guia.getCalibre2());
                     }
                 }
             }
@@ -145,10 +142,10 @@ public class CompraFormActivity extends AppCompatActivity {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
-                    calibre2.setVisibility(View.VISIBLE);
+                    layoutCalibre2.setVisibility(View.VISIBLE);
                 } else {
-                    calibre2.setVisibility(View.GONE);
-                    calibre2.setText("");
+                    layoutCalibre2.setVisibility(View.GONE);
+                    layoutCalibre2.getEditText().setText("");
                 }
             }
         });
@@ -160,7 +157,7 @@ public class CompraFormActivity extends AppCompatActivity {
             }
         });
 
-        fecha.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+        layoutFecha.getEditText().setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if (hasFocus) {
@@ -170,7 +167,7 @@ public class CompraFormActivity extends AppCompatActivity {
         });
 
         // Evento que saca el calendario al recibir el foco en el campo fecha
-        fecha.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+        layoutFecha.getEditText().setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if (hasFocus)
@@ -178,17 +175,17 @@ public class CompraFormActivity extends AppCompatActivity {
             }
         });
 
-        pesoMunicion.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+        layoutPesoMunicion.getEditText().setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
-                if (hasFocus && pesoMunicion.getText().toString().equals("0"))
-                    pesoMunicion.setText("");
+                if (hasFocus && layoutPesoMunicion.getEditText().getText().toString().equals("0"))
+                    layoutPesoMunicion.getEditText().setText("");
             }
         });
 
         // Validaciones de campos obligatorios antes de guardar
         // Calibre
-        calibre1.addTextChangedListener(new TextWatcher() {
+        layoutCalibre1.getEditText().addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -200,13 +197,13 @@ public class CompraFormActivity extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
-                if (calibre1.getText().toString().length() < 1) {
-                    calibre1.setError(getString(R.string.error_before_save));
+                if (layoutCalibre1.getEditText().getText().toString().length() < 1) {
+                    layoutCalibre1.setError(getString(R.string.error_before_save));
                 }
             }
         });
         // Unidades
-        unidades.addTextChangedListener(new TextWatcher() {
+        layoutUnidades.getEditText().addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -218,13 +215,13 @@ public class CompraFormActivity extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
-                if (unidades.getText().toString().length() < 1) {
-                    unidades.setError(getString(R.string.error_before_save));
+                if (layoutUnidades.getEditText().getText().toString().length() < 1) {
+                    layoutUnidades.setError(getString(R.string.error_before_save));
                 }
             }
         });
         // Precio
-        precio.addTextChangedListener(new TextWatcher() {
+        layoutPrecio.getEditText().addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -236,8 +233,8 @@ public class CompraFormActivity extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
-                if (precio.getText().toString().length() < 1) {
-                    precio.setError(getString(R.string.error_before_save));
+                if (layoutPrecio.getEditText().getText().toString().length() < 1) {
+                    layoutPrecio.setError(getString(R.string.error_before_save));
                 }
             }
         });
@@ -348,42 +345,42 @@ public class CompraFormActivity extends AppCompatActivity {
         }
 
         Bundle bundle = new Bundle();
-        bundle.putString("calibre1", calibre1.getText().toString());
-        if (calibre2.getText().toString().isEmpty()) {
-            calibre2.setText(null);
+        bundle.putString("calibre1", layoutCalibre1.getEditText().getText().toString());
+        if (layoutCalibre2.getEditText().getText().toString().isEmpty()) {
+            layoutCalibre2.getEditText().setText(null);
         }
-        bundle.putString("calibre2", calibre2.getText().toString());
+        bundle.putString("calibre2", layoutCalibre2.getEditText().getText().toString());
 
-        if (unidades.getText().toString().isEmpty()) {
-            unidades.setText("0");
+        if (layoutUnidades.getEditText().getText().toString().isEmpty()) {
+            layoutUnidades.getEditText().setText("0");
         }
-        bundle.putInt("unidades", Integer.parseInt(unidades.getText().toString()));
+        bundle.putInt("unidades", Integer.parseInt(layoutUnidades.getEditText().getText().toString()));
 
-        bundle.putDouble("precio", Double.parseDouble(precio.getText().toString().replace("€", "")));
-        if (fecha.getText().toString().isEmpty()) {
-            fecha.setText("");
+        bundle.putDouble("precio", Double.parseDouble(layoutPrecio.getEditText().getText().toString().replace("€", "")));
+        if (layoutFecha.getEditText().getText().toString().isEmpty()) {
+            layoutFecha.getEditText().setText("");
         }
-        bundle.putString("fecha", fecha.getText().toString());
+        bundle.putString("fecha", layoutFecha.getEditText().getText().toString());
 
-        if (tipoMunicion.getText().toString().isEmpty()) {
-            tipoMunicion.setText("");
+        if (layoutTipoMunicion.getEditText().getText().toString().isEmpty()) {
+            layoutTipoMunicion.getEditText().setText("");
         }
-        bundle.putString("tipo", tipoMunicion.getText().toString());
+        bundle.putString("tipo", layoutTipoMunicion.getEditText().getText().toString());
 
-        if (pesoMunicion.getText().toString().isEmpty()) {
-            pesoMunicion.setText("0");
+        if (layoutPesoMunicion.getEditText().getText().toString().isEmpty()) {
+            layoutPesoMunicion.getEditText().setText("0");
         }
-        bundle.putInt("peso", Integer.parseInt(pesoMunicion.getText().toString()));
+        bundle.putInt("peso", Integer.parseInt(layoutPesoMunicion.getEditText().getText().toString()));
 
-        if (marcaMunicion.getText().toString().isEmpty()) {
-            marcaMunicion.setText(null);
+        if (layoutMarcaMunicion.getEditText().getText().toString().isEmpty()) {
+            layoutMarcaMunicion.getEditText().setText(null);
         }
-        bundle.putString("marca", marcaMunicion.getText().toString());
+        bundle.putString("marca", layoutMarcaMunicion.getEditText().getText().toString());
 
-        if (tienda.getText().toString().isEmpty()) {
-            tienda.setText(null);
+        if (layoutTienda.getEditText().getText().toString().isEmpty()) {
+            layoutTienda.getEditText().setText(null);
         }
-        bundle.putString("tienda", tienda.getText().toString());
+        bundle.putString("tienda", layoutTienda.getEditText().getText().toString());
 
         bundle.putFloat("valoracion", valoracion.getRating());
 
@@ -409,18 +406,18 @@ public class CompraFormActivity extends AppCompatActivity {
         boolean retorno = true;
         // Validaciones campos formularios
         // Calibre1
-        if (calibre1.getText().toString().length() < 1) {
-            calibre1.setError(getString(R.string.error_before_save));
+        if (layoutCalibre1.getEditText().getText().toString().length() < 1) {
+            layoutCalibre1.setError(getString(R.string.error_before_save));
             retorno = false;
         }
-        // Unidades
-        if (unidades.getText().toString().length() < 1) {
-            unidades.setError(getString(R.string.error_before_save));
+        //
+        if (layoutUnidades.getEditText().getText().toString().length() < 1) {
+            layoutUnidades.setError(getString(R.string.error_before_save));
             retorno = false;
         }
         // Precio
-        if (precio.getText().toString().length() < 1) {
-            precio.setError(getString(R.string.error_before_save));
+        if (layoutPrecio.getEditText().getText().toString().length() < 1) {
+            layoutPrecio.setError(getString(R.string.error_before_save));
             retorno = false;
         }
         if (!retorno) {
@@ -444,14 +441,14 @@ public class CompraFormActivity extends AppCompatActivity {
             int year = 0, month = 0, day = 0;
             final Calendar c = Calendar.getInstance();
 
-            if (fecha.getText().toString().equals("")) {
+            if (layoutFecha.getEditText().getText().toString().equals("")) {
                 // Use the current date as the default date in the picker
                 year = c.get(Calendar.YEAR);
                 month = c.get(Calendar.MONTH);
                 day = c.get(Calendar.DAY_OF_MONTH);
             } else {
                 try {
-                    c.setTime(new SimpleDateFormat("dd/MM/yyyy").parse(fecha.getText().toString()));
+                    c.setTime(new SimpleDateFormat("dd/MM/yyyy").parse(layoutFecha.getEditText().getText().toString()));
                     year = c.get(Calendar.YEAR);
                     month = c.get(Calendar.MONTH);
                     day = c.get(Calendar.DAY_OF_MONTH);
@@ -473,7 +470,7 @@ public class CompraFormActivity extends AppCompatActivity {
             Date date = cal.getTime();
 
             String f = new DateFormat().format("dd/MM/yyyy", date).toString();
-            fecha.setText(f);
+            layoutFecha.getEditText().setText(f);
         }
     }
 }

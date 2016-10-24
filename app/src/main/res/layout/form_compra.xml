@@ -33,6 +33,7 @@
 
             <!--CALIBRE 1-->
             <android.support.design.widget.TextInputLayout
+                android:id="@+id/text_input_layout_calibre1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
@@ -55,6 +56,7 @@
                 android:text="@string/check_segundo_calibre"/>
             <!--CALIBRE 2-->
             <android.support.design.widget.TextInputLayout
+                android:id="@+id/text_input_layout_calibre2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
@@ -70,6 +72,7 @@
 
             <!--UNIDADES-->
             <android.support.design.widget.TextInputLayout
+                android:id="@+id/text_input_layout_unidades"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
@@ -85,6 +88,7 @@
 
             <!--PRECIO-->
             <android.support.design.widget.TextInputLayout
+                android:id="@+id/text_input_layout_precio"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
@@ -117,6 +121,7 @@
 
             <!--TIPO MUNICION-->
             <android.support.design.widget.TextInputLayout
+                android:id="@+id/text_input_layout_tipo_municion"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
@@ -131,6 +136,7 @@
 
             <!--PESO MUNICION-->
             <android.support.design.widget.TextInputLayout
+                android:id="@+id/text_input_layout_peso_municion"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
@@ -146,6 +152,7 @@
 
             <!--MARCA MUNICION-->
             <android.support.design.widget.TextInputLayout
+                android:id="@+id/text_input_layout_marca_municion"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
@@ -160,6 +167,7 @@
 
             <!--TIENDA MUNICION-->
             <android.support.design.widget.TextInputLayout
+                android:id="@+id/text_input_layout_tienda"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 

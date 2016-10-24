@@ -23,7 +23,6 @@ import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
-import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatSpinner;
 import android.support.v7.widget.Toolbar;
@@ -34,9 +33,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.DatePicker;
-import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import com.google.android.gms.ads.AdView;
 
@@ -56,27 +53,20 @@ import al.ahgitdevelopment.municion.Utils;
  */
 public class LicenciaFormActivity extends AppCompatActivity {
 
-    public static EditText fechaExpedicion;
     private LinearLayout layoutPermisoConducir;
     private TextInputLayout textInputLayoutLicencia;
-    private TextInputLayout layoutFechaExpedicion;
+    private static TextInputLayout layoutFechaExpedicion;
     private TextInputLayout layoutFechaCaducidad;
     private TextInputLayout layoutNumAbonado;
     private TextInputLayout layoutNumPoliza;
     private TextInputLayout layoutEdad;
     private AppCompatSpinner tipoLicencia;
     private AppCompatSpinner tipoPermisoConducir;
-    private EditText edad;
-    private EditText numLicencia;
-    private EditText fechaCaducidad;
-    private EditText numAbonado;
-    private EditText numSeguro;
     private LinearLayout layoutCCAA;
     private AppCompatSpinner autonomia;
     private LinearLayout layoutEscala;
     private AppCompatSpinner tipoEscala;
     private LinearLayout layoutCategoria;
-    private TextView lblCategoria;
     private AppCompatSpinner categoria;
     private FloatingActionButton fab;
 
@@ -103,24 +93,17 @@ public class LicenciaFormActivity extends AppCompatActivity {
         tipoLicencia = (AppCompatSpinner) findViewById(R.id.form_tipo_licencia);
         layoutPermisoConducir = (LinearLayout) findViewById(R.id.layout_permiso_conducir);
         textInputLayoutLicencia = (TextInputLayout) findViewById(R.id.text_input_layout_licencia);
-        numLicencia = (EditText) findViewById(R.id.form_num_licencia);
         layoutFechaExpedicion = (TextInputLayout) findViewById(R.id.layout_form_fecha_expedicion);
-        fechaExpedicion = (EditText) findViewById(R.id.form_fecha_expedicion);
         layoutFechaCaducidad = (TextInputLayout) findViewById(R.id.layout_form_fecha_caducidad);
-        fechaCaducidad = (EditText) findViewById(R.id.form_fecha_caducidad);
         layoutNumAbonado = (TextInputLayout) findViewById(R.id.layout_form_num_abonado);
-        numAbonado = (EditText) findViewById(R.id.form_num_abonado);
         layoutNumPoliza = (TextInputLayout) findViewById(R.id.layout_form_num_poliza);
-        numSeguro = (EditText) findViewById(R.id.form_num_poliza);
         layoutCCAA = (LinearLayout) findViewById(R.id.layout_ccaa);
         autonomia = (AppCompatSpinner) findViewById(R.id.form_ccaa);
         tipoPermisoConducir = (AppCompatSpinner) findViewById(R.id.form_tipo_permiso_conducir);
         layoutEdad = (TextInputLayout) findViewById(R.id.text_input_layout_edad);
-        edad = (EditText) findViewById(R.id.form_edad);
         layoutEscala = (LinearLayout) findViewById(R.id.layout_escala);
         tipoEscala = (AppCompatSpinner) findViewById(R.id.form_tipo_escala);
         layoutCategoria = (LinearLayout) findViewById(R.id.layout_categoria);
-        lblCategoria = (TextView) findViewById(R.id.form_lbl_categoria);
         categoria = (AppCompatSpinner) findViewById(R.id.form_categoria);
         fab = (FloatingActionButton) findViewById(R.id.fab_form_save);
 
@@ -136,13 +119,13 @@ public class LicenciaFormActivity extends AppCompatActivity {
             try {
                 Licencia licencia = new Licencia((Licencia) getIntent().getExtras().getParcelable("modify_licencia"));
                 tipoLicencia.setSelection(licencia.getTipo());
-                numLicencia.setText(String.valueOf(licencia.getNumLicencia()));
-                fechaExpedicion.setText(licencia.getFechaExpedicion());
-                numAbonado.setText(String.valueOf(licencia.getNumAbonado()));
-                numSeguro.setText(String.valueOf(licencia.getNumLicencia()));
+                textInputLayoutLicencia.getEditText().setText(String.valueOf(licencia.getNumLicencia()));
+                layoutFechaExpedicion.getEditText().setText(licencia.getFechaExpedicion());
+                layoutNumAbonado.getEditText().setText(String.valueOf(licencia.getNumAbonado()));
+                layoutNumPoliza.getEditText().setText(String.valueOf(licencia.getNumSeguro()));
                 autonomia.setSelection(licencia.getAutonomia());
                 tipoPermisoConducir.setSelection(licencia.getTipoPermisoConduccion());
-                edad.setText(String.valueOf(licencia.getEdad()));
+                layoutEdad.getEditText().setText(String.valueOf(licencia.getEdad()));
                 tipoEscala.setSelection(licencia.getEscala());
                 categoria.setSelection(licencia.getCategoria());
             } catch (NullPointerException e) {
@@ -151,13 +134,13 @@ public class LicenciaFormActivity extends AppCompatActivity {
         }
 
         // Eventos que sacan el calendario al recibir el foco en el campo fecha
-        layoutFechaExpedicion.setOnClickListener(new View.OnClickListener() {
+        layoutFechaExpedicion.getEditText().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 callDatePickerFragment();
             }
         });
-        layoutFechaExpedicion.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+        layoutFechaExpedicion.getEditText().setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if (hasFocus) {
@@ -165,7 +148,7 @@ public class LicenciaFormActivity extends AppCompatActivity {
                 }
             }
         });
-        fechaExpedicion.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+        layoutFechaExpedicion.getEditText().setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if (hasFocus) {
@@ -173,7 +156,7 @@ public class LicenciaFormActivity extends AppCompatActivity {
                 }
             }
         });
-        fechaExpedicion.setOnClickListener(new View.OnClickListener() {
+        layoutFechaExpedicion.getEditText().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 callDatePickerFragment();
@@ -253,7 +236,7 @@ public class LicenciaFormActivity extends AppCompatActivity {
                 addEventToCalendar();
                 finish();
             } else {
-                Snackbar.make(numLicencia, R.string.dialog_licencia_no_permiso, Snackbar.LENGTH_LONG)
+                Snackbar.make(textInputLayoutLicencia.getEditText(), R.string.dialog_licencia_no_permiso, Snackbar.LENGTH_LONG)
                         .setAction(android.R.string.ok, null)
                         .show();
             }
@@ -272,7 +255,7 @@ public class LicenciaFormActivity extends AppCompatActivity {
         try {
             //Fecha inicial
             Calendar beginTime = Calendar.getInstance();
-            beginTime.setTime(new SimpleDateFormat("dd/MM/yyyy").parse(fechaCaducidad.getText().toString()));
+            beginTime.setTime(new SimpleDateFormat("dd/MM/yyyy").parse(layoutFechaCaducidad.getEditText().getText().toString()));
             beginTime.set(Calendar.HOUR_OF_DAY, Calendar.getInstance().get(Calendar.HOUR_OF_DAY));
             beginTime.set(Calendar.MINUTE, Calendar.getInstance().get(Calendar.MINUTE));
             beginTime.set(Calendar.SECOND, Calendar.getInstance().get(Calendar.SECOND));
@@ -280,7 +263,7 @@ public class LicenciaFormActivity extends AppCompatActivity {
 
             //Fecha de caducidad
             Calendar endTime = Calendar.getInstance();
-            endTime.setTime(new SimpleDateFormat("dd/MM/yyyy").parse(fechaCaducidad.getText().toString()));
+            endTime.setTime(new SimpleDateFormat("dd/MM/yyyy").parse(layoutFechaCaducidad.getEditText().getText().toString()));
             endTime.add(Calendar.SECOND, 30);
             endTime.set(Calendar.HOUR_OF_DAY, Calendar.getInstance().get(Calendar.HOUR_OF_DAY) + 1);
             endTime.set(Calendar.MINUTE, Calendar.getInstance().get(Calendar.MINUTE));
@@ -294,7 +277,7 @@ public class LicenciaFormActivity extends AppCompatActivity {
             values.put(CalendarContract.Events.TITLE, "Tu licencia caduca hoy");
             values.put(CalendarContract.Events.DESCRIPTION, Utils.getStringLicenseFromId(
                     LicenciaFormActivity.this,
-                    tipoLicencia.getSelectedItemPosition()) + ": " + numLicencia.getText().toString());
+                    tipoLicencia.getSelectedItemPosition()) + ": " + textInputLayoutLicencia.getEditText().getText().toString());
             values.put(CalendarContract.Events.CALENDAR_ID, calID);
             values.put(CalendarContract.Events.EVENT_TIMEZONE, "Europe/Madrid");
 
@@ -319,7 +302,7 @@ public class LicenciaFormActivity extends AppCompatActivity {
 
         //Fecha de expedicion:
         // - Cambio de texto
-        fechaExpedicion.addTextChangedListener(new TextWatcher() {
+        layoutFechaExpedicion.getEditText().addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
             }
@@ -368,7 +351,7 @@ public class LicenciaFormActivity extends AppCompatActivity {
                 updateFechaCaducidad();
             }
         });
-        edad.addTextChangedListener(new TextWatcher() {
+        layoutEdad.getEditText().addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
             }
@@ -390,13 +373,13 @@ public class LicenciaFormActivity extends AppCompatActivity {
      */
     private void updateFechaCaducidad() {
 
-        if (!fechaExpedicion.getText().toString().equals("")) {
+        if (!layoutFechaExpedicion.getEditText().getText().toString().equals("")) {
 
             //Calculamos al fecha de caducidad en función de fecha de expedición introducida
             SimpleDateFormat simpleDate = new SimpleDateFormat("dd/MM/yyyy");
             Calendar calendar = Calendar.getInstance();
             try {
-                calendar.setTime(simpleDate.parse(fechaExpedicion.getText().toString()));
+                calendar.setTime(simpleDate.parse(layoutFechaExpedicion.getEditText().getText().toString()));
             } catch (ParseException e) {
                 e.printStackTrace();
             }
@@ -404,13 +387,13 @@ public class LicenciaFormActivity extends AppCompatActivity {
                 // Esta licencia no caduca por lo que ponemos una fecha muy lejaana
                 case 0: // Licencia A
                     calendar.set(3000, Calendar.DECEMBER, 31);
-                    fechaCaducidad.setText(simpleDate.format(calendar.getTime()));
+                    layoutFechaCaducidad.getEditText().setText(simpleDate.format(calendar.getTime()));
                     break;
                 // Sumamos 3 año
                 case 1: // Licencia B
                 case 5: // Licencia F
                     calendar.add(Calendar.YEAR, 3);
-                    fechaCaducidad.setText(simpleDate.format(calendar.getTime()));
+                    layoutFechaCaducidad.getEditText().setText(simpleDate.format(calendar.getTime()));
                     break;
                 // Sumamos 5 años
                 case 2: // Licencia C
@@ -420,21 +403,21 @@ public class LicenciaFormActivity extends AppCompatActivity {
                 case 7: // Licencia AER
                 case 8: // Licencia Libero Coleccionesta
                     calendar.add(Calendar.YEAR, 5);
-                    fechaCaducidad.setText(simpleDate.format(calendar.getTime()));
+                    layoutFechaCaducidad.getEditText().setText(simpleDate.format(calendar.getTime()));
                     break;
                 // Ajustamos al final de año
                 case 9: // Autonomica Caza
                 case 10: // Autonomica Pesca
                     calendar.set(calendar.get(Calendar.YEAR), Calendar.DECEMBER, 31);
-                    fechaCaducidad.setText(simpleDate.format(calendar.getTime()));
+                    layoutFechaCaducidad.getEditText().setText(simpleDate.format(calendar.getTime()));
                 case 11: // Licencia Federativa de tiro
 //                    calendar.add(Calendar.YEAR, 1);
                     calendar.set(calendar.get(Calendar.YEAR), Calendar.DECEMBER, 31);
-                    fechaCaducidad.setText(simpleDate.format(calendar.getTime()));
+                    layoutFechaCaducidad.getEditText().setText(simpleDate.format(calendar.getTime()));
                     break;
                 // Sumamos 10 años
                 case 12: // Persmiso de Conducir
-                    if (!edad.getText().toString().equals("") && Integer.parseInt(edad.getText().toString()) < 65) {
+                    if (!layoutEdad.getEditText().getText().toString().equals("") && Integer.parseInt(layoutEdad.getEditText().getText().toString()) < 65) {
                         switch (tipoPermisoConducir.getSelectedItemPosition()) {
                             case 0: // AM
                             case 1: // A1
@@ -442,7 +425,7 @@ public class LicenciaFormActivity extends AppCompatActivity {
                             case 3: // A
                             case 4: // B
                                 calendar.add(Calendar.YEAR, 10);
-                                fechaCaducidad.setText(simpleDate.format(calendar.getTime()));
+                                layoutFechaCaducidad.getEditText().setText(simpleDate.format(calendar.getTime()));
                                 break;
                             case 5: // C1
                             case 6: // C
@@ -455,7 +438,7 @@ public class LicenciaFormActivity extends AppCompatActivity {
                             case 13: // DE
                             case 14: // BTP
                                 calendar.add(Calendar.YEAR, 5);
-                                fechaCaducidad.setText(simpleDate.format(calendar.getTime()));
+                                layoutFechaCaducidad.getEditText().setText(simpleDate.format(calendar.getTime()));
                                 break;
                         }
                     } else {
@@ -466,7 +449,7 @@ public class LicenciaFormActivity extends AppCompatActivity {
                             case 3: // A
                             case 4: // B
                                 calendar.add(Calendar.YEAR, 5);
-                                fechaCaducidad.setText(simpleDate.format(calendar.getTime()));
+                                layoutFechaCaducidad.getEditText().setText(simpleDate.format(calendar.getTime()));
                                 break;
                             case 5: // C1
                             case 6: // C
@@ -479,14 +462,14 @@ public class LicenciaFormActivity extends AppCompatActivity {
                             case 13: // DE
                             case 14: // BTP
                                 calendar.add(Calendar.YEAR, 3);
-                                fechaCaducidad.setText(simpleDate.format(calendar.getTime()));
+                                layoutFechaCaducidad.getEditText().setText(simpleDate.format(calendar.getTime()));
                                 break;
                         }
                     }
                     break;
             }
         } else {
-            fechaCaducidad.setText("");
+            layoutFechaCaducidad.getEditText().setText("");
         }
     }
 
@@ -497,14 +480,14 @@ public class LicenciaFormActivity extends AppCompatActivity {
         //  Se envía la notificación cuando el sistema llegue a la fecha indicada
         try {
             Calendar caducidad = Calendar.getInstance();
-            caducidad.setTime(new SimpleDateFormat("dd/MM/yyyy").parse(fechaCaducidad.getText().toString()));
+            caducidad.setTime(new SimpleDateFormat("dd/MM/yyyy").parse(layoutFechaCaducidad.getEditText().getText().toString()));
             caducidad.set(Calendar.HOUR_OF_DAY, Calendar.getInstance().get(Calendar.HOUR_OF_DAY));
             caducidad.set(Calendar.MINUTE, Calendar.getInstance().get(Calendar.MINUTE));
             caducidad.set(Calendar.SECOND, Calendar.getInstance().get(Calendar.SECOND) + 30);
 
             // Creates an explicit intent for an Activity in your app
             Intent notificationIntent = new Intent(this, NotificationPublisher.class);
-            notificationIntent.putExtra(NotificationPublisher.NOTIFICATION_ID, Integer.parseInt(numLicencia.getText().toString()));
+            notificationIntent.putExtra(NotificationPublisher.NOTIFICATION_ID, Integer.parseInt(textInputLayoutLicencia.getEditText().getText().toString()));
             notificationIntent.putExtra(NotificationPublisher.NOTIFICATION, getNotification());
 
             PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
@@ -567,7 +550,7 @@ public class LicenciaFormActivity extends AppCompatActivity {
                     .setContentText("Tu licencia caduca hoy")
                     .setSubText(Utils.getStringLicenseFromId(
                             LicenciaFormActivity.this,
-                            tipoLicencia.getSelectedItemPosition()) + ": " + numLicencia.getText().toString())
+                            tipoLicencia.getSelectedItemPosition()) + ": " + textInputLayoutLicencia.getEditText().getText().toString())
                     .setContentIntent(resultPendingIntent)
                     .setAutoCancel(true)
                     .setPriority(Notification.PRIORITY_LOW)
@@ -581,7 +564,7 @@ public class LicenciaFormActivity extends AppCompatActivity {
                     .setContentText("Tu licencia caduca hoy")
                     .setSubText(Utils.getStringLicenseFromId(
                             LicenciaFormActivity.this,
-                            tipoLicencia.getSelectedItemPosition()) + ": " + numLicencia.getText().toString())
+                            tipoLicencia.getSelectedItemPosition()) + ": " + textInputLayoutLicencia.getEditText().getText().toString())
                     .setContentIntent(resultPendingIntent)
                     .setAutoCancel(true)
                     .setLights(Color.GREEN, 500, 500)
@@ -607,24 +590,24 @@ public class LicenciaFormActivity extends AppCompatActivity {
                 licencia.setTipoPermisoConduccion(tipoPermisoConducir.getSelectedItemPosition());
             } else
                 licencia.setTipoPermisoConduccion(-1);
-            licencia.setNumLicencia(Integer.parseInt(String.valueOf(numLicencia.getText())));
-            licencia.setFechaExpedicion(fechaExpedicion.getText().toString());
-            licencia.setFechaCaducidad(fechaCaducidad.getText().toString());
+            licencia.setNumLicencia(Integer.parseInt(String.valueOf(textInputLayoutLicencia.getEditText().getText())));
+            licencia.setFechaExpedicion(layoutFechaExpedicion.getEditText().getText().toString());
+            licencia.setFechaCaducidad(layoutFechaCaducidad.getEditText().getText().toString());
             if (layoutNumAbonado.getVisibility() == View.VISIBLE) {
-                if (numAbonado.getText().toString().equals(""))
+                if (layoutNumAbonado.getEditText().getText().toString().equals(""))
                     licencia.setNumAbonado(0);
                 else
-                    licencia.setNumAbonado(Integer.parseInt(String.valueOf(numAbonado.getText())));
+                    licencia.setNumAbonado(Integer.parseInt(String.valueOf(layoutNumAbonado.getEditText().getText())));
             }
             if (layoutNumPoliza.getVisibility() == View.VISIBLE) {
-                licencia.setNumSeguro(String.valueOf(numSeguro.getText()));
+                licencia.setNumSeguro(String.valueOf(layoutNumPoliza.getEditText().getText()));
             }
             if (layoutCCAA.getVisibility() == View.VISIBLE) {
                 licencia.setAutonomia(autonomia.getSelectedItemPosition());
             } else
                 licencia.setAutonomia(-1);
             if (layoutEdad.getVisibility() == View.VISIBLE)
-                licencia.setEdad(Integer.parseInt(String.valueOf(edad.getText())));
+                licencia.setEdad(Integer.parseInt(String.valueOf(layoutEdad.getEditText().getText())));
             if (layoutEscala.getVisibility() == View.VISIBLE) {
                 licencia.setEscala(tipoEscala.getSelectedItemPosition());
             } else
@@ -654,29 +637,29 @@ public class LicenciaFormActivity extends AppCompatActivity {
     private boolean controlCampos() {
         boolean flag = true;
 
-        if (numLicencia.getText().toString().equals("")) {
-            numLicencia.setError(getString(R.string.msg_err_num_licencia), ResourcesCompat.getDrawable(getResources(), android.R.drawable.stat_notify_error, getTheme()));
+        if (textInputLayoutLicencia.getEditText().getText().toString().equals("")) {
+            textInputLayoutLicencia.setError(getString(R.string.msg_err_num_licencia));
             flag = false;
         }
-        if (fechaExpedicion.getText().toString().equals("")) {
+        if (layoutFechaExpedicion.getEditText().getText().toString().equals("")) {
             layoutFechaExpedicion.setError(getString(R.string.msg_err_fecha_exp));
             flag = false;
         }
-        if (fechaCaducidad.getText().toString().equals("")) {
+        if (layoutFechaCaducidad.getEditText().getText().toString().equals("")) {
             layoutFechaCaducidad.setError(getString(R.string.msg_err_fecha_cad));
             flag = false;
         }
         //No obligatorio
-//        if (numAbonado.getVisibility() == View.VISIBLE && numAbonado.getText().toString().equals("")) {
-//            numAbonado.setError("Introduce el número de abonado", ResourcesCompat.getDrawable(getResources(), android.R.drawable.stat_notify_error, getTheme()));
+//        if (layoutNumAbonado.getVisibility() == View.VISIBLE && layoutNumAbonado.getEditText().getText().toString().equals("")) {
+//            layoutNumAbonado.setError("Introduce el número de abonado");
 //            flag = false;
 //        }
-        if (layoutNumPoliza.getVisibility() == View.VISIBLE && numSeguro.getText().toString().equals("")) {
-            numSeguro.setError(getString(R.string.msg_err_poliza_seg), ResourcesCompat.getDrawable(getResources(), android.R.drawable.stat_notify_error, getTheme()));
+        if (layoutNumPoliza.getVisibility() == View.VISIBLE && layoutNumPoliza.getEditText().getText().toString().equals("")) {
+            layoutNumPoliza.setError(getString(R.string.msg_err_poliza_seg));
             flag = false;
         }
-        if (layoutEdad.getVisibility() == View.VISIBLE && edad.getText().toString().equals("")) {
-            edad.setError(getString(R.string.msg_err_edad), ResourcesCompat.getDrawable(getResources(), android.R.drawable.stat_notify_error, getTheme()));
+        if (layoutEdad.getVisibility() == View.VISIBLE && layoutEdad.getEditText().getText().toString().equals("")) {
+            layoutEdad.setError(getString(R.string.msg_err_edad));
             flag = false;
         }
 
@@ -766,14 +749,14 @@ public class LicenciaFormActivity extends AppCompatActivity {
             int year = 0, month = 0, day = 0;
             final Calendar c = Calendar.getInstance();
 
-            if (fechaExpedicion.getText().toString().equals("")) {
+            if (layoutFechaExpedicion.getEditText().getText().toString().equals("")) {
                 // Use the current date as the default date in the picker
                 year = c.get(Calendar.YEAR);
                 month = c.get(Calendar.MONTH);
                 day = c.get(Calendar.DAY_OF_MONTH);
             } else {
                 try {
-                    c.setTime(new SimpleDateFormat("dd/MM/yyyy").parse(fechaExpedicion.getText().toString()));
+                    c.setTime(new SimpleDateFormat("dd/MM/yyyy").parse(layoutFechaExpedicion.getEditText().getText().toString()));
                     year = c.get(Calendar.YEAR);
                     month = c.get(Calendar.MONTH);
                     day = c.get(Calendar.DAY_OF_MONTH);
@@ -794,7 +777,7 @@ public class LicenciaFormActivity extends AppCompatActivity {
             Date date = cal.getTime();
 
             String fecha = new DateFormat().format("dd/MM/yyyy", date).toString();
-            fechaExpedicion.setText(fecha);
+            layoutFechaExpedicion.getEditText().setText(fecha);
         }
     }
 }
