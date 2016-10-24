@@ -5,15 +5,12 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.util.Log;
-import android.view.View;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.ChildEventListener;
-import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -24,8 +21,6 @@ import al.ahgitdevelopment.municion.DataModel.Compra;
 import al.ahgitdevelopment.municion.DataModel.Guia;
 import al.ahgitdevelopment.municion.DataModel.Licencia;
 import al.ahgitdevelopment.municion.Utils;
-
-import static al.ahgitdevelopment.municion.FragmentMainActivity.textEmptyList;
 
 /**
  * Created by Alberto on 15/10/2016.
@@ -127,117 +122,118 @@ public final class FirebaseDBHelper {
         }
     }
 
-    public static ArrayList<Guia> getListGuias() {
-        final ArrayList<Guia> guias = new ArrayList<>();
-        try {
-            userRef.child("db").child("guias").addChildEventListener(new ChildEventListener() {
-                @Override
-                public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                    guias.add(dataSnapshot.getValue(Guia.class));
-                    if (guias.size() != 0)
-                        textEmptyList.setVisibility(View.GONE);
-                    else
-                        textEmptyList.setVisibility(View.VISIBLE);
-                }
+    /*
+        public static ArrayList<Guia> getListGuias() {
+            final ArrayList<Guia> guias = new ArrayList<>();
+            try {
+                userRef.child("db").child("guias").addChildEventListener(new ChildEventListener() {
+                    @Override
+                    public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                        guias.add(dataSnapshot.getValue(Guia.class));
+                        if (guias.size() != 0)
+                            textEmptyList.setVisibility(View.GONE);
+                        else
+                            textEmptyList.setVisibility(View.VISIBLE);
+                    }
 
-                @Override
-                public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                }
+                    @Override
+                    public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                    }
 
-                @Override
-                public void onChildRemoved(DataSnapshot dataSnapshot) {
-                }
+                    @Override
+                    public void onChildRemoved(DataSnapshot dataSnapshot) {
+                    }
 
-                @Override
-                public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-                }
+                    @Override
+                    public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+                    }
 
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-                }
-            });
-        } catch (Exception e) {
-            e.printStackTrace();
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                    }
+                });
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            return guias;
         }
 
-        return guias;
-    }
+        public static ArrayList<Compra> getListCompras() {
+            final ArrayList<Compra> compras = new ArrayList<>();
+            try {
+                userRef.child("db").child("compras").addChildEventListener(new ChildEventListener() {
+                    @Override
+                    public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                        compras.add(dataSnapshot.getValue(Compra.class));
+                        if (compras.size() != 0)
+                            textEmptyList.setVisibility(View.GONE);
+                        else
+                            textEmptyList.setVisibility(View.VISIBLE);
+                    }
 
-    public static ArrayList<Compra> getListCompras() {
-        final ArrayList<Compra> compras = new ArrayList<>();
-        try {
-            userRef.child("db").child("compras").addChildEventListener(new ChildEventListener() {
-                @Override
-                public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                    compras.add(dataSnapshot.getValue(Compra.class));
-                    if (compras.size() != 0)
-                        textEmptyList.setVisibility(View.GONE);
-                    else
-                        textEmptyList.setVisibility(View.VISIBLE);
-                }
+                    @Override
+                    public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                    }
 
-                @Override
-                public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                }
+                    @Override
+                    public void onChildRemoved(DataSnapshot dataSnapshot) {
+                    }
 
-                @Override
-                public void onChildRemoved(DataSnapshot dataSnapshot) {
-                }
+                    @Override
+                    public void onChildMoved(DataSnapshot dataSnapshot, String s) {
 
-                @Override
-                public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+                    }
 
-                }
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
 
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-
-                }
-            });
-        } catch (Exception e) {
-            e.printStackTrace();
+                    }
+                });
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return compras;
         }
-        return compras;
-    }
 
-    public static ArrayList<Licencia> getListLicencias() {
-        final ArrayList<Licencia> licencias = new ArrayList<>();
+        public static ArrayList<Licencia> getListLicencias() {
+            final ArrayList<Licencia> licencias = new ArrayList<>();
 
-        try {
-            userRef.child("db").child("licencias").addChildEventListener(new ChildEventListener() {
-                @Override
-                public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                    licencias.add(dataSnapshot.getValue(Licencia.class));
-                    if (licencias.size() != 0)
-                        textEmptyList.setVisibility(View.GONE);
-                    else
-                        textEmptyList.setVisibility(View.VISIBLE);
-                }
+            try {
+                userRef.child("db").child("licencias").addChildEventListener(new ChildEventListener() {
+                    @Override
+                    public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                        licencias.add(dataSnapshot.getValue(Licencia.class));
+                        if (licencias.size() != 0)
+                            textEmptyList.setVisibility(View.GONE);
+                        else
+                            textEmptyList.setVisibility(View.VISIBLE);
+                    }
 
-                @Override
-                public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                }
+                    @Override
+                    public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                    }
 
-                @Override
-                public void onChildRemoved(DataSnapshot dataSnapshot) {
-                }
+                    @Override
+                    public void onChildRemoved(DataSnapshot dataSnapshot) {
+                    }
 
-                @Override
-                public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+                    @Override
+                    public void onChildMoved(DataSnapshot dataSnapshot, String s) {
 
-                }
+                    }
 
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
 
-                }
-            });
-        } catch (Exception e) {
-            e.printStackTrace();
+                    }
+                });
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return licencias;
         }
-        return licencias;
-    }
-
+    */
     public static boolean saveLists(final ArrayList<Guia> guias, final ArrayList<Compra> compras, final ArrayList<Licencia> licencias) {
         try {
             //Borrado de la vase de datos actual;
