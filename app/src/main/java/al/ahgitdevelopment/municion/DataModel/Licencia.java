@@ -46,12 +46,8 @@ public class Licencia implements Parcelable {
         this.nombre = in.readString();
         this.tipoPermisoConduccion = in.readInt();
         this.edad = in.readInt();
-        try {
-            this.setFechaExpedicion(in.readString());
-            this.setFechaCaducidad(in.readString());
-        } catch (NullPointerException e) {
-            e.printStackTrace();
-        }
+        this.setFechaExpedicion(in.readString());
+        this.setFechaCaducidad(in.readString());
         this.numLicencia = in.readInt();
         this.numAbonado = in.readInt();
         this.numSeguro = in.readString();

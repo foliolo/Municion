@@ -43,11 +43,7 @@ public class Compra implements Parcelable {
         calibre2 = in.readString();
         unidades = in.readInt();
         precio = in.readDouble();
-        try {
-            this.setFecha(in.readString());
-        } catch (NullPointerException e) {
-            e.printStackTrace();
-        }
+        this.setFecha(in.readString());
         tipo = in.readString();
         peso = in.readInt();
         marca = in.readString();
