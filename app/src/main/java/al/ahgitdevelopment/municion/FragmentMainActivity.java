@@ -415,11 +415,11 @@ public class FragmentMainActivity extends AppCompatActivity {
                     }
                     // Eliminacion evento Calendario
                     deleteEventCalendar(position);
+
                     licencias.remove(position);
                     licenciaArrayAdapter.notifyDataSetChanged();
                     break;
                 }
-
         }
     }
 
@@ -427,11 +427,10 @@ public class FragmentMainActivity extends AppCompatActivity {
      * Metodo para eliminar un evento del calendario del sistema despues de que el usuario elimine una licencia
      */
     private void deleteEventCalendar(int position) {
-        // Sino tiene permiso de lectura del calendario se hace la comprobacion
-        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.READ_CALENDAR) != PackageManager.PERMISSION_GRANTED) {
-            checkCalendarPermission();
-            // Si tiene tiene permiso de lectura del calendario se realiza la eliminacion del evento
-        } else {
+        // Se comprueba el permiso de lectura del calendario porque te obliga la implementacion de ContentResolver Query
+        // No tendria que ser necesario hacerlo porque ya se han comprobado los permisos de lectura y escritura en el
+        // guardado de las licencias. Si el usuario no los ha aceptado no puede guardar una licencia y por tanto tampoco eliminarla
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.READ_CALENDAR) == PackageManager.PERMISSION_GRANTED) {
             // Inicio preparacion eliminacion evento
             Cursor cursor = null;
             ContentResolver contentResolver = getContentResolver();
@@ -473,28 +472,6 @@ public class FragmentMainActivity extends AppCompatActivity {
                 contentResolver.delete(ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, eventId), null, null);
             }
             cursor.close();
-        }
-    }
-
-    /**
-     * Metodo para comprobrar los permisos de forma dinámica para las versiones de android superiores
-     * a la M
-     */
-    private void checkCalendarPermission() {
-        int readPermission = PackageManager.PERMISSION_GRANTED;
-        int writePermission = PackageManager.PERMISSION_GRANTED;
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-            readPermission = checkSelfPermission(android.Manifest.permission.READ_CALENDAR);
-            writePermission = checkSelfPermission(android.Manifest.permission.WRITE_CALENDAR);
-            if (readPermission != PackageManager.PERMISSION_GRANTED || writePermission != PackageManager.PERMISSION_GRANTED) {
-                requestPermissions(
-                        new String[]{
-                                android.Manifest.permission.READ_CALENDAR,
-                                android.Manifest.permission.WRITE_CALENDAR
-                        },
-                        100 //Codigo de respuesta de
-                );
-            }
         }
     }
 
