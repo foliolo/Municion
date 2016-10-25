@@ -312,7 +312,6 @@ public class LicenciaFormActivity extends AppCompatActivity {
             //Fecha de caducidad
             Calendar endTime = Calendar.getInstance();
             endTime.setTime(new SimpleDateFormat("dd/MM/yyyy").parse(layoutFechaCaducidad.getEditText().getText().toString()));
-            endTime.add(Calendar.SECOND, 30);
             endTime.set(Calendar.HOUR_OF_DAY, Calendar.getInstance().get(Calendar.HOUR_OF_DAY) + 1);
             endTime.set(Calendar.MINUTE, Calendar.getInstance().get(Calendar.MINUTE));
             endTime.set(Calendar.SECOND, Calendar.getInstance().get(Calendar.SECOND));
