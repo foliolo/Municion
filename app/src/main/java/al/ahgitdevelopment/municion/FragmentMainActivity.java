@@ -1,16 +1,23 @@
 package al.ahgitdevelopment.municion;
 
 import android.app.Dialog;
+import android.content.ContentResolver;
+import android.content.ContentUris;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
+import android.provider.BaseColumns;
+import android.provider.CalendarContract;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -40,7 +47,10 @@ import com.google.android.gms.ads.AdView;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 import al.ahgitdevelopment.municion.Adapters.CompraArrayAdapter;
 import al.ahgitdevelopment.municion.Adapters.GuiaArrayAdapter;
@@ -403,10 +413,88 @@ public class FragmentMainActivity extends AppCompatActivity {
                     } catch (Exception ex) {
                         Log.wtf(getPackageName(), "Fallo al listar las notificaciones", ex);
                     }
+                    // Eliminacion evento Calendario
+                    deleteEventCalendar(position);
                     licencias.remove(position);
                     licenciaArrayAdapter.notifyDataSetChanged();
+                    break;
                 }
-                break;
+
+        }
+    }
+
+    /**
+     * Metodo para eliminar un evento del calendario del sistema despues de que el usuario elimine una licencia
+     */
+    private void deleteEventCalendar(int position) {
+        // Sino tiene permiso de lectura del calendario se hace la comprobacion
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.READ_CALENDAR) != PackageManager.PERMISSION_GRANTED) {
+            checkCalendarPermission();
+            // Si tiene tiene permiso de lectura del calendario se realiza la eliminacion del evento
+        } else {
+            // Inicio preparacion eliminacion evento
+            Cursor cursor = null;
+            ContentResolver contentResolver = getContentResolver();
+            long startDay = 0;
+            long endDay = 0;
+            try {
+                // Fecha inicio evento
+                Calendar beginTime = Calendar.getInstance();
+                beginTime.setTime(new SimpleDateFormat("dd/MM/yyyy").parse(licencias.get(position).getFechaCaducidad()));
+                beginTime.set(Calendar.HOUR_OF_DAY, 0);
+                beginTime.set(Calendar.MINUTE, 0);
+                beginTime.set(Calendar.SECOND, 0);
+                startDay = beginTime.getTimeInMillis();
+                // Fecha final evento
+                Calendar endTime = Calendar.getInstance();
+                endTime.setTime(new SimpleDateFormat("dd/MM/yyyy").parse(licencias.get(position).getFechaCaducidad()));
+                endTime.set(Calendar.HOUR_OF_DAY, 23);
+                endTime.set(Calendar.MINUTE, 59);
+                endTime.set(Calendar.SECOND, 59);
+                endDay = endTime.getTimeInMillis();
+            } catch (ParseException e) {
+                e.printStackTrace();
+                Log.e(getPackageName(), "Fallo al eliminar el evento del calendario", e);
+            }
+            // Preparacion de la query
+            String title = "Tu licencia caduca hoy";
+            String description = Utils.getStringLicenseFromId(FragmentMainActivity.this, licencias.get(position).getTipo()) + ": " + licencias.get(position).getNumLicencia();
+            String[] projection = new String[]{BaseColumns._ID, CalendarContract.Events.TITLE,
+                    CalendarContract.Events.DESCRIPTION, CalendarContract.Events.DTSTART};
+            String selection = CalendarContract.Events.DTSTART + " >= ? AND " + CalendarContract.Events.DTSTART + " <= ? AND "
+                    + CalendarContract.Events.TITLE + " = ? AND " + CalendarContract.Events.DESCRIPTION + " = ? ";
+            String[] selectionArgs = new String[]{Long.toString(startDay), Long.toString(endDay), title, description};
+
+            // Primero se recupera el id del evento a eliminar
+            cursor = contentResolver.query(CalendarContract.Events.CONTENT_URI, projection, selection, selectionArgs, null);
+            while (cursor.moveToNext()) {
+                long eventId = cursor.getLong(cursor.getColumnIndex("_id"));
+                // Despues se elimina el evento en funcion de su id
+                contentResolver.delete(ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, eventId), null, null);
+            }
+            cursor.close();
+        }
+    }
+
+    /**
+     * Metodo para comprobrar los permisos de forma dinámica para las versiones de android superiores
+     * a la M
+     */
+    private void checkCalendarPermission() {
+        int readPermission = PackageManager.PERMISSION_GRANTED;
+        int writePermission = PackageManager.PERMISSION_GRANTED;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+            readPermission = checkSelfPermission(android.Manifest.permission.READ_CALENDAR);
+            writePermission = checkSelfPermission(android.Manifest.permission.WRITE_CALENDAR);
+            if (readPermission != PackageManager.PERMISSION_GRANTED || writePermission != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(
+                        new String[]{
+                                android.Manifest.permission.READ_CALENDAR,
+                                android.Manifest.permission.WRITE_CALENDAR
+                        },
+                        100 //Codigo de respuesta de
+                );
+            }
         }
     }
 
