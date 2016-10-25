@@ -8,18 +8,22 @@ import android.app.Dialog;
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.ContentResolver;
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.BaseColumns;
 import android.provider.CalendarContract;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputLayout;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
@@ -69,7 +73,8 @@ public class LicenciaFormActivity extends AppCompatActivity {
     private LinearLayout layoutCategoria;
     private AppCompatSpinner categoria;
     private FloatingActionButton fab;
-
+    // Creo este flag para comprabar en el Calendario si es un guardado o modificacion de licencia
+    private boolean isModify;
     private Toolbar toolbar;
 
     /**
@@ -106,6 +111,7 @@ public class LicenciaFormActivity extends AppCompatActivity {
         layoutCategoria = (LinearLayout) findViewById(R.id.layout_categoria);
         categoria = (AppCompatSpinner) findViewById(R.id.form_categoria);
         fab = (FloatingActionButton) findViewById(R.id.fab_form_save);
+        isModify = false;
 
         //Gestion del boton de guardado en funcion de si se abre tras pulsar la notificacion
         if (getIntent().hasExtra("notification_call")) {
@@ -128,6 +134,7 @@ public class LicenciaFormActivity extends AppCompatActivity {
                 layoutEdad.getEditText().setText(String.valueOf(licencia.getEdad()));
                 tipoEscala.setSelection(licencia.getEscala());
                 categoria.setSelection(licencia.getCategoria());
+                isModify = true;
             } catch (NullPointerException e) {
                 e.printStackTrace();
             }
@@ -194,7 +201,7 @@ public class LicenciaFormActivity extends AppCompatActivity {
 
             //Agregar notificacion
             publishNotification();
-            //Añadir fechaq de caducidad al calendario
+            //Añadir fecha de caducidad al calendario
             checkCalendarPermission();
 
             setResult(Activity.RESULT_OK, result);
@@ -219,11 +226,11 @@ public class LicenciaFormActivity extends AppCompatActivity {
                                 Manifest.permission.READ_CALENDAR,
                                 Manifest.permission.WRITE_CALENDAR
                         },
-                        100 //Codigo de respuesta de
+                        100 //Codigo de respuesta
                 );
             }
         } else {
-            addEventToCalendar();
+            addEventToCalendar(isModify);
         }
     }
 
@@ -233,7 +240,7 @@ public class LicenciaFormActivity extends AppCompatActivity {
 
         if (requestCode == 100) {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
-                addEventToCalendar();
+                addEventToCalendar(isModify);
                 finish();
             } else {
                 Snackbar.make(textInputLayoutLicencia.getEditText(), R.string.dialog_licencia_no_permiso, Snackbar.LENGTH_LONG)
@@ -244,14 +251,56 @@ public class LicenciaFormActivity extends AppCompatActivity {
     }
 
     /**
-     * Proceso de añadir la fecha de cducidad al calendario
+     * Proceso de agregar la fecha de caducidad como evento al calendario. Si es update se elimina el anterior y se guarda.
+     * En caso contrario solo se guarda.
      */
-    private void addEventToCalendar() {
-
+    private void addEventToCalendar(boolean isModify) {
+        Cursor cursor = null;
+        ContentResolver contentResolver = getContentResolver();
         long calID = 3;
         long startMillis = 0;
         long endMillis = 0;
-
+        // Primero se comprueba si es una modificacion. Si ya hay un evento previo se elimina.
+        if (isModify) {
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_CALENDAR) == PackageManager.PERMISSION_GRANTED) {
+                Licencia licencia = new Licencia((Licencia) getIntent().getExtras().getParcelable("modify_licencia"));
+                try {
+                    // Fecha inicio evento
+                    Calendar beginTime = Calendar.getInstance();
+                    beginTime.setTime(new SimpleDateFormat("dd/MM/yyyy").parse(licencia.getFechaCaducidad()));
+                    beginTime.set(Calendar.HOUR_OF_DAY, 0);
+                    beginTime.set(Calendar.MINUTE, 0);
+                    beginTime.set(Calendar.SECOND, 0);
+                    startMillis = beginTime.getTimeInMillis();
+                    // Fecha final evento
+                    Calendar endTime = Calendar.getInstance();
+                    endTime.setTime(new SimpleDateFormat("dd/MM/yyyy").parse(licencia.getFechaCaducidad()));
+                    endTime.set(Calendar.HOUR_OF_DAY, 23);
+                    endTime.set(Calendar.MINUTE, 59);
+                    endTime.set(Calendar.SECOND, 59);
+                    endMillis = endTime.getTimeInMillis();
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                    Log.e(getPackageName(), "Fallo al modificar el evento del calendario", e);
+                }
+                // Preparacion de la query
+                String title = "Tu licencia caduca hoy";
+                String description = Utils.getStringLicenseFromId(LicenciaFormActivity.this, licencia.getTipo()) + ": " + licencia.getNumLicencia();
+                String[] projection = new String[]{BaseColumns._ID, CalendarContract.Events.TITLE,
+                        CalendarContract.Events.DESCRIPTION, CalendarContract.Events.DTSTART};
+                String selection = CalendarContract.Events.DTSTART + " >= ? AND " + CalendarContract.Events.DTSTART + " <= ? AND "
+                        + CalendarContract.Events.TITLE + " = ? AND " + CalendarContract.Events.DESCRIPTION + " = ? ";
+                String[] selectionArgs = new String[]{Long.toString(startMillis), Long.toString(endMillis), title, description};
+                // Primero se recupera el id del evento a eliminar
+                cursor = contentResolver.query(CalendarContract.Events.CONTENT_URI, projection, selection, selectionArgs, null);
+                while (cursor.moveToNext()) {
+                    long eventId = cursor.getLong(cursor.getColumnIndex("_id"));
+                    // Despues se elimina el evento en funcion de su id
+                    contentResolver.delete(ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, eventId), null, null);
+                }
+                cursor.close();
+            }
+        }
         try {
             //Fecha inicial
             Calendar beginTime = Calendar.getInstance();
@@ -260,7 +309,6 @@ public class LicenciaFormActivity extends AppCompatActivity {
             beginTime.set(Calendar.MINUTE, Calendar.getInstance().get(Calendar.MINUTE));
             beginTime.set(Calendar.SECOND, Calendar.getInstance().get(Calendar.SECOND));
             startMillis = beginTime.getTimeInMillis();
-
             //Fecha de caducidad
             Calendar endTime = Calendar.getInstance();
             endTime.setTime(new SimpleDateFormat("dd/MM/yyyy").parse(layoutFechaCaducidad.getEditText().getText().toString()));
@@ -270,7 +318,6 @@ public class LicenciaFormActivity extends AppCompatActivity {
             endTime.set(Calendar.SECOND, Calendar.getInstance().get(Calendar.SECOND));
             endMillis = endTime.getTimeInMillis();
 
-            ContentResolver cr = getContentResolver();
             ContentValues values = new ContentValues();
             values.put(CalendarContract.Events.DTSTART, startMillis);
             values.put(CalendarContract.Events.DTEND, endMillis);
@@ -281,7 +328,7 @@ public class LicenciaFormActivity extends AppCompatActivity {
             values.put(CalendarContract.Events.CALENDAR_ID, calID);
             values.put(CalendarContract.Events.EVENT_TIMEZONE, "Europe/Madrid");
 
-            Uri uri = cr.insert(CalendarContract.Events.CONTENT_URI, values);
+            Uri uri = contentResolver.insert(CalendarContract.Events.CONTENT_URI, values);
 
         } catch (SecurityException ex) {
             ex.printStackTrace();
@@ -293,6 +340,7 @@ public class LicenciaFormActivity extends AppCompatActivity {
             ex.printStackTrace();
             Log.e(getPackageName(), "Excepcion generica", ex);
         }
+
     }
 
     /**
