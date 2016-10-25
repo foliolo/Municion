@@ -182,22 +182,21 @@ public class FragmentMainActivity extends AppCompatActivity {
                     mActionMode.finish();
                 mActionMode = null;
 
-                ShowTextEmptyList();
+                showTextEmptyList();
             }
 
             @Override
             public void onPageScrollStateChanged(int state) {
             }
         });
+        mViewPager.setCurrentItem(2);
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         if (mViewPager != null)
             tabLayout.setupWithViewPager(mViewPager);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        if (fab != null)
-
-        {
+        if (fab != null) {
             fab.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -281,7 +280,7 @@ public class FragmentMainActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
 
-        ShowTextEmptyList();
+        showTextEmptyList();
 
         mAuth.addAuthStateListener(mAuthListener);
     }
@@ -313,7 +312,7 @@ public class FragmentMainActivity extends AppCompatActivity {
         }
     }
 
-    private void ShowTextEmptyList() {
+    private void showTextEmptyList() {
         textEmptyList.setVisibility(View.GONE);
 
         //En caso de estar la lista vacía, indicamos un texto por defecto.
@@ -495,6 +494,8 @@ public class FragmentMainActivity extends AppCompatActivity {
         } else if (resultCode == RESULT_CANCELED) {
             Log.e(getPackageName(), "Resultado de la camara cancelada");
         }
+
+        showTextEmptyList();
     }
 
     private void updateImage(Bitmap imageBitmap) {

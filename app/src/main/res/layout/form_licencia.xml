@@ -122,7 +122,7 @@
                     android:layout_height="wrap_content"
                     android:hint="@string/lbl_num_licencia"
                     android:inputType="number"
-                    android:maxLength="10"/>
+                    android:maxLength="@integer/max_num_licencia_length"/>
             </android.support.design.widget.TextInputLayout>
 
             <!--EDAD CONDUCTOR-->
@@ -184,8 +184,7 @@
                     android:layout_height="wrap_content"
                     android:hint="@string/lbl_num_abonado"
                     android:inputType="number"
-                    android:maxLength="@integer/max_num_abonado_guia"
-                    />
+                    android:maxLength="@integer/max_num_abonado_guia"/>
             </android.support.design.widget.TextInputLayout>
 
             <!--NUMERO DE POLIZA-->
@@ -258,8 +257,7 @@
                     android:entries="@array/tipo_escala"
                     android:hint="@string/tipo_escala"
                     android:inputType="text"
-                    android:spinnerMode="dropdown"
-                    />
+                    android:spinnerMode="dropdown"/>
             </LinearLayout>
 
         </LinearLayout>
