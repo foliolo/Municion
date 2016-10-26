@@ -414,7 +414,8 @@ public class FragmentMainActivity extends AppCompatActivity {
                         Log.wtf(getPackageName(), "Fallo al listar las notificaciones", ex);
                     }
                     // Eliminacion evento Calendario
-                    deleteEventCalendar(position);
+                    deleteSameDayEventCalendar(position);
+                    deleteMonthBeforeEventCalendar(position);
 
                     licencias.remove(position);
                     licenciaArrayAdapter.notifyDataSetChanged();
@@ -426,7 +427,7 @@ public class FragmentMainActivity extends AppCompatActivity {
     /**
      * Metodo para eliminar un evento del calendario del sistema despues de que el usuario elimine una licencia
      */
-    private void deleteEventCalendar(int position) {
+    private void deleteSameDayEventCalendar(int position) {
         // Se comprueba el permiso de lectura del calendario porque te obliga la implementacion de ContentResolver Query
         // No tendria que ser necesario hacerlo porque ya se han comprobado los permisos de lectura y escritura en el
         // guardado de las licencias. Si el usuario no los ha aceptado no puede guardar una licencia y por tanto tampoco eliminarla
@@ -457,6 +458,59 @@ public class FragmentMainActivity extends AppCompatActivity {
             }
             // Preparacion de la query
             String title = "Tu licencia caduca hoy";
+            String description = Utils.getStringLicenseFromId(FragmentMainActivity.this, licencias.get(position).getTipo()) + ": " + licencias.get(position).getNumLicencia();
+            String[] projection = new String[]{BaseColumns._ID, CalendarContract.Events.TITLE,
+                    CalendarContract.Events.DESCRIPTION, CalendarContract.Events.DTSTART};
+            String selection = CalendarContract.Events.DTSTART + " >= ? AND " + CalendarContract.Events.DTSTART + " <= ? AND "
+                    + CalendarContract.Events.TITLE + " = ? AND " + CalendarContract.Events.DESCRIPTION + " = ? ";
+            String[] selectionArgs = new String[]{Long.toString(startDay), Long.toString(endDay), title, description};
+            // Primero se recupera el id del evento a eliminar
+            cursor = contentResolver.query(CalendarContract.Events.CONTENT_URI, projection, selection, selectionArgs, null);
+            while (cursor.moveToNext()) {
+                long eventId = cursor.getLong(cursor.getColumnIndex("_id"));
+                // Despues se elimina el evento en funcion de su id
+                contentResolver.delete(ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, eventId), null, null);
+            }
+            cursor.close();
+        }
+    }
+
+    // Lo mismo que el anterior metodo pero se elimina el evento con un mes de antelacion
+    private void deleteMonthBeforeEventCalendar(int position) {
+        // Se comprueba el permiso de lectura del calendario porque te obliga la implementacion de ContentResolver Query
+        // No tendria que ser necesario hacerlo porque ya se han comprobado los permisos de lectura y escritura en el
+        // guardado de las licencias. Si el usuario no los ha aceptado no puede guardar una licencia y por tanto tampoco eliminarla
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.READ_CALENDAR) == PackageManager.PERMISSION_GRANTED) {
+            // Inicio preparacion eliminacion evento
+            Cursor cursor = null;
+            ContentResolver contentResolver = getContentResolver();
+            long startDay = 0;
+            long endDay = 0;
+            try {
+                // Fecha inicio evento
+                Calendar beginTime = Calendar.getInstance();
+                beginTime.setTime(new SimpleDateFormat("dd/MM/yyyy").parse(licencias.get(position).getFechaCaducidad()));
+                // Un mes de antelacion
+                beginTime.add(Calendar.MONTH, -1);
+                beginTime.set(Calendar.HOUR_OF_DAY, 0);
+                beginTime.set(Calendar.MINUTE, 0);
+                beginTime.set(Calendar.SECOND, 0);
+                startDay = beginTime.getTimeInMillis();
+                // Fecha final evento
+                Calendar endTime = Calendar.getInstance();
+                endTime.setTime(new SimpleDateFormat("dd/MM/yyyy").parse(licencias.get(position).getFechaCaducidad()));
+                // Un mes de antelacion
+                endTime.add(Calendar.MONTH, -1);
+                endTime.set(Calendar.HOUR_OF_DAY, 23);
+                endTime.set(Calendar.MINUTE, 59);
+                endTime.set(Calendar.SECOND, 59);
+                endDay = endTime.getTimeInMillis();
+            } catch (ParseException e) {
+                e.printStackTrace();
+                Log.e(getPackageName(), "Fallo al eliminar el evento del calendario", e);
+            }
+            // Preparacion de la query
+            String title = "Tu licencia caduca dentro de un mes";
             String description = Utils.getStringLicenseFromId(FragmentMainActivity.this, licencias.get(position).getTipo()) + ": " + licencias.get(position).getNumLicencia();
             String[] projection = new String[]{BaseColumns._ID, CalendarContract.Events.TITLE,
                     CalendarContract.Events.DESCRIPTION, CalendarContract.Events.DTSTART};

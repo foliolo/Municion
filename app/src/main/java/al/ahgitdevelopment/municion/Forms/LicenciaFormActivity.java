@@ -230,7 +230,8 @@ public class LicenciaFormActivity extends AppCompatActivity {
                 );
             }
         } else {
-            addEventToCalendar(isModify);
+            addSameDayEventToCalendar(isModify);
+            addMonthBeforeEventToCalendar(isModify);
         }
     }
 
@@ -240,7 +241,8 @@ public class LicenciaFormActivity extends AppCompatActivity {
 
         if (requestCode == 100) {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
-                addEventToCalendar(isModify);
+                addSameDayEventToCalendar(isModify);
+                addMonthBeforeEventToCalendar(isModify);
                 finish();
             } else {
                 Snackbar.make(textInputLayoutLicencia.getEditText(), R.string.dialog_licencia_no_permiso, Snackbar.LENGTH_LONG)
@@ -254,7 +256,7 @@ public class LicenciaFormActivity extends AppCompatActivity {
      * Proceso de agregar la fecha de caducidad como evento al calendario. Si es update se elimina el anterior y se guarda.
      * En caso contrario solo se guarda.
      */
-    private void addEventToCalendar(boolean isModify) {
+    private void addSameDayEventToCalendar(boolean isModify) {
         Cursor cursor = null;
         ContentResolver contentResolver = getContentResolver();
         long calID = 3;
@@ -321,6 +323,103 @@ public class LicenciaFormActivity extends AppCompatActivity {
             values.put(CalendarContract.Events.DTSTART, startMillis);
             values.put(CalendarContract.Events.DTEND, endMillis);
             values.put(CalendarContract.Events.TITLE, "Tu licencia caduca hoy");
+            values.put(CalendarContract.Events.DESCRIPTION, Utils.getStringLicenseFromId(
+                    LicenciaFormActivity.this,
+                    tipoLicencia.getSelectedItemPosition()) + ": " + textInputLayoutLicencia.getEditText().getText().toString());
+            values.put(CalendarContract.Events.CALENDAR_ID, calID);
+            values.put(CalendarContract.Events.EVENT_TIMEZONE, "Europe/Madrid");
+
+            Uri uri = contentResolver.insert(CalendarContract.Events.CONTENT_URI, values);
+
+        } catch (SecurityException ex) {
+            ex.printStackTrace();
+            Log.e(getPackageName(), "Fallo en los permisos del calendario", ex);
+        } catch (ParseException ex) {
+            ex.printStackTrace();
+            Log.e(getPackageName(), "Fallo al crear el evento del calendario", ex);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            Log.e(getPackageName(), "Excepcion generica", ex);
+        }
+
+    }
+
+    // Lo mismo que el anterior metodo pero se crea el evento con un mes de antelacion
+    private void addMonthBeforeEventToCalendar(boolean isModify) {
+        Cursor cursor = null;
+        ContentResolver contentResolver = getContentResolver();
+        long calID = 3;
+        long startMillis = 0;
+        long endMillis = 0;
+        // Primero se comprueba si es una modificacion. Si ya hay un evento previo se elimina.
+        if (isModify) {
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_CALENDAR) == PackageManager.PERMISSION_GRANTED) {
+                Licencia licencia = new Licencia((Licencia) getIntent().getExtras().getParcelable("modify_licencia"));
+                try {
+                    // Fecha inicio evento
+                    Calendar beginTime = Calendar.getInstance();
+                    beginTime.setTime(new SimpleDateFormat("dd/MM/yyyy").parse(licencia.getFechaCaducidad()));
+                    // Un mes de antelacion
+                    beginTime.add(Calendar.MONTH, -1);
+                    beginTime.set(Calendar.HOUR_OF_DAY, 0);
+                    beginTime.set(Calendar.MINUTE, 0);
+                    beginTime.set(Calendar.SECOND, 0);
+                    startMillis = beginTime.getTimeInMillis();
+                    // Fecha final evento
+                    Calendar endTime = Calendar.getInstance();
+                    endTime.setTime(new SimpleDateFormat("dd/MM/yyyy").parse(licencia.getFechaCaducidad()));
+                    // Un mes de antelacion
+                    endTime.add(Calendar.MONTH, -1);
+                    endTime.set(Calendar.HOUR_OF_DAY, 23);
+                    endTime.set(Calendar.MINUTE, 59);
+                    endTime.set(Calendar.SECOND, 59);
+                    endMillis = endTime.getTimeInMillis();
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                    Log.e(getPackageName(), "Fallo al modificar el evento del calendario", e);
+                }
+                // Preparacion de la query
+                String title = "Tu licencia caduca dentro de un mes";
+                String description = Utils.getStringLicenseFromId(LicenciaFormActivity.this, licencia.getTipo()) + ": " + licencia.getNumLicencia();
+                String[] projection = new String[]{BaseColumns._ID, CalendarContract.Events.TITLE,
+                        CalendarContract.Events.DESCRIPTION, CalendarContract.Events.DTSTART};
+                String selection = CalendarContract.Events.DTSTART + " >= ? AND " + CalendarContract.Events.DTSTART + " <= ? AND "
+                        + CalendarContract.Events.TITLE + " = ? AND " + CalendarContract.Events.DESCRIPTION + " = ? ";
+                String[] selectionArgs = new String[]{Long.toString(startMillis), Long.toString(endMillis), title, description};
+                // Primero se recupera el id del evento a eliminar
+                cursor = contentResolver.query(CalendarContract.Events.CONTENT_URI, projection, selection, selectionArgs, null);
+                while (cursor.moveToNext()) {
+                    long eventId = cursor.getLong(cursor.getColumnIndex("_id"));
+                    // Despues se elimina el evento en funcion de su id
+                    contentResolver.delete(ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, eventId), null, null);
+                }
+                cursor.close();
+            }
+        }
+        try {
+            //Fecha inicial
+            Calendar beginTime = Calendar.getInstance();
+            beginTime.setTime(new SimpleDateFormat("dd/MM/yyyy").parse(layoutFechaCaducidad.getEditText().getText().toString()));
+            // Un mes de antelacion
+            beginTime.add(Calendar.MONTH, -1);
+            beginTime.set(Calendar.HOUR_OF_DAY, Calendar.getInstance().get(Calendar.HOUR_OF_DAY));
+            beginTime.set(Calendar.MINUTE, Calendar.getInstance().get(Calendar.MINUTE));
+            beginTime.set(Calendar.SECOND, Calendar.getInstance().get(Calendar.SECOND));
+            startMillis = beginTime.getTimeInMillis();
+            //Fecha de caducidad
+            Calendar endTime = Calendar.getInstance();
+            endTime.setTime(new SimpleDateFormat("dd/MM/yyyy").parse(layoutFechaCaducidad.getEditText().getText().toString()));
+            // Un mes de antelacion
+            endTime.add(Calendar.MONTH, -1);
+            endTime.set(Calendar.HOUR_OF_DAY, Calendar.getInstance().get(Calendar.HOUR_OF_DAY) + 1);
+            endTime.set(Calendar.MINUTE, Calendar.getInstance().get(Calendar.MINUTE));
+            endTime.set(Calendar.SECOND, Calendar.getInstance().get(Calendar.SECOND));
+            endMillis = endTime.getTimeInMillis();
+
+            ContentValues values = new ContentValues();
+            values.put(CalendarContract.Events.DTSTART, startMillis);
+            values.put(CalendarContract.Events.DTEND, endMillis);
+            values.put(CalendarContract.Events.TITLE, "Tu licencia caduca dentro de un mes");
             values.put(CalendarContract.Events.DESCRIPTION, Utils.getStringLicenseFromId(
                     LicenciaFormActivity.this,
                     tipoLicencia.getSelectedItemPosition()) + ": " + textInputLayoutLicencia.getEditText().getText().toString());
