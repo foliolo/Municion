@@ -3,23 +3,18 @@ package al.ahgitdevelopment.municion;
 
 import android.annotation.TargetApi;
 import android.app.DialogFragment;
+import android.app.Fragment;
 import android.content.Context;
 import android.content.res.Configuration;
-import android.media.Ringtone;
-import android.media.RingtoneManager;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
-import android.preference.PreferenceManager;
-import android.preference.RingtonePreference;
+import android.preference.PreferenceFragment;
 import android.support.v7.widget.Toolbar;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import java.util.List;
 
@@ -35,58 +30,6 @@ import java.util.List;
  * API Guide</a> for more information on developing a Settings UI.
  */
 public class SettingsActivity extends AppCompatPreferenceActivity {
-    /**
-     * A preference value change listener that updates the preference's summary
-     * to reflect its new value.
-     */
-    public static Preference.OnPreferenceChangeListener sBindPreferenceSummaryToValueListener = new Preference.OnPreferenceChangeListener() {
-        @Override
-        public boolean onPreferenceChange(Preference preference, Object value) {
-            String stringValue = value.toString();
-
-            if (preference instanceof ListPreference) {
-                // For list_guias preferences, look up the correct display value in
-                // the preference's 'entries' list_guias.
-                ListPreference listPreference = (ListPreference) preference;
-                int index = listPreference.findIndexOfValue(stringValue);
-
-                // Set the summary to reflect the new value.
-                preference.setSummary(
-                        index >= 0
-                                ? listPreference.getEntries()[index]
-                                : null);
-
-            } else if (preference instanceof RingtonePreference) {
-                // For ringtone preferences, look up the correct display value
-                // using RingtoneManager.
-                if (TextUtils.isEmpty(stringValue)) {
-                    // Empty values correspond to 'silent' (no ringtone).
-                    preference.setSummary(R.string.pref_ringtone_silent);
-
-                } else {
-                    Ringtone ringtone = RingtoneManager.getRingtone(
-                            preference.getContext(), Uri.parse(stringValue));
-
-                    if (ringtone == null) {
-                        // Clear the summary if there was a lookup error.
-                        preference.setSummary(null);
-                    } else {
-                        // Set the summary to reflect the new ringtone display
-                        // name.
-                        String name = ringtone.getTitle(preference.getContext());
-                        preference.setSummary(name);
-                    }
-                }
-
-            } else {
-                // For all other preferences, set the summary to the value's
-                // simple string representation.
-                preference.setSummary(stringValue);
-            }
-            return true;
-        }
-    };
-
     private Toolbar toolbar;
 
     /**
@@ -99,30 +42,32 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
     }
 
     /**
-     * Binds a preference's summary to its value. More specifically, when the
-     * preference's value is changed, its summary (line of text below the
-     * preference title) is updated to reflect the value. The summary is also
-     * immediately updated upon calling this method. The exact display format is
-     * dependent on the type of preference.
-     *
-     * @see #sBindPreferenceSummaryToValueListener
+     * {@inheritDoc}
      */
-    private static void bindPreferenceSummaryToValue(Preference preference) {
-        // Set the listener to watch for value changes.
-        preference.setOnPreferenceChangeListener(sBindPreferenceSummaryToValueListener);
-
-        // Trigger the listener immediately with the preference's
-        // current value.
-        sBindPreferenceSummaryToValueListener.onPreferenceChange(preference,
-                PreferenceManager
-                        .getDefaultSharedPreferences(preference.getContext())
-                        .getString(preference.getKey(), ""));
+    @Override
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+    public void onBuildHeaders(List<Header> target) {
+        loadHeadersFromResource(R.xml.pref_headers, target);
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setupActionBar();
+
+        // Add a button to the header list.
+        if (hasHeaders()) {
+            TextView text = new TextView(this);
+            text.setText(Utils.getAppVersion(this));
+            text.setPadding(20, 0, 0, 10);
+            setListFooter(text);
+        }
+    }
+
+    @Override
+    public boolean onIsMultiPane() {
+        return isXLargeTablet(this);
     }
 
     /**
@@ -149,47 +94,67 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
 //        }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    public boolean onIsMultiPane() {
-        return isXLargeTablet(this);
+    protected boolean isValidFragment(String fragmentName) {
+        return ChangePasswordDialog.class.getName().equals(fragmentName);
     }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-    public void onBuildHeaders(List<Header> target) {
-        loadHeadersFromResource(R.xml.pref_headers, target);
-    }
-
 
     @Override
     public void onHeaderClick(Header header, int position) {
-        super.onHeaderClick(header, position);
+
+//        if (onIsMultiPane()) {
+//            switchToHeader(header);
+//        }else
         if (header.id == R.id.change_password) {
             DialogFragment dialog = new ChangePasswordDialog();
             dialog.show(getFragmentManager(), "ChangePasswordDialog");
         }
-//        if (header.id == R.id.list_notifications) {
-//            Utils.loadNotificationData(this);
-//            DialogFragment dialog = new ListNotificationDialog();
-//            dialog.show(getFragmentManager(), "ListNotificationDialog");
+    }
+
+//    @Override
+//    protected void onResume() {
+//        super.onResume();
+//        final String showFragment = getIntent().getStringExtra(EXTRA_SHOW_FRAGMENT);
+//        if (showFragment != null) {
+//            for (final Header header : mHeaders) {
+//                if (showFragment.equals(header.fragment)) {
+//                    switchToHeader(header);
+//                    break;
+//                }
+//            }
 //        }
+//    }
+
+    @Override
+    public void startPreferencePanel(String fragmentClass, Bundle args, int titleRes, CharSequence titleText, Fragment resultTo, int resultRequestCode) {
+//        super.startPreferencePanel(fragmentClass, args, titleRes, titleText, resultTo, resultRequestCode);
+        super.startPreferencePanel(
+                "al.ahgitdevelopment.municion.ChangePasswordDialog",
+                null,
+                R.string.pref_header_general,
+                "",
+                getFragmentManager().getFragment(null, "al.ahgitdevelopment.municion.ChangePasswordDialog"),
+                100);
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                getFragmentManager().popBackStackImmediate();
-                finish();
-                break;
-        }
+    public void startPreferenceFragment(Fragment fragment, boolean push) {
+        super.startPreferenceFragment(new ChangePasswordDialog(), false);
+    }
 
-        return super.onOptionsItemSelected(item);
+    @Override
+    public void startWithFragment(String fragmentName, Bundle args, Fragment resultTo, int resultRequestCode, int titleRes, int shortTitleRes) {
+        super.startWithFragment(
+                "al.ahgitdevelopment.municion.ChangePasswordDialog",
+                null,
+                new ChangePasswordDialog(),
+                100,
+                0,
+                0);
+    }
+
+    @Override
+    public boolean onPreferenceStartFragment(PreferenceFragment caller, Preference pref) {
+        return super.onPreferenceStartFragment(caller, pref);
     }
 }

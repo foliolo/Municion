@@ -119,6 +119,22 @@ public final class FirebaseDBHelper {
                             }
                         }
                     });
+        } else {
+            mAuth.signInAnonymously()
+                    .addOnCompleteListener((Activity) context, new OnCompleteListener<AuthResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> task) {
+                            Log.d(TAG, "signInAnonymously:onComplete:" + task.isSuccessful());
+
+                            // If sign in fails, display a message to the user. If sign in succeeds
+                            // the auth state listener will be notified and logic to handle the
+                            // signed in user can be handled in the listener.
+                            if (!task.isSuccessful()) {
+                                Log.w(TAG, "signInAnonymously", task.getException());
+//                                Toast.makeText(context, "Authentication failed.", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
         }
     }
 

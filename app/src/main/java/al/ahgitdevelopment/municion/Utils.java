@@ -398,7 +398,7 @@ public final class Utils {
                 versionName = "";
             }
         }
-        return versionName;
+        return "Version: " + versionName;
     }
 
     /**

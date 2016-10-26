@@ -76,7 +76,7 @@ public class LoginPasswordActivity extends AppCompatActivity {
         button = (ImageView) findViewById(R.id.continuar);
         versionLabel = (TextView) findViewById(R.id.login_version_label);
 
-        versionLabel.setText("Version: " + Utils.getAppVersion(this));
+        versionLabel.setText(Utils.getAppVersion(this));
 
         // Registro de contraseña
         if (!prefs.contains("password")) {
