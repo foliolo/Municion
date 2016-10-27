@@ -122,10 +122,19 @@ public final class Utils {
         //Comprobar si la licencia a añadir es nueva o ya existe
         loadNotificationData(context);
         if (position != -1 && listNotificationData.size() > 0) {
-            listNotificationData.get(position).setLicencia(notificationData.getLicencia());
-            listNotificationData.get(position).setId(notificationData.getId());
-            listNotificationData.get(position).setFecha(notificationData.getFecha());
-//            Toast.makeText(context, "Modificada notificacion existente", Toast.LENGTH_SHORT).show();
+            // Para evitar un IndexOutOfBoundsException ya que hay casos en que position no coincide
+            // con el size de la lista y se produce esta excepcion cuando se invoca
+            // listNotificationData.get(position). No se si meter en el if lo mismo que el else
+            // Por eso lo he comentado, entiendo que no.
+            if(listNotificationData.size() <= position || listNotificationData.get(position) == null) {
+                Log.e("Utils.class", "No coincide position con el size de listNotificationData");
+                // listNotificationData.add(notificationData);
+            } else {
+                listNotificationData.get(position).setLicencia(notificationData.getLicencia());
+                listNotificationData.get(position).setId(notificationData.getId());
+                listNotificationData.get(position).setFecha(notificationData.getFecha());
+//              Toast.makeText(context, "Modificada notificacion existente", Toast.LENGTH_SHORT).show();
+            }
         } else {
             listNotificationData.add(notificationData);
 //            Toast.makeText(context, "Añadida notificacion nueva", Toast.LENGTH_SHORT).show();

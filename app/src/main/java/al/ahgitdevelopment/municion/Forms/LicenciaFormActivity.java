@@ -882,6 +882,29 @@ public class LicenciaFormActivity extends AppCompatActivity {
                 break;
         }
     }
+      // Lo subo comentado por si en algun momento es necesario utilizarlo. Sirve para que despues
+      // de agregarse un evento al Calendario este se sincronice. Esta comentado porque seria pedir
+     // otro permiso mas al usuario y la sincronizacion de un dispositivo, en general, es automatica
+    // por lo que no seria necesario utilizar es metodo.
+//    public void syncCalendars() {
+//        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.GET_ACCOUNTS) != PackageManager.PERMISSION_GRANTED) {
+//            // TODO: Consider calling
+//            //    ActivityCompat#requestPermissions
+//            // here to request the missing permissions, and then overriding
+//            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+//            //                                          int[] grantResults)
+//            // to handle the case where the user grants the permission. See the documentation
+//            // for ActivityCompat#requestPermissions for more details.
+//            return;
+//        }
+//        Account[] accounts = AccountManager.get(getApplicationContext()).getAccounts();
+//        String authority = CalendarContract.Calendars.CONTENT_URI.getAuthority();
+//        for (int i = 0; i < accounts.length; i++) {
+//            Bundle extras = new Bundle();
+//            extras.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true);
+//            ContentResolver.requestSync(accounts[i], authority, extras);
+//        }
+//    }
 
     /**
      * DatePickerFragment para seleccionar la fecha de expedicion
