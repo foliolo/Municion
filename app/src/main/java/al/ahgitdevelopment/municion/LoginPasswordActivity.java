@@ -157,6 +157,9 @@ public class LoginPasswordActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         checkAccountPermission();
+
+        //Lanza el tutorial la primera vez
+        showTotorial();
     }
 
     private void checkAccountPermission() {
@@ -174,12 +177,15 @@ public class LoginPasswordActivity extends AppCompatActivity {
         }
     }
 
+
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
-        if (requestCode == 100) {
-            accountPermission = grantResults[0] == PackageManager.PERMISSION_GRANTED;
+        if (grantResults != null && grantResults.length > 0) {
+            if (requestCode == 100) {
+                accountPermission = grantResults[0] == PackageManager.PERMISSION_GRANTED;
+            }
         }
     }
 
@@ -295,5 +301,18 @@ public class LoginPasswordActivity extends AppCompatActivity {
         Bundle bundle = new Bundle();
         bundle.putString(FirebaseAnalytics.Param.SIGN_UP_METHOD, android_id);
         mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.LOGIN, bundle);
+    }
+
+    /**
+     * Lanza el tutorial la primera vez que se inicia la aplicación.
+     */
+    private void showTotorial() {
+        if (prefs == null)
+            prefs = getSharedPreferences("Preferences", Context.MODE_PRIVATE);
+
+        if (prefs.getBoolean("show_tutorial", true)) {
+            Intent intent = new Intent(this, FragmentTutorialActivity.class);
+            startActivity(intent);
+        }
     }
 }

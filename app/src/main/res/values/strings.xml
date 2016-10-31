@@ -197,4 +197,7 @@
     <string name="login_text_info">Introduce 6 dígitos como mínimo</string>
     <string name="description_login_button">Botón de login</string>
 
+    <string name="title_activity_fragment_tutorial">Tutorial Fragment</string>
+    <string name="btn_tutorial_entrar">Entrar</string>
+
 </resources>

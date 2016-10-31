@@ -4,19 +4,18 @@
 
     <uses-feature
         android:name="android.hardware.camera"
-        android:required="true"/>l
-
+        android:required="true"/>
+    l
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
     <uses-permission android:name="android.permission.VIBRATE"/>
     <uses-permission android:name="android.permission.WAKE_LOCK"/>
-    <uses-permission android:name="android.permission.READ_CALENDAR" />
-    <uses-permission android:name="android.permission.WRITE_CALENDAR" />
+    <uses-permission android:name="android.permission.READ_CALENDAR"/>
+    <uses-permission android:name="android.permission.WRITE_CALENDAR"/>
     <uses-permission android:name="android.permission.GET_ACCOUNTS"/>
 
-
-    <!--android:supportsRtl="true"-->
+    <!-- android:supportsRtl="true" -->
     <application
         android:icon="@mipmap/ic_launcher_3_light"
         android:label="@string/app_name"
@@ -27,31 +26,27 @@
             android:windowSoftInputMode="stateVisible">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
+
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-
         <activity
             android:name=".FragmentMainActivity"
             android:label="@string/title_activity_fragment_main">
         </activity>
-
         <activity
             android:name=".Forms.GuiaFormActivity"
             android:label="@string/title_nueva_guia"
             android:windowSoftInputMode="stateHidden"/>
-
         <activity
             android:name=".Forms.CompraFormActivity"
             android:label="@string/title_nueva_compra"
             android:windowSoftInputMode="stateHidden"/>
-
         <activity
             android:name=".Forms.LicenciaFormActivity"
             android:label="@string/title_nueva_licencia"
             android:windowSoftInputMode="stateHidden">
         </activity>
-
         <activity
             android:name=".SettingsActivity"
             android:label="@string/title_activity_settings"/>
@@ -61,9 +56,17 @@
             android:label="BroadcastReceiverAux">
             <intent-filter>
                 <action android:name="ALARM"/>
+
                 <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </receiver>
+
+        <activity
+            android:name=".FragmentTutorialActivity"
+            android:label="@string/title_activity_fragment_tutorial"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme">
+        </activity>
     </application>
 
 </manifest>
