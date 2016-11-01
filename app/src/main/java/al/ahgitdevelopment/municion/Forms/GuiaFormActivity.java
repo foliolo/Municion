@@ -63,6 +63,7 @@ public class GuiaFormActivity extends AppCompatActivity {
     private TextInputLayout layoutNumArma;
     private TextInputLayout layoutCupo;
     private TextInputLayout layoutGastado;
+    private TextInputLayout layoutCalibre1;
 
     // Mensaje de error antes de guardar
     private TextView mensajeError;
@@ -90,6 +91,7 @@ public class GuiaFormActivity extends AppCompatActivity {
         getSupportActionBar().setIcon(R.drawable.ic_bullseye);
 
         tipoArma = (AppCompatSpinner) findViewById(R.id.form_tipo_arma);
+        layoutCalibre1 = (TextInputLayout) findViewById(R.id.text_input_layout_calibre1);
         calibre1 = (AutoCompleteTextView) findViewById(R.id.form_calibre1);
         segundoCalibre = (CheckBox) findViewById(R.id.form_check_segundo_calibre);
         calibre2 = (AutoCompleteTextView) findViewById(R.id.form_calibre2);
@@ -130,7 +132,7 @@ public class GuiaFormActivity extends AppCompatActivity {
                     layoutMarca.getEditText().setText(guia.getMarca());
                     layoutModelo.getEditText().setText(guia.getModelo());
                     layoutApodo.getEditText().setText(guia.getApodo());
-                    calibre1.setText(guia.getCalibre1());
+                    layoutCalibre1.getEditText().setText(guia.getCalibre1());
                     tipoArma.setSelection(guia.getTipoArma());
                     if (guia.getCalibre2() == null || "".equals(guia.getCalibre2())) {
                         segundoCalibre.setChecked(false);
@@ -241,7 +243,7 @@ public class GuiaFormActivity extends AppCompatActivity {
             }
         });
         // Calibre1
-        calibre1.addTextChangedListener(new TextWatcher() {
+        layoutCalibre1.getEditText().addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
             }
@@ -252,8 +254,8 @@ public class GuiaFormActivity extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
-                if (calibre1.getText().toString().length() < 1) {
-                    calibre1.setError(getString(R.string.error_before_save));
+                if (layoutCalibre1.getEditText().getText().toString().length() < 1) {
+                    layoutCalibre1.setError(getString(R.string.error_before_save));
                 }
             }
         });
@@ -479,7 +481,7 @@ public class GuiaFormActivity extends AppCompatActivity {
         }
         bundle.putString("apodo", layoutApodo.getEditText().getText().toString());
         bundle.putInt("tipoArma", tipoArma.getSelectedItemPosition());
-        bundle.putString("calibre1", calibre1.getText().toString());
+        bundle.putString("calibre1", layoutCalibre1.getEditText().getText().toString());
         if (segundoCalibre.isChecked()) {
             // Control error. He metido vacio porque el campo en BBDD no puede ser  nulo
             if (calibre2.getText().toString().isEmpty()) {
@@ -581,8 +583,8 @@ public class GuiaFormActivity extends AppCompatActivity {
             retorno = false;
         }
         // Calibre1
-        if (calibre1.getText().toString().length() < 1) {
-            calibre1.setError(getString(R.string.error_before_save));
+        if (layoutCalibre1.getEditText().getText().toString().length() < 1) {
+            layoutCalibre1.setError(getString(R.string.error_before_save));
             retorno = false;
         }
         // Num Guia
