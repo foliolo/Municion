@@ -545,7 +545,9 @@ public class FragmentMainActivity extends AppCompatActivity {
 
         switch (id) {
             case R.id.action_settings:
-                Intent intent = new Intent(FragmentMainActivity.this, SettingsActivity.class);
+//                Intent intent = new Intent(FragmentMainActivity.this, SettingsActivity.class);
+//                startActivity(intent);
+                Intent intent = new Intent(FragmentMainActivity.this, SettingsFragment.class);
                 startActivity(intent);
                 break;
             default:

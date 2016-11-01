@@ -131,7 +131,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         super.startPreferencePanel(
                 "al.ahgitdevelopment.municion.ChangePasswordDialog",
                 null,
-                R.string.pref_header_general,
+                R.string.settings_title_change_password,
                 "",
                 getFragmentManager().getFragment(null, "al.ahgitdevelopment.municion.ChangePasswordDialog"),
                 100);

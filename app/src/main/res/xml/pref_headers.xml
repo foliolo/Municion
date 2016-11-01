@@ -3,5 +3,5 @@
         android:id="@+id/change_password"
         android:fragment="al.ahgitdevelopment.municion.ChangePasswordDialog"
         android:icon="@drawable/ic_info_black_24dp"
-        android:title="@string/pref_header_general"/>
+        android:title="@string/settings_title_change_password"/>
 </preference-headers>

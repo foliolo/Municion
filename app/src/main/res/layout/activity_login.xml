@@ -59,6 +59,7 @@
             android:contentDescription="@string/description_login_button"
             android:elevation="8dp"
             app:srcCompat="@drawable/ic_next"/>
+
     </LinearLayout>
 
     <TextView

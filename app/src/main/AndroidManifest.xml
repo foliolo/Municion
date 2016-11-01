@@ -5,7 +5,7 @@
     <uses-feature
         android:name="android.hardware.camera"
         android:required="true"/>
-    l
+
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
@@ -15,7 +15,6 @@
     <uses-permission android:name="android.permission.WRITE_CALENDAR"/>
     <uses-permission android:name="android.permission.GET_ACCOUNTS"/>
 
-    <!-- android:supportsRtl="true" -->
     <application
         android:icon="@mipmap/ic_launcher_3_light"
         android:label="@string/app_name"
@@ -26,7 +25,6 @@
             android:windowSoftInputMode="stateVisible">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
-
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
@@ -47,9 +45,15 @@
             android:label="@string/title_nueva_licencia"
             android:windowSoftInputMode="stateHidden">
         </activity>
+
+        <!--<activity-->
+        <!--android:name=".SettingsActivity"-->
+        <!--android:label="@string/title_activity_settings"/>-->
+
         <activity
-            android:name=".SettingsActivity"
-            android:label="@string/title_activity_settings"/>
+            android:name=".SettingsFragment"
+            android:label="@string/title_activity_settings"
+            android:theme="@style/Theme.AppCompat.Light.DarkActionBar"/>
 
         <receiver
             android:name=".NotificationPublisher"

@@ -12,8 +12,9 @@ import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
+
+import java.util.Locale;
 
 public class FragmentTutorialActivity extends AppCompatActivity {
 
@@ -48,7 +49,7 @@ public class FragmentTutorialActivity extends AppCompatActivity {
         // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) findViewById(R.id.container);
         mViewPager.setAdapter(mSectionsPagerAdapter);
-        mViewPager.setOffscreenPageLimit(3);
+        mViewPager.setOffscreenPageLimit(1);
     }
 
     @Override
@@ -88,68 +89,74 @@ public class FragmentTutorialActivity extends AppCompatActivity {
         }
 
         @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
+        public View onCreateView(LayoutInflater inflater, final ViewGroup container,
                                  Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.content_fragment_tutorial, container, false);
             ImageView image = (ImageView) rootView.findViewById(R.id.image_tutorial);
-            Button exit = (Button) rootView.findViewById(R.id.btn_exit_tutorial);
+            final ImageView continuar = (ImageView) rootView.findViewById(R.id.btn_exit_tutorial);
 
             switch (getArguments().getInt(ARG_SECTION_NUMBER)) {
                 case 1:
                     image.setBackgroundResource(R.drawable.tutorial_01);
-                    exit.setVisibility(View.GONE);
+                    continuar.setVisibility(View.GONE);
                     break;
 
                 case 2:
                     image.setBackgroundResource(R.drawable.tutorial_02);
-                    exit.setVisibility(View.GONE);
+                    continuar.setVisibility(View.GONE);
                     break;
 
                 case 3:
                     image.setBackgroundResource(R.drawable.tutorial_03);
-                    exit.setVisibility(View.GONE);
+                    continuar.setVisibility(View.GONE);
                     break;
 
                 case 4:
                     image.setBackgroundResource(R.drawable.tutorial_04);
-                    exit.setVisibility(View.GONE);
+                    continuar.setVisibility(View.GONE);
                     break;
 
                 case 5:
                     image.setBackgroundResource(R.drawable.tutorial_05);
-                    exit.setVisibility(View.GONE);
+                    continuar.setVisibility(View.GONE);
                     break;
 
                 case 6:
                     image.setBackgroundResource(R.drawable.tutorial_06);
-                    exit.setVisibility(View.GONE);
+                    continuar.setVisibility(View.GONE);
                     break;
 
                 case 7:
                     image.setBackgroundResource(R.drawable.tutorial_07);
-                    exit.setVisibility(View.GONE);
+                    continuar.setVisibility(View.GONE);
                     break;
 
                 case 8:
                     image.setBackgroundResource(R.drawable.tutorial_08);
-                    exit.setVisibility(View.VISIBLE);
-                    exit.setOnClickListener(new View.OnClickListener() {
+
+                    //Cambio del boton en funcion del idioma
+                    if (Locale.getDefault().getLanguage().toLowerCase().contains("es")) {
+                        continuar.setImageResource(R.drawable.ic_empieza);
+                    } else {
+                        continuar.setImageResource(R.drawable.ic_go);
+                    }
+
+                    continuar.setVisibility(View.VISIBLE);
+                    continuar.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
                             getActivity().finish();
-
                             SharedPreferences prefs = getActivity().getSharedPreferences("Preferences", Context.MODE_PRIVATE);
+
                             if (!prefs.contains("show_tutorial")) {
-                                prefs.edit().putBoolean("show_tutorial", false).commit();
+                                prefs.edit().putBoolean("show_tutorial", false).apply();
                             }
                         }
                     });
                     break;
-
             }
             return rootView;
         }
-
     }
 
     /**

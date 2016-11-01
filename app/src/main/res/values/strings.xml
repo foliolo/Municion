@@ -95,7 +95,7 @@
 
 
     <!-- General settings -->
-    <string name="pref_header_general">Gestión de contraseñas</string>
+    <string name="settings_title_change_password">Gestión de contraseñas</string>
     <string name="password_equal_actual">Las contraseña no es correcta, vuelve a escribirla</string>
     <string name="settings_password_save">Contraseña modificada correctamente</string>
     <string name="settings_password_unlogin">Primero debes registrar tu contraseña</string>
@@ -199,5 +199,9 @@
 
     <string name="title_activity_fragment_tutorial">Tutorial Fragment</string>
     <string name="btn_tutorial_entrar">Entrar</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="settings_title_mostrar_tutorial">Mostrar tutorial</string>
 
 </resources>
