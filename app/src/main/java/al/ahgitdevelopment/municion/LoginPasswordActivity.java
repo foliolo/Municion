@@ -199,9 +199,6 @@ public class LoginPasswordActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_settings:
-//                Intent intent = new Intent(LoginPasswordActivity.this, SettingsActivity.class);
-//                startActivity(intent);
-
                 Intent intent = new Intent(LoginPasswordActivity.this, SettingsFragment.class);
                 startActivity(intent);
         }

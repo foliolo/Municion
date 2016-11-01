@@ -18,6 +18,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="18dp"
+            android:clickable="true"
             android:onClick="changePassword"
             android:text="@string/settings_title_change_password"
             android:textSize="18sp"/>
@@ -27,6 +28,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="18dp"
+            android:clickable="true"
             android:onClick="showTutorial"
             android:text="@string/settings_title_mostrar_tutorial"
             android:textSize="18sp"/>
