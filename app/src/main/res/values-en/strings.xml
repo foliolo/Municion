@@ -55,8 +55,8 @@
     <string name="lbl_num_dni">National Identity Document Number</string>
     <string name="lbl_num_abonado">Subscriber Number</string>
     <string name="lbl_num_poliza">Insurance Policy Number</string>
-    <string name="lbl_expedicion_licencia">Expedition Date</string>
-    <string name="lbl_caducidad_licencia">Expiration Date</string>
+    <string name="lbl_expedicion_licencia">Date of issue</string>
+    <string name="lbl_caducidad_licencia">Date of expiry</string>
     <string name="item_apodo_guia">Nick</string>
     <string name="check_segundo_calibre">Second Bore Allowed</string>
     <string name="item_num_guia">12345</string>
@@ -82,12 +82,12 @@
     <string name="tipo_permiso_conducir">Driving License</string>
     <string name="lbl_ccaa">Com. Autónoma</string>
     <string name="lbl_categoria">Category</string>
-    <string name="fecha_expedicion">Expedition Date</string>
-    <string name="fecha_caducidad">Expiration Date</string>
+    <string name="fecha_expedicion">Date of issue</string>
+    <string name="fecha_caducidad">Date of expiry</string>
     <string name="lbl_escala">Official Rank</string>
     <string name="msg_err_num_licencia">Enter the License Number</string>
-    <string name="msg_err_fecha_exp">Enter Date of Expedition</string>
-    <string name="msg_err_fecha_cad">Enter Date of Expiration</string>
+    <string name="msg_err_fecha_exp">Enter Date of Issue</string>
+    <string name="msg_err_fecha_cad">Enter Date of Expiry</string>
     <string name="msg_err_poliza_seg">Insert Number Insurance Policy</string>
     <string name="msg_err_edad">Enter your Age</string>
 
