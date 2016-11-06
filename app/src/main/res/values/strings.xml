@@ -13,7 +13,6 @@
     <string name="password_equal_fail">Las contraseñas no coinciden</string>
     <string name="title_activity_fragment_main">Munición</string>
     <string name="action_settings">Configuración</string>
-    <string name="section_format">Hello World from section: %1$d</string>
     <string name="guardar">Guardar</string>
     <string name="cancelar">Cancelar</string>
     <string name="login">Login</string>
@@ -70,7 +69,6 @@
     <string name="precio">Precio</string>
     <string name="cartuchos_comprados">Numero de cartuchos comprados</string>
     <string name="municion_propia">Municion propia</string>
-    <string name="cablibre_propio">Calibre propio</string>
     <string name="unidades">Unidades</string>
     <string name="fecha">Fecha</string>
     <string name="tipo_municion">Tipo de munición</string>
@@ -135,10 +133,10 @@
 
 
     <!--ADMOB ID ANUNCIOS-->
-    <string name="banner_login_id">ca-app-pub-8582752139018186/6275130957</string>
-    <string name="banner_main_id">ca-app-pub-8582752139018186/4700666152</string>
-    <string name="banner_formularios_id">ca-app-pub-8582752139018186/6177399356</string>
-    <string name="banner_configuracion_id">ca-app-pub-8582752139018186/7654132558</string>
+    <string name="banner_login_id" translatable="false">ca-app-pub-8582752139018186/6275130957</string>
+    <string name="banner_main_id" translatable="false">ca-app-pub-8582752139018186/4700666152</string>
+    <string name="banner_formularios_id" translatable="false">ca-app-pub-8582752139018186/6177399356</string>
+    <string name="banner_configuracion_id" translatable="false">ca-app-pub-8582752139018186/7654132558</string>
 
     <string name="guia_empty_list">Crea una LICENCIA de armas antes de añadir una GUIA</string>
     <string name="compra_empty_list">Crea una GUIA a la que asociar la COMPRA</string>
@@ -149,7 +147,6 @@
     <string name="login_text_info">Introduce 6 dígitos como mínimo</string>
     <string name="description_login_button">Botón de login</string>
 
-    <string name="title_activity_fragment_tutorial">Tutorial Fragment</string>
     <string name="btn_tutorial_entrar">Entrar</string>
 
     <!-- TODO: Remove or change this placeholder text -->

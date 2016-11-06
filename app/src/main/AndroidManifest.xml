@@ -63,7 +63,6 @@
 
         <activity
             android:name=".FragmentTutorialActivity"
-            android:label="@string/title_activity_fragment_tutorial"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme">
         </activity>
