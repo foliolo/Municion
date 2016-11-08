@@ -134,6 +134,14 @@
         <item>3ª Categoría</item>
     </string-array>
 
+
+    <string-array name="preguntas_seguridad">
+        <item>¿Cómo se llama tu mascota?</item>
+        <item>¿En qué colegio estudiaste?</item>
+        <item>¿Cuál es tu película preferida?</item>
+        <item>¿Cuál es tu libro favorito?</item>
+    </string-array>
+
     <string-array name="calibres">
         <item>1.1x13.1R Microballistic</item>
         <item>2.7x9mm Kolibri</item>
@@ -2561,13 +2569,6 @@
         <item>.58 US Musket RF Long</item>
         <item>Cal. 16 Béringer RF</item>
         <item>18 mm Milbank Amsler</item>
-    </string-array>
-
-    <string-array name="preguntas_seguridad">
-        <item>¿Cómo se llama tu mascota?</item>
-        <item>¿En qué colegio estudiaste?</item>
-        <item>¿Cuál es tu película preferida?</item>
-        <item>¿Cuál es tu libro preferido?</item>
     </string-array>
 
 </resources>

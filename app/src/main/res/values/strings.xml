@@ -151,7 +151,7 @@
     <string name="btn_tutorial_entrar">Entrar</string>
 
     <!-- Pregunta de seguridad -->
-    <string name="settings_title_security_question">Pregunta de Seguridad</string>
+    <string name="settings_title_security_question">Pregunta de seguridad</string>
     <string name="settings_type_security_question">Selecciona una pregunta de seguridad</string>
     <string name="settings_question_save">Pregunta guardada</string>
     <string name="settings_answer_empty">Debes responder a la pregunta</string>

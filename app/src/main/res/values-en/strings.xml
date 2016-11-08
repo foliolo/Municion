@@ -140,12 +140,13 @@
     <string name="login_text_info">Please enter at least 6 digits</string>
     <string name="description_login_button">Login Button</string>
 
+    <string name="settings_title_show_tutorial">Show Tutorial Now</string>
     <string name="btn_tutorial_entrar">Enter</string>
 
     <!-- Security Question -->
-    <string name="settings_title_show_tutorial">Show Tutorial Now</string>
     <string name="settings_title_security_question">Security Question</string>
     <string name="settings_type_security_question">Choose a security question</string>
+    <string name="settings_question_save">Save question</string>
     <string name="settings_answer_empty">You have to respond the question</string>
     <string name="settings_answer_fail">Answer too short</string>
     <string name="settings_answer_equal_fail">Answers are not the same</string>

@@ -293,6 +293,10 @@ public class LoginPasswordActivity extends AppCompatActivity {
         intent.putParcelableArrayListExtra("compras", dbSqlHelper.getListCompras(null));
         intent.putParcelableArrayListExtra("licencias", dbSqlHelper.getListLicencias(null));
 
+
+        //TODO: Comprobar año para renovar los cupos
+//        Utils.updateCupos();
+
         startActivity(intent);
         dbSqlHelper.close();
 
@@ -308,8 +312,10 @@ public class LoginPasswordActivity extends AppCompatActivity {
      */
     private void showTutorial() {
         // Para que no se muestre el tutorial cuando se ha reseteado el password
-        Intent intentResetPass = getIntent();
-        boolean isTutorial = intentResetPass.getBooleanExtra("tutorial", true);
+        boolean isTutorial = true;
+        if (getIntent().hasExtra("tutorial"))
+            isTutorial = getIntent().getBooleanExtra("tutorial", true);
+
         if (prefs == null)
             prefs = getSharedPreferences("Preferences", Context.MODE_PRIVATE);
 
