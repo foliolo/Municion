@@ -2,6 +2,7 @@ package al.ahgitdevelopment.municion;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
+import android.app.DialogFragment;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
@@ -93,6 +94,17 @@ public final class Utils {
     }
 
     /**
+     * Método que devuelve el string del tipo de pregunta introduciendo el id (posicion en el array de tipos de pregunta).
+     *
+     * @param dialogFragment
+     * @param selectedItemPosition
+     * @return
+     */
+    public static String getStringTipoPregunta(DialogFragment dialogFragment, int selectedItemPosition) {
+        return dialogFragment.getResources().getStringArray(R.array.preguntas_seguridad)[selectedItemPosition];
+    }
+
+    /**
      * Método para comprobar si se puede eliminar una licencia.
      * Para poder eliminar una licencia, antes deben borrarse las guias asociadas a ellas.
      *
@@ -106,7 +118,6 @@ public final class Utils {
                 return true;
             }
         }
-
         return false;
     }
 

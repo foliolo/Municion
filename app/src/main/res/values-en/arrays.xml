@@ -2562,4 +2562,12 @@
         <item>Cal. 16 Béringer RF</item>
         <item>18 mm Milbank Amsler</item>
     </string-array>
+
+    <string-array name="preguntas_seguridad">
+        <item>What is the name of your pet?</item>
+        <item>What is the name of your school?</item>
+        <item>What is your favorite film?</item>
+        <item>What is your favorite book?</item>
+    </string-array>
+
 </resources>

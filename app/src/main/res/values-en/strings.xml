@@ -142,7 +142,22 @@
 
     <string name="btn_tutorial_entrar">Enter</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="settings_title_mostrar_tutorial">Show Tutorial Now</string>
+    <!-- Security Question -->
+    <string name="settings_title_show_tutorial">Show Tutorial Now</string>
+    <string name="settings_title_security_question">Security Question</string>
+    <string name="settings_type_security_question">Choose a security question</string>
+    <string name="settings_answer_empty">You have to respond the question</string>
+    <string name="settings_answer_fail">Answer too short</string>
+    <string name="settings_answer_equal_fail">Answers are not the same</string>
+    <string name="lbl_question_type">Security Question</string>
+    <string name="lbl_insert_answer">Write your answer</string>
+    <string name="lbl_confirm_answer">Repeat your answer</string>
+    <string name="answer_save">Answer save</string>
+
+    <!-- Reset password -->
+    <string name="settings_title_reset_password">Reset Password</string>
+    <string name="settings_empty_question_security">First you have to answer a security question </string>
+    <string name="settings_reset_password">It is reset your password</string>
+    <string name="settings_reset_answer_fail">The answer is not correct</string>
 
 </resources>

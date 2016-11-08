@@ -30,7 +30,27 @@
             android:layout_marginTop="18dp"
             android:clickable="true"
             android:onClick="showTutorial"
-            android:text="@string/settings_title_mostrar_tutorial"
+            android:text="@string/settings_title_show_tutorial"
+            android:textSize="18sp"/>
+
+        <TextView
+            android:id="@+id/settings_security_question"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="18dp"
+            android:clickable="true"
+            android:onClick="securityQuestion"
+            android:text="@string/settings_title_security_question"
+            android:textSize="18sp"/>
+
+        <TextView
+            android:id="@+id/settings_reset_password"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="18dp"
+            android:clickable="true"
+            android:onClick="resetPassword"
+            android:text="@string/settings_title_reset_password"
             android:textSize="18sp"/>
 
     </LinearLayout>

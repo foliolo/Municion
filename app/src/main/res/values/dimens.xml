@@ -17,5 +17,6 @@
     <integer name="max_peso_municion_compra">5</integer>
     <integer name="max_poliza_seguro_licencia">9</integer>
     <integer name="max_num_abonado_guia">9</integer>
+    <integer name="question_max_length">20</integer>
 
 </resources>

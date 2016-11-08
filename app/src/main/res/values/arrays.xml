@@ -2562,4 +2562,12 @@
         <item>Cal. 16 Béringer RF</item>
         <item>18 mm Milbank Amsler</item>
     </string-array>
+
+    <string-array name="preguntas_seguridad">
+        <item>¿Cómo se llama tu mascota?</item>
+        <item>¿En qué colegio estudiaste?</item>
+        <item>¿Cuál es tu película preferida?</item>
+        <item>¿Cuál es tu libro preferido?</item>
+    </string-array>
+
 </resources>

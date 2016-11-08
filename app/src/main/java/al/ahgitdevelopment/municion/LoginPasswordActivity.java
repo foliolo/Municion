@@ -159,7 +159,7 @@ public class LoginPasswordActivity extends AppCompatActivity {
         checkAccountPermission();
 
         //Lanza el tutorial la primera vez
-        showTotorial();
+        showTutorial();
     }
 
     private void checkAccountPermission() {
@@ -306,11 +306,14 @@ public class LoginPasswordActivity extends AppCompatActivity {
     /**
      * Lanza el tutorial la primera vez que se inicia la aplicación.
      */
-    private void showTotorial() {
+    private void showTutorial() {
+        // Para que no se muestre el tutorial cuando se ha reseteado el password
+        Intent intentResetPass = getIntent();
+        boolean isTutorial = intentResetPass.getBooleanExtra("tutorial", true);
         if (prefs == null)
             prefs = getSharedPreferences("Preferences", Context.MODE_PRIVATE);
 
-        if (prefs.getBoolean("show_tutorial", true)) {
+        if (prefs.getBoolean("show_tutorial", true) && isTutorial) {
             Intent intent = new Intent(this, FragmentTutorialActivity.class);
             startActivity(intent);
         }

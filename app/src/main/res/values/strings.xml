@@ -147,9 +147,25 @@
     <string name="login_text_info">Introduce 6 dígitos como mínimo</string>
     <string name="description_login_button">Botón de login</string>
 
+    <string name="settings_title_show_tutorial">Mostrar tutorial</string>
     <string name="btn_tutorial_entrar">Entrar</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="settings_title_mostrar_tutorial">Mostrar tutorial</string>
+    <!-- Pregunta de seguridad -->
+    <string name="settings_title_security_question">Pregunta de Seguridad</string>
+    <string name="settings_type_security_question">Selecciona una pregunta de seguridad</string>
+    <string name="settings_question_save">Pregunta guardada</string>
+    <string name="settings_answer_empty">Debes responder a la pregunta</string>
+    <string name="settings_answer_fail">Respuesta demasiado corta</string>
+    <string name="settings_answer_equal_fail">Las respuestas no coinciden</string>
+    <string name="lbl_question_type">Pregunta de Seguridad</string>
+    <string name="lbl_insert_answer">Introduce tu respuesta</string>
+    <string name="lbl_confirm_answer">Repite tu respuesta</string>
+    <string name="answer_save">Respuesta guardada</string>
+
+    <!-- Reiniciar password -->
+    <string name="settings_title_reset_password">Reiniciar contraseña</string>
+    <string name="settings_empty_question_security">Primero debe responder a una pregunta de seguridad</string>
+    <string name="settings_reset_password">Se ha reseteado su password</string>
+    <string name="settings_reset_answer_fail">La respuesta no es correcta</string>
 
 </resources>

@@ -37,4 +37,14 @@ public class SettingsFragment extends FragmentActivity {
         Intent intent = new Intent(this, FragmentTutorialActivity.class);
         startActivity(intent);
     }
+
+    public void securityQuestion(View view) {
+        DialogFragment dialog = new SecurityQuestionDialog();
+        dialog.show(getFragmentManager(), "SecurityQuestionDialog");
+    }
+
+    public void resetPassword(View view) {
+        DialogFragment dialog = new ResetPasswordDialog();
+        dialog.show(getFragmentManager(), "ResetPasswordDialog");
+    }
 }
