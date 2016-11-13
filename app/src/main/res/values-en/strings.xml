@@ -6,7 +6,7 @@
     <string name="lbl3_insert_password">Enter your Current Password</string>
     <string name="lbl4_insert_password">Enter your New Password</string>
     <string name="lbl5_insert_password">Enter your New Password again</string>
-    <string name="password_save">Password Saved</string>
+    <string name="password_save">Password Saved, remember save a Security Question</string>
     <string name="password_fail">Wrong Password</string>
     <string name="password_save_fail">Wrong Password Error</string>
     <string name="password_short_fail">Short Passsword Length</string>

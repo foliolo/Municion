@@ -660,10 +660,12 @@ public class GuiaFormActivity extends AppCompatActivity {
 //            String nombreArma = Utils.getStringArmaFromId(GuiaFormActivity.this, tipoArma.getSelectedItemPosition());
             switch (arma) {
                 case "Pistola":
+                case "Gun":
                     defaultCupo = 100;
                     layoutCupo.getEditText().setInputType(InputType.TYPE_NULL);
                     break;
                 case "Escopeta":
+                case "Shotgun":
                     defaultCupo = 5000;
                     layoutCupo.getEditText().setInputType(InputType.TYPE_NULL);
                     break;

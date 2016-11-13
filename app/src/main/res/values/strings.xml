@@ -6,7 +6,8 @@
     <string name="lbl3_insert_password">Introduce tu contraseña actual</string>
     <string name="lbl4_insert_password">Introduce tu nueva contraseña</string>
     <string name="lbl5_insert_password">Repite la nueva contraseña</string>
-    <string name="password_save">Contraseña guardada</string>
+    <string name="password_save">Contraseña guardada, recuerda registrar una pregunta de seguridad
+        para poder resetear la contraseña en caso de olvido</string>
     <string name="password_fail">Contraseña incorrecta</string>
     <string name="password_save_fail">Contraseña invalida</string>
     <string name="password_short_fail">Contraseña demasiado corta</string>

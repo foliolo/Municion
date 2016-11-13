@@ -26,9 +26,14 @@ import android.widget.Toast;
 import com.google.android.gms.ads.AdView;
 import com.google.firebase.analytics.FirebaseAnalytics;
 
+import java.util.Calendar;
+import java.util.List;
+
 import al.ahgitdevelopment.municion.DataBases.DataBaseSQLiteHelper;
+import al.ahgitdevelopment.municion.DataModel.Guia;
 
 import static al.ahgitdevelopment.municion.DataBases.FirebaseDBHelper.accountPermission;
+import static al.ahgitdevelopment.municion.Utils.getStringLicenseFromId;
 
 public class LoginPasswordActivity extends AppCompatActivity {
     public static final int MIN_PASS_LENGTH = 6;
@@ -162,6 +167,16 @@ public class LoginPasswordActivity extends AppCompatActivity {
         showTutorial();
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Calendar calendar = Calendar.getInstance();
+        int yearPref =  calendar.get(Calendar.YEAR);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putInt("year", yearPref);
+        editor.apply();
+    }
+
     private void checkAccountPermission() {
         int accountPermission = PackageManager.PERMISSION_GRANTED;
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
@@ -176,7 +191,6 @@ public class LoginPasswordActivity extends AppCompatActivity {
             }
         }
     }
-
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -214,7 +228,7 @@ public class LoginPasswordActivity extends AppCompatActivity {
         // Registro de usuario
         if (!prefs.contains("password")) {
             if (savePassword()) { // Guardamos la contraseña
-                Toast.makeText(LoginPasswordActivity.this, R.string.password_save, Toast.LENGTH_SHORT).show();
+                Toast.makeText(LoginPasswordActivity.this, R.string.password_save, Toast.LENGTH_LONG).show();
                 launchActivity();
                 finish();
             } else { // Fallo al guardar la contraseñas
@@ -293,9 +307,7 @@ public class LoginPasswordActivity extends AppCompatActivity {
         intent.putParcelableArrayListExtra("compras", dbSqlHelper.getListCompras(null));
         intent.putParcelableArrayListExtra("licencias", dbSqlHelper.getListLicencias(null));
 
-
-        //TODO: Comprobar año para renovar los cupos
-//        Utils.updateCupos();
+        checkYearCupo(intent);
 
         startActivity(intent);
         dbSqlHelper.close();
@@ -305,6 +317,96 @@ public class LoginPasswordActivity extends AppCompatActivity {
         Bundle bundle = new Bundle();
         bundle.putString(FirebaseAnalytics.Param.SIGN_UP_METHOD, android_id);
         mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.LOGIN, bundle);
+    }
+
+    private void checkYearCupo(Intent intent) {
+        // Comprobar year para renovar los cupos
+        int yearPref = prefs.getInt("year", 0);
+        Calendar calendar = Calendar.getInstance(); // Fecha actual
+        int year =  calendar.get(Calendar.YEAR); // Year actual
+
+        if (yearPref != 0 && year > yearPref) {
+            List<Guia> listaGuias = intent.getParcelableArrayListExtra("guias");
+            if (listaGuias.size() > 0) {
+                for (Guia guia:listaGuias) {
+                    String nombreLicencia = getStringLicenseFromId(LoginPasswordActivity.this, guia.getTipoLicencia());
+                    String idNombreLicencia = nombreLicencia.split(" ")[0];
+                    int tipoArma = guia.getTipoArma();
+
+                    switch (idNombreLicencia) {
+                        case "A":
+                        case "Libro":
+                            switch (tipoArma) {
+                                case 0: // Pistola
+                                case 3: // Revolver
+                                    guia.setCupo(100);
+                                    break;
+                                case 1: // Escopeta
+                                    guia.setCupo(5000);
+                                    break;
+                                case 2: // Rifle
+                                case 4: // Avancarga
+                                    guia.setCupo(1000);
+                                    break;
+                            }
+                            break;
+                        case "B":
+                            switch (tipoArma) {
+                                case 0: // Pistola
+                                case 1: // Revolver
+                                    guia.setCupo(100);
+                                    break;
+                            }
+                            break;
+                        case "C":
+                            guia.setCupo(100);
+                            break;
+                        case "D":
+                            guia.setCupo(1000);
+                            break;
+                        case "E":
+                            switch (tipoArma) {
+                                case 0: // Escopeta
+                                    guia.setCupo(5000);
+                                    break;
+                                case 1: // Rifle
+                                    guia.setCupo(1000);
+                                    break;
+                            }
+                            break;
+                        case "F":
+                        case "Federativa":
+                            switch (tipoArma) {
+                                case 0: // Pistola
+                                case 3: // Revolver
+                                    guia.setCupo(100);
+                                    break;
+                                case 1: // Escopeta
+                                    guia.setCupo(5000);
+                                    break;
+                                case 2: // Rifle
+                                    guia.setCupo(1000);
+                                    break;
+                            }
+                            break;
+                        case "AE":
+                            guia.setCupo(1000);
+                            break;
+                        case "AER":
+                            switch (tipoArma) {
+                                case 0: // Pistola
+                                case 2: // Revolver
+                                    guia.setCupo(100);
+                                case 1: // Rifle
+                                    guia.setCupo(1000);
+                                    break;
+                            }
+                            break;
+                    }
+                }
+            }
+
+        }
     }
 
     /**
