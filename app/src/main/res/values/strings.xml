@@ -168,5 +168,6 @@
     <string name="settings_empty_question_security">Primero debe responder a una pregunta de seguridad</string>
     <string name="settings_reset_password">Se ha reseteado su password</string>
     <string name="settings_reset_answer_fail">La respuesta no es correcta</string>
+    <string name="year">Año</string>
 
 </resources>

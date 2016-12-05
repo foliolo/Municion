@@ -51,6 +51,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Locale;
 
 import al.ahgitdevelopment.municion.Adapters.CompraArrayAdapter;
 import al.ahgitdevelopment.municion.Adapters.GuiaArrayAdapter;
@@ -585,14 +586,7 @@ public class FragmentMainActivity extends AppCompatActivity {
                     Compra newCompra = new Compra(data.getExtras());
                     compras.add(newCompra);
                     compraArrayAdapter.notifyDataSetChanged();
-
-                    //Actualizamos el cupo de la guia a la que pertence la compra
-                    int posGuia = newCompra.getIdPosGuia();
-                    if (posGuia != -1) {
-                        int gastoActual = guias.get(posGuia).getGastado();
-                        guias.get(posGuia).setGastado(gastoActual + newCompra.getUnidades());
-                    }
-                    guiaArrayAdapter.notifyDataSetChanged();
+                    updateGastoMunicion();
                     break;
 
                 case LICENCIA_COMPLETED:
@@ -605,6 +599,7 @@ public class FragmentMainActivity extends AppCompatActivity {
                     break;
                 case COMPRA_UPDATED:
                     updateCompra(data);
+                    updateGastoMunicion();
                     break;
                 case LICENCIA_UPDATED:
                     updateLicencia(data);
@@ -615,6 +610,38 @@ public class FragmentMainActivity extends AppCompatActivity {
         }
 
         showTextEmptyList();
+    }
+
+    /**
+     * Recalculamos el gasto de municion de todas las guias, recorriendo las compras
+     */
+    private void updateGastoMunicion() {
+        //Reseteo de los gastos de todas las guias
+        for (Guia guia : guias) {
+            guia.setGastado(0);
+        }
+
+        // Recalculamos todos los gastos
+        for (Compra comp : compras) {
+            Guia guia = guias.get(comp.getIdPosGuia());
+            int currentYear = getSharedPreferences("Preferences", Context.MODE_PRIVATE).getInt("year", 0);
+
+            try {
+                if (currentYear != 0 && guia != null) {
+                    //Sumaamos solo las compras del año en el que estamos
+                    Calendar fechaCompra = Calendar.getInstance();
+                    fechaCompra.setTime(new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).parse(comp.getFecha()));
+
+                    if (currentYear == fechaCompra.get(Calendar.YEAR)) {
+                        guia.setGastado(guia.getGastado() + comp.getUnidades());
+                    }
+                }
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        }
+
+        guiaArrayAdapter.notifyDataSetChanged();
     }
 
     private void updateImage(Bitmap imageBitmap) {

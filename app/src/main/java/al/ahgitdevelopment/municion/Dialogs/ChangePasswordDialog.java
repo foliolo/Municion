@@ -1,4 +1,4 @@
-package al.ahgitdevelopment.municion;
+package al.ahgitdevelopment.municion.Dialogs;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -14,6 +14,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
+
+import al.ahgitdevelopment.municion.LoginPasswordActivity;
+import al.ahgitdevelopment.municion.R;
 
 /**
  * Created by ahidalgog on 06/07/2016.

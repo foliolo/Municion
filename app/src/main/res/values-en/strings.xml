@@ -160,5 +160,6 @@
     <string name="settings_empty_question_security">First you have to answer a security question </string>
     <string name="settings_reset_password">It is reset your password</string>
     <string name="settings_reset_answer_fail">The answer is not correct</string>
+    <string name="year">Year</string>
 
 </resources>

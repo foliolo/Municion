@@ -27,11 +27,13 @@ public class CompraCursorAdapter extends CursorAdapter {
         TextView calibre = (TextView) view.findViewById(R.id.item_calibre_compra);
         TextView unidades = (TextView) view.findViewById(R.id.item_unidades_compra);
         TextView precio = (TextView) view.findViewById(R.id.item_precio_compra);
+        TextView year = (TextView) view.findViewById(R.id.item_year_compra);
 
 //        imagen.setImageResource(R.drawable.municion1);
         calibre.setText(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_COMPRA_CALIBRE1)));
         unidades.setText(String.valueOf(cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_COMPRA_UNIDADES))));
         precio.setText(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_COMPRA_PRECIO)) + "€");
+        year.setText(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_COMPRA_FECHA)));
     }
 
     @Override

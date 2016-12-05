@@ -1,4 +1,4 @@
-package al.ahgitdevelopment.municion;
+package al.ahgitdevelopment.municion.Dialogs;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -18,19 +18,22 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import al.ahgitdevelopment.municion.LoginPasswordActivity;
+import al.ahgitdevelopment.municion.R;
+
 /**
  * Created by david.sierra on 07/11/2016.
  */
 
 public class ResetPasswordDialog extends DialogFragment {
 
+    public static TextView textEmptyList = null;
     private SharedPreferences preferences;
     private Activity activity;
     private TextInputLayout layoutQuestion;
     private TextInputEditText question;
     private TextInputLayout layoutAnswer;
     private TextInputEditText answer;
-    public static TextView textEmptyList = null;
     private boolean isQuestion = false;
 
     @Nullable
@@ -134,5 +137,4 @@ public class ResetPasswordDialog extends DialogFragment {
         editor.clear();
         editor.commit();
     }
-
 }

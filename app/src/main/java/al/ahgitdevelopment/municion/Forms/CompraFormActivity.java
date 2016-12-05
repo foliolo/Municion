@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
@@ -39,6 +40,7 @@ import al.ahgitdevelopment.municion.Utils;
  * Created by ahidalgog on 11/04/2016.
  */
 public class CompraFormActivity extends AppCompatActivity {
+    private static TextInputLayout layoutFecha;
     private CheckBox checkSegundoCalibre;
     private RatingBar valoracion;
     //    private ImageView imagen;
@@ -47,7 +49,6 @@ public class CompraFormActivity extends AppCompatActivity {
     private String imagePath;
     private int posicionGuia;
     private Toolbar toolbar;
-    private static TextInputLayout layoutFecha;
     private TextInputLayout layoutCalibre1;
     private TextInputLayout layoutCalibre2;
     private TextInputLayout layoutUnidades;
@@ -95,9 +96,6 @@ public class CompraFormActivity extends AppCompatActivity {
                 try {
                     Compra compra = getIntent().getExtras().getParcelable("modify_compra");
                     // Para la fecha de compra
-                    SimpleDateFormat simpleDate = new SimpleDateFormat("dd/MM/yyyy");
-                    Calendar calendar = Calendar.getInstance();
-
                     layoutCalibre1.getEditText().setText(compra.getCalibre1());
                     if (compra.getCalibre2() != null && !"null".equals(compra.getCalibre2())) {
                         if (!"".equals(compra.getCalibre2().toString())) {
@@ -111,7 +109,7 @@ public class CompraFormActivity extends AppCompatActivity {
                     }
                     layoutUnidades.getEditText().setText(String.valueOf(compra.getUnidades()));
                     layoutPrecio.getEditText().setText(String.valueOf(compra.getPrecio() + "€"));
-                    layoutFecha.getEditText().setText(simpleDate.format(calendar.getTime()));
+                    layoutFecha.getEditText().setText(compra.getFecha());
                     layoutTipoMunicion.getEditText().setText(compra.getTipo());
                     layoutPesoMunicion.getEditText().setText(String.valueOf(compra.getPeso()));
                     layoutMarcaMunicion.getEditText().setText(compra.getMarca());
@@ -410,7 +408,7 @@ public class CompraFormActivity extends AppCompatActivity {
             layoutCalibre1.setError(getString(R.string.error_before_save));
             retorno = false;
         }
-        //
+        // Unidades compradas
         if (layoutUnidades.getEditText().getText().toString().length() < 1) {
             layoutUnidades.setError(getString(R.string.error_before_save));
             retorno = false;
@@ -420,10 +418,17 @@ public class CompraFormActivity extends AppCompatActivity {
             layoutPrecio.setError(getString(R.string.error_before_save));
             retorno = false;
         }
+        // Fecha
+        if (layoutFecha.getEditText().getText().toString().length() < 1) {
+            layoutFecha.setError(getString(R.string.error_before_save));
+            retorno = false;
+        }
         if (!retorno) {
             mensajeError.setVisibility(View.VISIBLE);
             mensajeError.setText(getString(R.string.error_mensaje_cabecera));
             mensajeError.setTextColor(Color.parseColor("#0000ff"));
+
+            Snackbar.make(findViewById(R.id.form_scrollview_compra), getString(R.string.error_mensaje_cabecera), Snackbar.LENGTH_LONG).show();
         }
         return retorno;
     }

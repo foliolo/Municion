@@ -202,6 +202,7 @@
                     android:id="@+id/form_cartuchos_gastados"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:enabled="false"
                     android:hint="@string/cartuchos_comprados"
                     android:imeOptions="actionDone"
                     android:inputType="number"

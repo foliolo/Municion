@@ -1,4 +1,4 @@
-package al.ahgitdevelopment.municion;
+package al.ahgitdevelopment.municion.Dialogs;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -16,12 +16,16 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import al.ahgitdevelopment.municion.R;
+import al.ahgitdevelopment.municion.Utils;
+
 /**
  * Created by david.sierra on 07/11/2016.
  */
 
 public class SecurityQuestionDialog extends DialogFragment {
 
+    public static final int MIN_ANSWER_LENGTH = 4;
     private SharedPreferences preferences;
     private TextInputLayout layoutPassword;
     private TextInputEditText password;
@@ -31,8 +35,6 @@ public class SecurityQuestionDialog extends DialogFragment {
     private TextInputEditText answer;
     private TextInputLayout layoutConfirmAnswer;
     private TextInputEditText confirmAnswer;
-
-    public static final int MIN_ANSWER_LENGTH = 4;
 
     @Nullable
     @Override

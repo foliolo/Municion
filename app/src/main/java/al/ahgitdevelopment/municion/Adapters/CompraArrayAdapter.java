@@ -52,6 +52,7 @@ public class CompraArrayAdapter extends ArrayAdapter<Compra> {
         TextView calibre = (TextView) convertView.findViewById(R.id.item_calibre_compra);
         TextView unidades = (TextView) convertView.findViewById(R.id.item_unidades_compra);
         TextView precio = (TextView) convertView.findViewById(R.id.item_precio_compra);
+        TextView year = (TextView) convertView.findViewById(R.id.item_year_compra);
 
 //        if (compra.getImagePath() != null)
 //            imagen.setImageBitmap(BitmapFactory.decodeFile(compra.getImagePath()));
@@ -76,6 +77,7 @@ public class CompraArrayAdapter extends ArrayAdapter<Compra> {
 
         unidades.setText(compra.getUnidades() + "");
         precio.setText(String.format("%.2f€", compra.getPrecio()));
+        year.setText(compra.getFecha().split("/")[2]);
 
         //FIXME: Falla el control de las imagenes guardas en disco, por eso lo he eliminado.
 //        imagen.setOnClickListener(new View.OnClickListener() {

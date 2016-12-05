@@ -52,6 +52,7 @@ public class GuiaFormActivity extends AppCompatActivity {
 
     private int tipoLicencia;
     private AppCompatSpinner tipoArma;
+    private TextInputLayout layoutCalibre1;
     private AutoCompleteTextView calibre1;
     private CheckBox segundoCalibre;
     private AutoCompleteTextView calibre2;
@@ -63,7 +64,6 @@ public class GuiaFormActivity extends AppCompatActivity {
     private TextInputLayout layoutNumArma;
     private TextInputLayout layoutCupo;
     private TextInputLayout layoutGastado;
-    private TextInputLayout layoutCalibre1;
 
     // Mensaje de error antes de guardar
     private TextView mensajeError;
@@ -310,122 +310,11 @@ public class GuiaFormActivity extends AppCompatActivity {
                 }
             }
         });
-        // Gastado
-        layoutGastado.getEditText().addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                if (layoutGastado.getEditText().getText().toString().length() < 1) {
-                    layoutGastado.setError(getString(R.string.error_before_save));
-                }
-            }
-        });
-
 
         //Admob
         AdView mAdView = (AdView) findViewById(R.id.adView);
         mAdView.loadAd(Utils.getAdRequest(mAdView));
     }
-/*
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_form, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        if (id == R.id.action_save) {
-            // Validación formulario
-            if (!validateForm()) {
-                return false;
-            }
-
-            // Create intent to deliver some kind of result data
-            Intent result = new Intent(this, FragmentMainActivity.class);
-            Bundle bundle = new Bundle();
-
-            if (getIntent().getExtras().getString("tipo_licencia") != null) {
-                tipoLicencia = Utils.getLicenciaTipoFromString(GuiaFormActivity.this, getIntent().getExtras().getString("tipo_licencia"));
-                if (tipoLicencia == 4) {  // E - Escopeta
-                    if(checkMaxGuiasForLicenciaTipoE(marca)) { // Maximo: 12 guias
-                        return false;
-                    }
-                    if (tipoArma.getSelectedItemPosition() == 0) { // Arma: escopeta
-                        if (checkMaxGuiasEscopeta(marca)) {
-                            return false;
-                        }
-                    } else if (tipoArma.getSelectedItemPosition() == 1) { // Arma: rifle
-                        if (checkMaxGuiasRifle(marca)) {
-                            return false;
-                        }
-                    }
-                } else if(tipoLicencia == 5) { // F - Tiro olimpico
-                    // Se revisa el numero de guias maximas en funcion de la categoria
-                    if(checkNumGuiasMaxLicenciaTipoF(marca, Utils.getMaxCategoria(GuiaFormActivity.this))) {
-                        return false;
-                    }
-                }
-            } else {
-                tipoLicencia = ((Guia) getIntent().getExtras().getParcelable("modify_guia")).getTipoLicencia();
-                if (tipoLicencia == 4) {  // E - Escopeta
-                    if (tipoArma.getSelectedItemPosition() == 0) { // Arma: escopeta
-                        if (checkMaxGuiasEscopeta(marca)) {
-                            return false;
-                        }
-                    } else if (tipoArma.getSelectedItemPosition() == 1) { // Arma: rifle
-                        if (checkMaxGuiasRifle(marca)) {
-                            return false;
-                        }
-                    }
-                }
-            }
-            bundle.putInt("tipoLicencia", tipoLicencia);
-            bundle.putString("marca", marca.getText().toString());
-            bundle.putString("modelo", modelo.getText().toString());
-            // Control error. He metido vacio porque el campo en BBDD no puede ser  nulo
-            if (apodo.getText().toString().isEmpty()) {
-                apodo.setText("");
-            }
-            bundle.putString("apodo", apodo.getText().toString());
-            bundle.putInt("tipoArma", tipoArma.getSelectedItemPosition());
-            bundle.putString("calibre1", calibre1.getText().toString());
-            if (segundoCalibre.isChecked()) {
-                // Control error. He metido vacio porque el campo en BBDD no puede ser  nulo
-                if (calibre2.getText().toString().isEmpty()) {
-                    calibre2.setText("");
-                }
-                bundle.putString("calibre2", calibre2.getText().toString());
-            }
-            bundle.putInt("numGuia", Integer.parseInt(numGuia.getText().toString()));
-            bundle.putInt("numArma", Integer.parseInt(numArma.getText().toString()));
-            bundle.putInt("cupo", Integer.parseInt(cupo.getText().toString()));
-            bundle.putInt("gastado", Integer.parseInt(gastado.getText().toString()));
-
-            //Paso de vuelta de la posicion del item en el array
-            if (getIntent().getExtras() != null)
-                bundle.putInt("position", getIntent().getExtras().getInt("position", -1));
-
-            bundle.putString("imagePath", imagePath);
-
-            result.putExtras(bundle);
-
-            setResult(Activity.RESULT_OK, result);
-            finish();
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-*/
 
     public void fabSaveOnClick(View view) {
         // Validación formulario
@@ -603,10 +492,10 @@ public class GuiaFormActivity extends AppCompatActivity {
             retorno = false;
         }
         // Gastado
-        if (layoutGastado.getEditText().getText().toString().length() < 1) {
-            layoutGastado.setError(getString(R.string.error_before_save));
-            retorno = false;
-        }
+//        if (layoutGastado.getEditText().getText().toString().length() < 1) {
+//            layoutGastado.setError(getString(R.string.error_before_save));
+//            retorno = false;
+//        }
         if (!retorno) {
             mensajeError.setVisibility(View.VISIBLE);
             mensajeError.setText(getString(R.string.error_mensaje_cabecera));

@@ -9,6 +9,7 @@
         layout="@layout/basic_toolbar"/>
 
     <ScrollView
+        android:id="@+id/form_scrollview_compra"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@+id/adView"
