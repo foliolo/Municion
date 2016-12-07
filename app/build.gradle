@@ -1,5 +1,4 @@
 apply plugin: 'com.android.application'
-apply plugin: 'com.google.gms.google-services'
 
 // Create a variable called keystorePropertiesFile, and initialize it to your
 // keystore.properties file, in the rootProject folder .
@@ -9,45 +8,53 @@ def keystorePropertiesFile = rootProject.file("keystore.properties")
 def keystoreProperties = new Properties()
 
 // Load your keystore.properties file into the keystoreProperties object.
-//keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 
 android {
     signingConfigs {
+        config {
+            keyAlias keystoreProperties['keyAlias']
+            keyPassword keystoreProperties['keyPassword']
+            storeFile file(keystoreProperties['storeFile'])
+            storePassword keystoreProperties['storePassword']
+        }
     }
     compileSdkVersion 25
+    buildToolsVersion '25.0.1'
     defaultConfig {
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         applicationId "al.ahgitdevelopment.municion"
         minSdkVersion 15
         targetSdkVersion 25
-        versionCode 10
-        versionName '1.0.0'
+        versionCode 11
+        versionName '1.0.1'
         vectorDrawables.useSupportLibrary = true
+        signingConfig signingConfigs.config
     }
     buildTypes {
+
         release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            debuggable false
-            jniDebuggable false
-            renderscriptDebuggable false
-            zipAlignEnabled true
+            signingConfig signingConfigs.config
         }
     }
     productFlavors {
     }
-    buildToolsVersion '25.0.1'
 }
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile 'com.android.support:design:25.0.0'
-    compile 'com.android.support:support-v4:25.0.0'
-    compile 'com.android.support:support-v13:25.0.0'
-    compile 'com.android.support:support-annotations:25.0.0'
-    compile 'com.android.support:appcompat-v7:25.0.0'
+    compile 'com.android.support:design:25.0.1'
+    compile 'com.android.support:support-v4:25.0.1'
+    compile 'com.android.support:support-v13:25.0.1'
+    compile 'com.android.support:support-annotations:25.0.1'
+    compile 'com.android.support:appcompat-v7:25.0.1'
     compile 'com.google.code.gson:gson:2.7'
-    compile 'com.google.firebase:firebase-auth:9.8.0'
-    compile 'com.google.firebase:firebase-ads:9.8.0'
-    compile 'com.google.firebase:firebase-database:9.8.0'
+    compile 'com.google.firebase:firebase-core:9.8.0'
+    compile 'com.google.firebase:firebase-auth:10.0.1'
+    compile 'com.google.firebase:firebase-ads:10.0.1'
+    compile 'com.google.firebase:firebase-database:10.0.1'
+    compile 'com.google.firebase:firebase-crash:10.0.1'
+    compile 'com.google.firebase:firebase-messaging:10.0.1'
 }
+
+apply plugin: 'com.google.gms.google-services'

@@ -293,6 +293,8 @@ public class FragmentMainActivity extends AppCompatActivity {
 
         showTextEmptyList();
 
+        updateGastoMunicion();
+
         mAuth.addAuthStateListener(mAuthListener);
     }
 
@@ -586,7 +588,6 @@ public class FragmentMainActivity extends AppCompatActivity {
                     Compra newCompra = new Compra(data.getExtras());
                     compras.add(newCompra);
                     compraArrayAdapter.notifyDataSetChanged();
-                    updateGastoMunicion();
                     break;
 
                 case LICENCIA_COMPLETED:
@@ -599,7 +600,6 @@ public class FragmentMainActivity extends AppCompatActivity {
                     break;
                 case COMPRA_UPDATED:
                     updateCompra(data);
-                    updateGastoMunicion();
                     break;
                 case LICENCIA_UPDATED:
                     updateLicencia(data);
@@ -640,6 +640,9 @@ public class FragmentMainActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
         }
+
+        if (guiaArrayAdapter == null)
+            guiaArrayAdapter = new GuiaArrayAdapter(FragmentMainActivity.this, R.layout.guia_item, guias);
 
         guiaArrayAdapter.notifyDataSetChanged();
     }

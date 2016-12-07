@@ -14,6 +14,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -25,6 +26,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.ads.AdView;
 import com.google.firebase.analytics.FirebaseAnalytics;
+import com.google.firebase.crash.FirebaseCrash;
 
 import java.util.Calendar;
 import java.util.List;
@@ -57,15 +59,26 @@ public class LoginPasswordActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        final SharedPreferences prefs = getSharedPreferences("Preferences", Context.MODE_PRIVATE);
+        prefs = getSharedPreferences("Preferences", Context.MODE_PRIVATE);
+
+        //Gestion de mensajes de firebase en el intent de entrada
+        // [START handle_data_extras]
+        if (getIntent().getExtras() != null) {
+            for (String key : getIntent().getExtras().keySet()) {
+                Object value = getIntent().getExtras().get(key);
+                Log.d(getLocalClassName(), "Key: " + key + " Value: " + value);
+            }
+        }
+        // [END handle_data_extras]
+
 
         // Toolbar
         toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setTitle(R.string.app_name);
-        toolbar.setSubtitle(R.string.login);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setIcon(R.drawable.ic_bullseye);
+        toolbar.setTitle(R.string.app_name);
+        toolbar.setSubtitle(R.string.login);
 
         // Obtain the FirebaseAnalytics instance.
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
@@ -165,13 +178,16 @@ public class LoginPasswordActivity extends AppCompatActivity {
 
         //Lanza el tutorial la primera vez
         showTutorial();
+
+        FirebaseCrash.report(new Exception("My first Android non-fatal error"));
+        FirebaseCrash.log("Activity created");
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         Calendar calendar = Calendar.getInstance();
-        int yearPref =  calendar.get(Calendar.YEAR);
+        int yearPref = calendar.get(Calendar.YEAR);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putInt("year", yearPref);
         editor.apply();
@@ -322,8 +338,7 @@ public class LoginPasswordActivity extends AppCompatActivity {
     private void checkYearCupo(Intent intent) {
         // Comprobar year para renovar los cupos
         int yearPref = prefs.getInt("year", 0);
-        Calendar calendar = Calendar.getInstance(); // Fecha actual
-        int year =  calendar.get(Calendar.YEAR); // Year actual
+        int year = Calendar.getInstance().get(Calendar.YEAR); // Year actual
 
         if (yearPref != 0 && year > yearPref) {
             List<Guia> listaGuias = intent.getParcelableArrayListExtra("guias");
@@ -405,7 +420,6 @@ public class LoginPasswordActivity extends AppCompatActivity {
                     }
                 }
             }
-
         }
     }
 
@@ -427,3 +441,18 @@ public class LoginPasswordActivity extends AppCompatActivity {
         }
     }
 }
+
+//https://github.com/firebase/quickstart-android/blob/master/crash/app/src/main/java/com/google/samples/quickstart/crash/MainActivity.java
+//        FirebaseCrash.logcat(Log.INFO, "LoginPasswordActivity", "Crash DONE");
+//        if(catchCrashCheckBox.isChecked()){
+//            try{
+//                throw new NullPointerException();
+//            }catch(NullPointerException ex){
+//                // [START log_and_report]
+//                FirebaseCrash.logcat(Log.ERROR,TAG,"NPE caught");
+//                FirebaseCrash.report(ex);
+//                // [END log_and_report]
+//            }
+//        }else{
+//            throw new NullPointerException();
+//        }

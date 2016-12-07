@@ -105,6 +105,11 @@ public class GuiaFormActivity extends AppCompatActivity {
         layoutCupo = (TextInputLayout) findViewById(R.id.layout_cupo);
         layoutGastado = (TextInputLayout) findViewById(R.id.text_input_layout_cartuchos_gastados);
 
+        //Municion gastada por defecto = 0
+        if (layoutGastado.getEditText().getText().toString().equals("")) {
+            layoutGastado.getEditText().setText("0");
+        }
+
         imagePath = null;
 
         //Carga de calibres

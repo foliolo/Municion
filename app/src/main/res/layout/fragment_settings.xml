@@ -54,16 +54,6 @@
             android:text="@string/settings_title_reset_password"
             android:textSize="18sp"/>
 
-        <TextView
-            android:id="@+id/settings_change_year"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="18dp"
-            android:clickable="true"
-            android:onClick="changeYear"
-            android:text="Cambiar año (Solo para pruebas)"
-            android:textSize="18sp"/>
-
     </LinearLayout>
 
     <TextView
