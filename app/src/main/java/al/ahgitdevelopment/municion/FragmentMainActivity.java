@@ -632,7 +632,7 @@ public class FragmentMainActivity extends AppCompatActivity {
                     Calendar fechaCompra = Calendar.getInstance();
                     fechaCompra.setTime(new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).parse(comp.getFecha()));
 
-                    if (currentYear == fechaCompra.get(Calendar.YEAR)) {
+                    if ((int)currentYear == (int)fechaCompra.get(Calendar.YEAR)) {
                         guia.setGastado(guia.getGastado() + comp.getUnidades());
                     }
                 }

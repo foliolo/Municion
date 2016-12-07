@@ -26,7 +26,6 @@ import android.widget.Toast;
 
 import com.google.android.gms.ads.AdView;
 import com.google.firebase.analytics.FirebaseAnalytics;
-import com.google.firebase.crash.FirebaseCrash;
 
 import java.util.Calendar;
 import java.util.List;
@@ -179,8 +178,8 @@ public class LoginPasswordActivity extends AppCompatActivity {
         //Lanza el tutorial la primera vez
         showTutorial();
 
-        FirebaseCrash.report(new Exception("My first Android non-fatal error"));
-        FirebaseCrash.log("Activity created");
+//        FirebaseCrash.report(new Exception("My first Android non-fatal error"));
+//        FirebaseCrash.log("Activity created");
     }
 
     @Override

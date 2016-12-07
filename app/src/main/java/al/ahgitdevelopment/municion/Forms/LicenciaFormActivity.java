@@ -228,6 +228,9 @@ public class LicenciaFormActivity extends AppCompatActivity {
                         },
                         100 //Codigo de respuesta
                 );
+            }else {
+                addSameDayEventToCalendar(isModify);
+                addMonthBeforeEventToCalendar(isModify);
             }
         } else {
             addSameDayEventToCalendar(isModify);
