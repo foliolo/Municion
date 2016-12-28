@@ -160,7 +160,7 @@ public class CompraFormActivity extends AppCompatActivity {
             }
         });
 
-        layoutFecha.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+        layoutFecha.getEditText().setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if (hasFocus) {
@@ -170,7 +170,7 @@ public class CompraFormActivity extends AppCompatActivity {
         });
 
         // Evento que saca el calendario al recibir el foco en el campo fecha
-        layoutFecha.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+        layoutFecha.getEditText().setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if (hasFocus)

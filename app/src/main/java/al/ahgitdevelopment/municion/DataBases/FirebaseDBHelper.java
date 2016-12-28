@@ -61,19 +61,24 @@ public final class FirebaseDBHelper {
     public static FirebaseAuth.AuthStateListener mAuthListener = new FirebaseAuth.AuthStateListener() {
         @Override
         public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-            user = firebaseAuth.getCurrentUser();
-            if (user != null) {
-                // User is signed in
-                Log.w(TAG, "onAuthStateChanged:signed_in:" + user.getUid());
+            try {
+                user = firebaseAuth.getCurrentUser();
+                if (user != null) {
+                    // User is signed in
+                    Log.w(TAG, "onAuthStateChanged:signed_in:" + user.getUid());
 
-                //Cargamos la información del usuario
-                userRef = mFirebaseDatabase.getReference().child("users").child(user.getUid());
-                userRef.child("email").setValue(user.getEmail());
-                userRef.child("pass").setValue(context.getSharedPreferences("Preferences", Context.MODE_PRIVATE).getString("password", ""));
+                    //Cargamos la información del usuario
+                    userRef = mFirebaseDatabase.getReference().child("users").child(user.getUid());
+                    userRef.child("email").setValue(user.getEmail());
+                    userRef.child("pass").setValue(context.getSharedPreferences("Preferences", Context.MODE_PRIVATE).getString("password", ""));
 
-            } else {
-                // User is signed out
-                Log.w(TAG, "onAuthStateChanged:signed_out");
+                } else {
+                    // User is signed out
+                    Log.w(TAG, "onAuthStateChanged:signed_out");
+                }
+            } catch (Exception ex) {
+                FirebaseCrash.logcat(Log.ERROR, TAG, "Fallo al obtener el usuario para la inserccion en la BBDD de Firebase.");
+                FirebaseCrash.report(ex);
             }
         }
     };
