@@ -11,6 +11,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.crash.FirebaseCrash;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -79,62 +80,68 @@ public final class FirebaseDBHelper {
 
     public static void initFirebaseDBHelper(Context mContext) {
         context = mContext;
+        try {
 
-        //Guardado del usuario en las shared preferences del dispositivo
-        SharedPreferences prefs = context.getSharedPreferences("Preferences", Context.MODE_PRIVATE);
-        String email = Utils.getUserEmail(context);
-        String pass = prefs.getString("password", "");
+            //Guardado del usuario en las shared preferences del dispositivo
+            SharedPreferences prefs = context.getSharedPreferences("Preferences", Context.MODE_PRIVATE);
+            String email = Utils.getUserEmail(context);
+            String pass = prefs.getString("password", "");
 
-        if (!email.isEmpty()) {
-            //Obtención del código de autentificación del usuario
-            mAuth.createUserWithEmailAndPassword(email, pass)
-                    .addOnCompleteListener((Activity) context, new OnCompleteListener<AuthResult>() {
-                        @Override
-                        public void onComplete(@NonNull Task<AuthResult> task) {
-                            Log.d(TAG, "createUserWithEmail:onComplete:" + task.isSuccessful());
+            if (!email.isEmpty()) {
+                //Obtención del código de autentificación del usuario
+                mAuth.createUserWithEmailAndPassword(email, pass)
+                        .addOnCompleteListener((Activity) context, new OnCompleteListener<AuthResult>() {
+                            @Override
+                            public void onComplete(@NonNull Task<AuthResult> task) {
+                                Log.d(TAG, "createUserWithEmail:onComplete:" + task.isSuccessful());
 
-                            // If sign in fails, display a message to the user. If sign in succeeds
-                            // the auth state listener will be notified and logic to handle the
-                            // signed in user can be handled in the listener.
-                            if (!task.isSuccessful()) {
+                                // If sign in fails, display a message to the user. If sign in succeeds
+                                // the auth state listener will be notified and logic to handle the
+                                // signed in user can be handled in the listener.
+                                if (!task.isSuccessful()) {
 //                                Toast.makeText(context, R.string.auth_usuario_existente, Toast.LENGTH_SHORT).show();
-                                task.getException().printStackTrace();
-                                Log.w(TAG, task.getException().getMessage());
+                                    task.getException().printStackTrace();
+                                    Log.w(TAG, task.getException().getMessage());
+                                }
                             }
-                        }
-                    });
+                        });
 
-            mAuth.signInWithEmailAndPassword(email, pass)
-                    .addOnCompleteListener((Activity) context, new OnCompleteListener<AuthResult>() {
-                        @Override
-                        public void onComplete(@NonNull Task<AuthResult> task) {
-                            Log.d(TAG, "signInWithEmail:onComplete:" + task.isSuccessful());
+                mAuth.signInWithEmailAndPassword(email, pass)
+                        .addOnCompleteListener((Activity) context, new OnCompleteListener<AuthResult>() {
+                            @Override
+                            public void onComplete(@NonNull Task<AuthResult> task) {
+                                Log.d(TAG, "signInWithEmail:onComplete:" + task.isSuccessful());
 
-                            // If sign in fails, display a message to the user. If sign in succeeds
-                            // the auth state listener will be notified and logic to handle the
-                            // signed in user can be handled in the listener.
-                            if (!task.isSuccessful()) {
-                                Log.w(TAG, "signInWithEmail:failed", task.getException());
+                                // If sign in fails, display a message to the user. If sign in succeeds
+                                // the auth state listener will be notified and logic to handle the
+                                // signed in user can be handled in the listener.
+                                if (!task.isSuccessful()) {
+                                    Log.w(TAG, "signInWithEmail:failed", task.getException());
 //                                Toast.makeText(context, R.string.auth_usuario_logado, Toast.LENGTH_SHORT).show();
+                                }
                             }
-                        }
-                    });
-        } else {
-            mAuth.signInAnonymously()
-                    .addOnCompleteListener((Activity) context, new OnCompleteListener<AuthResult>() {
-                        @Override
-                        public void onComplete(@NonNull Task<AuthResult> task) {
-                            Log.d(TAG, "signInAnonymously:onComplete:" + task.isSuccessful());
+                        });
+            } else {
+                mAuth.signInAnonymously()
+                        .addOnCompleteListener((Activity) context, new OnCompleteListener<AuthResult>() {
+                            @Override
+                            public void onComplete(@NonNull Task<AuthResult> task) {
+                                Log.d(TAG, "signInAnonymously:onComplete:" + task.isSuccessful());
 
-                            // If sign in fails, display a message to the user. If sign in succeeds
-                            // the auth state listener will be notified and logic to handle the
-                            // signed in user can be handled in the listener.
-                            if (!task.isSuccessful()) {
-                                Log.w(TAG, "signInAnonymously", task.getException());
+                                // If sign in fails, display a message to the user. If sign in succeeds
+                                // the auth state listener will be notified and logic to handle the
+                                // signed in user can be handled in the listener.
+                                if (!task.isSuccessful()) {
+                                    Log.w(TAG, "signInAnonymously", task.getException());
 //                                Toast.makeText(context, "Authentication failed.", Toast.LENGTH_SHORT).show();
+                                }
                             }
-                        }
-                    });
+                        });
+            }
+
+        } catch (Exception ex) {
+            FirebaseCrash.logcat(Log.ERROR, TAG, "Fallo al iniciar la base de datos de firebase.");
+            FirebaseCrash.report(ex);
         }
     }
 
@@ -265,8 +272,9 @@ public final class FirebaseDBHelper {
             });
 
             return true;
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (Exception ex) {
+            FirebaseCrash.logcat(Log.ERROR, TAG, "Fallo guardando las listas");
+            FirebaseCrash.report(ex);
             return false;
         }
     }

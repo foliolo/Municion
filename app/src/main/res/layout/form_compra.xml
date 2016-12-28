@@ -67,8 +67,7 @@
                     android:layout_height="wrap_content"
                     android:hint="@string/calibre2"
                     android:imeOptions="actionNext"
-                    android:inputType="none"
-                    android:visibility="gone"/>
+                    android:inputType="none"/>
             </android.support.design.widget.TextInputLayout>
 
             <!--UNIDADES-->

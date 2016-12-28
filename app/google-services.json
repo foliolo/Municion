@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "522449412724-r1srdvfnq2q8k6vlh1eiaublmdgb12kq.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "al.ahgitdevelopment.municion",
+            "certificate_hash": "A32F13DBCBA50517576C4D3B75BCF4D9BE8D033E"
+          }
+        },
+        {
           "client_id": "522449412724-df6thllr7iiorvq53d09caj13biq7l1r.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {

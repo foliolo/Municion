@@ -101,11 +101,12 @@ public class CompraFormActivity extends AppCompatActivity {
                         if (!"".equals(compra.getCalibre2().toString())) {
                             checkSegundoCalibre.setChecked(true);
                             layoutCalibre2.setVisibility(View.VISIBLE);
+                            layoutCalibre2.getEditText().setText(compra.getCalibre2().toString());
                         } else {
                             checkSegundoCalibre.setChecked(false);
                             layoutCalibre2.setVisibility(View.GONE);
+                            layoutCalibre2.getEditText().setText("");
                         }
-                        layoutCalibre2.getEditText().setText(compra.getCalibre2().toString());
                     }
                     layoutUnidades.getEditText().setText(String.valueOf(compra.getUnidades()));
                     layoutPrecio.getEditText().setText(String.valueOf(compra.getPrecio() + "€"));
@@ -131,6 +132,10 @@ public class CompraFormActivity extends AppCompatActivity {
                         checkSegundoCalibre.setChecked(true);
                         layoutCalibre2.setVisibility(View.VISIBLE);
                         layoutCalibre2.getEditText().setText(guia.getCalibre2());
+                    } else {
+                        checkSegundoCalibre.setChecked(false);
+                        layoutCalibre2.setVisibility(View.GONE);
+                        layoutCalibre2.getEditText().setText("");
                     }
                 }
             }
@@ -247,91 +252,6 @@ public class CompraFormActivity extends AppCompatActivity {
         newFragment.show(getSupportFragmentManager(), "datePicker");
     }
 
-    /*
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_form, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        if (id == R.id.action_save) {
-            // Create intent to deliver some kind of result data
-            Intent result = new Intent(this, FragmentMainActivity.class);
-
-            // Validación formulario
-            if (!validateForm()) {
-                return false;
-            }
-
-            Bundle bundle = new Bundle();
-            bundle.putString("calibre1", calibre1.getText().toString());
-            if (calibre2.getText().toString().isEmpty()) {
-                calibre2.setText(null);
-            }
-            bundle.putString("calibre2", calibre2.getText().toString());
-
-            if (unidades.getText().toString().isEmpty()) {
-                unidades.setText("0");
-            }
-            bundle.putInt("unidades", Integer.parseInt(unidades.getText().toString()));
-
-            bundle.putDouble("precio", Double.parseDouble(precio.getText().toString().replace("€", "")));
-            if (fecha.getText().toString().isEmpty()) {
-                fecha.setText("");
-            }
-            bundle.putString("fecha", fecha.getText().toString());
-
-            if (tipoMunicion.getText().toString().isEmpty()) {
-                tipoMunicion.setText("");
-            }
-            bundle.putString("tipo", tipoMunicion.getText().toString());
-
-            if (pesoMunicion.getText().toString().isEmpty()) {
-                pesoMunicion.setText("0");
-            }
-            bundle.putInt("peso", Integer.parseInt(pesoMunicion.getText().toString()));
-
-            if (marcaMunicion.getText().toString().isEmpty()) {
-                marcaMunicion.setText(null);
-            }
-            bundle.putString("marca", marcaMunicion.getText().toString());
-
-            if (tienda.getText().toString().isEmpty()) {
-                tienda.setText(null);
-            }
-            bundle.putString("tienda", tienda.getText().toString());
-
-            bundle.putFloat("valoracion", valoracion.getRating());
-
-            bundle.putString("imagePath", imagePath);
-
-            //Paso de vuelta la posicion de la guía en el array
-            // Modificacion de elemento
-            if (getIntent().getExtras().get("position_guia") == null) {
-                int pos = getIntent().getExtras().getInt("position", -1);
-                bundle.putInt("position", pos);
-                bundle.putInt("idPosGuia", FragmentMainActivity.compras.get(pos).getIdPosGuia());
-            } else { // Nuevo elemento
-                bundle.putInt("idPosGuia", getIntent().getExtras().getInt("position_guia"));
-            }
-
-            result.putExtras(bundle);
-
-            setResult(Activity.RESULT_OK, result);
-            finish();
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-*/
 
     public void fabSaveOnClick(View view) {
         // Create intent to deliver some kind of result data

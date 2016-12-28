@@ -11,3 +11,4 @@
 /.idea/gradle.xml
 app/libs/
 app/src/test/
+app/google-services.json

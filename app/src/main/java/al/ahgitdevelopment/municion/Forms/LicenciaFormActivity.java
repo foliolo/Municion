@@ -40,6 +40,7 @@ import android.widget.DatePicker;
 import android.widget.LinearLayout;
 
 import com.google.android.gms.ads.AdView;
+import com.google.firebase.crash.FirebaseCrash;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -57,9 +58,9 @@ import al.ahgitdevelopment.municion.Utils;
  */
 public class LicenciaFormActivity extends AppCompatActivity {
 
+    private static TextInputLayout layoutFechaExpedicion;
     private LinearLayout layoutPermisoConducir;
     private TextInputLayout textInputLayoutLicencia;
-    private static TextInputLayout layoutFechaExpedicion;
     private TextInputLayout layoutFechaCaducidad;
     private TextInputLayout layoutNumAbonado;
     private TextInputLayout layoutNumPoliza;
@@ -184,7 +185,6 @@ public class LicenciaFormActivity extends AppCompatActivity {
     }
 
     public void fabSaveOnClick(View view) {
-
         if (controlCampos()) { // Agregar fecha al Calendar Provider
 
             // Create intent to deliver some kind of result data
@@ -285,8 +285,8 @@ public class LicenciaFormActivity extends AppCompatActivity {
                     endTime.set(Calendar.SECOND, 59);
                     endMillis = endTime.getTimeInMillis();
                 } catch (ParseException e) {
-                    e.printStackTrace();
-                    Log.e(getPackageName(), "Fallo al modificar el evento del calendario", e);
+                    FirebaseCrash.report(e);
+                    FirebaseCrash.logcat(Log.ERROR, getLocalClassName(), "Fallo al modificar el evento del calendario");
                 }
                 // Preparacion de la query
                 String title = "Tu licencia caduca hoy";
@@ -335,14 +335,14 @@ public class LicenciaFormActivity extends AppCompatActivity {
             Uri uri = contentResolver.insert(CalendarContract.Events.CONTENT_URI, values);
 
         } catch (SecurityException ex) {
-            ex.printStackTrace();
-            Log.e(getPackageName(), "Fallo en los permisos del calendario", ex);
+            FirebaseCrash.report(ex);
+            FirebaseCrash.logcat(Log.ERROR, getLocalClassName(), "Fallo en los permisos del calendario");
         } catch (ParseException ex) {
-            ex.printStackTrace();
-            Log.e(getPackageName(), "Fallo al crear el evento del calendario", ex);
+            FirebaseCrash.report(ex);
+            FirebaseCrash.logcat(Log.ERROR, getLocalClassName(), "Fallo al crear el evento del calendario");
         } catch (Exception ex) {
-            ex.printStackTrace();
-            Log.e(getPackageName(), "Excepcion generica", ex);
+            FirebaseCrash.report(ex);
+            FirebaseCrash.logcat(Log.ERROR, getLocalClassName(), "Excepcion generica");
         }
 
     }
@@ -378,8 +378,8 @@ public class LicenciaFormActivity extends AppCompatActivity {
                     endTime.set(Calendar.SECOND, 59);
                     endMillis = endTime.getTimeInMillis();
                 } catch (ParseException e) {
-                    e.printStackTrace();
-                    Log.e(getPackageName(), "Fallo al modificar el evento del calendario", e);
+                    FirebaseCrash.report(e);
+                    FirebaseCrash.logcat(Log.ERROR, getLocalClassName(), "Fallo al modificar el evento del calendario");
                 }
                 // Preparacion de la query
                 String title = "Tu licencia caduca dentro de un mes";
