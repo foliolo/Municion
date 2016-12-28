@@ -148,7 +148,7 @@ public class LicenciaFormActivity extends AppCompatActivity {
                 callDatePickerFragment();
             }
         });
-        layoutFechaExpedicion.getEditText().setOnFocusChangeListener(new View.OnFocusChangeListener() {
+        layoutFechaExpedicion.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if (hasFocus) {
@@ -739,24 +739,24 @@ public class LicenciaFormActivity extends AppCompatActivity {
                 licencia.setTipoPermisoConduccion(tipoPermisoConducir.getSelectedItemPosition());
             } else
                 licencia.setTipoPermisoConduccion(-1);
-            licencia.setNumLicencia(Integer.parseInt(String.valueOf(textInputLayoutLicencia.getEditText().getText())));
-            licencia.setFechaExpedicion(layoutFechaExpedicion.getEditText().getText().toString());
-            licencia.setFechaCaducidad(layoutFechaCaducidad.getEditText().getText().toString());
+            licencia.setNumLicencia(Integer.parseInt(String.valueOf(textInputLayoutLicencia.getEditText().getText().toString().trim())));
+            licencia.setFechaExpedicion(layoutFechaExpedicion.getEditText().getText().toString().trim());
+            licencia.setFechaCaducidad(layoutFechaCaducidad.getEditText().getText().toString().trim());
             if (layoutNumAbonado.getVisibility() == View.VISIBLE) {
-                if (layoutNumAbonado.getEditText().getText().toString().equals(""))
+                if (layoutNumAbonado.getEditText().getText().toString().trim().equals(""))
                     licencia.setNumAbonado(0);
                 else
-                    licencia.setNumAbonado(Integer.parseInt(String.valueOf(layoutNumAbonado.getEditText().getText())));
+                    licencia.setNumAbonado(Integer.parseInt(String.valueOf(layoutNumAbonado.getEditText().getText().toString().trim())));
             }
             if (layoutNumPoliza.getVisibility() == View.VISIBLE) {
-                licencia.setNumSeguro(String.valueOf(layoutNumPoliza.getEditText().getText()));
+                licencia.setNumSeguro(String.valueOf(layoutNumPoliza.getEditText().getText().toString().trim()));
             }
             if (layoutCCAA.getVisibility() == View.VISIBLE) {
                 licencia.setAutonomia(autonomia.getSelectedItemPosition());
             } else
                 licencia.setAutonomia(-1);
             if (layoutEdad.getVisibility() == View.VISIBLE)
-                licencia.setEdad(Integer.parseInt(String.valueOf(layoutEdad.getEditText().getText())));
+                licencia.setEdad(Integer.parseInt(String.valueOf(layoutEdad.getEditText().getText().toString().trim())));
             if (layoutEscala.getVisibility() == View.VISIBLE) {
                 licencia.setEscala(tipoEscala.getSelectedItemPosition());
             } else
