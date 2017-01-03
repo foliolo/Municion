@@ -27,9 +27,13 @@ import android.widget.Toast;
 import com.google.android.gms.ads.AdView;
 import com.google.firebase.analytics.FirebaseAnalytics;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import al.ahgitdevelopment.municion.BillingUtil.IabHelper;
+import al.ahgitdevelopment.municion.BillingUtil.IabResult;
+import al.ahgitdevelopment.municion.BillingUtil.Inventory;
 import al.ahgitdevelopment.municion.DataBases.DataBaseSQLiteHelper;
 import al.ahgitdevelopment.municion.DataModel.Guia;
 
@@ -38,9 +42,24 @@ import static al.ahgitdevelopment.municion.Utils.getStringLicenseFromId;
 
 public class LoginPasswordActivity extends AppCompatActivity {
     public static final int MIN_PASS_LENGTH = 6;
+    private static final String TAG = "LoginPasswordActivity";
+    private static final String ID_REMOVE_ADS = "remove_ads";
+    /**
+     * base64EncodedPublicKey should be YOUR APPLICATION'S PUBLIC KEY
+     * (that you got from the Google Play developer console). This is not your
+     * developer public key, it's the *app-specific* public key.
+     * <p>
+     * Instead of just storing the entire literal string here embedded in the
+     * program,  construct the key at runtime from pieces or
+     * use bit manipulation (for example, XOR with some other string) to hide
+     * the actual key.  The key itself is not secret information, but we don't
+     * want to make it easy for an attacker to replace the public key with one
+     * of their own and then fake messages from the server.
+     */
+    private static String base64EncodedPublicKey;
     public Toolbar toolbar;
+    private IabHelper mHelper;
     private FirebaseAnalytics mFirebaseAnalytics;
-
     private SharedPreferences prefs;
     private TextInputLayout textInputLayout1;
     private TextInputEditText password1;
@@ -48,6 +67,23 @@ public class LoginPasswordActivity extends AppCompatActivity {
     private TextInputEditText password2;
     private ImageView button;
     private TextView versionLabel;
+
+    /**
+     * Listener para la obtencion de detalles de los elementos a comprar
+     */
+    private IabHelper.QueryInventoryFinishedListener mQueryFinishedListener =
+            new IabHelper.QueryInventoryFinishedListener() {
+                public void onQueryInventoryFinished(IabResult result, Inventory inventory) {
+                    if (result.isFailure()) {
+                        Log.e(TAG, "Error obteniendo los detalles de productos" + result.getMessage());
+                        return;
+                    }
+
+                    String removeAdsDetails = inventory.getSkuDetails(ID_REMOVE_ADS).getPrice();
+                    // update the UI
+                    // o quitar publicidad
+                }
+            };
 
     /**
      * Inicializa la actividad
@@ -59,6 +95,9 @@ public class LoginPasswordActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         prefs = getSharedPreferences("Preferences", Context.MODE_PRIVATE);
+
+        // Setup in-app Billing
+        setUpInAppBilling();
 
         //Gestion de mensajes de firebase en el intent de entrada
         // [START handle_data_extras]
@@ -184,12 +223,24 @@ public class LoginPasswordActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        super.onDestroy();
+        // Gestión del año actual para actualizar los cupos y las compras
         Calendar calendar = Calendar.getInstance();
         int yearPref = calendar.get(Calendar.YEAR);
+
         SharedPreferences.Editor editor = prefs.edit();
         editor.putInt("year", yearPref);
         editor.apply();
+
+        // Desvinculación del servicio de compras
+//        if (mService != null) {
+//            unbindService(mServiceConn);
+//        }
+
+        if (mHelper != null)
+            mHelper.dispose();
+        mHelper = null;
+
+        super.onDestroy();
     }
 
     private void checkAccountPermission() {
@@ -342,7 +393,7 @@ public class LoginPasswordActivity extends AppCompatActivity {
         if (yearPref != 0 && year > yearPref) {
             List<Guia> listaGuias = intent.getParcelableArrayListExtra("guias");
             if (listaGuias.size() > 0) {
-                for (Guia guia:listaGuias) {
+                for (Guia guia : listaGuias) {
                     String nombreLicencia = getStringLicenseFromId(LoginPasswordActivity.this, guia.getTipoLicencia());
                     String idNombreLicencia = nombreLicencia.split(" ")[0];
                     int tipoArma = guia.getTipoArma();
@@ -438,6 +489,30 @@ public class LoginPasswordActivity extends AppCompatActivity {
             Intent intent = new Intent(this, FragmentTutorialActivity.class);
             startActivity(intent);
         }
+    }
+
+    /**
+     * Set up del servicio de in-app billing
+     */
+    private void setUpInAppBilling() {
+        base64EncodedPublicKey = getString(R.string.app_public_key);
+
+        // compute your public key and store it in base64EncodedPublicKey
+        mHelper = new IabHelper(this, base64EncodedPublicKey);
+        mHelper.startSetup(new IabHelper.OnIabSetupFinishedListener() {
+            public void onIabSetupFinished(IabResult result) {
+                if (!result.isSuccess()) {
+                    // Oh no, there was a problem.
+                    Log.d(TAG, "Problem setting up In-app Billing: " + result.getMessage());
+                } else {
+                    // Hooray, IAB is fully set up!
+                    // Detailed list from google play
+                    ArrayList<String> additionalSkuList = new ArrayList<>();
+                    additionalSkuList.add(ID_REMOVE_ADS);
+                    mHelper.queryInventoryAsync(true, additionalSkuList, mQueryFinishedListener);
+                }
+            }
+        });
     }
 }
 
