@@ -12,12 +12,6 @@ import android.util.Log;
 import android.view.View;
 
 import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -29,13 +23,15 @@ import al.ahgitdevelopment.municion.DataModel.Guia;
 import al.ahgitdevelopment.municion.DataModel.Licencia;
 import al.ahgitdevelopment.municion.DataModel.NotificationData;
 
-import static al.ahgitdevelopment.municion.DataBases.FirebaseDBHelper.mFirebaseDatabase;
-
 /**
  * Created by ahidalgog on 07/07/2016.
  */
 public final class Utils {
     public static final String NOTIFICATION_PREFERENCES_FILE = "Notifications";
+    public static final String PURCHASE_ID_REMOVE_ADS = "remove_ads";
+    public static final String PREFS_SHOW_ADS = "show_ads";
+    public static final String PREFS_PAYLOAD = "payload";
+
     public static NotificationData notificationData = new NotificationData();
     public static ArrayList<NotificationData> listNotificationData = new ArrayList<NotificationData>();
     private static SharedPreferences prefs;
@@ -137,7 +133,7 @@ public final class Utils {
             // con el size de la lista y se produce esta excepcion cuando se invoca
             // listNotificationData.get(position). No se si meter en el if lo mismo que el else
             // Por eso lo he comentado, entiendo que no.
-            if(listNotificationData.size() <= position || listNotificationData.get(position) == null) {
+            if (listNotificationData.size() <= position || listNotificationData.get(position) == null) {
                 Log.e("Utils.class", "No coincide position con el size de listNotificationData");
                 // listNotificationData.add(notificationData);
             } else {
@@ -265,32 +261,31 @@ public final class Utils {
      * @return Retorna el AdRequest done se encuentra que se visualizará en la view en caso de estar activa
      */
     public static AdRequest getAdRequest(final View view) {
-        // Read from the database
-        if (mFirebaseDatabase == null)
-            mFirebaseDatabase = FirebaseDatabase.getInstance();
-
-        DatabaseReference myRef = mFirebaseDatabase.getReference("global_settings/ads");
-        myRef.addValueEventListener(new ValueEventListener() {
-
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                // This method is called once with the initial value and again
-                // whenever data at this location is updated.
-                AdView mAdView = (AdView) view.findViewById(R.id.adView);
-                if (dataSnapshot.getValue() == null ? false : Boolean.valueOf(dataSnapshot.getValue().toString())) {
-                    mAdView.setVisibility(View.VISIBLE);
-                } else {
-                    mAdView.setVisibility(View.GONE);
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError error) {
-                // Failed to read value
-                Log.w("Ads", "Failed to read value.", error.toException());
-            }
-        });
-
+//        // Read from the database
+//        if (mFirebaseDatabase == null)
+//            mFirebaseDatabase = FirebaseDatabase.getInstance();
+//
+//        DatabaseReference myRef = mFirebaseDatabase.getReference("global_settings/ads");
+//        myRef.addValueEventListener(new ValueEventListener() {
+//
+//            @Override
+//            public void onDataChange(DataSnapshot dataSnapshot) {
+//                // This method is called once with the initial value and again
+//                // whenever data at this location is updated.
+//                AdView mAdView = (AdView) view.findViewById(R.id.adView);
+//                if (dataSnapshot.getValue() == null ? false : Boolean.valueOf(dataSnapshot.getValue().toString())) {
+//                    mAdView.setVisibility(View.VISIBLE);
+//                } else {
+//                    mAdView.setVisibility(View.GONE);
+//                }
+//            }
+//
+//            @Override
+//            public void onCancelled(DatabaseError error) {
+//                // Failed to read value
+//                Log.w("Ads", "Failed to read value.", error.toException());
+//            }
+//        });
         return new AdRequest.Builder()
                 .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)        // All emulators
                 .addTestDevice("19DFD6D99DFA16A1568E51C0698B3E2F")  // Alberto device ID

@@ -12,6 +12,7 @@ import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Color;
@@ -77,6 +78,8 @@ public class LicenciaFormActivity extends AppCompatActivity {
     // Creo este flag para comprabar en el Calendario si es un guardado o modificacion de licencia
     private boolean isModify;
     private Toolbar toolbar;
+    private SharedPreferences prefs;
+    private AdView mAdView;
 
     /**
      * Inicializa la actividad
@@ -112,6 +115,7 @@ public class LicenciaFormActivity extends AppCompatActivity {
         layoutCategoria = (LinearLayout) findViewById(R.id.layout_categoria);
         categoria = (AppCompatSpinner) findViewById(R.id.form_categoria);
         fab = (FloatingActionButton) findViewById(R.id.fab_form_save);
+        mAdView = (AdView) findViewById(R.id.adView);
         isModify = false;
 
         //Gestion del boton de guardado en funcion de si se abre tras pulsar la notificacion
@@ -174,9 +178,16 @@ public class LicenciaFormActivity extends AppCompatActivity {
         setVisibilityFields(tipoLicencia.getSelectedItemPosition());
         fieldsUpdateFechaCaducidad();
 
-        //Admob
-        AdView mAdView = (AdView) findViewById(R.id.adView);
-        mAdView.loadAd(Utils.getAdRequest(mAdView));
+        // Gestion de anuncios
+        prefs = getSharedPreferences("Preferences", Context.MODE_PRIVATE);
+        if (prefs.getBoolean(Utils.PREFS_SHOW_ADS, true)) {
+            mAdView.setVisibility(View.VISIBLE);
+            mAdView.setEnabled(true);
+            mAdView.loadAd(Utils.getAdRequest(mAdView));
+        } else {
+            mAdView.setVisibility(View.GONE);
+            mAdView.setEnabled(false);
+        }
     }
 
     private void callDatePickerFragment() {

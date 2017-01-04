@@ -6,6 +6,7 @@ import android.content.ContentUris;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -43,6 +44,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.ads.AdView;
+import com.google.firebase.crash.FirebaseCrash;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -76,22 +78,23 @@ public class FragmentMainActivity extends AppCompatActivity {
     public static final int REQUEST_IMAGE_CAPTURE = 100;
     public static final int GUIA_COMPLETED = 1;
     public static final int COMPRA_COMPLETED = 2;
+    private static final int LICENCIA_COMPLETED = 3;
+    private static final int GUIA_UPDATED = 4;
+    private static final int COMPRA_UPDATED = 5;
+    private static final int LICENCIA_UPDATED = 6;
+    private static final String TAG = "FragmentMainActivity";
 
     public static File fileImagePath = null;
-
     public static View auxView = null;
     public static ActionMode mActionMode = null;
     public static ActionMode.Callback mActionModeCallback = null;
     public static int imagePosition;
+
     public static ArrayList<Guia> guias;
     public static ArrayList<Compra> compras;
     public static ArrayList<Licencia> licencias;
     public static TextView textEmptyList = null;
     private static DataBaseSQLiteHelper dbSqlHelper;
-    private final int LICENCIA_COMPLETED = 3;
-    private final int GUIA_UPDATED = 4;
-    private final int COMPRA_UPDATED = 5;
-    private final int LICENCIA_UPDATED = 6;
     public Toolbar toolbar;
     /**
      * The {@link PagerAdapter} that will provide
@@ -106,6 +109,9 @@ public class FragmentMainActivity extends AppCompatActivity {
      * The {@link ViewPager} that will host the section contents.
      */
     private ViewPager mViewPager;
+
+    private SharedPreferences prefs;
+    private AdView mAdView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -261,9 +267,17 @@ public class FragmentMainActivity extends AppCompatActivity {
             });
         }
 
-        //Admob - TODO
-        AdView mAdView = (AdView) findViewById(R.id.adView);
-        mAdView.loadAd(Utils.getAdRequest(mAdView));
+        // Gestion de anuncios
+        mAdView = (AdView) findViewById(R.id.adView);
+        prefs = getSharedPreferences("Preferences", Context.MODE_PRIVATE);
+        if (prefs.getBoolean(Utils.PREFS_SHOW_ADS, true)) {
+            mAdView.setVisibility(View.VISIBLE);
+            mAdView.setEnabled(true);
+            mAdView.loadAd(Utils.getAdRequest(mAdView));
+        } else {
+            mAdView.setVisibility(View.GONE);
+            mAdView.setEnabled(false);
+        }
     }
 
     /**
@@ -308,20 +322,15 @@ public class FragmentMainActivity extends AppCompatActivity {
         dbSqlHelper.saveListLicencias(null, licencias);
         dbSqlHelper.close();
 
-        if (mAuthListener != null) {
-            mAuth.removeAuthStateListener(mAuthListener);
-        }
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-
         ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         if (cm.getActiveNetworkInfo() != null && cm.getActiveNetworkInfo().isConnected()) {
-            FirebaseDBHelper.saveLists(guias, compras, licencias); //Sin Toast
+            FirebaseDBHelper.saveLists(guias, compras, licencias);
 //            if (FirebaseDBHelper.saveLists(guias, compras, licencias))
 //                Toast.makeText(this, "Listas guardadas en Firebase", Toast.LENGTH_LONG).show();
+        }
+
+        if (mAuthListener != null) {
+            mAuth.removeAuthStateListener(mAuthListener);
         }
     }
 
@@ -608,6 +617,18 @@ public class FragmentMainActivity extends AppCompatActivity {
         } else if (resultCode == RESULT_CANCELED) {
             Log.e(getPackageName(), "Resultado de la camara cancelada");
         }
+        try {
+            ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+            if (cm.getActiveNetworkInfo() != null && cm.getActiveNetworkInfo().isConnected()) {
+                FirebaseDBHelper.saveLists(guias, compras, licencias);
+//            if (FirebaseDBHelper.saveLists(guias, compras, licencias))
+//                Toast.makeText(this, "Listas guardadas en Firebase", Toast.LENGTH_LONG).show();
+            }
+        } catch (Exception ex) {
+            FirebaseCrash.report(ex);
+            FirebaseCrash.logcat(Log.ERROR, TAG, "NPE caught");
+        }
+
 
         showTextEmptyList();
     }
@@ -632,7 +653,7 @@ public class FragmentMainActivity extends AppCompatActivity {
                     Calendar fechaCompra = Calendar.getInstance();
                     fechaCompra.setTime(new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).parse(comp.getFecha()));
 
-                    if ((int)currentYear == (int)fechaCompra.get(Calendar.YEAR)) {
+                    if (currentYear == fechaCompra.get(Calendar.YEAR)) {
                         guia.setGastado(guia.getGastado() + comp.getUnidades());
                     }
                 }

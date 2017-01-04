@@ -26,8 +26,8 @@ android {
         applicationId "al.ahgitdevelopment.municion"
         minSdkVersion 15
         targetSdkVersion 25
-        versionCode 15
-        versionName '1.0.5'
+        versionCode 16
+        versionName '1.0.6'
         vectorDrawables.useSupportLibrary = true
     }
     buildTypes {

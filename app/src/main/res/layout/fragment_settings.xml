@@ -54,6 +54,16 @@
             android:text="@string/settings_title_reset_password"
             android:textSize="18sp"/>
 
+        <TextView
+            android:id="@+id/settings_remove_ads"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="18dp"
+            android:clickable="true"
+            android:onClick="removeAds"
+            android:text="@string/settings_title_remove_ads"
+            android:textSize="18sp"/>
+
     </LinearLayout>
 
     <TextView

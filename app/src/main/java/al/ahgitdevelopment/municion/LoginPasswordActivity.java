@@ -38,27 +38,14 @@ import al.ahgitdevelopment.municion.DataBases.DataBaseSQLiteHelper;
 import al.ahgitdevelopment.municion.DataModel.Guia;
 
 import static al.ahgitdevelopment.municion.DataBases.FirebaseDBHelper.accountPermission;
+import static al.ahgitdevelopment.municion.Utils.PREFS_SHOW_ADS;
+import static al.ahgitdevelopment.municion.Utils.PURCHASE_ID_REMOVE_ADS;
 import static al.ahgitdevelopment.municion.Utils.getStringLicenseFromId;
 
-public class LoginPasswordActivity extends AppCompatActivity {
+public class LoginPasswordActivity extends AppCompatActivity implements IabHelper.QueryInventoryFinishedListener {
     public static final int MIN_PASS_LENGTH = 6;
-    private static final String TAG = "LoginPasswordActivity";
-    private static final String ID_REMOVE_ADS = "remove_ads";
-    /**
-     * base64EncodedPublicKey should be YOUR APPLICATION'S PUBLIC KEY
-     * (that you got from the Google Play developer console). This is not your
-     * developer public key, it's the *app-specific* public key.
-     * <p>
-     * Instead of just storing the entire literal string here embedded in the
-     * program,  construct the key at runtime from pieces or
-     * use bit manipulation (for example, XOR with some other string) to hide
-     * the actual key.  The key itself is not secret information, but we don't
-     * want to make it easy for an attacker to replace the public key with one
-     * of their own and then fake messages from the server.
-     */
-    private static String base64EncodedPublicKey;
+    private final String TAG = "LoginPasswordActivity";
     public Toolbar toolbar;
-    private IabHelper mHelper;
     private FirebaseAnalytics mFirebaseAnalytics;
     private SharedPreferences prefs;
     private TextInputLayout textInputLayout1;
@@ -67,23 +54,9 @@ public class LoginPasswordActivity extends AppCompatActivity {
     private TextInputEditText password2;
     private ImageView button;
     private TextView versionLabel;
+    private AdView mAdView;
 
-    /**
-     * Listener para la obtencion de detalles de los elementos a comprar
-     */
-    private IabHelper.QueryInventoryFinishedListener mQueryFinishedListener =
-            new IabHelper.QueryInventoryFinishedListener() {
-                public void onQueryInventoryFinished(IabResult result, Inventory inventory) {
-                    if (result.isFailure()) {
-                        Log.e(TAG, "Error obteniendo los detalles de productos" + result.getMessage());
-                        return;
-                    }
-
-                    String removeAdsDetails = inventory.getSkuDetails(ID_REMOVE_ADS).getPrice();
-                    // update the UI
-                    // o quitar publicidad
-                }
-            };
+    private IabHelper mHelper;
 
     /**
      * Inicializa la actividad
@@ -96,9 +69,6 @@ public class LoginPasswordActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
         prefs = getSharedPreferences("Preferences", Context.MODE_PRIVATE);
 
-        // Setup in-app Billing
-        setUpInAppBilling();
-
         //Gestion de mensajes de firebase en el intent de entrada
         // [START handle_data_extras]
         if (getIntent().getExtras() != null) {
@@ -108,7 +78,6 @@ public class LoginPasswordActivity extends AppCompatActivity {
             }
         }
         // [END handle_data_extras]
-
 
         // Toolbar
         toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -131,6 +100,7 @@ public class LoginPasswordActivity extends AppCompatActivity {
         password2 = (TextInputEditText) findViewById(R.id.password2);
         button = (ImageView) findViewById(R.id.continuar);
         versionLabel = (TextView) findViewById(R.id.login_version_label);
+        mAdView = (AdView) findViewById(R.id.adView);
 
         versionLabel.setText(Utils.getAppVersion(this));
 
@@ -205,8 +175,17 @@ public class LoginPasswordActivity extends AppCompatActivity {
             }
         });
 
-        AdView mAdView = (AdView) findViewById(R.id.adView);
-        mAdView.loadAd(Utils.getAdRequest(mAdView));
+        if (!prefs.contains(PREFS_SHOW_ADS)) {
+            // Agregar la configuración de anuncios en SharedPrefs
+            SharedPreferences.Editor editor = prefs.edit();
+            editor.putBoolean(PREFS_SHOW_ADS, true);
+            editor.apply();
+        }
+
+        if (prefs.getBoolean(PREFS_SHOW_ADS, true)) {
+            mAdView.setVisibility(View.VISIBLE);
+            mAdView.loadAd(Utils.getAdRequest(mAdView));
+        }
     }
 
     @Override
@@ -217,8 +196,25 @@ public class LoginPasswordActivity extends AppCompatActivity {
         //Lanza el tutorial la primera vez
         showTutorial();
 
-//        FirebaseCrash.report(new Exception("My first Android non-fatal error"));
-//        FirebaseCrash.log("Activity created");
+        // Comprobación de compra de eliminacion de publicidad
+        String base64EncodedPublicKey = getString(R.string.app_public_key);
+        mHelper = new IabHelper(this, base64EncodedPublicKey);
+
+        mHelper.startSetup(new IabHelper.OnIabSetupFinishedListener() {
+            public void onIabSetupFinished(IabResult result) {
+                if (!result.isSuccess()) {
+                    // Oh no, there was a problem.
+                    Log.d(TAG, "Problem setting up In-app Billing: " + result.getMessage());
+                } else {
+                    // Hooray, IAB is fully set up!
+                    // Detailed list from google play
+                    ArrayList<String> additionalSkuList = new ArrayList<>();
+                    additionalSkuList.add(PURCHASE_ID_REMOVE_ADS);
+                    mHelper.queryInventoryAsync(true, additionalSkuList,
+                            LoginPasswordActivity.this /*QueryFinishedListener*/);
+                }
+            }
+        });
     }
 
     @Override
@@ -227,14 +223,7 @@ public class LoginPasswordActivity extends AppCompatActivity {
         Calendar calendar = Calendar.getInstance();
         int yearPref = calendar.get(Calendar.YEAR);
 
-        SharedPreferences.Editor editor = prefs.edit();
-        editor.putInt("year", yearPref);
-        editor.apply();
-
-        // Desvinculación del servicio de compras
-//        if (mService != null) {
-//            unbindService(mServiceConn);
-//        }
+        prefs.edit().putInt("year", yearPref).apply();
 
         if (mHelper != null)
             mHelper.dispose();
@@ -491,30 +480,35 @@ public class LoginPasswordActivity extends AppCompatActivity {
         }
     }
 
-    /**
-     * Set up del servicio de in-app billing
-     */
-    private void setUpInAppBilling() {
-        base64EncodedPublicKey = getString(R.string.app_public_key);
+    @Override
+    public void onQueryInventoryFinished(IabResult result, Inventory inventory) {
+        if (result.isFailure()) {
+            Log.e(TAG, "Error obteniendo los detalles de productos" + result.getMessage());
+            return;
+        }
 
-        // compute your public key and store it in base64EncodedPublicKey
-        mHelper = new IabHelper(this, base64EncodedPublicKey);
-        mHelper.startSetup(new IabHelper.OnIabSetupFinishedListener() {
-            public void onIabSetupFinished(IabResult result) {
-                if (!result.isSuccess()) {
-                    // Oh no, there was a problem.
-                    Log.d(TAG, "Problem setting up In-app Billing: " + result.getMessage());
-                } else {
-                    // Hooray, IAB is fully set up!
-                    // Detailed list from google play
-                    ArrayList<String> additionalSkuList = new ArrayList<>();
-                    additionalSkuList.add(ID_REMOVE_ADS);
-                    mHelper.queryInventoryAsync(true, additionalSkuList, mQueryFinishedListener);
-                }
+//        SkuDetails removeAdsDetails = inventory.getSkuDetails(PURCHASE_ID_REMOVE_ADS); //Todo: borrar esta linea
+
+        //Si el usuario ha comprado la eliminación de anuncios
+        if (inventory.hasPurchase(PURCHASE_ID_REMOVE_ADS)) {
+            //pero no tiene actualizado su shared prefs
+            if (prefs.getBoolean(PREFS_SHOW_ADS, true)) {
+                // Eliminamos la publicidad
+                mAdView.setVisibility(View.GONE);
+                mAdView.setEnabled(false);
+
+                // Actualizamos las preferencias
+                prefs.edit().putBoolean(PREFS_SHOW_ADS, false);
             }
-        });
+        } else {
+            prefs.edit().putBoolean(PREFS_SHOW_ADS, true);
+            mAdView.setVisibility(View.VISIBLE);
+            mAdView.setEnabled(true);
+            mAdView.loadAd(Utils.getAdRequest(mAdView));
+        }
     }
 }
+
 
 //https://github.com/firebase/quickstart-android/blob/master/crash/app/src/main/java/com/google/samples/quickstart/crash/MainActivity.java
 //        FirebaseCrash.logcat(Log.INFO, "LoginPasswordActivity", "Crash DONE");

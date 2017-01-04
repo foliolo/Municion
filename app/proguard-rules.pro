@@ -21,8 +21,10 @@
 
 # This rule will properly ProGuard all the model classes in
 # the package com.yourcompany.models. Modify to fit the structure
-# of your app.
+# of your app.-keep class com.android.vending.billing.**
 -keepclassmembers class al.ahgitdevelopment.municion.DataModel.** { public *; }
 
 -keep public class com.google.android.gms.**{ public *; }
 -dontwarn com.google.android.gms.**
+
+-keep class com.android.vending.billing.**

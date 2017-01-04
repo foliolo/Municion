@@ -3,7 +3,9 @@ package al.ahgitdevelopment.municion.Forms;
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -57,6 +59,10 @@ public class CompraFormActivity extends AppCompatActivity {
     private TextInputLayout layoutPesoMunicion;
     private TextInputLayout layoutMarcaMunicion;
     private TextInputLayout layoutTienda;
+
+    private SharedPreferences prefs;
+    private AdView mAdView;
+
     /**
      * Inicializa la actividad
      *
@@ -89,6 +95,7 @@ public class CompraFormActivity extends AppCompatActivity {
         layoutPesoMunicion = (TextInputLayout) findViewById(R.id.text_input_layout_peso_municion);
         layoutMarcaMunicion = (TextInputLayout) findViewById(R.id.text_input_layout_marca_municion);
         layoutTienda = (TextInputLayout) findViewById(R.id.text_input_layout_tienda);
+        mAdView = (AdView) findViewById(R.id.adView);
 
         if (getIntent().getExtras() != null) {
             //Carga de datos (en caso de modificacion)
@@ -242,9 +249,16 @@ public class CompraFormActivity extends AppCompatActivity {
             }
         });
 
-        //Admob
-        AdView mAdView = (AdView) findViewById(R.id.adView);
-        mAdView.loadAd(Utils.getAdRequest(mAdView));
+        // Gestion de anuncios
+        prefs = getSharedPreferences("Preferences", Context.MODE_PRIVATE);
+        if (prefs.getBoolean(Utils.PREFS_SHOW_ADS, true)) {
+            mAdView.setVisibility(View.VISIBLE);
+            mAdView.setEnabled(true);
+            mAdView.loadAd(Utils.getAdRequest(mAdView));
+        } else {
+            mAdView.setVisibility(View.GONE);
+            mAdView.setEnabled(false);
+        }
     }
 
     private void callDatePickerFragment() {
