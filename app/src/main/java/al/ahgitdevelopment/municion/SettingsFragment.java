@@ -12,6 +12,7 @@ import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.security.SecureRandom;
 import java.util.ArrayList;
@@ -114,8 +115,9 @@ public class SettingsFragment extends FragmentActivity implements IabHelper.Quer
             //pero no tiene actualizado su shared prefs
             if (prefs.getBoolean("show_ads", true)) {
                 // Actualizamos las preferencias
-                prefs.edit().putBoolean("show_ads", false);
+                prefs.edit().putBoolean(PREFS_SHOW_ADS, false).apply();
             }
+            Toast.makeText(SettingsFragment.this, R.string.purchase_done, Toast.LENGTH_SHORT).show();
         } else {
             //Generar PREFS_PAYLOAD del usuario: Numero aleatorio que identifica al usuario
             SecureRandom random = new SecureRandom();

@@ -28,7 +28,10 @@ import al.ahgitdevelopment.municion.DataModel.NotificationData;
  */
 public final class Utils {
     public static final String NOTIFICATION_PREFERENCES_FILE = "Notifications";
-    public static final String PURCHASE_ID_REMOVE_ADS = "remove_ads";
+    //TODO: Cambiar en produccion
+//    public static final String PURCHASE_ID_REMOVE_ADS = "remove_ads";
+//    public static final String PURCHASE_ID_REMOVE_ADS = "android.test.purchased";
+    public static final String PURCHASE_ID_REMOVE_ADS = "android.test.canceled";
     public static final String PREFS_SHOW_ADS = "show_ads";
     public static final String PREFS_PAYLOAD = "payload";
 

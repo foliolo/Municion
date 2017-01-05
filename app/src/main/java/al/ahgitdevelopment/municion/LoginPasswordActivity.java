@@ -191,11 +191,10 @@ public class LoginPasswordActivity extends AppCompatActivity implements IabHelpe
     @Override
     protected void onStart() {
         super.onStart();
-        checkAccountPermission();
 
-        //Lanza el tutorial la primera vez
-        showTutorial();
-
+//        //Lanza el tutorial la primera vez
+//        showTutorial();
+//
         // Comprobación de compra de eliminacion de publicidad
         String base64EncodedPublicKey = getString(R.string.app_public_key);
         mHelper = new IabHelper(this, base64EncodedPublicKey);
@@ -215,6 +214,8 @@ public class LoginPasswordActivity extends AppCompatActivity implements IabHelpe
                 }
             }
         });
+//
+//        checkAccountPermission();
     }
 
     @Override
@@ -256,6 +257,8 @@ public class LoginPasswordActivity extends AppCompatActivity implements IabHelpe
                 accountPermission = grantResults[0] == PackageManager.PERMISSION_GRANTED;
             }
         }
+        //Lanza el tutorial la primera vez
+        showTutorial();
     }
 
     @Override
@@ -498,14 +501,16 @@ public class LoginPasswordActivity extends AppCompatActivity implements IabHelpe
                 mAdView.setEnabled(false);
 
                 // Actualizamos las preferencias
-                prefs.edit().putBoolean(PREFS_SHOW_ADS, false);
+                prefs.edit().putBoolean(PREFS_SHOW_ADS, false).apply();
             }
         } else {
-            prefs.edit().putBoolean(PREFS_SHOW_ADS, true);
+            prefs.edit().putBoolean(PREFS_SHOW_ADS, true).apply();
             mAdView.setVisibility(View.VISIBLE);
             mAdView.setEnabled(true);
             mAdView.loadAd(Utils.getAdRequest(mAdView));
         }
+
+        checkAccountPermission();
     }
 }
 

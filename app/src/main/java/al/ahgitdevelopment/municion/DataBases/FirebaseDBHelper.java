@@ -1,14 +1,10 @@
 package al.ahgitdevelopment.municion.DataBases;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.crash.FirebaseCrash;
@@ -23,7 +19,7 @@ import java.util.ArrayList;
 import al.ahgitdevelopment.municion.DataModel.Compra;
 import al.ahgitdevelopment.municion.DataModel.Guia;
 import al.ahgitdevelopment.municion.DataModel.Licencia;
-import al.ahgitdevelopment.municion.Utils;
+import al.ahgitdevelopment.municion.IRemoveAdsListener;
 
 import static al.ahgitdevelopment.municion.Utils.PREFS_SHOW_ADS;
 
@@ -57,7 +53,11 @@ public final class FirebaseDBHelper {
     /**
      * Context
      */
-    private static Context context;
+    public static Context context;
+    /**
+     *
+     */
+    public static IRemoveAdsListener removeAdsListener;
 
     /**
      * Create a handler to handle the result of the authentication
@@ -70,14 +70,33 @@ public final class FirebaseDBHelper {
                 if (user != null) {
                     // User is signed in
                     Log.w(TAG, "onAuthStateChanged:signed_in:" + user.getUid());
-                    SharedPreferences prefs = context.getSharedPreferences("Preferences", Context.MODE_PRIVATE);
+                    final SharedPreferences prefs = context.getSharedPreferences("Preferences", Context.MODE_PRIVATE);
 
                     //Cargamos la información del usuario
                     userRef = mFirebaseDatabase.getReference().child("users").child(user.getUid());
                     userRef.child("email").setValue(user.getEmail());
                     userRef.child("pass").setValue(prefs.getString("password", ""));
-                    userRef.child("settings").child("ads_prefs").setValue(prefs.getString(PREFS_SHOW_ADS, "true"));
+                    userRef.child("settings").child("ads").setValue(prefs.getBoolean(PREFS_SHOW_ADS, true));
 
+                    final String adsAdmin = "ads_admin";
+                    userRef.child("settings").child(adsAdmin).addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            // Si no existe, lo creamos
+                            if (!dataSnapshot.exists()) {
+                                dataSnapshot.getRef().setValue(prefs.getBoolean(PREFS_SHOW_ADS, true));
+                            }
+
+                            // Lanzamos el listener para actualizar la publicidad en funcion de la variable admin
+                            removeAdsListener.OnRemoveAdsListener(
+                                    Boolean.parseBoolean(dataSnapshot.getValue().toString())); //Mostramos anuncios
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+                            FirebaseCrash.logcat(Log.WARN, TAG, "Error en el control de ads_admin");
+                        }
+                    });
 
                 } else {
                     // User is signed out
@@ -90,70 +109,72 @@ public final class FirebaseDBHelper {
         }
     };
 
-    public static void initFirebaseDBHelper(Context mContext) {
-        context = mContext;
-        try {
-            //Guardado del usuario en las shared preferences del dispositivo
-            SharedPreferences prefs = context.getSharedPreferences("Preferences", Context.MODE_PRIVATE);
-            String email = Utils.getUserEmail(context);
-            String pass = prefs.getString("password", "");
-
-            if (!email.isEmpty()) {
-                //Obtención del código de autentificación del usuario
-                mAuth.createUserWithEmailAndPassword(email, pass)
-                        .addOnCompleteListener((Activity) context, new OnCompleteListener<AuthResult>() {
-                            @Override
-                            public void onComplete(@NonNull Task<AuthResult> task) {
-                                Log.d(TAG, "createUserWithEmail:onComplete:" + task.isSuccessful());
-
-                                // If sign in fails, display a message to the user. If sign in succeeds
-                                // the auth state listener will be notified and logic to handle the
-                                // signed in user can be handled in the listener.
-                                if (!task.isSuccessful()) {
-//                                Toast.makeText(context, R.string.auth_usuario_existente, Toast.LENGTH_SHORT).show();
-                                    Log.w(TAG, task.getException().getMessage());
-                                }
-                            }
-                        });
-
-                mAuth.signInWithEmailAndPassword(email, pass)
-                        .addOnCompleteListener((Activity) context, new OnCompleteListener<AuthResult>() {
-                            @Override
-                            public void onComplete(@NonNull Task<AuthResult> task) {
-                                Log.d(TAG, "signInWithEmail:onComplete:" + task.isSuccessful());
-
-                                // If sign in fails, display a message to the user. If sign in succeeds
-                                // the auth state listener will be notified and logic to handle the
-                                // signed in user can be handled in the listener.
-                                if (!task.isSuccessful()) {
-                                    Log.w(TAG, "signInWithEmail:failed", task.getException());
-//                                Toast.makeText(context, R.string.auth_usuario_logado, Toast.LENGTH_SHORT).show();
-                                }
-                            }
-                        });
-            } else {
-                mAuth.signInAnonymously()
-                        .addOnCompleteListener((Activity) context, new OnCompleteListener<AuthResult>() {
-                            @Override
-                            public void onComplete(@NonNull Task<AuthResult> task) {
-                                Log.d(TAG, "signInAnonymously:onComplete:" + task.isSuccessful());
-
-                                // If sign in fails, display a message to the user. If sign in succeeds
-                                // the auth state listener will be notified and logic to handle the
-                                // signed in user can be handled in the listener.
-                                if (!task.isSuccessful()) {
-                                    Log.w(TAG, "signInAnonymously", task.getException());
-//                                Toast.makeText(context, "Authentication failed.", Toast.LENGTH_SHORT).show();
-                                }
-                            }
-                        });
-            }
-
-        } catch (Exception ex) {
-            FirebaseCrash.logcat(Log.ERROR, TAG, "Fallo al iniciar la base de datos de firebase.");
-            FirebaseCrash.report(ex);
-        }
-    }
+//    public static void initFirebaseDBHelper(Context mContext, IRemoveAdsListener mRemoveAdsListener) {
+//        context = mContext;
+//        removeAdsListener = mRemoveAdsListener;
+//
+//        try {
+//            //Guardado del usuario en las shared preferences del dispositivo
+//            SharedPreferences prefs = context.getSharedPreferences("Preferences", Context.MODE_PRIVATE);
+//            String email = Utils.getUserEmail(context);
+//            String pass = prefs.getString("password", "");
+//
+//            if (!email.isEmpty()) {
+//                //Obtención del código de autentificación del usuario
+//                mAuth.createUserWithEmailAndPassword(email, pass)
+//                        .addOnCompleteListener((Activity) context, new OnCompleteListener<AuthResult>() {
+//                            @Override
+//                            public void onComplete(@NonNull Task<AuthResult> task) {
+//                                Log.d(TAG, "createUserWithEmail:onComplete:" + task.isSuccessful());
+//
+//                                // If sign in fails, display a message to the user. If sign in succeeds
+//                                // the auth state listener will be notified and logic to handle the
+//                                // signed in user can be handled in the listener.
+//                                if (!task.isSuccessful()) {
+////                                Toast.makeText(context, R.string.auth_usuario_existente, Toast.LENGTH_SHORT).show();
+//                                    Log.w(TAG, task.getException().getMessage());
+//                                }
+//                            }
+//                        });
+//
+//                mAuth.signInWithEmailAndPassword(email, pass)
+//                        .addOnCompleteListener((Activity) context, new OnCompleteListener<AuthResult>() {
+//                            @Override
+//                            public void onComplete(@NonNull Task<AuthResult> task) {
+//                                Log.d(TAG, "signInWithEmail:onComplete:" + task.isSuccessful());
+//
+//                                // If sign in fails, display a message to the user. If sign in succeeds
+//                                // the auth state listener will be notified and logic to handle the
+//                                // signed in user can be handled in the listener.
+//                                if (!task.isSuccessful()) {
+//                                    Log.w(TAG, "signInWithEmail:failed", task.getException());
+////                                Toast.makeText(context, R.string.auth_usuario_logado, Toast.LENGTH_SHORT).show();
+//                                }
+//                            }
+//                        });
+//            } else {
+//                mAuth.signInAnonymously()
+//                        .addOnCompleteListener((Activity) context, new OnCompleteListener<AuthResult>() {
+//                            @Override
+//                            public void onComplete(@NonNull Task<AuthResult> task) {
+//                                Log.d(TAG, "signInAnonymously:onComplete:" + task.isSuccessful());
+//
+//                                // If sign in fails, display a message to the user. If sign in succeeds
+//                                // the auth state listener will be notified and logic to handle the
+//                                // signed in user can be handled in the listener.
+//                                if (!task.isSuccessful()) {
+//                                    Log.w(TAG, "signInAnonymously", task.getException());
+////                                Toast.makeText(context, "Authentication failed.", Toast.LENGTH_SHORT).show();
+//                                }
+//                            }
+//                        });
+//            }
+//
+//        } catch (Exception ex) {
+//            FirebaseCrash.logcat(Log.ERROR, TAG, "Fallo al iniciar la base de datos de firebase.");
+//            FirebaseCrash.report(ex);
+//        }
+//    }
 /*
     public static ArrayList<Guia> getListGuias() {
         final ArrayList<Guia> guias = new ArrayList<>();
@@ -275,45 +296,5 @@ public final class FirebaseDBHelper {
             FirebaseCrash.report(ex);
             return false;
         }
-    }
-
-    public static void updateFirebaseAdsConfig() {
-        userRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-
-        // Read from the database
-//        if (mFirebaseDatabase == null)
-//            mFirebaseDatabase = FirebaseDatabase.getInstance();
-//
-//        DatabaseReference myRef = mFirebaseDatabase.getReference("global_settings/ads");
-//        myRef.addValueEventListener(new ValueEventListener() {
-//
-//            @Override
-//            public void onDataChange(DataSnapshot dataSnapshot) {
-//                // This method is called once with the initial value and again
-//                // whenever data at this location is updated.
-//                AdView mAdView = (AdView) view.findViewById(R.id.adView);
-//                if (dataSnapshot.getValue() == null ? false : Boolean.valueOf(dataSnapshot.getValue().toString())) {
-//                    mAdView.setVisibility(View.VISIBLE);
-//                } else {
-//                    mAdView.setVisibility(View.GONE);
-//                }
-//            }
-//
-//            @Override
-//            public void onCancelled(DatabaseError error) {
-//                // Failed to read value
-//                Log.w("Ads", "Failed to read value.", error.toException());
-//            }
-//        });
     }
 }

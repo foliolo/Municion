@@ -1,5 +1,6 @@
 package al.ahgitdevelopment.municion;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.ContentResolver;
 import android.content.ContentUris;
@@ -44,6 +45,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.ads.AdView;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
 import com.google.firebase.crash.FirebaseCrash;
 
 import java.io.File;
@@ -67,13 +71,14 @@ import al.ahgitdevelopment.municion.Forms.CompraFormActivity;
 import al.ahgitdevelopment.municion.Forms.GuiaFormActivity;
 import al.ahgitdevelopment.municion.Forms.LicenciaFormActivity;
 
+import static al.ahgitdevelopment.municion.DataBases.FirebaseDBHelper.context;
 import static al.ahgitdevelopment.municion.DataBases.FirebaseDBHelper.mAuth;
 import static al.ahgitdevelopment.municion.DataBases.FirebaseDBHelper.mAuthListener;
 import static al.ahgitdevelopment.municion.FragmentMainActivity.PlaceholderFragment.compraArrayAdapter;
 import static al.ahgitdevelopment.municion.FragmentMainActivity.PlaceholderFragment.guiaArrayAdapter;
 import static al.ahgitdevelopment.municion.FragmentMainActivity.PlaceholderFragment.licenciaArrayAdapter;
 
-public class FragmentMainActivity extends AppCompatActivity {
+public class FragmentMainActivity extends AppCompatActivity implements IRemoveAdsListener {
 
     public static final int REQUEST_IMAGE_CAPTURE = 100;
     public static final int GUIA_COMPLETED = 1;
@@ -173,7 +178,8 @@ public class FragmentMainActivity extends AppCompatActivity {
         // Instanciamos la base de datos
         dbSqlHelper = new DataBaseSQLiteHelper(getApplicationContext());
         // Obtain the FirebaseDatabase instance.
-        FirebaseDBHelper.initFirebaseDBHelper(this);
+//        FirebaseDBHelper.initFirebaseDBHelper(this /*Context*/, this /*OnRemoveAdsListener*/);
+        initFirebaseDBHelper();
 
         // Carga de las listas en funcion de la conectividad:
         // - Con conexion: Firebase
@@ -281,24 +287,6 @@ public class FragmentMainActivity extends AppCompatActivity {
     }
 
     /**
-     * Metodo para cargar las listas en función de su conectividad.
-     * En caso de tener, se cargarán las listas de internet.
-     * En caso contrario, se cargarán de la BBDD local
-     */
-    private void loadLists() {
-        // Obtenemos las estructuras de datos
-        if (guias == null) {
-            guias = getIntent().getParcelableArrayListExtra("guias");
-        }
-        if (compras == null) {
-            compras = getIntent().getParcelableArrayListExtra("compras");
-        }
-        if (licencias == null) {
-            licencias = getIntent().getParcelableArrayListExtra("licencias");
-        }
-    }
-
-    /**
      * Dispatch onPause() to fragments.
      */
     @Override
@@ -331,6 +319,32 @@ public class FragmentMainActivity extends AppCompatActivity {
 
         if (mAuthListener != null) {
             mAuth.removeAuthStateListener(mAuthListener);
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        if (FirebaseDBHelper.removeAdsListener != null)
+            FirebaseDBHelper.removeAdsListener = null;
+
+        super.onDestroy();
+    }
+
+    /**
+     * Metodo para cargar las listas en función de su conectividad.
+     * En caso de tener, se cargarán las listas de internet.
+     * En caso contrario, se cargarán de la BBDD local
+     */
+    private void loadLists() {
+        // Obtenemos las estructuras de datos
+        if (guias == null) {
+            guias = getIntent().getParcelableArrayListExtra("guias");
+        }
+        if (compras == null) {
+            compras = getIntent().getParcelableArrayListExtra("compras");
+        }
+        if (licencias == null) {
+            licencias = getIntent().getParcelableArrayListExtra("licencias");
         }
     }
 
@@ -765,10 +779,90 @@ public class FragmentMainActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public void OnRemoveAdsListener(boolean showAds) {
+        if (showAds) {
+            mAdView.setVisibility(View.VISIBLE);
+            mAdView.setEnabled(true);
+            mAdView.loadAd(Utils.getAdRequest(mAdView));
+        } else {
+            mAdView.setVisibility(View.GONE);
+            mAdView.setEnabled(false);
+        }
+    }
+
+    /**
+     * Dialog para la seleccion de la licencia qu
+     */
+    public void initFirebaseDBHelper() {
+        context = FragmentMainActivity.this;
+        FirebaseDBHelper.removeAdsListener = FragmentMainActivity.this;
+        try {
+            //Guardado del usuario en las shared preferences del dispositivo
+            SharedPreferences prefs = context.getSharedPreferences("Preferences", Context.MODE_PRIVATE);
+            String email = Utils.getUserEmail(context);
+            String pass = prefs.getString("password", "");
+
+            if (!email.isEmpty()) {
+                //Obtención del código de autentificación del usuario
+                mAuth.createUserWithEmailAndPassword(email, pass)
+                        .addOnCompleteListener((Activity) context, new OnCompleteListener<AuthResult>() {
+                            @Override
+                            public void onComplete(@NonNull Task<AuthResult> task) {
+                                Log.d(TAG, "createUserWithEmail:onComplete:" + task.isSuccessful());
+
+                                // If sign in fails, display a message to the user. If sign in succeeds
+                                // the auth state listener will be notified and logic to handle the
+                                // signed in user can be handled in the listener.
+                                if (!task.isSuccessful()) {
+//                                Toast.makeText(context, R.string.auth_usuario_existente, Toast.LENGTH_SHORT).show();
+                                    Log.w(TAG, task.getException().getMessage());
+                                }
+                            }
+                        });
+
+                mAuth.signInWithEmailAndPassword(email, pass)
+                        .addOnCompleteListener((Activity) context, new OnCompleteListener<AuthResult>() {
+                            @Override
+                            public void onComplete(@NonNull Task<AuthResult> task) {
+                                Log.d(TAG, "signInWithEmail:onComplete:" + task.isSuccessful());
+
+                                // If sign in fails, display a message to the user. If sign in succeeds
+                                // the auth state listener will be notified and logic to handle the
+                                // signed in user can be handled in the listener.
+                                if (!task.isSuccessful()) {
+                                    Log.w(TAG, "signInWithEmail:failed", task.getException());
+//                                Toast.makeText(context, R.string.auth_usuario_logado, Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        });
+            } else {
+                mAuth.signInAnonymously()
+                        .addOnCompleteListener((Activity) context, new OnCompleteListener<AuthResult>() {
+                            @Override
+                            public void onComplete(@NonNull Task<AuthResult> task) {
+                                Log.d(TAG, "signInAnonymously:onComplete:" + task.isSuccessful());
+
+                                // If sign in fails, display a message to the user. If sign in succeeds
+                                // the auth state listener will be notified and logic to handle the
+                                // signed in user can be handled in the listener.
+                                if (!task.isSuccessful()) {
+                                    Log.w(TAG, "signInAnonymously", task.getException());
+//                                Toast.makeText(context, "Authentication failed.", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        });
+            }
+
+        } catch (Exception ex) {
+            FirebaseCrash.logcat(Log.ERROR, TAG, "Fallo al iniciar la base de datos de firebase.");
+            FirebaseCrash.report(ex);
+        }
+    }
+
     /**
      * A placeholder fragment containing a simple view.
      */
-
     public static class PlaceholderFragment extends Fragment {
         /**
          * The fragment argument representing the section number for this fragment.
@@ -777,6 +871,7 @@ public class FragmentMainActivity extends AppCompatActivity {
         public static GuiaArrayAdapter guiaArrayAdapter = null;
         public static CompraArrayAdapter compraArrayAdapter = null;
         public static LicenciaArrayAdapter licenciaArrayAdapter = null;
+
         private static ListView listView = null;
 
         /**
@@ -791,7 +886,6 @@ public class FragmentMainActivity extends AppCompatActivity {
 
             return fragment;
         }
-
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.list_view_pager, container, false);
@@ -857,12 +951,14 @@ public class FragmentMainActivity extends AppCompatActivity {
 
             return rootView;
         }
+
     }
 
     /**
      * Dialog para la seleccion de la licencia
      */
     public static class GuiaDialogFragment extends DialogFragment {
+
         //https://developer.android.com/guide/topics/ui/dialogs.html
 
         private int selectedLicense;
@@ -918,9 +1014,11 @@ public class FragmentMainActivity extends AppCompatActivity {
      * Dialog para la seleccion de la licencia qu
      */
     public static class CompraDialogFragment extends DialogFragment {
+
         //https://developer.android.com/guide/topics/ui/dialogs.html
 
         private int selectedGuia;
+
 
         @NonNull
         @Override
@@ -958,7 +1056,6 @@ public class FragmentMainActivity extends AppCompatActivity {
             return builder.create();
         }
 
-
         private CharSequence[] getGuiaName() {
             ArrayList<String> list = new ArrayList<>();
             for (Guia guia : guias) {
@@ -969,6 +1066,7 @@ public class FragmentMainActivity extends AppCompatActivity {
         }
 
     }
+
 
     /**
      * A {@link FragmentPagerAdapter} that returns a fragment corresponding to

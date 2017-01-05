@@ -161,7 +161,10 @@
     <string name="settings_reset_password">It is reset your password</string>
     <string name="settings_reset_answer_fail">The answer is not correct</string>
     <string name="year">Year</string>
+
+    <!--PURCHASE-->
     <string name="settings_title_remove_ads">Remove Ads</string>
     <string name="purchase_cancel">Purchase Cancel</string>
+    <string name="purchase_done">Purchase already done</string>
 
 </resources>

@@ -174,5 +174,6 @@
     <string name="app_public_key" translatable="false">MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAvDvqFcMgylgnwiMHai3DqTiCEobhOp5Sx6i0TqiXpcOeB/H0AjPL7+6uqFRjrKmrxrNh0H6dw6oHPcuvO4M0WjIRfTyMOxnj/77APaVKYFJfQkebS19NxeldRiK67zVLrNVx5FWTpg4iwzOot6las7QxzAVG+CCy0KULP4q3khwZ/d0UKgJSvZwDpY6c9071tL6Vo1UTqbfAQf8lm1pinGPltZVJIQzvrCz1GAngEHU+eo4JHAUomVHJNTt7HlTABmhGUpOEG0MtMRSmlIq9yjoYvvO8PXcsFqF12z9LmMBH57Sw7mP3+9aeR6hMUS8N/Rqi6vw6KQivzeTqr0MyxwIDAQAB</string>
     <string name="settings_title_remove_ads">Eliminar publicidad</string>
     <string name="purchase_cancel">Compra cancelada</string>
+    <string name="purchase_done">Ya has realizado la compra</string>
 
 </resources>
