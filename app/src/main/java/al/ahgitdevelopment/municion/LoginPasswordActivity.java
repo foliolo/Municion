@@ -37,15 +37,16 @@ import al.ahgitdevelopment.municion.BillingUtil.Inventory;
 import al.ahgitdevelopment.municion.DataBases.DataBaseSQLiteHelper;
 import al.ahgitdevelopment.municion.DataModel.Guia;
 
-import static al.ahgitdevelopment.municion.DataBases.FirebaseDBHelper.accountPermission;
 import static al.ahgitdevelopment.municion.Utils.PREFS_SHOW_ADS;
 import static al.ahgitdevelopment.municion.Utils.PURCHASE_ID_REMOVE_ADS;
 import static al.ahgitdevelopment.municion.Utils.getStringLicenseFromId;
 
-public class LoginPasswordActivity extends AppCompatActivity implements IabHelper.QueryInventoryFinishedListener {
+public class LoginPasswordActivity extends AppCompatActivity implements
+        IabHelper.QueryInventoryFinishedListener {
     public static final int MIN_PASS_LENGTH = 6;
     private final String TAG = "LoginPasswordActivity";
     public Toolbar toolbar;
+    private BaseApplication baseApplication;
     private FirebaseAnalytics mFirebaseAnalytics;
     private SharedPreferences prefs;
     private TextInputLayout textInputLayout1;
@@ -67,6 +68,7 @@ public class LoginPasswordActivity extends AppCompatActivity implements IabHelpe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
         prefs = getSharedPreferences("Preferences", Context.MODE_PRIVATE);
 
         //Gestion de mensajes de firebase en el intent de entrada
@@ -181,20 +183,12 @@ public class LoginPasswordActivity extends AppCompatActivity implements IabHelpe
             editor.putBoolean(PREFS_SHOW_ADS, true);
             editor.apply();
         }
-
-        if (prefs.getBoolean(PREFS_SHOW_ADS, true)) {
-            mAdView.setVisibility(View.VISIBLE);
-            mAdView.loadAd(Utils.getAdRequest(mAdView));
-        }
     }
 
     @Override
     protected void onStart() {
         super.onStart();
 
-//        //Lanza el tutorial la primera vez
-//        showTutorial();
-//
         // Comprobación de compra de eliminacion de publicidad
         String base64EncodedPublicKey = getString(R.string.app_public_key);
         mHelper = new IabHelper(this, base64EncodedPublicKey);
@@ -214,8 +208,14 @@ public class LoginPasswordActivity extends AppCompatActivity implements IabHelpe
                 }
             }
         });
-//
-//        checkAccountPermission();
+
+        if (prefs.getBoolean(PREFS_SHOW_ADS, true)) {
+            mAdView.setVisibility(View.VISIBLE);
+            mAdView.loadAd(Utils.getAdRequest(mAdView));
+        } else {
+            mAdView.setVisibility(View.GONE);
+            mAdView.setEnabled(false);
+        }
     }
 
     @Override
@@ -254,7 +254,11 @@ public class LoginPasswordActivity extends AppCompatActivity implements IabHelpe
 
         if (grantResults != null && grantResults.length > 0) {
             if (requestCode == 100) {
-                accountPermission = grantResults[0] == PackageManager.PERMISSION_GRANTED;
+                if (grantResults[0] == PackageManager.PERMISSION_DENIED) {
+                    checkAccountPermission();
+                } else {
+                    Log.w(TAG, "Permisos de correo no concedidos");
+                }
             }
         }
         //Lanza el tutorial la primera vez
@@ -373,7 +377,7 @@ public class LoginPasswordActivity extends AppCompatActivity implements IabHelpe
         // Registrar Login - Analytics
         String android_id = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
         Bundle bundle = new Bundle();
-        bundle.putString(FirebaseAnalytics.Param.SIGN_UP_METHOD, android_id);
+        bundle.putString(FirebaseAnalytics.Param.VALUE, android_id);
         mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.LOGIN, bundle);
     }
 
@@ -489,8 +493,6 @@ public class LoginPasswordActivity extends AppCompatActivity implements IabHelpe
             Log.e(TAG, "Error obteniendo los detalles de productos" + result.getMessage());
             return;
         }
-
-//        SkuDetails removeAdsDetails = inventory.getSkuDetails(PURCHASE_ID_REMOVE_ADS); //Todo: borrar esta linea
 
         //Si el usuario ha comprado la eliminación de anuncios
         if (inventory.hasPurchase(PURCHASE_ID_REMOVE_ADS)) {

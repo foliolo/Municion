@@ -8,63 +8,81 @@
                 android:paddingTop="@dimen/activity_vertical_margin"
                 tools:context="al.ahgitdevelopment.municion.SettingsFragment">
 
-    <LinearLayout
+    <!--<LinearLayout-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:divider="@android:drawable/divider_horizontal_dark"-->
+    <!--android:orientation="vertical">-->
+
+    <!--<TextView-->
+    <!--android:id="@+id/settings_change_password"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_marginTop="18dp"-->
+    <!--android:clickable="true"-->
+    <!--android:onClick="changePassword"-->
+    <!--android:text="@string/settings_title_change_password"-->
+    <!--android:textSize="18sp"/>-->
+
+    <!--<TextView-->
+    <!--android:id="@+id/settings_show_tutorial"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_marginTop="18dp"-->
+    <!--android:clickable="true"-->
+    <!--android:onClick="showTutorial"-->
+    <!--android:text="@string/settings_title_show_tutorial"-->
+    <!--android:textSize="18sp"/>-->
+
+    <!--<TextView-->
+    <!--android:id="@+id/settings_security_question"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_marginTop="18dp"-->
+    <!--android:clickable="true"-->
+    <!--android:onClick="securityQuestion"-->
+    <!--android:text="@string/settings_title_security_question"-->
+    <!--android:textSize="18sp"/>-->
+
+    <!--<TextView-->
+    <!--android:id="@+id/settings_reset_password"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_marginTop="18dp"-->
+    <!--android:clickable="true"-->
+    <!--android:onClick="resetPassword"-->
+    <!--android:text="@string/settings_title_reset_password"-->
+    <!--android:textSize="18sp"/>-->
+
+    <!--<TextView-->
+    <!--android:id="@+id/settings_remove_ads"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_marginTop="18dp"-->
+    <!--android:clickable="true"-->
+    <!--android:onClick="removeAds"-->
+    <!--android:text="@string/settings_title_remove_ads"-->
+    <!--android:textSize="18sp"/>-->
+
+    <!--<TextView-->
+    <!--android:id="@+id/settings_consume_ads"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_marginTop="18dp"-->
+    <!--android:clickable="true"-->
+    <!--android:onClick="removeAds"-->
+    <!--android:text="@string/settings_title_remove_ads"-->
+    <!--android:textSize="18sp"/>-->
+
+    <!--</LinearLayout>-->
+
+    <ListView
+        android:id="@+id/settings_option_list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:divider="@android:drawable/divider_horizontal_dark"
-        android:orientation="vertical">
-
-        <TextView
-            android:id="@+id/settings_change_password"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="18dp"
-            android:clickable="true"
-            android:onClick="changePassword"
-            android:text="@string/settings_title_change_password"
-            android:textSize="18sp"/>
-
-        <TextView
-            android:id="@+id/settings_show_tutorial"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="18dp"
-            android:clickable="true"
-            android:onClick="showTutorial"
-            android:text="@string/settings_title_show_tutorial"
-            android:textSize="18sp"/>
-
-        <TextView
-            android:id="@+id/settings_security_question"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="18dp"
-            android:clickable="true"
-            android:onClick="securityQuestion"
-            android:text="@string/settings_title_security_question"
-            android:textSize="18sp"/>
-
-        <TextView
-            android:id="@+id/settings_reset_password"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="18dp"
-            android:clickable="true"
-            android:onClick="resetPassword"
-            android:text="@string/settings_title_reset_password"
-            android:textSize="18sp"/>
-
-        <TextView
-            android:id="@+id/settings_remove_ads"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="18dp"
-            android:clickable="true"
-            android:onClick="removeAds"
-            android:text="@string/settings_title_remove_ads"
-            android:textSize="18sp"/>
-
-    </LinearLayout>
+        android:entries="@array/settings_options">
+    </ListView>
 
     <TextView
         android:id="@+id/version_text"

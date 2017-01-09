@@ -1,6 +1,5 @@
 package al.ahgitdevelopment.municion;
 
-import android.app.Activity;
 import android.app.Dialog;
 import android.content.ContentResolver;
 import android.content.ContentUris;
@@ -48,7 +47,12 @@ import com.google.android.gms.ads.AdView;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.crash.FirebaseCrash;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -63,7 +67,6 @@ import al.ahgitdevelopment.municion.Adapters.CompraArrayAdapter;
 import al.ahgitdevelopment.municion.Adapters.GuiaArrayAdapter;
 import al.ahgitdevelopment.municion.Adapters.LicenciaArrayAdapter;
 import al.ahgitdevelopment.municion.DataBases.DataBaseSQLiteHelper;
-import al.ahgitdevelopment.municion.DataBases.FirebaseDBHelper;
 import al.ahgitdevelopment.municion.DataModel.Compra;
 import al.ahgitdevelopment.municion.DataModel.Guia;
 import al.ahgitdevelopment.municion.DataModel.Licencia;
@@ -71,14 +74,12 @@ import al.ahgitdevelopment.municion.Forms.CompraFormActivity;
 import al.ahgitdevelopment.municion.Forms.GuiaFormActivity;
 import al.ahgitdevelopment.municion.Forms.LicenciaFormActivity;
 
-import static al.ahgitdevelopment.municion.DataBases.FirebaseDBHelper.context;
-import static al.ahgitdevelopment.municion.DataBases.FirebaseDBHelper.mAuth;
-import static al.ahgitdevelopment.municion.DataBases.FirebaseDBHelper.mAuthListener;
 import static al.ahgitdevelopment.municion.FragmentMainActivity.PlaceholderFragment.compraArrayAdapter;
 import static al.ahgitdevelopment.municion.FragmentMainActivity.PlaceholderFragment.guiaArrayAdapter;
 import static al.ahgitdevelopment.municion.FragmentMainActivity.PlaceholderFragment.licenciaArrayAdapter;
+import static al.ahgitdevelopment.municion.Utils.PREFS_SHOW_ADS;
 
-public class FragmentMainActivity extends AppCompatActivity implements IRemoveAdsListener {
+public class FragmentMainActivity extends AppCompatActivity implements FirebaseAuth.AuthStateListener {
 
     public static final int REQUEST_IMAGE_CAPTURE = 100;
     public static final int GUIA_COMPLETED = 1;
@@ -99,8 +100,12 @@ public class FragmentMainActivity extends AppCompatActivity implements IRemoveAd
     public static ArrayList<Compra> compras;
     public static ArrayList<Licencia> licencias;
     public static TextView textEmptyList = null;
+    /**
+     * Constante de la referencia push() del usuario en funcion del correo del dispositivo
+     */
+    public static DatabaseReference userRef;
     private static DataBaseSQLiteHelper dbSqlHelper;
-    public Toolbar toolbar;
+    private Toolbar toolbar;
     /**
      * The {@link PagerAdapter} that will provide
      * fragments for each of the sections. We use a
@@ -114,14 +119,16 @@ public class FragmentMainActivity extends AppCompatActivity implements IRemoveAd
      * The {@link ViewPager} that will host the section contents.
      */
     private ViewPager mViewPager;
-
     private SharedPreferences prefs;
     private AdView mAdView;
+    private FirebaseAuth mAuth = FirebaseAuth.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_fragment_main);
+
+        prefs = getSharedPreferences("Preferences", Context.MODE_PRIVATE);
 
         mActionModeCallback = new ActionMode.Callback() {
             @Override
@@ -177,9 +184,6 @@ public class FragmentMainActivity extends AppCompatActivity implements IRemoveAd
 
         // Instanciamos la base de datos
         dbSqlHelper = new DataBaseSQLiteHelper(getApplicationContext());
-        // Obtain the FirebaseDatabase instance.
-//        FirebaseDBHelper.initFirebaseDBHelper(this /*Context*/, this /*OnRemoveAdsListener*/);
-        initFirebaseDBHelper();
 
         // Carga de las listas en funcion de la conectividad:
         // - Con conexion: Firebase
@@ -272,18 +276,6 @@ public class FragmentMainActivity extends AppCompatActivity implements IRemoveAd
                 }
             });
         }
-
-        // Gestion de anuncios
-        mAdView = (AdView) findViewById(R.id.adView);
-        prefs = getSharedPreferences("Preferences", Context.MODE_PRIVATE);
-        if (prefs.getBoolean(Utils.PREFS_SHOW_ADS, true)) {
-            mAdView.setVisibility(View.VISIBLE);
-            mAdView.setEnabled(true);
-            mAdView.loadAd(Utils.getAdRequest(mAdView));
-        } else {
-            mAdView.setVisibility(View.GONE);
-            mAdView.setEnabled(false);
-        }
     }
 
     /**
@@ -294,40 +286,40 @@ public class FragmentMainActivity extends AppCompatActivity implements IRemoveAd
         super.onStart();
 
         showTextEmptyList();
-
         updateGastoMunicion();
+        saveUserInFirebase();
+        mAuth.addAuthStateListener(this);
 
-        mAuth.addAuthStateListener(mAuthListener);
+        // Gestion de anuncios
+        mAdView = (AdView) findViewById(R.id.adView);
+        prefs = getSharedPreferences("Preferences", Context.MODE_PRIVATE);
+        if (prefs.getBoolean(PREFS_SHOW_ADS, true)) {
+            mAdView.setVisibility(View.VISIBLE);
+            mAdView.setEnabled(true);
+            mAdView.loadAd(Utils.getAdRequest(mAdView));
+        } else {
+            mAdView.setVisibility(View.GONE);
+            mAdView.setEnabled(false);
+        }
+    }
+
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (cm.getActiveNetworkInfo() != null && cm.getActiveNetworkInfo().isConnected()) {
+            saveLists();
+        }
     }
 
     @Override
     protected void onStop() {
         super.onStop();
 
-        // Guardado en la BBDD local de las estructuras de datos
-        dbSqlHelper.saveListGuias(null, guias);
-        dbSqlHelper.saveListCompras(null, compras);
-        dbSqlHelper.saveListLicencias(null, licencias);
         dbSqlHelper.close();
-
-        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        if (cm.getActiveNetworkInfo() != null && cm.getActiveNetworkInfo().isConnected()) {
-            FirebaseDBHelper.saveLists(guias, compras, licencias);
-//            if (FirebaseDBHelper.saveLists(guias, compras, licencias))
-//                Toast.makeText(this, "Listas guardadas en Firebase", Toast.LENGTH_LONG).show();
-        }
-
-        if (mAuthListener != null) {
-            mAuth.removeAuthStateListener(mAuthListener);
-        }
-    }
-
-    @Override
-    protected void onDestroy() {
-        if (FirebaseDBHelper.removeAdsListener != null)
-            FirebaseDBHelper.removeAdsListener = null;
-
-        super.onDestroy();
+        mAuth.removeAuthStateListener(this);
     }
 
     /**
@@ -631,20 +623,41 @@ public class FragmentMainActivity extends AppCompatActivity implements IRemoveAd
         } else if (resultCode == RESULT_CANCELED) {
             Log.e(getPackageName(), "Resultado de la camara cancelada");
         }
+
         try {
-            ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-            if (cm.getActiveNetworkInfo() != null && cm.getActiveNetworkInfo().isConnected()) {
-                FirebaseDBHelper.saveLists(guias, compras, licencias);
-//            if (FirebaseDBHelper.saveLists(guias, compras, licencias))
-//                Toast.makeText(this, "Listas guardadas en Firebase", Toast.LENGTH_LONG).show();
-            }
+            // Guardado en la BBDD local de las estructuras de datos
+            dbSqlHelper.saveListGuias(null, guias);
+            dbSqlHelper.saveListCompras(null, compras);
+            dbSqlHelper.saveListLicencias(null, licencias);
         } catch (Exception ex) {
             FirebaseCrash.report(ex);
             FirebaseCrash.logcat(Log.ERROR, TAG, "NPE caught");
         }
 
-
         showTextEmptyList();
+    }
+
+    private void saveLists() {
+        try {
+            //Borrado de la vase de datos actual;
+            if (userRef != null) {
+                userRef.child("db").removeValue(new DatabaseReference.CompletionListener() {
+                    @Override
+                    public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                        userRef.child("db").child("guias").setValue(guias);
+                        userRef.child("db").child("compras").setValue(compras);
+                        userRef.child("db").child("licencias").setValue(licencias);
+
+                        Log.i(TAG, "Guardado de listas en Firebase");
+                    }
+                });
+            } else {
+                FirebaseCrash.logcat(Log.WARN, TAG, "Fallo al  guardar las listas, usuario a null");
+            }
+        } catch (Exception ex) {
+            FirebaseCrash.logcat(Log.ERROR, TAG, "Fallo guardando las listas");
+            FirebaseCrash.report(ex);
+        }
     }
 
     /**
@@ -667,6 +680,7 @@ public class FragmentMainActivity extends AppCompatActivity implements IRemoveAd
                     Calendar fechaCompra = Calendar.getInstance();
                     fechaCompra.setTime(new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).parse(comp.getFecha()));
 
+                    //noinspection WrongConstant
                     if (currentYear == fechaCompra.get(Calendar.YEAR)) {
                         guia.setGastado(guia.getGastado() + comp.getUnidades());
                     }
@@ -779,34 +793,19 @@ public class FragmentMainActivity extends AppCompatActivity implements IRemoveAd
         }
     }
 
-    @Override
-    public void OnRemoveAdsListener(boolean showAds) {
-        if (showAds) {
-            mAdView.setVisibility(View.VISIBLE);
-            mAdView.setEnabled(true);
-            mAdView.loadAd(Utils.getAdRequest(mAdView));
-        } else {
-            mAdView.setVisibility(View.GONE);
-            mAdView.setEnabled(false);
-        }
-    }
-
     /**
      * Dialog para la seleccion de la licencia qu
      */
-    public void initFirebaseDBHelper() {
-        context = FragmentMainActivity.this;
-        FirebaseDBHelper.removeAdsListener = FragmentMainActivity.this;
+    public void saveUserInFirebase() {
         try {
             //Guardado del usuario en las shared preferences del dispositivo
-            SharedPreferences prefs = context.getSharedPreferences("Preferences", Context.MODE_PRIVATE);
-            String email = Utils.getUserEmail(context);
+            String email = Utils.getUserEmail(this);
             String pass = prefs.getString("password", "");
 
             if (!email.isEmpty()) {
                 //Obtención del código de autentificación del usuario
                 mAuth.createUserWithEmailAndPassword(email, pass)
-                        .addOnCompleteListener((Activity) context, new OnCompleteListener<AuthResult>() {
+                        .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                             @Override
                             public void onComplete(@NonNull Task<AuthResult> task) {
                                 Log.d(TAG, "createUserWithEmail:onComplete:" + task.isSuccessful());
@@ -822,7 +821,7 @@ public class FragmentMainActivity extends AppCompatActivity implements IRemoveAd
                         });
 
                 mAuth.signInWithEmailAndPassword(email, pass)
-                        .addOnCompleteListener((Activity) context, new OnCompleteListener<AuthResult>() {
+                        .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                             @Override
                             public void onComplete(@NonNull Task<AuthResult> task) {
                                 Log.d(TAG, "signInWithEmail:onComplete:" + task.isSuccessful());
@@ -838,7 +837,7 @@ public class FragmentMainActivity extends AppCompatActivity implements IRemoveAd
                         });
             } else {
                 mAuth.signInAnonymously()
-                        .addOnCompleteListener((Activity) context, new OnCompleteListener<AuthResult>() {
+                        .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                             @Override
                             public void onComplete(@NonNull Task<AuthResult> task) {
                                 Log.d(TAG, "signInAnonymously:onComplete:" + task.isSuccessful());
@@ -856,6 +855,56 @@ public class FragmentMainActivity extends AppCompatActivity implements IRemoveAd
 
         } catch (Exception ex) {
             FirebaseCrash.logcat(Log.ERROR, TAG, "Fallo al iniciar la base de datos de firebase.");
+            FirebaseCrash.report(ex);
+        }
+    }
+
+    @Override
+    public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+        try {
+            FirebaseUser user = firebaseAuth.getCurrentUser();
+            if (user != null) {
+                // User is signed in
+                Log.w(TAG, "onAuthStateChanged:signed_in:" + user.getUid());
+
+                //Cargamos la información del usuario
+                userRef = FirebaseDatabase.getInstance().getReference().child("users").child(user.getUid());
+                userRef.child("email").setValue(user.getEmail());
+                userRef.child("pass").setValue(prefs.getString("password", ""));
+                userRef.child("settings").child("ads").setValue(prefs.getBoolean(PREFS_SHOW_ADS, true));
+//                userRef.child("settings").child("ads_admin").setValue(prefs.getBoolean(PREFS_SHOW_ADS, true));
+
+
+//                userRef.child("settings").child("ads_admin").addValueEventListener(new ValueEventListener() {
+//                    @Override
+//                    public void onDataChange(DataSnapshot dataSnapshot) {
+//                        // Si no existe, lo creamos
+//                        if (!dataSnapshot.exists()) {
+//                            dataSnapshot.getRef().setValue(prefs.getBoolean(PREFS_SHOW_ADS, true));
+//                        }
+//
+//                        if (Boolean.parseBoolean(dataSnapshot.getValue().toString())) {
+//                            mAdView.setVisibility(View.VISIBLE);
+//                            mAdView.setEnabled(true);
+//                            mAdView.loadAd(Utils.getAdRequest(mAdView));
+//                        } else {
+//                            mAdView.setVisibility(View.GONE);
+//                            mAdView.setEnabled(false);
+//                        }
+//                    }
+//
+//                    @Override
+//                    public void onCancelled(DatabaseError databaseError) {
+//                        FirebaseCrash.logcat(Log.WARN, TAG, "Error en el control de ads_admin");
+//                    }
+//                });
+
+            } else {
+                // User is signed out
+                Log.w(TAG, "onAuthStateChanged:signed_out");
+            }
+        } catch (Exception ex) {
+            FirebaseCrash.logcat(Log.ERROR, TAG, "Fallo al obtener el usuario para la inserccion en la BBDD de Firebase.");
             FirebaseCrash.report(ex);
         }
     }
@@ -886,6 +935,7 @@ public class FragmentMainActivity extends AppCompatActivity implements IRemoveAd
 
             return fragment;
         }
+
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.list_view_pager, container, false);

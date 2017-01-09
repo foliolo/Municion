@@ -11,6 +11,8 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -33,12 +35,14 @@ import static al.ahgitdevelopment.municion.Utils.PURCHASE_ID_REMOVE_ADS;
  * A simple {@link FragmentActivity} subclass.
  */
 public class SettingsFragment extends FragmentActivity implements IabHelper.QueryInventoryFinishedListener,
-        IabHelper.OnIabPurchaseFinishedListener {
+        IabHelper.OnIabPurchaseFinishedListener, IabHelper.OnConsumeFinishedListener {
 
     private static final String TAG = "SettignsFragment";
     private static final int RC_PURCHASE_FLOW = 100;
     SharedPreferences prefs;
     private IabHelper mHelper;
+    private ListView settingOptionList;
+    private boolean flagConsume;
 
     public SettingsFragment() {
         // Required empty public constructor
@@ -51,6 +55,7 @@ public class SettingsFragment extends FragmentActivity implements IabHelper.Quer
 
         prefs = getSharedPreferences("Preferences", Context.MODE_PRIVATE);
 
+        settingOptionList = (ListView) findViewById(R.id.settings_option_list);
         ((TextView) findViewById(R.id.version_text)).setText(Utils.getAppVersion(this));
 
         String base64EncodedPublicKey = getString(R.string.app_public_key);
@@ -60,6 +65,32 @@ public class SettingsFragment extends FragmentActivity implements IabHelper.Quer
                 if (!result.isSuccess()) {
                     // Oh no, there was a problem.
                     Log.d(TAG, "Problem setting up In-app Billing: " + result.getMessage());
+                }
+            }
+        });
+
+        settingOptionList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                switch (position) {
+                    case 0:
+                        changePassword();
+                        break;
+                    case 1:
+                        showTutorial();
+                        break;
+                    case 2:
+                        securityQuestion();
+                        break;
+                    case 3:
+                        resetPassword();
+                        break;
+                    case 4:
+                        removeAds();
+                        break;
+                    case 5:
+                        consumeAds();
+                        break;
                 }
             }
         });
@@ -74,28 +105,35 @@ public class SettingsFragment extends FragmentActivity implements IabHelper.Quer
         super.onDestroy();
     }
 
-    public void changePassword(View view) {
+    public void changePassword() {
         DialogFragment dialog = new ChangePasswordDialog();
         dialog.show(getFragmentManager(), "ChangePasswordDialog");
     }
 
-    public void showTutorial(View view) {
+    public void showTutorial() {
         Intent intent = new Intent(this, FragmentTutorialActivity.class);
         startActivity(intent);
     }
 
-    public void securityQuestion(View view) {
+    public void securityQuestion() {
         DialogFragment dialog = new SecurityQuestionDialog();
         dialog.show(getFragmentManager(), "SecurityQuestionDialog");
     }
 
-    public void resetPassword(View view) {
+    public void resetPassword() {
         DialogFragment dialog = new ResetPasswordDialog();
         dialog.show(getFragmentManager(), "ResetPasswordDialog");
     }
 
-    public void removeAds(View view) {
-//        Utils.setUpInAppBilling(this/*Context*/, this/*QueryInventoryFinishedListener*/);
+    public void removeAds() {
+        flagConsume = false;
+        ArrayList<String> additionalSkuList = new ArrayList<>();
+        additionalSkuList.add(PURCHASE_ID_REMOVE_ADS);
+        mHelper.queryInventoryAsync(true, additionalSkuList, this /*QueryFinishedListener*/);
+    }
+
+    public void consumeAds() {
+        flagConsume = true;
         ArrayList<String> additionalSkuList = new ArrayList<>();
         additionalSkuList.add(PURCHASE_ID_REMOVE_ADS);
         mHelper.queryInventoryAsync(true, additionalSkuList, this /*QueryFinishedListener*/);
@@ -118,12 +156,20 @@ public class SettingsFragment extends FragmentActivity implements IabHelper.Quer
                 prefs.edit().putBoolean(PREFS_SHOW_ADS, false).apply();
             }
             Toast.makeText(SettingsFragment.this, R.string.purchase_done, Toast.LENGTH_SHORT).show();
+
+            //TODO: Remove this!!! Just for testing
+            if (flagConsume) {
+                mHelper.consumeAsync(inventory.getPurchase(PURCHASE_ID_REMOVE_ADS), this);
+                prefs.edit().putBoolean(PREFS_SHOW_ADS, true).apply();
+            }
         } else {
             //Generar PREFS_PAYLOAD del usuario: Numero aleatorio que identifica al usuario
             SecureRandom random = new SecureRandom();
             String payload = new java.math.BigInteger(130, random).toString(32);
             if (!prefs.contains(PREFS_PAYLOAD))
                 prefs.edit().putString(PREFS_PAYLOAD, payload).apply();
+            else
+                payload = prefs.getString(PREFS_PAYLOAD, "");
 
             // Realizar compra para eliminar publicidad
             mHelper.launchPurchaseFlow(this, PURCHASE_ID_REMOVE_ADS, RC_PURCHASE_FLOW,
@@ -166,7 +212,6 @@ public class SettingsFragment extends FragmentActivity implements IabHelper.Quer
         }
 
         // TASK TO DO
-        prefs = getSharedPreferences("Preferences", Context.MODE_PRIVATE);
         String payload = "";
         if (prefs.contains(PREFS_PAYLOAD))
             payload = prefs.getString(PREFS_PAYLOAD, "");
@@ -175,6 +220,21 @@ public class SettingsFragment extends FragmentActivity implements IabHelper.Quer
             // Compra realizada con existo
             // Actualizar Shared Prefs
             prefs.edit().putBoolean(PREFS_SHOW_ADS, false).apply();
+        }
+    }
+
+    @Override
+    public void onConsumeFinished(Purchase purchase, IabResult result) {
+        if (result.isSuccess()) {
+            // provision the in-app purchase to the user
+            // (for example, credit 50 gold coins to player's character)
+            Log.i(TAG, "Compra consumida");
+            Toast.makeText(this, "Compra consumida", Toast.LENGTH_SHORT).show();
+            prefs.edit().putBoolean(PREFS_SHOW_ADS, true).apply();
+        } else {
+            // handle error
+            Log.w(TAG, "Error cosumiendo la compra!");
+            Toast.makeText(this, "Error consumiendo compra", Toast.LENGTH_SHORT).show();
         }
     }
 }

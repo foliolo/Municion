@@ -1,5 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string-array name="settings_options">
+        <item>Password Manager</item>
+        <item>Show Tutorial</item>
+        <item>Security Question</item>
+        <item>Reset Password</item>
+        <item>Remove Ads</item>
+        <item>Consume Ads</item>
+    </string-array>
+
     <string-array name="tipo_armas">
         <item>Gun</item>
         <item>Shotgun</item>
