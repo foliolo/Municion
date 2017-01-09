@@ -7,8 +7,9 @@
 .DS_Store
 /build
 /captures
-/.idea/vcs.xml
+/.idea/misc.xml
 /.idea/gradle.xml
+/.idea/vcs.xml
 app/libs/
 app/src/test/
 app/google-services.json
