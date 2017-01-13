@@ -2,6 +2,7 @@ package al.ahgitdevelopment.municion.Adapters;
 
 import android.content.Context;
 import android.os.Build;
+import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,38 +19,37 @@ import al.ahgitdevelopment.municion.R;
 /**
  * Created by Alberto on 28/05/2016.
  */
+@SuppressWarnings("FieldCanBeLocal")
 public class LicenciaArrayAdapter extends ArrayAdapter<Licencia> {
-    Context context;
-
-    TextView tipo;
-    TextView lblTipoPermisoConduccion;
-    TextView tipoPermisoConduccion;
-    TextView lblEdad;
-    TextView edad;
-    TextView lblNumLicencia;
-    TextView numLicencia;
-    TextView expedicion;
-    LinearLayout layoutFechaCaducidad;
-    TextView caducidad;
-    TextView lblAbonado;
-    TextView numAbonado;
-    TextView lblNumSeguro;
-    TextView numSeguro;
-    LinearLayout layoutCCAA;
-    TextView autonomia;
-    TextView lblAutonomia;
-    LinearLayout layoutEscala;
-    TextView escala;
-    TextView categoria;
-    TextView lblCategoria;
+    private TextView tipo;
+    private TextView lblTipoPermisoConduccion;
+    private TextView tipoPermisoConduccion;
+    private TextView lblEdad;
+    private TextView edad;
+    private TextView lblNumLicencia;
+    private TextView numLicencia;
+    private TextView expedicion;
+    private LinearLayout layoutFechaCaducidad;
+    private TextView caducidad;
+    private TextView lblAbonado;
+    private TextView numAbonado;
+    private TextView lblNumSeguro;
+    private TextView numSeguro;
+    private LinearLayout layoutCCAA;
+    private TextView autonomia;
+    private TextView lblAutonomia;
+    private LinearLayout layoutEscala;
+    private TextView escala;
+    private TextView categoria;
+    private TextView lblCategoria;
 
     public LicenciaArrayAdapter(Context context, int resource, List<Licencia> licencias) {
         super(context, resource, licencias);
-        this.context = context;
     }
 
+    @NonNull
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(int position, View convertView, @NonNull ViewGroup parent) {
         // Get the data item for this position
         Licencia licencia = getItem(position);
 

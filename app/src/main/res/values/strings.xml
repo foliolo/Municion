@@ -25,6 +25,7 @@
     <string name="section_guias_title">Guías</string>
     <string name="section_compras_title">Compras</string>
     <string name="section_licencias_title">Licencias</string>
+    <string name="section_competiciones_title">Competiciones</string>
 
     <!--String Guias Form-->
     <string name="title_nueva_guia">Nueva guía de arma</string>
@@ -92,6 +93,12 @@
     <string name="msg_err_poliza_seg">Introduce el número de la poliza del seguro</string>
     <string name="msg_err_edad">Introduce la edad</string>
 
+    <!--String Tirada Form-->
+    <string name="title_nueva_tirada">Nueva Tirada</string>
+    <string name="lbl_rango_tirada">Rango</string>
+    <string name="lbl_descripcion_tirada">Descripción</string>
+    <string name="lbl_puntuacion_tirada">Puntuación [0-600]</string>
+    <string name="msg_countdown_ultima_tirada">Para renovar tu licencia necesitas una tirada antes de éstos días:</string>
 
     <!-- General settings -->
     <string name="settings_title_change_password">Gestión de contraseñas</string>
@@ -141,7 +148,8 @@
 
     <string name="guia_empty_list">Crea una LICENCIA de armas antes de añadir una GUIA</string>
     <string name="compra_empty_list">Crea una GUIA a la que asociar la COMPRA</string>
-    <string name="licencia_empty_list">¿A qué esperas? Crea tu primera licencia</string>
+    <string name="licencia_empty_list">¿A qué esperas? Crea tu primera LICENCIA</string>
+    <string name="tiradas_empty_list">¡¡Adelante!! Agrega una COMPETICIÓN</string>
 
     <string name="auth_usuario_existente">Usuario ya existente</string>
     <string name="auth_usuario_logado">El usuario ya esta logado</string>

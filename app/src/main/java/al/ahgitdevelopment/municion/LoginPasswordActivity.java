@@ -368,6 +368,7 @@ public class LoginPasswordActivity extends AppCompatActivity implements
         intent.putParcelableArrayListExtra("guias", dbSqlHelper.getListGuias(null));
         intent.putParcelableArrayListExtra("compras", dbSqlHelper.getListCompras(null));
         intent.putParcelableArrayListExtra("licencias", dbSqlHelper.getListLicencias(null));
+        intent.putParcelableArrayListExtra("tiradas", dbSqlHelper.getListTiradas(null));
 
         checkYearCupo(intent);
 

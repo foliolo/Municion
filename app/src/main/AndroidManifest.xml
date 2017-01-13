@@ -17,6 +17,7 @@
 
     <application
         android:name=".BaseApplication"
+        android:allowBackup="true"
         android:icon="@mipmap/ic_launcher_3_light"
         android:label="@string/app_name"
         android:theme="@style/AppTheme">
@@ -44,6 +45,11 @@
         <activity
             android:name=".Forms.LicenciaFormActivity"
             android:label="@string/title_nueva_licencia"
+            android:windowSoftInputMode="stateHidden">
+        </activity>
+        <activity
+            android:name=".Forms.TiradaFormActivity"
+            android:label="@string/title_nueva_tirada"
             android:windowSoftInputMode="stateHidden">
         </activity>
 

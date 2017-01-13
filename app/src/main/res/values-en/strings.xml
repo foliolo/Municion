@@ -24,6 +24,7 @@
     <string name="section_guias_title">Property Documents</string>
     <string name="section_compras_title">Purchases</string>
     <string name="section_licencias_title">License</string>
+    <string name="section_competiciones_title">Tirada</string>
 
     <!--String Guias Form-->
     <string name="title_nueva_guia">New Property Document</string>
@@ -91,6 +92,12 @@
     <string name="msg_err_poliza_seg">Insert Number Insurance Policy</string>
     <string name="msg_err_edad">Enter your Age</string>
 
+    <!--String Tirada Form-->
+    <string name="title_nueva_tirada">New Competition</string>
+    <string name="lbl_rango_tirada">Range</string>
+    <string name="lbl_descripcion_tirada">Description</string>
+    <string name="lbl_puntuacion_tirada">Score [0-600]</string>
+    <string name="msg_countdown_ultima_tirada">Update your licence! Go shooting before it expire in the following days:</string>
 
     <!-- General settings -->
     <string name="settings_title_change_password">Change of Password</string>
@@ -134,6 +141,7 @@
     <string name="guia_empty_list">Create a weapons LICENSE before adding a document of property</string>
     <string name="compra_empty_list">Create a DOCUMENT OF PROPERTY to associate the PURCHASE</string>
     <string name="licencia_empty_list">What are you waiting for? Create your first license</string>
+    <string name="tiradas_empty_list">Come On!!! Insert a new competition</string>
 
     <string name="auth_usuario_existente">Existing User</string>
     <string name="auth_usuario_logado">User is already logged in</string>

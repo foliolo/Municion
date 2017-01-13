@@ -6,11 +6,14 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import com.google.firebase.crash.FirebaseCrash;
+
 import java.util.ArrayList;
 
 import al.ahgitdevelopment.municion.DataModel.Compra;
 import al.ahgitdevelopment.municion.DataModel.Guia;
 import al.ahgitdevelopment.municion.DataModel.Licencia;
+import al.ahgitdevelopment.municion.DataModel.Tirada;
 
 /**
  * Created by Alberto on 12/04/2016.
@@ -20,6 +23,7 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
     public static final String TABLE_GUIAS = "guias";
     public static final String TABLE_COMPRAS = "compras";
     public static final String TABLE_LICENCIAS = "licencias";
+    public static final String TABLE_TIRADAS = "tiradas";
     // Common column names
     public static final String KEY_ID = "_id";
     // Table GUIAS  - column names
@@ -62,8 +66,13 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
     public static final String KEY_LICENCIAS_AUTONOMIA = "autonomia";
     public static final String KEY_LICENCIAS_ESCALA = "escala";
     public static final String KEY_LICENCIAS_CATEGORIA = "categoria";
+    // Table TIRADAS  - column names
+    public static final String KEY_TIRADAS_DESCRIPCION = "descripcion";
+    public static final String KEY_TIRADAS_RANGO = "rango";
+    public static final String KEY_TIRADAS_FECHA = "fecha";
+    public static final String KEY_TIRADAS_PUNTUACION = "puntuacion";
     // Database Version
-    private static final int DATABASE_VERSION = 20;
+    private static final int DATABASE_VERSION = 21;
     // Database Name
     private static final String DATABASE_NAME = "DBMunicion.db";
     // Table Create Statements
@@ -86,7 +95,6 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
             + " FOREIGN KEY (" + KEY_GUIA_ID_COMPRA + ") REFERENCES " + TABLE_COMPRAS + "(" + KEY_ID + ")"
             + " FOREIGN KEY (" + KEY_GUIA_ID_LICENCIA + ") REFERENCES " + TABLE_LICENCIAS + "(" + KEY_ID + ")"
             + ")";
-
     // Compras table create statement
     private static final String CREATE_TABLE_COMPRA = "CREATE TABLE " + TABLE_COMPRAS + "("
             + KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,"
@@ -103,7 +111,6 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
             + KEY_COMPRA_IMAGEN + " TEXT,"
             + KEY_COMPRA_VALORACION + " REAL"
             + ")";
-
     // Licencias table create statement
     private static final String CREATE_TABLE_LICENCIAS = "CREATE TABLE " + TABLE_LICENCIAS + "("
             + KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,"
@@ -120,7 +127,15 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
             + KEY_LICENCIAS_ESCALA + " INTEGER,"
             + KEY_LICENCIAS_CATEGORIA + " INTEGER"
             + ")";
-
+    // Tiradas table create statement
+    private static final String CREATE_TABLE_TIRADAS = "CREATE TABLE " + TABLE_TIRADAS + "("
+            + KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,"
+            + KEY_TIRADAS_DESCRIPCION + " TEXT,"
+            + KEY_TIRADAS_RANGO + " TEXT,"
+            + KEY_TIRADAS_FECHA + " TEXT,"
+            + KEY_TIRADAS_PUNTUACION + " INTEGER"
+            + ")";
+    private final String TAG = "DataBaseSQLLiteHelper";
     public Context context;
 
     public DataBaseSQLiteHelper(Context context) {
@@ -134,20 +149,44 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
         db.execSQL(CREATE_TABLE_GUIA);
         db.execSQL(CREATE_TABLE_COMPRA);
         db.execSQL(CREATE_TABLE_LICENCIAS);
-
+        db.execSQL(CREATE_TABLE_TIRADAS);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+
+        ArrayList<Guia> guias = new ArrayList<>();
+        ArrayList<Compra> compras = new ArrayList<>();
+        ArrayList<Licencia> licencias = new ArrayList<>();
+        ArrayList<Tirada> tiradas = new ArrayList<>();
+
         // Guardado previo de la BBDD
-        ArrayList<Guia> guias = getListGuias(db);
-        ArrayList<Compra> compras = getListCompras(db);
-        ArrayList<Licencia> licencias = getListLicencias(db);
+        try {
+            guias = getListGuias(db);
+        } catch (Exception ex) {
+            FirebaseCrash.logcat(Log.WARN, TAG, "Fallo obteniendo guias. No existe la tabla");
+        }
+        try {
+            compras = getListCompras(db);
+        } catch (Exception ex) {
+            FirebaseCrash.logcat(Log.WARN, TAG, "Fallo obteniendo compras. No existe la tabla");
+        }
+        try {
+            licencias = getListLicencias(db);
+        } catch (Exception ex) {
+            FirebaseCrash.logcat(Log.WARN, TAG, "Fallo obteniendo licencias. No existe la tabla");
+        }
+        try {
+            tiradas = getListTiradas(db);
+        } catch (Exception ex) {
+            FirebaseCrash.logcat(Log.WARN, TAG, "Fallo obteniendo tiradas. No existe la tabla");
+        }
 
         // On upgrade drop older tables
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_GUIAS);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_COMPRAS);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_LICENCIAS);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_TIRADAS);
 
         // Create new tables
         onCreate(db);
@@ -156,6 +195,7 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
         saveListGuias(db, guias);
         saveListCompras(db, compras);
         saveListLicencias(db, licencias);
+        saveListTiradas(db, tiradas);
 
         Log.i(context.getPackageName(), "Upgrade Done");
     }
@@ -269,7 +309,7 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
                 ");");
     }
 
-    public Cursor getCursorGuias(SQLiteDatabase db) {
+    private Cursor getCursorGuias(SQLiteDatabase db) {
         if (db == null)
             db = this.getWritableDatabase();
         return db.query(
@@ -283,7 +323,7 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
         );
     }
 
-    public Cursor getCursorCompras(SQLiteDatabase db) {
+    private Cursor getCursorCompras(SQLiteDatabase db) {
         if (db == null)
             db = this.getWritableDatabase();
         return db.query(
@@ -297,7 +337,7 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
         );
     }
 
-    public Cursor getCursorLicencias(SQLiteDatabase db) {
+    private Cursor getCursorLicencias(SQLiteDatabase db) {
         if (db == null)
             db = this.getWritableDatabase();
         return db.query(
@@ -311,7 +351,21 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
         );
     }
 
-    public Cursor getCursorMaxGuiasLicenciaE(SQLiteDatabase db) {
+    private Cursor getCursorTiradas(SQLiteDatabase db) {
+        if (db == null)
+            db = this.getWritableDatabase();
+        return db.query(
+                DataBaseSQLiteHelper.TABLE_TIRADAS,  //Nombre de la tabla
+                null,  //Lista de Columnas a consultar
+                null,  //Columnas para la clausula WHERE
+                null,  //Valores a comparar con las columnas del WHERE
+                null,  //Agrupar con GROUP BY
+                null,  //Condición HAVING para GROUP BY
+                null  //Clausula ORDER BY
+        );
+    }
+
+    private Cursor getCursorMaxGuiasLicenciaE(SQLiteDatabase db) {
         String selection = KEY_GUIA_ID_LICENCIA + " = ?";
         String[] selectionArgs = {"4"};
         if (db == null)
@@ -327,7 +381,7 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
         );
     }
 
-    public Cursor getCursorMaxGuiasEscopeta(SQLiteDatabase db) {
+    private Cursor getCursorMaxGuiasEscopeta(SQLiteDatabase db) {
         String selection = KEY_GUIA_ID_LICENCIA + " = ?" + " AND " + KEY_GUIA_TIPO_ARMA + " = ?";
         String[] selectionArgs = {"4", "0"};
         if (db == null)
@@ -343,7 +397,7 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
         );
     }
 
-    public Cursor getCursorMaxGuiasRifle(SQLiteDatabase db) {
+    private Cursor getCursorMaxGuiasRifle(SQLiteDatabase db) {
         String selection = KEY_GUIA_ID_LICENCIA + " = ?" + " AND " + KEY_GUIA_TIPO_ARMA + " = ?";
         String[] selectionArgs = {"4", "1"};
         if (db == null)
@@ -473,6 +527,32 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
         return licencias;
     }
 
+    public ArrayList<Tirada> getListTiradas(SQLiteDatabase db) {
+        if (db == null)
+            db = this.getWritableDatabase();
+        ArrayList<Tirada> tiradas = new ArrayList<>();
+        Cursor cursor = getCursorTiradas(db);
+
+        // Looping through all rows and adding to list
+        try {
+            if (cursor != null && cursor.getCount() >= 0 && cursor.moveToFirst()) {
+                do {
+                    Tirada tirada = new Tirada();
+                    tirada.setDescripcion(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_ID)));
+                    tirada.setRango(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_LICENCIAS_TIPO)));
+                    tirada.setFecha(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_LICENCIAS_NOMBRE)));
+                    tirada.setPuntuacion(cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_LICENCIAS_TIPO_PERMISO_CONDUCCION)));
+                    // Adding to list
+                    tiradas.add(tirada);
+                } while (cursor.moveToNext());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return tiradas;
+    }
+
     public void saveListGuias(SQLiteDatabase db, ArrayList<Guia> guias) {
         if (db == null)
             db = this.getWritableDatabase();
@@ -587,6 +667,28 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
             }
         }
         Log.d(context.getPackageName(), "Licencia actualizada en BBDD");
+    }
+
+    public void saveListTiradas(SQLiteDatabase db, ArrayList<Tirada> tiradas) {
+        if (db == null)
+            db = this.getWritableDatabase();
+        db.delete(TABLE_LICENCIAS, null, null); // No elimina la tabla, solo elimina las filas
+        if (tiradas.size() > 0) {
+            for (Tirada tirada : tiradas) {
+                db.execSQL("INSERT INTO " + TABLE_TIRADAS + " (" +
+                        KEY_TIRADAS_DESCRIPCION + ", " +
+                        KEY_TIRADAS_RANGO + ", " +
+                        KEY_TIRADAS_FECHA + ", " +
+                        KEY_TIRADAS_PUNTUACION +
+                        ") VALUES (" +
+                        "'" + tirada.getDescripcion() + "' , " +
+                        "'" + tirada.getRango() + "' , " +
+                        "'" + tirada.getFecha() + "' , " +
+                        "'" + tirada.getPuntuacion() + "'" +
+                        ");");
+            }
+        }
+        Log.d(context.getPackageName(), "Tirada actualizada en BBDD");
     }
 
     public int getNumLicenciasTipoE() {

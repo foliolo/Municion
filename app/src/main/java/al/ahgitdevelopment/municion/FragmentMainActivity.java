@@ -66,28 +66,34 @@ import java.util.Locale;
 import al.ahgitdevelopment.municion.Adapters.CompraArrayAdapter;
 import al.ahgitdevelopment.municion.Adapters.GuiaArrayAdapter;
 import al.ahgitdevelopment.municion.Adapters.LicenciaArrayAdapter;
+import al.ahgitdevelopment.municion.Adapters.TiradaArrayAdapter;
 import al.ahgitdevelopment.municion.DataBases.DataBaseSQLiteHelper;
 import al.ahgitdevelopment.municion.DataModel.Compra;
 import al.ahgitdevelopment.municion.DataModel.Guia;
 import al.ahgitdevelopment.municion.DataModel.Licencia;
+import al.ahgitdevelopment.municion.DataModel.Tirada;
 import al.ahgitdevelopment.municion.Forms.CompraFormActivity;
 import al.ahgitdevelopment.municion.Forms.GuiaFormActivity;
 import al.ahgitdevelopment.municion.Forms.LicenciaFormActivity;
+import al.ahgitdevelopment.municion.Forms.TiradaFormActivity;
 
 import static al.ahgitdevelopment.municion.FragmentMainActivity.PlaceholderFragment.compraArrayAdapter;
 import static al.ahgitdevelopment.municion.FragmentMainActivity.PlaceholderFragment.guiaArrayAdapter;
 import static al.ahgitdevelopment.municion.FragmentMainActivity.PlaceholderFragment.licenciaArrayAdapter;
+import static al.ahgitdevelopment.municion.FragmentMainActivity.PlaceholderFragment.tiradaArrayAdapter;
 import static al.ahgitdevelopment.municion.Utils.PREFS_SHOW_ADS;
 
 public class FragmentMainActivity extends AppCompatActivity implements FirebaseAuth.AuthStateListener {
 
     public static final int REQUEST_IMAGE_CAPTURE = 100;
-    public static final int GUIA_COMPLETED = 1;
-    public static final int COMPRA_COMPLETED = 2;
-    private static final int LICENCIA_COMPLETED = 3;
-    private static final int GUIA_UPDATED = 4;
-    private static final int COMPRA_UPDATED = 5;
-    private static final int LICENCIA_UPDATED = 6;
+    public static final int GUIA_COMPLETED = 10;
+    public static final int COMPRA_COMPLETED = 11;
+    private static final int LICENCIA_COMPLETED = 12;
+    private static final int TIRADA_COMPLETED = 13;
+    private static final int GUIA_UPDATED = 20;
+    private static final int COMPRA_UPDATED = 21;
+    private static final int LICENCIA_UPDATED = 22;
+    private static final int TIRADA_UPDATED = 23;
     private static final String TAG = "FragmentMainActivity";
 
     public static File fileImagePath = null;
@@ -99,6 +105,7 @@ public class FragmentMainActivity extends AppCompatActivity implements FirebaseA
     public static ArrayList<Guia> guias;
     public static ArrayList<Compra> compras;
     public static ArrayList<Licencia> licencias;
+    public static ArrayList<Tirada> tiradas;
     public static TextView textEmptyList = null;
     /**
      * Constante de la referencia push() del usuario en funcion del correo del dispositivo
@@ -270,6 +277,11 @@ public class FragmentMainActivity extends AppCompatActivity implements FirebaseA
                             form = new Intent(FragmentMainActivity.this, LicenciaFormActivity.class);
                             startActivityForResult(form, LICENCIA_COMPLETED);
                             break;
+
+                        case 3:
+                            form = new Intent(FragmentMainActivity.this, TiradaFormActivity.class);
+                            startActivityForResult(form, TIRADA_COMPLETED);
+                            break;
                     }
 
                     mActionModeCallback.onDestroyActionMode(mActionMode);
@@ -338,6 +350,9 @@ public class FragmentMainActivity extends AppCompatActivity implements FirebaseA
         if (licencias == null) {
             licencias = getIntent().getParcelableArrayListExtra("licencias");
         }
+        if (tiradas == null) {
+            tiradas = getIntent().getParcelableArrayListExtra("tiradas");
+        }
     }
 
     private void showTextEmptyList() {
@@ -370,6 +385,14 @@ public class FragmentMainActivity extends AppCompatActivity implements FirebaseA
                     textEmptyList.setVisibility(View.GONE);
                 break;
 
+            case 3:
+                if (tiradas.size() == 0) {
+                    textEmptyList.setVisibility(View.VISIBLE);
+                    textEmptyList.setText(R.string.tiradas_empty_list);
+                } else
+                    textEmptyList.setVisibility(View.GONE);
+                break;
+
             default:
                 textEmptyList.setVisibility(View.GONE);
         }
@@ -385,17 +408,26 @@ public class FragmentMainActivity extends AppCompatActivity implements FirebaseA
                 form.putExtra("position", position);
                 startActivityForResult(form, GUIA_UPDATED);
                 break;
+
             case 1:
                 form = new Intent(FragmentMainActivity.this, CompraFormActivity.class);
                 form.putExtra("modify_compra", compras.get(position));
                 form.putExtra("position", position);
                 startActivityForResult(form, COMPRA_UPDATED);
                 break;
+
             case 2:
                 form = new Intent(FragmentMainActivity.this, LicenciaFormActivity.class);
                 form.putExtra("modify_licencia", licencias.get(position));
                 form.putExtra("position", position);
                 startActivityForResult(form, LICENCIA_UPDATED);
+                break;
+
+            case 3:
+                form = new Intent(FragmentMainActivity.this, TiradaFormActivity.class);
+                form.putExtra("modify_tirada", tiradas.get(position));
+                form.putExtra("position", position);
+                startActivityForResult(form, TIRADA_UPDATED);
                 break;
         }
     }
@@ -439,6 +471,10 @@ public class FragmentMainActivity extends AppCompatActivity implements FirebaseA
                     licenciaArrayAdapter.notifyDataSetChanged();
                     break;
                 }
+            case 3:
+                tiradas.remove(position);
+                tiradaArrayAdapter.notifyDataSetChanged();
+                break;
         }
     }
 
@@ -610,6 +646,12 @@ public class FragmentMainActivity extends AppCompatActivity implements FirebaseA
                     licenciaArrayAdapter.notifyDataSetChanged();
                     break;
 
+                case TIRADA_COMPLETED:
+                    Tirada newTirada = new Tirada((Tirada) data.getExtras().getParcelable("modify_tirada"));
+                    tiradas.add(newTirada);
+                    tiradaArrayAdapter.notifyDataSetChanged();
+                    break;
+
                 case GUIA_UPDATED:
                     updateGuia(data);
                     break;
@@ -618,6 +660,9 @@ public class FragmentMainActivity extends AppCompatActivity implements FirebaseA
                     break;
                 case LICENCIA_UPDATED:
                     updateLicencia(data);
+                    break;
+                case TIRADA_UPDATED:
+                    updateTirada(data);
                     break;
             }
         } else if (resultCode == RESULT_CANCELED) {
@@ -629,6 +674,7 @@ public class FragmentMainActivity extends AppCompatActivity implements FirebaseA
             dbSqlHelper.saveListGuias(null, guias);
             dbSqlHelper.saveListCompras(null, compras);
             dbSqlHelper.saveListLicencias(null, licencias);
+            dbSqlHelper.saveListTiradas(null, tiradas);
         } catch (Exception ex) {
             FirebaseCrash.report(ex);
             FirebaseCrash.logcat(Log.ERROR, TAG, "NPE caught");
@@ -647,6 +693,7 @@ public class FragmentMainActivity extends AppCompatActivity implements FirebaseA
                         userRef.child("db").child("guias").setValue(guias);
                         userRef.child("db").child("compras").setValue(compras);
                         userRef.child("db").child("licencias").setValue(licencias);
+                        userRef.child("db").child("tiradas").setValue(tiradas);
 
                         Log.i(TAG, "Guardado de listas en Firebase");
                     }
@@ -793,6 +840,16 @@ public class FragmentMainActivity extends AppCompatActivity implements FirebaseA
         }
     }
 
+    private void updateTirada(Intent data) {
+        if (data.getExtras() != null) {
+            int position = data.getExtras().getInt("position", -1);
+
+            Tirada tirada = new Tirada((Tirada) data.getExtras().get("modify_tirada"));
+            tiradas.set(position, tirada);
+
+            tiradaArrayAdapter.notifyDataSetChanged();
+        }
+    }
     /**
      * Dialog para la seleccion de la licencia qu
      */
@@ -920,8 +977,10 @@ public class FragmentMainActivity extends AppCompatActivity implements FirebaseA
         public static GuiaArrayAdapter guiaArrayAdapter = null;
         public static CompraArrayAdapter compraArrayAdapter = null;
         public static LicenciaArrayAdapter licenciaArrayAdapter = null;
+        public static TiradaArrayAdapter tiradaArrayAdapter = null;
 
-        private static ListView listView = null;
+        private static ListView listView;
+        private static TextView tiradaCountDown;
 
         /**
          * Returns a new instance of this fragment for the given section
@@ -939,30 +998,48 @@ public class FragmentMainActivity extends AppCompatActivity implements FirebaseA
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.list_view_pager, container, false);
+            listView = (ListView) rootView.findViewById(R.id.ListView);
+            tiradaCountDown = (TextView) rootView.findViewById(R.id.pager_tirada_countdown);
 
             try {
                 switch (getArguments().getInt(ARG_SECTION_NUMBER)) {
                     case 0: // Lista de las guias
-                        //Abrimos la base de datos 'DBUMunicion' en modo escritura
+                        tiradaCountDown.setVisibility(View.GONE);
                         guiaArrayAdapter = new GuiaArrayAdapter(getActivity(), R.layout.guia_item, guias);
-                        listView = (ListView) rootView.findViewById(R.id.ListView);
                         listView.setAdapter(guiaArrayAdapter);
                         break;
 
                     case 1: // Lista de las compras
+                        tiradaCountDown.setVisibility(View.GONE);
                         compraArrayAdapter = new CompraArrayAdapter(getActivity(), R.layout.compra_item, compras);
-                        listView = (ListView) rootView.findViewById(R.id.ListView);
                         listView.setAdapter(compraArrayAdapter);
                         break;
 
                     case 2: // Lista de las licencias
-
                         try {
+                            tiradaCountDown.setVisibility(View.GONE);
                             licenciaArrayAdapter = new LicenciaArrayAdapter(getActivity(), R.layout.licencia_item, licencias);
-                            listView = (ListView) rootView.findViewById(R.id.ListView);
                             listView.setAdapter(licenciaArrayAdapter);
-                        } catch (Exception e) {
-                            e.printStackTrace();
+                        } catch (Exception ex) {
+                            FirebaseCrash.logcat(Log.ERROR, TAG, ex.getMessage());
+                            FirebaseCrash.report(ex);
+                        }
+                        break;
+                    case 3: // Lista de Tiradas
+                        try {
+                            if (tiradas.size() > 0) {
+                                tiradaCountDown.setVisibility(View.VISIBLE);
+                                String countDownText = getContext().getString(R.string.msg_countdown_ultima_tirada) +
+                                        " " + Tirada.ultimaTiradaRealizada(tiradas);
+                                tiradaCountDown.setText(countDownText);
+                            } else {
+                                tiradaCountDown.setVisibility(View.GONE);
+                            }
+                            tiradaArrayAdapter = new TiradaArrayAdapter(getActivity(), R.layout.tirada_item, tiradas);
+                            listView.setAdapter(tiradaArrayAdapter);
+                        } catch (Exception ex) {
+                            FirebaseCrash.logcat(Log.ERROR, TAG, ex.getMessage());
+                            FirebaseCrash.report(ex);
                         }
                         break;
                 }
@@ -1001,13 +1078,12 @@ public class FragmentMainActivity extends AppCompatActivity implements FirebaseA
 
             return rootView;
         }
-
     }
 
     /**
      * Dialog para la seleccion de la licencia
      */
-    public static class GuiaDialogFragment extends DialogFragment {
+    public class GuiaDialogFragment extends DialogFragment {
 
         //https://developer.android.com/guide/topics/ui/dialogs.html
 
@@ -1033,21 +1109,24 @@ public class FragmentMainActivity extends AppCompatActivity implements FirebaseA
                     .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int pos) {
-                            String tipoLicencia = (String) Utils.getLicenseName(getActivity())[selectedLicense];
-                            if (tipoLicencia.equals("F - Tiro olimpico")) {
-                                if (Utils.isLicenciaFederativa(getActivity())) {
-                                    Intent form = new Intent(getActivity(), GuiaFormActivity.class);
-                                    form.putExtra("tipo_licencia", (String) Utils.getLicenseName(getActivity())[selectedLicense]);
-                                    getActivity().startActivityForResult(form, FragmentMainActivity.GUIA_COMPLETED);
-                                } else {
-                                    Toast.makeText(getActivity(), R.string.dialog_guia_licencia_federativa, Toast.LENGTH_LONG).show();
-                                    GuiaDialogFragment.this.getDialog().dismiss();
-                                }
-                            } else {
-                                Intent form = new Intent(getActivity(), GuiaFormActivity.class);
-                                form.putExtra("tipo_licencia", (String) Utils.getLicenseName(getActivity())[selectedLicense]);
-                                getActivity().startActivityForResult(form, FragmentMainActivity.GUIA_COMPLETED);
-                            }
+                            // Alberto H (10/1/2017):
+                            // Comentada la condicion de obligar al usuario a tener la licencia
+                            // federativa para poder crear la licencia F - Tiro olimpico.
+//                            String tipoLicencia = (String) Utils.getLicenseName(getActivity())[selectedLicense];
+//                            if (tipoLicencia.equals("F - Tiro olimpico")) {
+//                                if (Utils.isLicenciaFederativa(getActivity())) {
+//                                    Intent form = new Intent(getActivity(), GuiaFormActivity.class);
+//                                    form.putExtra("tipo_licencia", (String) Utils.getLicenseName(getActivity())[selectedLicense]);
+//                                    getActivity().startActivityForResult(form, FragmentMainActivity.GUIA_COMPLETED);
+//                                } else {
+//                                    Toast.makeText(getActivity(), R.string.dialog_guia_licencia_federativa, Toast.LENGTH_LONG).show();
+//                                    GuiaDialogFragment.this.getDialog().dismiss();
+//                                }
+//                            } else {
+                            Intent form = new Intent(getActivity(), GuiaFormActivity.class);
+                            form.putExtra("tipo_licencia", (String) Utils.getLicenseName(getActivity())[selectedLicense]);
+                            getActivity().startActivityForResult(form, FragmentMainActivity.GUIA_COMPLETED);
+//                            }
                         }
                     })
                     .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
@@ -1063,7 +1142,7 @@ public class FragmentMainActivity extends AppCompatActivity implements FirebaseA
     /**
      * Dialog para la seleccion de la licencia qu
      */
-    public static class CompraDialogFragment extends DialogFragment {
+    public class CompraDialogFragment extends DialogFragment {
 
         //https://developer.android.com/guide/topics/ui/dialogs.html
 
@@ -1114,9 +1193,7 @@ public class FragmentMainActivity extends AppCompatActivity implements FirebaseA
 
             return list.toArray(new CharSequence[list.size()]);
         }
-
     }
-
 
     /**
      * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
@@ -1137,7 +1214,7 @@ public class FragmentMainActivity extends AppCompatActivity implements FirebaseA
 
         @Override
         public int getCount() {
-            return 3;
+            return 4;
         }
 
         @Override
@@ -1149,6 +1226,8 @@ public class FragmentMainActivity extends AppCompatActivity implements FirebaseA
                     return getString(R.string.section_compras_title);
                 case 2:
                     return getString(R.string.section_licencias_title);
+                case 3:
+                    return getString(R.string.section_competiciones_title);
             }
             return null;
         }

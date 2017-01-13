@@ -28,7 +28,6 @@ import al.ahgitdevelopment.municion.DataModel.NotificationData;
  */
 public final class Utils {
     public static final String NOTIFICATION_PREFERENCES_FILE = "Notifications";
-    //TODO: Cambiar en produccion
     public static final String PURCHASE_ID_REMOVE_ADS = "remove_ads";
 //    public static final String PURCHASE_ID_REMOVE_ADS = "android.test.purchased";
 //    public static final String PURCHASE_ID_REMOVE_ADS = "android.test.canceled";
@@ -226,9 +225,9 @@ public final class Utils {
 
     /**
      * Método que devuelve el id (posicion en el Array) de la categoria introducida como parametro.
-     *
-     * @param context Necesario para acceder a getResources
-     * @return El indice de la categoria en el array que corresponde con su tipo
+     * @param context Contexto necesario para acceder a getResources
+     * @param cat Categoria a buscar en el array de categorias.
+     * @return
      */
     public static int getCategoriaId(Context context, int cat) {
         String[] categorias = context.getResources().getStringArray(R.array.categorias);

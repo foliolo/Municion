@@ -17,6 +17,12 @@
         <item>Avancarga</item>
     </string-array>
 
+    <string-array name="rango_tirada">
+        <item>National</item>
+        <item>Autonomic</item>
+        <item>Local</item>
+    </string-array>
+
     <string-array name="tipo_licencias">
         <item>A - Professionals / police</item>
         <item>B - Defence</item>
