@@ -16,8 +16,10 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 
 import al.ahgitdevelopment.municion.DataModel.Guia;
 import al.ahgitdevelopment.municion.DataModel.Licencia;
@@ -29,7 +31,7 @@ import al.ahgitdevelopment.municion.DataModel.NotificationData;
 public final class Utils {
     public static final String NOTIFICATION_PREFERENCES_FILE = "Notifications";
     public static final String PURCHASE_ID_REMOVE_ADS = "remove_ads";
-//    public static final String PURCHASE_ID_REMOVE_ADS = "android.test.purchased";
+    //    public static final String PURCHASE_ID_REMOVE_ADS = "android.test.purchased";
 //    public static final String PURCHASE_ID_REMOVE_ADS = "android.test.canceled";
     public static final String PREFS_SHOW_ADS = "show_ads";
     public static final String PREFS_PAYLOAD = "payload";
@@ -225,8 +227,9 @@ public final class Utils {
 
     /**
      * Método que devuelve el id (posicion en el Array) de la categoria introducida como parametro.
+     *
      * @param context Contexto necesario para acceder a getResources
-     * @param cat Categoria a buscar en el array de categorias.
+     * @param cat     Categoria a buscar en el array de categorias.
      * @return
      */
     public static int getCategoriaId(Context context, int cat) {
@@ -441,5 +444,15 @@ public final class Utils {
         }
 
         return email;
+    }
+
+    public static Date getDateFromString(String fecha) {
+        Date date = new Date();
+        try {
+            date = new SimpleDateFormat("dd/MM/yyyy").parse(fecha);
+        } catch (Exception ex) {
+            Log.e("Utils", "Fallo en el método: getDateFromString", ex);
+        }
+        return date;
     }
 }

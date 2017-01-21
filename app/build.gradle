@@ -26,8 +26,8 @@ android {
         applicationId "al.ahgitdevelopment.municion"
         minSdkVersion 15
         targetSdkVersion 25
-        versionCode 17
-        versionName '1.0.7'
+        versionCode 18
+        versionName '1.0.8'
         vectorDrawables.useSupportLibrary = true
     }
     buildTypes {
@@ -35,7 +35,7 @@ android {
             signingConfig signingConfigs.config
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            debuggable true
+            debuggable false
             jniDebuggable false
         }
         debug {

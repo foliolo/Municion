@@ -17,12 +17,11 @@ import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.View;
 import android.widget.DatePicker;
+import android.widget.Toast;
 
 import com.google.android.gms.ads.AdView;
 import com.google.firebase.crash.FirebaseCrash;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -155,11 +154,24 @@ public class TiradaFormActivity extends AppCompatActivity {
             tirada.setDescripcion(descripcion.getEditText().getText().toString());
             tirada.setRango(getStringFromRangePosition(rango.getSelectedItemPosition()));
             tirada.setFecha(fecha.getEditText().getText().toString());
-            tirada.setPuntuacion(Integer.parseInt(puntuacion.getEditText().getText().toString()));
+            tirada.setPuntuacion(checkScore(puntuacion.getEditText().getText().toString()));
         } catch (Exception ex) {
             Log.e(getPackageName(), "Fallo en el empaquetado de la tirada para la notificación", ex);
         }
         return tirada;
+    }
+
+    private int checkScore(String s) {
+        if (!s.toString().equals("")) {
+            int maxValue = 600;
+            int val = Integer.parseInt(s.toString());
+            if (val > maxValue) {
+                val = maxValue;
+                Toast.makeText(this, getString(R.string.form_tirada_aviso_puntuacion), Toast.LENGTH_SHORT).show();
+            }
+            return val;
+        }
+        return 0;
     }
 
     private int getRangePositionFromString(String rango) {
@@ -220,16 +232,10 @@ public class TiradaFormActivity extends AppCompatActivity {
                 month = calendar.get(Calendar.MONTH);
                 day = calendar.get(Calendar.DAY_OF_MONTH);
             } else {
-                try {
-                    calendar.setTime(
-                            new SimpleDateFormat("dd/MM/yyyy")
-                                    .parse(fecha.getEditText().getText().toString()));
-                    year = calendar.get(Calendar.YEAR);
-                    month = calendar.get(Calendar.MONTH);
-                    day = calendar.get(Calendar.DAY_OF_MONTH);
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
+                calendar.setTime(Utils.getDateFromString(fecha.getEditText().getText().toString()));
+                year = calendar.get(Calendar.YEAR);
+                month = calendar.get(Calendar.MONTH);
+                day = calendar.get(Calendar.DAY_OF_MONTH);
             }
             // Create a new instance of DatePickerDialog and return it
             return new DatePickerDialog(getActivity(), this, year, month, day);

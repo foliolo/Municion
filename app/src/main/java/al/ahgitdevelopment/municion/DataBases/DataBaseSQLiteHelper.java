@@ -538,10 +538,10 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
             if (cursor != null && cursor.getCount() >= 0 && cursor.moveToFirst()) {
                 do {
                     Tirada tirada = new Tirada();
-                    tirada.setDescripcion(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_ID)));
-                    tirada.setRango(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_LICENCIAS_TIPO)));
-                    tirada.setFecha(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_LICENCIAS_NOMBRE)));
-                    tirada.setPuntuacion(cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_LICENCIAS_TIPO_PERMISO_CONDUCCION)));
+                    tirada.setDescripcion(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_TIRADAS_DESCRIPCION)));
+                    tirada.setRango(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_TIRADAS_RANGO)));
+                    tirada.setFecha(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_TIRADAS_FECHA)));
+                    tirada.setPuntuacion(cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_TIRADAS_PUNTUACION)));
                     // Adding to list
                     tiradas.add(tirada);
                 } while (cursor.moveToNext());
@@ -672,7 +672,7 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
     public void saveListTiradas(SQLiteDatabase db, ArrayList<Tirada> tiradas) {
         if (db == null)
             db = this.getWritableDatabase();
-        db.delete(TABLE_LICENCIAS, null, null); // No elimina la tabla, solo elimina las filas
+        db.delete(TABLE_TIRADAS, null, null); // No elimina la tabla, solo elimina las filas
         if (tiradas.size() > 0) {
             for (Tirada tirada : tiradas) {
                 db.execSQL("INSERT INTO " + TABLE_TIRADAS + " (" +

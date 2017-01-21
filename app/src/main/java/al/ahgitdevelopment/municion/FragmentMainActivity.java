@@ -44,6 +44,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.InterstitialAd;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -61,6 +62,9 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Formatter;
 import java.util.Locale;
 
 import al.ahgitdevelopment.municion.Adapters.CompraArrayAdapter;
@@ -77,10 +81,6 @@ import al.ahgitdevelopment.municion.Forms.GuiaFormActivity;
 import al.ahgitdevelopment.municion.Forms.LicenciaFormActivity;
 import al.ahgitdevelopment.municion.Forms.TiradaFormActivity;
 
-import static al.ahgitdevelopment.municion.FragmentMainActivity.PlaceholderFragment.compraArrayAdapter;
-import static al.ahgitdevelopment.municion.FragmentMainActivity.PlaceholderFragment.guiaArrayAdapter;
-import static al.ahgitdevelopment.municion.FragmentMainActivity.PlaceholderFragment.licenciaArrayAdapter;
-import static al.ahgitdevelopment.municion.FragmentMainActivity.PlaceholderFragment.tiradaArrayAdapter;
 import static al.ahgitdevelopment.municion.Utils.PREFS_SHOW_ADS;
 
 public class FragmentMainActivity extends AppCompatActivity implements FirebaseAuth.AuthStateListener {
@@ -101,7 +101,6 @@ public class FragmentMainActivity extends AppCompatActivity implements FirebaseA
     public static ActionMode mActionMode = null;
     public static ActionMode.Callback mActionModeCallback = null;
     public static int imagePosition;
-
     public static ArrayList<Guia> guias;
     public static ArrayList<Compra> compras;
     public static ArrayList<Licencia> licencias;
@@ -110,8 +109,13 @@ public class FragmentMainActivity extends AppCompatActivity implements FirebaseA
     /**
      * Constante de la referencia push() del usuario en funcion del correo del dispositivo
      */
-    public static DatabaseReference userRef;
+    private static GuiaArrayAdapter guiaArrayAdapter = null;
+    private static CompraArrayAdapter compraArrayAdapter = null;
+    private static LicenciaArrayAdapter licenciaArrayAdapter = null;
+    private static TiradaArrayAdapter tiradaArrayAdapter = null;
+    private static ListView listView;
     private static DataBaseSQLiteHelper dbSqlHelper;
+    private static TextView tiradaCountDown;
     private Toolbar toolbar;
     /**
      * The {@link PagerAdapter} that will provide
@@ -128,6 +132,8 @@ public class FragmentMainActivity extends AppCompatActivity implements FirebaseA
     private ViewPager mViewPager;
     private SharedPreferences prefs;
     private AdView mAdView;
+    private InterstitialAd mInterstitialAd;
+    private DatabaseReference userRef;
     private FirebaseAuth mAuth = FirebaseAuth.getInstance();
 
     @Override
@@ -158,18 +164,23 @@ public class FragmentMainActivity extends AppCompatActivity implements FirebaseA
                 // Respond to clicks on the actions in the CAB
                 switch (item.getItemId()) {
                     case R.id.item_menu_modify:
-//                        Toast.makeText(FragmentMainActivity.this, "Modify item: " + (int) mActionMode.getTag(), Toast.LENGTH_SHORT).show();
                         openForm((int) mActionMode.getTag());
                         mode.finish(); // Action picked, so close the CAB
-                        return true;
+                        break;
                     case R.id.item_menu_delete:
-//                        Toast.makeText(FragmentMainActivity.this, "Delete item" + (int) mActionMode.getTag(), Toast.LENGTH_SHORT).show();
-                        deleteSelectedItems((int) mActionMode.getTag());
+                        try {
+                            deleteSelectedItems((int) mActionMode.getTag());
+                            showTextEmptyList();
+                        } catch (Exception ex) {
+                            FirebaseCrash.logcat(Log.ERROR, TAG, "Error al borrar elementos de la lista en el método onActionItemClicked()");
+                            FirebaseCrash.report(ex);
+                        }
                         mode.finish(); // Action picked, so close the CAB
-                        return true;
+                        break;
                     default:
                         return false;
                 }
+                return true;
             }
 
             @Override
@@ -224,6 +235,9 @@ public class FragmentMainActivity extends AppCompatActivity implements FirebaseA
             }
         });
         mViewPager.setCurrentItem(2);
+
+        mInterstitialAd = new InterstitialAd(this);
+        mInterstitialAd.setAdUnitId(getString(R.string.banner_login_intersticial_id));
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         if (mViewPager != null)
@@ -297,7 +311,6 @@ public class FragmentMainActivity extends AppCompatActivity implements FirebaseA
     protected void onStart() {
         super.onStart();
 
-        showTextEmptyList();
         updateGastoMunicion();
         saveUserInFirebase();
         mAuth.addAuthStateListener(this);
@@ -309,12 +322,17 @@ public class FragmentMainActivity extends AppCompatActivity implements FirebaseA
             mAdView.setVisibility(View.VISIBLE);
             mAdView.setEnabled(true);
             mAdView.loadAd(Utils.getAdRequest(mAdView));
+            mInterstitialAd.loadAd(Utils.getAdRequest(mAdView));
+
+            if (mInterstitialAd.isLoaded()) {
+                mInterstitialAd.show();
+            }
         } else {
             mAdView.setVisibility(View.GONE);
             mAdView.setEnabled(false);
         }
-    }
 
+    }
 
     @Override
     protected void onPause() {
@@ -474,7 +492,19 @@ public class FragmentMainActivity extends AppCompatActivity implements FirebaseA
             case 3:
                 tiradas.remove(position);
                 tiradaArrayAdapter.notifyDataSetChanged();
+                PlaceholderFragment.updateInfoTirada();
                 break;
+        }
+
+        try {
+            // Guardado en la BBDD local de las estructuras de datos
+            dbSqlHelper.saveListGuias(null, guias);
+            dbSqlHelper.saveListCompras(null, compras);
+            dbSqlHelper.saveListLicencias(null, licencias);
+            dbSqlHelper.saveListTiradas(null, tiradas);
+        } catch (Exception ex) {
+            FirebaseCrash.report(ex);
+            FirebaseCrash.logcat(Log.ERROR, TAG, "NPE caught");
         }
     }
 
@@ -647,8 +677,8 @@ public class FragmentMainActivity extends AppCompatActivity implements FirebaseA
                     break;
 
                 case TIRADA_COMPLETED:
-                    Tirada newTirada = new Tirada((Tirada) data.getExtras().getParcelable("modify_tirada"));
-                    tiradas.add(newTirada);
+                    tiradas.add(new Tirada((Tirada) data.getExtras().getParcelable("modify_tirada")));
+                    PlaceholderFragment.updateInfoTirada();
                     tiradaArrayAdapter.notifyDataSetChanged();
                     break;
 
@@ -662,7 +692,7 @@ public class FragmentMainActivity extends AppCompatActivity implements FirebaseA
                     updateLicencia(data);
                     break;
                 case TIRADA_UPDATED:
-                    updateTirada(data);
+                    PlaceholderFragment.updateInfoTirada(data);
                     break;
             }
         } else if (resultCode == RESULT_CANCELED) {
@@ -840,16 +870,6 @@ public class FragmentMainActivity extends AppCompatActivity implements FirebaseA
         }
     }
 
-    private void updateTirada(Intent data) {
-        if (data.getExtras() != null) {
-            int position = data.getExtras().getInt("position", -1);
-
-            Tirada tirada = new Tirada((Tirada) data.getExtras().get("modify_tirada"));
-            tiradas.set(position, tirada);
-
-            tiradaArrayAdapter.notifyDataSetChanged();
-        }
-    }
     /**
      * Dialog para la seleccion de la licencia qu
      */
@@ -974,25 +994,94 @@ public class FragmentMainActivity extends AppCompatActivity implements FirebaseA
          * The fragment argument representing the section number for this fragment.
          */
         private static final String ARG_SECTION_NUMBER = "section_number";
-        public static GuiaArrayAdapter guiaArrayAdapter = null;
-        public static CompraArrayAdapter compraArrayAdapter = null;
-        public static LicenciaArrayAdapter licenciaArrayAdapter = null;
-        public static TiradaArrayAdapter tiradaArrayAdapter = null;
-
-        private static ListView listView;
-        private static TextView tiradaCountDown;
+        private static Context context;
 
         /**
          * Returns a new instance of this fragment for the given section
          * number.
          */
-        public static PlaceholderFragment newInstance(int sectionNumber) {
+        public static PlaceholderFragment newInstance(int sectionNumber, Context mContext) {
             PlaceholderFragment fragment = new PlaceholderFragment();
             Bundle args = new Bundle();
             args.putInt(ARG_SECTION_NUMBER, sectionNumber);
             fragment.setArguments(args);
 
+            context = mContext;
+
             return fragment;
+        }
+
+        /**
+         * @param data
+         */
+        public static void updateInfoTirada(Intent data) {
+            if (data.getExtras() != null) {
+                int position = data.getExtras().getInt("position", -1);
+
+                Tirada tirada = new Tirada((Tirada) data.getExtras().get("modify_tirada"));
+                tiradas.set(position, tirada);
+            }
+            updateInfoTirada();
+        }
+
+        /**
+         *
+         */
+        private static void updateInfoTirada() {
+            try {
+                // Ordenamos el array de tiradas por fecha descendente (la mas actual arriba)
+                Collections.sort(tiradas, new Comparator<Tirada>() {
+                    @Override
+                    public int compare(Tirada date1, Tirada date2) {
+                        return Utils.getDateFromString(date2.getFecha()).compareTo(Utils.getDateFromString(date1.getFecha()));
+                    }
+                });
+
+                if (tiradas.size() > 0 && tiradaCountDown != null) {
+                    tiradaCountDown.setVisibility(View.VISIBLE);
+
+                } else {
+                    if (tiradaCountDown != null)
+                        tiradaCountDown.setVisibility(View.GONE);
+                }
+                updateCaducidadLicenciaTirada();
+
+//            tiradaArrayAdapter = new TiradaArrayAdapter(PlaceholderFragment.newInstance(3).getActivity(), R.layout.tirada_item, tiradas);
+//            listView.setAdapter(tiradaArrayAdapter);
+            } catch (Exception ex) {
+                FirebaseCrash.logcat(Log.ERROR, TAG, ex.getMessage());
+                FirebaseCrash.report(ex);
+            }
+        }
+
+        /**
+         *
+         */
+        private static void updateCaducidadLicenciaTirada() {
+            int daysRemain = Math.round(Tirada.millisUntilExpiracy(tiradas.get(0)) / (1000 * 60 * 60 * 24));
+//                    int horasRemain = Math.round(millisUntilFinished / (1000 * 60 * 60 * 24));
+//                    int minutosRemain = Math.round(millisUntilFinished / (1000 * 60 * 60));
+//                    int segundosRemain = Math.round(millisUntilFinished / (1000 * 60));
+            StringBuilder sb = new StringBuilder();
+            Formatter formatter = new Formatter(sb);
+
+            String text = formatter.format("%s\n%s %s",
+                    context.getString(R.string.lbl_caducidad_tirada),
+                    daysRemain,
+                    context.getString(R.string.days)
+            ).toString();
+
+            if (tiradaCountDown != null) {
+                tiradaCountDown.setText(text);
+            }
+
+            if (daysRemain <= 10) {
+                tiradaCountDown.setBackgroundColor(context.getColor(android.R.color.holo_red_dark));
+                tiradaCountDown.setTextColor(context.getColor(android.R.color.white));
+            } else {
+                tiradaCountDown.setBackgroundColor(context.getColor(R.color.light_yellow));
+                tiradaCountDown.setTextColor(context.getColor(android.R.color.black));
+            }
         }
 
         @Override
@@ -1029,16 +1118,14 @@ public class FragmentMainActivity extends AppCompatActivity implements FirebaseA
                         try {
                             if (tiradas.size() > 0) {
                                 tiradaCountDown.setVisibility(View.VISIBLE);
-                                String countDownText = getContext().getString(R.string.msg_countdown_ultima_tirada) +
-                                        " " + Tirada.ultimaTiradaRealizada(tiradas);
-                                tiradaCountDown.setText(countDownText);
                             } else {
                                 tiradaCountDown.setVisibility(View.GONE);
                             }
                             tiradaArrayAdapter = new TiradaArrayAdapter(getActivity(), R.layout.tirada_item, tiradas);
                             listView.setAdapter(tiradaArrayAdapter);
+                            updateInfoTirada();
                         } catch (Exception ex) {
-                            FirebaseCrash.logcat(Log.ERROR, TAG, ex.getMessage());
+                            FirebaseCrash.logcat(Log.ERROR, TAG, "Fallo al actualizar la lista de tiradas");
                             FirebaseCrash.report(ex);
                         }
                         break;
@@ -1083,7 +1170,7 @@ public class FragmentMainActivity extends AppCompatActivity implements FirebaseA
     /**
      * Dialog para la seleccion de la licencia
      */
-    public class GuiaDialogFragment extends DialogFragment {
+    public static class GuiaDialogFragment extends DialogFragment {
 
         //https://developer.android.com/guide/topics/ui/dialogs.html
 
@@ -1136,13 +1223,12 @@ public class FragmentMainActivity extends AppCompatActivity implements FirebaseA
                     });
             return builder.create();
         }
-
     }
 
     /**
      * Dialog para la seleccion de la licencia qu
      */
-    public class CompraDialogFragment extends DialogFragment {
+    public static class CompraDialogFragment extends DialogFragment {
 
         //https://developer.android.com/guide/topics/ui/dialogs.html
 
@@ -1209,7 +1295,7 @@ public class FragmentMainActivity extends AppCompatActivity implements FirebaseA
         public Fragment getItem(int position) {
             // getItem is called to instantiate the fragment for the given page.
             // Return a PlaceholderFragment (defined as a static inner class below).
-            return PlaceholderFragment.newInstance(position);
+            return PlaceholderFragment.newInstance(position, getApplicationContext());
         }
 
         @Override

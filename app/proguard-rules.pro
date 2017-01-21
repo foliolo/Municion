@@ -24,7 +24,7 @@
 # of your app.-keep class com.android.vending.billing.**
 -keepclassmembers class al.ahgitdevelopment.municion.DataModel.** { public *; }
 -keepclassmembers class al.ahgitdevelopment.municion.BillingUtil.** { public *; }
-
+-keep public class al.ahgitdevelopment.municion.BillingUtil.**
 -keep public class com.google.firebase.**
 -keep public class com.google.android.gms.**{ public *; }
 -dontwarn com.google.android.gms.**

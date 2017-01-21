@@ -2,12 +2,10 @@ package al.ahgitdevelopment.municion.DataModel;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.support.annotation.NonNull;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
+
+import al.ahgitdevelopment.municion.Utils;
 
 /**
  * Created by ahidalgog on 12/01/2017.
@@ -65,35 +63,19 @@ public class Tirada implements Parcelable {
     }
 
     /**
-     * Método que obtiene la fecha de la ultima tirada realizada
+     * Método que obtiene los milisegundos que quedan desde la fecha actual hasta un años despues de la ultima tirada
      *
-     * @param Lista de tiaradas realizadas
-     * @return Fecha de la ultima tirada
+     * @param tirada Array de tiaradas realizadas
+     * @return Milisegundos hasta que expire la licencia
      */
-    public static String ultimaTiradaRealizada(@NonNull ArrayList<Tirada> tiradas) {
-        Calendar auxLastDate = Calendar.getInstance();
+    public static long millisUntilExpiracy(Tirada tirada) {
+        Calendar ultimaTirada = Calendar.getInstance();
+        ultimaTirada.setTime(Utils.getDateFromString(tirada.getFecha()));
+
         Calendar expiracy = Calendar.getInstance();
-        auxLastDate.set(2000, 1, 1); //Iniciamos la fecha en el año 2000.
-
-        for (Tirada tirada : tiradas) {
-            try {
-                Calendar fechaTirada = Calendar.getInstance();
-                fechaTirada.setTime(new SimpleDateFormat("dd/MM/yyyy").parse(tirada.getFecha()));
-                //Actualizamos auxLastDate si fechaTirada es mas actual
-                if (fechaTirada.compareTo(auxLastDate) > 0) {
-                    auxLastDate = fechaTirada;
-                    expiracy.set(Calendar.YEAR, auxLastDate.get(Calendar.YEAR) + 1);
-                }
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
-        }
-
-        long daysInMillis = expiracy.getTimeInMillis() - auxLastDate.getTimeInMillis();
-        return String.valueOf((daysInMillis / (1000 * 60 * 60 * 24)) / 7);
-
-//        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-//        return dateFormat.format(auxLastDate.getTime());
+        expiracy.setTime(ultimaTirada.getTime());
+        expiracy.set(Calendar.YEAR, expiracy.get(Calendar.YEAR) + 1);
+        return expiracy.getTimeInMillis() - Calendar.getInstance().getTimeInMillis();
     }
 
     public String getDescripcion() {

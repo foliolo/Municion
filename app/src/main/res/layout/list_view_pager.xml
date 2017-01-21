@@ -10,9 +10,11 @@
         android:id="@+id/pager_tirada_countdown"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/item_margin_left"
+        android:gravity="center"
+        android:padding="8dp"
         android:textAlignment="center"
-        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textStyle="normal|bold"
         android:visibility="gone"
         tools:context="al.ahgitdevelopment.municion.FragmentMainActivity$PlaceholderFragment"/>/>
 

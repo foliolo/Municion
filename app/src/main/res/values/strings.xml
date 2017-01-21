@@ -25,7 +25,7 @@
     <string name="section_guias_title">Guías</string>
     <string name="section_compras_title">Compras</string>
     <string name="section_licencias_title">Licencias</string>
-    <string name="section_competiciones_title">Competiciones</string>
+    <string name="section_competiciones_title">Tiradas</string>
 
     <!--String Guias Form-->
     <string name="title_nueva_guia">Nueva guía de arma</string>
@@ -99,6 +99,11 @@
     <string name="lbl_descripcion_tirada">Descripción</string>
     <string name="lbl_puntuacion_tirada">Puntuación [0-600]</string>
     <string name="msg_countdown_ultima_tirada">Para renovar tu licencia necesitas una tirada antes de éstos días:</string>
+    <string name="form_tirada_aviso_puntuacion">Puntuación por encima de rango (600 pts)</string>
+
+    <!--TIRADAS-->
+    <string name="lbl_caducidad_tirada">Tiempo hasta que caduque tu licencia</string>
+    <string name="days">días</string>
 
     <!-- General settings -->
     <string name="settings_title_change_password">Gestión de contraseñas</string>
@@ -145,6 +150,7 @@
     <string name="banner_main_id" translatable="false">ca-app-pub-8582752139018186/4700666152</string>
     <string name="banner_formularios_id" translatable="false">ca-app-pub-8582752139018186/6177399356</string>
     <string name="banner_configuracion_id" translatable="false">ca-app-pub-8582752139018186/7654132558</string>
+    <string name="banner_login_intersticial_id" translatable="false">ca-app-pub-8582752139018186/3022096555</string>
 
     <string name="guia_empty_list">Crea una LICENCIA de armas antes de añadir una GUIA</string>
     <string name="compra_empty_list">Crea una GUIA a la que asociar la COMPRA</string>
@@ -182,6 +188,5 @@
     <string name="app_public_key" translatable="false">MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAvDvqFcMgylgnwiMHai3DqTiCEobhOp5Sx6i0TqiXpcOeB/H0AjPL7+6uqFRjrKmrxrNh0H6dw6oHPcuvO4M0WjIRfTyMOxnj/77APaVKYFJfQkebS19NxeldRiK67zVLrNVx5FWTpg4iwzOot6las7QxzAVG+CCy0KULP4q3khwZ/d0UKgJSvZwDpY6c9071tL6Vo1UTqbfAQf8lm1pinGPltZVJIQzvrCz1GAngEHU+eo4JHAUomVHJNTt7HlTABmhGUpOEG0MtMRSmlIq9yjoYvvO8PXcsFqF12z9LmMBH57Sw7mP3+9aeR6hMUS8N/Rqi6vw6KQivzeTqr0MyxwIDAQAB</string>
     <string name="settings_title_remove_ads">Eliminar publicidad</string>
     <string name="purchase_cancel">Compra cancelada</string>
-    <string name="purchase_done">Ya has realizado la compra</string>
-
+    <string name="purchase_done">Ya has eliminado la publicidad</string>
 </resources>

@@ -21,7 +21,8 @@
             android:paddingLeft="@dimen/activity_vertical_margin"
             android:paddingRight="@dimen/activity_vertical_margin"
             android:text="@string/lbl_num_licencia"
-            android:textAppearance="?android:attr/textAppearanceMedium"/>
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textStyle="normal|bold"/>
 
         <TextView
             android:id="@+id/item_rango_tirada"
@@ -32,7 +33,7 @@
             android:paddingRight="@dimen/activity_vertical_margin"
             android:text="local/social"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textStyle="bold"/>
+            />
     </LinearLayout>
 
     <LinearLayout
@@ -50,7 +51,7 @@
             android:paddingRight="@dimen/activity_vertical_margin"
             android:text="15/05/2016"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            />
+            android:textStyle="normal|bold"/>
 
         <TextView
             android:id="@+id/item_puntuacion_tirada"
@@ -61,7 +62,7 @@
             android:paddingRight="@dimen/activity_vertical_margin"
             android:text="600"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textStyle="bold"/>
+            />
     </LinearLayout>
 
 </LinearLayout>
