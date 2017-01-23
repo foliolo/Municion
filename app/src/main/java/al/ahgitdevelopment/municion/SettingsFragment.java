@@ -205,7 +205,7 @@ public class SettingsFragment extends FragmentActivity implements IabHelper.Quer
             new AlertDialog.Builder(SettingsFragment.this)
                     .setTitle(getString(R.string.purchase_cancel))
                     .setPositiveButton(android.R.string.ok, null)
-                    .setIcon(R.drawable.ic_error_red_64pt_3x)
+                    .setIcon(R.drawable.ic_warning_amber_48pt_3x)
                     .show();
             return;
         }
