@@ -204,9 +204,8 @@ public class SettingsFragment extends FragmentActivity implements IabHelper.Quer
             Log.d(TAG, "Error purchasing: " + result.toString());
             new AlertDialog.Builder(SettingsFragment.this)
                     .setTitle(getString(R.string.purchase_cancel))
-                    .setMessage(result.getMessage())
                     .setPositiveButton(android.R.string.ok, null)
-                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .setIcon(R.drawable.ic_error_red_64pt_3x)
                     .show();
             return;
         }

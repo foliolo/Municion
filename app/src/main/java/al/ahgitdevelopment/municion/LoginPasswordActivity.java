@@ -107,7 +107,7 @@ public class LoginPasswordActivity extends AppCompatActivity implements
         versionLabel.setText(Utils.getAppVersion(this));
 
         // Registro de contraseña
-        if (!prefs.contains("password")) {
+        if (!prefs.contains("password") || prefs.getString("password", "").equals("")) {
             textInputLayout2.setVisibility(View.VISIBLE);
         } else {
             textInputLayout2.setVisibility(View.GONE);
@@ -288,7 +288,7 @@ public class LoginPasswordActivity extends AppCompatActivity implements
      */
     private void evaluatePassword(SharedPreferences prefs) {
         // Registro de usuario
-        if (!prefs.contains("password")) {
+        if (!prefs.contains("password") || prefs.getString("password", "").equals("")) {
             if (savePassword()) { // Guardamos la contraseña
                 Toast.makeText(LoginPasswordActivity.this, R.string.password_save, Toast.LENGTH_LONG).show();
                 launchActivity();

@@ -1,6 +1,5 @@
 package al.ahgitdevelopment.municion.Dialogs;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
@@ -29,7 +28,6 @@ public class ResetPasswordDialog extends DialogFragment {
 
     public static TextView textEmptyList = null;
     private SharedPreferences preferences;
-    private Activity activity;
     private TextInputLayout layoutQuestion;
     private TextInputEditText question;
     private TextInputLayout layoutAnswer;
@@ -41,7 +39,6 @@ public class ResetPasswordDialog extends DialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
 
         preferences = this.getActivity().getSharedPreferences("Preferences", Context.MODE_PRIVATE);
-        activity = this.getActivity();
         final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
         // Get the layout inflater
@@ -76,7 +73,7 @@ public class ResetPasswordDialog extends DialogFragment {
                             clearPreferences();
                             Toast.makeText(getActivity(), R.string.settings_reset_password, Toast.LENGTH_SHORT).show();
                             dismiss();
-                            Intent intent = new Intent(activity, LoginPasswordActivity.class);
+                            Intent intent = new Intent(getActivity(), LoginPasswordActivity.class);
                             intent.putExtra("tutorial", false);
                             startActivity(intent);
                         } else if (!isQuestion){
@@ -106,7 +103,7 @@ public class ResetPasswordDialog extends DialogFragment {
                         clearPreferences();
                         Toast.makeText(getActivity(), R.string.settings_reset_password, Toast.LENGTH_SHORT).show();
                         dismiss();
-                        Intent intent = new Intent(activity, LoginPasswordActivity.class);
+                        Intent intent = new Intent(getActivity(), LoginPasswordActivity.class);
                         intent.putExtra("tutorial", false);
                         startActivity(intent);
                     } else if (!isQuestion){
@@ -133,8 +130,7 @@ public class ResetPasswordDialog extends DialogFragment {
     }
 
     public void clearPreferences() {
-        SharedPreferences.Editor editor = preferences.edit();
-        editor.clear();
-        editor.commit();
+        SharedPreferences prefs = getActivity().getSharedPreferences("Preferences", Context.MODE_PRIVATE);
+        prefs.edit().putString("password", "").apply();
     }
 }
