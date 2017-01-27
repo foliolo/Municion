@@ -64,7 +64,7 @@
     <string-array name="tipo_escala">
         <item>Tropa</item>
         <item>Suboficiales</item>
-        <item>Oficilales</item>
+        <item>Oficiales</item>
     </string-array>
 
     <string-array name="tipo_permiso_conducir">

@@ -24,6 +24,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
@@ -1076,11 +1077,11 @@ public class FragmentMainActivity extends AppCompatActivity implements FirebaseA
             }
 
             if (daysRemain <= 10) {
-                tiradaCountDown.setBackgroundColor(context.getColor(android.R.color.holo_red_dark));
-                tiradaCountDown.setTextColor(context.getColor(android.R.color.white));
+                tiradaCountDown.setBackgroundColor(ContextCompat.getColor(context, android.R.color.holo_red_dark));
+                tiradaCountDown.setTextColor(ContextCompat.getColor(context, android.R.color.white));
             } else {
-                tiradaCountDown.setBackgroundColor(context.getColor(R.color.light_yellow));
-                tiradaCountDown.setTextColor(context.getColor(android.R.color.black));
+                tiradaCountDown.setBackgroundColor(ContextCompat.getColor(context, R.color.light_yellow));
+                tiradaCountDown.setTextColor(ContextCompat.getColor(context, android.R.color.black));
             }
         }
 
