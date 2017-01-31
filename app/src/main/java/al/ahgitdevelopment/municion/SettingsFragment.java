@@ -45,6 +45,7 @@ public class SettingsFragment extends FragmentActivity implements IabHelper.Quer
     private IabHelper mHelper;
     private ListView settingOptionList;
     private boolean flagConsume;
+    private boolean isPurchaseAvailable;
 
     public SettingsFragment() {
         // Required empty public constructor
@@ -67,6 +68,9 @@ public class SettingsFragment extends FragmentActivity implements IabHelper.Quer
                 if (!result.isSuccess()) {
                     // Oh no, there was a problem.
                     Log.d(TAG, "Problem setting up In-app Billing: " + result.getMessage());
+                    isPurchaseAvailable = false;
+                } else {
+                    isPurchaseAvailable = true;
                 }
             }
         });
@@ -100,10 +104,13 @@ public class SettingsFragment extends FragmentActivity implements IabHelper.Quer
 
     @Override
     protected void onDestroy() {
-        if (mHelper != null)
-            mHelper.dispose();
-        mHelper = null;
-
+//        try {
+//            if (mHelper != null)
+//                mHelper.dispose();
+//            mHelper = null;
+//        } catch (IllegalArgumentException ex) {
+//            Log.e(TAG, "Fallo en el dispose de IabHelper");
+//        }
         super.onDestroy();
     }
 
@@ -128,10 +135,19 @@ public class SettingsFragment extends FragmentActivity implements IabHelper.Quer
     }
 
     public void removeAds() {
-        flagConsume = false;
-        ArrayList<String> additionalSkuList = new ArrayList<>();
-        additionalSkuList.add(PURCHASE_ID_REMOVE_ADS);
-        mHelper.queryInventoryAsync(true, additionalSkuList, this /*QueryFinishedListener*/);
+        try {
+            if (isPurchaseAvailable && Utils.isGooglePlayServicesAvailable(this)) {
+                flagConsume = false;
+                ArrayList<String> additionalSkuList = new ArrayList<>();
+                additionalSkuList.add(PURCHASE_ID_REMOVE_ADS);
+                mHelper.queryInventoryAsync(true, additionalSkuList, this /*QueryFinishedListener*/);
+            } else {
+                Toast.makeText(this, R.string.purchase_not_support, Toast.LENGTH_SHORT).show();
+            }
+        } catch (IllegalStateException ex) {
+            Toast.makeText(this, "Ex: " + R.string.purchase_not_support, Toast.LENGTH_SHORT).show();
+            FirebaseCrash.report(ex);
+        }
     }
 
     public void consumeAds() {

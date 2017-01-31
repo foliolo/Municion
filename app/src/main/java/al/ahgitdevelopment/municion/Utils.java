@@ -12,6 +12,8 @@ import android.util.Log;
 import android.view.View;
 
 import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -454,5 +456,11 @@ public final class Utils {
             Log.e("Utils", "Fallo en el método: getDateFromString", ex);
         }
         return date;
+    }
+
+    public static boolean isGooglePlayServicesAvailable(Context context) {
+        GoogleApiAvailability googleApiAvailability = GoogleApiAvailability.getInstance();
+        int resultCode = googleApiAvailability.isGooglePlayServicesAvailable(context);
+        return resultCode == ConnectionResult.SUCCESS;
     }
 }

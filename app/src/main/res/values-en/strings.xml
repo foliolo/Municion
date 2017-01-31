@@ -24,7 +24,7 @@
     <string name="section_guias_title">Property Documents</string>
     <string name="section_compras_title">Purchases</string>
     <string name="section_licencias_title">License</string>
-    <string name="section_competiciones_title">Tirada</string>
+    <string name="section_competiciones_title">Competition</string>
 
     <!--String Guias Form-->
     <string name="title_nueva_guia">New Property Document</string>
@@ -179,5 +179,6 @@
     <string name="settings_title_remove_ads">Remove Ads</string>
     <string name="purchase_cancel">Purchase Cancel</string>
     <string name="purchase_done">Ads already removed</string>
+    <string name="purchase_not_support">This device not support purchases</string>
 
 </resources>

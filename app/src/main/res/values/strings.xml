@@ -189,4 +189,5 @@
     <string name="settings_title_remove_ads">Eliminar publicidad</string>
     <string name="purchase_cancel">Compra cancelada</string>
     <string name="purchase_done">Ya has eliminado la publicidad</string>
+    <string name="purchase_not_support">Tu dispositivo no soporta compras integradas</string>
 </resources>

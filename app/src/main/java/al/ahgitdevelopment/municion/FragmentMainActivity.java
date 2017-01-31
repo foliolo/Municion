@@ -332,7 +332,6 @@ public class FragmentMainActivity extends AppCompatActivity implements FirebaseA
             mAdView.setVisibility(View.GONE);
             mAdView.setEnabled(false);
         }
-
     }
 
     @Override

@@ -58,6 +58,7 @@ public class LoginPasswordActivity extends AppCompatActivity implements
     private AdView mAdView;
 
     private IabHelper mHelper;
+    private boolean isPurchaseAvailable;
 
     /**
      * Inicializa la actividad
@@ -144,13 +145,17 @@ public class LoginPasswordActivity extends AppCompatActivity implements
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                String pass = prefs.getString("password", "");
-                if (!pass.equals("") && !password1.getText().toString().equals(pass) && textInputLayout1.getError() != null) {
-                    textInputLayout1.setError(getString(R.string.password_equal_fail));
-                }
+                try {
+                    String pass = prefs.getString("password", "");
+                    if (!pass.equals("") && !password1.getText().toString().equals(pass) && textInputLayout1.getError() != null) {
+                        textInputLayout1.setError(getString(R.string.password_equal_fail));
+                    }
 
-                if (password1.getText().toString().equals(pass) && password1.getText().toString().length() >= MIN_PASS_LENGTH)
-                    textInputLayout1.setError(null);
+                    if (password1.getText().toString().equals(pass) && password1.getText().toString().length() >= MIN_PASS_LENGTH)
+                        textInputLayout1.setError(null);
+                } catch (Exception ex) {
+                    Log.e(TAG, "Error en el onTextChange por la version de android");
+                }
             }
 
             @Override
@@ -165,10 +170,14 @@ public class LoginPasswordActivity extends AppCompatActivity implements
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (s.toString().equals(password1.getText().toString())) {
-                    textInputLayout2.setError(null);
-                } else {
-                    textInputLayout2.setError(getString(R.string.password_equal_fail));
+                try {
+                    if (s.toString().equals(password1.getText().toString())) {
+                        textInputLayout2.setError(null);
+                    } else {
+                        textInputLayout2.setError(getString(R.string.password_equal_fail));
+                    }
+                } catch (Exception ex) {
+                    Log.e(TAG, "Error en el onTextChange por la version de android");
                 }
             }
 
@@ -197,8 +206,10 @@ public class LoginPasswordActivity extends AppCompatActivity implements
             public void onIabSetupFinished(IabResult result) {
                 if (!result.isSuccess()) {
                     // Oh no, there was a problem.
-                    Log.d(TAG, "Problem setting up In-app Billing: " + result.getMessage());
+                    Log.w(TAG, "Problem setting up In-app Billing: " + result.getMessage());
+                    isPurchaseAvailable = false;
                 } else {
+                    isPurchaseAvailable = true;
                     // Hooray, IAB is fully set up!
                     // Detailed list from google play
                     ArrayList<String> additionalSkuList = new ArrayList<>();
@@ -226,10 +237,13 @@ public class LoginPasswordActivity extends AppCompatActivity implements
 
         prefs.edit().putInt("year", yearPref).apply();
 
-        if (mHelper != null)
-            mHelper.dispose();
-        mHelper = null;
-
+//        try {
+//            if (mHelper != null)
+//                mHelper.dispose();
+//            mHelper = null;
+//        } catch (IllegalArgumentException ex) {
+//            Log.e(TAG, "Fallo en el dispose de IabHelper");
+//        }
         super.onDestroy();
     }
 
@@ -491,7 +505,7 @@ public class LoginPasswordActivity extends AppCompatActivity implements
     @Override
     public void onQueryInventoryFinished(IabResult result, Inventory inventory) {
         if (result.isFailure()) {
-            Log.e(TAG, "Error obteniendo los detalles de productos" + result.getMessage());
+            Log.e(TAG, "Error obteniendo los detalles de los productos" + result.getMessage());
             return;
         }
 
