@@ -1044,12 +1044,13 @@ public class FragmentMainActivity extends AppCompatActivity implements FirebaseA
                     if (tiradaCountDown != null)
                         tiradaCountDown.setVisibility(View.GONE);
                 }
-                try {
+
+                if (tiradas.size() > 0)
                     updateCaducidadLicenciaTirada();
-                } catch (IndexOutOfBoundsException ex) {
-                    FirebaseCrash.logcat(Log.ERROR, TAG, "Error calculando la caducidad de la tirada");
-                    FirebaseCrash.report(ex);
-                }
+
+            } catch (IndexOutOfBoundsException ex) {
+                FirebaseCrash.logcat(Log.ERROR, TAG, "Error calculando la caducidad de la tirada");
+                FirebaseCrash.report(ex);
             } catch (Exception ex) {
                 FirebaseCrash.logcat(Log.ERROR, TAG, ex.getMessage());
                 FirebaseCrash.report(ex);

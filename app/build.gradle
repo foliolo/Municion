@@ -26,16 +26,16 @@ android {
         applicationId "al.ahgitdevelopment.municion"
         minSdkVersion 15
         targetSdkVersion 25
-        versionCode 21
-        versionName '1.0.11'
+        versionCode 22
+        versionName '1.1.0'
         vectorDrawables.useSupportLibrary = true
     }
     buildTypes {
         release {
             signingConfig signingConfigs.config
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            debuggable true
+            debuggable false
             jniDebuggable false
         }
         debug {
@@ -51,11 +51,11 @@ android {
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile 'com.android.support:design:25.1.0'
-    compile 'com.android.support:support-v4:25.1.0'
-    compile 'com.android.support:support-v13:25.1.0'
-    compile 'com.android.support:support-annotations:25.1.0'
-    compile 'com.android.support:appcompat-v7:25.1.0'
+    compile 'com.android.support:design:25.1.1'
+    compile 'com.android.support:support-v4:25.1.1'
+    compile 'com.android.support:support-v13:25.1.1'
+    compile 'com.android.support:support-annotations:25.1.1'
+    compile 'com.android.support:appcompat-v7:25.1.1'
     compile 'com.google.firebase:firebase-core:9.8.0'
     compile 'com.google.firebase:firebase-auth:10.0.1'
     compile 'com.google.firebase:firebase-ads:10.0.1'
