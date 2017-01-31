@@ -12,7 +12,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package al.ahgitdevelopment.municion.BillingUtil;
 
 /**
@@ -35,15 +34,10 @@ public class IabResult {
             mMessage = message + " (response: " + IabHelper.getResponseDesc(response) + ")";
         }
     }
-
     public int getResponse() { return mResponse; }
-
     public String getMessage() { return mMessage; }
-
     public boolean isSuccess() { return mResponse == IabHelper.BILLING_RESPONSE_RESULT_OK; }
-
     public boolean isFailure() { return !isSuccess(); }
-
     public String toString() { return "IabResult: " + getMessage(); }
 }
 

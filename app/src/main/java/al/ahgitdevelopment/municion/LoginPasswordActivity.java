@@ -3,6 +3,7 @@ package al.ahgitdevelopment.municion;
 import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -26,11 +27,12 @@ import android.widget.Toast;
 
 import com.google.android.gms.ads.AdView;
 import com.google.firebase.analytics.FirebaseAnalytics;
+import com.google.firebase.crash.FirebaseCrash;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import al.ahgitdevelopment.municion.BillingUtil.IabBroadcastReceiver;
 import al.ahgitdevelopment.municion.BillingUtil.IabHelper;
 import al.ahgitdevelopment.municion.BillingUtil.IabResult;
 import al.ahgitdevelopment.municion.BillingUtil.Inventory;
@@ -42,10 +44,13 @@ import static al.ahgitdevelopment.municion.Utils.PURCHASE_ID_REMOVE_ADS;
 import static al.ahgitdevelopment.municion.Utils.getStringLicenseFromId;
 
 public class LoginPasswordActivity extends AppCompatActivity implements
-        IabHelper.QueryInventoryFinishedListener {
+        IabBroadcastReceiver.IabBroadcastListener, IabHelper.QueryInventoryFinishedListener {
+
     public static final int MIN_PASS_LENGTH = 6;
     private final String TAG = "LoginPasswordActivity";
     public Toolbar toolbar;
+    // Provides purchase notification while this app is running
+    IabBroadcastReceiver mBroadcastReceiver;
     private BaseApplication baseApplication;
     private FirebaseAnalytics mFirebaseAnalytics;
     private SharedPreferences prefs;
@@ -56,7 +61,6 @@ public class LoginPasswordActivity extends AppCompatActivity implements
     private ImageView button;
     private TextView versionLabel;
     private AdView mAdView;
-
     private IabHelper mHelper;
     private boolean isPurchaseAvailable;
 
@@ -202,6 +206,9 @@ public class LoginPasswordActivity extends AppCompatActivity implements
         String base64EncodedPublicKey = getString(R.string.app_public_key);
         mHelper = new IabHelper(this, base64EncodedPublicKey);
 
+        // enable debug logging (for a production application, you should set this to false).
+        mHelper.enableDebugLogging(true);
+
         mHelper.startSetup(new IabHelper.OnIabSetupFinishedListener() {
             public void onIabSetupFinished(IabResult result) {
                 if (!result.isSuccess()) {
@@ -210,15 +217,26 @@ public class LoginPasswordActivity extends AppCompatActivity implements
                     isPurchaseAvailable = false;
                 } else {
                     isPurchaseAvailable = true;
-                    // Hooray, IAB is fully set up!
-                    // Detailed list from google play
-                    ArrayList<String> additionalSkuList = new ArrayList<>();
-                    additionalSkuList.add(PURCHASE_ID_REMOVE_ADS);
-                    mHelper.queryInventoryAsync(true, additionalSkuList,
-                            LoginPasswordActivity.this /*QueryFinishedListener*/);
+                    try {
+                        mHelper.queryInventoryAsync(LoginPasswordActivity.this /*QueryInventoryFinishedListener*/);
+                    } catch (IabHelper.IabAsyncInProgressException ex) {
+                        FirebaseCrash.logcat(Log.ERROR, TAG, "Error querying inventory. Another async operation in progress.");
+                        FirebaseCrash.report(ex);
+                    }
                 }
             }
         });
+
+        // Important: Dynamically register for broadcast messages about updated purchases.
+        // We register the receiver here instead of as a <receiver> in the Manifest
+        // because we always call getPurchases() at startup, so therefore we can ignore
+        // any broadcasts sent while the app isn't running.
+        // Note: registering this listener in an Activity is a bad idea, but is done here
+        // because this is a SAMPLE. Regardless, the receiver must be registered after
+        // IabHelper is setup, but before first call to getPurchases().
+        mBroadcastReceiver = new IabBroadcastReceiver(this /*IabBroadcastListener*/);
+        IntentFilter broadcastFilter = new IntentFilter(IabBroadcastReceiver.ACTION);
+        registerReceiver(mBroadcastReceiver, broadcastFilter);
 
         if (prefs.getBoolean(PREFS_SHOW_ADS, true)) {
             mAdView.setVisibility(View.VISIBLE);
@@ -237,13 +255,23 @@ public class LoginPasswordActivity extends AppCompatActivity implements
 
         prefs.edit().putInt("year", yearPref).apply();
 
-//        try {
-//            if (mHelper != null)
-//                mHelper.dispose();
-//            mHelper = null;
-//        } catch (IllegalArgumentException ex) {
-//            Log.e(TAG, "Fallo en el dispose de IabHelper");
-//        }
+        // very important:
+        if (mBroadcastReceiver != null) {
+            unregisterReceiver(mBroadcastReceiver);
+        }
+
+        // very important:
+        try {
+            Log.d(TAG, "Destroying helper.");
+            if (mHelper != null) {
+                mHelper.disposeWhenFinished();
+                mHelper = null;
+            }
+        } catch (IllegalArgumentException ex) {
+            Log.e(TAG, "Fallo en el dispose de IabHelper");
+            FirebaseCrash.report(ex);
+        }
+
         super.onDestroy();
     }
 
@@ -504,30 +532,50 @@ public class LoginPasswordActivity extends AppCompatActivity implements
 
     @Override
     public void onQueryInventoryFinished(IabResult result, Inventory inventory) {
-        if (result.isFailure()) {
-            Log.e(TAG, "Error obteniendo los detalles de los productos" + result.getMessage());
-            return;
-        }
+        try {
+            // if we were disposed of in the meantime, quit.
+            if (mHelper == null) return;
 
-        //Si el usuario ha comprado la eliminación de anuncios
-        if (inventory.hasPurchase(PURCHASE_ID_REMOVE_ADS)) {
-            //pero no tiene actualizado su shared prefs
-            if (prefs.getBoolean(PREFS_SHOW_ADS, true)) {
-                // Eliminamos la publicidad
-                mAdView.setVisibility(View.GONE);
-                mAdView.setEnabled(false);
-
-                // Actualizamos las preferencias
-                prefs.edit().putBoolean(PREFS_SHOW_ADS, false).apply();
+            if (result.isFailure()) {
+                Log.e(TAG, "Error obteniendo los detalles de los productos" + result.getMessage());
+                return;
             }
-        } else {
-            prefs.edit().putBoolean(PREFS_SHOW_ADS, true).apply();
-            mAdView.setVisibility(View.VISIBLE);
-            mAdView.setEnabled(true);
-            mAdView.loadAd(Utils.getAdRequest(mAdView));
-        }
 
-        checkAccountPermission();
+            //Si el usuario ha comprado la eliminación de anuncios
+            if (inventory.hasPurchase(PURCHASE_ID_REMOVE_ADS)) {
+                //pero no tiene actualizado su shared prefs
+                if (prefs.getBoolean(PREFS_SHOW_ADS, true)) {
+                    // Eliminamos la publicidad
+                    mAdView.setVisibility(View.GONE);
+                    mAdView.setEnabled(false);
+
+                    // Actualizamos las preferencias
+                    prefs.edit().putBoolean(PREFS_SHOW_ADS, false).apply();
+                }
+            } else {
+                prefs.edit().putBoolean(PREFS_SHOW_ADS, true).apply();
+                mAdView.setVisibility(View.VISIBLE);
+                mAdView.setEnabled(true);
+                mAdView.loadAd(Utils.getAdRequest(mAdView));
+            }
+
+            checkAccountPermission();
+
+        } catch (Exception ex) {
+            FirebaseCrash.logcat(Log.ERROR, TAG, "Error en el proceso de onQueryInventoryFinished");
+            FirebaseCrash.report(ex);
+        }
+    }
+
+    @Override
+    public void receivedBroadcast() {
+        // Received a broadcast notification that the inventory of items has changed
+        Log.d(TAG, "Received broadcast notification. Querying inventory.");
+        try {
+            mHelper.queryInventoryAsync(LoginPasswordActivity.this /*QueryInventoryFinishedListener*/);
+        } catch (IabHelper.IabAsyncInProgressException ex) {
+            Log.e(TAG, "Error querying inventory. Another async operation in progress.", ex);
+        }
     }
 }
 

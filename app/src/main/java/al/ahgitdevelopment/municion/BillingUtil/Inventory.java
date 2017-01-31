@@ -12,7 +12,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package al.ahgitdevelopment.municion.BillingUtil;
 
 import java.util.ArrayList;
@@ -37,23 +36,17 @@ public class Inventory {
         return mSkuMap.get(sku);
     }
 
-    /**
-     * Returns purchase information for a given product, or null if there is no purchase.
-     */
+    /** Returns purchase information for a given product, or null if there is no purchase. */
     public Purchase getPurchase(String sku) {
         return mPurchaseMap.get(sku);
     }
 
-    /**
-     * Returns whether or not there exists a purchase of the given product.
-     */
+    /** Returns whether or not there exists a purchase of the given product. */
     public boolean hasPurchase(String sku) {
         return mPurchaseMap.containsKey(sku);
     }
 
-    /**
-     * Return whether or not details about the given product are available.
-     */
+    /** Return whether or not details about the given product are available. */
     public boolean hasDetails(String sku) {
         return mSkuMap.containsKey(sku);
     }
@@ -70,16 +63,12 @@ public class Inventory {
         if (mPurchaseMap.containsKey(sku)) mPurchaseMap.remove(sku);
     }
 
-    /**
-     * Returns a list of all owned product IDs.
-     */
+    /** Returns a list of all owned product IDs. */
     List<String> getAllOwnedSkus() {
         return new ArrayList<String>(mPurchaseMap.keySet());
     }
 
-    /**
-     * Returns a list of all owned product IDs of a given type
-     */
+    /** Returns a list of all owned product IDs of a given type */
     List<String> getAllOwnedSkus(String itemType) {
         List<String> result = new ArrayList<String>();
         for (Purchase p : mPurchaseMap.values()) {
@@ -88,9 +77,7 @@ public class Inventory {
         return result;
     }
 
-    /**
-     * Returns a list of all purchases.
-     */
+    /** Returns a list of all purchases. */
     List<Purchase> getAllPurchases() {
         return new ArrayList<Purchase>(mPurchaseMap.values());
     }

@@ -12,7 +12,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package al.ahgitdevelopment.municion.BillingUtil;
 
 import org.json.JSONException;
@@ -32,6 +31,7 @@ public class Purchase {
     String mToken;
     String mOriginalJson;
     String mSignature;
+    boolean mIsAutoRenewing;
 
     public Purchase(String itemType, String jsonPurchaseInfo, String signature) throws JSONException {
         mItemType = itemType;
@@ -44,28 +44,22 @@ public class Purchase {
         mPurchaseState = o.optInt("purchaseState");
         mDeveloperPayload = o.optString("developerPayload");
         mToken = o.optString("token", o.optString("purchaseToken"));
+        mIsAutoRenewing = o.optBoolean("autoRenewing");
         mSignature = signature;
     }
 
     public String getItemType() { return mItemType; }
-
     public String getOrderId() { return mOrderId; }
-
     public String getPackageName() { return mPackageName; }
-
     public String getSku() { return mSku; }
-
     public long getPurchaseTime() { return mPurchaseTime; }
-
     public int getPurchaseState() { return mPurchaseState; }
-
     public String getDeveloperPayload() { return mDeveloperPayload; }
-
     public String getToken() { return mToken; }
-
     public String getOriginalJson() { return mOriginalJson; }
-
     public String getSignature() { return mSignature; }
+
+    public boolean isAutoRenewing() { return mIsAutoRenewing; }
 
     @Override
     public String toString() { return "PurchaseInfo(type:" + mItemType + "):" + mOriginalJson; }

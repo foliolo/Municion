@@ -1044,10 +1044,12 @@ public class FragmentMainActivity extends AppCompatActivity implements FirebaseA
                     if (tiradaCountDown != null)
                         tiradaCountDown.setVisibility(View.GONE);
                 }
-                updateCaducidadLicenciaTirada();
-
-//            tiradaArrayAdapter = new TiradaArrayAdapter(PlaceholderFragment.newInstance(3).getActivity(), R.layout.tirada_item, tiradas);
-//            listView.setAdapter(tiradaArrayAdapter);
+                try {
+                    updateCaducidadLicenciaTirada();
+                } catch (IndexOutOfBoundsException ex) {
+                    FirebaseCrash.logcat(Log.ERROR, TAG, "Error calculando la caducidad de la tirada");
+                    FirebaseCrash.report(ex);
+                }
             } catch (Exception ex) {
                 FirebaseCrash.logcat(Log.ERROR, TAG, ex.getMessage());
                 FirebaseCrash.report(ex);
@@ -1057,8 +1059,8 @@ public class FragmentMainActivity extends AppCompatActivity implements FirebaseA
         /**
          *
          */
-        private static void updateCaducidadLicenciaTirada() {
-            int daysRemain = Math.round(Tirada.millisUntilExpiracy(tiradas.get(0)) / (1000 * 60 * 60 * 24));
+        private static void updateCaducidadLicenciaTirada() throws IndexOutOfBoundsException {
+            int daysRemain = Math.round((float) Tirada.millisUntilExpiracy(tiradas.get(0)) / (1000 * 60 * 60 * 24));
 //                    int horasRemain = Math.round(millisUntilFinished / (1000 * 60 * 60 * 24));
 //                    int minutosRemain = Math.round(millisUntilFinished / (1000 * 60 * 60));
 //                    int segundosRemain = Math.round(millisUntilFinished / (1000 * 60));

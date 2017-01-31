@@ -4,6 +4,7 @@ package al.ahgitdevelopment.municion;
 import android.app.DialogFragment;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -19,8 +20,8 @@ import android.widget.Toast;
 import com.google.firebase.crash.FirebaseCrash;
 
 import java.security.SecureRandom;
-import java.util.ArrayList;
 
+import al.ahgitdevelopment.municion.BillingUtil.IabBroadcastReceiver;
 import al.ahgitdevelopment.municion.BillingUtil.IabHelper;
 import al.ahgitdevelopment.municion.BillingUtil.IabResult;
 import al.ahgitdevelopment.municion.BillingUtil.Inventory;
@@ -36,12 +37,15 @@ import static al.ahgitdevelopment.municion.Utils.PURCHASE_ID_REMOVE_ADS;
 /**
  * A simple {@link FragmentActivity} subclass.
  */
-public class SettingsFragment extends FragmentActivity implements IabHelper.QueryInventoryFinishedListener,
+public class SettingsFragment extends FragmentActivity implements
+        IabBroadcastReceiver.IabBroadcastListener, IabHelper.QueryInventoryFinishedListener,
         IabHelper.OnIabPurchaseFinishedListener, IabHelper.OnConsumeFinishedListener {
 
     private static final String TAG = "SettignsFragment";
     private static final int RC_PURCHASE_FLOW = 100;
     SharedPreferences prefs;
+    // Provides purchase notification while this app is running
+    IabBroadcastReceiver mBroadcastReceiver;
     private IabHelper mHelper;
     private ListView settingOptionList;
     private boolean flagConsume;
@@ -63,6 +67,10 @@ public class SettingsFragment extends FragmentActivity implements IabHelper.Quer
 
         String base64EncodedPublicKey = getString(R.string.app_public_key);
         mHelper = new IabHelper(this, base64EncodedPublicKey);
+
+        // enable debug logging (for a production application, you should set this to false).
+        mHelper.enableDebugLogging(true);
+
         mHelper.startSetup(new IabHelper.OnIabSetupFinishedListener() {
             public void onIabSetupFinished(IabResult result) {
                 if (!result.isSuccess()) {
@@ -103,15 +111,44 @@ public class SettingsFragment extends FragmentActivity implements IabHelper.Quer
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+
+        // Important: Dynamically register for broadcast messages about updated purchases.
+        // We register the receiver here instead of as a <receiver> in the Manifest
+        // because we always call getPurchases() at startup, so therefore we can ignore
+        // any broadcasts sent while the app isn't running.
+        // Note: registering this listener in an Activity is a bad idea, but is done here
+        // because this is a SAMPLE. Regardless, the receiver must be registered after
+        // IabHelper is setup, but before first call to getPurchases().
+        mBroadcastReceiver = new IabBroadcastReceiver(this /*IabBroadcastListener*/);
+        IntentFilter broadcastFilter = new IntentFilter(IabBroadcastReceiver.ACTION);
+        registerReceiver(mBroadcastReceiver, broadcastFilter);
+    }
+
+    /**
+     * We're being destroyed. It's important to dispose of the helper here!
+     */
+    @Override
     protected void onDestroy() {
-//        try {
-//            if (mHelper != null)
-//                mHelper.dispose();
-//            mHelper = null;
-//        } catch (IllegalArgumentException ex) {
-//            Log.e(TAG, "Fallo en el dispose de IabHelper");
-//        }
         super.onDestroy();
+
+        // very important:
+        if (mBroadcastReceiver != null) {
+            unregisterReceiver(mBroadcastReceiver);
+        }
+
+        // very important:
+        try {
+            Log.d(TAG, "Destroying helper.");
+            if (mHelper != null) {
+                mHelper.disposeWhenFinished();
+                mHelper = null;
+            }
+        } catch (IllegalArgumentException ex) {
+            Log.e(TAG, "Fallo en el dispose de IabHelper");
+            FirebaseCrash.report(ex);
+        }
     }
 
     public void changePassword() {
@@ -138,9 +175,14 @@ public class SettingsFragment extends FragmentActivity implements IabHelper.Quer
         try {
             if (isPurchaseAvailable && Utils.isGooglePlayServicesAvailable(this)) {
                 flagConsume = false;
-                ArrayList<String> additionalSkuList = new ArrayList<>();
-                additionalSkuList.add(PURCHASE_ID_REMOVE_ADS);
-                mHelper.queryInventoryAsync(true, additionalSkuList, this /*QueryFinishedListener*/);
+//                ArrayList<String> additionalSkuList = new ArrayList<>();
+//                additionalSkuList.add(PURCHASE_ID_REMOVE_ADS);
+                try {
+                    mHelper.queryInventoryAsync(this /*QueryInventoryFinishedListener*/);
+                } catch (IabHelper.IabAsyncInProgressException ex) {
+                    FirebaseCrash.logcat(Log.ERROR, TAG, "Error querying inventory. Another async operation in progress.");
+                    FirebaseCrash.report(ex);
+                }
             } else {
                 Toast.makeText(this, R.string.purchase_not_support, Toast.LENGTH_SHORT).show();
             }
@@ -152,9 +194,14 @@ public class SettingsFragment extends FragmentActivity implements IabHelper.Quer
 
     public void consumeAds() {
         flagConsume = true;
-        ArrayList<String> additionalSkuList = new ArrayList<>();
-        additionalSkuList.add(PURCHASE_ID_REMOVE_ADS);
-        mHelper.queryInventoryAsync(true, additionalSkuList, this /*QueryFinishedListener*/);
+//        ArrayList<String> additionalSkuList = new ArrayList<>();
+//        additionalSkuList.add(PURCHASE_ID_REMOVE_ADS);
+        try {
+            mHelper.queryInventoryAsync(this /*QueryInventoryFinishedListener*/);
+        } catch (IabHelper.IabAsyncInProgressException ex) {
+            FirebaseCrash.logcat(Log.ERROR, TAG, "Error querying inventory. Another async operation in progress.");
+            FirebaseCrash.report(ex);
+        }
     }
 
     @Override
@@ -164,10 +211,11 @@ public class SettingsFragment extends FragmentActivity implements IabHelper.Quer
             if (mHelper == null) return;
 
             if (result.isFailure()) {
-                Log.e(TAG, "Error obteniendo los detalles de productos" + result.getMessage());
+                Log.e(TAG, "Error obteniendo los detalles de productos" + result);
                 return;
             }
 
+            // Ya se ha realizado la compra
             if (inventory.hasPurchase(PURCHASE_ID_REMOVE_ADS)) {
                 //pero no tiene actualizado su shared prefs
                 if (prefs.getBoolean("show_ads", true)) {
@@ -177,25 +225,36 @@ public class SettingsFragment extends FragmentActivity implements IabHelper.Quer
                 Toast.makeText(SettingsFragment.this, R.string.purchase_done, Toast.LENGTH_SHORT).show();
 
                 //TODO: Remove this!!! Just for testing
-                if (flagConsume) {
-                    mHelper.consumeAsync(inventory.getPurchase(PURCHASE_ID_REMOVE_ADS), this);
-                    prefs.edit().putBoolean(PREFS_SHOW_ADS, true).apply();
+                try {
+                    if (flagConsume) {
+                        mHelper.consumeAsync(inventory.getPurchase(PURCHASE_ID_REMOVE_ADS), this);
+                        prefs.edit().putBoolean(PREFS_SHOW_ADS, true).apply();
+                    }
+                } catch (IabHelper.IabAsyncInProgressException ex) {
+                    FirebaseCrash.logcat(Log.ERROR, TAG, "Error consuming gas. Another async operation in progress.");
+                    FirebaseCrash.report(ex);
                 }
-            } else {
+            } else { //No se ha realizado la compra y procedemos a ello
                 //Generar PREFS_PAYLOAD del usuario: Numero aleatorio que identifica al usuario
                 SecureRandom random = new SecureRandom();
                 String payload = new java.math.BigInteger(130, random).toString(32);
+
                 if (!prefs.contains(PREFS_PAYLOAD))
                     prefs.edit().putString(PREFS_PAYLOAD, payload).apply();
                 else
                     payload = prefs.getString(PREFS_PAYLOAD, "");
 
                 // Realizar compra para eliminar publicidad
-                mHelper.launchPurchaseFlow(this, PURCHASE_ID_REMOVE_ADS, RC_PURCHASE_FLOW,
-                        this /*PurchaseFinishedListener*/, payload);
+                try {
+                    mHelper.launchPurchaseFlow(this, PURCHASE_ID_REMOVE_ADS, RC_PURCHASE_FLOW,
+                            this /*PurchaseFinishedListener*/, payload);
+                } catch (IabHelper.IabAsyncInProgressException ex) {
+                    FirebaseCrash.logcat(Log.ERROR, TAG, "Error launching purchase flow. Another async operation in progress.");
+                    FirebaseCrash.report(ex);
+                }
             }
         } catch (Exception ex) {
-            FirebaseCrash.logcat(Log.ERROR, TAG, ex.getMessage());
+            FirebaseCrash.logcat(Log.ERROR, TAG, "Error en el proceso de onQueryInventoryFinished");
             FirebaseCrash.report(ex);
         }
     }
@@ -248,6 +307,8 @@ public class SettingsFragment extends FragmentActivity implements IabHelper.Quer
                 // Compra realizada con existo
                 // Actualizar Shared Prefs
                 prefs.edit().putBoolean(PREFS_SHOW_ADS, false).apply();
+            } else {
+                Log.w(TAG, "Error purchasing. Authenticity verification failed.");
             }
         } catch (Exception ex) {
             FirebaseCrash.logcat(Log.ERROR, TAG, ex.getMessage());
@@ -272,6 +333,17 @@ public class SettingsFragment extends FragmentActivity implements IabHelper.Quer
         } catch (Exception ex) {
             FirebaseCrash.logcat(Log.ERROR, TAG, ex.getMessage());
             FirebaseCrash.report(ex);
+        }
+    }
+
+    @Override
+    public void receivedBroadcast() {
+        // Received a broadcast notification that the inventory of items has changed
+        Log.d(TAG, "Received broadcast notification. Querying inventory.");
+        try {
+            mHelper.queryInventoryAsync(SettingsFragment.this /*QueryInventoryFinishedListener*/);
+        } catch (IabHelper.IabAsyncInProgressException ex) {
+            Log.e(TAG, "Error querying inventory. Another async operation in progress.", ex);
         }
     }
 }
