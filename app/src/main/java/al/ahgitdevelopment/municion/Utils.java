@@ -22,6 +22,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.NoSuchElementException;
 
 import al.ahgitdevelopment.municion.DataModel.Guia;
 import al.ahgitdevelopment.municion.DataModel.Licencia;
@@ -217,14 +218,23 @@ public final class Utils {
      * @param context Contexto de la actividad
      */
     public static int getMaxCategoria(Context context) {
-        ArrayList<Integer> list = new ArrayList<>();
-        for (Licencia licencia : FragmentMainActivity.licencias) {
-            int categoria = Utils.getCategoriaId(context, licencia.getCategoria());
-            if (categoria != -1) {
-                list.add(categoria);
-            }
-        } // Devuelve el numero menor que seria la licencia de mas categoria
-        return Collections.min(list);
+        try {
+            ArrayList<Integer> list = new ArrayList<>();
+            for (Licencia licencia : FragmentMainActivity.licencias) {
+                int categoria = Utils.getCategoriaId(context, licencia.getCategoria());
+                if (categoria != -1) {
+                    list.add(categoria);
+                }
+            } // Devuelve el numero menor que seria la licencia de mas categoria
+            return Collections.min(list);
+
+        } catch (NoSuchElementException ex) {
+            Log.e("Utils", "No hay categoria maxima que comprobar", ex);
+            return -1;
+        } catch (Exception ex) {
+            Log.e("Utils", "Fallo comprobando categoría maxima", ex);
+            return -1;
+        }
     }
 
     /**

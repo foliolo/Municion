@@ -220,8 +220,9 @@ public class LoginPasswordActivity extends AppCompatActivity implements
                     try {
                         mHelper.queryInventoryAsync(LoginPasswordActivity.this /*QueryInventoryFinishedListener*/);
                     } catch (IabHelper.IabAsyncInProgressException ex) {
-                        FirebaseCrash.logcat(Log.ERROR, TAG, "Error querying inventory. Another async operation in progress.");
-                        FirebaseCrash.report(ex);
+                        Log.e(TAG, "Error querying inventory. Another async operation in progress.", ex);
+//                        FirebaseCrash.logcat(Log.ERROR, TAG, "Error querying inventory. Another async operation in progress.");
+//                        FirebaseCrash.report(ex);
                     }
                 }
             }

@@ -468,6 +468,10 @@ public class GuiaFormActivity extends AppCompatActivity {
                     .show();
             return true;
         }
+        // No se evaluan las categorías maximas
+        else if (maxCategoria == -1) {
+
+        }
         return false;
     }
 

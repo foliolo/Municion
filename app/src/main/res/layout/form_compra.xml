@@ -42,18 +42,19 @@
                     android:id="@+id/form_calibre1"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:enabled="false"
                     android:hint="@string/calibre"
                     android:imeOptions="actionNext"
-                    android:inputType="none"/>
+                    android:inputType="none|textCapSentences"/>
             </android.support.design.widget.TextInputLayout>
 
             <!--CHECK BOX CALIBRE 2-->
-
             <CheckBox
                 android:id="@+id/form_check_segundo_calibre"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:checked="false"
+                android:enabled="false"
                 android:text="@string/check_segundo_calibre"/>
             <!--CALIBRE 2-->
             <android.support.design.widget.TextInputLayout
@@ -65,9 +66,10 @@
                     android:id="@+id/form_calibre2"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:enabled="false"
                     android:hint="@string/calibre2"
                     android:imeOptions="actionNext"
-                    android:inputType="none"/>
+                    android:inputType="none|textCapSentences"/>
             </android.support.design.widget.TextInputLayout>
 
             <!--UNIDADES-->
@@ -116,7 +118,7 @@
                     android:editable="false"
                     android:hint="@string/fecha"
                     android:imeOptions="actionNext"
-                    android:inputType="date"/>
+                    android:inputType="none"/>
             </android.support.design.widget.TextInputLayout>
 
             <!--TIPO MUNICION-->
@@ -131,7 +133,7 @@
                     android:layout_height="wrap_content"
                     android:hint="@string/tipo_municion"
                     android:imeOptions="actionNext"
-                    android:inputType="text"/>
+                    android:inputType="text|textCapSentences"/>
             </android.support.design.widget.TextInputLayout>
 
             <!--PESO MUNICION-->
@@ -162,7 +164,7 @@
                     android:layout_height="wrap_content"
                     android:hint="@string/marca"
                     android:imeOptions="actionNext"
-                    android:inputType="text"/>
+                    android:inputType="text|textCapSentences"/>
             </android.support.design.widget.TextInputLayout>
 
             <!--TIENDA MUNICION-->
@@ -177,7 +179,7 @@
                     android:layout_height="wrap_content"
                     android:hint="@string/tienda"
                     android:imeOptions="actionNext"
-                    android:inputType="text"/>
+                    android:inputType="text|textCapSentences"/>
             </android.support.design.widget.TextInputLayout>
 
             <!--VALORACION-->

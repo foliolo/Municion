@@ -33,7 +33,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/lbl_descripcion_tirada"
-                    android:inputType="text"/>
+                    android:inputType="text|textCapSentences"/>
             </android.support.design.widget.TextInputLayout>
 
             <!--RANGO-->
@@ -73,6 +73,7 @@
                 <EditText
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:editable="false"
                     android:hint="@string/fecha"
                     android:inputType="none"/>
             </android.support.design.widget.TextInputLayout>

@@ -28,7 +28,6 @@
                 android:id="@+id/form_mensaje_guia"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:imeOptions="actionNext"
                 android:visibility="gone"/>
 
             <!--MARCA-->
@@ -43,7 +42,7 @@
                     android:layout_height="wrap_content"
                     android:hint="@string/marca"
                     android:imeOptions="actionNext"
-                    android:inputType="text"/>
+                    android:inputType="text|textCapSentences"/>
             </android.support.design.widget.TextInputLayout>
 
             <!--MODELO-->
@@ -58,7 +57,7 @@
                     android:layout_height="wrap_content"
                     android:hint="@string/modelo"
                     android:imeOptions="actionNext"
-                    android:inputType="text"/>
+                    android:inputType="text|textCapSentences"/>
             </android.support.design.widget.TextInputLayout>
 
             <!--APODO-->
@@ -73,7 +72,7 @@
                     android:layout_height="wrap_content"
                     android:hint="@string/apodo"
                     android:imeOptions="actionNext"
-                    android:inputType="text"/>
+                    android:inputType="text|textCapSentences"/>
             </android.support.design.widget.TextInputLayout>
 
             <!--TIPO ARMA-->
@@ -105,7 +104,7 @@
                     android:layout_height="wrap_content"
                     android:hint="@string/calibre"
                     android:imeOptions="actionNext"
-                    android:inputType="text"
+                    android:inputType="text|textCapSentences"
                     android:maxLines="1"/>
             </android.support.design.widget.TextInputLayout>
 
@@ -126,8 +125,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/calibre2"
-                    android:imeOptions="actionNext"
-                    android:inputType="text"
+                    android:inputType="text|textCapSentences"
                     android:maxLines="1"
                     android:visibility="gone"/>
             </android.support.design.widget.TextInputLayout>

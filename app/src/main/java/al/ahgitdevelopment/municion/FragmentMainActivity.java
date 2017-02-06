@@ -453,8 +453,10 @@ public class FragmentMainActivity extends AppCompatActivity implements FirebaseA
     private void deleteSelectedItems(int position) {
         switch (mViewPager.getCurrentItem()) {
             case 0:
-                guias.remove(position);
-                guiaArrayAdapter.notifyDataSetChanged();
+                if (guias != null && guias.size() > 0) {
+                    guias.remove(position);
+                    guiaArrayAdapter.notifyDataSetChanged();
+                }
                 break;
             case 1:
                 try {
@@ -490,9 +492,11 @@ public class FragmentMainActivity extends AppCompatActivity implements FirebaseA
                     break;
                 }
             case 3:
-                tiradas.remove(position);
-                tiradaArrayAdapter.notifyDataSetChanged();
-                PlaceholderFragment.updateInfoTirada();
+                if (tiradas != null && tiradas.size() > 0) {
+                    tiradas.remove(position);
+                    tiradaArrayAdapter.notifyDataSetChanged();
+                    PlaceholderFragment.updateInfoTirada();
+                }
                 break;
         }
 
@@ -1049,11 +1053,13 @@ public class FragmentMainActivity extends AppCompatActivity implements FirebaseA
                     updateCaducidadLicenciaTirada();
 
             } catch (IndexOutOfBoundsException ex) {
-                FirebaseCrash.logcat(Log.ERROR, TAG, "Error calculando la caducidad de la tirada");
-                FirebaseCrash.report(ex);
+                Log.e(TAG, "Error calculando la caducidad de la tirada", ex);
+//                FirebaseCrash.logcat(Log.ERROR, TAG, "Error calculando la caducidad de la tirada");
+//                FirebaseCrash.report(ex);
             } catch (Exception ex) {
-                FirebaseCrash.logcat(Log.ERROR, TAG, ex.getMessage());
-                FirebaseCrash.report(ex);
+                Log.e(TAG, ex.getMessage(), ex);
+//                FirebaseCrash.logcat(Log.ERROR, TAG, ex.getMessage());
+//                FirebaseCrash.report(ex);
             }
         }
 

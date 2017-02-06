@@ -113,8 +113,7 @@
             <android.support.design.widget.TextInputLayout
                 android:id="@+id/text_input_layout_licencia"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                >
+                android:layout_height="wrap_content">
 
                 <EditText
                     android:id="@+id/form_num_licencia"
@@ -151,6 +150,7 @@
                     android:id="@+id/form_fecha_expedicion"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:editable="false"
                     android:hint="@string/fecha_expedicion"
                     android:inputType="none"/>
             </android.support.design.widget.TextInputLayout>
@@ -198,7 +198,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/lbl_num_poliza"
-                    android:inputType="text"
+                    android:inputType="text|textCapSentences"
                     android:maxLength="@integer/max_poliza_seguro_licencia"
                     />
             </android.support.design.widget.TextInputLayout>
