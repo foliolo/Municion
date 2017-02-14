@@ -10,6 +10,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.provider.BaseColumns;
@@ -47,6 +48,8 @@ import android.widget.Toast;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.InterstitialAd;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
@@ -55,6 +58,8 @@ import com.google.firebase.crash.FirebaseCrash;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -136,6 +141,7 @@ public class FragmentMainActivity extends AppCompatActivity implements FirebaseA
     private InterstitialAd mInterstitialAd;
     private DatabaseReference userRef;
     private FirebaseAuth mAuth = FirebaseAuth.getInstance();
+    private FirebaseStorage mStorage = FirebaseStorage.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -220,6 +226,7 @@ public class FragmentMainActivity extends AppCompatActivity implements FirebaseA
         mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+                invalidateOptionsMenu();
             }
 
             @Override
@@ -621,7 +628,18 @@ public class FragmentMainActivity extends AppCompatActivity implements FirebaseA
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_fragment_main, menu);
-        return true;
+
+        switch (mViewPager.getCurrentItem()) {
+            case 0:
+            case 1:
+            case 2:
+                menu.findItem(R.id.tabla_tiradas).setVisible(false);
+                break;
+            case 3:
+                menu.findItem(R.id.tabla_tiradas).setVisible(true);
+                break;
+        }
+        return super.onCreateOptionsMenu(menu);
     }
 
     @Override
@@ -636,6 +654,27 @@ public class FragmentMainActivity extends AppCompatActivity implements FirebaseA
                 Intent intent = new Intent(FragmentMainActivity.this, SettingsFragment.class);
                 startActivity(intent);
                 break;
+            case R.id.tabla_tiradas:
+                StorageReference storageRef = mStorage.getReference();
+                StorageReference islandRef = storageRef.child(getString(R.string.storage_element_tabla_tiradas));
+
+                final long ONE_MEGABYTE = 1024 * 1024;
+                islandRef.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                    @Override
+                    public void onSuccess(byte[] bytes) {
+                        Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                        Utils.showDialogBitmap(FragmentMainActivity.this, bitmap);
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception exception) {
+                        // Handle any errors
+                        Log.e(TAG, "Error descargando la imagen de las tables", exception);
+                        Toast.makeText(FragmentMainActivity.this, R.string.error_downloading_image, Toast.LENGTH_LONG).show();
+                    }
+                });
+                break;
+
             default:
                 return false;
         }

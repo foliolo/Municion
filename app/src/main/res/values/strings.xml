@@ -190,4 +190,8 @@
     <string name="purchase_cancel">Compra cancelada</string>
     <string name="purchase_done">Ya has eliminado la publicidad</string>
     <string name="purchase_not_support">Tu dispositivo no soporta compras integradas</string>
+    <string name="tabla_tiradas">Puntuaciones de ascenso</string>
+    <string name="url_tabla_tiradas" translatable="false">https://firebasestorage.googleapis.com/v0/b/municion-95caa.appspot.com/o/Resources%2Ftabla_ventana_tiradas.png?alt=media&amp;token=88037b28-5aca-4e96-9d67-bfcbeb1ef2bb</string>
+    <string name="storage_element_tabla_tiradas" translatable="false">Resources/tabla_ventana_tiradas3.png</string>
+    <string name="error_downloading_image">Error descargando la imagen</string>
 </resources>

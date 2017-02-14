@@ -2,14 +2,21 @@ package al.ahgitdevelopment.municion;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
+import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
+import android.widget.RelativeLayout;
 
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.common.ConnectionResult;
@@ -22,11 +29,14 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Locale;
 import java.util.NoSuchElementException;
 
 import al.ahgitdevelopment.municion.DataModel.Guia;
 import al.ahgitdevelopment.municion.DataModel.Licencia;
 import al.ahgitdevelopment.municion.DataModel.NotificationData;
+import uk.co.senab.photoview.PhotoView;
+import uk.co.senab.photoview.PhotoViewAttacher;
 
 /**
  * Created by ahidalgog on 07/07/2016.
@@ -461,16 +471,38 @@ public final class Utils {
     public static Date getDateFromString(String fecha) {
         Date date = new Date();
         try {
-            date = new SimpleDateFormat("dd/MM/yyyy").parse(fecha);
+            date = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).parse(fecha);
         } catch (Exception ex) {
             Log.e("Utils", "Fallo en el método: getDateFromString", ex);
         }
         return date;
     }
 
-    public static boolean isGooglePlayServicesAvailable(Context context) {
+    static boolean isGooglePlayServicesAvailable(Context context) {
         GoogleApiAvailability googleApiAvailability = GoogleApiAvailability.getInstance();
         int resultCode = googleApiAvailability.isGooglePlayServicesAvailable(context);
         return resultCode == ConnectionResult.SUCCESS;
+    }
+
+    static void showDialogBitmap(Context context, Bitmap bitmap) {
+        // Any implementation of ImageView can be used!
+        PhotoView photoView = new PhotoView(context);
+        // Set the Drawable displayed
+        Drawable mDrawable = new BitmapDrawable(context.getResources(), bitmap);
+        photoView.setImageDrawable(mDrawable);
+        // Attach a PhotoViewAttacher, which takes care of all of the zooming functionality.
+        // (not needed unless you are going to change the drawable later)
+        PhotoViewAttacher mAttacher = new PhotoViewAttacher(photoView);
+
+        //Create dialog to show the image
+        Dialog builder = new Dialog(context);
+//        builder.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        builder.setTitle("Obtención de licencia F para 2ª y 1ª clase");
+        builder.getWindow()/*.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);*/
+                .setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+        builder.addContentView(mAttacher.getImageView(), new RelativeLayout.LayoutParams(
+                WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN));
+        builder.show();
     }
 }

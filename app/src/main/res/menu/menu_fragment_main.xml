@@ -10,4 +10,11 @@
         android:title="@string/action_settings"
         app:showAsAction="ifRoom"/>
     <!--android:icon="@drawable/ic_settings"-->
+    <item
+        android:id="@+id/tabla_tiradas"
+        android:icon="@drawable/tabla_tiradas2"
+        android:orderInCategory="10"
+        android:title="@string/tabla_tiradas"
+        android:visible="false"
+        app:showAsAction="ifRoom"/>
 </menu>
