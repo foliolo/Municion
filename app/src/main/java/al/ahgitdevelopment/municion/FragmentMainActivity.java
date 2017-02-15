@@ -62,8 +62,6 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -818,7 +816,9 @@ public class FragmentMainActivity extends AppCompatActivity implements FirebaseA
 
     private void updateImage(Bitmap imageBitmap) {
         //Guardado en disco de la imagen tomada con la foto
-        saveBitmapToFile(imageBitmap);
+        Utils.saveBitmapToFile(imageBitmap);
+        //Guardado de la imagen en Firebase
+        Utils.saveBitmaptoFirebase(mStorage, imageBitmap, fileImagePath, mAuth.getCurrentUser().getUid());
 
         //Actualizacion de las listas para mostrar las nuevas imagenes
         if (imageBitmap != null) {
@@ -836,23 +836,6 @@ public class FragmentMainActivity extends AppCompatActivity implements FirebaseA
             Log.e(getPackageName(), "Error en la devolucion de la imagens");
     }
 
-    private void saveBitmapToFile(Bitmap imageBitmap) {
-        FileOutputStream out = null;
-        try {
-            out = new FileOutputStream(fileImagePath);
-            imageBitmap.compress(Bitmap.CompressFormat.JPEG, 100, out); // imageBitmap is your Bitmap instance
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                if (out != null) {
-                    out.close();
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
 
     private void updateGuia(Intent data) {
         if (data.getExtras() != null) {

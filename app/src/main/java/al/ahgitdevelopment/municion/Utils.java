@@ -12,6 +12,7 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.View;
@@ -21,9 +22,17 @@ import android.widget.RelativeLayout;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.lang.reflect.Type;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -37,6 +46,8 @@ import al.ahgitdevelopment.municion.DataModel.Licencia;
 import al.ahgitdevelopment.municion.DataModel.NotificationData;
 import uk.co.senab.photoview.PhotoView;
 import uk.co.senab.photoview.PhotoViewAttacher;
+
+import static al.ahgitdevelopment.municion.FragmentMainActivity.fileImagePath;
 
 /**
  * Created by ahidalgog on 07/07/2016.
@@ -504,5 +515,56 @@ public final class Utils {
                 WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN));
         builder.show();
+    }
+
+    public static void saveBitmapToFile(Bitmap imageBitmap) {
+        FileOutputStream out = null;
+        try {
+            out = new FileOutputStream(fileImagePath);
+            imageBitmap.compress(Bitmap.CompressFormat.PNG, 100, out); // imageBitmap is your Bitmap instance
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (out != null) {
+                    out.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    /**
+     * Función para subir las imagenes a Firebase
+     *
+     * @param storage       Instancia de la bbdd de firebase
+     * @param imageBitmap   Bitmap de la imagen (No es necesaria)
+     * @param fileImagePath Ruta de la imagen local en el dispositivo
+     * @param userId        Id del usuario para crear la carpeta con su imagen
+     */
+    public static void saveBitmaptoFirebase(
+            FirebaseStorage storage, Bitmap imageBitmap, File fileImagePath, String userId) {
+
+        Uri file = Uri.fromFile(fileImagePath);
+        StorageReference riversRef = storage.getReference()
+                .child("UserImages").child(userId + "/" + fileImagePath.getName());
+        UploadTask uploadTask = riversRef.putFile(file);
+
+// Register observers to listen for when the download is done or if it fails
+        uploadTask.addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                // Handle unsuccessful uploads
+                Log.e("UploadImage", "Fallo en la subida de las imagenes a Firebase", exception);
+            }
+        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
+                Uri downloadUrl = taskSnapshot.getDownloadUrl();
+                Log.i("UploadImage", "Imagen subida: " + downloadUrl);
+            }
+        });
     }
 }

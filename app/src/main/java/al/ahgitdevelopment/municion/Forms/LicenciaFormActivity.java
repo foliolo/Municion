@@ -647,7 +647,7 @@ public class LicenciaFormActivity extends AppCompatActivity {
 
             // Creates an explicit intent for an Activity in your app
             Intent notificationIntent = new Intent(this, NotificationPublisher.class);
-            notificationIntent.putExtra(NotificationPublisher.NOTIFICATION_ID, Integer.parseInt(textInputLayoutLicencia.getEditText().getText().toString()));
+            notificationIntent.putExtra(NotificationPublisher.NOTIFICATION_ID, textInputLayoutLicencia.getEditText().getText().toString().trim());
             notificationIntent.putExtra(NotificationPublisher.NOTIFICATION, getNotification());
 
             PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);

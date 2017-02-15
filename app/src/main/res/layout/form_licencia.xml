@@ -120,7 +120,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/lbl_num_licencia"
-                    android:inputType="text|number"
+                    android:inputType="text"
                     android:maxLength="@integer/max_num_licencia_length"/>
             </android.support.design.widget.TextInputLayout>
 

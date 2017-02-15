@@ -142,7 +142,7 @@
                     android:layout_height="wrap_content"
                     android:hint="@string/numGuia"
                     android:imeOptions="actionNext"
-                    android:inputType="text|number"
+                    android:inputType="text"
                     android:maxLength="@integer/max_num_guia_form_guias"/>
             </android.support.design.widget.TextInputLayout>
 
@@ -158,7 +158,7 @@
                     android:layout_height="wrap_content"
                     android:hint="@string/num_arma"
                     android:imeOptions="actionNext"
-                    android:inputType="text|number"
+                    android:inputType="text"
                     android:maxLength="@integer/max_num_arma_form_guias"/>
             </android.support.design.widget.TextInputLayout>
 

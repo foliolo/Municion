@@ -1,9 +1,12 @@
 package al.ahgitdevelopment.municion.Adapters;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.provider.MediaStore;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -40,7 +43,7 @@ public class GuiaArrayAdapter extends ArrayAdapter<Guia> {
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
         // Get the data item for this position
-        Guia guia = getItem(position);
+        final Guia guia = getItem(position);
         // Check if an existing view is being reused, otherwise inflate the view
         if (convertView == null) {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.guia_item, parent, false);
@@ -55,30 +58,46 @@ public class GuiaArrayAdapter extends ArrayAdapter<Guia> {
         TextView cupo = (TextView) convertView.findViewById(R.id.item_cupo_guia);
         TextView gastado = (TextView) convertView.findViewById(R.id.item_gastados_guia);
 
-//        if (guia.getImagePath() != null && !guia.getImagePath().equals("null")) {
-//            imagen.setImageBitmap(BitmapFactory.decodeFile(guia.getImagePath()));
-//        } else {
-//            imagen.setImageResource(Utils.getRandomWeapon());
-//        }
-        imagen.setImageResource(Utils.getResourceWeapon(guia.getTipoLicencia(), guia.getTipoArma()));
+        if (guia.getImagePath() != null && !guia.getImagePath().equals("null")) {
+            imagen.setImageBitmap(BitmapFactory.decodeFile(guia.getImagePath()));
+        } else {
+            imagen.setImageResource(Utils.getResourceWeapon(guia.getTipoLicencia(), guia.getTipoArma()));
+        }
 
         apodo.setText(guia.getApodo());
         numGuia.setText(String.valueOf(guia.getNumGuia()));
         cupo.setText(guia.getGastado() + " / " + guia.getCupo());
         gastado.setText(String.format("%.2f", (1.0 * guia.getGastado() / guia.getCupo() * 100)) + "%");
 
-//        imagen.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                FragmentMainActivity.imagePosition = position;
-//                new AlertDialog.Builder()
-//                        .setCancelable(true)
-//                        .setView(R.layout.dialog_image_view)
-//                        .setNeutralButton(R.string.modif_image)
-//
-//                dispatchTakePictureIntent();
-//            }
-//        });
+        imagen.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FragmentMainActivity.imagePosition = position;
+
+                View layout = ((FragmentMainActivity) context).getLayoutInflater()
+                        .inflate(R.layout.dialog_image_view, null);
+                if (guia.getImagePath() != null && !guia.getImagePath().equals("null")) {
+                    ((ImageView) layout.findViewById(R.id.image_view)).setImageBitmap(
+                            BitmapFactory.decodeFile(guia.getImagePath()));
+                } else {
+                    ((ImageView) layout.findViewById(R.id.image_view)).setImageResource(
+                            Utils.getResourceWeapon(guia.getTipoLicencia(), guia.getTipoArma()));
+                }
+
+
+                new AlertDialog.Builder(context)
+                        .setCancelable(true)
+                        .setView(layout)
+                        .setNeutralButton("Cambiao de imagen"/*R.string.change_image*/, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dispatchTakePictureIntent();
+                            }
+                        })
+                        .setPositiveButton(android.R.string.ok, null)
+                        .show();
+            }
+        });
 
         // Return the completed view to render on screen
         return convertView;

@@ -396,8 +396,8 @@ public class GuiaFormActivity extends AppCompatActivity {
             }
             bundle.putString("calibre2", calibre2.getText().toString());
         }
-        bundle.putInt("numGuia", Integer.parseInt(layoutNumGuia.getEditText().getText().toString()));
-        bundle.putInt("numArma", Integer.parseInt(layoutNumArma.getEditText().getText().toString()));
+        bundle.putString("numGuia", layoutNumGuia.getEditText().getText().toString().trim());
+        bundle.putString("numArma", layoutNumArma.getEditText().getText().toString().trim());
         bundle.putInt("cupo", Integer.parseInt(layoutCupo.getEditText().getText().toString()));
         bundle.putInt("gastado", Integer.parseInt(layoutGastado.getEditText().getText().toString()));
 

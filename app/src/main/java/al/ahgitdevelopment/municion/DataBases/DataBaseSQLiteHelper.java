@@ -197,7 +197,7 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
         saveListLicencias(db, licencias);
         saveListTiradas(db, tiradas);
 
-        Log.i(context.getPackageName(), "Upgrade Done");
+        Log.i(TAG, "BBDD Upgrade Done");
     }
 
     /**
