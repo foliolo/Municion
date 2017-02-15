@@ -190,14 +190,14 @@ public final class Utils {
      * @param context Contexto de la actividad
      * @param id      Identificador de la notificacion
      */
-    public static void removeNotificationFromSharedPreference(Context context, int id) {
+    public static void removeNotificationFromSharedPreference(Context context, String id) {
         if (prefs == null)
             prefs = context.getSharedPreferences(NOTIFICATION_PREFERENCES_FILE, Context.MODE_PRIVATE);
 
         SharedPreferences.Editor editor = prefs.edit();
 
         for (int i = 0; i < listNotificationData.size(); i++) {
-            if (listNotificationData.get(i).getId().equals(String.valueOf(id))) {
+            if (listNotificationData.get(i).getId().equals(id)) {
                 listNotificationData.remove(i);
             }
         }
@@ -271,7 +271,7 @@ public final class Utils {
      * @return tamaño de la lista de guias
      */
     public static int getNumGuias(Context context) {
-        ArrayList<Integer> list = new ArrayList<Integer>();
+        ArrayList<String> list = new ArrayList<>();
         for (Guia guia : FragmentMainActivity.guias) {
             String licenseName = Utils.getStringLicenseFromId(context, guia.getTipoLicencia());
             if (licenseName.equals("F - Tiro olimpico")) {

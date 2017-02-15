@@ -750,7 +750,7 @@ public class LicenciaFormActivity extends AppCompatActivity {
                 licencia.setTipoPermisoConduccion(tipoPermisoConducir.getSelectedItemPosition());
             } else
                 licencia.setTipoPermisoConduccion(-1);
-            licencia.setNumLicencia(Integer.parseInt(String.valueOf(textInputLayoutLicencia.getEditText().getText().toString().trim())));
+            licencia.setNumLicencia(textInputLayoutLicencia.getEditText().getText().toString().trim());
             licencia.setFechaExpedicion(layoutFechaExpedicion.getEditText().getText().toString().trim());
             licencia.setFechaCaducidad(layoutFechaCaducidad.getEditText().getText().toString().trim());
             if (layoutNumAbonado.getVisibility() == View.VISIBLE) {

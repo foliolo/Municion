@@ -30,7 +30,7 @@ public class Licencia implements Parcelable {
     private int edad;
     private String fechaExpedicion;
     private String fechaCaducidad;
-    private int numLicencia;
+    private String numLicencia;
     private int numAbonado;
     private String numSeguro;
     private int autonomia;
@@ -48,7 +48,7 @@ public class Licencia implements Parcelable {
         this.edad = in.readInt();
         this.setFechaExpedicion(in.readString());
         this.setFechaCaducidad(in.readString());
-        this.numLicencia = in.readInt();
+        this.numLicencia = in.readString();
         this.numAbonado = in.readInt();
         this.numSeguro = in.readString();
         this.autonomia = in.readInt();
@@ -61,7 +61,7 @@ public class Licencia implements Parcelable {
         this.nombre = getNombre(context);
         this.tipoPermisoConduccion = extras.getInt("tipo_permiso_conduccion", -1);
         this.edad = extras.getInt("edad");
-        this.numLicencia = extras.getInt("num_licencia", -1);
+        this.numLicencia = extras.getString("num_licencia", "");
         this.setFechaExpedicion(extras.getString("fecha_expedicion", ""));
         this.setFechaCaducidad(extras.getString("fecha_caducidad", ""));
         this.numAbonado = extras.getInt("num_abonado", -1);
@@ -131,11 +131,11 @@ public class Licencia implements Parcelable {
         this.edad = edad;
     }
 
-    public int getNumLicencia() {
+    public String getNumLicencia() {
         return numLicencia;
     }
 
-    public void setNumLicencia(int numLicencia) {
+    public void setNumLicencia(String numLicencia) {
         this.numLicencia = numLicencia;
     }
 
@@ -213,7 +213,7 @@ public class Licencia implements Parcelable {
         dest.writeInt(edad);
         dest.writeString(getFechaExpedicion());
         dest.writeString(getFechaCaducidad());
-        dest.writeInt(numLicencia);
+        dest.writeString(numLicencia);
         dest.writeInt(numAbonado);
         dest.writeString(numSeguro);
         dest.writeInt(autonomia);

@@ -72,7 +72,7 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
     public static final String KEY_TIRADAS_FECHA = "fecha";
     public static final String KEY_TIRADAS_PUNTUACION = "puntuacion";
     // Database Version
-    private static final int DATABASE_VERSION = 21;
+    private static final int DATABASE_VERSION = 22;
     // Database Name
     private static final String DATABASE_NAME = "DBMunicion.db";
     // Table Create Statements
@@ -87,8 +87,8 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
             + KEY_GUIA_TIPO_ARMA + " INTEGER NOT NULL,"
             + KEY_GUIA_CALIBRE1 + " TEXT NOT NULL,"
             + KEY_GUIA_CALIBRE2 + " TEXT,"
-            + KEY_GUIA_NUM_GUIA + " INTEGER NOT NULL,"
-            + KEY_GUIA_NUM_ARMA + " INTEGER NOT NULL,"
+            + KEY_GUIA_NUM_GUIA + " TEXT NOT NULL,"
+            + KEY_GUIA_NUM_ARMA + " TEXT NOT NULL,"
             + KEY_GUIA_IMAGEN + " TEXT,"
             + KEY_GUIA_CUPO + " INTEGER NOT NULL,"
             + KEY_GUIA_GASTADO + " INTEGER NOT NULL,"
@@ -120,7 +120,7 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
             + KEY_LICENCIAS_EDAD + " INTEGER,"
             + KEY_LICENCIAS_FECHA_EXPEDICION + " TEXT NOT NULL,"
             + KEY_LICENCIAS_FECHA_CADUCIDAD + " TEXT NOT NULL,"
-            + KEY_LICENCIAS_NUM_LICENCIA + " INTEGER NOT NULL,"
+            + KEY_LICENCIAS_NUM_LICENCIA + " TEXT NOT NULL,"
             + KEY_LICENCIAS_NUM_ABONADO + " INTEGER,"
             + KEY_LICENCIAS_NUM_SEGURO + " TEXT,"
             + KEY_LICENCIAS_AUTONOMIA + " INTEGER,"
@@ -432,8 +432,8 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
                 guia.setTipoArma(cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_GUIA_TIPO_ARMA)));
                 guia.setCalibre1(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_GUIA_CALIBRE1)));
                 guia.setCalibre2(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_GUIA_CALIBRE2)));
-                guia.setNumGuia(cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_GUIA_NUM_GUIA)));
-                guia.setNumArma(cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_GUIA_NUM_ARMA)));
+                guia.setNumGuia(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_GUIA_NUM_GUIA)));
+                guia.setNumArma(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_GUIA_NUM_ARMA)));
                 guia.setImagePath(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_GUIA_IMAGEN)));
                 guia.setCupo(cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_GUIA_CUPO)));
                 guia.setGastado(cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_GUIA_GASTADO)));
@@ -502,7 +502,7 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
                     licencia.setEdad(cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_LICENCIAS_EDAD)));
                     licencia.setFechaExpedicion(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_LICENCIAS_FECHA_EXPEDICION)));
                     licencia.setFechaCaducidad(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_LICENCIAS_FECHA_CADUCIDAD)));
-                    licencia.setNumLicencia(cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_LICENCIAS_NUM_LICENCIA)));
+                    licencia.setNumLicencia(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_LICENCIAS_NUM_LICENCIA)));
                     licencia.setNumAbonado(cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_LICENCIAS_NUM_ABONADO)));
                     licencia.setNumSeguro(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_LICENCIAS_NUM_SEGURO)));
                     licencia.setAutonomia(cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_LICENCIAS_AUTONOMIA)));

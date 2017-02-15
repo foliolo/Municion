@@ -60,18 +60,22 @@ public class GuiaArrayAdapter extends ArrayAdapter<Guia> {
 //        } else {
 //            imagen.setImageResource(Utils.getRandomWeapon());
 //        }
-
         imagen.setImageResource(Utils.getResourceWeapon(guia.getTipoLicencia(), guia.getTipoArma()));
+
         apodo.setText(guia.getApodo());
         numGuia.setText(String.valueOf(guia.getNumGuia()));
         cupo.setText(guia.getGastado() + " / " + guia.getCupo());
         gastado.setText(String.format("%.2f", (1.0 * guia.getGastado() / guia.getCupo() * 100)) + "%");
 
-        //FIXME: A veces borra la imagen (Eliminar funcionalidad)
 //        imagen.setOnClickListener(new View.OnClickListener() {
 //            @Override
 //            public void onClick(View v) {
 //                FragmentMainActivity.imagePosition = position;
+//                new AlertDialog.Builder()
+//                        .setCancelable(true)
+//                        .setView(R.layout.dialog_image_view)
+//                        .setNeutralButton(R.string.modif_image)
+//
 //                dispatchTakePictureIntent();
 //            }
 //        });

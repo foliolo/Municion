@@ -868,8 +868,8 @@ public class FragmentMainActivity extends AppCompatActivity implements FirebaseA
             guia.setTipoArma(data.getExtras().getInt("tipoArma"));
             guia.setCalibre1(data.getExtras().getString("calibre1"));
             guia.setCalibre2(data.getExtras().getString("calibre2"));
-            guia.setNumGuia(data.getExtras().getInt("numGuia"));
-            guia.setNumArma(data.getExtras().getInt("numArma"));
+            guia.setNumGuia(data.getExtras().getString("numGuia"));
+            guia.setNumArma(data.getExtras().getString("numArma"));
             guia.setImagePath(data.getExtras().getString("imagePath"));
             guia.setCupo(data.getExtras().getInt("cupo"));
             guia.setGastado(data.getExtras().getInt("gastado"));

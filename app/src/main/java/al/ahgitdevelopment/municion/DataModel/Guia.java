@@ -28,8 +28,8 @@ public class Guia implements Parcelable {
     private int tipoArma;
     private String calibre1;
     private String calibre2;
-    private int numGuia;
-    private int numArma;
+    private String numGuia;
+    private String numArma;
     private String imagePath;
     private int cupo;
     private int gastado;
@@ -47,9 +47,8 @@ public class Guia implements Parcelable {
         tipoArma = in.readInt();
         calibre1 = in.readString();
         calibre2 = in.readString();
-        numGuia = in.readInt();
-        numArma = in.readInt();
-//        imagen = in.readParcelable(Bitmap.class.getClassLoader());
+        numGuia = in.readString();
+        numArma = in.readString();
         imagePath = in.readString();
         cupo = in.readInt();
         gastado = in.readInt();
@@ -63,8 +62,8 @@ public class Guia implements Parcelable {
         tipoArma = extras.getInt("tipoArma");
         calibre1 = extras.getString("calibre1");
         calibre2 = extras.getString("calibre2");
-        numGuia = extras.getInt("numGuia");
-        numArma = extras.getInt("numArma");
+        numGuia = extras.getString("numGuia");
+        numArma = extras.getString("numArma");
         imagePath = extras.getString("imagePath");
         gastado = extras.getInt("gastado");
         cupo = extras.getInt("cupo");
@@ -143,19 +142,19 @@ public class Guia implements Parcelable {
         this.calibre2 = calibre2;
     }
 
-    public int getNumGuia() {
+    public String getNumGuia() {
         return numGuia;
     }
 
-    public void setNumGuia(int numGuia) {
+    public void setNumGuia(String numGuia) {
         this.numGuia = numGuia;
     }
 
-    public int getNumArma() {
+    public String getNumArma() {
         return numArma;
     }
 
-    public void setNumArma(int numArma) {
+    public void setNumArma(String numArma) {
         this.numArma = numArma;
     }
 
@@ -199,8 +198,8 @@ public class Guia implements Parcelable {
         dest.writeInt(tipoArma);
         dest.writeString(calibre1);
         dest.writeString(calibre2);
-        dest.writeInt(numGuia);
-        dest.writeInt(numArma);
+        dest.writeString(numGuia);
+        dest.writeString(numArma);
         dest.writeString(imagePath);
         dest.writeInt(cupo);
         dest.writeInt(gastado);
