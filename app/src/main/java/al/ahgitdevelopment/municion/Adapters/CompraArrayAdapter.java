@@ -1,9 +1,12 @@
 package al.ahgitdevelopment.municion.Adapters;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.provider.MediaStore;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -39,7 +42,7 @@ public class CompraArrayAdapter extends ArrayAdapter<Compra> {
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
         // Get the data item for this position
-        Compra compra = getItem(position);
+        final Compra compra = getItem(position);
         // Check if an existing view is being reused, otherwise inflate the view
         if (convertView == null) {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.compra_item, parent, false);
@@ -54,20 +57,16 @@ public class CompraArrayAdapter extends ArrayAdapter<Compra> {
         TextView precio = (TextView) convertView.findViewById(R.id.item_precio_compra);
         TextView year = (TextView) convertView.findViewById(R.id.item_year_compra);
 
-//        if (compra.getImagePath() != null)
-//            imagen.setImageBitmap(BitmapFactory.decodeFile(compra.getImagePath()));
-//        else
-//            imagen.setImageResource(R.drawable.municion1);
-//        if (compra.getImagePath() == null) {
-//            int tipoArma = FragmentMainActivity.guias.get(compra.getIdPosGuia()).getTipoArma();
-//            imagen.setImageResource(Utils.getResourceCartucho(tipoArma));
-//        }
-        try {
-            imagen.setImageResource(Utils.getResourceCartucho(
-                    FragmentMainActivity.guias.get(compra.getIdPosGuia()).getTipoLicencia(),
-                    FragmentMainActivity.guias.get(compra.getIdPosGuia()).getTipoArma()));
-        } catch (Exception ex) {
-            Log.e(context.getPackageName(), "Fallo en la carga de imagen de los cartuchos");
+        if (compra.getImagePath() != null) {
+            imagen.setImageBitmap(BitmapFactory.decodeFile(compra.getImagePath()));
+        } else {
+            try {
+                imagen.setImageResource(Utils.getResourceCartucho(
+                        FragmentMainActivity.guias.get(compra.getIdPosGuia()).getTipoLicencia(),
+                        FragmentMainActivity.guias.get(compra.getIdPosGuia()).getTipoArma()));
+            } catch (Exception ex) {
+                Log.e(context.getPackageName(), "Fallo en la carga de imagen de los cartuchos");
+            }
         }
 
         if (compra.getCalibre2() == null || "".equals(compra.getCalibre2()))
@@ -79,14 +78,43 @@ public class CompraArrayAdapter extends ArrayAdapter<Compra> {
         precio.setText(String.format("%.2f€", compra.getPrecio()));
         year.setText(compra.getFecha().split("/")[2]);
 
-        //FIXME: Falla el control de las imagenes guardas en disco, por eso lo he eliminado.
-//        imagen.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                FragmentMainActivity.imagePosition = position;
+        imagen.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FragmentMainActivity.imagePosition = position;
 //                dispatchTakePictureIntent();
-//            }
-//        });
+
+                //Creamos la vista del dialogo para mostar la imagen
+                View layout = ((FragmentMainActivity) context).getLayoutInflater()
+                        .inflate(R.layout.dialog_image_view, null);
+
+                if (compra.getImagePath() != null) {
+                    ((ImageView) layout.findViewById(R.id.image_view)).setImageBitmap(
+                            BitmapFactory.decodeFile(compra.getImagePath())
+                    );
+                } else {
+                    try {
+                        ((ImageView) layout.findViewById(R.id.image_view)).setImageResource(Utils.getResourceCartucho(
+                                FragmentMainActivity.guias.get(compra.getIdPosGuia()).getTipoLicencia(),
+                                FragmentMainActivity.guias.get(compra.getIdPosGuia()).getTipoArma()));
+                    } catch (Exception ex) {
+                        Log.e(context.getPackageName(), "Fallo en la carga de imagen de los cartuchos");
+                    }
+                }
+
+                new AlertDialog.Builder(context)
+                        .setCancelable(true)
+                        .setView(layout)
+                        .setNeutralButton(R.string.change_image, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dispatchTakePictureIntent();
+                            }
+                        })
+                        .setPositiveButton(android.R.string.ok, null)
+                        .show();
+            }
+        });
 
         // Return the completed view to render on screen
         return convertView;
