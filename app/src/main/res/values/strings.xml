@@ -195,4 +195,5 @@
     <string name="storage_element_tabla_tiradas" translatable="false">Resources/tabla_ventana_tiradas3.png</string>
     <string name="error_downloading_image">Error descargando la imagen</string>
     <string name="change_image">Cambiar imagen</string>
+    <string name="delete_image">Borrar imagen</string>
 </resources>

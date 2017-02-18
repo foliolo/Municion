@@ -134,7 +134,7 @@ public class CompraArrayAdapter extends ArrayAdapter<Compra> {
             }
             // Continue only if the File was successfully created
             if (photoFile != null) {
-                FragmentMainActivity.fileImagePath = photoFile;
+                FragmentMainActivity.fileImagePath = photoFile.getAbsolutePath();
                 ((AppCompatActivity) context).startActivityForResult(takePictureIntent, FragmentMainActivity.REQUEST_IMAGE_CAPTURE);
             }
         }

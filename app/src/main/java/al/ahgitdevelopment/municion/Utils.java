@@ -9,6 +9,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
@@ -17,6 +18,7 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 import com.google.android.gms.ads.AdRequest;
@@ -30,6 +32,7 @@ import com.google.firebase.storage.UploadTask;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -521,7 +524,7 @@ public final class Utils {
         FileOutputStream out = null;
         try {
             out = new FileOutputStream(fileImagePath);
-            imageBitmap.compress(Bitmap.CompressFormat.PNG, 100, out); // imageBitmap is your Bitmap instance
+            imageBitmap.compress(Bitmap.CompressFormat.JPEG, 70, out); // imageBitmap is your Bitmap instance
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -543,15 +546,17 @@ public final class Utils {
      * @param fileImagePath Ruta de la imagen local en el dispositivo
      * @param userId        Id del usuario para crear la carpeta con su imagen
      */
-    public static void saveBitmaptoFirebase(
-            FirebaseStorage storage, Bitmap imageBitmap, File fileImagePath, String userId) {
+    public static void saveBitmapToFirebase(
+            FirebaseStorage storage, Bitmap imageBitmap, String fileImagePath, String userId) {
 
-        Uri file = Uri.fromFile(fileImagePath);
+        File file = new File(fileImagePath);
+
         StorageReference riversRef = storage.getReference()
-                .child("UserImages").child(userId + "/" + fileImagePath.getName());
-        UploadTask uploadTask = riversRef.putFile(file);
+                .child("UserImages").child(userId + "/" + file.getName());
+//        UploadTask uploadTask = riversRef.putFile(Uri.fromFile(file));
+        UploadTask uploadTask = riversRef.putBytes(bitmapToByteArray(imageBitmap));
 
-// Register observers to listen for when the download is done or if it fails
+        // Register observers to listen for when the download is done or if it fails
         uploadTask.addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception exception) {
@@ -566,5 +571,76 @@ public final class Utils {
                 Log.i("UploadImage", "Imagen subida: " + downloadUrl);
             }
         });
+    }
+
+
+    public static Bitmap resizeImage(Bitmap original, ImageView view) {
+        // Get the dimensions of the View
+        int targetW, targetH;
+        if (view != null /*&& view.getWidth()!=0 && view.getHeight()!=0*/) {
+            targetW = view.getLayoutParams().width;// getWidth();
+            targetH = view.getLayoutParams().height;
+        } else {
+            targetW = 300;
+            targetH = 200;
+        }
+        // Get the dimensions of the bitmap
+        BitmapFactory.Options bmOptions = new BitmapFactory.Options();
+        bmOptions.inJustDecodeBounds = true;
+
+//        BitmapFactory.decodeFile(FragmentMainActivity.fileImagePath, bmOptions);
+        byte[] imageByte = bitmapToByteArray(original);
+        BitmapFactory.decodeByteArray(imageByte, 0, imageByte.length, bmOptions);
+
+        int photoW = bmOptions.outWidth;
+        int photoH = bmOptions.outHeight;
+
+        // Determine how much to scale down the image
+        int scaleFactor = Math.min(photoW / targetW, photoH / targetH);
+
+        // Decode the image file into a Bitmap sized to fill the View
+        bmOptions.inJustDecodeBounds = false;
+        bmOptions.inSampleSize = scaleFactor;
+        bmOptions.inPurgeable = true;
+
+        Bitmap bitmap = BitmapFactory.decodeFile(FragmentMainActivity.fileImagePath, bmOptions);
+//        view.setImageBitmap(bitmap);
+        return bitmap;
+    }
+
+//    private void setPic() {
+//        // Get the dimensions of the View
+//        int targetW = mImageView.getWidth();
+//        int targetH = mImageView.getHeight();
+//
+//        // Get the dimensions of the bitmap
+//        BitmapFactory.Options bmOptions = new BitmapFactory.Options();
+//        bmOptions.inJustDecodeBounds = true;
+//        BitmapFactory.decodeFile(mCurrentPhotoPath, bmOptions);
+//        int photoW = bmOptions.outWidth;
+//        int photoH = bmOptions.outHeight;
+//
+//        // Determine how much to scale down the image
+//        int scaleFactor = Math.min(photoW / targetW, photoH / targetH);
+//
+//        // Decode the image file into a Bitmap sized to fill the View
+//        bmOptions.inJustDecodeBounds = false;
+//        bmOptions.inSampleSize = scaleFactor;
+//        bmOptions.inPurgeable = true;
+//
+//        Bitmap bitmap = BitmapFactory.decodeFile(mCurrentPhotoPath, bmOptions);
+//        mImageView.setImageBitmap(bitmap);
+//    }
+
+    /**
+     * Metodo para convertir un Bitmap en un byte[]
+     *
+     * @param image Imagen
+     * @return Byte[] de la imagen
+     */
+    public static byte[] bitmapToByteArray(Bitmap image) {
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        image.compress(Bitmap.CompressFormat.JPEG, 70 /*ignored for PNG*/, bos);
+        return bos.toByteArray();
     }
 }

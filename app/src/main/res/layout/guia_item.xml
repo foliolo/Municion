@@ -10,6 +10,7 @@
         android:id="@+id/imageArma"
         android:layout_width="110dp"
         android:layout_height="90dp"
+        android:layout_gravity="center"
         android:layout_marginEnd="@dimen/appbar_padding_top"
         android:layout_marginRight="@dimen/appbar_padding_top"
         android:clickable="true"

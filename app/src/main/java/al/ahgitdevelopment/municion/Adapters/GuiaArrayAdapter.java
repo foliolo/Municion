@@ -3,9 +3,13 @@ package al.ahgitdevelopment.municion.Adapters;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Build;
+import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -33,7 +37,6 @@ import al.ahgitdevelopment.municion.Utils;
 public class GuiaArrayAdapter extends ArrayAdapter<Guia> {
 
     private Context context;
-    private String mCurrentPhotoPath;
 
     public GuiaArrayAdapter(Context context, int resource, List<Guia> guias) {
         super(context, resource, guias);
@@ -59,7 +62,8 @@ public class GuiaArrayAdapter extends ArrayAdapter<Guia> {
         TextView gastado = (TextView) convertView.findViewById(R.id.item_gastados_guia);
 
         if (guia.getImagePath() != null && !guia.getImagePath().equals("null")) {
-            imagen.setImageBitmap(BitmapFactory.decodeFile(guia.getImagePath()));
+            Bitmap bitmap = BitmapFactory.decodeFile(guia.getImagePath());
+            imagen.setImageBitmap(Utils.resizeImage(bitmap, imagen));
         } else {
             imagen.setImageResource(Utils.getResourceWeapon(guia.getTipoLicencia(), guia.getTipoArma()));
         }
@@ -74,11 +78,12 @@ public class GuiaArrayAdapter extends ArrayAdapter<Guia> {
             public void onClick(View v) {
                 FragmentMainActivity.imagePosition = position;
 
-                View layout = ((FragmentMainActivity) context).getLayoutInflater()
-                        .inflate(R.layout.dialog_image_view, null);
+                // Creamos la vista del dialogo para mostrar la imagen
+                View layout = ((FragmentMainActivity) context).getLayoutInflater().inflate(R.layout.dialog_image_view, null);
                 if (guia.getImagePath() != null && !guia.getImagePath().equals("null")) {
-                    ((ImageView) layout.findViewById(R.id.image_view)).setImageBitmap(
-                            BitmapFactory.decodeFile(guia.getImagePath()));
+                    ImageView imageViewDialog = ((ImageView) layout.findViewById(R.id.image_view));
+                    Bitmap bitmap = Utils.resizeImage(BitmapFactory.decodeFile(guia.getImagePath()), imageViewDialog);
+                    imageViewDialog.setImageBitmap(bitmap);
                 } else {
                     ((ImageView) layout.findViewById(R.id.image_view)).setImageResource(
                             Utils.getResourceWeapon(guia.getTipoLicencia(), guia.getTipoArma()));
@@ -88,10 +93,17 @@ public class GuiaArrayAdapter extends ArrayAdapter<Guia> {
                 new AlertDialog.Builder(context)
                         .setCancelable(true)
                         .setView(layout)
-                        .setNeutralButton("Cambiao de imagen"/*R.string.change_image*/, new DialogInterface.OnClickListener() {
+                        .setNeutralButton(R.string.change_image, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 dispatchTakePictureIntent();
+                            }
+                        })
+                        .setNegativeButton(R.string.delete_image, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                guia.setImagePath(null);
+                                notifyDataSetChanged();
                             }
                         })
                         .setPositiveButton(android.R.string.ok, null)
@@ -115,9 +127,13 @@ public class GuiaArrayAdapter extends ArrayAdapter<Guia> {
             } catch (IOException ex) {
                 Log.e(context.getPackageName(), "IOException");
             }
+
             // Continue only if the File was successfully created
             if (photoFile != null) {
-                FragmentMainActivity.fileImagePath = photoFile;
+                Uri photoURI = FileProvider.getUriForFile(context,
+                        "al.ahgitdevelopment.municion.fileprovider",
+                        photoFile);
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
                 ((AppCompatActivity) context).startActivityForResult(takePictureIntent, FragmentMainActivity.REQUEST_IMAGE_CAPTURE);
             }
         }
@@ -130,8 +146,9 @@ public class GuiaArrayAdapter extends ArrayAdapter<Guia> {
         String imageFileName = "JPEG_" + timeStamp;
 //        File storageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
 //        File storageDir = context.getCacheDir() /*+ File.separator + "Armas")*/;
-        File storageDir = context.getFilesDir() /*+ File.separator + "Armas")*/;
+//        File storageDir = context.getFilesDir() /*+ File.separator + "Armas")*/;
 //        File storageDir = context.getExternalCacheDir(); /*+ File.separator + "Armas")*/
+        File storageDir = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
 
         if (!storageDir.exists()) {
             storageDir.mkdir();
@@ -144,10 +161,10 @@ public class GuiaArrayAdapter extends ArrayAdapter<Guia> {
                 ".jpg",         /* suffix */
                 storageDir      /* directory */
         );
-        image.setWritable(true, false); //Da permisos para que otra aplicacion pueda escribir en el fichero temporal de la memoria cache reservada
+//        image.setWritable(true, false); //Da permisos para que otra aplicacion pueda escribir en el fichero temporal de la memoria cache reservada
 
         // Save a file: path for use with ACTION_VIEW intents
-        mCurrentPhotoPath = "file:" + image.getAbsolutePath();
+        FragmentMainActivity.fileImagePath = image.getAbsolutePath();
         return image;
     }
 }

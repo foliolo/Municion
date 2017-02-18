@@ -183,5 +183,6 @@
     <string name="tabla_tiradas">Promotions scores</string>
     <string name="error_downloading_image">Error downloading the image</string>
     <string name="change_image">Change image</string>
+    <string name="delete_image">Delete image</string>
 
 </resources>

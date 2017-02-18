@@ -12,9 +12,11 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.provider.BaseColumns;
 import android.provider.CalendarContract;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -100,7 +102,7 @@ public class FragmentMainActivity extends AppCompatActivity implements FirebaseA
     private static final int TIRADA_UPDATED = 23;
     private static final String TAG = "FragmentMainActivity";
 
-    public static File fileImagePath = null;
+    public static String fileImagePath = null;
     public static View auxView = null;
     public static ActionMode mActionMode = null;
     public static ActionMode.Callback mActionModeCallback = null;
@@ -689,16 +691,19 @@ public class FragmentMainActivity extends AppCompatActivity implements FirebaseA
      */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Bitmap imageBitmap;
+        Bitmap imageBitmap = null;
         // Check which request we're responding to
         if (resultCode == RESULT_OK) {
             switch (requestCode) {
                 case REQUEST_IMAGE_CAPTURE:
-                    if (data != null) {
-                        imageBitmap = (Bitmap) data.getExtras().get("data");
+                    try {
+                        imageBitmap = MediaStore.Images.Media.getBitmap(
+                                getContentResolver(), Uri.fromFile(new File(fileImagePath)));
+//                        imageBitmap = Utils.resizeImage(imageBitmap, null);
                         updateImage(imageBitmap);
-                    } else
-                        Log.i(getPackageName(), "Intent sin informacion");
+                    } catch (Exception ex) {
+                        Log.e(TAG, "Error obteniendo la imagen de la camara", ex);
+                    }
                     break;
 
                 case GUIA_COMPLETED:
@@ -815,25 +820,29 @@ public class FragmentMainActivity extends AppCompatActivity implements FirebaseA
     }
 
     private void updateImage(Bitmap imageBitmap) {
-        //Guardado en disco de la imagen tomada con la foto
-        Utils.saveBitmapToFile(imageBitmap);
-        //Guardado de la imagen en Firebase
-        Utils.saveBitmaptoFirebase(mStorage, imageBitmap, fileImagePath, mAuth.getCurrentUser().getUid());
-
-        //Actualizacion de las listas para mostrar las nuevas imagenes
         if (imageBitmap != null) {
+            try {
+                //Guardado en disco de la imagen tomada con la foto
+                Utils.saveBitmapToFile(imageBitmap);
+                //Guardado de la imagen en Firebase
+                Utils.saveBitmapToFirebase(mStorage, imageBitmap, fileImagePath, mAuth.getCurrentUser().getUid());
+            } catch (Exception ex) {
+                Log.e(TAG, "Error guarando la imagen en Firebase", ex);
+            }
+
+            //Actualizacion de las listas para mostrar las nuevas imagenes
             switch (mViewPager.getCurrentItem()) {
                 case 0:
-                    guias.get(imagePosition).setImagePath(fileImagePath.getAbsolutePath());
+                    guias.get(imagePosition).setImagePath(fileImagePath);
                     guiaArrayAdapter.notifyDataSetChanged();
                     break;
                 case 1:
-                    compras.get(imagePosition).setImagePath(fileImagePath.getAbsolutePath());
+                    compras.get(imagePosition).setImagePath(fileImagePath);
                     compraArrayAdapter.notifyDataSetChanged();
                     break;
             }
         } else
-            Log.e(getPackageName(), "Error en la devolucion de la imagens");
+            Log.e(TAG, "Imagen Null. No se han guardado las imagenes");
     }
 
 
