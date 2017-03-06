@@ -11,6 +11,7 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.ThumbnailUtils;
 import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Bundle;
@@ -655,24 +656,29 @@ public class FragmentMainActivity extends AppCompatActivity implements FirebaseA
                 startActivity(intent);
                 break;
             case R.id.tabla_tiradas:
-                StorageReference storageRef = mStorage.getReference();
-                StorageReference islandRef = storageRef.child(getString(R.string.storage_element_tabla_tiradas));
+                if (Utils.isNetworkAvailable(this)) {
+                    StorageReference storageRef = mStorage.getReference();
+                    StorageReference islandRef = storageRef.child(getString(R.string.storage_element_tabla_tiradas));
 
-                final long ONE_MEGABYTE = 1024 * 1024;
-                islandRef.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
-                    @Override
-                    public void onSuccess(byte[] bytes) {
-                        Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                        Utils.showDialogBitmap(FragmentMainActivity.this, bitmap);
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception exception) {
-                        // Handle any errors
-                        Log.e(TAG, "Error descargando la imagen de las tables", exception);
-                        Toast.makeText(FragmentMainActivity.this, R.string.error_downloading_image, Toast.LENGTH_LONG).show();
-                    }
-                });
+                    final long ONE_MEGABYTE = 1024 * 1024;
+                    islandRef.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                        @Override
+                        public void onSuccess(byte[] bytes) {
+                            Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                            Utils.showDialogBitmap(FragmentMainActivity.this, bitmap);
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception exception) {
+                            // Handle any errors
+                            Log.e(TAG, "Error descargando la imagen de las tables", exception);
+                            Toast.makeText(FragmentMainActivity.this, R.string.error_downloading_image, Toast.LENGTH_LONG).show();
+                        }
+                    });
+                } else {
+                    Snackbar.make(findViewById(R.id.main_content), R.string.sin_conexion, Snackbar.LENGTH_LONG).show();
+                }
+
                 break;
 
             default:
@@ -691,16 +697,25 @@ public class FragmentMainActivity extends AppCompatActivity implements FirebaseA
      */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Bitmap imageBitmap = null;
+        Bitmap localImageBitmap = null;
+        Bitmap firebaseImageBitmap = null;
         // Check which request we're responding to
         if (resultCode == RESULT_OK) {
             switch (requestCode) {
                 case REQUEST_IMAGE_CAPTURE:
                     try {
-                        imageBitmap = MediaStore.Images.Media.getBitmap(
-                                getContentResolver(), Uri.fromFile(new File(fileImagePath)));
+                        firebaseImageBitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), Uri.fromFile(new File(fileImagePath)));
+
+                        localImageBitmap = ThumbnailUtils.extractThumbnail(
+                                BitmapFactory.decodeFile(fileImagePath),
+                                (int) (firebaseImageBitmap.getWidth() * 0.2),
+                                (int) (firebaseImageBitmap.getHeight() * 0.2)/*,
+                                ThumbnailUtils.OPTIONS_RECYCLE_INPUT*/);
+
+                        // No se necesita esta función
 //                        imageBitmap = Utils.resizeImage(imageBitmap, null);
-                        updateImage(imageBitmap);
+
+                        updateImage(localImageBitmap, firebaseImageBitmap);
                     } catch (Exception ex) {
                         Log.e(TAG, "Error obteniendo la imagen de la camara", ex);
                     }
@@ -819,13 +834,13 @@ public class FragmentMainActivity extends AppCompatActivity implements FirebaseA
         guiaArrayAdapter.notifyDataSetChanged();
     }
 
-    private void updateImage(Bitmap imageBitmap) {
-        if (imageBitmap != null) {
+    private void updateImage(Bitmap LocalImageBitmap, Bitmap FirebaseImageBitmap) {
+        if (LocalImageBitmap != null && FirebaseImageBitmap != null) {
             try {
                 //Guardado en disco de la imagen tomada con la foto
-                Utils.saveBitmapToFile(imageBitmap);
+                Utils.saveBitmapToFile(LocalImageBitmap);
                 //Guardado de la imagen en Firebase
-                Utils.saveBitmapToFirebase(mStorage, imageBitmap, fileImagePath, mAuth.getCurrentUser().getUid());
+                Utils.saveBitmapToFirebase(mStorage, FirebaseImageBitmap, fileImagePath, mAuth.getCurrentUser().getUid());
             } catch (Exception ex) {
                 Log.e(TAG, "Error guarando la imagen en Firebase", ex);
             }

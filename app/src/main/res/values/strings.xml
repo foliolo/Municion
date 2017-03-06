@@ -194,6 +194,7 @@
     <string name="url_tabla_tiradas" translatable="false">https://firebasestorage.googleapis.com/v0/b/municion-95caa.appspot.com/o/Resources%2Ftabla_ventana_tiradas.png?alt=media&amp;token=88037b28-5aca-4e96-9d67-bfcbeb1ef2bb</string>
     <string name="storage_element_tabla_tiradas" translatable="false">Resources/tabla_ventana_tiradas3.png</string>
     <string name="error_downloading_image">Error descargando la imagen</string>
-    <string name="change_image">Cambiar imagen</string>
-    <string name="delete_image">Borrar imagen</string>
+    <string name="change_image">Cambiar</string>
+    <string name="delete_image">Borrar</string>
+    <string name="sin_conexion">Sin conexión a internet</string>
 </resources>

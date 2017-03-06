@@ -13,6 +13,8 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.util.Log;
@@ -524,7 +526,7 @@ public final class Utils {
         FileOutputStream out = null;
         try {
             out = new FileOutputStream(fileImagePath);
-            imageBitmap.compress(Bitmap.CompressFormat.JPEG, 70, out); // imageBitmap is your Bitmap instance
+            imageBitmap.compress(Bitmap.CompressFormat.JPEG, 90, out); // imageBitmap is your Bitmap instance
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -573,7 +575,6 @@ public final class Utils {
         });
     }
 
-
     public static Bitmap resizeImage(Bitmap original, ImageView view) {
         // Get the dimensions of the View
         int targetW, targetH;
@@ -603,9 +604,34 @@ public final class Utils {
         bmOptions.inSampleSize = scaleFactor;
         bmOptions.inPurgeable = true;
 
-        Bitmap bitmap = BitmapFactory.decodeFile(FragmentMainActivity.fileImagePath, bmOptions);
+//        Bitmap bitmap = BitmapFactory.decodeFile(FragmentMainActivity.fileImagePath, bmOptions);
+        return BitmapFactory.decodeByteArray(imageByte, 0, imageByte.length, bmOptions);
 //        view.setImageBitmap(bitmap);
-        return bitmap;
+    }
+
+    /**
+     * Metodo para convertir un Bitmap en un byte[]
+     *
+     * @param image Imagen
+     * @return Byte[] de la imagen
+     */
+    public static byte[] bitmapToByteArray(Bitmap image) {
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        image.compress(Bitmap.CompressFormat.JPEG, 70 /*ignored for PNG*/, bos);
+        return bos.toByteArray();
+    }
+
+    /**
+     * Indica si el dispositivo esta conectado a internet
+     *
+     * @param context Contexto de la aplicación
+     * @return true si tiene conexión a internet, false en caso contrario
+     */
+    public static boolean isNetworkAvailable(Context context) {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
 //    private void setPic() {
@@ -631,16 +657,4 @@ public final class Utils {
 //        Bitmap bitmap = BitmapFactory.decodeFile(mCurrentPhotoPath, bmOptions);
 //        mImageView.setImageBitmap(bitmap);
 //    }
-
-    /**
-     * Metodo para convertir un Bitmap en un byte[]
-     *
-     * @param image Imagen
-     * @return Byte[] de la imagen
-     */
-    public static byte[] bitmapToByteArray(Bitmap image) {
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        image.compress(Bitmap.CompressFormat.JPEG, 70 /*ignored for PNG*/, bos);
-        return bos.toByteArray();
-    }
 }

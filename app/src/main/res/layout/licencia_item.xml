@@ -100,7 +100,7 @@
                 android:layout_weight="1"
                 android:gravity="start"
                 android:text="1234"
-                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textAppearance="?android:attr/textAppearanceSmall"
                 android:textStyle="bold"/>
         </LinearLayout>
 
@@ -127,7 +127,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="start"
-                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textAppearance="?android:attr/textAppearanceSmall"
                 android:textStyle="bold"
                 android:visibility="gone"/>
 
@@ -156,7 +156,7 @@
                 android:layout_weight="1"
                 android:gravity="start"
                 android:text="15/05/2016"
-                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textAppearance="?android:attr/textAppearanceSmall"
                 android:textStyle="bold"/>
         </LinearLayout>
 
@@ -183,7 +183,7 @@
                 android:layout_weight="1"
                 android:gravity="start"
                 android:text="15/05/2017"
-                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textAppearance="?android:attr/textAppearanceSmall"
                 android:textStyle="bold"/>
         </LinearLayout>
 
@@ -209,7 +209,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="start"
-                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textAppearance="?android:attr/textAppearanceSmall"
                 android:textStyle="bold"/>
         </LinearLayout>
 
@@ -234,7 +234,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="start"
-                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textAppearance="?android:attr/textAppearanceSmall"
                 android:textStyle="bold"/>
         </LinearLayout>
 
@@ -261,7 +261,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="start"
-                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textAppearance="?android:attr/textAppearanceSmall"
                 android:textStyle="bold"/>
         </LinearLayout>
 
@@ -288,7 +288,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="start"
-                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textAppearance="?android:attr/textAppearanceSmall"
                 android:textStyle="bold"/>
         </LinearLayout>
     </LinearLayout>

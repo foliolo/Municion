@@ -3,9 +3,13 @@ package al.ahgitdevelopment.municion.Adapters;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Build;
+import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -82,24 +86,19 @@ public class CompraArrayAdapter extends ArrayAdapter<Compra> {
             @Override
             public void onClick(View v) {
                 FragmentMainActivity.imagePosition = position;
-//                dispatchTakePictureIntent();
 
                 //Creamos la vista del dialogo para mostar la imagen
-                View layout = ((FragmentMainActivity) context).getLayoutInflater()
-                        .inflate(R.layout.dialog_image_view, null);
-
-                if (compra.getImagePath() != null) {
-                    ((ImageView) layout.findViewById(R.id.image_view)).setImageBitmap(
-                            BitmapFactory.decodeFile(compra.getImagePath())
-                    );
+                View layout = ((FragmentMainActivity) context).getLayoutInflater().inflate(R.layout.dialog_image_view, null);
+                if (compra.getImagePath() != null && !compra.getImagePath().equals("null")) {
+                    ImageView imageViewDialog = (ImageView) layout.findViewById(R.id.image_view);
+                    Bitmap bitmap = Utils.resizeImage(BitmapFactory.decodeFile(compra.getImagePath()), imageViewDialog);
+                    imageViewDialog.setImageBitmap(bitmap);
                 } else {
-                    try {
-                        ((ImageView) layout.findViewById(R.id.image_view)).setImageResource(Utils.getResourceCartucho(
-                                FragmentMainActivity.guias.get(compra.getIdPosGuia()).getTipoLicencia(),
-                                FragmentMainActivity.guias.get(compra.getIdPosGuia()).getTipoArma()));
-                    } catch (Exception ex) {
-                        Log.e(context.getPackageName(), "Fallo en la carga de imagen de los cartuchos");
-                    }
+                    ((ImageView) layout.findViewById(R.id.image_view)).setImageResource(
+                            Utils.getResourceCartucho(
+                                    FragmentMainActivity.guias.get(compra.getIdPosGuia()).getTipoLicencia(),
+                                    FragmentMainActivity.guias.get(compra.getIdPosGuia()).getTipoArma()));
+
                 }
 
                 new AlertDialog.Builder(context)
@@ -109,6 +108,13 @@ public class CompraArrayAdapter extends ArrayAdapter<Compra> {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 dispatchTakePictureIntent();
+                            }
+                        })
+                        .setNegativeButton(R.string.delete_image, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                compra.setImagePath(null);
+                                notifyDataSetChanged();
                             }
                         })
                         .setPositiveButton(android.R.string.ok, null)
@@ -132,9 +138,13 @@ public class CompraArrayAdapter extends ArrayAdapter<Compra> {
             } catch (IOException ex) {
                 Log.e(context.getPackageName(), "IOException");
             }
+
             // Continue only if the File was successfully created
             if (photoFile != null) {
-                FragmentMainActivity.fileImagePath = photoFile.getAbsolutePath();
+                Uri photoURI = FileProvider.getUriForFile(context,
+                        "al.ahgitdevelopment.municion.fileprovider",
+                        photoFile);
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
                 ((AppCompatActivity) context).startActivityForResult(takePictureIntent, FragmentMainActivity.REQUEST_IMAGE_CAPTURE);
             }
         }
@@ -145,7 +155,8 @@ public class CompraArrayAdapter extends ArrayAdapter<Compra> {
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         String imageFileName = "JPEG_" + timeStamp;
 //        File storageDir = new File(context.getFilesDir() + File.separator + "Municion");
-        File storageDir = context.getFilesDir() /*+ File.separator + "Municion")*/;
+//        File storageDir = context.getFilesDir() /*+ File.separator + "Municion")*/;
+        File storageDir = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
 
         if (!storageDir.exists()) {
             storageDir.mkdir();
@@ -158,10 +169,9 @@ public class CompraArrayAdapter extends ArrayAdapter<Compra> {
                 ".jpg",         /* suffix */
                 storageDir      /* directory */
         );
-        image.setWritable(true, false); //Da permisos para que otra aplicacion pueda escribir en el fichero temporal de la memoria cache reservada
+//        image.setWritable(true, false); //Da permisos para que otra aplicacion pueda escribir en el fichero temporal de la memoria cache reservada
 
-        // Save a file: path for use with ACTION_VIEW intents
-        mCurrentPhotoPath = "file:" + image.getAbsolutePath();
+        FragmentMainActivity.fileImagePath = image.getAbsolutePath();
         return image;
     }
 }

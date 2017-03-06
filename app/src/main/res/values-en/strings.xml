@@ -182,7 +182,8 @@
     <string name="purchase_not_support">This device not support purchases</string>
     <string name="tabla_tiradas">Promotions scores</string>
     <string name="error_downloading_image">Error downloading the image</string>
-    <string name="change_image">Change image</string>
-    <string name="delete_image">Delete image</string>
+    <string name="change_image">Change</string>
+    <string name="delete_image">Delete</string>
+    <string name="sin_conexion">Without internet conection</string>
 
 </resources>

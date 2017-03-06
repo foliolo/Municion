@@ -163,7 +163,6 @@ public class GuiaArrayAdapter extends ArrayAdapter<Guia> {
         );
 //        image.setWritable(true, false); //Da permisos para que otra aplicacion pueda escribir en el fichero temporal de la memoria cache reservada
 
-        // Save a file: path for use with ACTION_VIEW intents
         FragmentMainActivity.fileImagePath = image.getAbsolutePath();
         return image;
     }
