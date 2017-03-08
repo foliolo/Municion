@@ -29,13 +29,13 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:text="@string/calibre"
-            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textAppearance="?android:attr/textAppearanceMedium"
             android:textStyle="bold"/>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
+            android:layout_marginTop="10dp"
             android:gravity="center"
             android:orientation="horizontal">
 
@@ -47,17 +47,18 @@
                 android:orientation="vertical">
 
                 <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
                     android:text="@string/unidades"
                     android:textAppearance="?android:attr/textAppearanceSmall"/>
 
                 <TextView
                     android:id="@+id/item_unidades_compra"
+                    style="@style/letter_black"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:gravity="center"
-                    android:text="50"
                     android:textAppearance="?android:attr/textAppearanceMedium"
                     android:textStyle="bold"/>
             </LinearLayout>
@@ -70,19 +71,18 @@
                 android:orientation="vertical">
 
                 <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
                     android:gravity="center"
                     android:text="@string/precio"
                     android:textAppearance="?android:attr/textAppearanceSmall"/>
 
                 <TextView
                     android:id="@+id/item_precio_compra"
+                    style="@style/letter_black"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:gravity="center"
-                    android:paddingTop="5dp"
-                    android:text="35.85€"
                     android:textAppearance="?android:attr/textAppearanceMedium"
                     android:textStyle="bold"/>
             </LinearLayout>
@@ -95,19 +95,18 @@
                 android:orientation="vertical">
 
                 <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
                     android:gravity="center"
                     android:text="@string/year"
                     android:textAppearance="?android:attr/textAppearanceSmall"/>
 
                 <TextView
                     android:id="@+id/item_year_compra"
+                    style="@style/letter_black"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:gravity="center"
-                    android:paddingTop="5dp"
-                    android:text="2016"
                     android:textAppearance="?android:attr/textAppearanceMedium"
                     android:textStyle="bold"/>
             </LinearLayout>

@@ -11,7 +11,6 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
 import android.media.ThumbnailUtils;
 import android.net.ConnectivityManager;
 import android.net.Uri;
@@ -53,8 +52,6 @@ import android.widget.Toast;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.InterstitialAd;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
@@ -64,7 +61,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
 
 import java.io.File;
 import java.text.ParseException;
@@ -151,7 +147,6 @@ public class FragmentMainActivity extends AppCompatActivity implements FirebaseA
     private FirebaseStorage mStorage = FirebaseStorage.getInstance();
 
     private ImageView viewImageTable;
-    private Bitmap imageTable;
     private PhotoViewAttacher mAttacher;
 
     @Override
@@ -368,12 +363,6 @@ public class FragmentMainActivity extends AppCompatActivity implements FirebaseA
     }
 
     @Override
-    protected void onPostResume() {
-
-        super.onPostResume();
-    }
-
-    @Override
     protected void onStop() {
         super.onStop();
 
@@ -395,8 +384,6 @@ public class FragmentMainActivity extends AppCompatActivity implements FirebaseA
         try {
             //Guardamos si se está visualizando la tabla
             outState.putBoolean("image_table_showing", (viewImageTable.getVisibility() == View.VISIBLE ? true : false));
-            outState.putParcelable("image_table", imageTable);
-
         } catch (Exception ex) {
             Log.e(TAG, "onSaveInstanceState: Tamaño del Bundle demasiado grande", ex);
         }
@@ -409,7 +396,6 @@ public class FragmentMainActivity extends AppCompatActivity implements FirebaseA
         try {
             super.onRestoreInstanceState(savedInstanceState);
             boolean isTableImageShowing = savedInstanceState.getBoolean("image_table_showing");
-            imageTable = savedInstanceState.getParcelable("image_table");
 
             if (isTableImageShowing) {
                 changeVisibilityImageTable(true);
@@ -730,29 +716,33 @@ public class FragmentMainActivity extends AppCompatActivity implements FirebaseA
 //WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //See the License for the specific language governing permissions and
 //limitations under the License.
-                if (Utils.isNetworkAvailable(this)) {
-                    StorageReference storageRef = mStorage.getReference();
-                    StorageReference islandRef = storageRef.child(getString(R.string.storage_element_tabla_tiradas));
 
-                    final long ONE_MEGABYTE = 1024 * 1024;
-                    islandRef.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
-                        @Override
-                        public void onSuccess(byte[] bytes) {
-                            imageTable = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                            changeVisibilityImageTable(true);
-                        }
-                    }).addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception exception) {
-                            // Handle any errors
-                            Log.e(TAG, "Error descargando la imagen de las tables", exception);
-                            Toast.makeText(FragmentMainActivity.this, R.string.error_downloading_image, Toast.LENGTH_LONG).show();
-                        }
-                    });
-                } else {
-                    Snackbar.make(findViewById(R.id.main_content), R.string.sin_conexion, Snackbar.LENGTH_LONG).show();
-                }
+                //Firebase
+//                if (Utils.isNetworkAvailable(this)) {
+//                    StorageReference storageRef = mStorage.getReference();
+//                    StorageReference islandRef = storageRef.child(getString(R.string.storage_element_tabla_tiradas));
+//
+//                    final long ONE_MEGABYTE = 1024 * 1024;
+//                    islandRef.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+//                        @Override
+//                        public void onSuccess(byte[] bytes) {
+//                            imageTable = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+//                            changeVisibilityImageTable(true);
+//                        }
+//                    }).addOnFailureListener(new OnFailureListener() {
+//                        @Override
+//                        public void onFailure(@NonNull Exception exception) {
+//                            // Handle any errors
+//                            Log.e(TAG, "Error descargando la imagen de las tables", exception);
+//                            Toast.makeText(FragmentMainActivity.this, R.string.error_downloading_image, Toast.LENGTH_LONG).show();
+//                        }
+//                    });
+//                } else {
+//                    Snackbar.make(findViewById(R.id.main_content), R.string.sin_conexion, Snackbar.LENGTH_LONG).show();
+//                }
 
+                // Local Image
+                changeVisibilityImageTable(true);
                 break;
 
             default:
@@ -770,7 +760,7 @@ public class FragmentMainActivity extends AppCompatActivity implements FirebaseA
      */
     private void changeVisibilityImageTable(boolean visibility) {
         if (visibility) {
-            viewImageTable.setImageDrawable(new BitmapDrawable(getResources(), imageTable));
+            viewImageTable.setImageDrawable(getDrawable(R.drawable.image_table));
             mAttacher.update();
             viewImageTable.setVisibility(View.VISIBLE);
             tabs.setVisibility(View.GONE);
@@ -875,34 +865,12 @@ public class FragmentMainActivity extends AppCompatActivity implements FirebaseA
                 userRef.child("db").removeValue(new DatabaseReference.CompletionListener() {
                     @Override
                     public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                        userRef.child("db").child("guias").setValue(guias);
+                        userRef.child("db").child("compras").setValue(compras);
+                        userRef.child("db").child("licencias").setValue(licencias);
+                        userRef.child("db").child("tiradas").setValue(tiradas);
 
-                        userRef.child("db").child("guias").setValue(guias, new DatabaseReference.CompletionListener() {
-                            @Override
-                            public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-                                Log.i(TAG, "Guardado de la lista de GUIAS en Firebase");
-
-                                userRef.child("db").child("compras").setValue(compras, new DatabaseReference.CompletionListener() {
-                                    @Override
-                                    public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-                                        Log.i(TAG, "Guardado de la lista de COMPRAS en Firebase");
-
-                                        userRef.child("db").child("licencias").setValue(licencias, new DatabaseReference.CompletionListener() {
-                                            @Override
-                                            public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-                                                Log.i(TAG, "Guardado de la lista de LICENCIAS en Firebase");
-
-                                                userRef.child("db").child("tiradas").setValue(tiradas, new DatabaseReference.CompletionListener() {
-                                                    @Override
-                                                    public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-                                                        Log.i(TAG, "Guardado de la lista de TIRADAS en Firebase");
-                                                    }
-                                                });
-                                            }
-                                        });
-                                    }
-                                });
-                            }
-                        });
+                        Log.i(TAG, "Guardado de listas en Firebase");
                     }
                 });
             } else {

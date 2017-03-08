@@ -22,6 +22,7 @@
 
         <TextView
             android:id="@+id/item_tipo_licencia"
+            style="@style/letter_black"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
@@ -41,6 +42,7 @@
 
         <TextView
             android:id="@+id/item_categoria"
+            style="@style/letter_black"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -61,6 +63,7 @@
 
         <TextView
             android:id="@+id/item_tipo_permiso_conducir"
+            style="@style/letter_black"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
@@ -95,6 +98,7 @@
 
             <TextView
                 android:id="@+id/item_num_guia"
+                style="@style/letter_black"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -123,6 +127,7 @@
 
             <TextView
                 android:id="@+id/item_edad"
+                style="@style/letter_black"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -151,6 +156,7 @@
 
             <TextView
                 android:id="@+id/item_expedicion_licencia"
+                style="@style/letter_black"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -178,6 +184,7 @@
 
             <TextView
                 android:id="@+id/item_caducidad_licencia"
+                style="@style/letter_black"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -205,6 +212,7 @@
 
             <TextView
                 android:id="@+id/item_num_abonado"
+                style="@style/letter_black"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -230,6 +238,7 @@
 
             <TextView
                 android:id="@+id/item_num_poliza"
+                style="@style/letter_black"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -257,6 +266,7 @@
 
             <TextView
                 android:id="@+id/item_ccaa"
+                style="@style/letter_black"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -284,6 +294,7 @@
 
             <TextView
                 android:id="@+id/item_escala"
+                style="@style/letter_black"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"

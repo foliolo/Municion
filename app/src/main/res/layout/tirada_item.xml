@@ -14,6 +14,7 @@
 
         <TextView
             android:id="@+id/item_descripcion_tirada"
+            style="@style/letter_black"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="0.5"
@@ -43,6 +44,7 @@
 
         <TextView
             android:id="@+id/item_fecha_tirada"
+            style="@style/letter_black"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
