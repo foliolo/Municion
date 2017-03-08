@@ -11,6 +11,7 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.media.ThumbnailUtils;
 import android.net.ConnectivityManager;
 import android.net.Uri;
@@ -44,6 +45,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -87,6 +89,7 @@ import al.ahgitdevelopment.municion.Forms.CompraFormActivity;
 import al.ahgitdevelopment.municion.Forms.GuiaFormActivity;
 import al.ahgitdevelopment.municion.Forms.LicenciaFormActivity;
 import al.ahgitdevelopment.municion.Forms.TiradaFormActivity;
+import uk.co.senab.photoview.PhotoViewAttacher;
 
 import static al.ahgitdevelopment.municion.Utils.PREFS_SHOW_ADS;
 
@@ -136,13 +139,20 @@ public class FragmentMainActivity extends AppCompatActivity implements FirebaseA
     /**
      * The {@link ViewPager} that will host the section contents.
      */
+    private TabLayout tabs;
     private ViewPager mViewPager;
     private SharedPreferences prefs;
     private AdView mAdView;
     private InterstitialAd mInterstitialAd;
+    private FloatingActionButton fab;
+
     private DatabaseReference userRef;
     private FirebaseAuth mAuth = FirebaseAuth.getInstance();
     private FirebaseStorage mStorage = FirebaseStorage.getInstance();
+
+    private ImageView viewImageTable;
+    private Bitmap imageTable;
+    private PhotoViewAttacher mAttacher;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -219,6 +229,7 @@ public class FragmentMainActivity extends AppCompatActivity implements FirebaseA
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
+        tabs = ((TabLayout) findViewById(R.id.tabs));
 
         // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) findViewById(R.id.container);
@@ -252,7 +263,7 @@ public class FragmentMainActivity extends AppCompatActivity implements FirebaseA
         if (mViewPager != null)
             tabLayout.setupWithViewPager(mViewPager);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab = (FloatingActionButton) findViewById(R.id.fab);
         if (fab != null) {
             fab.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -311,6 +322,10 @@ public class FragmentMainActivity extends AppCompatActivity implements FirebaseA
                 }
             });
         }
+
+        // Gestión de la foto de categoria en funcion de los puntos, que se muestra en el tab de tiradas
+        viewImageTable = (ImageView) findViewById(R.id.document_image_view);
+        mAttacher = new PhotoViewAttacher(viewImageTable);
     }
 
     /**
@@ -353,11 +368,57 @@ public class FragmentMainActivity extends AppCompatActivity implements FirebaseA
     }
 
     @Override
+    protected void onPostResume() {
+
+        super.onPostResume();
+    }
+
+    @Override
     protected void onStop() {
         super.onStop();
 
         dbSqlHelper.close();
         mAuth.removeAuthStateListener(this);
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (viewImageTable.getVisibility() == View.VISIBLE) {
+            changeVisibilityImageTable(false);
+        } else {
+            super.onBackPressed();
+        }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        try {
+            //Guardamos si se está visualizando la tabla
+            outState.putBoolean("image_table_showing", (viewImageTable.getVisibility() == View.VISIBLE ? true : false));
+            outState.putParcelable("image_table", imageTable);
+
+        } catch (Exception ex) {
+            Log.e(TAG, "onSaveInstanceState: Tamaño del Bundle demasiado grande", ex);
+        }
+
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        try {
+            super.onRestoreInstanceState(savedInstanceState);
+            boolean isTableImageShowing = savedInstanceState.getBoolean("image_table_showing");
+            imageTable = savedInstanceState.getParcelable("image_table");
+
+            if (isTableImageShowing) {
+                changeVisibilityImageTable(true);
+            } else {
+                changeVisibilityImageTable(false);
+            }
+        } catch (Exception ex) {
+            Log.e(TAG, "onRestoreInstanceState: Tamaño del Bundle demasiado grande", ex);
+        }
     }
 
     /**
@@ -656,6 +717,19 @@ public class FragmentMainActivity extends AppCompatActivity implements FirebaseA
                 startActivity(intent);
                 break;
             case R.id.tabla_tiradas:
+//Copyright 2016 Chris Banes
+//
+//Licensed under the Apache License, Version 2.0 (the "License");
+//you may not use this file except in compliance with the License.
+//You may obtain a copy of the License at
+//
+//   http://www.apache.org/licenses/LICENSE-2.0
+//
+//Unless required by applicable law or agreed to in writing, software
+//distributed under the License is distributed on an "AS IS" BASIS,
+//WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//See the License for the specific language governing permissions and
+//limitations under the License.
                 if (Utils.isNetworkAvailable(this)) {
                     StorageReference storageRef = mStorage.getReference();
                     StorageReference islandRef = storageRef.child(getString(R.string.storage_element_tabla_tiradas));
@@ -664,8 +738,8 @@ public class FragmentMainActivity extends AppCompatActivity implements FirebaseA
                     islandRef.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
                         @Override
                         public void onSuccess(byte[] bytes) {
-                            Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                            Utils.showDialogBitmap(FragmentMainActivity.this, bitmap);
+                            imageTable = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                            changeVisibilityImageTable(true);
                         }
                     }).addOnFailureListener(new OnFailureListener() {
                         @Override
@@ -686,6 +760,26 @@ public class FragmentMainActivity extends AppCompatActivity implements FirebaseA
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    /**
+     * Metodo para cambiar la visibilidad de la tabla de caterogias
+     *
+     * @param bitmap     Imagen a mostrar
+     * @param visibility Flag que indica si se muestra o no
+     */
+    private void changeVisibilityImageTable(boolean visibility) {
+        if (visibility) {
+            viewImageTable.setImageDrawable(new BitmapDrawable(getResources(), imageTable));
+            mAttacher.update();
+            viewImageTable.setVisibility(View.VISIBLE);
+            tabs.setVisibility(View.GONE);
+            fab.setVisibility(View.GONE);
+        } else {
+            viewImageTable.setVisibility(View.GONE);
+            tabs.setVisibility(View.VISIBLE);
+            fab.setVisibility(View.VISIBLE);
+        }
     }
 
     /**
@@ -776,17 +870,39 @@ public class FragmentMainActivity extends AppCompatActivity implements FirebaseA
 
     private void saveLists() {
         try {
-            //Borrado de la vase de datos actual;
+            //Borrado de la base de datos actual;
             if (userRef != null) {
                 userRef.child("db").removeValue(new DatabaseReference.CompletionListener() {
                     @Override
                     public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-                        userRef.child("db").child("guias").setValue(guias);
-                        userRef.child("db").child("compras").setValue(compras);
-                        userRef.child("db").child("licencias").setValue(licencias);
-                        userRef.child("db").child("tiradas").setValue(tiradas);
 
-                        Log.i(TAG, "Guardado de listas en Firebase");
+                        userRef.child("db").child("guias").setValue(guias, new DatabaseReference.CompletionListener() {
+                            @Override
+                            public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                                Log.i(TAG, "Guardado de la lista de GUIAS en Firebase");
+
+                                userRef.child("db").child("compras").setValue(compras, new DatabaseReference.CompletionListener() {
+                                    @Override
+                                    public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                                        Log.i(TAG, "Guardado de la lista de COMPRAS en Firebase");
+
+                                        userRef.child("db").child("licencias").setValue(licencias, new DatabaseReference.CompletionListener() {
+                                            @Override
+                                            public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                                                Log.i(TAG, "Guardado de la lista de LICENCIAS en Firebase");
+
+                                                userRef.child("db").child("tiradas").setValue(tiradas, new DatabaseReference.CompletionListener() {
+                                                    @Override
+                                                    public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                                                        Log.i(TAG, "Guardado de la lista de TIRADAS en Firebase");
+                                                    }
+                                                });
+                                            }
+                                        });
+                                    }
+                                });
+                            }
+                        });
                     }
                 });
             } else {
@@ -1132,10 +1248,8 @@ public class FragmentMainActivity extends AppCompatActivity implements FirebaseA
 
             if (daysRemain <= 10) {
                 tiradaCountDown.setBackgroundColor(ContextCompat.getColor(context, android.R.color.holo_red_dark));
-                tiradaCountDown.setTextColor(ContextCompat.getColor(context, android.R.color.white));
             } else {
-                tiradaCountDown.setBackgroundColor(ContextCompat.getColor(context, R.color.light_yellow));
-                tiradaCountDown.setTextColor(ContextCompat.getColor(context, android.R.color.black));
+                tiradaCountDown.setBackgroundColor(ContextCompat.getColor(context, R.color.colorPrimary));
             }
         }
 
@@ -1144,6 +1258,7 @@ public class FragmentMainActivity extends AppCompatActivity implements FirebaseA
             View rootView = inflater.inflate(R.layout.list_view_pager, container, false);
             listView = (ListView) rootView.findViewById(R.id.ListView);
             tiradaCountDown = (TextView) rootView.findViewById(R.id.pager_tirada_countdown);
+            tiradaCountDown.setTextColor(ContextCompat.getColor(context, android.R.color.white));
 
             try {
                 switch (getArguments().getInt(ARG_SECTION_NUMBER)) {

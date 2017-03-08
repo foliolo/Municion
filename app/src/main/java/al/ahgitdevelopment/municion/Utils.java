@@ -500,6 +500,13 @@ public final class Utils {
         return resultCode == ConnectionResult.SUCCESS;
     }
 
+    /**
+     * (No se usa) Se ha cambiado por una vista a pantalla completa
+     * Dialog para mostrar una imagen con capacidad de zoom
+     *
+     * @param context Contexto
+     * @param bitmap  Imagen
+     */
     static void showDialogBitmap(Context context, Bitmap bitmap) {
         // Any implementation of ImageView can be used!
         PhotoView photoView = new PhotoView(context);
@@ -526,7 +533,7 @@ public final class Utils {
         FileOutputStream out = null;
         try {
             out = new FileOutputStream(fileImagePath);
-            imageBitmap.compress(Bitmap.CompressFormat.JPEG, 90, out); // imageBitmap is your Bitmap instance
+            imageBitmap.compress(Bitmap.CompressFormat.JPEG, 70, out); // imageBitmap is your Bitmap instance
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
