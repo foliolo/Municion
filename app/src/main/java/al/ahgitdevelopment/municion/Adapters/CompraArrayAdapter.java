@@ -26,6 +26,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import al.ahgitdevelopment.municion.DataBases.DataBaseSQLiteHelper;
 import al.ahgitdevelopment.municion.DataModel.Compra;
 import al.ahgitdevelopment.municion.FragmentMainActivity;
 import al.ahgitdevelopment.municion.R;
@@ -61,7 +62,7 @@ public class CompraArrayAdapter extends ArrayAdapter<Compra> {
         TextView precio = (TextView) convertView.findViewById(R.id.item_precio_compra);
         TextView year = (TextView) convertView.findViewById(R.id.item_year_compra);
 
-        if (compra.getImagePath() != null) {
+        if (compra.getImagePath() != null && !compra.getImagePath().equals("null")) {
             imagen.setImageBitmap(BitmapFactory.decodeFile(compra.getImagePath()));
         } else {
             try {
@@ -115,6 +116,9 @@ public class CompraArrayAdapter extends ArrayAdapter<Compra> {
                             public void onClick(DialogInterface dialog, int which) {
                                 compra.setImagePath(null);
                                 notifyDataSetChanged();
+
+                                DataBaseSQLiteHelper dbSqlHelper = new DataBaseSQLiteHelper(context.getApplicationContext());
+                                dbSqlHelper.saveListCompras(null, FragmentMainActivity.compras);
                             }
                         })
                         .setPositiveButton(android.R.string.ok, null)

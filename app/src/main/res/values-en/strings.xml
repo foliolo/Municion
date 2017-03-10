@@ -101,8 +101,7 @@
     <string name="form_tirada_aviso_puntuacion">Score too hight</string>
 
     <!--TIRADAS-->
-    <string name="lbl_caducidad_tirada">Time until your license expire</string>
-    <string name="days">days</string>
+    <string name="lbl_caducidad_tirada">Maximum time allowed until the next competition %s days</string>
 
     <!-- General settings -->
     <string name="settings_title_change_password">Change of Password</string>

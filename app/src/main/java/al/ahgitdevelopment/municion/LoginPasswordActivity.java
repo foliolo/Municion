@@ -207,7 +207,7 @@ public class LoginPasswordActivity extends AppCompatActivity implements
         mHelper = new IabHelper(this, base64EncodedPublicKey);
 
         // enable debug logging (for a production application, you should set this to false).
-        mHelper.enableDebugLogging(true);
+        mHelper.enableDebugLogging(BuildConfig.DEBUG);
 
         mHelper.startSetup(new IabHelper.OnIabSetupFinishedListener() {
             public void onIabSetupFinished(IabResult result) {

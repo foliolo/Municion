@@ -102,8 +102,7 @@
     <string name="form_tirada_aviso_puntuacion">Puntuación por encima de rango (600 pts)</string>
 
     <!--TIRADAS-->
-    <string name="lbl_caducidad_tirada">Tiempo hasta que caduque tu licencia</string>
-    <string name="days">días</string>
+    <string name="lbl_caducidad_tirada">Tiempo máximo permitido hasta la próxima tirada %s días</string>
 
     <!-- General settings -->
     <string name="settings_title_change_password">Gestión de contraseñas</string>

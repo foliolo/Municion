@@ -384,6 +384,7 @@ public class FragmentMainActivity extends AppCompatActivity implements FirebaseA
         try {
             //Guardamos si se está visualizando la tabla
             outState.putBoolean("image_table_showing", (viewImageTable.getVisibility() == View.VISIBLE ? true : false));
+            outState.putBoolean("dialog_images_showing", (viewImageTable.getVisibility() == View.VISIBLE ? true : false));
         } catch (Exception ex) {
             Log.e(TAG, "onSaveInstanceState: Tamaño del Bundle demasiado grande", ex);
         }
@@ -765,10 +766,13 @@ public class FragmentMainActivity extends AppCompatActivity implements FirebaseA
             viewImageTable.setVisibility(View.VISIBLE);
             tabs.setVisibility(View.GONE);
             fab.setVisibility(View.GONE);
+            textEmptyList.setVisibility(View.GONE);
         } else {
             viewImageTable.setVisibility(View.GONE);
             tabs.setVisibility(View.VISIBLE);
             fab.setVisibility(View.VISIBLE);
+            if (tiradas.size() == 0)
+                textEmptyList.setVisibility(View.VISIBLE);
         }
     }
 
@@ -1204,11 +1208,7 @@ public class FragmentMainActivity extends AppCompatActivity implements FirebaseA
             StringBuilder sb = new StringBuilder();
             Formatter formatter = new Formatter(sb);
 
-            String text = formatter.format("%s\n%s %s",
-                    context.getString(R.string.lbl_caducidad_tirada),
-                    daysRemain,
-                    context.getString(R.string.days)
-            ).toString();
+            String text = formatter.format(context.getString(R.string.lbl_caducidad_tirada), daysRemain).toString();
 
             if (tiradaCountDown != null) {
                 tiradaCountDown.setText(text);
@@ -1367,11 +1367,8 @@ public class FragmentMainActivity extends AppCompatActivity implements FirebaseA
      * Dialog para la seleccion de la licencia qu
      */
     public static class CompraDialogFragment extends DialogFragment {
-
         //https://developer.android.com/guide/topics/ui/dialogs.html
-
         private int selectedGuia;
-
 
         @NonNull
         @Override
