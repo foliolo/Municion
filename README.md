@@ -1,5 +1,9 @@
 # Municion
 Gestión de munición
+Cosas a implementar para la proxima actualización (1.2.1):
+
+- Añadir campo de comentarios para la compras realizadas
+
 Cosas a implementar para la proxima actualización (1.0.1):
 
 - Prioritario: Actualizar los cupos cada año (1 de enero) (Hecho)
