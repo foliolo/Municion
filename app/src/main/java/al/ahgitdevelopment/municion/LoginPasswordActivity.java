@@ -202,49 +202,53 @@ public class LoginPasswordActivity extends AppCompatActivity implements
     protected void onStart() {
         super.onStart();
 
-        // Comprobación de compra de eliminacion de publicidad
-        String base64EncodedPublicKey = getString(R.string.app_public_key);
-        mHelper = new IabHelper(this, base64EncodedPublicKey);
+        try {
+            // Comprobación de compra de eliminacion de publicidad
+            String base64EncodedPublicKey = getString(R.string.app_public_key);
+            mHelper = new IabHelper(this, base64EncodedPublicKey);
 
-        // enable debug logging (for a production application, you should set this to false).
-        mHelper.enableDebugLogging(BuildConfig.DEBUG);
+            // enable debug logging (for a production application, you should set this to false).
+            mHelper.enableDebugLogging(BuildConfig.DEBUG);
 
-        mHelper.startSetup(new IabHelper.OnIabSetupFinishedListener() {
-            public void onIabSetupFinished(IabResult result) {
-                if (!result.isSuccess()) {
-                    // Oh no, there was a problem.
-                    Log.w(TAG, "Problem setting up In-app Billing: " + result.getMessage());
-                    isPurchaseAvailable = false;
-                } else {
-                    isPurchaseAvailable = true;
-                    try {
-                        mHelper.queryInventoryAsync(LoginPasswordActivity.this /*QueryInventoryFinishedListener*/);
-                    } catch (IabHelper.IabAsyncInProgressException ex) {
-                        Log.e(TAG, "Error querying inventory. Another async operation in progress.", ex);
+            mHelper.startSetup(new IabHelper.OnIabSetupFinishedListener() {
+                public void onIabSetupFinished(IabResult result) {
+                    if (!result.isSuccess()) {
+                        // Oh no, there was a problem.
+                        Log.w(TAG, "Problem setting up In-app Billing: " + result.getMessage());
+                        isPurchaseAvailable = false;
+                    } else {
+                        isPurchaseAvailable = true;
+                        try {
+                            mHelper.queryInventoryAsync(LoginPasswordActivity.this /*QueryInventoryFinishedListener*/);
+                        } catch (IabHelper.IabAsyncInProgressException ex) {
+                            Log.e(TAG, "Error querying inventory. Another async operation in progress.", ex);
 //                        FirebaseCrash.logcat(Log.ERROR, TAG, "Error querying inventory. Another async operation in progress.");
 //                        FirebaseCrash.report(ex);
+                        }
                     }
                 }
+            });
+
+            // Important: Dynamically register for broadcast messages about updated purchases.
+            // We register the receiver here instead of as a <receiver> in the Manifest
+            // because we always call getPurchases() at startup, so therefore we can ignore
+            // any broadcasts sent while the app isn't running.
+            // Note: registering this listener in an Activity is a bad idea, but is done here
+            // because this is a SAMPLE. Regardless, the receiver must be registered after
+            // IabHelper is setup, but before first call to getPurchases().
+            mBroadcastReceiver = new IabBroadcastReceiver(this /*IabBroadcastListener*/);
+            IntentFilter broadcastFilter = new IntentFilter(IabBroadcastReceiver.ACTION);
+            registerReceiver(mBroadcastReceiver, broadcastFilter);
+
+            if (prefs.getBoolean(PREFS_SHOW_ADS, true)) {
+                mAdView.setVisibility(View.VISIBLE);
+                mAdView.loadAd(Utils.getAdRequest(mAdView));
+            } else {
+                mAdView.setVisibility(View.GONE);
+                mAdView.setEnabled(false);
             }
-        });
-
-        // Important: Dynamically register for broadcast messages about updated purchases.
-        // We register the receiver here instead of as a <receiver> in the Manifest
-        // because we always call getPurchases() at startup, so therefore we can ignore
-        // any broadcasts sent while the app isn't running.
-        // Note: registering this listener in an Activity is a bad idea, but is done here
-        // because this is a SAMPLE. Regardless, the receiver must be registered after
-        // IabHelper is setup, but before first call to getPurchases().
-        mBroadcastReceiver = new IabBroadcastReceiver(this /*IabBroadcastListener*/);
-        IntentFilter broadcastFilter = new IntentFilter(IabBroadcastReceiver.ACTION);
-        registerReceiver(mBroadcastReceiver, broadcastFilter);
-
-        if (prefs.getBoolean(PREFS_SHOW_ADS, true)) {
-            mAdView.setVisibility(View.VISIBLE);
-            mAdView.loadAd(Utils.getAdRequest(mAdView));
-        } else {
-            mAdView.setVisibility(View.GONE);
-            mAdView.setEnabled(false);
+        } catch (Exception ex) {
+            Log.e(TAG, "Error en OnStart del login por fallo en la libreria de pago");
         }
     }
 

@@ -2,26 +2,23 @@ package al.ahgitdevelopment.municion;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
-import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
+import android.os.Environment;
 import android.support.annotation.NonNull;
+import android.support.v4.content.FileProvider;
 import android.util.Log;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.common.ConnectionResult;
@@ -49,8 +46,6 @@ import java.util.NoSuchElementException;
 import al.ahgitdevelopment.municion.DataModel.Guia;
 import al.ahgitdevelopment.municion.DataModel.Licencia;
 import al.ahgitdevelopment.municion.DataModel.NotificationData;
-import uk.co.senab.photoview.PhotoView;
-import uk.co.senab.photoview.PhotoViewAttacher;
 
 import static al.ahgitdevelopment.municion.FragmentMainActivity.fileImagePath;
 
@@ -58,19 +53,18 @@ import static al.ahgitdevelopment.municion.FragmentMainActivity.fileImagePath;
  * Created by ahidalgog on 07/07/2016.
  */
 public final class Utils {
-    public static final String NOTIFICATION_PREFERENCES_FILE = "Notifications";
-    public static final String PURCHASE_ID_REMOVE_ADS = "remove_ads";
     //    public static final String PURCHASE_ID_REMOVE_ADS = "android.test.purchased";
 //    public static final String PURCHASE_ID_REMOVE_ADS = "android.test.canceled";
     public static final String PREFS_SHOW_ADS = "show_ads";
-    public static final String PREFS_PAYLOAD = "payload";
-
+    static final String PURCHASE_ID_REMOVE_ADS = "remove_ads";
+    static final String PREFS_PAYLOAD = "payload";
+    private static final String NOTIFICATION_PREFERENCES_FILE = "Notifications";
     public static NotificationData notificationData = new NotificationData();
-    public static ArrayList<NotificationData> listNotificationData = new ArrayList<NotificationData>();
+    static ArrayList<NotificationData> listNotificationData = new ArrayList<NotificationData>();
     private static SharedPreferences prefs;
 
     @NonNull
-    public static CharSequence[] getLicenseName(Context context) {
+    static CharSequence[] getLicenseName(Context context) {
         ArrayList<String> list = new ArrayList<>();
         for (Licencia licencia : FragmentMainActivity.licencias) {
             String licenseName = Utils.getStringLicenseFromId(context, licencia.getTipo());
@@ -206,7 +200,7 @@ public final class Utils {
      * @param context Contexto de la actividad
      * @param id      Identificador de la notificacion
      */
-    public static void removeNotificationFromSharedPreference(Context context, String id) {
+    static void removeNotificationFromSharedPreference(Context context, String id) {
         if (prefs == null)
             prefs = context.getSharedPreferences(NOTIFICATION_PREFERENCES_FILE, Context.MODE_PRIVATE);
 
@@ -218,7 +212,7 @@ public final class Utils {
             }
         }
 
-        editor.clear().commit();
+        editor.clear().apply();
         editor.putString("notification_data", new Gson().toJson(listNotificationData));
         editor.commit();
     }
@@ -270,7 +264,7 @@ public final class Utils {
      * @param cat     Categoria a buscar en el array de categorias.
      * @return
      */
-    public static int getCategoriaId(Context context, int cat) {
+    private static int getCategoriaId(Context context, int cat) {
         String[] categorias = context.getResources().getStringArray(R.array.categorias);
         for (int i = 0; i < categorias.length; i++) {
             if (i == cat) {
@@ -465,7 +459,7 @@ public final class Utils {
      * @param context
      * @return Email de la primera cuenta de google registrada en el dispositivo
      */
-    public static String getUserEmail(Context context) {
+    static String getUserEmail(Context context) {
         String email = "";
         try {
             Account[] accounts = AccountManager.get(context).getAccountsByType("com.google");
@@ -500,36 +494,8 @@ public final class Utils {
         return resultCode == ConnectionResult.SUCCESS;
     }
 
-    /**
-     * (No se usa) Se ha cambiado por una vista a pantalla completa
-     * Dialog para mostrar una imagen con capacidad de zoom
-     *
-     * @param context Contexto
-     * @param bitmap  Imagen
-     */
-    static void showDialogBitmap(Context context, Bitmap bitmap) {
-        // Any implementation of ImageView can be used!
-        PhotoView photoView = new PhotoView(context);
-        // Set the Drawable displayed
-        Drawable mDrawable = new BitmapDrawable(context.getResources(), bitmap);
-        photoView.setImageDrawable(mDrawable);
-        // Attach a PhotoViewAttacher, which takes care of all of the zooming functionality.
-        // (not needed unless you are going to change the drawable later)
-        PhotoViewAttacher mAttacher = new PhotoViewAttacher(photoView);
 
-        //Create dialog to show the image
-        Dialog builder = new Dialog(context);
-//        builder.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        builder.setTitle("Obtención de licencia F para 2ª y 1ª clase");
-        builder.getWindow()/*.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);*/
-                .setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
-        builder.addContentView(mAttacher.getImageView(), new RelativeLayout.LayoutParams(
-                WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN));
-        builder.show();
-    }
-
-    public static void saveBitmapToFile(Bitmap imageBitmap) {
+    static void saveBitmapToFile(Bitmap imageBitmap) {
         FileOutputStream out = null;
         try {
             out = new FileOutputStream(fileImagePath);
@@ -555,7 +521,7 @@ public final class Utils {
      * @param fileImagePath Ruta de la imagen local en el dispositivo
      * @param userId        Id del usuario para crear la carpeta con su imagen
      */
-    public static void saveBitmapToFirebase(
+    static void saveBitmapToFirebase(
             FirebaseStorage storage, Bitmap imageBitmap, String fileImagePath, String userId) {
 
         File file = new File(fileImagePath);
@@ -622,7 +588,7 @@ public final class Utils {
      * @param image Imagen
      * @return Byte[] de la imagen
      */
-    public static byte[] bitmapToByteArray(Bitmap image) {
+    private static byte[] bitmapToByteArray(Bitmap image) {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         image.compress(Bitmap.CompressFormat.JPEG, 70 /*ignored for PNG*/, bos);
         return bos.toByteArray();
@@ -641,27 +607,34 @@ public final class Utils {
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
-//    private void setPic() {
-//        // Get the dimensions of the View
-//        int targetW = mImageView.getWidth();
-//        int targetH = mImageView.getHeight();
-//
-//        // Get the dimensions of the bitmap
-//        BitmapFactory.Options bmOptions = new BitmapFactory.Options();
-//        bmOptions.inJustDecodeBounds = true;
-//        BitmapFactory.decodeFile(mCurrentPhotoPath, bmOptions);
-//        int photoW = bmOptions.outWidth;
-//        int photoH = bmOptions.outHeight;
-//
-//        // Determine how much to scale down the image
-//        int scaleFactor = Math.min(photoW / targetW, photoH / targetH);
-//
-//        // Decode the image file into a Bitmap sized to fill the View
-//        bmOptions.inJustDecodeBounds = false;
-//        bmOptions.inSampleSize = scaleFactor;
-//        bmOptions.inPurgeable = true;
-//
-//        Bitmap bitmap = BitmapFactory.decodeFile(mCurrentPhotoPath, bmOptions);
-//        mImageView.setImageBitmap(bitmap);
-//    }
+    /**
+     * @param context  Contexto
+     * @param drawable Id del recurso que queremos mostrar
+     * @param fileName Nombre de la imagen que vamos a guardar en el dispositivo
+     */
+    public static void showImage(Context context, Bitmap bitmap, String fileName) {
+
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+
+        File f = new File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES) + File.separator + fileName + ".jpg");
+
+        try {
+            //noinspection ResultOfMethodCallIgnored
+            f.createNewFile();
+            FileOutputStream fo = new FileOutputStream(f);
+            fo.write(bytes.toByteArray());
+            fo.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
+        Uri path = FileProvider.getUriForFile(context, "al.ahgitdevelopment.municion.fileprovider", f);
+        Intent intent = new Intent();
+        intent.setAction(Intent.ACTION_VIEW);
+        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        intent.setDataAndType(path, "image/*");
+        context.startActivity(intent);
+    }
 }

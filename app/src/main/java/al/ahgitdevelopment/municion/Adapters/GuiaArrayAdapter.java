@@ -83,8 +83,15 @@ public class GuiaArrayAdapter extends ArrayAdapter<Guia> {
                 View layout = ((FragmentMainActivity) context).getLayoutInflater().inflate(R.layout.dialog_image_view, null);
                 if (guia.getImagePath() != null && !guia.getImagePath().equals("null")) {
                     ImageView imageViewDialog = ((ImageView) layout.findViewById(R.id.image_view));
-                    Bitmap bitmap = Utils.resizeImage(BitmapFactory.decodeFile(guia.getImagePath()), imageViewDialog);
+                    final Bitmap bitmap = Utils.resizeImage(BitmapFactory.decodeFile(guia.getImagePath()), imageViewDialog);
                     imageViewDialog.setImageBitmap(bitmap);
+
+                    imageViewDialog.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Utils.showImage(context, bitmap, "guiaTemp");
+                        }
+                    });
                 } else {
                     ((ImageView) layout.findViewById(R.id.image_view)).setImageResource(
                             Utils.getResourceWeapon(guia.getTipoLicencia(), guia.getTipoArma()));

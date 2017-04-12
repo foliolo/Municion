@@ -85,8 +85,8 @@ import al.ahgitdevelopment.municion.Forms.CompraFormActivity;
 import al.ahgitdevelopment.municion.Forms.GuiaFormActivity;
 import al.ahgitdevelopment.municion.Forms.LicenciaFormActivity;
 import al.ahgitdevelopment.municion.Forms.TiradaFormActivity;
-import uk.co.senab.photoview.PhotoViewAttacher;
 
+import static al.ahgitdevelopment.municion.R.id.container;
 import static al.ahgitdevelopment.municion.Utils.PREFS_SHOW_ADS;
 
 public class FragmentMainActivity extends AppCompatActivity implements FirebaseAuth.AuthStateListener {
@@ -147,7 +147,6 @@ public class FragmentMainActivity extends AppCompatActivity implements FirebaseA
     private FirebaseStorage mStorage = FirebaseStorage.getInstance();
 
     private ImageView viewImageTable;
-    private PhotoViewAttacher mAttacher;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -227,7 +226,7 @@ public class FragmentMainActivity extends AppCompatActivity implements FirebaseA
         tabs = ((TabLayout) findViewById(R.id.tabs));
 
         // Set up the ViewPager with the sections adapter.
-        mViewPager = (ViewPager) findViewById(R.id.container);
+        mViewPager = (ViewPager) findViewById(container);
         if (mViewPager != null && mSectionsPagerAdapter != null)
             mViewPager.setAdapter(mSectionsPagerAdapter);
         mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
@@ -317,10 +316,6 @@ public class FragmentMainActivity extends AppCompatActivity implements FirebaseA
                 }
             });
         }
-
-        // Gestión de la foto de categoria en funcion de los puntos, que se muestra en el tab de tiradas
-        viewImageTable = (ImageView) findViewById(R.id.document_image_view);
-        mAttacher = new PhotoViewAttacher(viewImageTable);
     }
 
     /**
@@ -368,44 +363,6 @@ public class FragmentMainActivity extends AppCompatActivity implements FirebaseA
 
         dbSqlHelper.close();
         mAuth.removeAuthStateListener(this);
-    }
-
-    @Override
-    public void onBackPressed() {
-        if (viewImageTable.getVisibility() == View.VISIBLE) {
-            changeVisibilityImageTable(false);
-        } else {
-            super.onBackPressed();
-        }
-    }
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        try {
-            //Guardamos si se está visualizando la tabla
-            outState.putBoolean("image_table_showing", (viewImageTable.getVisibility() == View.VISIBLE ? true : false));
-            outState.putBoolean("dialog_images_showing", (viewImageTable.getVisibility() == View.VISIBLE ? true : false));
-        } catch (Exception ex) {
-            Log.e(TAG, "onSaveInstanceState: Tamaño del Bundle demasiado grande", ex);
-        }
-
-        super.onSaveInstanceState(outState);
-    }
-
-    @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        try {
-            super.onRestoreInstanceState(savedInstanceState);
-            boolean isTableImageShowing = savedInstanceState.getBoolean("image_table_showing");
-
-            if (isTableImageShowing) {
-                changeVisibilityImageTable(true);
-            } else {
-                changeVisibilityImageTable(false);
-            }
-        } catch (Exception ex) {
-            Log.e(TAG, "onRestoreInstanceState: Tamaño del Bundle demasiado grande", ex);
-        }
     }
 
     /**
@@ -704,46 +661,15 @@ public class FragmentMainActivity extends AppCompatActivity implements FirebaseA
                 startActivity(intent);
                 break;
             case R.id.tabla_tiradas:
-//Copyright 2016 Chris Banes
-//
-//Licensed under the Apache License, Version 2.0 (the "License");
-//you may not use this file except in compliance with the License.
-//You may obtain a copy of the License at
-//
-//   http://www.apache.org/licenses/LICENSE-2.0
-//
-//Unless required by applicable law or agreed to in writing, software
-//distributed under the License is distributed on an "AS IS" BASIS,
-//WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-//See the License for the specific language governing permissions and
-//limitations under the License.
+                try {
+                    Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.image_table);
+                    Utils.showImage(this, bitmap, "table");
+                } catch (Exception ex) {
+                    Log.e(TAG, "Error mostrando la tabla de tiradas");
+                    FirebaseCrash.logcat(Log.ERROR, TAG, "Error mostrando la tabla de tiradas");
+                    FirebaseCrash.report(ex);
+                }
 
-                //Firebase
-//                if (Utils.isNetworkAvailable(this)) {
-//                    StorageReference storageRef = mStorage.getReference();
-//                    StorageReference islandRef = storageRef.child(getString(R.string.storage_element_tabla_tiradas));
-//
-//                    final long ONE_MEGABYTE = 1024 * 1024;
-//                    islandRef.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
-//                        @Override
-//                        public void onSuccess(byte[] bytes) {
-//                            imageTable = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-//                            changeVisibilityImageTable(true);
-//                        }
-//                    }).addOnFailureListener(new OnFailureListener() {
-//                        @Override
-//                        public void onFailure(@NonNull Exception exception) {
-//                            // Handle any errors
-//                            Log.e(TAG, "Error descargando la imagen de las tables", exception);
-//                            Toast.makeText(FragmentMainActivity.this, R.string.error_downloading_image, Toast.LENGTH_LONG).show();
-//                        }
-//                    });
-//                } else {
-//                    Snackbar.make(findViewById(R.id.main_content), R.string.sin_conexion, Snackbar.LENGTH_LONG).show();
-//                }
-
-                // Local Image
-                changeVisibilityImageTable(true);
                 break;
 
             default:
@@ -751,29 +677,6 @@ public class FragmentMainActivity extends AppCompatActivity implements FirebaseA
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    /**
-     * Metodo para cambiar la visibilidad de la tabla de caterogias
-     *
-     * @param bitmap     Imagen a mostrar
-     * @param visibility Flag que indica si se muestra o no
-     */
-    private void changeVisibilityImageTable(boolean visibility) {
-        if (visibility) {
-            viewImageTable.setImageDrawable(getDrawable(R.drawable.image_table));
-            mAttacher.update();
-            viewImageTable.setVisibility(View.VISIBLE);
-            tabs.setVisibility(View.GONE);
-            fab.setVisibility(View.GONE);
-            textEmptyList.setVisibility(View.GONE);
-        } else {
-            viewImageTable.setVisibility(View.GONE);
-            tabs.setVisibility(View.VISIBLE);
-            fab.setVisibility(View.VISIBLE);
-            if (tiradas.size() == 0)
-                textEmptyList.setVisibility(View.VISIBLE);
-        }
     }
 
     /**
@@ -1214,10 +1117,16 @@ public class FragmentMainActivity extends AppCompatActivity implements FirebaseA
                 tiradaCountDown.setText(text);
             }
 
-            if (daysRemain <= 10) {
-                tiradaCountDown.setBackgroundColor(ContextCompat.getColor(context, android.R.color.holo_red_dark));
-            } else {
-                tiradaCountDown.setBackgroundColor(ContextCompat.getColor(context, R.color.colorPrimary));
+            try {
+                if (daysRemain <= 10) {
+                    tiradaCountDown.setBackgroundColor(ContextCompat.getColor(context, android.R.color.holo_red_dark));
+                } else {
+                    tiradaCountDown.setBackgroundColor(ContextCompat.getColor(context, R.color.colorPrimary));
+                }
+            } catch (Exception ex) {
+                Log.e(TAG, "Error \"controlado\" en getColor en el label de tiradas", ex);
+                FirebaseCrash.logcat(Log.ERROR, TAG, "Error \"controlado\" en getColor en el label de tiradas");
+                FirebaseCrash.report(ex);
             }
         }
 

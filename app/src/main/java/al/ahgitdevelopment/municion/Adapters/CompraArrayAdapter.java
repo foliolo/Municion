@@ -92,8 +92,14 @@ public class CompraArrayAdapter extends ArrayAdapter<Compra> {
                 View layout = ((FragmentMainActivity) context).getLayoutInflater().inflate(R.layout.dialog_image_view, null);
                 if (compra.getImagePath() != null && !compra.getImagePath().equals("null")) {
                     ImageView imageViewDialog = (ImageView) layout.findViewById(R.id.image_view);
-                    Bitmap bitmap = Utils.resizeImage(BitmapFactory.decodeFile(compra.getImagePath()), imageViewDialog);
+                    final Bitmap bitmap = Utils.resizeImage(BitmapFactory.decodeFile(compra.getImagePath()), imageViewDialog);
                     imageViewDialog.setImageBitmap(bitmap);
+                    imageViewDialog.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Utils.showImage(context, bitmap, "compraTemp");
+                        }
+                    });
                 } else {
                     ((ImageView) layout.findViewById(R.id.image_view)).setImageResource(
                             Utils.getResourceCartucho(
