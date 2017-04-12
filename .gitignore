@@ -120,8 +120,10 @@ obj/
 .idea/sqlDataSources.xml
 .idea/dynamic.xml
 .idea/uiDesigner.xml
+.idea/inspectionProfiles/
 
 # Keystore files
+keystore.properties
 
 # OS-specific files
 .DS_Store
