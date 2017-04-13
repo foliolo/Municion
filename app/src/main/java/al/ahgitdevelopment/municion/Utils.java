@@ -608,8 +608,9 @@ public final class Utils {
     }
 
     /**
+     * Método que lanza el intent de una imagen pasando el bitmap de la imagen
      * @param context  Contexto
-     * @param drawable Id del recurso que queremos mostrar
+     * @param bitmap Id del recurso que queremos mostrar
      * @param fileName Nombre de la imagen que vamos a guardar en el dispositivo
      */
     public static void showImage(Context context, Bitmap bitmap, String fileName) {
@@ -629,8 +630,24 @@ public final class Utils {
             e.printStackTrace();
         }
 
-
         Uri path = FileProvider.getUriForFile(context, "al.ahgitdevelopment.municion.fileprovider", f);
+        Intent intent = new Intent();
+        intent.setAction(Intent.ACTION_VIEW);
+        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        intent.setDataAndType(path, "image/*");
+        context.startActivity(intent);
+    }
+
+
+    /**
+     * Método que lanza el intent de una imagen pasando la ruta a la imagen
+     *
+     * @param context   Contexto
+     * @param imagePath Id del recurso que queremos mostrar
+     */
+    public static void showImage(Context context, String imagePath) {
+
+        Uri path = FileProvider.getUriForFile(context, "al.ahgitdevelopment.municion.fileprovider", new File(imagePath));
         Intent intent = new Intent();
         intent.setAction(Intent.ACTION_VIEW);
         intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);

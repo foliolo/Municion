@@ -97,7 +97,7 @@ public class CompraArrayAdapter extends ArrayAdapter<Compra> {
                     imageViewDialog.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            Utils.showImage(context, bitmap, "compraTemp");
+                            Utils.showImage(context, compra.getImagePath());
                         }
                     });
                 } else {

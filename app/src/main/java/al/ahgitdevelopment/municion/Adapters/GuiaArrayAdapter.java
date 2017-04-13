@@ -89,7 +89,7 @@ public class GuiaArrayAdapter extends ArrayAdapter<Guia> {
                     imageViewDialog.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            Utils.showImage(context, bitmap, "guiaTemp");
+                            Utils.showImage(context, guia.getImagePath());
                         }
                     });
                 } else {

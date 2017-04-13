@@ -1366,3 +1366,4 @@ public class FragmentMainActivity extends AppCompatActivity implements FirebaseA
 
 //http://stackoverflow.com/questions/17207366/creating-a-menu-after-a-long-click-event-on-a-list-view
 //http://stackoverflow.com/questions/18204386/contextual-action-mode-in-fragment-close-if-not-focused
+//Todo - Read: http://stackoverflow.com/questions/32244851/androidjava-lang-outofmemoryerror-failed-to-allocate-a-23970828-byte-allocatio
