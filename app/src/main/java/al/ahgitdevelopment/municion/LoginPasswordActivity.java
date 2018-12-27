@@ -28,16 +28,17 @@ import android.widget.Toast;
 import com.google.android.gms.ads.AdView;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.crash.FirebaseCrash;
+import com.google.firebase.perf.metrics.AddTrace;
 
 import java.util.Calendar;
 import java.util.List;
 
-import al.ahgitdevelopment.municion.BillingUtil.IabBroadcastReceiver;
-import al.ahgitdevelopment.municion.BillingUtil.IabHelper;
-import al.ahgitdevelopment.municion.BillingUtil.IabResult;
-import al.ahgitdevelopment.municion.BillingUtil.Inventory;
-import al.ahgitdevelopment.municion.DataBases.DataBaseSQLiteHelper;
-import al.ahgitdevelopment.municion.DataModel.Guia;
+import al.ahgitdevelopment.municion.billingutil.IabBroadcastReceiver;
+import al.ahgitdevelopment.municion.billingutil.IabHelper;
+import al.ahgitdevelopment.municion.billingutil.IabResult;
+import al.ahgitdevelopment.municion.billingutil.Inventory;
+import al.ahgitdevelopment.municion.databases.DataBaseSQLiteHelper;
+import al.ahgitdevelopment.municion.datamodel.Guia;
 
 import static al.ahgitdevelopment.municion.Utils.PREFS_SHOW_ADS;
 import static al.ahgitdevelopment.municion.Utils.PURCHASE_ID_REMOVE_ADS;
@@ -87,7 +88,7 @@ public class LoginPasswordActivity extends AppCompatActivity implements
         // [END handle_data_extras]
 
         // Toolbar
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setIcon(R.drawable.ic_bullseye);
@@ -101,13 +102,13 @@ public class LoginPasswordActivity extends AppCompatActivity implements
         mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.APP_OPEN, bundle);
 
         //Instances of UI objects
-        textInputLayout1 = (TextInputLayout) findViewById(R.id.text_input_layout1);
-        password1 = (TextInputEditText) findViewById(R.id.password1);
-        textInputLayout2 = (TextInputLayout) findViewById(R.id.text_input_layout2);
-        password2 = (TextInputEditText) findViewById(R.id.password2);
-        button = (ImageView) findViewById(R.id.continuar);
-        versionLabel = (TextView) findViewById(R.id.login_version_label);
-        mAdView = (AdView) findViewById(R.id.adView);
+        textInputLayout1 = findViewById(R.id.text_input_layout1);
+        password1 = findViewById(R.id.password1);
+        textInputLayout2 = findViewById(R.id.text_input_layout2);
+        password2 = findViewById(R.id.password2);
+        button = findViewById(R.id.continuar);
+        versionLabel = findViewById(R.id.login_version_label);
+        mAdView = findViewById(R.id.adView);
 
         versionLabel.setText(Utils.getAppVersion(this));
 
@@ -407,6 +408,7 @@ public class LoginPasswordActivity extends AppCompatActivity implements
         return isPassCorrect;
     }
 
+    @AddTrace(name = "launchActivity", enabled = true/*Optional*/)
     private void launchActivity() {
         DataBaseSQLiteHelper dbSqlHelper = new DataBaseSQLiteHelper(getApplicationContext());
 

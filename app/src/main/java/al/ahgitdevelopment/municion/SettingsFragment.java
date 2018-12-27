@@ -21,14 +21,14 @@ import com.google.firebase.crash.FirebaseCrash;
 
 import java.security.SecureRandom;
 
-import al.ahgitdevelopment.municion.BillingUtil.IabBroadcastReceiver;
-import al.ahgitdevelopment.municion.BillingUtil.IabHelper;
-import al.ahgitdevelopment.municion.BillingUtil.IabResult;
-import al.ahgitdevelopment.municion.BillingUtil.Inventory;
-import al.ahgitdevelopment.municion.BillingUtil.Purchase;
-import al.ahgitdevelopment.municion.Dialogs.ChangePasswordDialog;
-import al.ahgitdevelopment.municion.Dialogs.ResetPasswordDialog;
-import al.ahgitdevelopment.municion.Dialogs.SecurityQuestionDialog;
+import al.ahgitdevelopment.municion.billingutil.IabBroadcastReceiver;
+import al.ahgitdevelopment.municion.billingutil.IabHelper;
+import al.ahgitdevelopment.municion.billingutil.IabResult;
+import al.ahgitdevelopment.municion.billingutil.Inventory;
+import al.ahgitdevelopment.municion.billingutil.Purchase;
+import al.ahgitdevelopment.municion.dialogs.ChangePasswordDialog;
+import al.ahgitdevelopment.municion.dialogs.ResetPasswordDialog;
+import al.ahgitdevelopment.municion.dialogs.SecurityQuestionDialog;
 
 import static al.ahgitdevelopment.municion.Utils.PREFS_PAYLOAD;
 import static al.ahgitdevelopment.municion.Utils.PREFS_SHOW_ADS;
@@ -62,7 +62,7 @@ public class SettingsFragment extends FragmentActivity implements
 
         prefs = getSharedPreferences("Preferences", Context.MODE_PRIVATE);
 
-        settingOptionList = (ListView) findViewById(R.id.settings_option_list);
+        settingOptionList = findViewById(R.id.settings_option_list);
         ((TextView) findViewById(R.id.version_text)).setText(Utils.getAppVersion(this));
 
         String base64EncodedPublicKey = getString(R.string.app_public_key);

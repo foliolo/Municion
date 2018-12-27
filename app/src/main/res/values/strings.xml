@@ -145,6 +145,7 @@
 
 
     <!--ADMOB ID ANUNCIOS-->
+    <string name="admob_id" translatable="false">ca-app-pub-8582752139018186~4798397758</string>
     <string name="banner_login_id" translatable="false">ca-app-pub-8582752139018186/6275130957</string>
     <string name="banner_main_id" translatable="false">ca-app-pub-8582752139018186/4700666152</string>
     <string name="banner_formularios_id" translatable="false">ca-app-pub-8582752139018186/6177399356</string>
@@ -182,6 +183,7 @@
     <string name="settings_reset_password">Se ha reseteado su password</string>
     <string name="settings_reset_answer_fail">La respuesta no es correcta</string>
     <string name="year">Año</string>
+    <string name="date">Fecha</string>
 
     <!--IN-APP BILLING-->
     <string name="app_public_key" translatable="false">MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAvDvqFcMgylgnwiMHai3DqTiCEobhOp5Sx6i0TqiXpcOeB/H0AjPL7+6uqFRjrKmrxrNh0H6dw6oHPcuvO4M0WjIRfTyMOxnj/77APaVKYFJfQkebS19NxeldRiK67zVLrNVx5FWTpg4iwzOot6las7QxzAVG+CCy0KULP4q3khwZ/d0UKgJSvZwDpY6c9071tL6Vo1UTqbfAQf8lm1pinGPltZVJIQzvrCz1GAngEHU+eo4JHAUomVHJNTt7HlTABmhGUpOEG0MtMRSmlIq9yjoYvvO8PXcsFqF12z9LmMBH57Sw7mP3+9aeR6hMUS8N/Rqi6vw6KQivzeTqr0MyxwIDAQAB</string>

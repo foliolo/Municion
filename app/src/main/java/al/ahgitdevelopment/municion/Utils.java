@@ -43,9 +43,9 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.NoSuchElementException;
 
-import al.ahgitdevelopment.municion.DataModel.Guia;
-import al.ahgitdevelopment.municion.DataModel.Licencia;
-import al.ahgitdevelopment.municion.DataModel.NotificationData;
+import al.ahgitdevelopment.municion.datamodel.Guia;
+import al.ahgitdevelopment.municion.datamodel.Licencia;
+import al.ahgitdevelopment.municion.datamodel.NotificationData;
 
 import static al.ahgitdevelopment.municion.FragmentMainActivity.fileImagePath;
 
@@ -542,7 +542,7 @@ public final class Utils {
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                 // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
-                Uri downloadUrl = taskSnapshot.getDownloadUrl();
+                Uri downloadUrl = taskSnapshot.getUploadSessionUri();
                 Log.i("UploadImage", "Imagen subida: " + downloadUrl);
             }
         });

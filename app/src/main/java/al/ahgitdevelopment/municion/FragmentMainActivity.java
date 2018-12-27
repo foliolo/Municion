@@ -60,6 +60,8 @@ import com.google.firebase.crash.FirebaseCrash;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.perf.FirebasePerformance;
+import com.google.firebase.perf.metrics.Trace;
 import com.google.firebase.storage.FirebaseStorage;
 
 import java.io.File;
@@ -72,19 +74,19 @@ import java.util.Comparator;
 import java.util.Formatter;
 import java.util.Locale;
 
-import al.ahgitdevelopment.municion.Adapters.CompraArrayAdapter;
-import al.ahgitdevelopment.municion.Adapters.GuiaArrayAdapter;
-import al.ahgitdevelopment.municion.Adapters.LicenciaArrayAdapter;
-import al.ahgitdevelopment.municion.Adapters.TiradaArrayAdapter;
-import al.ahgitdevelopment.municion.DataBases.DataBaseSQLiteHelper;
-import al.ahgitdevelopment.municion.DataModel.Compra;
-import al.ahgitdevelopment.municion.DataModel.Guia;
-import al.ahgitdevelopment.municion.DataModel.Licencia;
-import al.ahgitdevelopment.municion.DataModel.Tirada;
-import al.ahgitdevelopment.municion.Forms.CompraFormActivity;
-import al.ahgitdevelopment.municion.Forms.GuiaFormActivity;
-import al.ahgitdevelopment.municion.Forms.LicenciaFormActivity;
-import al.ahgitdevelopment.municion.Forms.TiradaFormActivity;
+import al.ahgitdevelopment.municion.adapters.CompraArrayAdapter;
+import al.ahgitdevelopment.municion.adapters.GuiaArrayAdapter;
+import al.ahgitdevelopment.municion.adapters.LicenciaArrayAdapter;
+import al.ahgitdevelopment.municion.adapters.TiradaArrayAdapter;
+import al.ahgitdevelopment.municion.databases.DataBaseSQLiteHelper;
+import al.ahgitdevelopment.municion.datamodel.Compra;
+import al.ahgitdevelopment.municion.datamodel.Guia;
+import al.ahgitdevelopment.municion.datamodel.Licencia;
+import al.ahgitdevelopment.municion.datamodel.Tirada;
+import al.ahgitdevelopment.municion.forms.CompraFormActivity;
+import al.ahgitdevelopment.municion.forms.GuiaFormActivity;
+import al.ahgitdevelopment.municion.forms.LicenciaFormActivity;
+import al.ahgitdevelopment.municion.forms.TiradaFormActivity;
 
 import static al.ahgitdevelopment.municion.R.id.container;
 import static al.ahgitdevelopment.municion.Utils.PREFS_SHOW_ADS;
@@ -204,13 +206,13 @@ public class FragmentMainActivity extends AppCompatActivity implements FirebaseA
             }
         };
 
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar = findViewById(R.id.toolbar);
         toolbar.setTitle(R.string.app_name);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setIcon(R.drawable.ic_bullseye);
 
-        textEmptyList = (TextView) findViewById(R.id.textEmptyList);
+        textEmptyList = findViewById(R.id.textEmptyList);
 
         // Instanciamos la base de datos
         dbSqlHelper = new DataBaseSQLiteHelper(getApplicationContext());
@@ -223,10 +225,10 @@ public class FragmentMainActivity extends AppCompatActivity implements FirebaseA
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
-        tabs = ((TabLayout) findViewById(R.id.tabs));
+        tabs = findViewById(R.id.tabs);
 
         // Set up the ViewPager with the sections adapter.
-        mViewPager = (ViewPager) findViewById(container);
+        mViewPager = findViewById(container);
         if (mViewPager != null && mSectionsPagerAdapter != null)
             mViewPager.setAdapter(mSectionsPagerAdapter);
         mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
@@ -253,11 +255,11 @@ public class FragmentMainActivity extends AppCompatActivity implements FirebaseA
         mInterstitialAd = new InterstitialAd(this);
         mInterstitialAd.setAdUnitId(getString(R.string.banner_login_intersticial_id));
 
-        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
+        TabLayout tabLayout = findViewById(R.id.tabs);
         if (mViewPager != null)
             tabLayout.setupWithViewPager(mViewPager);
 
-        fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab = findViewById(R.id.fab);
         if (fab != null) {
             fab.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -330,7 +332,7 @@ public class FragmentMainActivity extends AppCompatActivity implements FirebaseA
         mAuth.addAuthStateListener(this);
 
         // Gestion de anuncios
-        mAdView = (AdView) findViewById(R.id.adView);
+        mAdView = findViewById(R.id.adView);
         prefs = getSharedPreferences("Preferences", Context.MODE_PRIVATE);
         if (prefs.getBoolean(PREFS_SHOW_ADS, true)) {
             mAdView.setVisibility(View.VISIBLE);
@@ -688,6 +690,9 @@ public class FragmentMainActivity extends AppCompatActivity implements FirebaseA
      */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Trace myTrace = FirebasePerformance.getInstance().newTrace("onActivityResult_FragmentMainActivity");
+        myTrace.start();
+
         Bitmap localImageBitmap = null;
         Bitmap firebaseImageBitmap = null;
         // Check which request we're responding to
@@ -763,6 +768,8 @@ public class FragmentMainActivity extends AppCompatActivity implements FirebaseA
         }
 
         showTextEmptyList();
+
+        myTrace.stop();
     }
 
     private void saveLists() {
@@ -1133,11 +1140,14 @@ public class FragmentMainActivity extends AppCompatActivity implements FirebaseA
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.list_view_pager, container, false);
-            listView = (ListView) rootView.findViewById(R.id.ListView);
-            tiradaCountDown = (TextView) rootView.findViewById(R.id.pager_tirada_countdown);
-            tiradaCountDown.setTextColor(ContextCompat.getColor(context, android.R.color.white));
+            listView = rootView.findViewById(R.id.ListView);
+            tiradaCountDown = rootView.findViewById(R.id.pager_tirada_countdown);
 
             try {
+                if (tiradaCountDown != null) {
+                    tiradaCountDown.setTextColor(ContextCompat.getColor(context, android.R.color.white));
+                }
+
                 switch (getArguments().getInt(ARG_SECTION_NUMBER)) {
                     case 0: // Lista de las guias
                         tiradaCountDown.setVisibility(View.GONE);
