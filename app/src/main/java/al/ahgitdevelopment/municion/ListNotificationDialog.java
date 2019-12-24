@@ -4,7 +4,6 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,7 +16,6 @@ import android.widget.TextView;
  */
 public class ListNotificationDialog extends DialogFragment {
 
-    @Nullable
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -31,9 +29,9 @@ public class ListNotificationDialog extends DialogFragment {
                 @Override
                 public View getView(int position, View convertView, ViewGroup parent) {
                     View view = super.getView(position, convertView, parent);
-                    TextView nombre = (TextView) view.findViewById(R.id.item_nombre_licencia);
-                    TextView numero = (TextView) view.findViewById(R.id.item_num_licencia);
-                    TextView fecha = (TextView) view.findViewById(R.id.item_caducidad_licencia);
+                    TextView nombre = view.findViewById(R.id.item_nombre_licencia);
+                    TextView numero = view.findViewById(R.id.item_num_licencia);
+                    TextView fecha = view.findViewById(R.id.item_caducidad_licencia);
 
                     if (position % 2 == 0)
                         view.setBackgroundColor(0xE7DFEBFF);

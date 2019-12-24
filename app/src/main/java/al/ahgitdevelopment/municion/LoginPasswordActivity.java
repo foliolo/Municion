@@ -8,11 +8,6 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.support.annotation.NonNull;
-import android.support.design.widget.TextInputEditText;
-import android.support.design.widget.TextInputLayout;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -25,10 +20,15 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+
 import com.google.android.gms.ads.AdView;
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.crash.FirebaseCrash;
-import com.google.firebase.perf.metrics.AddTrace;
 
 import java.util.Calendar;
 import java.util.List;
@@ -44,6 +44,8 @@ import static al.ahgitdevelopment.municion.Utils.PREFS_SHOW_ADS;
 import static al.ahgitdevelopment.municion.Utils.PURCHASE_ID_REMOVE_ADS;
 import static al.ahgitdevelopment.municion.Utils.getStringLicenseFromId;
 
+//import com.google.firebase.crash.FirebaseCrash;
+
 public class LoginPasswordActivity extends AppCompatActivity implements
         IabBroadcastReceiver.IabBroadcastListener, IabHelper.QueryInventoryFinishedListener {
 
@@ -52,7 +54,6 @@ public class LoginPasswordActivity extends AppCompatActivity implements
     public Toolbar toolbar;
     // Provides purchase notification while this app is running
     IabBroadcastReceiver mBroadcastReceiver;
-    private BaseApplication baseApplication;
     private FirebaseAnalytics mFirebaseAnalytics;
     private SharedPreferences prefs;
     private TextInputLayout textInputLayout1;
@@ -120,12 +121,7 @@ public class LoginPasswordActivity extends AppCompatActivity implements
         }
 
         //Añadimos la contraseña a las preferencias
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                evaluatePassword(prefs);
-            }
-        });
+        button.setOnClickListener(v -> evaluatePassword(prefs));
         password1.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -408,7 +404,7 @@ public class LoginPasswordActivity extends AppCompatActivity implements
         return isPassCorrect;
     }
 
-    @AddTrace(name = "launchActivity", enabled = true/*Optional*/)
+    //    @AddTrace(name = "launchActivity", enabled = true/*Optional*/)
     private void launchActivity() {
         DataBaseSQLiteHelper dbSqlHelper = new DataBaseSQLiteHelper(getApplicationContext());
 
@@ -569,8 +565,8 @@ public class LoginPasswordActivity extends AppCompatActivity implements
             checkAccountPermission();
 
         } catch (Exception ex) {
-            FirebaseCrash.logcat(Log.ERROR, TAG, "Error en el proceso de onQueryInventoryFinished");
-            FirebaseCrash.report(ex);
+//            FirebaseCrash.logcat(Log.ERROR, TAG, "Error en el proceso de onQueryInventoryFinished");
+//            FirebaseCrash.report(ex);
         }
     }
 

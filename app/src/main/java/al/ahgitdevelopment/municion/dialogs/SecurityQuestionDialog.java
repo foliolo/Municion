@@ -7,14 +7,15 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.design.widget.TextInputEditText;
-import android.support.design.widget.TextInputLayout;
-import android.support.v7.widget.AppCompatSpinner;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
+
+import androidx.appcompat.widget.AppCompatSpinner;
+
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 
 import al.ahgitdevelopment.municion.R;
 import al.ahgitdevelopment.municion.Utils;
@@ -36,7 +37,6 @@ public class SecurityQuestionDialog extends DialogFragment {
     private TextInputLayout layoutConfirmAnswer;
     private TextInputEditText confirmAnswer;
 
-    @Nullable
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
 

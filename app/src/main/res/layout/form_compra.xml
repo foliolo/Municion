@@ -33,7 +33,7 @@
                 android:visibility="gone"/>
 
             <!--CALIBRE 1-->
-            <android.support.design.widget.TextInputLayout
+            <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/text_input_layout_calibre1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
@@ -46,7 +46,7 @@
                     android:hint="@string/calibre"
                     android:imeOptions="actionNext"
                     android:inputType="none|textCapSentences"/>
-            </android.support.design.widget.TextInputLayout>
+            </com.google.android.material.textfield.TextInputLayout>
 
             <!--CHECK BOX CALIBRE 2-->
             <CheckBox
@@ -57,7 +57,7 @@
                 android:enabled="false"
                 android:text="@string/check_segundo_calibre"/>
             <!--CALIBRE 2-->
-            <android.support.design.widget.TextInputLayout
+            <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/text_input_layout_calibre2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
@@ -70,10 +70,10 @@
                     android:hint="@string/calibre2"
                     android:imeOptions="actionNext"
                     android:inputType="none|textCapSentences"/>
-            </android.support.design.widget.TextInputLayout>
+            </com.google.android.material.textfield.TextInputLayout>
 
             <!--UNIDADES-->
-            <android.support.design.widget.TextInputLayout
+            <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/text_input_layout_unidades"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
@@ -86,10 +86,10 @@
                     android:imeOptions="actionNext"
                     android:inputType="number"
                     android:maxLength="@integer/max_unidades_compra_length"/>
-            </android.support.design.widget.TextInputLayout>
+            </com.google.android.material.textfield.TextInputLayout>
 
             <!--PRECIO-->
-            <android.support.design.widget.TextInputLayout
+            <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/text_input_layout_precio"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
@@ -102,10 +102,10 @@
                     android:imeOptions="actionNext"
                     android:inputType="numberDecimal"
                     android:maxLength="@integer/max_unidades_precio_length"/>
-            </android.support.design.widget.TextInputLayout>
+            </com.google.android.material.textfield.TextInputLayout>
 
             <!--FECHA-->
-            <android.support.design.widget.TextInputLayout
+            <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/layout_form_fecha_compra"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -119,10 +119,10 @@
                     android:hint="@string/fecha"
                     android:imeOptions="actionNext"
                     android:inputType="none"/>
-            </android.support.design.widget.TextInputLayout>
+            </com.google.android.material.textfield.TextInputLayout>
 
             <!--TIPO MUNICION-->
-            <android.support.design.widget.TextInputLayout
+            <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/text_input_layout_tipo_municion"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
@@ -134,10 +134,10 @@
                     android:hint="@string/tipo_municion"
                     android:imeOptions="actionNext"
                     android:inputType="text|textCapSentences"/>
-            </android.support.design.widget.TextInputLayout>
+            </com.google.android.material.textfield.TextInputLayout>
 
             <!--PESO MUNICION-->
-            <android.support.design.widget.TextInputLayout
+            <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/text_input_layout_peso_municion"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
@@ -150,10 +150,10 @@
                     android:imeOptions="actionNext"
                     android:inputType="numberDecimal"
                     android:maxLength="@integer/max_peso_municion_compra"/>
-            </android.support.design.widget.TextInputLayout>
+            </com.google.android.material.textfield.TextInputLayout>
 
             <!--MARCA MUNICION-->
-            <android.support.design.widget.TextInputLayout
+            <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/text_input_layout_marca_municion"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
@@ -165,10 +165,10 @@
                     android:hint="@string/marca"
                     android:imeOptions="actionNext"
                     android:inputType="text|textCapSentences"/>
-            </android.support.design.widget.TextInputLayout>
+            </com.google.android.material.textfield.TextInputLayout>
 
             <!--TIENDA MUNICION-->
-            <android.support.design.widget.TextInputLayout
+            <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/text_input_layout_tienda"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
@@ -180,7 +180,7 @@
                     android:hint="@string/tienda"
                     android:imeOptions="actionNext"
                     android:inputType="text|textCapSentences"/>
-            </android.support.design.widget.TextInputLayout>
+            </com.google.android.material.textfield.TextInputLayout>
 
             <!--VALORACION-->
             <TextView

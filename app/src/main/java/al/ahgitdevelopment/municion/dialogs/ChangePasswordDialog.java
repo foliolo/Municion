@@ -7,13 +7,13 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.design.widget.TextInputEditText;
-import android.support.design.widget.TextInputLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
+
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 
 import al.ahgitdevelopment.municion.LoginPasswordActivity;
 import al.ahgitdevelopment.municion.R;
@@ -30,7 +30,6 @@ public class ChangePasswordDialog extends DialogFragment {
     private TextInputLayout layoutPass2;
     private TextInputEditText passwordNew2;
 
-    @Nullable
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
 

@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:app="http://schemas.android.com/apk/res-auto"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
 
     <include
         android:id="@+id/appbar_layout"
-        layout="@layout/basic_toolbar"/>
+        layout="@layout/basic_toolbar" />
 
     <ScrollView
         android:layout_width="match_parent"
@@ -18,13 +18,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:paddingBottom="@dimen/activity_vertical_margin"
             android:paddingLeft="@dimen/activity_horizontal_margin"
+            android:paddingTop="@dimen/activity_vertical_margin"
             android:paddingRight="@dimen/activity_horizontal_margin"
-            android:paddingTop="@dimen/activity_vertical_margin">
+            android:paddingBottom="@dimen/activity_vertical_margin">
 
             <!--DESCRIPCION-->
-            <android.support.design.widget.TextInputLayout
+            <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/form_tirada_descripcion"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
@@ -33,8 +33,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/lbl_descripcion_tirada"
-                    android:inputType="text|textCapSentences"/>
-            </android.support.design.widget.TextInputLayout>
+                    android:inputType="text|textCapSentences" />
+            </com.google.android.material.textfield.TextInputLayout>
 
             <!--RANGO-->
             <LinearLayout
@@ -50,9 +50,9 @@
                     android:layout_marginRight="10dp"
                     android:layout_weight="2"
                     android:text="@string/lbl_rango_tirada"
-                    android:textAppearance="?android:attr/textAppearanceSmall"/>
+                    android:textAppearance="?android:attr/textAppearanceSmall" />
 
-                <android.support.v7.widget.AppCompatSpinner
+                <androidx.appcompat.widget.AppCompatSpinner
                     android:id="@+id/form_tirada_rango"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
@@ -60,11 +60,11 @@
                     android:entries="@array/rango_tirada"
                     android:hint="@string/lbl_rango_tirada"
                     android:inputType="text"
-                    android:spinnerMode="dropdown"/>
+                    android:spinnerMode="dropdown" />
             </LinearLayout>
 
             <!--FECHA-->
-            <android.support.design.widget.TextInputLayout
+            <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/form_tirada_fecha"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -75,11 +75,11 @@
                     android:layout_height="wrap_content"
                     android:editable="false"
                     android:hint="@string/fecha"
-                    android:inputType="none"/>
-            </android.support.design.widget.TextInputLayout>
+                    android:inputType="none" />
+            </com.google.android.material.textfield.TextInputLayout>
 
             <!--PUNTUACION-->
-            <android.support.design.widget.TextInputLayout
+            <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/form_tirada_puntuacion"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
@@ -89,8 +89,8 @@
                     android:layout_height="wrap_content"
                     android:hint="@string/lbl_puntuacion_tirada"
                     android:inputType="number"
-                    android:maxLength="@integer/max_num_abonado_guia"/>
-            </android.support.design.widget.TextInputLayout>
+                    android:maxLength="@integer/max_num_abonado_guia" />
+            </com.google.android.material.textfield.TextInputLayout>
 
         </LinearLayout>
     </ScrollView>
@@ -103,21 +103,20 @@
         android:layout_centerHorizontal="true"
         android:visibility="gone"
         app:adSize="SMART_BANNER"
-        app:adUnitId="@string/banner_formularios_id">
-    </com.google.android.gms.ads.AdView>
+        app:adUnitId="@string/banner_formularios_id" />
 
-    <android.support.design.widget.FloatingActionButton
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab_form_save"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignWithParentIfMissing="true"
         android:layout_above="@+id/adView"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
-        android:layout_alignWithParentIfMissing="true"
         android:layout_margin="12dp"
         android:clickable="true"
         android:onClick="fabSaveOnClick"
         app:fabSize="normal"
-        app:srcCompat="@android:drawable/ic_menu_save"/>
+        app:srcCompat="@android:drawable/ic_menu_save" />
 
 </RelativeLayout>

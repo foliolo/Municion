@@ -20,17 +20,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.BaseColumns;
 import android.provider.CalendarContract;
-import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.design.widget.TextInputLayout;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.DialogFragment;
-import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.TaskStackBuilder;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.AppCompatSpinner;
-import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.text.format.DateFormat;
@@ -40,7 +29,19 @@ import android.widget.AdapterView;
 import android.widget.DatePicker;
 import android.widget.LinearLayout;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatSpinner;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.TaskStackBuilder;
+import androidx.fragment.app.DialogFragment;
+
 import com.google.android.gms.ads.AdView;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
+import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.crash.FirebaseCrash;
 
 import java.text.ParseException;
@@ -119,8 +120,8 @@ public class LicenciaFormActivity extends AppCompatActivity {
         isModify = false;
 
         //Gestion del boton de guardado en funcion de si se abre tras pulsar la notificacion
+        fab.setVisibility(View.GONE);
         if (getIntent().hasExtra("notification_call")) {
-            fab.setVisibility(View.GONE);
         } else {
             fab.setVisibility(View.VISIBLE);
         }
@@ -128,7 +129,7 @@ public class LicenciaFormActivity extends AppCompatActivity {
         //Carga de datos (en caso de modificacion)
         if (getIntent().getExtras() != null) {
             try {
-                Licencia licencia = new Licencia((Licencia) getIntent().getExtras().getParcelable("modify_licencia"));
+                Licencia licencia = new Licencia(getIntent().getExtras().getParcelable("modify_licencia"));
                 tipoLicencia.setSelection(licencia.getTipo());
                 textInputLayoutLicencia.getEditText().setText(String.valueOf(licencia.getNumLicencia()));
                 layoutFechaExpedicion.getEditText().setText(licencia.getFechaExpedicion());
@@ -279,7 +280,7 @@ public class LicenciaFormActivity extends AppCompatActivity {
         // Primero se comprueba si es una modificacion. Si ya hay un evento previo se elimina.
         if (isModify) {
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_CALENDAR) == PackageManager.PERMISSION_GRANTED) {
-                Licencia licencia = new Licencia((Licencia) getIntent().getExtras().getParcelable("modify_licencia"));
+                Licencia licencia = new Licencia(getIntent().getExtras().getParcelable("modify_licencia"));
                 try {
                     // Fecha inicio evento
                     Calendar beginTime = Calendar.getInstance();
@@ -368,7 +369,7 @@ public class LicenciaFormActivity extends AppCompatActivity {
         // Primero se comprueba si es una modificacion. Si ya hay un evento previo se elimina.
         if (isModify) {
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_CALENDAR) == PackageManager.PERMISSION_GRANTED) {
-                Licencia licencia = new Licencia((Licencia) getIntent().getExtras().getParcelable("modify_licencia"));
+                Licencia licencia = new Licencia(getIntent().getExtras().getParcelable("modify_licencia"));
                 try {
                     // Fecha inicio evento
                     Calendar beginTime = Calendar.getInstance();
@@ -757,17 +758,17 @@ public class LicenciaFormActivity extends AppCompatActivity {
                 if (layoutNumAbonado.getEditText().getText().toString().trim().equals(""))
                     licencia.setNumAbonado(0);
                 else
-                    licencia.setNumAbonado(Integer.parseInt(String.valueOf(layoutNumAbonado.getEditText().getText().toString().trim())));
+                    licencia.setNumAbonado(Integer.parseInt(layoutNumAbonado.getEditText().getText().toString().trim()));
             }
             if (layoutNumPoliza.getVisibility() == View.VISIBLE) {
-                licencia.setNumSeguro(String.valueOf(layoutNumPoliza.getEditText().getText().toString().trim()));
+                licencia.setNumSeguro(layoutNumPoliza.getEditText().getText().toString().trim());
             }
             if (layoutCCAA.getVisibility() == View.VISIBLE) {
                 licencia.setAutonomia(autonomia.getSelectedItemPosition());
             } else
                 licencia.setAutonomia(-1);
             if (layoutEdad.getVisibility() == View.VISIBLE)
-                licencia.setEdad(Integer.parseInt(String.valueOf(layoutEdad.getEditText().getText().toString().trim())));
+                licencia.setEdad(Integer.parseInt(layoutEdad.getEditText().getText().toString().trim()));
             if (layoutEscala.getVisibility() == View.VISIBLE) {
                 licencia.setEscala(tipoEscala.getSelectedItemPosition());
             } else

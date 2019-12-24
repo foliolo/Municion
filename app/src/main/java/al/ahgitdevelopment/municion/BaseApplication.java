@@ -1,17 +1,12 @@
 package al.ahgitdevelopment.municion;
 
-import android.app.Application;
+import androidx.multidex.MultiDexApplication;
 
 /**
  * Created by ahidalgog on 09/01/2017.
  */
 
-public class BaseApplication extends Application {
-    private static BaseApplication singleton;
-
-//    public static BaseApplication getInstance() {
-//        return singleton;
-//    }
+public class BaseApplication extends MultiDexApplication {
 
     @Override
     public void onCreate() {

@@ -18,24 +18,8 @@ import android.os.Bundle;
 import android.provider.BaseColumns;
 import android.provider.CalendarContract;
 import android.provider.MediaStore;
-import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.design.widget.TabLayout;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.DialogFragment;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.app.FragmentStatePagerAdapter;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.view.PagerAdapter;
-import android.support.v4.view.ViewPager;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.view.ActionMode;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -43,16 +27,29 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
-import android.widget.AdapterView;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentPagerAdapter;
+import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.InterstitialAd;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
+import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -60,8 +57,6 @@ import com.google.firebase.crash.FirebaseCrash;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.perf.FirebasePerformance;
-import com.google.firebase.perf.metrics.Trace;
 import com.google.firebase.storage.FirebaseStorage;
 
 import java.io.File;
@@ -125,18 +120,9 @@ public class FragmentMainActivity extends AppCompatActivity implements FirebaseA
     private static DataBaseSQLiteHelper dbSqlHelper;
     private static TextView tiradaCountDown;
     private Toolbar toolbar;
-    /**
-     * The {@link PagerAdapter} that will provide
-     * fragments for each of the sections. We use a
-     * {@link FragmentPagerAdapter} derivative, which will keep every
-     * loaded fragment in memory. If this becomes too memory intensive, it
-     * may be best to switch to a
-     * {@link FragmentStatePagerAdapter}.
-     */
+
     private SectionsPagerAdapter mSectionsPagerAdapter;
-    /**
-     * The {@link ViewPager} that will host the section contents.
-     */
+
     private TabLayout tabs;
     private ViewPager mViewPager;
     private SharedPreferences prefs;
@@ -147,8 +133,6 @@ public class FragmentMainActivity extends AppCompatActivity implements FirebaseA
     private DatabaseReference userRef;
     private FirebaseAuth mAuth = FirebaseAuth.getInstance();
     private FirebaseStorage mStorage = FirebaseStorage.getInstance();
-
-    private ImageView viewImageTable;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -261,61 +245,58 @@ public class FragmentMainActivity extends AppCompatActivity implements FirebaseA
 
         fab = findViewById(R.id.fab);
         if (fab != null) {
-            fab.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    //                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                    //                        .setAction("Action", null).show();
-                    Intent form;
-                    switch (mViewPager.getCurrentItem()) {
-                        case 0:
-                            if (Utils.getLicenseName(FragmentMainActivity.this).length > 0) {
-                                // Seleccion de licencia a la que asociar la guia
-                                DialogFragment dialog = new GuiaDialogFragment();
-                                dialog.show(getSupportFragmentManager(), "NewGuiaDialogFragment");
-                            } else {
-                                Snackbar.make(view, R.string.dialog_guia_fail, Snackbar.LENGTH_LONG)
+            fab.setOnClickListener(view -> {
+                //                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                //                        .setAction("Action", null).show();
+                Intent form;
+                switch (mViewPager.getCurrentItem()) {
+                    case 0:
+                        if (Utils.getLicenseName(FragmentMainActivity.this).length > 0) {
+                            // Seleccion de licencia a la que asociar la guia
+                            DialogFragment dialog = new GuiaDialogFragment();
+                            dialog.show(getSupportFragmentManager(), "NewGuiaDialogFragment");
+                        } else {
+                            Snackbar.make(view, R.string.dialog_guia_fail, Snackbar.LENGTH_LONG)
 //                                        .setAction(android.R.string.ok, new View.OnClickListener() {
 //                                            @Override
 //                                            public void onClick(View view) {
 //                                            }
 //                                        })
-                                        .setAction(android.R.string.ok, null)
-                                        .show();
-                            }
+                                    .setAction(android.R.string.ok, null)
+                                    .show();
+                        }
 
-                            break;
-                        case 1:
-                            if (guias.size() > 0) {
+                        break;
+                    case 1:
+                        if (guias.size() > 0) {
 //                                form = new Intent(FragmentMainActivity.this, CompraFormActivity.class);
 //                                startActivityForResult(form, COMPRA_COMPLETED);
-                                DialogFragment dialog = new CompraDialogFragment();
-                                dialog.show(getSupportFragmentManager(), "NewCompraDialogFragment");
-                            } else {
-                                Snackbar.make(view, "Debe introducir una guia primero", Snackbar.LENGTH_LONG)
+                            DialogFragment dialog = new CompraDialogFragment();
+                            dialog.show(getSupportFragmentManager(), "NewCompraDialogFragment");
+                        } else {
+                            Snackbar.make(view, "Debe introducir una guia primero", Snackbar.LENGTH_LONG)
 //                                        .setAction(android.R.string.ok, new View.OnClickListener() {
 //                                            @Override
 //                                            public void onClick(View view) {
 //                                            }
 //                                        })
-                                        .setAction(android.R.string.ok, null)
-                                        .show();
-                            }
+                                    .setAction(android.R.string.ok, null)
+                                    .show();
+                        }
 
-                            break;
-                        case 2:
-                            form = new Intent(FragmentMainActivity.this, LicenciaFormActivity.class);
-                            startActivityForResult(form, LICENCIA_COMPLETED);
-                            break;
+                        break;
+                    case 2:
+                        form = new Intent(FragmentMainActivity.this, LicenciaFormActivity.class);
+                        startActivityForResult(form, LICENCIA_COMPLETED);
+                        break;
 
-                        case 3:
-                            form = new Intent(FragmentMainActivity.this, TiradaFormActivity.class);
-                            startActivityForResult(form, TIRADA_COMPLETED);
-                            break;
-                    }
-
-                    mActionModeCallback.onDestroyActionMode(mActionMode);
+                    case 3:
+                        form = new Intent(FragmentMainActivity.this, TiradaFormActivity.class);
+                        startActivityForResult(form, TIRADA_COMPLETED);
+                        break;
                 }
+
+                mActionModeCallback.onDestroyActionMode(mActionMode);
             });
         }
     }
@@ -690,8 +671,8 @@ public class FragmentMainActivity extends AppCompatActivity implements FirebaseA
      */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Trace myTrace = FirebasePerformance.getInstance().newTrace("onActivityResult_FragmentMainActivity");
-        myTrace.start();
+//        Trace myTrace = FirebasePerformance.getInstance().newTrace("onActivityResult_FragmentMainActivity");
+//        myTrace.start();
 
         Bitmap localImageBitmap = null;
         Bitmap firebaseImageBitmap = null;
@@ -729,7 +710,7 @@ public class FragmentMainActivity extends AppCompatActivity implements FirebaseA
                     break;
 
                 case LICENCIA_COMPLETED:
-                    licencias.add(new Licencia((Licencia) data.getExtras().getParcelable("modify_licencia")));
+                    licencias.add(new Licencia(data.getExtras().getParcelable("modify_licencia")));
                     licenciaArrayAdapter.notifyDataSetChanged();
                     break;
 
@@ -769,7 +750,7 @@ public class FragmentMainActivity extends AppCompatActivity implements FirebaseA
 
         showTextEmptyList();
 
-        myTrace.stop();
+//        myTrace.stop();
     }
 
     private void saveLists() {
@@ -1189,32 +1170,26 @@ public class FragmentMainActivity extends AppCompatActivity implements FirebaseA
                 }
 
                 listView.setChoiceMode(AbsListView.CHOICE_MODE_SINGLE);
-                listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-                    @Override
-                    public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                        if (mActionMode != null) {
-                            return false;
-                        }
-
-                        view.setSelected(true);
-                        auxView = view;
-
-                        // Start the CAB using the ActionMode.Callback defined above
-                        mActionMode = ((AppCompatActivity) getActivity()).startSupportActionMode(mActionModeCallback);
-                        assert mActionMode != null;
-                        mActionMode.setTitle(R.string.menu_cab_title);
-                        mActionMode.setTag(position);
-                        return true;
+                listView.setOnItemLongClickListener((parent, view, position, id) -> {
+                    if (mActionMode != null) {
+                        return false;
                     }
+
+                    view.setSelected(true);
+                    auxView = view;
+
+                    // Start the CAB using the ActionMode.Callback defined above
+                    mActionMode = getActivity().startActionMode(mActionModeCallback);
+                    assert mActionMode != null;
+                    mActionMode.setTitle(R.string.menu_cab_title);
+                    mActionMode.setTag(position);
+                    return true;
                 });
 
-                listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                        if (mActionMode != null)
-                            mActionMode.finish();
-                        mActionMode = null;
-                    }
+                listView.setOnItemClickListener((parent, view, position, id) -> {
+                    if (mActionMode != null)
+                        mActionMode.finish();
+                    mActionMode = null;
                 });
             } catch (Exception e) {
                 e.printStackTrace();
@@ -1241,21 +1216,15 @@ public class FragmentMainActivity extends AppCompatActivity implements FirebaseA
             // Set title
             builder.setTitle(R.string.dialog_licencia_title)
                     // Set items
-                    .setSingleChoiceItems(Utils.getLicenseName(getActivity()), 0, new DialogInterface.OnClickListener() {
-
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
+                    .setSingleChoiceItems(Utils.getLicenseName(getActivity()), 0, (dialogInterface, i) -> {
 //                            Toast.makeText(getActivity(), "Seleccionado: " + (String) getGuiaName()[i], Toast.LENGTH_SHORT).show();
-                            selectedLicense = i;
-                        }
+                        selectedLicense = i;
                     })
                     // Add action buttons
-                    .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int pos) {
-                            // Alberto H (10/1/2017):
-                            // Comentada la condicion de obligar al usuario a tener la licencia
-                            // federativa para poder crear la licencia F - Tiro olimpico.
+                    .setPositiveButton(android.R.string.ok, (dialog, pos) -> {
+                        // Alberto H (10/1/2017):
+                        // Comentada la condicion de obligar al usuario a tener la licencia
+                        // federativa para poder crear la licencia F - Tiro olimpico.
 //                            String tipoLicencia = (String) Utils.getLicenseName(getActivity())[selectedLicense];
 //                            if (tipoLicencia.equals("F - Tiro olimpico")) {
 //                                if (Utils.isLicenciaFederativa(getActivity())) {
@@ -1267,11 +1236,10 @@ public class FragmentMainActivity extends AppCompatActivity implements FirebaseA
 //                                    GuiaDialogFragment.this.getDialog().dismiss();
 //                                }
 //                            } else {
-                            Intent form = new Intent(getActivity(), GuiaFormActivity.class);
-                            form.putExtra("tipo_licencia", (String) Utils.getLicenseName(getActivity())[selectedLicense]);
-                            getActivity().startActivityForResult(form, FragmentMainActivity.GUIA_COMPLETED);
+                        Intent form = new Intent(getActivity(), GuiaFormActivity.class);
+                        form.putExtra("tipo_licencia", (String) Utils.getLicenseName(getActivity())[selectedLicense]);
+                        getActivity().startActivityForResult(form, FragmentMainActivity.GUIA_COMPLETED);
 //                            }
-                        }
                     })
                     .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
@@ -1297,25 +1265,16 @@ public class FragmentMainActivity extends AppCompatActivity implements FirebaseA
             // Set title
             builder.setTitle(R.string.dialog_guia_title)
                     // Set items
-                    .setSingleChoiceItems(getGuiaName(), 0, new DialogInterface.OnClickListener() {
-
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int pos) {
-                            selectedGuia = pos;
-                        }
-                    })
+                    .setSingleChoiceItems(getGuiaName(), 0, (dialogInterface, pos) -> selectedGuia = pos)
                     // Add action buttons
-                    .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int pos) {
+                    .setPositiveButton(android.R.string.ok, (dialog, pos) -> {
 //                            if (pos >= 0)
 //                                Toast.makeText(getActivity(), "Seleccionado: " + getGuiaName()[pos].toString(), Toast.LENGTH_SHORT).show();
 
-                            Intent form = new Intent(getActivity(), CompraFormActivity.class);
-                            form.putExtra("position_guia", selectedGuia);
-                            form.putExtra("guia", guias.get(selectedGuia));
-                            getActivity().startActivityForResult(form, FragmentMainActivity.COMPRA_COMPLETED);
-                        }
+                        Intent form = new Intent(getActivity(), CompraFormActivity.class);
+                        form.putExtra("position_guia", selectedGuia);
+                        form.putExtra("guia", guias.get(selectedGuia));
+                        getActivity().startActivityForResult(form, FragmentMainActivity.COMPRA_COMPLETED);
                     })
                     .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
