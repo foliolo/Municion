@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:gravity="center_vertical"
-              android:orientation="vertical"
-              android:paddingBottom="8dp"
-              android:paddingTop="7dp">
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical"
+    android:orientation="vertical"
+    android:paddingTop="7dp"
+    android:paddingBottom="8dp">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -23,7 +23,7 @@
             android:paddingRight="@dimen/activity_vertical_margin"
             android:text="@string/lbl_num_licencia"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textStyle="normal|bold"/>
+            android:textStyle="normal|bold" />
 
         <TextView
             android:id="@+id/item_rango_tirada"
@@ -33,8 +33,7 @@
             android:gravity="end"
             android:paddingRight="@dimen/activity_vertical_margin"
             android:text="local/social"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            />
+            android:textAppearance="?android:attr/textAppearanceMedium" />
     </LinearLayout>
 
     <LinearLayout
@@ -53,7 +52,7 @@
             android:paddingRight="@dimen/activity_vertical_margin"
             android:text="15/05/2016"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textStyle="normal|bold"/>
+            android:textStyle="normal|bold" />
 
         <TextView
             android:id="@+id/item_puntuacion_tirada"
@@ -63,8 +62,7 @@
             android:gravity="end"
             android:paddingRight="@dimen/activity_vertical_margin"
             android:text="600"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            />
+            android:textAppearance="?android:attr/textAppearanceMedium" />
     </LinearLayout>
 
 </LinearLayout>

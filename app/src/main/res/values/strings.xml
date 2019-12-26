@@ -86,6 +86,7 @@
     <string name="lbl_categoria">Categoria</string>
     <string name="fecha_expedicion">Fecha de expedición</string>
     <string name="fecha_caducidad">Fecha de caducidad</string>
+    <string name="libro_coleccionista">Libro de coleccionista</string>
     <string name="lbl_escala">Escala</string>
     <string name="msg_err_num_licencia">Introduce el numero de licencia</string>
     <string name="msg_err_fecha_exp">Introduce la fecha de expedición</string>

@@ -86,6 +86,7 @@
     <string name="fecha_expedicion">Date of issue</string>
     <string name="fecha_caducidad">Date of expiry</string>
     <string name="lbl_escala">Official Rank</string>
+    <string name="libro_coleccionista">Collector\'s book</string>
     <string name="msg_err_num_licencia">Enter the License Number</string>
     <string name="msg_err_fecha_exp">Enter Date of Issue</string>
     <string name="msg_err_fecha_cad">Enter Date of Expiry</string>

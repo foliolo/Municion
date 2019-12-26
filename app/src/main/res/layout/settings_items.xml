@@ -8,12 +8,12 @@
               android:paddingRight="@dimen/activity_horizontal_margin"
               android:paddingTop="@dimen/activity_vertical_margin">
 
-    <android.support.design.widget.TextInputLayout
+    <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/text_input_layout_old"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <android.support.design.widget.TextInputEditText
+        <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/passwordOld"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -21,14 +21,14 @@
             android:hint="@string/lbl3_insert_password"
             android:inputType="numberPassword"
             android:maxLength="@integer/password_max_length"/>
-    </android.support.design.widget.TextInputLayout>
+    </com.google.android.material.textfield.TextInputLayout>
 
-    <android.support.design.widget.TextInputLayout
+    <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/text_input_layout_new"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <android.support.design.widget.TextInputEditText
+        <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/passwordNew"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -36,14 +36,14 @@
             android:hint="@string/lbl4_insert_password"
             android:inputType="numberPassword"
             android:maxLength="@integer/password_max_length"/>
-    </android.support.design.widget.TextInputLayout>
+    </com.google.android.material.textfield.TextInputLayout>
 
-    <android.support.design.widget.TextInputLayout
+    <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/text_input_layout_new2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <android.support.design.widget.TextInputEditText
+        <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/passwordNew2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -51,6 +51,6 @@
             android:hint="@string/lbl5_insert_password"
             android:inputType="numberPassword"
             android:maxLength="@integer/password_max_length"/>
-    </android.support.design.widget.TextInputLayout>
+    </com.google.android.material.textfield.TextInputLayout>
 
 </LinearLayout>

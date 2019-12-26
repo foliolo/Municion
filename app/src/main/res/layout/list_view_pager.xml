@@ -16,7 +16,7 @@
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:textStyle="normal|bold"
         android:visibility="gone"
-        tools:context="al.ahgitdevelopment.municion.FragmentMainActivity$PlaceholderFragment"/>/>
+        tools:context="al.ahgitdevelopment.municion.FragmentMainActivity$PlaceholderFragment" />
 
     <ListView
         android:id="@+id/ListView"

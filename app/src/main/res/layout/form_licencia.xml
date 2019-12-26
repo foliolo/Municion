@@ -38,7 +38,7 @@
                     android:text="@string/lbl_tipo_licencia"
                     android:textAppearance="?android:attr/textAppearanceSmall"/>
 
-                <android.support.v7.widget.AppCompatSpinner
+                <androidx.appcompat.widget.AppCompatSpinner
                     android:id="@+id/form_tipo_licencia"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -66,7 +66,7 @@
                     android:text="@string/lbl_categoria"
                     android:textAppearance="?android:attr/textAppearanceSmall"/>
 
-                <android.support.v7.widget.AppCompatSpinner
+                <androidx.appcompat.widget.AppCompatSpinner
                     android:id="@+id/form_categoria"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -95,7 +95,7 @@
                     android:textAppearance="?android:attr/textAppearanceSmall"
                     android:visibility="visible"/>
 
-                <android.support.v7.widget.AppCompatSpinner
+                <androidx.appcompat.widget.AppCompatSpinner
                     android:id="@+id/form_tipo_permiso_conducir"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -110,7 +110,7 @@
             </LinearLayout>
 
             <!--NUMERO DE LICENCIA-->
-            <android.support.design.widget.TextInputLayout
+            <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/text_input_layout_licencia"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
@@ -122,10 +122,10 @@
                     android:hint="@string/lbl_num_licencia"
                     android:inputType="text|textCapSentences"
                     android:maxLength="@integer/max_num_licencia_length"/>
-            </android.support.design.widget.TextInputLayout>
+            </com.google.android.material.textfield.TextInputLayout>
 
             <!--EDAD CONDUCTOR-->
-            <android.support.design.widget.TextInputLayout
+            <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/text_input_layout_edad"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
@@ -137,10 +137,10 @@
                     android:hint="@string/lbl_edad"
                     android:inputType="number"
                     android:maxLength="3"/>
-            </android.support.design.widget.TextInputLayout>
+            </com.google.android.material.textfield.TextInputLayout>
 
             <!--FECHA EXPEDICION-->
-            <android.support.design.widget.TextInputLayout
+            <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/layout_form_fecha_expedicion"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -153,10 +153,10 @@
                     android:editable="false"
                     android:hint="@string/fecha_expedicion"
                     android:inputType="none"/>
-            </android.support.design.widget.TextInputLayout>
+            </com.google.android.material.textfield.TextInputLayout>
 
             <!--FECHA CADUCIDAD-->
-            <android.support.design.widget.TextInputLayout
+            <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/layout_form_fecha_caducidad"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -170,10 +170,10 @@
                     android:focusable="false"
                     android:hint="@string/fecha_caducidad"
                     android:inputType="none"/>
-            </android.support.design.widget.TextInputLayout>
+            </com.google.android.material.textfield.TextInputLayout>
 
             <!--NUMERO DE ABONADO-->
-            <android.support.design.widget.TextInputLayout
+            <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/layout_form_num_abonado"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
@@ -185,10 +185,10 @@
                     android:hint="@string/lbl_num_abonado"
                     android:inputType="number"
                     android:maxLength="@integer/max_num_abonado_guia"/>
-            </android.support.design.widget.TextInputLayout>
+            </com.google.android.material.textfield.TextInputLayout>
 
             <!--NUMERO DE POLIZA-->
-            <android.support.design.widget.TextInputLayout
+            <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/layout_form_num_poliza"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
@@ -201,7 +201,7 @@
                     android:inputType="text|textCapSentences"
                     android:maxLength="@integer/max_poliza_seguro_licencia"
                     />
-            </android.support.design.widget.TextInputLayout>
+            </com.google.android.material.textfield.TextInputLayout>
 
             <!--COMUNIDAD AUTONOMA-->
             <LinearLayout
@@ -220,7 +220,7 @@
                     android:text="@string/lbl_ccaa"
                     android:textAppearance="?android:attr/textAppearanceSmall"/>
 
-                <android.support.v7.widget.AppCompatSpinner
+                <androidx.appcompat.widget.AppCompatSpinner
                     android:id="@+id/form_ccaa"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -249,7 +249,7 @@
                     android:text="@string/lbl_tipo_escala"
                     android:textAppearance="?android:attr/textAppearanceSmall"/>
 
-                <android.support.v7.widget.AppCompatSpinner
+                <androidx.appcompat.widget.AppCompatSpinner
                     android:id="@+id/form_tipo_escala"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
@@ -274,7 +274,7 @@
         app:adUnitId="@string/banner_formularios_id">
     </com.google.android.gms.ads.AdView>
 
-    <android.support.design.widget.FloatingActionButton
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab_form_save"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

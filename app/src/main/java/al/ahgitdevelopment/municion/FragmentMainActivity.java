@@ -1241,11 +1241,7 @@ public class FragmentMainActivity extends AppCompatActivity implements FirebaseA
                         getActivity().startActivityForResult(form, FragmentMainActivity.GUIA_COMPLETED);
 //                            }
                     })
-                    .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            GuiaDialogFragment.this.getDialog().cancel();
-                        }
-                    });
+                    .setNegativeButton(android.R.string.cancel, (dialog, id) -> GuiaDialogFragment.this.getDialog().cancel());
             return builder.create();
         }
     }
