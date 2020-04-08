@@ -67,7 +67,7 @@ public class TiradaFormActivity extends AppCompatActivity {
         rango = findViewById(R.id.form_tirada_rango);
         fecha = findViewById(R.id.form_tirada_fecha);
         puntuacion = findViewById(R.id.form_tirada_puntuacion);
-        mAdView = findViewById(R.id.adView);
+        mAdView = findViewById(R.id.login_adView);
 
         //Carga de datos (en caso de modificacion)
         if (getIntent().getExtras() != null) {

@@ -96,7 +96,7 @@ public class CompraFormActivity extends AppCompatActivity {
         layoutPesoMunicion = findViewById(R.id.text_input_layout_peso_municion);
         layoutMarcaMunicion = findViewById(R.id.text_input_layout_marca_municion);
         layoutTienda = findViewById(R.id.text_input_layout_tienda);
-        mAdView = findViewById(R.id.adView);
+        mAdView = findViewById(R.id.login_adView);
 
         if (getIntent().getExtras() != null) {
             //Carga de datos (en caso de modificacion)

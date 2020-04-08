@@ -116,7 +116,7 @@ public class LicenciaFormActivity extends AppCompatActivity {
         layoutCategoria = findViewById(R.id.layout_categoria);
         categoria = findViewById(R.id.form_categoria);
         fab = findViewById(R.id.fab_form_save);
-        mAdView = findViewById(R.id.adView);
+        mAdView = findViewById(R.id.login_adView);
         isModify = false;
 
         //Gestion del boton de guardado en funcion de si se abre tras pulsar la notificacion

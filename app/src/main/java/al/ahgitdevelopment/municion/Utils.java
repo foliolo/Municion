@@ -57,7 +57,6 @@ public final class Utils {
     //    public static final String PURCHASE_ID_REMOVE_ADS = "android.test.purchased";
 //    public static final String PURCHASE_ID_REMOVE_ADS = "android.test.canceled";
     public static final String PREFS_SHOW_ADS = "show_ads";
-    static final String PURCHASE_ID_REMOVE_ADS = "remove_ads";
     static final String PREFS_PAYLOAD = "payload";
     private static final String NOTIFICATION_PREFERENCES_FILE = "Notifications";
     public static NotificationData notificationData = new NotificationData();

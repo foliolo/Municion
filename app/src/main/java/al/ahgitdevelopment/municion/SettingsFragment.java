@@ -32,7 +32,7 @@ import al.ahgitdevelopment.municion.dialogs.SecurityQuestionDialog;
 
 import static al.ahgitdevelopment.municion.Utils.PREFS_PAYLOAD;
 import static al.ahgitdevelopment.municion.Utils.PREFS_SHOW_ADS;
-import static al.ahgitdevelopment.municion.Utils.PURCHASE_ID_REMOVE_ADS;
+import static al.ahgitdevelopment.municion.login.LoginPasswordActivity.PURCHASE_ID_REMOVE_ADS;
 
 /**
  * A simple {@link FragmentActivity} subclass.

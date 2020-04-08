@@ -313,7 +313,7 @@ public class FragmentMainActivity extends AppCompatActivity implements FirebaseA
         mAuth.addAuthStateListener(this);
 
         // Gestion de anuncios
-        mAdView = findViewById(R.id.adView);
+        mAdView = findViewById(R.id.login_adView);
         prefs = getSharedPreferences("Preferences", Context.MODE_PRIVATE);
         if (prefs.getBoolean(PREFS_SHOW_ADS, true)) {
             mAdView.setVisibility(View.VISIBLE);

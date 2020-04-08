@@ -27,7 +27,7 @@
             android:value="@string/admob_id" />
 
         <activity
-            android:name=".LoginPasswordActivity"
+            android:name=".login.LoginPasswordActivity"
             android:screenOrientation="fullSensor"
             android:windowSoftInputMode="stateVisible">
             <intent-filter>
@@ -74,7 +74,7 @@
 
         <activity
             android:name=".FragmentTutorialActivity"
-            android:screenOrientation="portrait"
+            android:screenOrientation="fullSensor"
             android:theme="@style/AppTheme" />
 
         <provider

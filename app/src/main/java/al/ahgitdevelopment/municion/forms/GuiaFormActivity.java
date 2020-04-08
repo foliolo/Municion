@@ -110,7 +110,7 @@ public class GuiaFormActivity extends AppCompatActivity {
         layoutNumArma = findViewById(R.id.text_input_layout_num_arma);
         layoutCupo = findViewById(R.id.layout_cupo);
         layoutGastado = findViewById(R.id.text_input_layout_cartuchos_gastados);
-        mAdView = findViewById(R.id.adView);
+        mAdView = findViewById(R.id.login_adView);
 
         //Municion gastada por defecto = 0
         if (layoutGastado.getEditText().getText().toString().equals("")) {

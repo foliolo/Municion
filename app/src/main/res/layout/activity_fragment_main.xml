@@ -12,7 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignWithParentIfMissing="true"
-        android:layout_above="@+id/adView"
+        android:layout_above="@+id/login_adView"
         android:layout_alignParentTop="true"
         android:fitsSystemWindows="true">
 
@@ -64,7 +64,7 @@
 
 
     <com.google.android.gms.ads.AdView
-        android:id="@+id/adView"
+        android:id="@+id/login_adView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"

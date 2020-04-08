@@ -15,8 +15,8 @@ import android.widget.Toast;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
-import al.ahgitdevelopment.municion.LoginPasswordActivity;
 import al.ahgitdevelopment.municion.R;
+import al.ahgitdevelopment.municion.login.LoginPasswordActivity;
 
 /**
  * Created by ahidalgog on 06/07/2016.
