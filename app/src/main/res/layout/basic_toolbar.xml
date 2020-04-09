@@ -11,7 +11,8 @@
         android:background="@color/colorPrimary"
         android:orientation="vertical"
         android:paddingTop="@dimen/appbar_small_line"
-        android:theme="@style/AppTheme.AppBarOverlay">
+        >
+        <!--        android:theme="@style/AppTheme.AppBarOverlay"-->
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
@@ -19,9 +20,9 @@
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
             app:layout_scrollFlags="enterAlways"
-            app:popupTheme="@style/AppTheme.PopupOverlay"
             app:titleMarginStart="30dp" />
     </com.google.android.material.appbar.AppBarLayout>
+    <!--    app:popupTheme="@style/AppTheme.PopupOverlay"-->
 
     <ImageView
         android:id="@+id/imageView"

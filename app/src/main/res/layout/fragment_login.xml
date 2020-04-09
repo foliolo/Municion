@@ -4,16 +4,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".login.LoginPasswordActivity">
+    tools:context=".login.LoginPasswordFragment"
+    >
 
-    <include
-        android:id="@+id/appbar_layout"
-        layout="@layout/basic_toolbar" />
+    <!--    <include-->
+    <!--        android:id="@+id/appbar_layout"-->
+    <!--        layout="@layout/basic_toolbar" />-->
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/appbar_layout"
         android:orientation="vertical"
         android:paddingLeft="@dimen/activity_horizontal_margin"
         android:paddingTop="@dimen/activity_vertical_margin"
@@ -67,6 +67,7 @@
         android:layout_alignWithParentIfMissing="true"
         android:layout_above="@+id/login_adView"
         android:layout_margin="12dp"
+        android:text="asdfasdfadf"
         android:alpha="0.5" />
 
     <com.google.android.gms.ads.AdView

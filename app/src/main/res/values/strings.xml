@@ -198,4 +198,6 @@
     <string name="change_image">Cambiar</string>
     <string name="delete_image">Borrar</string>
     <string name="sin_conexion">Sin conexión a internet</string>
+
+    <string name="title_activity_navigation">NavigationActivity</string>
 </resources>

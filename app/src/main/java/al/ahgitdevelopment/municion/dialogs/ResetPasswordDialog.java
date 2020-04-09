@@ -18,7 +18,7 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
 import al.ahgitdevelopment.municion.R;
-import al.ahgitdevelopment.municion.login.LoginPasswordActivity;
+import al.ahgitdevelopment.municion.login.LoginPasswordFragment;
 
 /**
  * Created by david.sierra on 07/11/2016.
@@ -72,7 +72,7 @@ public class ResetPasswordDialog extends DialogFragment {
                             clearPreferences();
                             Toast.makeText(getActivity(), R.string.settings_reset_password, Toast.LENGTH_SHORT).show();
                             dismiss();
-                            Intent intent = new Intent(getActivity(), LoginPasswordActivity.class);
+                            Intent intent = new Intent(getActivity(), LoginPasswordFragment.class);
                             intent.putExtra("tutorial", false);
                             startActivity(intent);
                         } else if (!isQuestion){
@@ -102,7 +102,7 @@ public class ResetPasswordDialog extends DialogFragment {
                         clearPreferences();
                         Toast.makeText(getActivity(), R.string.settings_reset_password, Toast.LENGTH_SHORT).show();
                         dismiss();
-                        Intent intent = new Intent(getActivity(), LoginPasswordActivity.class);
+                        Intent intent = new Intent(getActivity(), LoginPasswordFragment.class);
                         intent.putExtra("tutorial", false);
                         startActivity(intent);
                     } else if (!isQuestion){

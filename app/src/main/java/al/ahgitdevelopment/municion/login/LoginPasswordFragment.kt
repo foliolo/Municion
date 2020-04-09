@@ -1,6 +1,9 @@
 package al.ahgitdevelopment.municion.login
 
-import al.ahgitdevelopment.municion.*
+import al.ahgitdevelopment.municion.BuildConfig
+import al.ahgitdevelopment.municion.R.layout
+import al.ahgitdevelopment.municion.R.string
+import al.ahgitdevelopment.municion.Utils
 import al.ahgitdevelopment.municion.billingutil.IabBroadcastReceiver
 import al.ahgitdevelopment.municion.billingutil.IabBroadcastReceiver.IabBroadcastListener
 import al.ahgitdevelopment.municion.billingutil.IabHelper
@@ -8,7 +11,6 @@ import al.ahgitdevelopment.municion.billingutil.IabHelper.IabAsyncInProgressExce
 import al.ahgitdevelopment.municion.billingutil.IabHelper.QueryInventoryFinishedListener
 import al.ahgitdevelopment.municion.billingutil.IabResult
 import al.ahgitdevelopment.municion.billingutil.Inventory
-import al.ahgitdevelopment.municion.databases.DataBaseSQLiteHelper
 import al.ahgitdevelopment.municion.datamodel.Guia
 import android.Manifest
 import android.content.Context
@@ -18,74 +20,72 @@ import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
-import android.provider.Settings
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
-import android.view.Menu
-import android.view.MenuItem
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
 import com.google.firebase.analytics.FirebaseAnalytics
-import kotlinx.android.synthetic.main.activity_login.*
-import kotlinx.android.synthetic.main.basic_toolbar.*
+import kotlinx.android.synthetic.main.fragment_login.*
+import kotlinx.android.synthetic.main.fragment_login.view.*
 import java.util.*
 
-class LoginPasswordActivity : AppCompatActivity(), IabBroadcastListener, QueryInventoryFinishedListener {
+class LoginPasswordFragment : Fragment(), IabBroadcastListener, QueryInventoryFinishedListener {
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_login)
-        prefs = getSharedPreferences("Preferences", Context.MODE_PRIVATE)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+
+        val root = inflater.inflate(layout.fragment_login, container, false)
+        prefs = requireContext().getSharedPreferences("Preferences", Context.MODE_PRIVATE)
         //Gestion de mensajes de firebase en el intent de entrada
-        // [START handle_data_extras]
-        if (intent.extras != null) {
-            for (key in intent.extras!!.keySet()) {
-                val value = intent.extras!![key]
-                Log.d(localClassName, "Key: $key Value: $value")
-            }
-        }
-        // [END handle_data_extras]
 
-        setSupportActionBar(toolbar)
-        supportActionBar!!.setDisplayShowHomeEnabled(true)
-        supportActionBar!!.setIcon(R.drawable.ic_bullseye)
-        toolbar.setTitle(R.string.app_name)
-        toolbar.setSubtitle(R.string.login)
-        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this)
+//        (requireActivity() as AppCompatActivity).setSupportActionBar(toolbar!!)
+//        (requireActivity() as AppCompatActivity).supportActionBar?.apply {
+//            setDisplayShowHomeEnabled(true)
+//            setIcon(R.drawable.ic_bullseye)
+//            setTitle(R.string.app_name)
+//            setSubtitle(R.string.login)
+//        }
+
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(requireContext())
+
         val bundle = Bundle()
         bundle.putString(FirebaseAnalytics.Param.VALUE, "Inicio de aplicacion")
         mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.APP_OPEN, bundle)
-        login_version_label.text = Utils.getAppVersion(this)
+
+        root.login_version_label.text = Utils.getAppVersion(requireContext())
 
         // Registro de contraseña
         if (!prefs.contains("password") || prefs.getString("password", "") == "") {
-            login_password_2.visibility = View.VISIBLE
+            root.login_password_2.visibility = View.VISIBLE
         } else {
-            login_password_2.visibility = View.GONE
+            root.login_password_2.visibility = View.GONE
         }
         //Añadimos la contraseña a las preferencias
-        button.setOnClickListener { evaluatePassword(prefs) }
-        login_password_1.editText?.setOnEditorActionListener { _, actionId, _ ->
+        root.button.setOnClickListener { evaluatePassword(prefs) }
+
+        root.login_password_1.editText?.setOnEditorActionListener { _, actionId, _ ->
             when (actionId) {
                 EditorInfo.IME_ACTION_NEXT -> evaluatePassword(prefs)
                 EditorInfo.IME_ACTION_DONE -> evaluatePassword(prefs)
-                else -> Toast.makeText(this@LoginPasswordActivity, "IME erroneo", Toast.LENGTH_SHORT).show()
+                else -> Toast.makeText(requireContext(), "IME erroneo", Toast.LENGTH_SHORT).show()
             }
             true
         }
-        login_password_1.editText?.addTextChangedListener(object : TextWatcher {
+
+        root.login_password_1.editText?.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
                 try {
                     val pass = prefs.getString("password", "")
-                    if (pass != "" && login_password_1.editText?.text.toString() != pass && login_password_1.error != null) {
-                        login_password_1.error = getString(R.string.password_equal_fail)
+                    if (pass != "" && root.login_password_1.editText?.text.toString() != pass && root.login_password_1.error != null) {
+                        root.login_password_1.error = getString(string.password_equal_fail)
                     }
-                    if (login_password_1.editText?.text.toString() == pass && login_password_1.editText?.text.toString().length >= MIN_PASS_LENGTH)
-                        login_password_1.error = null
+                    if (root.login_password_1.editText?.text.toString() == pass && root.login_password_1.editText?.text.toString().length >= MIN_PASS_LENGTH)
+                        root.login_password_1.error = null
                 } catch (ex: Exception) {
                     Log.e(TAG, "Error en el onTextChange por la version de android")
                 }
@@ -93,14 +93,15 @@ class LoginPasswordActivity : AppCompatActivity(), IabBroadcastListener, QueryIn
 
             override fun afterTextChanged(s: Editable) {}
         })
-        login_password_2.editText?.addTextChangedListener(object : TextWatcher {
+
+        root.login_password_2.editText?.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
                 try {
                     if (s.toString() == login_password_1.editText?.text.toString()) {
-                        login_password_2.error = null
+                        root.login_password_2.error = null
                     } else {
-                        login_password_2.error = getString(R.string.password_equal_fail)
+                        root.login_password_2.error = getString(string.password_equal_fail)
                     }
                 } catch (ex: Exception) {
                     Log.e(TAG, "Error en el onTextChange por la version de android")
@@ -115,13 +116,15 @@ class LoginPasswordActivity : AppCompatActivity(), IabBroadcastListener, QueryIn
             editor.putBoolean(Utils.PREFS_SHOW_ADS, true)
             editor.apply()
         }
+
+        return root
     }
 
     override fun onStart() {
         super.onStart()
         try { // Comprobación de compra de eliminacion de publicidad
-            val base64EncodedPublicKey = getString(R.string.app_public_key)
-            mHelper = IabHelper(this, base64EncodedPublicKey)
+            val base64EncodedPublicKey = getString(string.app_public_key)
+            mHelper = IabHelper(requireContext(), base64EncodedPublicKey)
             // enable debug logging (for a production application, you should set this to false).
             mHelper.enableDebugLogging(BuildConfig.DEBUG)
             mHelper.startSetup { result ->
@@ -131,7 +134,7 @@ class LoginPasswordActivity : AppCompatActivity(), IabBroadcastListener, QueryIn
                 } else {
                     isPurchaseAvailable = true
                     try {
-                        mHelper.queryInventoryAsync(this@LoginPasswordActivity  /*QueryInventoryFinishedListener*/)
+                        mHelper.queryInventoryAsync(this@LoginPasswordFragment  /*QueryInventoryFinishedListener*/)
                     } catch (ex: IabAsyncInProgressException) {
                         Log.e(TAG, "Error querying inventory. Another async operation in progress.", ex)
 //                        FirebaseCrash.logcat(Log.ERROR, TAG, "Error querying inventory. Another async operation in progress.");
@@ -149,7 +152,7 @@ class LoginPasswordActivity : AppCompatActivity(), IabBroadcastListener, QueryIn
             // IabHelper is setup, but before first call to getPurchases().
             mBroadcastReceiver = IabBroadcastReceiver(this /*IabBroadcastListener*/)
             val broadcastFilter = IntentFilter(IabBroadcastReceiver.ACTION)
-            registerReceiver(mBroadcastReceiver, broadcastFilter)
+            requireContext().registerReceiver(mBroadcastReceiver, broadcastFilter)
             if (prefs.getBoolean(Utils.PREFS_SHOW_ADS, true)) {
                 login_adView.visibility = View.VISIBLE
                 login_adView.loadAd(Utils.getAdRequest(login_adView))
@@ -168,10 +171,11 @@ class LoginPasswordActivity : AppCompatActivity(), IabBroadcastListener, QueryIn
         val yearPref = calendar[Calendar.YEAR]
         prefs.edit().putInt("year", yearPref).apply()
 
-        unregisterReceiver(mBroadcastReceiver)
+        requireContext().unregisterReceiver(mBroadcastReceiver)
 
         Log.d(TAG, "Destroying helper.")
-        mHelper.disposeWhenFinished()
+        if (isPurchaseAvailable)
+            mHelper.disposeWhenFinished()
 
         super.onDestroy()
     }
@@ -179,7 +183,7 @@ class LoginPasswordActivity : AppCompatActivity(), IabBroadcastListener, QueryIn
     private fun checkAccountPermission() {
         val accountPermission: Int
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            accountPermission = checkSelfPermission(Manifest.permission.GET_ACCOUNTS)
+            accountPermission = requireContext().checkSelfPermission(Manifest.permission.GET_ACCOUNTS)
             if (accountPermission != PackageManager.PERMISSION_GRANTED) {
                 requestPermissions(arrayOf(
                         Manifest.permission.GET_ACCOUNTS),
@@ -204,20 +208,19 @@ class LoginPasswordActivity : AppCompatActivity(), IabBroadcastListener, QueryIn
         showTutorial()
     }
 
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(R.menu.menu_login, menu)
-        return true
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            R.id.action_settings -> {
-                val intent = Intent(this@LoginPasswordActivity, SettingsFragment::class.java)
-                startActivity(intent)
-            }
-        }
-        return super.onOptionsItemSelected(item)
-    }
+//    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+//        inflater.inflate(R.menu.menu_login, menu)
+//    }
+//
+//    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+//        when (item.itemId) {
+//            R.id.action_settings -> {
+////                val intent = Intent(this@LoginPasswordFragment, SettingsFragment::class.java)
+////                startActivity(intent)
+//            }
+//        }
+//        return super.onOptionsItemSelected(item)
+//    }
 
     /**
      * Validación de la contraseña para poder entrar a la aplicación
@@ -227,19 +230,20 @@ class LoginPasswordActivity : AppCompatActivity(), IabBroadcastListener, QueryIn
     private fun evaluatePassword(prefs: SharedPreferences?) { // Registro de usuario
         if (!prefs!!.contains("password") || prefs.getString("password", "") == "") {
             if (savePassword()) { // Guardamos la contraseña
-                Toast.makeText(this@LoginPasswordActivity, R.string.password_save, Toast.LENGTH_LONG).show()
+                Toast.makeText(requireContext(), string.password_save, Toast.LENGTH_LONG).show()
                 launchActivity()
-                finish()
+                requireActivity().finish()
             } else { // Fallo al guardar la contraseñas
-                if (login_password_1.error == null) login_password_1.error = getString(R.string.password_save_fail)
+                if (view?.login_password_1?.error == null) view?.login_password_1?.error =
+                        getString(string.password_save_fail)
             }
         } else {
             if (checkPassword()) { // Password correcta
                 launchActivity()
-                finish()
+                requireActivity().finish()
             } else { // Password incorrecta
-                login_password_1.error = getString(R.string.password_fail)
-                login_password_1.editText?.setText("")
+                view?.login_password_1?.error = getString(string.password_fail)
+                view?.login_password_1?.editText?.setText("")
             }
         }
     }
@@ -258,11 +262,11 @@ class LoginPasswordActivity : AppCompatActivity(), IabBroadcastListener, QueryIn
                 editor.apply()
                 flag = true
             } else {
-                login_password_2.error = getString(R.string.password_equal_fail)
+                login_password_2.error = getString(string.password_equal_fail)
             }
         } else {
             flag = false
-            login_password_1.error = getString(R.string.password_short_fail)
+            login_password_1.error = getString(string.password_short_fail)
         }
         return flag
     }
@@ -278,29 +282,29 @@ class LoginPasswordActivity : AppCompatActivity(), IabBroadcastListener, QueryIn
         if (pass == login_password_1.editText?.text.toString()) {
             isPassCorrect = true
         } else {
-            login_password_2.error = getString(R.string.password_equal_fail)
+            login_password_2.error = getString(string.password_equal_fail)
         }
         return isPassCorrect
     }
 
     //    @AddTrace(name = "launchActivity", enabled = true/*Optional*/)
     private fun launchActivity() {
-        val dbSqlHelper = DataBaseSQLiteHelper(applicationContext)
-        //Lanzamiento del Intent
-        val intent = Intent(this@LoginPasswordActivity, FragmentMainActivity::class.java)
-        intent.putParcelableArrayListExtra("guias", dbSqlHelper.getListGuias(null))
-        intent.putParcelableArrayListExtra("compras", dbSqlHelper.getListCompras(null))
-        intent.putParcelableArrayListExtra("licencias", dbSqlHelper.getListLicencias(null))
-        intent.putParcelableArrayListExtra("tiradas", dbSqlHelper.getListTiradas(null))
-        checkYearCupo(intent)
-        startActivity(intent)
-        dbSqlHelper.close()
-
-        // Registrar Login - Analytics
-        val androidId = Settings.Secure.getString(contentResolver, Settings.Secure.ANDROID_ID)
-        val bundle = Bundle()
-        bundle.putString(FirebaseAnalytics.Param.VALUE, androidId)
-        mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.LOGIN, bundle)
+//        val dbSqlHelper = DataBaseSQLiteHelper(requireContext())
+//        //Lanzamiento del Intent
+//        val intent = Intent(this@LoginPasswordFragment, FragmentMainActivity::class.java)
+//        intent.putParcelableArrayListExtra("guias", dbSqlHelper.getListGuias(null))
+//        intent.putParcelableArrayListExtra("compras", dbSqlHelper.getListCompras(null))
+//        intent.putParcelableArrayListExtra("licencias", dbSqlHelper.getListLicencias(null))
+//        intent.putParcelableArrayListExtra("tiradas", dbSqlHelper.getListTiradas(null))
+//        checkYearCupo(intent)
+//        startActivity(intent)
+//        dbSqlHelper.close()
+//
+//        // Registrar Login - Analytics
+//        val androidId = Settings.Secure.getString(requireContext().contentResolver, Settings.Secure.ANDROID_ID)
+//        val bundle = Bundle()
+//        bundle.putString(FirebaseAnalytics.Param.VALUE, androidId)
+//        mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.LOGIN, bundle)
     }
 
     private fun checkYearCupo(intent: Intent) { // Comprobar year para renovar los cupos
@@ -312,7 +316,7 @@ class LoginPasswordActivity : AppCompatActivity(), IabBroadcastListener, QueryIn
 
                 if (listaGuias.size > 0) {
                     for (guia in listaGuias) {
-                        val nombreLicencia = Utils.getStringLicenseFromId(this@LoginPasswordActivity, guia.tipoLicencia)
+                        val nombreLicencia = Utils.getStringLicenseFromId(requireContext(), guia.tipoLicencia)
                         val idNombreLicencia = nombreLicencia.split(" ").toTypedArray()[0]
                         val tipoArma = guia.tipoArma
                         when (idNombreLicencia) {
@@ -354,12 +358,12 @@ class LoginPasswordActivity : AppCompatActivity(), IabBroadcastListener, QueryIn
      * Lanza el tutorial la primera vez que se inicia la aplicación.
      */
     private fun showTutorial() { // Para que no se muestre el tutorial cuando se ha reseteado el password
-        var isTutorial = true
-        if (intent.hasExtra("tutorial")) isTutorial = intent.getBooleanExtra("tutorial", true)
-        if (prefs.getBoolean("show_tutorial", true) && isTutorial) {
-            val intent = Intent(this, FragmentTutorialActivity::class.java)
-            startActivity(intent)
-        }
+//        var isTutorial = true
+//        if (requireActivity().intent.hasExtra("tutorial")) isTutorial = requireActivity().intent.getBooleanExtra("tutorial", true)
+//        if (prefs.getBoolean("show_tutorial", true) && isTutorial) {
+//            val intent = Intent(this, FragmentTutorialActivity::class.java)
+//            startActivity(intent)
+//        }
     }
 
     override fun onQueryInventoryFinished(result: IabResult, inventory: Inventory) {
@@ -392,7 +396,7 @@ class LoginPasswordActivity : AppCompatActivity(), IabBroadcastListener, QueryIn
     override fun receivedBroadcast() { // Received a broadcast notification that the inventory of items has changed
         Log.d(TAG, "Received broadcast notification. Querying inventory.")
         try {
-            mHelper.queryInventoryAsync(this@LoginPasswordActivity  /*QueryInventoryFinishedListener*/)
+            mHelper.queryInventoryAsync(this@LoginPasswordFragment  /*QueryInventoryFinishedListener*/)
         } catch (ex: IabAsyncInProgressException) {
             Log.e(TAG, "Error querying inventory. Another async operation in progress.", ex)
         }
