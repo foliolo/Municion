@@ -135,7 +135,7 @@ public class SecurityQuestionDialog extends DialogFragment {
             isPassCorrect = true;
             layoutPassword.setError(null);
         } else {
-            layoutPassword.setError(getString(R.string.password_equal_fail));
+            layoutPassword.setError(getString(R.string.login_not_matching_password_error));
         }
         return isPassCorrect;
     }

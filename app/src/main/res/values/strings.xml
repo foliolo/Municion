@@ -10,8 +10,8 @@
         para poder resetear la contraseña en caso de olvido</string>
     <string name="password_fail">Contraseña incorrecta</string>
     <string name="password_save_fail">Contraseña invalida</string>
-    <string name="password_short_fail">Contraseña demasiado corta</string>
-    <string name="password_equal_fail">Las contraseñas no coinciden</string>
+    <string name="login_short_password_error">Contraseña demasiado corta</string>
+    <string name="login_not_matching_password_error">Las contraseñas no coinciden</string>
     <string name="title_activity_fragment_main">Munición</string>
     <string name="action_settings">Configuración</string>
     <string name="guardar">Guardar</string>
@@ -200,4 +200,5 @@
     <string name="sin_conexion">Sin conexión a internet</string>
 
     <string name="title_activity_navigation">NavigationActivity</string>
+    <string name="error" translatable="false">Error</string>
 </resources>

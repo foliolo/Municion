@@ -6,8 +6,6 @@ import android.app.DialogFragment;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
@@ -48,7 +46,7 @@ import al.ahgitdevelopment.municion.datamodel.Guia;
 import al.ahgitdevelopment.municion.datamodel.Licencia;
 import al.ahgitdevelopment.municion.datamodel.NotificationData;
 
-import static al.ahgitdevelopment.municion.FragmentMainActivity.fileImagePath;
+import static al.ahgitdevelopment.municion.FragmentMainContent.fileImagePath;
 
 /**
  * Created by ahidalgog on 07/07/2016.
@@ -56,7 +54,6 @@ import static al.ahgitdevelopment.municion.FragmentMainActivity.fileImagePath;
 public final class Utils {
     //    public static final String PURCHASE_ID_REMOVE_ADS = "android.test.purchased";
 //    public static final String PURCHASE_ID_REMOVE_ADS = "android.test.canceled";
-    public static final String PREFS_SHOW_ADS = "show_ads";
     static final String PREFS_PAYLOAD = "payload";
     private static final String NOTIFICATION_PREFERENCES_FILE = "Notifications";
     public static NotificationData notificationData = new NotificationData();
@@ -66,7 +63,7 @@ public final class Utils {
     @NonNull
     static CharSequence[] getLicenseName(Context context) {
         ArrayList<String> list = new ArrayList<>();
-        for (Licencia licencia : FragmentMainActivity.licencias) {
+        for (Licencia licencia : FragmentMainContent.licencias) {
             String licenseName = Utils.getStringLicenseFromId(context, licencia.getTipo());
             if (!licenseName.equals("Autonómica de Caza") &&
                     !licenseName.equals("Autonómica de Pesca") &&
@@ -136,8 +133,8 @@ public final class Utils {
      */
     public static boolean licenseCanBeDeleted(int position) {
         // Si alguna guía tiene el id de la licencia que queremos borrar, no se podra eliminar la licencia
-        for (Guia guia : FragmentMainActivity.guias) {
-            if (guia.getTipoLicencia() == FragmentMainActivity.licencias.get(position).getTipo()) {
+        for (Guia guia : FragmentMainContent.guias) {
+            if (guia.getTipoLicencia() == FragmentMainContent.licencias.get(position).getTipo()) {
                 return true;
             }
         }
@@ -223,7 +220,7 @@ public final class Utils {
      * @param context Contexto de la actividad
      */
     public static boolean isLicenciaFederativa(Context context) {
-        for (Licencia licencia : FragmentMainActivity.licencias) {
+        for (Licencia licencia : FragmentMainContent.licencias) {
             String licenseName = Utils.getStringLicenseFromId(context, licencia.getTipo());
             if (licenseName.equals("Federativa de tiro")) {
                 return true;
@@ -240,7 +237,7 @@ public final class Utils {
     public static int getMaxCategoria(Context context) {
         try {
             ArrayList<Integer> list = new ArrayList<>();
-            for (Licencia licencia : FragmentMainActivity.licencias) {
+            for (Licencia licencia : FragmentMainContent.licencias) {
                 int categoria = Utils.getCategoriaId(context, licencia.getCategoria());
                 if (categoria != -1) {
                     list.add(categoria);
@@ -282,7 +279,7 @@ public final class Utils {
      */
     public static int getNumGuias(Context context) {
         ArrayList<String> list = new ArrayList<>();
-        for (Guia guia : FragmentMainActivity.guias) {
+        for (Guia guia : FragmentMainContent.guias) {
             String licenseName = Utils.getStringLicenseFromId(context, guia.getTipoLicencia());
             if (licenseName.equals("F - Tiro olimpico")) {
                 list.add(guia.getNumGuia());
@@ -436,21 +433,6 @@ public final class Utils {
             }
         }
         return -1;
-    }
-
-    public static String getAppVersion(Context context) {
-        String versionName = "";
-        final PackageManager packageManager = context.getPackageManager();
-        if (packageManager != null) {
-            try {
-                PackageInfo packageInfo = packageManager.getPackageInfo(context.getPackageName(), 0);
-                versionName = packageInfo.versionName;
-            } catch (PackageManager.NameNotFoundException e) {
-                e.printStackTrace();
-                versionName = "";
-            }
-        }
-        return "Version: " + versionName;
     }
 
     /**

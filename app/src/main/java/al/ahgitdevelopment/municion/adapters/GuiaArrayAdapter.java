@@ -1,7 +1,6 @@
 package al.ahgitdevelopment.municion.adapters;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -27,7 +26,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
-import al.ahgitdevelopment.municion.FragmentMainActivity;
+import al.ahgitdevelopment.municion.FragmentMainContent;
+import al.ahgitdevelopment.municion.NavigationActivity;
 import al.ahgitdevelopment.municion.R;
 import al.ahgitdevelopment.municion.Utils;
 import al.ahgitdevelopment.municion.databases.DataBaseSQLiteHelper;
@@ -78,21 +78,16 @@ public class GuiaArrayAdapter extends ArrayAdapter<Guia> {
         imagen.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                FragmentMainActivity.imagePosition = position;
+                FragmentMainContent.imagePosition = position;
 
                 // Creamos la vista del dialogo para mostrar la imagen
-                View layout = ((FragmentMainActivity) context).getLayoutInflater().inflate(R.layout.dialog_image_view, null);
+                View layout = ((NavigationActivity) context).getLayoutInflater().inflate(R.layout.dialog_image_view, null);
                 if (guia.getImagePath() != null && !guia.getImagePath().equals("null")) {
                     ImageView imageViewDialog = layout.findViewById(R.id.image_view);
                     final Bitmap bitmap = Utils.resizeImage(BitmapFactory.decodeFile(guia.getImagePath()), imageViewDialog);
                     imageViewDialog.setImageBitmap(bitmap);
 
-                    imageViewDialog.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            Utils.showImage(context, guia.getImagePath());
-                        }
-                    });
+                    imageViewDialog.setOnClickListener(v1 -> Utils.showImage(context, guia.getImagePath()));
                 } else {
                     ((ImageView) layout.findViewById(R.id.image_view)).setImageResource(
                             Utils.getResourceWeapon(guia.getTipoLicencia(), guia.getTipoArma()));
@@ -102,21 +97,13 @@ public class GuiaArrayAdapter extends ArrayAdapter<Guia> {
                 new AlertDialog.Builder(context)
                         .setCancelable(true)
                         .setView(layout)
-                        .setNeutralButton(R.string.change_image, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dispatchTakePictureIntent();
-                            }
-                        })
-                        .setNegativeButton(R.string.delete_image, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                guia.setImagePath(null);
-                                notifyDataSetChanged();
+                        .setNeutralButton(R.string.change_image, (dialog, which) -> dispatchTakePictureIntent())
+                        .setNegativeButton(R.string.delete_image, (dialog, which) -> {
+                            guia.setImagePath(null);
+                            notifyDataSetChanged();
 
-                                DataBaseSQLiteHelper dbSqlHelper = new DataBaseSQLiteHelper(context.getApplicationContext());
-                                dbSqlHelper.saveListGuias(null, FragmentMainActivity.guias);
-                            }
+                            DataBaseSQLiteHelper dbSqlHelper = new DataBaseSQLiteHelper(context.getApplicationContext());
+                            dbSqlHelper.saveListGuias(null, FragmentMainContent.guias);
                         })
                         .setPositiveButton(android.R.string.ok, null)
                         .show();
@@ -146,7 +133,7 @@ public class GuiaArrayAdapter extends ArrayAdapter<Guia> {
                         "al.ahgitdevelopment.municion.fileprovider",
                         photoFile);
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
-                ((AppCompatActivity) context).startActivityForResult(takePictureIntent, FragmentMainActivity.REQUEST_IMAGE_CAPTURE);
+                ((AppCompatActivity) context).startActivityForResult(takePictureIntent, FragmentMainContent.REQUEST_IMAGE_CAPTURE);
             }
         }
     }
@@ -179,7 +166,7 @@ public class GuiaArrayAdapter extends ArrayAdapter<Guia> {
         );
 //        image.setWritable(true, false); //Da permisos para que otra aplicacion pueda escribir en el fichero temporal de la memoria cache reservada
 
-        FragmentMainActivity.fileImagePath = image.getAbsolutePath();
+        FragmentMainContent.fileImagePath = image.getAbsolutePath();
         return image;
     }
 }

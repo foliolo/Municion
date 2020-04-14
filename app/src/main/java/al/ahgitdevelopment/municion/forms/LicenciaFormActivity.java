@@ -49,11 +49,13 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
-import al.ahgitdevelopment.municion.FragmentMainActivity;
+import al.ahgitdevelopment.municion.FragmentMainContent;
 import al.ahgitdevelopment.municion.NotificationPublisher;
 import al.ahgitdevelopment.municion.R;
 import al.ahgitdevelopment.municion.Utils;
 import al.ahgitdevelopment.municion.datamodel.Licencia;
+
+import static al.ahgitdevelopment.municion.di.SharedPrefsModule.PREFS_SHOW_ADS;
 
 /**
  * Created by Alberto on 24/05/2016.
@@ -181,7 +183,7 @@ public class LicenciaFormActivity extends AppCompatActivity {
 
         // Gestion de anuncios
         prefs = getSharedPreferences("Preferences", Context.MODE_PRIVATE);
-        if (prefs.getBoolean(Utils.PREFS_SHOW_ADS, true)) {
+        if (prefs.getBoolean(PREFS_SHOW_ADS, true)) {
             mAdView.setVisibility(View.VISIBLE);
             mAdView.setEnabled(true);
             mAdView.loadAd(Utils.getAdRequest(mAdView));
@@ -200,7 +202,7 @@ public class LicenciaFormActivity extends AppCompatActivity {
         if (controlCampos()) { // Agregar fecha al Calendar Provider
 
             // Create intent to deliver some kind of result data
-            Intent result = new Intent(this, FragmentMainActivity.class);
+            Intent result = new Intent(this, FragmentMainContent.class);
 
             Bundle bundle = new Bundle();
             bundle.putParcelable("modify_licencia", getCurrenteLicense());

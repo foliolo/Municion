@@ -1,16 +1,16 @@
 <resources>
     <string name="app_name">Tu Armería</string>
-    <string name="lbl_password">Save Password</string>
-    <string name="lbl_insert_password">Enter your Password</string>
-    <string name="lbl2_insert_password">Enter your Password again</string>
-    <string name="lbl3_insert_password">Enter your Current Password</string>
-    <string name="lbl4_insert_password">Enter your New Password</string>
-    <string name="lbl5_insert_password">Enter your New Password again</string>
-    <string name="password_save">Password Saved, remember save a Security Question</string>
-    <string name="password_fail">Wrong Password</string>
-    <string name="password_save_fail">Wrong Password Error</string>
-    <string name="password_short_fail">Short Passsword Length</string>
-    <string name="password_equal_fail">Passwords Don´t Match</string>
+    <string name="lbl_password">Save password</string>
+    <string name="lbl_insert_password">Enter your password</string>
+    <string name="lbl2_insert_password">Enter your password again</string>
+    <string name="lbl3_insert_password">Enter your current password</string>
+    <string name="lbl4_insert_password">Enter your new password</string>
+    <string name="lbl5_insert_password">Enter your new password again</string>
+    <string name="password_save">Password saved. Remember saving a security question</string>
+    <string name="password_fail">Wrong password</string>
+    <string name="password_save_fail">Wrong password error</string>
+    <string name="login_short_password_error">Short passsword length</string>
+    <string name="login_not_matching_password_error">Passwords don´t match</string>
     <string name="title_activity_fragment_main">Ammunition</string>
     <string name="action_settings">Setting</string>
     <string name="guardar">Save</string>
@@ -97,7 +97,7 @@
     <string name="title_nueva_tirada">New Competition</string>
     <string name="lbl_rango_tirada">Range</string>
     <string name="lbl_descripcion_tirada">Description</string>
-    <string name="lbl_puntuacion_tirada">Score [0-600]</string>
+    <string name="lbl_puntuacion_tirada">Score [0–600]</string>
     <string name="msg_countdown_ultima_tirada">Update your licence! Go shooting before it expire in the following days:</string>
     <string name="form_tirada_aviso_puntuacion">Score too hight</string>
 
@@ -185,6 +185,6 @@
     <string name="error_downloading_image">Error downloading the image</string>
     <string name="change_image">Change</string>
     <string name="delete_image">Delete</string>
-    <string name="sin_conexion">Without internet conection</string>
+    <string name="sin_conexion">Without internet connection</string>
 
 </resources>

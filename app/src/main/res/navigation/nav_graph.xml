@@ -9,5 +9,16 @@
         android:id="@+id/loginPasswordFragment"
         android:name="al.ahgitdevelopment.municion.login.LoginPasswordFragment"
         android:label="fragment_login"
-        tools:layout="@layout/fragment_login" />
+        tools:layout="@layout/fragment_login">
+        <action
+            android:id="@+id/action_loginPasswordFragment_to_fragmentMainContent2"
+            app:destination="@id/fragmentMainContent" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/fragmentMainContent"
+        android:name="al.ahgitdevelopment.municion.FragmentMainContent"
+        android:label="activity_fragment_main"
+        tools:layout="@layout/activity_fragment_main" />
+
 </navigation>

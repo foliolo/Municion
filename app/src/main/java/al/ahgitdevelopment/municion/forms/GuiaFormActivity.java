@@ -30,11 +30,13 @@ import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.ArrayList;
 
-import al.ahgitdevelopment.municion.FragmentMainActivity;
+import al.ahgitdevelopment.municion.FragmentMainContent;
 import al.ahgitdevelopment.municion.R;
 import al.ahgitdevelopment.municion.Utils;
 import al.ahgitdevelopment.municion.databases.DataBaseSQLiteHelper;
 import al.ahgitdevelopment.municion.datamodel.Guia;
+
+import static al.ahgitdevelopment.municion.di.SharedPrefsModule.PREFS_SHOW_ADS;
 
 /**
  * Created by Alberto on 25/03/2016.
@@ -325,7 +327,7 @@ public class GuiaFormActivity extends AppCompatActivity {
 
         // Gestion de anuncios
         prefs = getSharedPreferences("Preferences", Context.MODE_PRIVATE);
-        if (prefs.getBoolean(Utils.PREFS_SHOW_ADS, true)) {
+        if (prefs.getBoolean(PREFS_SHOW_ADS, true)) {
             mAdView.setVisibility(View.VISIBLE);
             mAdView.setEnabled(true);
             mAdView.loadAd(Utils.getAdRequest(mAdView));
@@ -342,7 +344,7 @@ public class GuiaFormActivity extends AppCompatActivity {
         }
 
         // Create intent to deliver some kind of result data
-        Intent result = new Intent(this, FragmentMainActivity.class);
+        Intent result = new Intent(this, FragmentMainContent.class);
         Bundle bundle = new Bundle();
 
         if (getIntent().getExtras().getString("tipo_licencia") != null) {

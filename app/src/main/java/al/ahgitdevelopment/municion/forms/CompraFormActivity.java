@@ -33,11 +33,13 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
-import al.ahgitdevelopment.municion.FragmentMainActivity;
+import al.ahgitdevelopment.municion.FragmentMainContent;
 import al.ahgitdevelopment.municion.R;
 import al.ahgitdevelopment.municion.Utils;
 import al.ahgitdevelopment.municion.datamodel.Compra;
 import al.ahgitdevelopment.municion.datamodel.Guia;
+
+import static al.ahgitdevelopment.municion.di.SharedPrefsModule.PREFS_SHOW_ADS;
 
 /**
  * Created by ahidalgog on 11/04/2016.
@@ -252,7 +254,7 @@ public class CompraFormActivity extends AppCompatActivity {
 
         // Gestion de anuncios
         prefs = getSharedPreferences("Preferences", Context.MODE_PRIVATE);
-        if (prefs.getBoolean(Utils.PREFS_SHOW_ADS, true)) {
+        if (prefs.getBoolean(PREFS_SHOW_ADS, true)) {
             mAdView.setVisibility(View.VISIBLE);
             mAdView.setEnabled(true);
             mAdView.loadAd(Utils.getAdRequest(mAdView));
@@ -270,7 +272,7 @@ public class CompraFormActivity extends AppCompatActivity {
 
     public void fabSaveOnClick(View view) {
         // Create intent to deliver some kind of result data
-        Intent result = new Intent(this, FragmentMainActivity.class);
+        Intent result = new Intent(this, FragmentMainContent.class);
 
         // Validación formulario
         if (!validateForm()) {
@@ -324,7 +326,7 @@ public class CompraFormActivity extends AppCompatActivity {
         if (getIntent().getExtras().get("position_guia") == null) {
             int pos = getIntent().getExtras().getInt("position", -1);
             bundle.putInt("position", pos);
-            bundle.putInt("idPosGuia", FragmentMainActivity.compras.get(pos).getIdPosGuia());
+            bundle.putInt("idPosGuia", FragmentMainContent.compras.get(pos).getIdPosGuia());
         } else { // Nuevo elemento
             bundle.putInt("idPosGuia", getIntent().getExtras().getInt("position_guia"));
         }

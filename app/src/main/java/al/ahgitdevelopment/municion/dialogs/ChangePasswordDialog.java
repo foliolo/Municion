@@ -112,7 +112,7 @@ public class ChangePasswordDialog extends DialogFragment {
                 layoutOld.setError(null);
             }
         } else {
-            layoutOld.setError(getString(R.string.password_short_fail));
+            layoutOld.setError(getString(R.string.login_short_password_error));
         }
         return flag;
     }
@@ -131,7 +131,7 @@ public class ChangePasswordDialog extends DialogFragment {
             isPassCorrect = true;
             layoutOld.setError(null);
         } else {
-            layoutOld.setError(getString(R.string.password_equal_fail));
+            layoutOld.setError(getString(R.string.login_not_matching_password_error));
         }
         return isPassCorrect;
     }
@@ -148,11 +148,11 @@ public class ChangePasswordDialog extends DialogFragment {
         } else if ("".equals(passwordNew2.getText().toString())) {
             layoutPass2.setError(getString(R.string.settings_password_empty));
         } else if (passwordNew1.getText().toString().length() < LoginPasswordFragment.MIN_PASS_LENGTH) {
-            layoutPass1.setError(getString(R.string.password_short_fail));
+            layoutPass1.setError(getString(R.string.login_short_password_error));
         } else if (passwordNew2.getText().toString().length() < LoginPasswordFragment.MIN_PASS_LENGTH) {
-            layoutPass2.setError(getString(R.string.password_short_fail));
+            layoutPass2.setError(getString(R.string.login_short_password_error));
         } else if (!passwordNew1.getText().toString().equals(passwordNew2.getText().toString())) {
-            layoutPass2.setError(getString(R.string.password_equal_fail));
+            layoutPass2.setError(getString(R.string.login_not_matching_password_error));
         } else if (passwordNew1.getText().toString().equals(passwordNew2.getText().toString())) {
             isPassCorrect = true;
         }

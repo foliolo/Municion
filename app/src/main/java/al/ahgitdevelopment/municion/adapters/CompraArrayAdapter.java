@@ -1,7 +1,6 @@
 package al.ahgitdevelopment.municion.adapters;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -27,7 +26,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
-import al.ahgitdevelopment.municion.FragmentMainActivity;
+import al.ahgitdevelopment.municion.FragmentMainContent;
+import al.ahgitdevelopment.municion.NavigationActivity;
 import al.ahgitdevelopment.municion.R;
 import al.ahgitdevelopment.municion.Utils;
 import al.ahgitdevelopment.municion.databases.DataBaseSQLiteHelper;
@@ -38,7 +38,6 @@ import al.ahgitdevelopment.municion.datamodel.Compra;
  */
 public class CompraArrayAdapter extends ArrayAdapter<Compra> {
     private Context context;
-    private String mCurrentPhotoPath;
 
     public CompraArrayAdapter(Context context, int resource, List<Compra> compras) {
         super(context, resource, compras);
@@ -68,8 +67,8 @@ public class CompraArrayAdapter extends ArrayAdapter<Compra> {
         } else {
             try {
                 imagen.setImageResource(Utils.getResourceCartucho(
-                        FragmentMainActivity.guias.get(compra.getIdPosGuia()).getTipoLicencia(),
-                        FragmentMainActivity.guias.get(compra.getIdPosGuia()).getTipoArma()));
+                        FragmentMainContent.guias.get(compra.getIdPosGuia()).getTipoLicencia(),
+                        FragmentMainContent.guias.get(compra.getIdPosGuia()).getTipoArma()));
             } catch (Exception ex) {
                 Log.e(context.getPackageName(), "Fallo en la carga de imagen de los cartuchos");
             }
@@ -87,46 +86,33 @@ public class CompraArrayAdapter extends ArrayAdapter<Compra> {
         imagen.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                FragmentMainActivity.imagePosition = position;
+                FragmentMainContent.imagePosition = position;
 
                 //Creamos la vista del dialogo para mostar la imagen
-                View layout = ((FragmentMainActivity) context).getLayoutInflater().inflate(R.layout.dialog_image_view, null);
+                View layout = ((NavigationActivity) context).getLayoutInflater().inflate(R.layout.dialog_image_view, null);
                 if (compra.getImagePath() != null && !compra.getImagePath().equals("null")) {
                     ImageView imageViewDialog = layout.findViewById(R.id.image_view);
                     final Bitmap bitmap = Utils.resizeImage(BitmapFactory.decodeFile(compra.getImagePath()), imageViewDialog);
                     imageViewDialog.setImageBitmap(bitmap);
-                    imageViewDialog.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            Utils.showImage(context, compra.getImagePath());
-                        }
-                    });
+                    imageViewDialog.setOnClickListener(v1 -> Utils.showImage(context, compra.getImagePath()));
                 } else {
                     ((ImageView) layout.findViewById(R.id.image_view)).setImageResource(
                             Utils.getResourceCartucho(
-                                    FragmentMainActivity.guias.get(compra.getIdPosGuia()).getTipoLicencia(),
-                                    FragmentMainActivity.guias.get(compra.getIdPosGuia()).getTipoArma()));
+                                    FragmentMainContent.guias.get(compra.getIdPosGuia()).getTipoLicencia(),
+                                    FragmentMainContent.guias.get(compra.getIdPosGuia()).getTipoArma()));
 
                 }
 
                 new AlertDialog.Builder(context)
                         .setCancelable(true)
                         .setView(layout)
-                        .setNeutralButton(R.string.change_image, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dispatchTakePictureIntent();
-                            }
-                        })
-                        .setNegativeButton(R.string.delete_image, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                compra.setImagePath(null);
-                                notifyDataSetChanged();
+                        .setNeutralButton(R.string.change_image, (dialog, which) -> dispatchTakePictureIntent())
+                        .setNegativeButton(R.string.delete_image, (dialog, which) -> {
+                            compra.setImagePath(null);
+                            notifyDataSetChanged();
 
-                                DataBaseSQLiteHelper dbSqlHelper = new DataBaseSQLiteHelper(context.getApplicationContext());
-                                dbSqlHelper.saveListCompras(null, FragmentMainActivity.compras);
-                            }
+                            DataBaseSQLiteHelper dbSqlHelper = new DataBaseSQLiteHelper(context.getApplicationContext());
+                            dbSqlHelper.saveListCompras(null, FragmentMainContent.compras);
                         })
                         .setPositiveButton(android.R.string.ok, null)
                         .show();
@@ -156,7 +142,7 @@ public class CompraArrayAdapter extends ArrayAdapter<Compra> {
                         "al.ahgitdevelopment.municion.fileprovider",
                         photoFile);
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
-                ((AppCompatActivity) context).startActivityForResult(takePictureIntent, FragmentMainActivity.REQUEST_IMAGE_CAPTURE);
+                ((AppCompatActivity) context).startActivityForResult(takePictureIntent, FragmentMainContent.REQUEST_IMAGE_CAPTURE);
             }
         }
     }
@@ -182,7 +168,7 @@ public class CompraArrayAdapter extends ArrayAdapter<Compra> {
         );
 //        image.setWritable(true, false); //Da permisos para que otra aplicacion pueda escribir en el fichero temporal de la memoria cache reservada
 
-        FragmentMainActivity.fileImagePath = image.getAbsolutePath();
+        FragmentMainContent.fileImagePath = image.getAbsolutePath();
         return image;
     }
 }
