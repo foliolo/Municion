@@ -10,7 +10,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import al.ahgitdevelopment.municion.R;
-import al.ahgitdevelopment.municion.databases.DataBaseSQLiteHelper;
+
+import static al.ahgitdevelopment.municion.repository.dao.DbConstantsKt.KEY_GUIA_APODO;
+import static al.ahgitdevelopment.municion.repository.dao.DbConstantsKt.KEY_GUIA_CUPO;
+import static al.ahgitdevelopment.municion.repository.dao.DbConstantsKt.KEY_GUIA_GASTADO;
 
 /**
  * Created by Alberto on 15/04/2016.
@@ -32,14 +35,14 @@ public class GuiaCursorAdapter extends CursorAdapter {
 //            imagen.
 //        )
 
-        apodo.setText(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_GUIA_APODO)));
-        int numCupo = cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_GUIA_CUPO));
-        int numGastado = cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_GUIA_GASTADO));
+        apodo.setText(cursor.getString(cursor.getColumnIndex(KEY_GUIA_APODO)));
+        int numCupo = cursor.getInt(cursor.getColumnIndex(KEY_GUIA_CUPO));
+        int numGastado = cursor.getInt(cursor.getColumnIndex(KEY_GUIA_GASTADO));
         cupo.setText(new StringBuilder().append(numCupo));
         gastado.setText(new StringBuilder().append((1.0 * numGastado / numCupo) * 100 + "%"));
 
 //        Bitmap bitmap = BitmapFactory.decodeByteArray((byte[]) cursor.getBlob(
-//                cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_GUIA_IMAGEN)));
+//                cursor.getColumnIndex( KEY_GUIA_IMAGEN)));
 
 //        imagen.setImageBitmap(bitmap);
     }

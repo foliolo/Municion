@@ -81,11 +81,11 @@ public final class Utils {
      * @param s       Texto de la licencia que se quiere encontrar en el array de licencias para obtener su posicion (id)
      * @return La posicion de la licencia en el array que corresponde con su tipo
      */
-    public static int getLicenciaTipoFromString(Context context, String s) {
+    public static Long getLicenciaTipoFromString(Context context, String s) {
         String[] listLicencias = context.getResources().getStringArray(R.array.tipo_licencias);
-        int idLicencia = -1;
-        for (int i = 0; i < listLicencias.length; i++)
-            if (listLicencias[i].equals(s))
+        long idLicencia = -1L;
+        for (long i = 0; i < listLicencias.length; i++)
+            if (listLicencias[(int) i].equals(s))
                 idLicencia = i;
 
         return idLicencia;
@@ -98,8 +98,8 @@ public final class Utils {
      * @param tipo
      * @return
      */
-    public static String getStringLicenseFromId(Context context, int tipo) {
-        return context.getResources().getStringArray(R.array.tipo_licencias)[tipo];
+    public static String getStringLicenseFromId(Context context, long tipo) {
+        return context.getResources().getStringArray(R.array.tipo_licencias)[(int) tipo];
     }
 
     /**
@@ -280,7 +280,7 @@ public final class Utils {
     public static int getNumGuias(Context context) {
         ArrayList<String> list = new ArrayList<>();
         for (Guia guia : FragmentMainContent.guias) {
-            String licenseName = Utils.getStringLicenseFromId(context, guia.getTipoLicencia());
+            String licenseName = Utils.getStringLicenseFromId(context, (int) guia.getTipoLicencia());
             if (licenseName.equals("F - Tiro olimpico")) {
                 list.add(guia.getNumGuia());
             }

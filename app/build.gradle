@@ -90,13 +90,12 @@ dependencies {
 //    implementation "androidx.navigation:navigation-dynamic-features-fragment:$nav_version"
 
     // Testing Navigation
-    implementation 'androidx.vectordrawable:vectordrawable:1.1.0'
-    implementation 'androidx.navigation:navigation-fragment:2.2.1'
-    implementation 'androidx.navigation:navigation-ui:2.2.1'
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0'
     implementation 'androidx.navigation:navigation-fragment-ktx:2.2.1'
     implementation 'androidx.navigation:navigation-ui-ktx:2.2.1'
-    androidTestImplementation "androidx.navigation:navigation-testing:2.3.0-alpha04"
+    implementation 'androidx.vectordrawable:vectordrawable:1.1.0'
 
     // Dagger
     implementation "com.google.dagger:dagger:2.27"
@@ -112,4 +111,13 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.8.6'
     implementation 'com.google.firebase:firebase-core:17.3.0'
     implementation 'com.google.android.material:material:1.1.0'
+
+    // Room components
+    implementation 'androidx.room:room-runtime:2.2.5'
+    annotationProcessor 'androidx.room:room-compiler:2.2.5'
+    androidTestImplementation 'androidx.room:room-testing:2.2.5'
+
+    // Testing
+    androidTestImplementation 'androidx.navigation:navigation-testing:2.3.0-alpha04'
+    androidTestImplementation 'androidx.arch.core:core-testing:2.1.0'
 }

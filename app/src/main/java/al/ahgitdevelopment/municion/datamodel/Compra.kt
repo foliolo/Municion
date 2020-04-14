@@ -1,88 +1,42 @@
 package al.ahgitdevelopment.municion.datamodel
 
-import android.os.Bundle
-import android.os.Parcel
-import android.os.Parcelable
+import al.ahgitdevelopment.municion.repository.dao.*
+import androidx.annotation.NonNull
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 
 /**
  * Created by Alberto on 12/05/2016.
  */
+@Entity(tableName = TABLE_COMPRAS)
 open class Compra(
-        var id: Int = 0,
-        var idPosGuia: Int = 0,
-        var calibre1: String? = null,
-        var calibre2: String? = null,
-        var unidades: Int = 0,
-        var precio: Double = 0.toDouble(),
-        var fecha: String? = null,
-        var tipo: String? = null,
-        var peso: Int = 0,
-        var marca: String? = null,
-        var tienda: String? = null,
-        var valoracion: Float = 0f,
-        var imagePath: String? = null
-) : Parcelable {
 
-    protected constructor(input: Parcel) : this() {
-        id = input.readInt()
-        idPosGuia = input.readInt()
-        calibre1 = input.readString()
-        calibre2 = input.readString()
-        unidades = input.readInt()
-        precio = input.readDouble()
-        fecha = input.readString()
-        tipo = input.readString()
-        peso = input.readInt()
-        marca = input.readString()
-        tienda = input.readString()
-        valoracion = input.readFloat()
-        imagePath = input.readString()
-    }
+        @PrimaryKey(autoGenerate = true)
+        @NonNull
+        @ColumnInfo(name = KEY_ID) var id: Long,
 
-    constructor(extras: Bundle) : this() {
-        idPosGuia = extras.getInt("idPosGuia")
-        calibre1 = extras.getString("calibre1")
-        calibre2 = extras.getString("calibre2", "")
-        unidades = extras.getInt("unidades")
-        precio = extras.getDouble("precio")
-        fecha = extras.getString("fecha", "")
-        tipo = extras.getString("tipo")
-        peso = extras.getInt("peso")
-        marca = extras.getString("marca")
-        tienda = extras.getString("tienda")
-        valoracion = extras.getFloat("valoracion")
-        imagePath = extras.getString("imagePath")
-    }
+        @ColumnInfo(name = KEY_COMPRA_ID_POS_GUIA) var idPosGuia: Int,
 
-    override fun describeContents(): Int {
-        return 0
-    }
+        @ColumnInfo(name = KEY_COMPRA_CALIBRE1) var calibre1: String,
 
-    override fun writeToParcel(dest: Parcel, flags: Int) {
-        dest.writeInt(id)
-        dest.writeInt(idPosGuia)
-        dest.writeString(calibre1)
-        dest.writeString(calibre2)
-        dest.writeInt(unidades)
-        dest.writeDouble(precio)
-        dest.writeString(fecha)
-        dest.writeString(tipo)
-        dest.writeInt(peso)
-        dest.writeString(marca)
-        dest.writeString(tienda)
-        dest.writeFloat(valoracion)
-        dest.writeString(imagePath)
-    }
+        @ColumnInfo(name = KEY_COMPRA_CALIBRE2) var calibre2: String,
 
-    companion object {
-        val CREATOR: Parcelable.Creator<Compra> = object : Parcelable.Creator<Compra> {
-            override fun createFromParcel(input: Parcel): Compra? {
-                return Compra(input)
-            }
+        @ColumnInfo(name = KEY_COMPRA_UNIDADES) var unidades: Int,
 
-            override fun newArray(size: Int): Array<Compra?> {
-                return arrayOfNulls(size)
-            }
-        }
-    }
-}
+        @ColumnInfo(name = KEY_COMPRA_PRECIO) var precio: Double,
+
+        @ColumnInfo(name = KEY_COMPRA_FECHA) var fecha: String,
+
+        @ColumnInfo(name = KEY_COMPRA_TIPO) var tipo: String,
+
+        @ColumnInfo(name = KEY_COMPRA_PESO) var peso: Int = 0,
+
+        @ColumnInfo(name = KEY_COMPRA_MARCA) var marca: String,
+
+        @ColumnInfo(name = KEY_COMPRA_TIENDA) var tienda: String,
+
+        @ColumnInfo(name = KEY_COMPRA_VALORACION) var valoracion: Float,
+
+        @ColumnInfo(name = KEY_COMPRA_IMAGEN) var imagePath: String
+)

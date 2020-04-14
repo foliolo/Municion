@@ -33,8 +33,8 @@ import java.util.ArrayList;
 import al.ahgitdevelopment.municion.FragmentMainContent;
 import al.ahgitdevelopment.municion.R;
 import al.ahgitdevelopment.municion.Utils;
-import al.ahgitdevelopment.municion.databases.DataBaseSQLiteHelper;
 import al.ahgitdevelopment.municion.datamodel.Guia;
+import al.ahgitdevelopment.municion.repository.DataBaseSQLiteHelper;
 
 import static al.ahgitdevelopment.municion.di.SharedPrefsModule.PREFS_SHOW_ADS;
 
@@ -55,7 +55,7 @@ public class GuiaFormActivity extends AppCompatActivity {
 
     private ArrayList<String> finalWeapons = new ArrayList<>();
 
-    private int tipoLicencia;
+    private Long tipoLicencia;
     private AppCompatSpinner tipoArma;
     private TextInputLayout layoutCalibre1;
     private AutoCompleteTextView calibre1;
@@ -159,8 +159,8 @@ public class GuiaFormActivity extends AppCompatActivity {
                     }
 
                     calibre2.setText(guia.getCalibre2());
-                    layoutNumGuia.getEditText().setText(String.valueOf(guia.getNumGuia()));
-                    layoutNumArma.getEditText().setText(String.valueOf(guia.getNumArma()));
+                    layoutNumGuia.getEditText().setText(guia.getNumGuia());
+                    layoutNumArma.getEditText().setText(guia.getNumArma());
                     layoutGastado.getEditText().setText(String.valueOf(guia.getGastado()));
                     if (aumentoCupo.isChecked()) {
                         layoutCupo.getEditText().setInputType(InputType.TYPE_CLASS_NUMBER);
@@ -379,7 +379,7 @@ public class GuiaFormActivity extends AppCompatActivity {
                 }
             }
         }
-        bundle.putInt("tipoLicencia", tipoLicencia);
+        bundle.putLong("tipoLicencia", tipoLicencia);
         bundle.putString("marca", layoutMarca.getEditText().getText().toString());
         bundle.putString("modelo", layoutModelo.getEditText().getText().toString());
         // Control error. He metido vacio porque el campo en BBDD no puede ser  nulo

@@ -74,7 +74,7 @@ public class TiradaFormActivity extends AppCompatActivity {
         //Carga de datos (en caso de modificacion)
         if (getIntent().getExtras() != null) {
             try {
-                Tirada tirada = new Tirada((Tirada) getIntent().getExtras().getParcelable("modify_tirada"));
+                Tirada tirada = new Tirada(getIntent().getExtras().getParcelable("modify_tirada"));
                 descripcion.getEditText().setText(tirada.getDescripcion());
                 rango.setSelection(getRangePositionFromString(tirada.getRango()));
                 fecha.getEditText().setText(tirada.getFecha());
@@ -133,7 +133,7 @@ public class TiradaFormActivity extends AppCompatActivity {
             Intent result = new Intent(this, FragmentMainContent.class);
 
             Bundle bundle = new Bundle();
-            bundle.putParcelable("modify_tirada", getCurrenteTirada());
+            bundle.putSerializable("modify_tirada", getCurrenteTirada());
 
             //Paso de vuelta de la posicion del item en el array
             if (getIntent().getExtras() != null)
@@ -152,16 +152,16 @@ public class TiradaFormActivity extends AppCompatActivity {
      * @return Objeto Tirada con todos los datos del formulario
      */
     private Tirada getCurrenteTirada() {
-        Tirada tirada = new Tirada();
-        try {
-            tirada.setDescripcion(descripcion.getEditText().getText().toString());
-            tirada.setRango(getStringFromRangePosition(rango.getSelectedItemPosition()));
-            tirada.setFecha(fecha.getEditText().getText().toString());
-            tirada.setPuntuacion(checkScore(puntuacion.getEditText().getText().toString()));
-        } catch (Exception ex) {
-            Log.e(getPackageName(), "Fallo en el empaquetado de la tirada para la notificación", ex);
-        }
-        return tirada;
+//        Tirada tirada = new Tirada();
+//        try {
+//            tirada.setDescripcion(descripcion.getEditText().getText().toString());
+//            tirada.setRango(getStringFromRangePosition(rango.getSelectedItemPosition()));
+//            tirada.setFecha(fecha.getEditText().getText().toString());
+//            tirada.setPuntuacion(checkScore(puntuacion.getEditText().getText().toString()));
+//        } catch (Exception ex) {
+//            Log.e(getPackageName(), "Fallo en el empaquetado de la tirada para la notificación", ex);
+//        }
+        return null;
     }
 
     private int checkScore(String s) {

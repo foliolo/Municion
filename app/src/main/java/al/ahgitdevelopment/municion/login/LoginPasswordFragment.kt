@@ -2,9 +2,7 @@ package al.ahgitdevelopment.municion.login
 
 import al.ahgitdevelopment.municion.NavigationActivity
 import al.ahgitdevelopment.municion.R
-import al.ahgitdevelopment.municion.Utils
 import al.ahgitdevelopment.municion.databinding.FragmentLoginBinding
-import al.ahgitdevelopment.municion.datamodel.Guia
 import al.ahgitdevelopment.municion.di.AppComponent
 import android.Manifest
 import android.content.Context
@@ -22,10 +20,10 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import com.google.firebase.analytics.FirebaseAnalytics
 import kotlinx.android.synthetic.main.activity_navigation.*
 import kotlinx.android.synthetic.main.fragment_login.*
-import java.util.*
 import javax.inject.Inject
 
 class LoginPasswordFragment : Fragment() {
@@ -33,12 +31,11 @@ class LoginPasswordFragment : Fragment() {
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
 
-    @Inject
-    lateinit var prefs: SharedPreferences
-
     private val viewModel: LoginViewModel by viewModels {
         viewModelFactory
     }
+
+    private val args: LoginPasswordFragmentArgs by navArgs()
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -57,11 +54,6 @@ class LoginPasswordFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-
-        viewModel.buttonNavBarVisibility.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
-            requireActivity().nav_view.visibility = it
-        })
 
         viewModel.userState.observe(viewLifecycleOwner,
                 androidx.lifecycle.Observer { userState: LoginViewModel.UserState ->
@@ -90,6 +82,7 @@ class LoginPasswordFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
+        requireActivity().nav_view.visibility = if (args.isButtonNavigationVisible) View.VISIBLE else View.GONE
         setUpToolBar()
         loadAppVersion()
     }
@@ -113,7 +106,7 @@ class LoginPasswordFragment : Fragment() {
 
     private fun setUpToolBar() {
         (activity as NavigationActivity).supportActionBar?.apply {
-            setIcon(R.drawable.ic_bullseye)
+//            setIcon(R.drawable.ic_bullseye)
             setTitle(R.string.app_name)
             setSubtitle(R.string.login)
         }
@@ -123,6 +116,7 @@ class LoginPasswordFragment : Fragment() {
         requireContext().packageManager.let { packageManager ->
             packageManager.getPackageInfo(requireContext().packageName, 0).let {
                 val version = "v${it.versionName}"
+                login_version_label.text = version
             }
         }
     }
@@ -168,7 +162,7 @@ class LoginPasswordFragment : Fragment() {
 //        startActivity(intent)
 //        dbSqlHelper.close()
 
-        findNavController().navigate(R.id.fragmentMainContent)
+        findNavController().navigate(R.id.licenciasFragment)
 
         // Registrar Login - Analytics
 //        val androidId = Settings.Secure.getString(requireContext().contentResolver, Settings.Secure.ANDROID_ID)
@@ -178,50 +172,50 @@ class LoginPasswordFragment : Fragment() {
     }
 
     private fun checkYearCupo(intent: Intent) { // Comprobar year para renovar los cupos
-        val yearPref = prefs.getInt("year", 0)
-        val year = Calendar.getInstance()[Calendar.YEAR] // Year actual
-        if (yearPref != 0 && year > yearPref) {
-            val listaGuias: ArrayList<Guia>? = intent.getParcelableArrayListExtra("guias")
-            listaGuias?.let {
-
-                if (listaGuias.size > 0) {
-                    for (guia in listaGuias) {
-                        val nombreLicencia = Utils.getStringLicenseFromId(requireContext(), guia.tipoLicencia)
-                        val idNombreLicencia = nombreLicencia.split(" ").toTypedArray()[0]
-                        val tipoArma = guia.tipoArma
-                        when (idNombreLicencia) {
-                            "A", "Libro" -> when (tipoArma) {
-                                0, 3 -> guia.cupo = 100
-                                1 -> guia.cupo = 5000
-                                2, 4 -> guia.cupo = 1000
-                            }
-                            "B" -> when (tipoArma) {
-                                0, 1 -> guia.cupo = 100
-                            }
-                            "C" -> guia.cupo = 100
-                            "D" -> guia.cupo = 1000
-                            "E" -> when (tipoArma) {
-                                0 -> guia.cupo = 5000
-                                1 -> guia.cupo = 1000
-                            }
-                            "F", "Federativa" -> when (tipoArma) {
-                                0, 3 -> guia.cupo = 100
-                                1 -> guia.cupo = 5000
-                                2 -> guia.cupo = 1000
-                            }
-                            "AE" -> guia.cupo = 1000
-                            "AER" -> when (tipoArma) {
-                                0, 2 -> {
-                                    guia.cupo = 100
-                                    guia.cupo = 1000
-                                }
-                                1 -> guia.cupo = 1000
-                            }
-                        }
-                    }
-                }
-            }
-        }
+//        val yearPref = prefs.getInt("year", 0)
+//        val year = Calendar.getInstance()[Calendar.YEAR] // Year actual
+//        if (yearPref != 0 && year > yearPref) {
+//            val listaGuias: ArrayList<Guia>? = intent.getParcelableArrayListExtra("guias")
+//            listaGuias?.let {
+//
+//                if (listaGuias.size > 0) {
+//                    for (guia in listaGuias) {
+//                        val nombreLicencia = Utils.getStringLicenseFromId(requireContext(), guia.tipoLicencia)
+//                        val idNombreLicencia = nombreLicencia.split(" ").toTypedArray()[0]
+//                        val tipoArma = guia.tipoArma
+//                        when (idNombreLicencia) {
+//                            "A", "Libro" -> when (tipoArma) {
+//                                0, 3 -> guia.cupo = 100
+//                                1 -> guia.cupo = 5000
+//                                2, 4 -> guia.cupo = 1000
+//                            }
+//                            "B" -> when (tipoArma) {
+//                                0, 1 -> guia.cupo = 100
+//                            }
+//                            "C" -> guia.cupo = 100
+//                            "D" -> guia.cupo = 1000
+//                            "E" -> when (tipoArma) {
+//                                0 -> guia.cupo = 5000
+//                                1 -> guia.cupo = 1000
+//                            }
+//                            "F", "Federativa" -> when (tipoArma) {
+//                                0, 3 -> guia.cupo = 100
+//                                1 -> guia.cupo = 5000
+//                                2 -> guia.cupo = 1000
+//                            }
+//                            "AE" -> guia.cupo = 1000
+//                            "AER" -> when (tipoArma) {
+//                                0, 2 -> {
+//                                    guia.cupo = 100
+//                                    guia.cupo = 1000
+//                                }
+//                                1 -> guia.cupo = 1000
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+//        }
     }
 
     /**

@@ -10,7 +10,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import al.ahgitdevelopment.municion.R;
-import al.ahgitdevelopment.municion.databases.DataBaseSQLiteHelper;
+
+import static al.ahgitdevelopment.municion.repository.dao.DbConstantsKt.KEY_COMPRA_CALIBRE1;
+import static al.ahgitdevelopment.municion.repository.dao.DbConstantsKt.KEY_COMPRA_FECHA;
+import static al.ahgitdevelopment.municion.repository.dao.DbConstantsKt.KEY_COMPRA_PRECIO;
+import static al.ahgitdevelopment.municion.repository.dao.DbConstantsKt.KEY_COMPRA_UNIDADES;
 
 /**
  * Created by Alberto on 11/04/2016.
@@ -30,10 +34,10 @@ public class CompraCursorAdapter extends CursorAdapter {
         TextView year = view.findViewById(R.id.item_year_compra);
 
 //        imagen.setImageResource(R.drawable.municion1);
-        calibre.setText(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_COMPRA_CALIBRE1)));
-        unidades.setText(String.valueOf(cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_COMPRA_UNIDADES))));
-        precio.setText(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_COMPRA_PRECIO)) + "€");
-        year.setText(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_COMPRA_FECHA)));
+        calibre.setText(cursor.getString(cursor.getColumnIndex(KEY_COMPRA_CALIBRE1)));
+        unidades.setText(String.valueOf(cursor.getInt(cursor.getColumnIndex(KEY_COMPRA_UNIDADES))));
+        precio.setText(cursor.getString(cursor.getColumnIndex(KEY_COMPRA_PRECIO)) + "€");
+        year.setText(cursor.getString(cursor.getColumnIndex(KEY_COMPRA_FECHA)));
     }
 
     @Override

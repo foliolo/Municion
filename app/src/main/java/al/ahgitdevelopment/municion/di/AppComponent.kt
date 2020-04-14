@@ -1,5 +1,6 @@
 package al.ahgitdevelopment.municion.di
 
+import al.ahgitdevelopment.municion.licencias.LicenciasFragment
 import al.ahgitdevelopment.municion.login.LoginPasswordFragment
 import android.content.Context
 import dagger.Component
@@ -10,6 +11,7 @@ import dagger.Component
 interface AppComponent {
 
     fun inject(loginPasswordFragment: LoginPasswordFragment)
+    fun inject(licenciasFragment: LicenciasFragment)
 
     companion object {
         fun create(context: Context): AppComponent {

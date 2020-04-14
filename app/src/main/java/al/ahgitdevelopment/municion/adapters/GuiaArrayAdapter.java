@@ -30,8 +30,8 @@ import al.ahgitdevelopment.municion.FragmentMainContent;
 import al.ahgitdevelopment.municion.NavigationActivity;
 import al.ahgitdevelopment.municion.R;
 import al.ahgitdevelopment.municion.Utils;
-import al.ahgitdevelopment.municion.databases.DataBaseSQLiteHelper;
 import al.ahgitdevelopment.municion.datamodel.Guia;
+import al.ahgitdevelopment.municion.repository.DataBaseSQLiteHelper;
 
 /**
  * Created by Alberto on 28/05/2016.
@@ -63,15 +63,15 @@ public class GuiaArrayAdapter extends ArrayAdapter<Guia> {
         TextView cupo = convertView.findViewById(R.id.item_cupo_guia);
         TextView gastado = convertView.findViewById(R.id.item_gastados_guia);
 
-        if (guia.getImagePath() != null && !guia.getImagePath().equals("null")) {
-            Bitmap bitmap = BitmapFactory.decodeFile(guia.getImagePath());
-            imagen.setImageBitmap(Utils.resizeImage(bitmap, imagen));
-        } else {
-            imagen.setImageResource(Utils.getResourceWeapon(guia.getTipoLicencia(), guia.getTipoArma()));
-        }
+//        if (guia.getImagePath() != null && !guia.getImagePath().equals("null")) {
+//            Bitmap bitmap = BitmapFactory.decodeFile(guia.getImagePath());
+//            imagen.setImageBitmap(Utils.resizeImage(bitmap, imagen));
+//        } else {
+//            imagen.setImageResource(Utils.getResourceWeapon(guia.getTipoLicencia(), guia.getTipoArma()));
+//        }
 
         apodo.setText(guia.getApodo());
-        numGuia.setText(String.valueOf(guia.getNumGuia()));
+        numGuia.setText(guia.getNumGuia());
         cupo.setText(guia.getGastado() + " / " + guia.getCupo());
         gastado.setText(String.format("%.2f", (1.0 * guia.getGastado() / guia.getCupo() * 100)) + "%");
 
@@ -88,10 +88,11 @@ public class GuiaArrayAdapter extends ArrayAdapter<Guia> {
                     imageViewDialog.setImageBitmap(bitmap);
 
                     imageViewDialog.setOnClickListener(v1 -> Utils.showImage(context, guia.getImagePath()));
-                } else {
-                    ((ImageView) layout.findViewById(R.id.image_view)).setImageResource(
-                            Utils.getResourceWeapon(guia.getTipoLicencia(), guia.getTipoArma()));
                 }
+//                else {
+//                    ((ImageView) layout.findViewById(R.id.image_view)).setImageResource(
+//                            Utils.getResourceWeapon(guia.getTipoLicencia(), guia.getTipoArma()));
+//                }
 
 
                 new AlertDialog.Builder(context)

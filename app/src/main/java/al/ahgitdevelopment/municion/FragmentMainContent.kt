@@ -2,16 +2,16 @@ package al.ahgitdevelopment.municion
 
 import al.ahgitdevelopment.municion.adapters.CompraArrayAdapter
 import al.ahgitdevelopment.municion.adapters.GuiaArrayAdapter
-import al.ahgitdevelopment.municion.adapters.LicenciaArrayAdapter
 import al.ahgitdevelopment.municion.adapters.TiradaArrayAdapter
-import al.ahgitdevelopment.municion.databases.DataBaseSQLiteHelper
 import al.ahgitdevelopment.municion.datamodel.Compra
 import al.ahgitdevelopment.municion.datamodel.Guia
 import al.ahgitdevelopment.municion.datamodel.Licencia
 import al.ahgitdevelopment.municion.datamodel.Tirada
 import al.ahgitdevelopment.municion.di.SharedPrefsModule.Companion.PREFS_SHOW_ADS
-import al.ahgitdevelopment.municion.forms.CompraFormActivity
 import al.ahgitdevelopment.municion.forms.GuiaFormActivity
+import al.ahgitdevelopment.municion.licencias.LicenciaArrayAdapter
+import al.ahgitdevelopment.municion.repository.DataBaseSQLiteHelper
+import al.ahgitdevelopment.municion.repository.Repository
 import android.Manifest
 import android.app.Activity.RESULT_CANCELED
 import android.app.Activity.RESULT_OK
@@ -25,7 +25,6 @@ import android.media.ThumbnailUtils
 import android.net.ConnectivityManager
 import android.net.Uri
 import android.os.Bundle
-import android.os.Parcelable
 import android.provider.BaseColumns
 import android.provider.CalendarContract
 import android.provider.MediaStore
@@ -56,8 +55,13 @@ import java.io.File
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
+import javax.inject.Inject
 
 class FragmentMainContent : Fragment(), AuthStateListener {
+
+    @Inject
+    lateinit var repository: Repository
+
     private var mSectionsPagerAdapter: SectionsPagerAdapter? = null
     private var prefs: SharedPreferences? = null
 
@@ -246,35 +250,39 @@ class FragmentMainContent : Fragment(), AuthStateListener {
     private fun loadLists() {
         // Obtenemos las estructuras de datos
         if (guias == null) {
-            guias = activity?.intent?.getParcelableArrayListExtra("guias")
+//            guias = activity?.intent?.getParcelableArrayListExtra("guias")
+//            guias = repository.getGuias()
         }
         if (compras == null) {
-            compras = activity?.intent?.getParcelableArrayListExtra("compras")
+//            compras = activity?.intent?.getParcelableArrayListExtra("compras")
+//            compras = repository.getCompras()
         }
         if (licencias == null) {
-            licencias = activity?.intent?.getParcelableArrayListExtra("licencias")
+//            licencias = activity?.intent?.getParcelableArrayListExtra("licencias")
+//            licencias = repository.getLicencias()
         }
         if (tiradas == null) {
-            tiradas = activity?.intent?.getParcelableArrayListExtra("tiradas")
+//            tiradas = activity?.intent?.getParcelableArrayListExtra("tiradas")
+//            tiradas = repository.getTiradas()
         }
     }
 
     private fun showTextEmptyList() {
         textEmptyList!!.visibility = View.GONE
         when (mViewPager.currentItem) {
-            0 -> if (guias!!.size == 0) {
+            0 -> if (guias.size == 0) {
                 textEmptyList!!.visibility = View.VISIBLE
                 textEmptyList!!.setText(R.string.guia_empty_list)
             } else textEmptyList!!.visibility = View.GONE
-            1 -> if (compras!!.size == 0) {
+            1 -> if (compras.size == 0) {
                 textEmptyList!!.visibility = View.VISIBLE
                 textEmptyList!!.setText(R.string.compra_empty_list)
             } else textEmptyList!!.visibility = View.GONE
-            2 -> if (licencias!!.size == 0) {
+            2 -> if (licencias.size == 0) {
                 textEmptyList!!.visibility = View.VISIBLE
                 textEmptyList!!.setText(R.string.licencia_empty_list)
             } else textEmptyList!!.visibility = View.GONE
-            3 -> if (tiradas!!.size == 0) {
+            3 -> if (tiradas.size == 0) {
                 textEmptyList!!.visibility = View.VISIBLE
                 textEmptyList!!.setText(R.string.tiradas_empty_list)
             } else textEmptyList!!.visibility = View.GONE
@@ -314,18 +322,18 @@ class FragmentMainContent : Fragment(), AuthStateListener {
 
     private fun deleteSelectedItems(position: Int) {
         when (mViewPager.currentItem) {
-            0 -> if (guias != null && guias!!.size > 0) {
-                guias!!.removeAt(position)
+            0 -> if (guias != null && guias.size > 0) {
+                guias.removeAt(position)
                 guiaArrayAdapter!!.notifyDataSetChanged()
             }
             1 -> try {
                 //Actualizar cupo de la guia correspondiente
-                val guia = guias!![compras!![position].idPosGuia]
-                val unidadesComprada = compras!![position].unidades
+                val guia = guias[compras[position].idPosGuia]
+                val unidadesComprada = compras[position].unidades
                 guia.gastado = guia.gastado - unidadesComprada
 
                 //Borrado de la compra
-                compras!!.removeAt(position)
+                compras.removeAt(position)
                 compraArrayAdapter!!.notifyDataSetChanged()
                 guiaArrayAdapter!!.notifyDataSetChanged()
             } catch (ex: IndexOutOfBoundsException) {
@@ -338,24 +346,24 @@ class FragmentMainContent : Fragment(), AuthStateListener {
                 } else {
                     try {
                         Utils.removeNotificationFromSharedPreference(requireContext(),
-                                licencias!![position].numLicencia)
+                                licencias[position].numLicencia)
                     } catch (ex: Exception) {
                         Log.wtf(activity?.packageName, "Fallo al listar las notificaciones", ex)
                     }
                     // Eliminacion evento Calendario
                     deleteSameDayEventCalendar(position)
                     deleteMonthBeforeEventCalendar(position)
-                    licencias!!.removeAt(position)
+                    licencias.removeAt(position)
                     licenciaArrayAdapter!!.notifyDataSetChanged()
                 }
-                if (tiradas != null && tiradas!!.size > 0) {
-                    tiradas!!.removeAt(position)
+                if (tiradas != null && tiradas.size > 0) {
+                    tiradas.removeAt(position)
                     tiradaArrayAdapter!!.notifyDataSetChanged()
                     PlaceholderFragment.updateInfoTirada()
                 }
             }
-            3 -> if (tiradas != null && tiradas!!.size > 0) {
-                tiradas!!.removeAt(position)
+            3 -> if (tiradas != null && tiradas.size > 0) {
+                tiradas.removeAt(position)
                 tiradaArrayAdapter!!.notifyDataSetChanged()
                 PlaceholderFragment.updateInfoTirada()
             }
@@ -389,7 +397,7 @@ class FragmentMainContent : Fragment(), AuthStateListener {
                 // Fecha inicio evento
                 val beginTime = Calendar.getInstance()
                 beginTime.time = SimpleDateFormat("dd/MM/yyyy")
-                        .parse(licencias!![position].fechaCaducidad)
+                        .parse(licencias[position].fechaCaducidad)
                 beginTime[Calendar.HOUR_OF_DAY] = 0
                 beginTime[Calendar.MINUTE] = 0
                 beginTime[Calendar.SECOND] = 0
@@ -397,7 +405,7 @@ class FragmentMainContent : Fragment(), AuthStateListener {
                 // Fecha final evento
                 val endTime = Calendar.getInstance()
                 endTime.time = SimpleDateFormat("dd/MM/yyyy")
-                        .parse(licencias!![position].fechaCaducidad)
+                        .parse(licencias[position].fechaCaducidad)
                 endTime[Calendar.HOUR_OF_DAY] = 23
                 endTime[Calendar.MINUTE] = 59
                 endTime[Calendar.SECOND] = 59
@@ -410,7 +418,7 @@ class FragmentMainContent : Fragment(), AuthStateListener {
             val title = "Tu licencia caduca hoy"
             val description =
                     Utils.getStringLicenseFromId(requireContext(),
-                            licencias!![position].tipo) + ": " + licencias!![position].numLicencia
+                            licencias[position].tipo.toLong()) + ": " + licencias[position].numLicencia
             val projection =
                     arrayOf(BaseColumns._ID, CalendarContract.Events.TITLE,
                             CalendarContract.Events.DESCRIPTION, CalendarContract.Events.DTSTART)
@@ -450,7 +458,7 @@ class FragmentMainContent : Fragment(), AuthStateListener {
                 // Fecha inicio evento
                 val beginTime = Calendar.getInstance()
                 beginTime.time = SimpleDateFormat("dd/MM/yyyy")
-                        .parse(licencias!![position].fechaCaducidad)
+                        .parse(licencias[position].fechaCaducidad)
                 // Un mes de antelacion
                 beginTime.add(Calendar.MONTH, -1)
                 beginTime[Calendar.HOUR_OF_DAY] = 0
@@ -460,7 +468,7 @@ class FragmentMainContent : Fragment(), AuthStateListener {
                 // Fecha final evento
                 val endTime = Calendar.getInstance()
                 endTime.time = SimpleDateFormat("dd/MM/yyyy")
-                        .parse(licencias!![position].fechaCaducidad)
+                        .parse(licencias[position].fechaCaducidad)
                 // Un mes de antelacion
                 endTime.add(Calendar.MONTH, -1)
                 endTime[Calendar.HOUR_OF_DAY] = 23
@@ -475,7 +483,7 @@ class FragmentMainContent : Fragment(), AuthStateListener {
             val title = "Tu licencia caduca dentro de un mes"
             val description =
                     Utils.getStringLicenseFromId(requireContext(),
-                            licencias!![position].tipo) + ": " + licencias!![position].numLicencia
+                            licencias[position].tipo.toLong()) + ": " + licencias[position].numLicencia
             val projection =
                     arrayOf(BaseColumns._ID, CalendarContract.Events.TITLE,
                             CalendarContract.Events.DESCRIPTION, CalendarContract.Events.DTSTART)
@@ -566,24 +574,25 @@ class FragmentMainContent : Fragment(), AuthStateListener {
                             ex)
                 }
                 GUIA_COMPLETED -> {
-                    guias!!.add(Guia(data!!.extras!!))
-                    guiaArrayAdapter!!.notifyDataSetChanged()
+//                    guias.add(Guia(data!!.extras!!))
+//                    repository.db.GuiaDao()?.insert(Guia(data.extras!!))
+//                    guiaArrayAdapter!!.notifyDataSetChanged()
                 }
                 COMPRA_COMPLETED -> {
-                    val newCompra = Compra(data!!.extras!!)
-                    compras!!.add(newCompra)
-                    compraArrayAdapter!!.notifyDataSetChanged()
+//                    val newCompra = Compra(data!!.extras!!)
+//                    compras.add(newCompra)
+//                    compraArrayAdapter!!.notifyDataSetChanged()
                 }
                 LICENCIA_COMPLETED -> {
-                    licencias!!.add(
-                            Licencia(data!!.extras!!.getParcelable<Parcelable>("modify_licencia") as Licencia))
-                    licenciaArrayAdapter!!.notifyDataSetChanged()
+//                    licencias.add(
+//                            Licencia(data!!.extras!!.getParcelable<Parcelable>("modify_licencia") as Licencia))
+//                    licenciaArrayAdapter!!.notifyDataSetChanged()
                 }
                 TIRADA_COMPLETED -> {
-                    tiradas!!.add(
-                            Tirada(data!!.extras!!.getParcelable<Parcelable>("modify_tirada") as Tirada))
-                    PlaceholderFragment.updateInfoTirada()
-                    tiradaArrayAdapter!!.notifyDataSetChanged()
+//                    tiradas.add(
+//                            Tirada(data!!.extras!!.getParcelable<Parcelable>("modify_tirada") as Tirada))
+//                    PlaceholderFragment.updateInfoTirada()
+//                    tiradaArrayAdapter!!.notifyDataSetChanged()
                 }
                 GUIA_UPDATED -> updateGuia(data)
                 COMPRA_UPDATED -> updateCompra(data)
@@ -636,13 +645,13 @@ class FragmentMainContent : Fragment(), AuthStateListener {
      */
     private fun updateGastoMunicion() {
         //Reseteo de los gastos de todas las guias
-        for (guia: Guia in guias!!) {
+        for (guia: Guia in guias) {
             guia.gastado = 0
         }
 
         // Recalculamos todos los gastos
-        for (comp: Compra in compras!!) {
-            val guia: Guia = guias!![comp.idPosGuia]
+        for (comp: Compra in compras) {
+            val guia: Guia = guias[comp.idPosGuia]
             val currentYear: Int =
                     activity?.getSharedPreferences("Preferences", Context.MODE_PRIVATE)?.getInt("year", 0)!!
             try {
@@ -676,11 +685,11 @@ class FragmentMainContent : Fragment(), AuthStateListener {
             }
             when (mViewPager.currentItem) {
                 0 -> {
-                    guias!![imagePosition].imagePath = fileImagePath
+                    guias[imagePosition].imagePath = fileImagePath
                     guiaArrayAdapter!!.notifyDataSetChanged()
                 }
                 1 -> {
-                    compras!!.get(imagePosition).imagePath = fileImagePath
+                    compras.get(imagePosition).imagePath = fileImagePath
                     compraArrayAdapter!!.notifyDataSetChanged()
                 }
             }
@@ -688,58 +697,58 @@ class FragmentMainContent : Fragment(), AuthStateListener {
     }
 
     private fun updateGuia(data: Intent?) {
-        if (data!!.extras != null) {
-            val position = data.extras!!.getInt("position", -1)
-            val guia = guias!![position]
-
-            //TODO: Refactorizar y cambiar esto como en licencias. Hacer que el intent devuelva un objeto Guia y no los campos individualizados.
-//            guia.setIdCompra(data.getExtras().getInt(""));
-            guia.tipoLicencia = data.extras!!.getInt("tipoLicencia")
-            guia.marca = data.extras!!.getString("marca")
-            guia.modelo = data.extras!!.getString("modelo")
-            guia.apodo = data.extras!!.getString("apodo")
-            guia.tipoArma = data.extras!!.getInt("tipoArma")
-            guia.calibre1 = data.extras!!.getString("calibre1")
-            guia.calibre2 = data.extras!!.getString("calibre2")
-            guia.numGuia = data.extras!!.getString("numGuia")
-            guia.numArma = data.extras!!.getString("numArma")
-            guia.imagePath = data.extras!!.getString("imagePath")
-            guia.cupo = data.extras!!.getInt("cupo")
-            guia.gastado = data.extras!!.getInt("gastado")
-            guiaArrayAdapter!!.notifyDataSetChanged()
-            compraArrayAdapter!!.notifyDataSetChanged()
-        }
+//        if (data!!.extras != null) {
+//            val position = data.extras!!.getInt("position", -1)
+//            val guia = guias!![position]
+//
+//            //TODO: Refactorizar y cambiar esto como en licencias. Hacer que el intent devuelva un objeto Guia y no los campos individualizados.
+////            guia.setIdCompra(data.getExtras().getInt(""));
+//            guia.tipoLicencia = data.extras!!.getInt("tipoLicencia")
+//            guia.marca = data.extras!!.getString("marca")
+//            guia.modelo = data.extras!!.getString("modelo")
+//            guia.apodo = data.extras!!.getString("apodo")
+//            guia.tipoArma = data.extras!!.getInt("tipoArma")
+//            guia.calibre1 = data.extras!!.getString("calibre1")
+//            guia.calibre2 = data.extras!!.getString("calibre2")
+//            guia.numGuia = data.extras!!.getString("numGuia")
+//            guia.numArma = data.extras!!.getString("numArma")
+//            guia.imagePath = data.extras!!.getString("imagePath")
+//            guia.cupo = data.extras!!.getInt("cupo")
+//            guia.gastado = data.extras!!.getInt("gastado")
+//            guiaArrayAdapter!!.notifyDataSetChanged()
+//            compraArrayAdapter!!.notifyDataSetChanged()
+//        }
     }
 
     private fun updateCompra(data: Intent?) {
-        if (data!!.extras != null) {
-            val position = data.extras!!.getInt("position", -1)
-            val compra = compras!![position]
-
-            //TODO: Refactorizar y cambiar esto como en licencias. Hacer que el intent devuelva un objeto Compra y no los campos individualizados.
-            compra.idPosGuia = data.extras!!.getInt("idPosGuia")
-            compra.calibre1 = data.extras!!.getString("calibre1")
-            compra.calibre2 = data.extras!!.getString("calibre2")
-            compra.unidades = data.extras!!.getInt("unidades")
-            compra.precio = data.extras!!.getDouble("precio")
-            compra.fecha = data.extras!!.getString("fecha")
-            compra.tipo = data.extras!!.getString("tipo")
-            compra.peso = data.extras!!.getInt("peso")
-            compra.marca = data.extras!!.getString("marca")
-            compra.tienda = data.extras!!.getString("tienda")
-            compra.valoracion = data.extras!!.getFloat("valoracion")
-            compra.imagePath = data.extras!!.getString("imagePath")
-            compraArrayAdapter!!.notifyDataSetChanged()
-        }
+//        if (data!!.extras != null) {
+//            val position = data.extras!!.getInt("position", -1)
+//            val compra = compras!![position]
+//
+//            //TODO: Refactorizar y cambiar esto como en licencias. Hacer que el intent devuelva un objeto Compra y no los campos individualizados.
+//            compra.idPosGuia = data.extras!!.getInt("idPosGuia")
+//            compra.calibre1 = data.extras!!.getString("calibre1")
+//            compra.calibre2 = data.extras!!.getString("calibre2")
+//            compra.unidades = data.extras!!.getInt("unidades")
+//            compra.precio = data.extras!!.getDouble("precio")
+//            compra.fecha = data.extras!!.getString("fecha")
+//            compra.tipo = data.extras!!.getString("tipo")
+//            compra.peso = data.extras!!.getInt("peso")
+//            compra.marca = data.extras!!.getString("marca")
+//            compra.tienda = data.extras!!.getString("tienda")
+//            compra.valoracion = data.extras!!.getFloat("valoracion")
+//            compra.imagePath = data.extras!!.getString("imagePath")
+//            compraArrayAdapter!!.notifyDataSetChanged()
+//        }
     }
 
     private fun updateLicencia(data: Intent?) {
-        if (data!!.extras != null) {
-            val position = data.extras!!.getInt("position", -1)
-            val licencia = Licencia(data.extras!!["modify_licencia"] as Licencia)
-            licencias!![position] = licencia
-            licenciaArrayAdapter!!.notifyDataSetChanged()
-        }
+//        if (data!!.extras != null) {
+//            val position = data.extras!!.getInt("position", -1)
+//            val licencia = Licencia(data.extras!!["modify_licencia"] as Licencia)
+//            licencias!![position] = licencia
+//            licenciaArrayAdapter!!.notifyDataSetChanged()
+//        }
     }
 
     /**
@@ -857,7 +866,7 @@ class FragmentMainContent : Fragment(), AuthStateListener {
     class PlaceholderFragment : Fragment() {
         override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
             val rootView = inflater.inflate(R.layout.list_view_pager, container, false)
-            listView = rootView.findViewById(R.id.ListView)
+            listView = rootView.findViewById(R.id.list_view)
 
             tiradaCountDown = rootView.findViewById(R.id.pager_tirada_countdown)
             try {
@@ -879,14 +888,16 @@ class FragmentMainContent : Fragment(), AuthStateListener {
                     }
                     2 -> try {
                         (tiradaCountDown as View).visibility = View.GONE
-                        licenciaArrayAdapter = LicenciaArrayAdapter(activity, R.layout.licencia_item, licencias)
+                        licenciaArrayAdapter =
+                                LicenciaArrayAdapter(activity,
+                                        R.layout.licencia_item, licencias)
                         (listView as ListView).adapter = licenciaArrayAdapter
                     } catch (ex: Exception) {
                         FirebaseCrash.logcat(Log.ERROR, TAG, ex.message)
                         FirebaseCrash.report(ex)
                     }
                     3 -> try {
-                        if (tiradas!!.size > 0) {
+                        if (tiradas.size > 0) {
                             (tiradaCountDown as View).visibility = View.VISIBLE
                         } else {
                             (tiradaCountDown as View).visibility = View.GONE
@@ -956,12 +967,12 @@ class FragmentMainContent : Fragment(), AuthStateListener {
              * @param data
              */
             fun updateInfoTirada(data: Intent?) {
-                if (data!!.extras != null) {
-                    val position = data.extras!!.getInt("position", -1)
-                    val tirada = Tirada(data.extras!!["modify_tirada"] as Tirada)
-                    tiradas!![position] = tirada
-                }
-                updateInfoTirada()
+//                if (data!!.extras != null) {
+//                    val position = data.extras!!.getInt("position", -1)
+//                    val tirada = Tirada(data.extras!!["modify_tirada"] as Tirada)
+//                    tiradas!![position] = tirada
+//                }
+//                updateInfoTirada()
             }
 
             /**
@@ -970,17 +981,17 @@ class FragmentMainContent : Fragment(), AuthStateListener {
             fun updateInfoTirada() {
                 try {
                     // Ordenamos el array de tiradas por fecha descendente (la mas actual arriba)
-                    tiradas?.sortWith(Comparator { date1, date2 ->
+                    tiradas.sortWith(Comparator { date1, date2 ->
                         Utils.getDateFromString(date2.fecha)
                                 .compareTo(Utils.getDateFromString(
                                         date1.fecha))
                     })
-                    if (tiradas!!.size > 0 && tiradaCountDown != null) {
+                    if (tiradas.size > 0 && tiradaCountDown != null) {
                         tiradaCountDown!!.visibility = View.VISIBLE
                     } else {
                         if (tiradaCountDown != null) tiradaCountDown!!.visibility = View.GONE
                     }
-                    if (tiradas!!.size > 0) updateCaducidadLicenciaTirada()
+                    if (tiradas.size > 0) updateCaducidadLicenciaTirada()
                 } catch (ex: IndexOutOfBoundsException) {
                     Log.e(TAG, "Error calculando la caducidad de la tirada", ex)
 //                  FirebaseCrash.logcat(Log.ERROR, TAG, "Error calculando la caducidad de la tirada");
@@ -997,36 +1008,36 @@ class FragmentMainContent : Fragment(), AuthStateListener {
              */
             @Throws(IndexOutOfBoundsException::class)
             private fun updateCaducidadLicenciaTirada() {
-                val daysRemain = Math.round(Tirada.millisUntilExpiracy(
-                        tiradas!![0]).toFloat() / (1000 * 60 * 60 * 24))
-                //                    int horasRemain = Math.round(millisUntilFinished / (1000 * 60 * 60 * 24));
-//                    int minutosRemain = Math.round(millisUntilFinished / (1000 * 60 * 60));
-//                    int segundosRemain = Math.round(millisUntilFinished / (1000 * 60));
-                val sb = StringBuilder()
-                val formatter = Formatter(sb)
-                val text = formatter.format(
-                        context!!.getString(
-                                R.string.lbl_caducidad_tirada), daysRemain).toString()
-                if (tiradaCountDown != null) {
-                    tiradaCountDown!!.text = text
-                }
-                try {
-                    if (daysRemain <= 10) {
-                        tiradaCountDown!!.setBackgroundColor(ContextCompat.getColor(
-                                (context)!!,
-                                android.R.color.holo_red_dark))
-                    } else {
-                        tiradaCountDown!!.setBackgroundColor(ContextCompat.getColor(
-                                (context)!!,
-                                R.color.colorPrimary))
-                    }
-                } catch (ex: Exception) {
-                    Log.e(TAG,
-                            "Error \"controlado\" en getColor en el label de tiradas", ex)
-                    FirebaseCrash.logcat(Log.ERROR, TAG,
-                            "Error \"controlado\" en getColor en el label de tiradas")
-                    FirebaseCrash.report(ex)
-                }
+//                val daysRemain = Math.round(Tirada.millisUntilExpiracy(
+//                        tiradas!![0]).toFloat() / (1000 * 60 * 60 * 24))
+//                //                    int horasRemain = Math.round(millisUntilFinished / (1000 * 60 * 60 * 24));
+////                    int minutosRemain = Math.round(millisUntilFinished / (1000 * 60 * 60));
+////                    int segundosRemain = Math.round(millisUntilFinished / (1000 * 60));
+//                val sb = StringBuilder()
+//                val formatter = Formatter(sb)
+//                val text = formatter.format(
+//                        context!!.getString(
+//                                R.string.lbl_caducidad_tirada), daysRemain).toString()
+//                if (tiradaCountDown != null) {
+//                    tiradaCountDown!!.text = text
+//                }
+//                try {
+//                    if (daysRemain <= 10) {
+//                        tiradaCountDown!!.setBackgroundColor(ContextCompat.getColor(
+//                                (context)!!,
+//                                android.R.color.holo_red_dark))
+//                    } else {
+//                        tiradaCountDown!!.setBackgroundColor(ContextCompat.getColor(
+//                                (context)!!,
+//                                R.color.colorPrimary))
+//                    }
+//                } catch (ex: Exception) {
+//                    Log.e(TAG,
+//                            "Error \"controlado\" en getColor en el label de tiradas", ex)
+//                    FirebaseCrash.logcat(Log.ERROR, TAG,
+//                            "Error \"controlado\" en getColor en el label de tiradas")
+//                    FirebaseCrash.report(ex)
+//                }
             }
         }
     }
@@ -1093,11 +1104,11 @@ class FragmentMainContent : Fragment(), AuthStateListener {
                     .setPositiveButton(android.R.string.ok) { _: DialogInterface?, _: Int ->
                         //                            if (pos >= 0)
                         //                                Toast.makeText(getActivity(), "Seleccionado: " + getGuiaName()[pos].toString(), Toast.LENGTH_SHORT).show();
-                        val form = Intent(activity, CompraFormActivity::class.java)
-                        form.putExtra("position_guia", selectedGuia)
-                        form.putExtra("guia", guias!![selectedGuia])
-                        requireActivity().startActivityForResult(form,
-                                COMPRA_COMPLETED)
+//                        val form = Intent(activity, CompraFormActivity::class.java)
+//                        form.putExtra("position_guia", selectedGuia)
+//                        form.putExtra("guia", guias!![selectedGuia])
+//                        requireActivity().startActivityForResult(form,
+//                                COMPRA_COMPLETED)
                     }
                     .setNegativeButton(android.R.string.cancel) { dialog, _ -> dialog.cancel() }
             return builder.create()
@@ -1106,8 +1117,8 @@ class FragmentMainContent : Fragment(), AuthStateListener {
         private val guiaName: Array<CharSequence>
             get() {
                 val list = ArrayList<String>()
-                for (guia: Guia in guias!!) {
-                    list.add(guia.apodo ?: "")
+                for (guia: Guia in guias) {
+                    list.add(guia.apodo)
                 }
                 return list.toTypedArray()
             }
@@ -1160,15 +1171,10 @@ class FragmentMainContent : Fragment(), AuthStateListener {
         @JvmField
         var imagePosition = 0
 
-        @JvmField
-        var guias: ArrayList<Guia>? = null
-
-        @JvmField
-        var compras: ArrayList<Compra>? = null
-
-        @JvmField
-        var licencias: ArrayList<Licencia>? = null
-        var tiradas: ArrayList<Tirada>? = null
+        lateinit var guias: ArrayList<Guia>
+        lateinit var compras: ArrayList<Compra>
+        lateinit var licencias: ArrayList<Licencia>
+        lateinit var tiradas: ArrayList<Tirada>
 
         /**
          * Constante de la referencia push() del usuario en funcion del correo del dispositivo

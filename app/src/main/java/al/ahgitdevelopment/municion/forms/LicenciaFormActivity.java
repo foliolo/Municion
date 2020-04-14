@@ -129,24 +129,24 @@ public class LicenciaFormActivity extends AppCompatActivity {
         }
 
         //Carga de datos (en caso de modificacion)
-        if (getIntent().getExtras() != null) {
-            try {
-                Licencia licencia = new Licencia((Licencia) getIntent().getExtras().getParcelable("modify_licencia"));
-                tipoLicencia.setSelection(licencia.getTipo());
-                textInputLayoutLicencia.getEditText().setText(String.valueOf(licencia.getNumLicencia()));
-                layoutFechaExpedicion.getEditText().setText(licencia.getFechaExpedicion());
-                layoutNumAbonado.getEditText().setText(String.valueOf(licencia.getNumAbonado()));
-                layoutNumPoliza.getEditText().setText(String.valueOf(licencia.getNumSeguro()));
-                autonomia.setSelection(licencia.getAutonomia());
-                tipoPermisoConducir.setSelection(licencia.getTipoPermisoConduccion());
-                layoutEdad.getEditText().setText(String.valueOf(licencia.getEdad()));
-                tipoEscala.setSelection(licencia.getEscala());
-                categoria.setSelection(licencia.getCategoria());
-                isModify = true;
-            } catch (NullPointerException e) {
-                e.printStackTrace();
-            }
-        }
+//        if (getIntent().getExtras() != null) {
+//            try {
+//                Licencia licencia = new Licencia((Licencia) getIntent().getExtras().getParcelable("modify_licencia"));
+//                tipoLicencia.setSelection(licencia.getTipo());
+//                textInputLayoutLicencia.getEditText().setText(String.valueOf(licencia.getNumLicencia()));
+//                layoutFechaExpedicion.getEditText().setText(licencia.getFechaExpedicion());
+//                layoutNumAbonado.getEditText().setText(String.valueOf(licencia.getNumAbonado()));
+//                layoutNumPoliza.getEditText().setText(String.valueOf(licencia.getNumSeguro()));
+//                autonomia.setSelection(licencia.getAutonomia());
+//                tipoPermisoConducir.setSelection(licencia.getTipoPermisoConduccion());
+//                layoutEdad.getEditText().setText(String.valueOf(licencia.getEdad()));
+//                tipoEscala.setSelection(licencia.getEscala());
+//                categoria.setSelection(licencia.getCategoria());
+//                isModify = true;
+//            } catch (NullPointerException e) {
+//                e.printStackTrace();
+//            }
+//        }
 
         // Eventos que sacan el calendario al recibir el foco en el campo fecha
         layoutFechaExpedicion.getEditText().setOnClickListener(new View.OnClickListener() {
@@ -205,7 +205,7 @@ public class LicenciaFormActivity extends AppCompatActivity {
             Intent result = new Intent(this, FragmentMainContent.class);
 
             Bundle bundle = new Bundle();
-            bundle.putParcelable("modify_licencia", getCurrenteLicense());
+            bundle.putSerializable("modify_licencia", getCurrenteLicense());
 
             //Paso de vuelta de la posicion del item en el array
             if (getIntent().getExtras() != null)
@@ -282,7 +282,8 @@ public class LicenciaFormActivity extends AppCompatActivity {
         // Primero se comprueba si es una modificacion. Si ya hay un evento previo se elimina.
         if (isModify) {
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_CALENDAR) == PackageManager.PERMISSION_GRANTED) {
-                Licencia licencia = new Licencia((Licencia) getIntent().getExtras().getParcelable("modify_licencia"));
+//                Licencia licencia = new Licencia((Licencia) getIntent().getExtras().getSerializable("modify_licencia"));
+                Licencia licencia = null;
                 try {
                     // Fecha inicio evento
                     Calendar beginTime = Calendar.getInstance();
@@ -371,7 +372,8 @@ public class LicenciaFormActivity extends AppCompatActivity {
         // Primero se comprueba si es una modificacion. Si ya hay un evento previo se elimina.
         if (isModify) {
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_CALENDAR) == PackageManager.PERMISSION_GRANTED) {
-                Licencia licencia = new Licencia((Licencia) getIntent().getExtras().getParcelable("modify_licencia"));
+//                Licencia licencia = new Licencia((Licencia) getIntent().getExtras().getParcelable("modify_licencia"));
+                Licencia licencia = null;
                 try {
                     // Fecha inicio evento
                     Calendar beginTime = Calendar.getInstance();
@@ -684,7 +686,7 @@ public class LicenciaFormActivity extends AppCompatActivity {
 
         Intent resultIntent = new Intent(this, LicenciaFormActivity.class);
         Bundle bundle = new Bundle();
-        bundle.putParcelable("modify_licencia", getCurrenteLicense());
+        bundle.putSerializable("modify_licencia", getCurrenteLicense());
         resultIntent.putExtras(bundle);
 
         resultIntent.putExtra("notification_call", true);
@@ -744,7 +746,7 @@ public class LicenciaFormActivity extends AppCompatActivity {
      * @return Objeto licencia con todos los datos del formulario
      */
     private Licencia getCurrenteLicense() {
-        Licencia licencia = new Licencia();
+        Licencia licencia = null;
         try {
             licencia.setTipo(tipoLicencia.getSelectedItemPosition());
             if (licencia.getNombre() == null || licencia.getNombre().equals(""))
@@ -786,7 +788,7 @@ public class LicenciaFormActivity extends AppCompatActivity {
 
         //Guardado de la información de la notificacion
         Utils.notificationData.setLicencia(licencia.getNombre());
-        Utils.notificationData.setId(String.valueOf(licencia.getNumLicencia()));
+        Utils.notificationData.setId(licencia.getNumLicencia());
         Utils.notificationData.setFecha(licencia.getFechaCaducidad());
 
         return licencia;

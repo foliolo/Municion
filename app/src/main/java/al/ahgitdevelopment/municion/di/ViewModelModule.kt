@@ -1,5 +1,6 @@
 package al.ahgitdevelopment.municion.di
 
+import al.ahgitdevelopment.municion.licencias.LicenciasViewModel
 import al.ahgitdevelopment.municion.login.LoginViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -18,6 +19,11 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(LoginViewModel::class)
     abstract fun bindLogingViewModel(loginViewModel: LoginViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(LicenciasViewModel::class)
+    abstract fun bindLicenciasViewModel(licenciasViewModel: LicenciasViewModel): ViewModel
 
     @Binds
     abstract fun bindsModelFactory(factory: ViewModelFactory): ViewModelProvider.Factory

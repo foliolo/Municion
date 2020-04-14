@@ -1,92 +1,92 @@
 package al.ahgitdevelopment.municion.datamodel
 
+import al.ahgitdevelopment.municion.repository.dao.*
 import android.os.Bundle
-import android.os.Parcel
-import android.os.Parcelable
+import androidx.annotation.NonNull
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.ForeignKey
+import androidx.room.PrimaryKey
 
 /**
  * Created by Alberto on 13/05/2016.
  */
+
+@Entity(
+        tableName = TABLE_GUIAS,
+        foreignKeys = [
+            ForeignKey(
+                    entity = Compra::class,
+                    parentColumns = [KEY_ID],
+                    childColumns = [KEY_GUIA_ID_COMPRA],
+                    onDelete = ForeignKey.CASCADE
+            ),
+            ForeignKey(entity = Licencia::class,
+                    parentColumns = [KEY_ID],
+                    childColumns = [KEY_GUIA_ID_LICENCIA],
+                    onDelete = ForeignKey.CASCADE)
+        ]
+)
 open class Guia(
-        var id: Int = 0,
-        var idCompra: Int = 0,
-        var tipoLicencia: Int = 0,
-        var marca: String? = null,
-        var modelo: String? = null,
-        var apodo: String? = null,
-        var tipoArma: Int = 0,
-        var calibre1: String? = null,
-        var calibre2: String? = null,
-        var numGuia: String? = null,
-        var numArma: String? = null,
-        var imagePath: String? = null,
-        var cupo: Int = 0,
-        var gastado: Int = 0
-) : Parcelable {
 
-    constructor(input: Parcel) : this() {
-        id = input.readInt()
-        idCompra = input.readInt()
-        tipoLicencia = input.readInt()
-        marca = input.readString()
-        modelo = input.readString()
-        apodo = input.readString()
-        tipoArma = input.readInt()
-        calibre1 = input.readString()
-        calibre2 = input.readString()
-        numGuia = input.readString()
-        numArma = input.readString()
-        imagePath = input.readString()
-        cupo = input.readInt()
-        gastado = input.readInt()
-    }
+        @PrimaryKey(autoGenerate = true)
+        @NonNull
+        @ColumnInfo(name = KEY_ID) var id: Long,
 
-    constructor(extras: Bundle) : this() {
-        tipoLicencia = extras.getInt("tipoLicencia")
-        marca = extras.getString("marca")
-        modelo = extras.getString("modelo")
-        apodo = extras.getString("apodo")
-        tipoArma = extras.getInt("tipoArma")
-        calibre1 = extras.getString("calibre1")
-        calibre2 = extras.getString("calibre2")
-        numGuia = extras.getString("numGuia")
-        numArma = extras.getString("numArma")
-        imagePath = extras.getString("imagePath")
-        gastado = extras.getInt("gastado")
-        cupo = extras.getInt("cupo")
-        imagePath = extras.getString("imagePath")
-    }
+        @ColumnInfo(name = KEY_GUIA_ID_COMPRA) var idCompra: Long,
 
-    override fun describeContents(): Int {
-        return 0
-    }
+        @ColumnInfo(name = KEY_GUIA_ID_LICENCIA) var tipoLicencia: Long,
 
-    override fun writeToParcel(dest: Parcel, flags: Int) {
-        dest.writeInt(id)
-        dest.writeInt(idCompra)
-        dest.writeInt(tipoLicencia)
-        dest.writeString(marca)
-        dest.writeString(modelo)
-        dest.writeString(apodo)
-        dest.writeInt(tipoArma)
-        dest.writeString(calibre1)
-        dest.writeString(calibre2)
-        dest.writeString(numGuia)
-        dest.writeString(numArma)
-        dest.writeString(imagePath)
-        dest.writeInt(cupo)
-        dest.writeInt(gastado)
-    }
+        @ColumnInfo(name = KEY_GUIA_APODO) var apodo: String,
 
-    companion object {
-        val CREATOR: Parcelable.Creator<Guia?> = object : Parcelable.Creator<Guia?> {
-            override fun createFromParcel(input: Parcel): Guia? {
-                return Guia(input)
-            }
+        @ColumnInfo(name = KEY_GUIA_MARCA) var marca: String,
 
-            override fun newArray(size: Int): Array<Guia?> {
-                return arrayOfNulls(size)
-            }
-        }
+        @ColumnInfo(name = KEY_GUIA_MODELO) var modelo: String,
+
+        @ColumnInfo(name = KEY_GUIA_TIPO_ARMA) var tipoArma: Int,
+
+        @ColumnInfo(name = KEY_GUIA_CALIBRE1) var calibre1: String,
+
+        @ColumnInfo(name = KEY_GUIA_CALIBRE2) var calibre2: String,
+
+        @ColumnInfo(name = KEY_GUIA_NUM_GUIA) var numGuia: String,
+
+        @ColumnInfo(name = KEY_GUIA_NUM_ARMA) var numArma: String,
+
+        @ColumnInfo(name = KEY_GUIA_IMAGEN) var imagePath: String,
+
+        @ColumnInfo(name = KEY_GUIA_CUPO) var cupo: Int,
+
+        @ColumnInfo(name = KEY_GUIA_GASTADO) var gastado: Int
+) {
+    constructor(bundle: Bundle) : this(
+            id = 0L,
+            idCompra = 0L,
+            tipoLicencia = 0L,
+            apodo = "",
+            marca = "",
+            modelo = "",
+            tipoArma = 0,
+            calibre1 = "",
+            calibre2 = "",
+            numGuia = "",
+            numArma = "",
+            imagePath = "",
+            cupo = 0,
+            gastado = 0
+    ) {
+        idCompra = bundle.getLong(KEY_GUIA_ID_COMPRA)
+        tipoLicencia = bundle.getLong(KEY_GUIA_ID_LICENCIA)
+        apodo = bundle.getString(KEY_GUIA_APODO) ?: ""
+        marca = bundle.getString(KEY_GUIA_MARCA) ?: ""
+        modelo = bundle.getString(KEY_GUIA_MODELO) ?: ""
+        tipoArma = bundle.getInt(KEY_GUIA_TIPO_ARMA)
+        calibre1 = bundle.getString(KEY_GUIA_CALIBRE1) ?: ""
+        calibre2 = bundle.getString(KEY_GUIA_CALIBRE2) ?: ""
+        numGuia = bundle.getString(KEY_GUIA_NUM_GUIA) ?: ""
+        numArma = bundle.getString(KEY_GUIA_NUM_ARMA) ?: ""
+        imagePath = bundle.getString(KEY_GUIA_IMAGEN) ?: ""
+        cupo = bundle.getInt(KEY_GUIA_CUPO)
+        gastado = bundle.getInt(KEY_GUIA_GASTADO)
     }
 }

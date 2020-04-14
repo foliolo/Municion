@@ -10,15 +10,28 @@
         android:name="al.ahgitdevelopment.municion.login.LoginPasswordFragment"
         android:label="fragment_login"
         tools:layout="@layout/fragment_login">
+
         <action
-            android:id="@+id/action_loginPasswordFragment_to_fragmentMainContent2"
-            app:destination="@id/fragmentMainContent" />
+            android:id="@+id/action_loginPasswordFragment_to_licenciasFragment"
+            app:destination="@id/licenciasFragment" />
+
+        <argument
+            android:name="isButtonNavigationVisible"
+            android:defaultValue="false"
+            app:argType="boolean" />
+
     </fragment>
 
     <fragment
-        android:id="@+id/fragmentMainContent"
-        android:name="al.ahgitdevelopment.municion.FragmentMainContent"
-        android:label="activity_fragment_main"
-        tools:layout="@layout/activity_fragment_main" />
+        android:id="@+id/licenciasFragment"
+        android:name="al.ahgitdevelopment.municion.licencias.LicenciasFragment"
+        android:label="licencias_fragment"
+        tools:layout="@layout/licencias_fragment">
+
+        <argument
+            android:name="isButtonNavigationVisible"
+            android:defaultValue="true"
+            app:argType="boolean" />
+    </fragment>
 
 </navigation>

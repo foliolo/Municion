@@ -12,8 +12,6 @@ import javax.inject.Inject
 
 class LoginViewModel @Inject constructor(private val prefs: SharedPreferences) : ViewModel() {
 
-    val buttonNavBarVisibility = SingleLiveEvent<Int>()
-
     val navigateIntoApp = SingleLiveEvent<Void>()
 
     val showAds = SingleLiveEvent<Boolean>()
@@ -30,21 +28,15 @@ class LoginViewModel @Inject constructor(private val prefs: SharedPreferences) :
     private val _password2Error = MutableLiveData<ErrorMessages>()
     val password2Error: LiveData<ErrorMessages> = _password2Error
 
+    private val _version = MutableLiveData<String>()
+    val version: LiveData<String> = _version
+
     private var password1 = ""
 
     fun onCreateView() {
-        buttonNavBarVisibility.postValue(View.GONE)
         showAds.postValue(prefs.getBoolean(PREFS_SHOW_ADS, true))
         _userState.postValue(isUserLogged())
     }
-
-//    private fun manageAds() {
-//        if (!prefs.contains(PREFS_SHOW_ADS)) {
-//            prefs.edit().apply {
-//                putBoolean(PREFS_SHOW_ADS, true)
-//            }.apply()
-//        }
-//    }
 
     private fun isUserLogged(): UserState {
         return if (prefs.contains(PREFS_PASSWORD) && prefs.getString(PREFS_PASSWORD, "")!!.isNotBlank()) {

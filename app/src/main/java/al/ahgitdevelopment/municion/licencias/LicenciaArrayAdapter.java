@@ -1,4 +1,4 @@
-package al.ahgitdevelopment.municion.adapters;
+package al.ahgitdevelopment.municion.licencias;
 
 import android.content.Context;
 import android.os.Build;
@@ -132,7 +132,7 @@ public class LicenciaArrayAdapter extends ArrayAdapter<Licencia> {
         } catch (ArrayIndexOutOfBoundsException ex) {
             Log.e(getContext().getPackageName(), "Error al cambiar una permiso de conducir a otra licencia", ex);
         }
-        numLicencia.setText(String.valueOf(licencia.getNumLicencia()));
+        numLicencia.setText(licencia.getNumLicencia());
 
         if (licencia.getFechaExpedicion() != null)
             expedicion.setText(licencia.getFechaExpedicion());
@@ -141,7 +141,7 @@ public class LicenciaArrayAdapter extends ArrayAdapter<Licencia> {
         if (licencia.getTipo() == 0) {
             layoutFechaCaducidad.setVisibility(View.GONE);
             layoutEscala.setVisibility(View.VISIBLE);
-            escala.setText(licencia.getStringEscala(getContext()));
+//            escala.setText(licencia.getStringEscala(getContext()));
         } else {
             layoutFechaCaducidad.setVisibility(View.VISIBLE);
             layoutEscala.setVisibility(View.GONE);

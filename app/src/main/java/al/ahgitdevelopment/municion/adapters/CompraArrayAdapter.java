@@ -30,8 +30,8 @@ import al.ahgitdevelopment.municion.FragmentMainContent;
 import al.ahgitdevelopment.municion.NavigationActivity;
 import al.ahgitdevelopment.municion.R;
 import al.ahgitdevelopment.municion.Utils;
-import al.ahgitdevelopment.municion.databases.DataBaseSQLiteHelper;
 import al.ahgitdevelopment.municion.datamodel.Compra;
+import al.ahgitdevelopment.municion.repository.DataBaseSQLiteHelper;
 
 /**
  * Created by Alberto on 28/05/2016.
@@ -62,17 +62,17 @@ public class CompraArrayAdapter extends ArrayAdapter<Compra> {
         TextView precio = convertView.findViewById(R.id.item_precio_compra);
         TextView year = convertView.findViewById(R.id.item_year_compra);
 
-        if (compra.getImagePath() != null && !compra.getImagePath().equals("null")) {
-            imagen.setImageBitmap(BitmapFactory.decodeFile(compra.getImagePath()));
-        } else {
-            try {
-                imagen.setImageResource(Utils.getResourceCartucho(
-                        FragmentMainContent.guias.get(compra.getIdPosGuia()).getTipoLicencia(),
-                        FragmentMainContent.guias.get(compra.getIdPosGuia()).getTipoArma()));
-            } catch (Exception ex) {
-                Log.e(context.getPackageName(), "Fallo en la carga de imagen de los cartuchos");
-            }
-        }
+//        if (compra.getImagePath() != null && !compra.getImagePath().equals("null")) {
+//            imagen.setImageBitmap(BitmapFactory.decodeFile(compra.getImagePath()));
+//        } else {
+//            try {
+//                imagen.setImageResource(Utils.getResourceCartucho(
+//                        FragmentMainContent.guias.get(compra.getIdPosGuia()).getTipoLicencia(),
+//                        FragmentMainContent.guias.get(compra.getIdPosGuia()).getTipoArma()));
+//            } catch (Exception ex) {
+//                Log.e(context.getPackageName(), "Fallo en la carga de imagen de los cartuchos");
+//            }
+//        }
 
         if (compra.getCalibre2() == null || "".equals(compra.getCalibre2()))
             calibre.setText(compra.getCalibre1());
@@ -93,13 +93,13 @@ public class CompraArrayAdapter extends ArrayAdapter<Compra> {
                 final Bitmap bitmap = Utils.resizeImage(BitmapFactory.decodeFile(compra.getImagePath()), imageViewDialog);
                 imageViewDialog.setImageBitmap(bitmap);
                 imageViewDialog.setOnClickListener(v1 -> Utils.showImage(context, compra.getImagePath()));
-            } else {
-                ((ImageView) layout.findViewById(R.id.image_view)).setImageResource(
-                        Utils.getResourceCartucho(
-                                FragmentMainContent.guias.get(compra.getIdPosGuia()).getTipoLicencia(),
-                                FragmentMainContent.guias.get(compra.getIdPosGuia()).getTipoArma()));
-
             }
+//            else {
+//                ((ImageView) layout.findViewById(R.id.image_view)).setImageResource(
+//                        Utils.getResourceCartucho(
+//                                FragmentMainContent.guias.get(compra.getIdPosGuia()).getTipoLicencia(),
+//                                FragmentMainContent.guias.get(compra.getIdPosGuia()).getTipoArma()));
+//            }
 
             new AlertDialog.Builder(context)
                     .setCancelable(true)
