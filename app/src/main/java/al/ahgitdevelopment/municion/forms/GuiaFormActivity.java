@@ -193,20 +193,17 @@ public class GuiaFormActivity extends AppCompatActivity {
             }
         });
 
-        aumentoCupo.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
-                if (isChecked) {
-                    layoutCupo.getEditText().setInputType(InputType.TYPE_CLASS_NUMBER);
-                    layoutCupo.setClickable(true);
-                    layoutCupo.setEnabled(true);
-                    layoutCupo.setFocusable(true);
-                } else {
-                    layoutCupo.getEditText().setInputType(InputType.TYPE_NULL);
-                    layoutCupo.setClickable(false);
-                    layoutCupo.setEnabled(false);
-                    layoutCupo.setFocusable(false);
-                }
+        aumentoCupo.setOnCheckedChangeListener((compoundButton, isChecked) -> {
+            if (isChecked) {
+                layoutCupo.getEditText().setInputType(InputType.TYPE_CLASS_NUMBER);
+                layoutCupo.setClickable(true);
+                layoutCupo.setEnabled(true);
+                layoutCupo.setFocusable(true);
+            } else {
+                layoutCupo.getEditText().setInputType(InputType.TYPE_NULL);
+                layoutCupo.setClickable(false);
+                layoutCupo.setEnabled(false);
+                layoutCupo.setFocusable(false);
             }
         });
 

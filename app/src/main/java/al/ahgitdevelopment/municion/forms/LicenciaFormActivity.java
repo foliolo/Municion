@@ -131,7 +131,7 @@ public class LicenciaFormActivity extends AppCompatActivity {
         //Carga de datos (en caso de modificacion)
         if (getIntent().getExtras() != null) {
             try {
-                Licencia licencia = new Licencia(getIntent().getExtras().getParcelable("modify_licencia"));
+                Licencia licencia = new Licencia((Licencia) getIntent().getExtras().getParcelable("modify_licencia"));
                 tipoLicencia.setSelection(licencia.getTipo());
                 textInputLayoutLicencia.getEditText().setText(String.valueOf(licencia.getNumLicencia()));
                 layoutFechaExpedicion.getEditText().setText(licencia.getFechaExpedicion());
@@ -242,7 +242,7 @@ public class LicenciaFormActivity extends AppCompatActivity {
                         },
                         100 //Codigo de respuesta
                 );
-            }else {
+            } else {
                 addSameDayEventToCalendar(isModify);
                 addMonthBeforeEventToCalendar(isModify);
             }
@@ -282,7 +282,7 @@ public class LicenciaFormActivity extends AppCompatActivity {
         // Primero se comprueba si es una modificacion. Si ya hay un evento previo se elimina.
         if (isModify) {
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_CALENDAR) == PackageManager.PERMISSION_GRANTED) {
-                Licencia licencia = new Licencia(getIntent().getExtras().getParcelable("modify_licencia"));
+                Licencia licencia = new Licencia((Licencia) getIntent().getExtras().getParcelable("modify_licencia"));
                 try {
                     // Fecha inicio evento
                     Calendar beginTime = Calendar.getInstance();
@@ -371,7 +371,7 @@ public class LicenciaFormActivity extends AppCompatActivity {
         // Primero se comprueba si es una modificacion. Si ya hay un evento previo se elimina.
         if (isModify) {
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_CALENDAR) == PackageManager.PERMISSION_GRANTED) {
-                Licencia licencia = new Licencia(getIntent().getExtras().getParcelable("modify_licencia"));
+                Licencia licencia = new Licencia((Licencia) getIntent().getExtras().getParcelable("modify_licencia"));
                 try {
                     // Fecha inicio evento
                     Calendar beginTime = Calendar.getInstance();
@@ -899,9 +899,9 @@ public class LicenciaFormActivity extends AppCompatActivity {
                 break;
         }
     }
-      // Lo subo comentado por si en algun momento es necesario utilizarlo. Sirve para que despues
-      // de agregarse un evento al Calendario este se sincronice. Esta comentado porque seria pedir
-     // otro permiso mas al usuario y la sincronizacion de un dispositivo, en general, es automatica
+    // Lo subo comentado por si en algun momento es necesario utilizarlo. Sirve para que despues
+    // de agregarse un evento al Calendario este se sincronice. Esta comentado porque seria pedir
+    // otro permiso mas al usuario y la sincronizacion de un dispositivo, en general, es automatica
     // por lo que no seria necesario utilizar es metodo.
 //    public void syncCalendars() {
 //        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.GET_ACCOUNTS) != PackageManager.PERMISSION_GRANTED) {

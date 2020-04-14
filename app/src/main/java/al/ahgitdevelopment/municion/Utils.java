@@ -57,7 +57,7 @@ public final class Utils {
     static final String PREFS_PAYLOAD = "payload";
     private static final String NOTIFICATION_PREFERENCES_FILE = "Notifications";
     public static NotificationData notificationData = new NotificationData();
-    static ArrayList<NotificationData> listNotificationData = new ArrayList<NotificationData>();
+    static ArrayList<NotificationData> listNotificationData = new ArrayList();
     private static SharedPreferences prefs;
 
     @NonNull
@@ -171,7 +171,7 @@ public final class Utils {
 //            Toast.makeText(context, "Añadida notificacion nueva", Toast.LENGTH_SHORT).show();
         }
 
-        editor.clear().commit();
+        editor.clear().apply();
         editor.putString("notification_data", new Gson().toJson(listNotificationData));
         editor.commit();
     }
@@ -179,7 +179,7 @@ public final class Utils {
     /**
      * Carga la lista de notificaciones del fichero de Shared Preferences a la lista
      */
-    public static void loadNotificationData(Context context) {
+    private static void loadNotificationData(Context context) {
         if (prefs == null)
             prefs = context.getSharedPreferences(NOTIFICATION_PREFERENCES_FILE, Context.MODE_PRIVATE);
 
@@ -591,8 +591,9 @@ public final class Utils {
 
     /**
      * Método que lanza el intent de una imagen pasando el bitmap de la imagen
+     *
      * @param context  Contexto
-     * @param bitmap Id del recurso que queremos mostrar
+     * @param bitmap   Id del recurso que queremos mostrar
      * @param fileName Nombre de la imagen que vamos a guardar en el dispositivo
      */
     public static void showImage(Context context, Bitmap bitmap, String fileName) {

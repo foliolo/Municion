@@ -389,7 +389,7 @@ class FragmentMainContent : Fragment(), AuthStateListener {
                 // Fecha inicio evento
                 val beginTime = Calendar.getInstance()
                 beginTime.time = SimpleDateFormat("dd/MM/yyyy")
-                        .parse(licencias!!.get(position).fechaCaducidad)
+                        .parse(licencias!![position].fechaCaducidad)
                 beginTime[Calendar.HOUR_OF_DAY] = 0
                 beginTime[Calendar.MINUTE] = 0
                 beginTime[Calendar.SECOND] = 0
@@ -397,7 +397,7 @@ class FragmentMainContent : Fragment(), AuthStateListener {
                 // Fecha final evento
                 val endTime = Calendar.getInstance()
                 endTime.time = SimpleDateFormat("dd/MM/yyyy")
-                        .parse(licencias!!.get(position).fechaCaducidad)
+                        .parse(licencias!![position].fechaCaducidad)
                 endTime[Calendar.HOUR_OF_DAY] = 23
                 endTime[Calendar.MINUTE] = 59
                 endTime[Calendar.SECOND] = 59
@@ -450,7 +450,7 @@ class FragmentMainContent : Fragment(), AuthStateListener {
                 // Fecha inicio evento
                 val beginTime = Calendar.getInstance()
                 beginTime.time = SimpleDateFormat("dd/MM/yyyy")
-                        .parse(licencias!!.get(position).fechaCaducidad)
+                        .parse(licencias!![position].fechaCaducidad)
                 // Un mes de antelacion
                 beginTime.add(Calendar.MONTH, -1)
                 beginTime[Calendar.HOUR_OF_DAY] = 0
@@ -460,7 +460,7 @@ class FragmentMainContent : Fragment(), AuthStateListener {
                 // Fecha final evento
                 val endTime = Calendar.getInstance()
                 endTime.time = SimpleDateFormat("dd/MM/yyyy")
-                        .parse(licencias!!.get(position).fechaCaducidad)
+                        .parse(licencias!![position].fechaCaducidad)
                 // Un mes de antelacion
                 endTime.add(Calendar.MONTH, -1)
                 endTime[Calendar.HOUR_OF_DAY] = 23
@@ -566,22 +566,22 @@ class FragmentMainContent : Fragment(), AuthStateListener {
                             ex)
                 }
                 GUIA_COMPLETED -> {
-                    guias!!.add(Guia(data!!.extras))
+                    guias!!.add(Guia(data!!.extras!!))
                     guiaArrayAdapter!!.notifyDataSetChanged()
                 }
                 COMPRA_COMPLETED -> {
-                    val newCompra = Compra(data!!.extras)
+                    val newCompra = Compra(data!!.extras!!)
                     compras!!.add(newCompra)
                     compraArrayAdapter!!.notifyDataSetChanged()
                 }
                 LICENCIA_COMPLETED -> {
                     licencias!!.add(
-                            Licencia(data!!.extras!!.getParcelable("modify_licencia")))
+                            Licencia(data!!.extras!!.getParcelable<Parcelable>("modify_licencia") as Licencia))
                     licenciaArrayAdapter!!.notifyDataSetChanged()
                 }
                 TIRADA_COMPLETED -> {
                     tiradas!!.add(
-                            Tirada(data!!.extras!!.getParcelable<Parcelable>("modify_tirada") as Tirada?))
+                            Tirada(data!!.extras!!.getParcelable<Parcelable>("modify_tirada") as Tirada))
                     PlaceholderFragment.updateInfoTirada()
                     tiradaArrayAdapter!!.notifyDataSetChanged()
                 }
@@ -736,7 +736,7 @@ class FragmentMainContent : Fragment(), AuthStateListener {
     private fun updateLicencia(data: Intent?) {
         if (data!!.extras != null) {
             val position = data.extras!!.getInt("position", -1)
-            val licencia = Licencia(data.extras!!["modify_licencia"] as Licencia?)
+            val licencia = Licencia(data.extras!!["modify_licencia"] as Licencia)
             licencias!![position] = licencia
             licenciaArrayAdapter!!.notifyDataSetChanged()
         }
@@ -745,12 +745,12 @@ class FragmentMainContent : Fragment(), AuthStateListener {
     /**
      * Dialog para la seleccion de la licencia qu
      */
-    fun saveUserInFirebase() {
+    private fun saveUserInFirebase() {
         try {
             //Guardado del usuario en las shared preferences del dispositivo
             val email = Utils.getUserEmail(requireContext())
             val pass = prefs!!.getString("password", "")
-            if (!email.isEmpty()) {
+            if (email.isNotEmpty()) {
                 //Obtención del código de autentificación del usuario
                 mAuth.createUserWithEmailAndPassword(email, (pass)!!)
                         .addOnCompleteListener(requireActivity()) { task ->
@@ -855,8 +855,7 @@ class FragmentMainContent : Fragment(), AuthStateListener {
      * A placeholder fragment containing a simple view.
      */
     class PlaceholderFragment : Fragment() {
-        override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                                  savedInstanceState: Bundle?): View? {
+        override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
             val rootView = inflater.inflate(R.layout.list_view_pager, container, false)
             listView = rootView.findViewById(R.id.ListView)
 
@@ -944,12 +943,10 @@ class FragmentMainContent : Fragment(), AuthStateListener {
              */
             fun newInstance(sectionNumber: Int,
                             mContext: Context?): PlaceholderFragment {
-                val fragment =
-                        PlaceholderFragment()
-                val args = Bundle()
-                args.putInt(
-                        ARG_SECTION_NUMBER,
-                        sectionNumber)
+                val fragment = PlaceholderFragment()
+                val args = Bundle().apply {
+                    putInt(ARG_SECTION_NUMBER, sectionNumber)
+                }
                 fragment.arguments = args
                 context = mContext
                 return fragment
@@ -961,7 +958,7 @@ class FragmentMainContent : Fragment(), AuthStateListener {
             fun updateInfoTirada(data: Intent?) {
                 if (data!!.extras != null) {
                     val position = data.extras!!.getInt("position", -1)
-                    val tirada = Tirada(data.extras!!["modify_tirada"] as Tirada?)
+                    val tirada = Tirada(data.extras!!["modify_tirada"] as Tirada)
                     tiradas!![position] = tirada
                 }
                 updateInfoTirada()
@@ -973,14 +970,11 @@ class FragmentMainContent : Fragment(), AuthStateListener {
             fun updateInfoTirada() {
                 try {
                     // Ordenamos el array de tiradas por fecha descendente (la mas actual arriba)
-                    Collections.sort(tiradas,
-                            object : Comparator<Tirada> {
-                                override fun compare(date1: Tirada, date2: Tirada): Int {
-                                    return Utils.getDateFromString(date2.fecha)
-                                            .compareTo(Utils.getDateFromString(
-                                                    date1.fecha))
-                                }
-                            })
+                    tiradas?.sortWith(Comparator { date1, date2 ->
+                        Utils.getDateFromString(date2.fecha)
+                                .compareTo(Utils.getDateFromString(
+                                        date1.fecha))
+                    })
                     if (tiradas!!.size > 0 && tiradaCountDown != null) {
                         tiradaCountDown!!.visibility = View.VISIBLE
                     } else {
@@ -988,14 +982,13 @@ class FragmentMainContent : Fragment(), AuthStateListener {
                     }
                     if (tiradas!!.size > 0) updateCaducidadLicenciaTirada()
                 } catch (ex: IndexOutOfBoundsException) {
-                    Log.e(TAG, "Error calculando la caducidad de la tirada",
-                            ex)
-                    //                FirebaseCrash.logcat(Log.ERROR, TAG, "Error calculando la caducidad de la tirada");
-//                FirebaseCrash.report(ex);
+                    Log.e(TAG, "Error calculando la caducidad de la tirada", ex)
+//                  FirebaseCrash.logcat(Log.ERROR, TAG, "Error calculando la caducidad de la tirada");
+//                  FirebaseCrash.report(ex);
                 } catch (ex: Exception) {
                     Log.e(TAG, ex.message, ex)
-                    //                FirebaseCrash.logcat(Log.ERROR, TAG, ex.getMessage());
-//                FirebaseCrash.report(ex);
+//                    FirebaseCrash.logcat(Log.ERROR, TAG, ex.getMessage());
+//                    FirebaseCrash.report(ex);
                 }
             }
 
@@ -1070,7 +1063,7 @@ class FragmentMainContent : Fragment(), AuthStateListener {
                         //                                    GuiaDialogFragment.this.getDialog().dismiss();
                         //                                }
                         //                            } else {
-                        val form: Intent = Intent(requireActivity(), GuiaFormActivity::class.java)
+                        val form = Intent(requireActivity(), GuiaFormActivity::class.java)
                         form.putExtra("tipo_licencia",
                                 Utils.getLicenseName(requireActivity())[selectedLicense] as String?)
                         requireActivity().startActivityForResult(form, GUIA_COMPLETED)
@@ -1100,7 +1093,7 @@ class FragmentMainContent : Fragment(), AuthStateListener {
                     .setPositiveButton(android.R.string.ok) { _: DialogInterface?, _: Int ->
                         //                            if (pos >= 0)
                         //                                Toast.makeText(getActivity(), "Seleccionado: " + getGuiaName()[pos].toString(), Toast.LENGTH_SHORT).show();
-                        val form: Intent = Intent(activity, CompraFormActivity::class.java)
+                        val form = Intent(activity, CompraFormActivity::class.java)
                         form.putExtra("position_guia", selectedGuia)
                         form.putExtra("guia", guias!![selectedGuia])
                         requireActivity().startActivityForResult(form,
@@ -1114,7 +1107,7 @@ class FragmentMainContent : Fragment(), AuthStateListener {
             get() {
                 val list = ArrayList<String>()
                 for (guia: Guia in guias!!) {
-                    list.add(guia.apodo)
+                    list.add(guia.apodo ?: "")
                 }
                 return list.toTypedArray()
             }

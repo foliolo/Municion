@@ -83,40 +83,37 @@ public class CompraArrayAdapter extends ArrayAdapter<Compra> {
         precio.setText(String.format("%.2f€", compra.getPrecio()));
         year.setText(compra.getFecha());
 
-        imagen.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                FragmentMainContent.imagePosition = position;
+        imagen.setOnClickListener(v -> {
+            FragmentMainContent.imagePosition = position;
 
-                //Creamos la vista del dialogo para mostar la imagen
-                View layout = ((NavigationActivity) context).getLayoutInflater().inflate(R.layout.dialog_image_view, null);
-                if (compra.getImagePath() != null && !compra.getImagePath().equals("null")) {
-                    ImageView imageViewDialog = layout.findViewById(R.id.image_view);
-                    final Bitmap bitmap = Utils.resizeImage(BitmapFactory.decodeFile(compra.getImagePath()), imageViewDialog);
-                    imageViewDialog.setImageBitmap(bitmap);
-                    imageViewDialog.setOnClickListener(v1 -> Utils.showImage(context, compra.getImagePath()));
-                } else {
-                    ((ImageView) layout.findViewById(R.id.image_view)).setImageResource(
-                            Utils.getResourceCartucho(
-                                    FragmentMainContent.guias.get(compra.getIdPosGuia()).getTipoLicencia(),
-                                    FragmentMainContent.guias.get(compra.getIdPosGuia()).getTipoArma()));
+            //Creamos la vista del dialogo para mostar la imagen
+            View layout = ((NavigationActivity) context).getLayoutInflater().inflate(R.layout.dialog_image_view, null);
+            if (compra.getImagePath() != null && !compra.getImagePath().equals("null")) {
+                ImageView imageViewDialog = layout.findViewById(R.id.image_view);
+                final Bitmap bitmap = Utils.resizeImage(BitmapFactory.decodeFile(compra.getImagePath()), imageViewDialog);
+                imageViewDialog.setImageBitmap(bitmap);
+                imageViewDialog.setOnClickListener(v1 -> Utils.showImage(context, compra.getImagePath()));
+            } else {
+                ((ImageView) layout.findViewById(R.id.image_view)).setImageResource(
+                        Utils.getResourceCartucho(
+                                FragmentMainContent.guias.get(compra.getIdPosGuia()).getTipoLicencia(),
+                                FragmentMainContent.guias.get(compra.getIdPosGuia()).getTipoArma()));
 
-                }
-
-                new AlertDialog.Builder(context)
-                        .setCancelable(true)
-                        .setView(layout)
-                        .setNeutralButton(R.string.change_image, (dialog, which) -> dispatchTakePictureIntent())
-                        .setNegativeButton(R.string.delete_image, (dialog, which) -> {
-                            compra.setImagePath(null);
-                            notifyDataSetChanged();
-
-                            DataBaseSQLiteHelper dbSqlHelper = new DataBaseSQLiteHelper(context.getApplicationContext());
-                            dbSqlHelper.saveListCompras(null, FragmentMainContent.compras);
-                        })
-                        .setPositiveButton(android.R.string.ok, null)
-                        .show();
             }
+
+            new AlertDialog.Builder(context)
+                    .setCancelable(true)
+                    .setView(layout)
+                    .setNeutralButton(R.string.change_image, (dialog, which) -> dispatchTakePictureIntent())
+                    .setNegativeButton(R.string.delete_image, (dialog, which) -> {
+                        compra.setImagePath(null);
+                        notifyDataSetChanged();
+
+                        DataBaseSQLiteHelper dbSqlHelper = new DataBaseSQLiteHelper(context.getApplicationContext());
+                        dbSqlHelper.saveListCompras(null, FragmentMainContent.compras);
+                    })
+                    .setPositiveButton(android.R.string.ok, null)
+                    .show();
         });
 
         // Return the completed view to render on screen

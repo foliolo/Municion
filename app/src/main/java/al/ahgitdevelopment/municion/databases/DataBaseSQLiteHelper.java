@@ -422,21 +422,22 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
         // Looping through all rows and adding to list
         if (cursor != null && cursor.getCount() >= 0 && cursor.moveToFirst()) {
             do {
-                Guia guia = new Guia();
-                guia.setId(cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_ID)));
-                guia.setIdCompra(cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_GUIA_ID_COMPRA)));
-                guia.setTipoLicencia(cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_GUIA_ID_LICENCIA)));
-                guia.setApodo(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_GUIA_APODO)));
-                guia.setMarca(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_GUIA_MARCA)));
-                guia.setModelo(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_GUIA_MODELO)));
-                guia.setTipoArma(cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_GUIA_TIPO_ARMA)));
-                guia.setCalibre1(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_GUIA_CALIBRE1)));
-                guia.setCalibre2(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_GUIA_CALIBRE2)));
-                guia.setNumGuia(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_GUIA_NUM_GUIA)));
-                guia.setNumArma(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_GUIA_NUM_ARMA)));
-                guia.setImagePath(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_GUIA_IMAGEN)));
-                guia.setCupo(cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_GUIA_CUPO)));
-                guia.setGastado(cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_GUIA_GASTADO)));
+                Guia guia = new Guia(
+                        cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_ID)),
+                        cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_GUIA_ID_COMPRA)),
+                        cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_GUIA_ID_LICENCIA)),
+                        cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_GUIA_APODO)),
+                        cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_GUIA_MARCA)),
+                        cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_GUIA_MODELO)),
+                        cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_GUIA_TIPO_ARMA)),
+                        cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_GUIA_CALIBRE1)),
+                        cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_GUIA_CALIBRE2)),
+                        cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_GUIA_NUM_GUIA)),
+                        cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_GUIA_NUM_ARMA)),
+                        cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_GUIA_IMAGEN)),
+                        cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_GUIA_CUPO)),
+                        cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_GUIA_GASTADO))
+                );
 
                 // Adding contact to list
                 guias.add(guia);
@@ -447,7 +448,7 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
         return guias;
     }
 
-    public ArrayList<Compra> getListCompras(SQLiteDatabase db) {
+    private ArrayList<Compra> getListCompras(SQLiteDatabase db) {
         if (db == null)
             db = this.getWritableDatabase();
         ArrayList<Compra> compras = new ArrayList<>();
@@ -457,21 +458,21 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
         try {
             if (cursor != null && cursor.getCount() >= 0 && cursor.moveToFirst()) {
                 do {
-                    Compra compra = new Compra();
-                    compra.setId(cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_ID)));
-                    compra.setIdPosGuia(cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_COMPRA_ID_POS_GUIA)));
-                    compra.setCalibre1(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_COMPRA_CALIBRE1)));
-                    compra.setCalibre2(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_COMPRA_CALIBRE2)));
-                    compra.setUnidades(cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_COMPRA_UNIDADES)));
-                    compra.setPrecio(cursor.getDouble(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_COMPRA_PRECIO)));
-                    compra.setFecha(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_COMPRA_FECHA)));
-                    compra.setTipo(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_COMPRA_TIPO)));
-                    compra.setPeso(cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_COMPRA_PESO)));
-                    compra.setMarca(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_COMPRA_MARCA)));
-                    compra.setTienda(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_COMPRA_TIENDA)));
-                    compra.setImagePath(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_COMPRA_IMAGEN)));
-                    compra.setValoracion(cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_COMPRA_VALORACION)));
-
+                    Compra compra = new Compra(
+                            cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_ID)),
+                            cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_COMPRA_ID_POS_GUIA)),
+                            cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_COMPRA_CALIBRE1)),
+                            cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_COMPRA_CALIBRE2)),
+                            cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_COMPRA_UNIDADES)),
+                            cursor.getDouble(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_COMPRA_PRECIO)),
+                            cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_COMPRA_FECHA)),
+                            cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_COMPRA_TIPO)),
+                            cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_COMPRA_PESO)),
+                            cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_COMPRA_MARCA)),
+                            cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_COMPRA_TIENDA)),
+                            cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_COMPRA_VALORACION)),
+                            cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_COMPRA_IMAGEN))
+                    );
                     // Adding contact to list
                     compras.add(compra);
                 } while (cursor.moveToNext());
@@ -494,25 +495,24 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
         try {
             if (cursor != null && cursor.getCount() >= 0 && cursor.moveToFirst()) {
                 do {
-                    Licencia licencia = new Licencia();
-                    licencia.setId(cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_ID)));
-                    licencia.setTipo(cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_LICENCIAS_TIPO)));
-                    licencia.setNombre(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_LICENCIAS_NOMBRE)));
-                    licencia.setTipoPermisoConduccion(cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_LICENCIAS_TIPO_PERMISO_CONDUCCION)));
-                    licencia.setEdad(cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_LICENCIAS_EDAD)));
-                    licencia.setFechaExpedicion(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_LICENCIAS_FECHA_EXPEDICION)));
-                    licencia.setFechaCaducidad(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_LICENCIAS_FECHA_CADUCIDAD)));
-                    licencia.setNumLicencia(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_LICENCIAS_NUM_LICENCIA)));
-                    licencia.setNumAbonado(cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_LICENCIAS_NUM_ABONADO)));
-                    licencia.setNumSeguro(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_LICENCIAS_NUM_SEGURO)));
-                    licencia.setAutonomia(cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_LICENCIAS_AUTONOMIA)));
-                    licencia.setEscala(cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_LICENCIAS_ESCALA)));
-                    licencia.setCategoria(cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_LICENCIAS_CATEGORIA)));
+                    Licencia licencia = new Licencia(
+                            cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_ID)),
+                            cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_LICENCIAS_TIPO)),
+                            cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_LICENCIAS_NOMBRE)),
+                            cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_LICENCIAS_TIPO_PERMISO_CONDUCCION)),
+                            cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_LICENCIAS_EDAD)),
+                            cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_LICENCIAS_FECHA_EXPEDICION)),
+                            cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_LICENCIAS_FECHA_CADUCIDAD)),
+                            cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_LICENCIAS_NUM_LICENCIA)),
+                            cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_LICENCIAS_NUM_ABONADO)),
+                            cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_LICENCIAS_NUM_SEGURO)),
+                            cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_LICENCIAS_AUTONOMIA)),
+                            cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_LICENCIAS_ESCALA)),
+                            cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_LICENCIAS_CATEGORIA))
+                    );
                     // Adding contact to list
                     licencias.add(licencia);
 
-                    Log.d(context.getPackageName(), "F. Expedicion: " + licencia.getFechaExpedicion());
-                    Log.d(context.getPackageName(), "F. Expedicion: " + licencia.getFechaExpedicion());
                     if (String.valueOf(licencia.getFechaExpedicion()).equals(String.valueOf(licencia.getFechaCaducidad())))
                         Log.wtf(context.getPackageName(), "Error de fechas");
 
@@ -537,11 +537,12 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
         try {
             if (cursor != null && cursor.getCount() >= 0 && cursor.moveToFirst()) {
                 do {
-                    Tirada tirada = new Tirada();
-                    tirada.setDescripcion(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_TIRADAS_DESCRIPCION)));
-                    tirada.setRango(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_TIRADAS_RANGO)));
-                    tirada.setFecha(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_TIRADAS_FECHA)));
-                    tirada.setPuntuacion(cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_TIRADAS_PUNTUACION)));
+                    Tirada tirada = new Tirada(
+                            cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_TIRADAS_DESCRIPCION)),
+                            cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_TIRADAS_RANGO)),
+                            cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_TIRADAS_FECHA)),
+                            cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_TIRADAS_PUNTUACION))
+                    );
                     // Adding to list
                     tiradas.add(tirada);
                 } while (cursor.moveToNext());
@@ -574,7 +575,7 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
                         KEY_GUIA_CUPO + ", " +
                         KEY_GUIA_GASTADO +
                         ") VALUES (" +
-                        "'" + guia.getIdCompra() + "' , " +
+                        "'" + guia.getId() + "' , " +
                         "'" + guia.getTipoLicencia() + "' , " +
                         "'" + guia.getApodo() + "' , " +
                         "'" + guia.getMarca() + "' , " +

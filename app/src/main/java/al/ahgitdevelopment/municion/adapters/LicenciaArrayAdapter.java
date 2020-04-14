@@ -105,7 +105,7 @@ public class LicenciaArrayAdapter extends ArrayAdapter<Licencia> {
 
 //        tipo.setText(getContext().getResources().getTextArray(R.array.tipo_licencias)[licencia.getTipo()].toString());
 
-        String nombreLicencia = licencia.getNombre(getContext());
+        String nombreLicencia = licencia.getNombre();
         if (nombreLicencia.contains(" - ")) {
             tipo.setText(nombreLicencia.split("-")[0].trim());
         } else {
