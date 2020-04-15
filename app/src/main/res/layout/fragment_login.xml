@@ -41,7 +41,7 @@
                 android:layout_marginTop="8dp"
                 >
 
-                <EditText
+                <com.google.android.material.textfield.TextInputEditText
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/login_text_info"
@@ -59,7 +59,7 @@
                 android:visibility="@{viewModel.userState == viewModel.userState.NEW_USER ? view.VISIBLE : view.GONE}"
                 >
 
-                <EditText
+                <com.google.android.material.textfield.TextInputEditText
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:ems="15"
@@ -98,16 +98,16 @@
             android:alpha="0.5"
             />
 
-        <com.google.android.gms.ads.AdView
-            android:id="@+id/login_adView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
-            android:visibility="@{viewModel.showAds ? view.VISIBLE : view.GONE}"
-            app:adSize="SMART_BANNER"
-            app:adUnitId="@string/banner_login_id"
-            />
+        <!--        <com.google.android.gms.ads.AdView-->
+        <!--            android:id="@+id/login_adView"-->
+        <!--            android:layout_width="match_parent"-->
+        <!--            android:layout_height="wrap_content"-->
+        <!--            android:layout_alignParentBottom="true"-->
+        <!--            android:layout_centerHorizontal="true"-->
+        <!--            android:visibility="@{viewModel.showAds ? view.VISIBLE : view.GONE}"-->
+        <!--            app:adSize="SMART_BANNER"-->
+        <!--            app:adUnitId="@string/banner_login_id"-->
+        <!--            />-->
 
     </RelativeLayout>
 

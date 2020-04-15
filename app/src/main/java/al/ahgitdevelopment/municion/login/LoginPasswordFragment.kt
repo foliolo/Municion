@@ -1,6 +1,5 @@
 package al.ahgitdevelopment.municion.login
 
-import al.ahgitdevelopment.municion.NavigationActivity
 import al.ahgitdevelopment.municion.R
 import al.ahgitdevelopment.municion.databinding.FragmentLoginBinding
 import al.ahgitdevelopment.municion.di.AppComponent
@@ -20,9 +19,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.fragment.navArgs
 import com.google.firebase.analytics.FirebaseAnalytics
-import kotlinx.android.synthetic.main.activity_navigation.*
 import kotlinx.android.synthetic.main.fragment_login.*
 import javax.inject.Inject
 
@@ -35,7 +32,6 @@ class LoginPasswordFragment : Fragment() {
         viewModelFactory
     }
 
-    private val args: LoginPasswordFragmentArgs by navArgs()
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -76,14 +72,11 @@ class LoginPasswordFragment : Fragment() {
         })
 
         viewModel.onCreateView()
-
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        requireActivity().nav_view.visibility = if (args.isButtonNavigationVisible) View.VISIBLE else View.GONE
-        setUpToolBar()
         loadAppVersion()
     }
 
@@ -101,14 +94,6 @@ class LoginPasswordFragment : Fragment() {
             LoginViewModel.ErrorMessages.NOT_MATCHING_PASSWORD -> getString(R.string.login_not_matching_password_error)
             LoginViewModel.ErrorMessages.SHORT_PASSWORD -> getString(R.string.login_short_password_error)
             LoginViewModel.ErrorMessages.NONE -> null
-        }
-    }
-
-    private fun setUpToolBar() {
-        (activity as NavigationActivity).supportActionBar?.apply {
-//            setIcon(R.drawable.ic_bullseye)
-            setTitle(R.string.app_name)
-            setSubtitle(R.string.login)
         }
     }
 
@@ -162,7 +147,7 @@ class LoginPasswordFragment : Fragment() {
 //        startActivity(intent)
 //        dbSqlHelper.close()
 
-        findNavController().navigate(R.id.licenciasFragment)
+        findNavController().navigate(R.id.compras_fragment)
 
         // Registrar Login - Analytics
 //        val androidId = Settings.Secure.getString(requireContext().contentResolver, Settings.Secure.ANDROID_ID)

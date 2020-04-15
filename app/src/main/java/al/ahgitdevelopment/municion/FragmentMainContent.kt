@@ -865,7 +865,7 @@ class FragmentMainContent : Fragment(), AuthStateListener {
      */
     class PlaceholderFragment : Fragment() {
         override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-            val rootView = inflater.inflate(R.layout.list_view_pager, container, false)
+            val rootView = inflater.inflate(R.layout.list_view_layout, container, false)
             listView = rootView.findViewById(R.id.list_view)
 
             tiradaCountDown = rootView.findViewById(R.id.pager_tirada_countdown)

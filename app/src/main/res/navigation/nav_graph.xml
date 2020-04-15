@@ -9,29 +9,26 @@
         android:id="@+id/loginPasswordFragment"
         android:name="al.ahgitdevelopment.municion.login.LoginPasswordFragment"
         android:label="fragment_login"
-        tools:layout="@layout/fragment_login">
-
-        <action
-            android:id="@+id/action_loginPasswordFragment_to_licenciasFragment"
-            app:destination="@id/licenciasFragment" />
-
-        <argument
-            android:name="isButtonNavigationVisible"
-            android:defaultValue="false"
-            app:argType="boolean" />
-
-    </fragment>
+        tools:layout="@layout/fragment_login" />
 
     <fragment
-        android:id="@+id/licenciasFragment"
+        android:id="@+id/licencias_fragment"
         android:name="al.ahgitdevelopment.municion.licencias.LicenciasFragment"
         android:label="licencias_fragment"
-        tools:layout="@layout/licencias_fragment">
+        tools:layout="@layout/licencias_fragment" />
 
-        <argument
-            android:name="isButtonNavigationVisible"
-            android:defaultValue="true"
-            app:argType="boolean" />
-    </fragment>
+    <!--    <action-->
+    <!--        android:id="@+id/action_global_licenciasFragment"-->
+    <!--        app:destination="@+id/licencias_fragment" />-->
+
+    <fragment
+        android:id="@+id/compras_fragment"
+        android:name="al.ahgitdevelopment.municion.compras.ComprasFragment"
+        android:label="compras_fragment"
+        tools:layout="@layout/compras_fragment" />
+
+    <!--    <action-->
+    <!--        android:id="@+id/action_global_comprasFragment"-->
+    <!--        app:destination="@+id/compras_fragment" />-->
 
 </navigation>

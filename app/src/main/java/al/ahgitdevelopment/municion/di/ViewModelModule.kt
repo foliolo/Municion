@@ -1,5 +1,6 @@
 package al.ahgitdevelopment.municion.di
 
+import al.ahgitdevelopment.municion.compras.ComprasViewModel
 import al.ahgitdevelopment.municion.licencias.LicenciasViewModel
 import al.ahgitdevelopment.municion.login.LoginViewModel
 import androidx.lifecycle.ViewModel
@@ -24,6 +25,11 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(LicenciasViewModel::class)
     abstract fun bindLicenciasViewModel(licenciasViewModel: LicenciasViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(ComprasViewModel::class)
+    abstract fun bindComprasViewModel(comprasViewModel: ComprasViewModel): ViewModel
 
     @Binds
     abstract fun bindsModelFactory(factory: ViewModelFactory): ViewModelProvider.Factory
@@ -51,5 +57,4 @@ class ViewModelFactory @Inject constructor(
         @Suppress("UNCHECKED_CAST")
         return creator.get() as T
     }
-
 }

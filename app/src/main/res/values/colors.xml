@@ -10,4 +10,6 @@
     <color name="control_background">#cc4285f4</color>
     <color name="light_yellow">#fafad2</color>
 
+    <color name="toolbar_text_color">#FFFFFF</color>
+
 </resources>

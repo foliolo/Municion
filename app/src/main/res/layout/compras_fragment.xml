@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".licencias.LicenciasFragment"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".compras.ComprasFragment"
     >
 
     <data>
 
         <variable
             name="viewModel"
-            type="al.ahgitdevelopment.municion.licencias.LicenciasViewModel"
+            type="al.ahgitdevelopment.municion.compras.ComprasViewModel"
             />
     </data>
 
@@ -24,11 +24,12 @@
             android:id="@+id/textView2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Licencia"
+            android:text="Compra"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

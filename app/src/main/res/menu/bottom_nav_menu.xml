@@ -1,8 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <!--    <item-->
+    <!--        android:id="@+id/comprasFragment"-->
+    <!--        android:title="@string/section_guias_title" />-->
     <item
-        android:id="@+id/loginPasswordFragment"
-        android:title="@string/login" />
+        android:id="@id/compras_fragment"
+        android:title="@string/section_compras_title" />
+    <item
+        android:id="@id/licencias_fragment"
+        android:title="@string/section_licencias_title" />
+    <!--    <item-->
+    <!--        android:id="@+id/listViewFragmentTiradas"-->
+    <!--        android:title="@string/section_competiciones_title" />-->
 
 </menu>
