@@ -32,7 +32,6 @@ class LoginPasswordFragment : Fragment() {
         viewModelFactory
     }
 
-
     override fun onAttach(context: Context) {
         super.onAttach(context)
 
@@ -147,7 +146,7 @@ class LoginPasswordFragment : Fragment() {
 //        startActivity(intent)
 //        dbSqlHelper.close()
 
-        findNavController().navigate(R.id.compras_fragment)
+        findNavController().navigate(R.id.licenciasFragment)
 
         // Registrar Login - Analytics
 //        val androidId = Settings.Secure.getString(requireContext().contentResolver, Settings.Secure.ANDROID_ID)

@@ -5,10 +5,10 @@
     <!--        android:id="@+id/comprasFragment"-->
     <!--        android:title="@string/section_guias_title" />-->
     <item
-        android:id="@id/compras_fragment"
+        android:id="@id/comprasFragment"
         android:title="@string/section_compras_title" />
     <item
-        android:id="@id/licencias_fragment"
+        android:id="@id/licenciasFragment"
         android:title="@string/section_licencias_title" />
     <!--    <item-->
     <!--        android:id="@+id/listViewFragmentTiradas"-->

@@ -9,26 +9,23 @@
         android:id="@+id/loginPasswordFragment"
         android:name="al.ahgitdevelopment.municion.login.LoginPasswordFragment"
         android:label="fragment_login"
-        tools:layout="@layout/fragment_login" />
+        tools:layout="@layout/fragment_login">
+
+        <action
+            android:id="@+id/action_loginPasswordFragment_to_licencias_fragment"
+            app:destination="@id/licenciasFragment" />
+    </fragment>
 
     <fragment
-        android:id="@+id/licencias_fragment"
+        android:id="@+id/licenciasFragment"
         android:name="al.ahgitdevelopment.municion.licencias.LicenciasFragment"
         android:label="licencias_fragment"
         tools:layout="@layout/licencias_fragment" />
 
-    <!--    <action-->
-    <!--        android:id="@+id/action_global_licenciasFragment"-->
-    <!--        app:destination="@+id/licencias_fragment" />-->
-
     <fragment
-        android:id="@+id/compras_fragment"
+        android:id="@+id/comprasFragment"
         android:name="al.ahgitdevelopment.municion.compras.ComprasFragment"
         android:label="compras_fragment"
         tools:layout="@layout/compras_fragment" />
-
-    <!--    <action-->
-    <!--        android:id="@+id/action_global_comprasFragment"-->
-    <!--        app:destination="@+id/compras_fragment" />-->
 
 </navigation>

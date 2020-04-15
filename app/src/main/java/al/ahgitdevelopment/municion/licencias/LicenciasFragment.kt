@@ -23,7 +23,6 @@ class LicenciasFragment : Fragment() {
         viewModelFactory
     }
 
-
     override fun onAttach(context: Context) {
         super.onAttach(context)
 

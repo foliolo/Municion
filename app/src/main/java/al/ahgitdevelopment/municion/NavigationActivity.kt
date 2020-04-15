@@ -20,17 +20,14 @@ class NavigationActivity : AppCompatActivity() {
         val navController = findNavController(R.id.nav_host_fragment)
         val appBarConfiguration = AppBarConfiguration(
                 setOf(
-                        R.id.compras_fragment, R.id.licencias_fragment
-//                        ,
-//                        R.id.listViewFragmentLicencias, R.id.listViewFragmentTiradas
+                        R.id.comprasFragment, R.id.licenciasFragment
                 )
         )
-
 
         setupActionBarWithNavController(navController, appBarConfiguration)
         nav_view?.setupWithNavController(navController)
 
-        navController.addOnDestinationChangedListener { _, destination, _ ->
+        navController.addOnDestinationChangedListener { controller, destination, arguments ->
             supportActionBar?.title = getString(R.string.app_name)
             supportActionBar?.setDisplayHomeAsUpEnabled(false)
 
@@ -39,11 +36,11 @@ class NavigationActivity : AppCompatActivity() {
                     setToolbarSubtitle(getString(R.string.login))
                     nav_view.visibility = View.GONE
                 }
-                R.id.compras_fragment -> {
+                R.id.comprasFragment -> {
                     setToolbarSubtitle(getString(R.string.section_compras_title))
                     nav_view.visibility = View.VISIBLE
                 }
-                R.id.licencias_fragment -> {
+                R.id.licenciasFragment -> {
                     setToolbarSubtitle(getString(R.string.section_licencias_title))
                     nav_view.visibility = View.VISIBLE
                 }
