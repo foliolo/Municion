@@ -2,6 +2,14 @@
 
 Gestión de munición
 
+## Change Log
+
+- Refactorización en la version 2.x.x (lanzamiento a finales de 2020 aprox)
+  - Actualización de librerias y migración a AndroidX
+  - Refactorización de código para hacerlo mantenible
+  - Eliminación de lógica y elementos innecesarios
+  - Migración de la BBDD a Room
+
 - Cosas a implementar para la proxima actualización (1.2.1):
   - Añadir campo de comentarios para la compras realizadas
 
