@@ -4,6 +4,7 @@ import al.ahgitdevelopment.municion.R
 import al.ahgitdevelopment.municion.databinding.FragmentLoginBinding
 import al.ahgitdevelopment.municion.di.AppComponent
 import android.Manifest
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
@@ -11,19 +12,36 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import com.firebase.ui.auth.AuthUI
+import com.firebase.ui.auth.IdpResponse
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.analytics.ktx.logEvent
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import kotlinx.android.synthetic.main.fragment_login.*
 import javax.inject.Inject
 
 class LoginPasswordFragment : Fragment() {
+
+    @Inject
+    lateinit var prefs: SharedPreferences
+
+    @Inject
+    lateinit var firebaseAuth: FirebaseAuth
+
+    @Inject
+    lateinit var firebaseAnalytics: FirebaseAnalytics
+
+    @Inject
+    lateinit var firebaseCrashlytics: FirebaseCrashlytics
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
@@ -38,25 +56,33 @@ class LoginPasswordFragment : Fragment() {
         AppComponent.create(requireContext()).inject(this)
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
 
-        val binding: FragmentLoginBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_login, container, false)
+        val binding: FragmentLoginBinding =
+            DataBindingUtil.inflate(inflater, R.layout.fragment_login, container, false)
         binding.viewModel = this.viewModel
         binding.lifecycleOwner = viewLifecycleOwner
 
+        setHasOptionsMenu(true)
+
         return binding.root
     }
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         viewModel.userState.observe(viewLifecycleOwner,
-                androidx.lifecycle.Observer { userState: LoginViewModel.UserState ->
-                    login_password_2.visibility = when (userState) {
-                        LoginViewModel.UserState.NEW_USER -> View.VISIBLE
-                        LoginViewModel.UserState.ACTIVE_USER -> View.GONE
-                    }
-                })
+            androidx.lifecycle.Observer { userState: LoginViewModel.UserState ->
+                login_password_2.visibility = when (userState) {
+                    LoginViewModel.UserState.NEW_USER -> View.VISIBLE
+                    LoginViewModel.UserState.ACTIVE_USER -> View.GONE
+                }
+            })
 
         viewModel.password1Error.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
             login_password_1.error = getErrorMessage(it)
@@ -79,7 +105,12 @@ class LoginPasswordFragment : Fragment() {
         loadAppVersion()
     }
 
-//    override fun onDestroy() {
+    override fun onResume() {
+        super.onResume()
+        setUpUser()
+    }
+
+    //    override fun onDestroy() {
 //        // Gestión del año actual para actualizar los cupos y las compras
 //        val calendar = Calendar.getInstance()
 //        val yearPref = calendar[Calendar.YEAR]
@@ -108,17 +139,24 @@ class LoginPasswordFragment : Fragment() {
     private fun checkAccountPermission() {
         val accountPermission: Int
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            accountPermission = requireContext().checkSelfPermission(Manifest.permission.GET_ACCOUNTS)
+            accountPermission =
+                requireContext().checkSelfPermission(Manifest.permission.GET_ACCOUNTS)
             if (accountPermission != PackageManager.PERMISSION_GRANTED) {
-                requestPermissions(arrayOf(
-                        Manifest.permission.GET_ACCOUNTS),
-                        100 //Codigo de respuesta de
+                requestPermissions(
+                    arrayOf(
+                        Manifest.permission.GET_ACCOUNTS
+                    ),
+                    100 //Codigo de respuesta de
                 )
             }
         }
     }
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String>,
+        grantResults: IntArray
+    ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (grantResults.isNotEmpty()) {
             if (requestCode == 100) {
@@ -155,7 +193,7 @@ class LoginPasswordFragment : Fragment() {
 //        mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.LOGIN, bundle)
     }
 
-    private fun checkYearCupo(intent: Intent) { // Comprobar year para renovar los cupos
+//    private fun checkYearCupo(intent: Intent) { // Comprobar year para renovar los cupos
 //        val yearPref = prefs.getInt("year", 0)
 //        val year = Calendar.getInstance()[Calendar.YEAR] // Year actual
 //        if (yearPref != 0 && year > yearPref) {
@@ -200,7 +238,7 @@ class LoginPasswordFragment : Fragment() {
 //                }
 //            }
 //        }
-    }
+//    }
 
     /**
      * Lanza el tutorial la primera vez que se inicia la aplicación.
@@ -214,12 +252,111 @@ class LoginPasswordFragment : Fragment() {
 //        }
     }
 
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.menu_login, menu)
+        super.onCreateOptionsMenu(menu, inflater)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        when (item.itemId) {
+            R.id.log_out -> {
+                signOut()
+            }
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
+    private fun signOut() {
+        AuthUI.getInstance()
+            .signOut(requireContext())
+            .addOnCompleteListener {
+                recordLogoutEvent()
+                clearUserData()
+                setUpUser()
+            }
+    }
+
+    private fun recordLogoutEvent() {
+        firebaseAnalytics.logEvent(EVENT_LOGOUT, null)
+    }
+
+    private fun clearUserData() {
+        firebaseAnalytics.setUserId(null)
+        firebaseCrashlytics.setUserId("")
+    }
+
+    private fun setUpUser() {
+        val user = firebaseAuth.currentUser
+
+        if (user != null) recordUserData(user)
+        else signIn()
+    }
+
+    private fun signIn() {
+        val providers = arrayListOf(
+            AuthUI.IdpConfig.GoogleBuilder()
+                .setSignInOptions(
+                    GoogleSignInOptions.Builder()
+                        .build()
+                )
+                .build(),
+            AuthUI.IdpConfig.AnonymousBuilder()
+                .build(),
+            AuthUI.IdpConfig.EmailBuilder()
+                .build()
+        )
+
+        startActivityForResult(
+            AuthUI.getInstance()
+                .createSignInIntentBuilder()
+                .setLogo(R.mipmap.ic_launcher_3_light)
+                .setTheme(R.style.AppTheme)
+                .setAvailableProviders(providers)
+                .build(),
+            RC_SIGN_IN
+        )
+    }
+
+    private fun recordUserData(user: FirebaseUser) {
+        firebaseAnalytics.setUserId(user.uid)
+        firebaseCrashlytics.setUserId(user.uid)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (requestCode == RC_SIGN_IN) {
+            val response = IdpResponse.fromResultIntent(data)
+
+            if (resultCode == Activity.RESULT_OK) {
+                val user = firebaseAuth.currentUser
+
+                if (user != null) {
+                    recordUserData(user)
+                    recordLoginEvent(user)
+                }
+            } else {
+                response?.error?.cause?.let(firebaseCrashlytics::recordException)
+            }
+        }
+    }
+
+    private fun recordLoginEvent(user: FirebaseUser) {
+        firebaseAnalytics.logEvent(FirebaseAnalytics.Event.LOGIN) {
+            param(FirebaseAnalytics.Param.METHOD, user.providerId)
+            param(PARAM_USER_UID, user.uid)
+        }
+    }
+
+
     companion object {
         private const val TAG = "LoginPasswordActivity"
         const val MIN_PASS_LENGTH = 6
-
-        lateinit var mFirebaseAnalytics: FirebaseAnalytics
-        lateinit var prefs: SharedPreferences
-
+        private const val RC_SIGN_IN = 100
+        private const val PARAM_USER_UID = "user_uid"
+        private const val EVENT_LOGOUT = "logout"
     }
 }

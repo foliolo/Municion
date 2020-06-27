@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="al.ahgitdevelopment.municion"
-    >
+    package="al.ahgitdevelopment.municion">
 
     <uses-feature
         android:name="android.hardware.camera"
-        android:required="true"
-        />
+        android:required="true" />
 
     <uses-permission android:name="com.android.vending.BILLING" />
     <uses-permission android:name="android.permission.INTERNET" />
@@ -18,21 +16,19 @@
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
 
     <application
+        android:name=".App"
         android:icon="@mipmap/ic_launcher_3_light"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme"
-        >
+        android:theme="@style/AppTheme">
 
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="@string/admob_id"
-            />
+            android:value="@string/admob_id" />
 
         <activity
             android:name=".NavigationActivity"
-            android:screenOrientation="fullSensor"
-            android:windowSoftInputMode="stateHidden"
-            >
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <action android:name="android.intent.action.VIEW" />
@@ -41,63 +37,56 @@
             </intent-filter>
         </activity>
 
-        <activity
-            android:name=".FragmentMainContent"
-            android:windowSoftInputMode="stateHidden"
-            />
-        <activity
-            android:name="forms.GuiaFormActivity"
-            android:label="@string/title_nueva_guia"
-            android:windowSoftInputMode="stateHidden"
-            />
+        <!--        <activity-->
+        <!--            android:name=".FragmentMainContent"-->
+        <!--            android:windowSoftInputMode="stateHidden"-->
+        <!--            />-->
+        <!--        <activity-->
+        <!--            android:name="forms.GuiaFormActivity"-->
+        <!--            android:label="@string/title_nueva_guia"-->
+        <!--            android:windowSoftInputMode="stateHidden"-->
+        <!--            />-->
         <activity
             android:name=".forms.CompraFormActivity"
             android:label="@string/title_nueva_compra"
-            android:windowSoftInputMode="stateHidden"
-            />
+            android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".forms.LicenciaFormActivity"
             android:label="@string/title_nueva_licencia"
-            android:windowSoftInputMode="stateHidden"
-            />
+            android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".forms.TiradaFormActivity"
             android:label="@string/title_nueva_tirada"
-            android:windowSoftInputMode="stateHidden"
-            />
+            android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".SettingsFragment"
             android:label="@string/title_activity_settings"
-            android:theme="@style/Theme.AppCompat.Light.DarkActionBar"
-            />
+            android:theme="@style/Theme.AppCompat.Light.DarkActionBar" />
 
-        <receiver
-            android:name=".NotificationPublisher"
-            android:label="BroadcastReceiverAux"
-            >
-            <intent-filter>
-                <action android:name="ALARM" />
+        <!--        <receiver-->
+        <!--            android:name=".NotificationPublisher"-->
+        <!--            android:label="BroadcastReceiverAux"-->
+        <!--            >-->
+        <!--            <intent-filter>-->
+        <!--                <action android:name="ALARM" />-->
 
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </receiver>
+        <!--                <category android:name="android.intent.category.DEFAULT" />-->
+        <!--            </intent-filter>-->
+        <!--        </receiver>-->
 
         <activity
             android:name=".FragmentTutorialActivity"
             android:screenOrientation="fullSensor"
-            android:theme="@style/AppTheme"
-            />
+            android:theme="@style/AppTheme" />
 
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="al.ahgitdevelopment.municion.fileprovider"
             android:exported="false"
-            android:grantUriPermissions="true"
-            >
+            android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/file_paths"
-                />
+                android:resource="@xml/file_paths" />
         </provider>
 
     </application>

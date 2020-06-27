@@ -504,7 +504,7 @@ public final class Utils {
      * @param userId        Id del usuario para crear la carpeta con su imagen
      */
     static void saveBitmapToFirebase(
-            FirebaseStorage storage, Bitmap imageBitmap, String fileImagePath, String userId) {
+            FirebaseStorage storage, Bitmap imageBitmap, String fileImagePath, @NonNull String userId) {
 
         File file = new File(fileImagePath);
 

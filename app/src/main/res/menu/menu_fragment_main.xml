@@ -1,20 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-      xmlns:app="http://schemas.android.com/apk/res-auto"
-      xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     tools:context="al.ahgitdevelopment.municion.FragmentMainContent">
     <item
         android:id="@+id/action_settings"
         android:icon="@drawable/ic_settings_3"
         android:orderInCategory="100"
         android:title="@string/action_settings"
-        app:showAsAction="ifRoom"/>
+        app:showAsAction="ifRoom" />
     <!--android:icon="@drawable/ic_settings"-->
     <item
         android:id="@+id/tabla_tiradas"
         android:icon="@drawable/tabla_tiradas2"
         android:orderInCategory="10"
         android:title="@string/tabla_tiradas"
-        android:visible="false"
-        app:showAsAction="ifRoom"/>
+        android:visible="true"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/log_out"
+        android:icon="@drawable/ic_log_out"
+        android:title="@string/menu_sign_out"
+        app:showAsAction="ifRoom" />
 </menu>

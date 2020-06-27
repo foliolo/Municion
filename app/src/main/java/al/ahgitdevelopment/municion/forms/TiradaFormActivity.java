@@ -21,10 +21,12 @@ import androidx.fragment.app.DialogFragment;
 
 import com.google.android.gms.ads.AdView;
 import com.google.android.material.textfield.TextInputLayout;
-import com.google.firebase.crash.FirebaseCrash;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 
 import java.util.Calendar;
 import java.util.Date;
+
+import javax.inject.Inject;
 
 import al.ahgitdevelopment.municion.FragmentMainContent;
 import al.ahgitdevelopment.municion.R;
@@ -37,6 +39,10 @@ import static al.ahgitdevelopment.municion.di.SharedPrefsModule.PREFS_SHOW_ADS;
  * Created by Alberto on 24/05/2016.
  */
 public class TiradaFormActivity extends AppCompatActivity {
+
+    @Inject
+    FirebaseCrashlytics firebaseCrashlytics;
+
     private static final String TAG = "TiradaFormActivity";
     private static TextInputLayout fecha;
     private SharedPreferences prefs;
@@ -80,8 +86,8 @@ public class TiradaFormActivity extends AppCompatActivity {
                 fecha.getEditText().setText(tirada.getFecha());
                 puntuacion.getEditText().setText(String.valueOf(tirada.getPuntuacion()));
             } catch (NullPointerException ex) {
-                FirebaseCrash.logcat(Log.ERROR, TAG, "Fallo al modificar una tirada en el formulario");
-                FirebaseCrash.report(ex);
+                Log.e(TAG, "Fallo al modificar una tirada en el formulario");
+                firebaseCrashlytics.recordException(ex);
             }
         }
 

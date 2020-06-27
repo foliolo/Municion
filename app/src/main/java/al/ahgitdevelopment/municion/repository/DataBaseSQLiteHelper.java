@@ -6,14 +6,12 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
-import com.google.firebase.crash.FirebaseCrash;
-
-import java.util.ArrayList;
-
 import al.ahgitdevelopment.municion.datamodel.Compra;
 import al.ahgitdevelopment.municion.datamodel.Guia;
 import al.ahgitdevelopment.municion.datamodel.Licencia;
 import al.ahgitdevelopment.municion.datamodel.Tirada;
+
+import java.util.ArrayList;
 
 /**
  * Created by Alberto on 12/04/2016.
@@ -109,22 +107,22 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
         try {
             guias = getListGuias(db);
         } catch (Exception ex) {
-            FirebaseCrash.logcat(Log.WARN, TAG, "Fallo obteniendo guias. No existe la tabla");
+            Log.w( TAG, "Fallo obteniendo guias. No existe la tabla");
         }
         try {
             compras = getListCompras(db);
         } catch (Exception ex) {
-            FirebaseCrash.logcat(Log.WARN, TAG, "Fallo obteniendo compras. No existe la tabla");
+            Log.w( TAG, "Fallo obteniendo compras. No existe la tabla");
         }
         try {
             licencias = getListLicencias(db);
         } catch (Exception ex) {
-            FirebaseCrash.logcat(Log.WARN, TAG, "Fallo obteniendo licencias. No existe la tabla");
+            Log.w( TAG, "Fallo obteniendo licencias. No existe la tabla");
         }
         try {
             tiradas = getListTiradas(db);
         } catch (Exception ex) {
-            FirebaseCrash.logcat(Log.WARN, TAG, "Fallo obteniendo tiradas. No existe la tabla");
+            Log.w( TAG, "Fallo obteniendo tiradas. No existe la tabla");
         }
 
         // On upgrade drop older tables

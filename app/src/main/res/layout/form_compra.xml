@@ -1,24 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:app="http://schemas.android.com/apk/res-auto"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
 
     <ScrollView
         android:id="@+id/form_scrollview_compra"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@+id/login_adView"
-        >
+        android:layout_above="@+id/login_adView">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:paddingBottom="@dimen/activity_vertical_margin"
             android:paddingLeft="@dimen/activity_horizontal_margin"
+            android:paddingTop="@dimen/activity_vertical_margin"
             android:paddingRight="@dimen/activity_horizontal_margin"
-            android:paddingTop="@dimen/activity_vertical_margin">
+            android:paddingBottom="@dimen/activity_vertical_margin">
 
             <!--Mensaje de error formulario-->
             <TextView
@@ -26,7 +25,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:imeOptions="actionNext"
-                android:visibility="gone"/>
+                android:visibility="gone" />
 
             <!--CALIBRE 1-->
             <com.google.android.material.textfield.TextInputLayout
@@ -41,7 +40,7 @@
                     android:enabled="false"
                     android:hint="@string/calibre"
                     android:imeOptions="actionNext"
-                    android:inputType="none|textCapSentences"/>
+                    android:inputType="none|textCapSentences" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <!--CHECK BOX CALIBRE 2-->
@@ -51,7 +50,7 @@
                 android:layout_height="wrap_content"
                 android:checked="false"
                 android:enabled="false"
-                android:text="@string/check_segundo_calibre"/>
+                android:text="@string/check_segundo_calibre" />
             <!--CALIBRE 2-->
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/text_input_layout_calibre2"
@@ -65,7 +64,7 @@
                     android:enabled="false"
                     android:hint="@string/calibre2"
                     android:imeOptions="actionNext"
-                    android:inputType="none|textCapSentences"/>
+                    android:inputType="none|textCapSentences" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <!--UNIDADES-->
@@ -81,7 +80,7 @@
                     android:hint="@string/unidades"
                     android:imeOptions="actionNext"
                     android:inputType="number"
-                    android:maxLength="@integer/max_unidades_compra_length"/>
+                    android:maxLength="@integer/max_unidades_compra_length" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <!--PRECIO-->
@@ -97,7 +96,7 @@
                     android:hint="@string/precio"
                     android:imeOptions="actionNext"
                     android:inputType="numberDecimal"
-                    android:maxLength="@integer/max_unidades_precio_length"/>
+                    android:maxLength="@integer/max_unidades_precio_length" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <!--FECHA-->
@@ -114,7 +113,7 @@
                     android:editable="false"
                     android:hint="@string/fecha"
                     android:imeOptions="actionNext"
-                    android:inputType="none"/>
+                    android:inputType="none" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <!--TIPO MUNICION-->
@@ -129,7 +128,7 @@
                     android:layout_height="wrap_content"
                     android:hint="@string/tipo_municion"
                     android:imeOptions="actionNext"
-                    android:inputType="text|textCapSentences"/>
+                    android:inputType="text|textCapSentences" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <!--PESO MUNICION-->
@@ -145,7 +144,7 @@
                     android:hint="@string/peso_municion"
                     android:imeOptions="actionNext"
                     android:inputType="numberDecimal"
-                    android:maxLength="@integer/max_peso_municion_compra"/>
+                    android:maxLength="@integer/max_peso_municion_compra" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <!--MARCA MUNICION-->
@@ -160,7 +159,7 @@
                     android:layout_height="wrap_content"
                     android:hint="@string/marca"
                     android:imeOptions="actionNext"
-                    android:inputType="text|textCapSentences"/>
+                    android:inputType="text|textCapSentences" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <!--TIENDA MUNICION-->
@@ -175,7 +174,7 @@
                     android:layout_height="wrap_content"
                     android:hint="@string/tienda"
                     android:imeOptions="actionNext"
-                    android:inputType="text|textCapSentences"/>
+                    android:inputType="text|textCapSentences" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <!--VALORACION-->
@@ -185,13 +184,13 @@
                 android:layout_height="wrap_content"
                 android:imeOptions="actionDone"
                 android:text="@string/valoracion"
-                android:textAppearance="?android:attr/textAppearanceSmall"/>
+                android:textAppearance="?android:attr/textAppearanceSmall" />
 
             <RatingBar
                 android:id="@+id/form_ratingBar_valoracion"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"/>
+                android:layout_gravity="center" />
 
         </LinearLayout>
     </ScrollView>
@@ -204,22 +203,22 @@
         android:layout_centerHorizontal="true"
         android:visibility="gone"
         app:adSize="SMART_BANNER"
-        app:adUnitId="@string/banner_formularios_id">
-    </com.google.android.gms.ads.AdView>
+        app:adUnitId="@string/banner_formularios_id" />
 
-    <android.support.design.widget.FloatingActionButton
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab_form_save"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/adView"
-        android:layout_alignParentBottom="false"
+        android:layout_alignWithParentIfMissing="true"
+        android:layout_above="@+id/login_adView"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
-        android:layout_alignWithParentIfMissing="true"
+        android:layout_alignParentBottom="false"
         android:layout_margin="12dp"
         android:clickable="true"
+        android:focusable="true"
         android:onClick="fabSaveOnClick"
         app:fabSize="normal"
-        app:srcCompat="@android:drawable/ic_menu_save"/>
+        app:srcCompat="@android:drawable/ic_menu_save" />
 
 </RelativeLayout>

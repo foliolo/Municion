@@ -7,12 +7,14 @@ import al.ahgitdevelopment.municion.datamodel.Compra
 import al.ahgitdevelopment.municion.datamodel.Guia
 import al.ahgitdevelopment.municion.datamodel.Licencia
 import al.ahgitdevelopment.municion.datamodel.Tirada
+import al.ahgitdevelopment.municion.di.AppComponent
 import al.ahgitdevelopment.municion.di.SharedPrefsModule.Companion.PREFS_SHOW_ADS
 import al.ahgitdevelopment.municion.forms.GuiaFormActivity
 import al.ahgitdevelopment.municion.licencias.LicenciaArrayAdapter
 import al.ahgitdevelopment.municion.repository.DataBaseSQLiteHelper
 import al.ahgitdevelopment.municion.repository.Repository
 import android.Manifest
+import android.app.Activity
 import android.app.Activity.RESULT_CANCELED
 import android.app.Activity.RESULT_OK
 import android.app.Dialog
@@ -44,10 +46,8 @@ import androidx.viewpager.widget.ViewPager
 import androidx.viewpager.widget.ViewPager.OnPageChangeListener
 import com.google.android.gms.ads.InterstitialAd
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseAuth.AuthStateListener
-import com.google.firebase.crash.FirebaseCrash
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.android.synthetic.main.activity_fragment_main.*
 import kotlinx.android.synthetic.main.activity_fragment_main.view.*
@@ -57,10 +57,16 @@ import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
 
-class FragmentMainContent : Fragment(), AuthStateListener {
+class FragmentMainContent: Fragment() {
+
+    @Inject
+    lateinit var firebaseAuth: FirebaseAuth
 
     @Inject
     lateinit var repository: Repository
+
+    @Inject
+    lateinit var firebaseCrashlytics: FirebaseCrashlytics
 
     private var mSectionsPagerAdapter: SectionsPagerAdapter? = null
     private var prefs: SharedPreferences? = null
@@ -70,11 +76,17 @@ class FragmentMainContent : Fragment(), AuthStateListener {
     private lateinit var mInterstitialAd: InterstitialAd
 
     private var userRef: DatabaseReference? = null
-    private val mAuth = FirebaseAuth.getInstance()
     private val mStorage = FirebaseStorage.getInstance()
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         val root = inflater.inflate(R.layout.activity_fragment_main, container, false)
+
+        setHasOptionsMenu(true)
 
         prefs = activity?.getSharedPreferences("Preferences", Context.MODE_PRIVATE)
 
@@ -104,9 +116,11 @@ class FragmentMainContent : Fragment(), AuthStateListener {
                             deleteSelectedItems(mActionMode!!.tag as Int)
                             showTextEmptyList()
                         } catch (ex: Exception) {
-                            FirebaseCrash.logcat(Log.ERROR, TAG,
-                                    "Error al borrar elementos de la lista en el método onActionItemClicked()")
-                            FirebaseCrash.report(ex)
+                            Log.e(
+                                TAG,
+                                "Error al borrar elementos de la lista en el método onActionItemClicked()"
+                            )
+                            firebaseCrashlytics.recordException(ex)
                         }
                         mode.finish() // Action picked, so close the CAB
                     }
@@ -123,7 +137,7 @@ class FragmentMainContent : Fragment(), AuthStateListener {
 
 //        toolbar = findViewById(R.id.toolbar)
 //        toolbar!!.setTitle(R.string.app_name)
-        //        setSupportActionBar(toolbar);
+//        setSupportActionBar(toolbar);
 //        getSupportActionBar().setDisplayShowHomeEnabled(true);
 //        getSupportActionBar().setIcon(R.drawable.ic_bullseye);
 //        textEmptyList = findViewById(R.id.textEmptyList)
@@ -143,7 +157,11 @@ class FragmentMainContent : Fragment(), AuthStateListener {
         // Set up the ViewPager with the sections adapter.
         root.pager_container.adapter = mSectionsPagerAdapter
         root.pager_container.addOnPageChangeListener(object : OnPageChangeListener {
-            override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
+            override fun onPageScrolled(
+                position: Int,
+                positionOffset: Float,
+                positionOffsetPixels: Int
+            ) {
                 activity?.invalidateOptionsMenu()
             }
 
@@ -209,8 +227,6 @@ class FragmentMainContent : Fragment(), AuthStateListener {
     override fun onStart() {
         super.onStart()
 //        updateGastoMunicion()
-        saveUserInFirebase()
-        mAuth.addAuthStateListener(this)
 
         // Gestion de anuncios
         prefs = activity?.getSharedPreferences("Preferences", Context.MODE_PRIVATE)
@@ -239,7 +255,6 @@ class FragmentMainContent : Fragment(), AuthStateListener {
     override fun onStop() {
         super.onStop()
         dbSqlHelper!!.close()
-        mAuth.removeAuthStateListener(this)
     }
 
     /**
@@ -342,11 +357,17 @@ class FragmentMainContent : Fragment(), AuthStateListener {
             2 -> {
                 //Si existe alguna conexion, no se podra eliminar la licencia
                 if (Utils.licenseCanBeDeleted(position)) {
-                    Toast.makeText(requireContext(), R.string.delete_license_fail, Toast.LENGTH_LONG).show()
+                    Toast.makeText(
+                        requireContext(),
+                        R.string.delete_license_fail,
+                        Toast.LENGTH_LONG
+                    ).show()
                 } else {
                     try {
-                        Utils.removeNotificationFromSharedPreference(requireContext(),
-                                licencias[position].numLicencia)
+                        Utils.removeNotificationFromSharedPreference(
+                            requireContext(),
+                            licencias[position].numLicencia
+                        )
                     } catch (ex: Exception) {
                         Log.wtf(activity?.packageName, "Fallo al listar las notificaciones", ex)
                     }
@@ -375,8 +396,8 @@ class FragmentMainContent : Fragment(), AuthStateListener {
             dbSqlHelper!!.saveListLicencias(null, licencias)
             dbSqlHelper!!.saveListTiradas(null, tiradas)
         } catch (ex: Exception) {
-            FirebaseCrash.report(ex)
-            FirebaseCrash.logcat(Log.ERROR, TAG, "NPE caught")
+            Log.e(TAG, "NPE caught")
+            firebaseCrashlytics.recordException(ex)
         }
     }
 
@@ -387,8 +408,11 @@ class FragmentMainContent : Fragment(), AuthStateListener {
         // Se comprueba el permiso de lectura del calendario porque te obliga la implementacion de ContentResolver Query
         // No tendria que ser necesario hacerlo porque ya se han comprobado los permisos de lectura y escritura en el
         // guardado de las licencias. Si el usuario no los ha aceptado no puede guardar una licencia y por tanto tampoco eliminarla
-        if (ActivityCompat.checkSelfPermission(requireContext(),
-                        Manifest.permission.READ_CALENDAR) == PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.READ_CALENDAR
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
             // Inicio preparacion eliminacion evento
             val cursor: Cursor?
             var startDay: Long = 0
@@ -397,7 +421,7 @@ class FragmentMainContent : Fragment(), AuthStateListener {
                 // Fecha inicio evento
                 val beginTime = Calendar.getInstance()
                 beginTime.time = SimpleDateFormat("dd/MM/yyyy")
-                        .parse(licencias[position].fechaCaducidad)
+                    .parse(licencias[position].fechaCaducidad)
                 beginTime[Calendar.HOUR_OF_DAY] = 0
                 beginTime[Calendar.MINUTE] = 0
                 beginTime[Calendar.SECOND] = 0
@@ -405,7 +429,7 @@ class FragmentMainContent : Fragment(), AuthStateListener {
                 // Fecha final evento
                 val endTime = Calendar.getInstance()
                 endTime.time = SimpleDateFormat("dd/MM/yyyy")
-                        .parse(licencias[position].fechaCaducidad)
+                    .parse(licencias[position].fechaCaducidad)
                 endTime[Calendar.HOUR_OF_DAY] = 23
                 endTime[Calendar.MINUTE] = 59
                 endTime[Calendar.SECOND] = 59
@@ -417,27 +441,36 @@ class FragmentMainContent : Fragment(), AuthStateListener {
             // Preparacion de la query
             val title = "Tu licencia caduca hoy"
             val description =
-                    Utils.getStringLicenseFromId(requireContext(),
-                            licencias[position].tipo.toLong()) + ": " + licencias[position].numLicencia
+                Utils.getStringLicenseFromId(
+                    requireContext(),
+                    licencias[position].tipo.toLong()
+                ) + ": " + licencias[position].numLicencia
             val projection =
-                    arrayOf(BaseColumns._ID, CalendarContract.Events.TITLE,
-                            CalendarContract.Events.DESCRIPTION, CalendarContract.Events.DTSTART)
+                arrayOf(
+                    BaseColumns._ID, CalendarContract.Events.TITLE,
+                    CalendarContract.Events.DESCRIPTION, CalendarContract.Events.DTSTART
+                )
             val selection =
-                    (CalendarContract.Events.DTSTART + " >= ? AND " + CalendarContract.Events.DTSTART + " <= ? AND "
-                            + CalendarContract.Events.TITLE + " = ? AND " + CalendarContract.Events.DESCRIPTION + " = ? ")
+                (CalendarContract.Events.DTSTART + " >= ? AND " + CalendarContract.Events.DTSTART + " <= ? AND "
+                        + CalendarContract.Events.TITLE + " = ? AND " + CalendarContract.Events.DESCRIPTION + " = ? ")
             val selectionArgs =
-                    arrayOf(java.lang.Long.toString(startDay), java.lang.Long.toString(endDay), title,
-                            description)
+                arrayOf(
+                    java.lang.Long.toString(startDay), java.lang.Long.toString(endDay), title,
+                    description
+                )
             // Primero se recupera el id del evento a eliminar
-            cursor = activity?.contentResolver?.query(CalendarContract.Events.CONTENT_URI, projection, selection,
-                    selectionArgs,
-                    null)
+            cursor = activity?.contentResolver?.query(
+                CalendarContract.Events.CONTENT_URI, projection, selection,
+                selectionArgs,
+                null
+            )
             while (cursor!!.moveToNext()) {
                 val eventId = cursor.getLong(cursor.getColumnIndex("_id"))
                 // Despues se elimina el evento en funcion de su id
                 activity?.contentResolver?.delete(
-                        ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, eventId), null,
-                        null)
+                    ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, eventId), null,
+                    null
+                )
             }
             cursor.close()
         }
@@ -448,8 +481,11 @@ class FragmentMainContent : Fragment(), AuthStateListener {
         // Se comprueba el permiso de lectura del calendario porque te obliga la implementacion de ContentResolver Query
         // No tendria que ser necesario hacerlo porque ya se han comprobado los permisos de lectura y escritura en el
         // guardado de las licencias. Si el usuario no los ha aceptado no puede guardar una licencia y por tanto tampoco eliminarla
-        if (ActivityCompat.checkSelfPermission(requireContext(),
-                        Manifest.permission.READ_CALENDAR) == PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.READ_CALENDAR
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
             // Inicio preparacion eliminacion evento
             val cursor: Cursor?
             var startDay: Long = 0
@@ -458,7 +494,7 @@ class FragmentMainContent : Fragment(), AuthStateListener {
                 // Fecha inicio evento
                 val beginTime = Calendar.getInstance()
                 beginTime.time = SimpleDateFormat("dd/MM/yyyy")
-                        .parse(licencias[position].fechaCaducidad)
+                    .parse(licencias[position].fechaCaducidad)
                 // Un mes de antelacion
                 beginTime.add(Calendar.MONTH, -1)
                 beginTime[Calendar.HOUR_OF_DAY] = 0
@@ -468,7 +504,7 @@ class FragmentMainContent : Fragment(), AuthStateListener {
                 // Fecha final evento
                 val endTime = Calendar.getInstance()
                 endTime.time = SimpleDateFormat("dd/MM/yyyy")
-                        .parse(licencias[position].fechaCaducidad)
+                    .parse(licencias[position].fechaCaducidad)
                 // Un mes de antelacion
                 endTime.add(Calendar.MONTH, -1)
                 endTime[Calendar.HOUR_OF_DAY] = 23
@@ -482,28 +518,37 @@ class FragmentMainContent : Fragment(), AuthStateListener {
             // Preparacion de la query
             val title = "Tu licencia caduca dentro de un mes"
             val description =
-                    Utils.getStringLicenseFromId(requireContext(),
-                            licencias[position].tipo.toLong()) + ": " + licencias[position].numLicencia
+                Utils.getStringLicenseFromId(
+                    requireContext(),
+                    licencias[position].tipo.toLong()
+                ) + ": " + licencias[position].numLicencia
             val projection =
-                    arrayOf(BaseColumns._ID, CalendarContract.Events.TITLE,
-                            CalendarContract.Events.DESCRIPTION, CalendarContract.Events.DTSTART)
+                arrayOf(
+                    BaseColumns._ID, CalendarContract.Events.TITLE,
+                    CalendarContract.Events.DESCRIPTION, CalendarContract.Events.DTSTART
+                )
             val selection =
-                    (CalendarContract.Events.DTSTART + " >= ? AND " + CalendarContract.Events.DTSTART + " <= ? AND "
-                            + CalendarContract.Events.TITLE + " = ? AND " + CalendarContract.Events.DESCRIPTION + " = ? ")
+                (CalendarContract.Events.DTSTART + " >= ? AND " + CalendarContract.Events.DTSTART + " <= ? AND "
+                        + CalendarContract.Events.TITLE + " = ? AND " + CalendarContract.Events.DESCRIPTION + " = ? ")
             val selectionArgs =
-                    arrayOf(java.lang.Long.toString(startDay), java.lang.Long.toString(endDay), title,
-                            description)
+                arrayOf(
+                    java.lang.Long.toString(startDay), java.lang.Long.toString(endDay), title,
+                    description
+                )
 
             // Primero se recupera el id del evento a eliminar
-            cursor = activity?.contentResolver?.query(CalendarContract.Events.CONTENT_URI, projection, selection,
-                    selectionArgs,
-                    null)
+            cursor = activity?.contentResolver?.query(
+                CalendarContract.Events.CONTENT_URI, projection, selection,
+                selectionArgs,
+                null
+            )
             while (cursor!!.moveToNext()) {
                 val eventId = cursor.getLong(cursor.getColumnIndex("_id"))
                 // Despues se elimina el evento en funcion de su id
                 activity?.contentResolver?.delete(
-                        ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, eventId), null,
-                        null)
+                    ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, eventId), null,
+                    null
+                )
             }
             cursor.close()
         }
@@ -532,9 +577,11 @@ class FragmentMainContent : Fragment(), AuthStateListener {
                 Utils.showImage(requireContext(), bitmap, "table")
             } catch (ex: Exception) {
                 Log.e(TAG, "Error mostrando la tabla de tiradas")
-                FirebaseCrash.logcat(Log.ERROR, TAG,
-                        "Error mostrando la tabla de tiradas")
-                FirebaseCrash.report(ex)
+                Log.e(
+                    TAG,
+                    "Error mostrando la tabla de tiradas"
+                )
+                firebaseCrashlytics.recordException(ex)
             }
             else -> return false
         }
@@ -558,20 +605,26 @@ class FragmentMainContent : Fragment(), AuthStateListener {
         if (resultCode == RESULT_OK) {
             when (requestCode) {
                 REQUEST_IMAGE_CAPTURE -> try {
-                    firebaseImageBitmap = MediaStore.Images.Media.getBitmap(activity?.contentResolver,
-                            Uri.fromFile(File(fileImagePath)))
+                    firebaseImageBitmap = MediaStore.Images.Media.getBitmap(
+                        activity?.contentResolver,
+                        Uri.fromFile(File(fileImagePath))
+                    )
                     localImageBitmap = ThumbnailUtils.extractThumbnail(
-                            BitmapFactory.decodeFile(fileImagePath),
-                            (firebaseImageBitmap.width * 0.2).toInt(),
-                            (firebaseImageBitmap.height * 0.2).toInt() /*,
-                                ThumbnailUtils.OPTIONS_RECYCLE_INPUT*/)
+                        BitmapFactory.decodeFile(fileImagePath),
+                        (firebaseImageBitmap.width * 0.2).toInt(),
+                        (firebaseImageBitmap.height * 0.2).toInt() /*,
+                                ThumbnailUtils.OPTIONS_RECYCLE_INPUT*/
+                    )
 
                     // No se necesita esta función
 //                        imageBitmap = Utils.resizeImage(imageBitmap, null);
                     updateImage(localImageBitmap, firebaseImageBitmap)
                 } catch (ex: Exception) {
-                    Log.e(TAG, "Error obteniendo la imagen de la camara",
-                            ex)
+                    Log.e(
+                        TAG, "Error obteniendo la imagen de la camara",
+                        ex
+                    )
+                    firebaseCrashlytics.recordException(ex)
                 }
                 GUIA_COMPLETED -> {
 //                    guias.add(Guia(data!!.extras!!))
@@ -598,7 +651,8 @@ class FragmentMainContent : Fragment(), AuthStateListener {
                 COMPRA_UPDATED -> updateCompra(data)
                 LICENCIA_UPDATED -> updateLicencia(data)
                 TIRADA_UPDATED -> PlaceholderFragment.updateInfoTirada(
-                        data)
+                    data
+                )
             }
         } else if (resultCode == RESULT_CANCELED) {
             Log.e(TAG, "Resultado de la camara cancelada")
@@ -610,8 +664,8 @@ class FragmentMainContent : Fragment(), AuthStateListener {
             dbSqlHelper!!.saveListLicencias(null, licencias)
             dbSqlHelper!!.saveListTiradas(null, tiradas)
         } catch (ex: Exception) {
-            FirebaseCrash.report(ex)
-            FirebaseCrash.logcat(Log.ERROR, TAG, "NPE caught")
+            Log.e(TAG, "NPE caught")
+            firebaseCrashlytics.recordException(ex)
         }
         showTextEmptyList()
 
@@ -630,13 +684,11 @@ class FragmentMainContent : Fragment(), AuthStateListener {
                     Log.i(TAG, "Guardado de listas en Firebase")
                 }
             } else {
-                FirebaseCrash.logcat(Log.WARN, TAG,
-                        "Fallo al  guardar las listas, usuario a null")
+                Log.e(TAG, "Fallo al  guardar las listas, usuario a null")
             }
         } catch (ex: Exception) {
-            FirebaseCrash.logcat(Log.ERROR, TAG,
-                    "Fallo guardando las listas")
-            FirebaseCrash.report(ex)
+            Log.e(TAG, "Fallo guardando las listas")
+            firebaseCrashlytics.recordException(ex)
         }
     }
 
@@ -653,13 +705,14 @@ class FragmentMainContent : Fragment(), AuthStateListener {
         for (comp: Compra in compras) {
             val guia: Guia = guias[comp.idPosGuia]
             val currentYear: Int =
-                    activity?.getSharedPreferences("Preferences", Context.MODE_PRIVATE)?.getInt("year", 0)!!
+                activity?.getSharedPreferences("Preferences", Context.MODE_PRIVATE)
+                    ?.getInt("year", 0)!!
             try {
                 if (currentYear != 0) {
                     //Sumaamos solo las compras del año en el que estamos
                     val fechaCompra = Calendar.getInstance()
                     fechaCompra.time = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-                            .parse(comp.fecha)
+                        .parse(comp.fecha)
                     if (currentYear == fechaCompra[Calendar.YEAR]) {
                         guia.gastado = guia.gastado + comp.unidades
                     }
@@ -668,7 +721,8 @@ class FragmentMainContent : Fragment(), AuthStateListener {
                 e.printStackTrace()
             }
         }
-        if (guiaArrayAdapter == null) guiaArrayAdapter = GuiaArrayAdapter(requireContext(), R.layout.guia_item, guias)
+        if (guiaArrayAdapter == null) guiaArrayAdapter =
+            GuiaArrayAdapter(requireContext(), R.layout.guia_item, guias)
         guiaArrayAdapter!!.notifyDataSetChanged()
     }
 
@@ -678,8 +732,11 @@ class FragmentMainContent : Fragment(), AuthStateListener {
                 //Guardado en disco de la imagen tomada con la foto
                 Utils.saveBitmapToFile(LocalImageBitmap)
                 //Guardado de la imagen en Firebase
-                Utils.saveBitmapToFirebase(mStorage, FirebaseImageBitmap,
-                        fileImagePath, mAuth.currentUser!!.uid)
+                Utils.saveBitmapToFirebase(
+                    mStorage, FirebaseImageBitmap,
+                    fileImagePath,
+                    firebaseAuth.currentUser?.uid!!
+                )
             } catch (ex: Exception) {
                 Log.e(TAG, "Error guarando la imagen en Firebase", ex)
             }
@@ -751,130 +808,38 @@ class FragmentMainContent : Fragment(), AuthStateListener {
 //        }
     }
 
-    /**
-     * Dialog para la seleccion de la licencia qu
-     */
-    private fun saveUserInFirebase() {
-        try {
-            //Guardado del usuario en las shared preferences del dispositivo
-            val email = Utils.getUserEmail(requireContext())
-            val pass = prefs!!.getString("password", "")
-            if (email.isNotEmpty()) {
-                //Obtención del código de autentificación del usuario
-                mAuth.createUserWithEmailAndPassword(email, (pass)!!)
-                        .addOnCompleteListener(requireActivity()) { task ->
-                            Log.d(TAG,
-                                    "createUserWithEmail:onComplete:" + task.isSuccessful)
-
-                            // If sign in fails, display a message to the user. If sign in succeeds
-                            // the auth state listener will be notified and logic to handle the
-                            // signed in user can be handled in the listener.
-                            if (!task.isSuccessful) {
-                                //                                Toast.makeText(context, R.string.auth_usuario_existente, Toast.LENGTH_SHORT).show();
-                                Log.w(TAG, task.exception?.message ?: "Error")
-                            }
-                        }
-                mAuth.signInWithEmailAndPassword(email, (pass)).addOnCompleteListener(requireActivity()
-                ) { task ->
-                    Log.d(TAG,
-                            "signInWithEmail:onComplete:" + task.isSuccessful)
-
-                    // If sign in fails, display a message to the user. If sign in succeeds
-                    // the auth state listener will be notified and logic to handle the
-                    // signed in user can be handled in the listener.
-                    if (!task.isSuccessful) {
-                        Log.w(TAG, "signInWithEmail:failed",
-                                task.exception)
-                        //                                Toast.makeText(context, R.string.auth_usuario_logado, Toast.LENGTH_SHORT).show();
-                    }
-                }
-            } else {
-                mAuth.signInAnonymously()
-                        .addOnCompleteListener(requireActivity()) { task ->
-                            Log.d(TAG,
-                                    "signInAnonymously:onComplete:" + task.isSuccessful)
-
-                            // If sign in fails, display a message to the user. If sign in succeeds
-                            // the auth state listener will be notified and logic to handle the
-                            // signed in user can be handled in the listener.
-                            if (!task.isSuccessful) {
-                                Log.w(TAG, "signInAnonymously",
-                                        task.exception)
-                                //                                Toast.makeText(context, "Authentication failed.", Toast.LENGTH_SHORT).show();
-                            }
-                        }
-            }
-        } catch (ex: Exception) {
-            FirebaseCrash.logcat(Log.ERROR, TAG,
-                    "Fallo al iniciar la base de datos de firebase.")
-            FirebaseCrash.report(ex)
-        }
-    }
-
-    override fun onAuthStateChanged(firebaseAuth: FirebaseAuth) {
-        try {
-            val user = firebaseAuth.currentUser
-            if (user != null) {
-                // User is signed in
-                Log.w(TAG, "onAuthStateChanged:signed_in:" + user.uid)
-
-                //Cargamos la información del usuario
-                userRef = FirebaseDatabase.getInstance().reference.child("users").child(user.uid)
-                userRef!!.child("email").setValue(user.email)
-                userRef!!.child("pass").setValue(prefs!!.getString("password", ""))
-                userRef!!.child("settings").child("ads")
-                        .setValue(prefs!!.getBoolean(PREFS_SHOW_ADS, true))
-                //                userRef.child("settings").child("ads_admin").setValue(prefs.getBoolean(PREFS_SHOW_ADS, true));
-
-//                userRef.child("settings").child("ads_admin").addValueEventListener(new ValueEventListener() {
-//                    @Override
-//                    public void onDataChange(DataSnapshot dataSnapshot) {
-//                        // Si no existe, lo creamos
-//                        if (!dataSnapshot.exists()) {
-//                            dataSnapshot.getRef().setValue(prefs.getBoolean(PREFS_SHOW_ADS, true));
-//                        }
-//
-//                        if (Boolean.parseBoolean(dataSnapshot.getValue().toString())) {
-//                            mAdView.setVisibility(View.VISIBLE);
-//                            mAdView.setEnabled(true);
-//                            mAdView.loadAd(Utils.getAdRequest(mAdView));
-//                        } else {
-//                            mAdView.setVisibility(View.GONE);
-//                            mAdView.setEnabled(false);
-//                        }
-//                    }
-//
-//                    @Override
-//                    public void onCancelled(DatabaseError databaseError) {
-//                        FirebaseCrash.logcat(Log.WARN, TAG, "Error en el control de ads_admin");
-//                    }
-//                });
-            } else {
-                // User is signed out
-                Log.w(TAG, "onAuthStateChanged:signed_out")
-            }
-        } catch (ex: Exception) {
-            FirebaseCrash.logcat(Log.ERROR, TAG,
-                    "Fallo al obtener el usuario para la inserccion en la BBDD de Firebase.")
-            FirebaseCrash.report(ex)
-        }
-    }
 
     /**
      * A placeholder fragment containing a simple view.
      */
     class PlaceholderFragment : Fragment() {
-        override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-            val rootView = inflater.inflate(R.layout.list_view_layout, container, false)
+
+        @Inject
+        lateinit var firebaseCrashlytics: FirebaseCrashlytics
+
+        override fun onCreateView(
+            inflater: LayoutInflater,
+            container: ViewGroup?,
+            savedInstanceState: Bundle?
+        ): View? {
+
+            val rootView =
+                inflater.inflate(R.layout.main_content_list_view_layout, container, false)
             listView = rootView.findViewById(R.id.list_view)
 
             tiradaCountDown = rootView.findViewById(R.id.pager_tirada_countdown)
             try {
                 if (tiradaCountDown != null) {
-                    tiradaCountDown!!.setTextColor(ContextCompat.getColor(requireContext(), android.R.color.white))
+                    tiradaCountDown!!.setTextColor(
+                        ContextCompat.getColor(
+                            requireContext(),
+                            android.R.color.white
+                        )
+                    )
                 }
                 when (requireArguments().getInt(
-                        ARG_SECTION_NUMBER)) {
+                    ARG_SECTION_NUMBER
+                )) {
                     0 -> {
                         (tiradaCountDown as View).visibility = View.GONE
                         guiaArrayAdapter = GuiaArrayAdapter(activity, R.layout.guia_item, guias)
@@ -883,18 +848,20 @@ class FragmentMainContent : Fragment(), AuthStateListener {
                     1 -> {
                         (tiradaCountDown as View).visibility = View.GONE
                         compraArrayAdapter =
-                                CompraArrayAdapter(activity, R.layout.compra_item, compras)
+                            CompraArrayAdapter(activity, R.layout.compra_item, compras)
                         (listView as ListView).adapter = compraArrayAdapter
                     }
                     2 -> try {
                         (tiradaCountDown as View).visibility = View.GONE
                         licenciaArrayAdapter =
-                                LicenciaArrayAdapter(activity,
-                                        R.layout.licencia_item, licencias)
+                            LicenciaArrayAdapter(
+                                activity,
+                                R.layout.licencia_item, licencias
+                            )
                         (listView as ListView).adapter = licenciaArrayAdapter
                     } catch (ex: Exception) {
-                        FirebaseCrash.logcat(Log.ERROR, TAG, ex.message)
-                        FirebaseCrash.report(ex)
+                        Log.e(TAG, ex.message)
+                        firebaseCrashlytics.recordException(ex)
                     }
                     3 -> try {
                         if (tiradas.size > 0) {
@@ -903,38 +870,42 @@ class FragmentMainContent : Fragment(), AuthStateListener {
                             (tiradaCountDown as View).visibility = View.GONE
                         }
                         tiradaArrayAdapter =
-                                TiradaArrayAdapter(activity, R.layout.tirada_item,
-                                        tiradas)
+                            TiradaArrayAdapter(
+                                activity, R.layout.tirada_item,
+                                tiradas
+                            )
                         (listView as ListView).adapter = tiradaArrayAdapter
                         updateInfoTirada()
                     } catch (ex: Exception) {
-                        FirebaseCrash.logcat(Log.ERROR, TAG,
-                                "Fallo al actualizar la lista de tiradas")
-                        FirebaseCrash.report(ex)
+                        Log.e(
+                            TAG,
+                            "Fallo al actualizar la lista de tiradas"
+                        )
+                        firebaseCrashlytics.recordException(ex)
                     }
                 }
                 (listView as ListView).choiceMode = AbsListView.CHOICE_MODE_SINGLE
                 (listView as ListView).onItemLongClickListener =
-                        OnItemLongClickListener { parent: AdapterView<*>?, view: View, position: Int, id: Long ->
-                            if (mActionMode != null) {
-                                return@OnItemLongClickListener false
-                            }
-                            view.isSelected = true
-                            auxView = view
+                    OnItemLongClickListener { parent: AdapterView<*>?, view: View, position: Int, id: Long ->
+                        if (mActionMode != null) {
+                            return@OnItemLongClickListener false
+                        }
+                        view.isSelected = true
+                        auxView = view
 
-                            // Start the CAB using the ActionMode.Callback defined above
-                            mActionMode =
-                                    requireActivity().startActionMode(mActionModeCallback)
-                            assert(mActionMode != null)
-                            mActionMode!!.setTitle(R.string.menu_cab_title)
-                            mActionMode!!.tag = position
-                            true
-                        }
+                        // Start the CAB using the ActionMode.Callback defined above
+                        mActionMode =
+                            requireActivity().startActionMode(mActionModeCallback)
+                        assert(mActionMode != null)
+                        mActionMode!!.setTitle(R.string.menu_cab_title)
+                        mActionMode!!.tag = position
+                        true
+                    }
                 (listView as ListView).onItemClickListener =
-                        AdapterView.OnItemClickListener { parent: AdapterView<*>?, view: View?, position: Int, id: Long ->
-                            if (mActionMode != null) mActionMode!!.finish()
-                            mActionMode = null
-                        }
+                    AdapterView.OnItemClickListener { parent: AdapterView<*>?, view: View?, position: Int, id: Long ->
+                        if (mActionMode != null) mActionMode!!.finish()
+                        mActionMode = null
+                    }
             } catch (e: Exception) {
                 e.printStackTrace()
             }
@@ -952,8 +923,10 @@ class FragmentMainContent : Fragment(), AuthStateListener {
              * Returns a new instance of this fragment for the given section
              * number.
              */
-            fun newInstance(sectionNumber: Int,
-                            mContext: Context?): PlaceholderFragment {
+            fun newInstance(
+                sectionNumber: Int,
+                mContext: Context?
+            ): PlaceholderFragment {
                 val fragment = PlaceholderFragment()
                 val args = Bundle().apply {
                     putInt(ARG_SECTION_NUMBER, sectionNumber)
@@ -983,8 +956,11 @@ class FragmentMainContent : Fragment(), AuthStateListener {
                     // Ordenamos el array de tiradas por fecha descendente (la mas actual arriba)
                     tiradas.sortWith(Comparator { date1, date2 ->
                         Utils.getDateFromString(date2.fecha)
-                                .compareTo(Utils.getDateFromString(
-                                        date1.fecha))
+                            .compareTo(
+                                Utils.getDateFromString(
+                                    date1.fecha
+                                )
+                            )
                     })
                     if (tiradas.size > 0 && tiradaCountDown != null) {
                         tiradaCountDown!!.visibility = View.VISIBLE
@@ -1050,38 +1026,41 @@ class FragmentMainContent : Fragment(), AuthStateListener {
         private var selectedLicense = 0
         override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
             val builder =
-                    AlertDialog.Builder((activity)!!)
+                AlertDialog.Builder((activity)!!)
 
             // Set title
             builder.setTitle(R.string.dialog_licencia_title) // Set items
-                    .setSingleChoiceItems(Utils.getLicenseName(activity), 0
-                    ) { _: DialogInterface?, i: Int ->
-                        //                            Toast.makeText(getActivity(), "Seleccionado: " + (String) getGuiaName()[i], Toast.LENGTH_SHORT).show();
-                        selectedLicense = i
-                    } // Add action buttons
-                    .setPositiveButton(android.R.string.ok) { _: DialogInterface?, _: Int ->
-                        // Alberto H (10/1/2017):
-                        // Comentada la condicion de obligar al usuario a tener la licencia
-                        // federativa para poder crear la licencia F - Tiro olimpico.
-                        //                            String tipoLicencia = (String) Utils.getLicenseName(getActivity())[selectedLicense];
-                        //                            if (tipoLicencia.equals("F - Tiro olimpico")) {
-                        //                                if (Utils.isLicenciaFederativa(getActivity())) {
-                        //                                    Intent form = new Intent(getActivity(), GuiaFormActivity.class);
-                        //                                    form.putExtra("tipo_licencia", (String) Utils.getLicenseName(getActivity())[selectedLicense]);
-                        //                                    getActivity().startActivityForResult(form, FragmentMainActivity.GUIA_COMPLETED);
-                        //                                } else {
-                        //                                    Toast.makeText(getActivity(), R.string.dialog_guia_licencia_federativa, Toast.LENGTH_LONG).show();
-                        //                                    GuiaDialogFragment.this.getDialog().dismiss();
-                        //                                }
-                        //                            } else {
-                        val form = Intent(requireActivity(), GuiaFormActivity::class.java)
-                        form.putExtra("tipo_licencia",
-                                Utils.getLicenseName(requireActivity())[selectedLicense] as String?)
-                        requireActivity().startActivityForResult(form, GUIA_COMPLETED)
-                    }
-                    .setNegativeButton(android.R.string.cancel) { _: DialogInterface?, _: Int ->
-                        dialog!!.cancel()
-                    }
+                .setSingleChoiceItems(
+                    Utils.getLicenseName(activity), 0
+                ) { _: DialogInterface?, i: Int ->
+                    //                            Toast.makeText(getActivity(), "Seleccionado: " + (String) getGuiaName()[i], Toast.LENGTH_SHORT).show();
+                    selectedLicense = i
+                } // Add action buttons
+                .setPositiveButton(android.R.string.ok) { _: DialogInterface?, _: Int ->
+                    // Alberto H (10/1/2017):
+                    // Comentada la condicion de obligar al usuario a tener la licencia
+                    // federativa para poder crear la licencia F - Tiro olimpico.
+                    //                            String tipoLicencia = (String) Utils.getLicenseName(getActivity())[selectedLicense];
+                    //                            if (tipoLicencia.equals("F - Tiro olimpico")) {
+                    //                                if (Utils.isLicenciaFederativa(getActivity())) {
+                    //                                    Intent form = new Intent(getActivity(), GuiaFormActivity.class);
+                    //                                    form.putExtra("tipo_licencia", (String) Utils.getLicenseName(getActivity())[selectedLicense]);
+                    //                                    getActivity().startActivityForResult(form, FragmentMainActivity.GUIA_COMPLETED);
+                    //                                } else {
+                    //                                    Toast.makeText(getActivity(), R.string.dialog_guia_licencia_federativa, Toast.LENGTH_LONG).show();
+                    //                                    GuiaDialogFragment.this.getDialog().dismiss();
+                    //                                }
+                    //                            } else {
+                    val form = Intent(requireActivity(), GuiaFormActivity::class.java)
+                    form.putExtra(
+                        "tipo_licencia",
+                        Utils.getLicenseName(requireActivity())[selectedLicense] as String?
+                    )
+                    requireActivity().startActivityForResult(form, GUIA_COMPLETED)
+                }
+                .setNegativeButton(android.R.string.cancel) { _: DialogInterface?, _: Int ->
+                    dialog!!.cancel()
+                }
             return builder.create()
         }
     }
@@ -1094,23 +1073,23 @@ class FragmentMainContent : Fragment(), AuthStateListener {
         private var selectedGuia = 0
         override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
             val builder =
-                    AlertDialog.Builder((activity)!!)
+                AlertDialog.Builder((activity)!!)
 
             // Set title
             builder.setTitle(R.string.dialog_guia_title) // Set items
-                    .setSingleChoiceItems(guiaName, 0) { _: DialogInterface?, pos: Int ->
-                        selectedGuia = pos
-                    } // Add action buttons
-                    .setPositiveButton(android.R.string.ok) { _: DialogInterface?, _: Int ->
-                        //                            if (pos >= 0)
-                        //                                Toast.makeText(getActivity(), "Seleccionado: " + getGuiaName()[pos].toString(), Toast.LENGTH_SHORT).show();
+                .setSingleChoiceItems(guiaName, 0) { _: DialogInterface?, pos: Int ->
+                    selectedGuia = pos
+                } // Add action buttons
+                .setPositiveButton(android.R.string.ok) { _: DialogInterface?, _: Int ->
+                    //                            if (pos >= 0)
+                    //                                Toast.makeText(getActivity(), "Seleccionado: " + getGuiaName()[pos].toString(), Toast.LENGTH_SHORT).show();
 //                        val form = Intent(activity, CompraFormActivity::class.java)
 //                        form.putExtra("position_guia", selectedGuia)
 //                        form.putExtra("guia", guias!![selectedGuia])
 //                        requireActivity().startActivityForResult(form,
 //                                COMPRA_COMPLETED)
-                    }
-                    .setNegativeButton(android.R.string.cancel) { dialog, _ -> dialog.cancel() }
+                }
+                .setNegativeButton(android.R.string.cancel) { dialog, _ -> dialog.cancel() }
             return builder.create()
         }
 
@@ -1129,7 +1108,7 @@ class FragmentMainContent : Fragment(), AuthStateListener {
      * one of the sections/tabs/pages.
      */
     inner class SectionsPagerAdapter(fm: FragmentManager?) :
-            FragmentPagerAdapter((fm)!!, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
+        FragmentPagerAdapter((fm)!!, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
         override fun getItem(position: Int): Fragment {
             // getItem is called to instantiate the fragment for the given page.
             // Return a PlaceholderFragment (defined as a static inner class below).

@@ -18,6 +18,7 @@
         app:layout_constraintTop_toTopOf="parent"
         android:theme="@style/ThemeOverlay.MaterialComponents.Dark.ActionBar"
         app:subtitleTextColor="@color/toolbar_text_color"
+        app:menu="@menu/menu_login"
         app:titleTextColor="@color/toolbar_text_color"
         />
 
@@ -38,7 +39,6 @@
         android:id="@+id/login_adView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
         android:visibility="gone"
         android:layout_centerHorizontal="true"
         app:adSize="SMART_BANNER"

@@ -11,5 +11,6 @@
     <color name="light_yellow">#fafad2</color>
 
     <color name="toolbar_text_color">#FFFFFF</color>
+    <color name="white">#FFFFFF</color>
 
 </resources>
