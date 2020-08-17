@@ -1,5 +1,7 @@
-package al.ahgitdevelopment.municion
+package al.ahgitdevelopment.municion.sandbox
 
+import al.ahgitdevelopment.municion.R
+import al.ahgitdevelopment.municion.SettingsFragment
 import al.ahgitdevelopment.municion.adapters.CompraArrayAdapter
 import al.ahgitdevelopment.municion.adapters.GuiaArrayAdapter
 import al.ahgitdevelopment.municion.adapters.TiradaArrayAdapter
@@ -7,14 +9,10 @@ import al.ahgitdevelopment.municion.datamodel.Compra
 import al.ahgitdevelopment.municion.datamodel.Guia
 import al.ahgitdevelopment.municion.datamodel.Licencia
 import al.ahgitdevelopment.municion.datamodel.Tirada
-import al.ahgitdevelopment.municion.di.AppComponent
 import al.ahgitdevelopment.municion.di.SharedPrefsModule.Companion.PREFS_SHOW_ADS
-import al.ahgitdevelopment.municion.forms.GuiaFormActivity
-import al.ahgitdevelopment.municion.licencias.LicenciaArrayAdapter
-import al.ahgitdevelopment.municion.repository.DataBaseSQLiteHelper
 import al.ahgitdevelopment.municion.repository.Repository
+import al.ahgitdevelopment.municion.ui.licencias.LicenciaArrayAdapter
 import android.Manifest
-import android.app.Activity
 import android.app.Activity.RESULT_CANCELED
 import android.app.Activity.RESULT_OK
 import android.app.Dialog
@@ -57,7 +55,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
 
-class FragmentMainContent: Fragment() {
+class FragmentMainContent : Fragment() {
 
     @Inject
     lateinit var firebaseAuth: FirebaseAuth
@@ -143,7 +141,7 @@ class FragmentMainContent: Fragment() {
 //        textEmptyList = findViewById(R.id.textEmptyList)
 
         // Instanciamos la base de datos
-        dbSqlHelper = DataBaseSQLiteHelper(requireContext())
+        dbSqlHelper = null//DataBaseSQLiteHelper(requireContext())
 
         // Carga de las listas en funcion de la conectividad:
         // - Con conexion: Firebase
@@ -250,11 +248,6 @@ class FragmentMainContent: Fragment() {
         if (cm.isDefaultNetworkActive) {
             saveLists()
         }
-    }
-
-    override fun onStop() {
-        super.onStop()
-        dbSqlHelper!!.close()
     }
 
     /**
@@ -364,10 +357,10 @@ class FragmentMainContent: Fragment() {
                     ).show()
                 } else {
                     try {
-                        Utils.removeNotificationFromSharedPreference(
-                            requireContext(),
-                            licencias[position].numLicencia
-                        )
+//                        Utils.removeNotificationFromSharedPreference(
+//                            requireContext(),
+//                            licencias[position].numLicencia
+//                        )
                     } catch (ex: Exception) {
                         Log.wtf(activity?.packageName, "Fallo al listar las notificaciones", ex)
                     }
@@ -391,10 +384,10 @@ class FragmentMainContent: Fragment() {
         }
         try {
             // Guardado en la BBDD local de las estructuras de datos
-            dbSqlHelper!!.saveListGuias(null, guias)
-            dbSqlHelper!!.saveListCompras(null, compras)
-            dbSqlHelper!!.saveListLicencias(null, licencias)
-            dbSqlHelper!!.saveListTiradas(null, tiradas)
+//            dbSqlHelper!!.saveListGuias(null, guias)
+//            dbSqlHelper!!.saveListCompras(null, compras)
+//            dbSqlHelper!!.saveListLicencias(null, licencias)
+//            dbSqlHelper!!.saveListTiradas(null, tiradas)
         } catch (ex: Exception) {
             Log.e(TAG, "NPE caught")
             firebaseCrashlytics.recordException(ex)
@@ -573,7 +566,10 @@ class FragmentMainContent: Fragment() {
                 startActivity(intent)
             }
             R.id.tabla_tiradas -> try {
-                val bitmap = BitmapFactory.decodeResource(resources, R.drawable.image_table)
+                val bitmap = BitmapFactory.decodeResource(
+                    resources,
+                    R.drawable.image_table
+                )
                 Utils.showImage(requireContext(), bitmap, "table")
             } catch (ex: Exception) {
                 Log.e(TAG, "Error mostrando la tabla de tiradas")
@@ -659,10 +655,10 @@ class FragmentMainContent: Fragment() {
         }
         try {
             // Guardado en la BBDD local de las estructuras de datos
-            dbSqlHelper!!.saveListGuias(null, guias)
-            dbSqlHelper!!.saveListCompras(null, compras)
-            dbSqlHelper!!.saveListLicencias(null, licencias)
-            dbSqlHelper!!.saveListTiradas(null, tiradas)
+//            dbSqlHelper!!.saveListGuias(null, guias)
+//            dbSqlHelper!!.saveListCompras(null, compras)
+//            dbSqlHelper!!.saveListLicencias(null, licencias)
+//            dbSqlHelper!!.saveListTiradas(null, tiradas)
         } catch (ex: Exception) {
             Log.e(TAG, "NPE caught")
             firebaseCrashlytics.recordException(ex)
@@ -722,7 +718,11 @@ class FragmentMainContent: Fragment() {
             }
         }
         if (guiaArrayAdapter == null) guiaArrayAdapter =
-            GuiaArrayAdapter(requireContext(), R.layout.guia_item, guias)
+            GuiaArrayAdapter(
+                requireContext(),
+                R.layout.guia_item,
+                guias
+            )
         guiaArrayAdapter!!.notifyDataSetChanged()
     }
 
@@ -730,23 +730,27 @@ class FragmentMainContent: Fragment() {
         if (LocalImageBitmap != null && FirebaseImageBitmap != null) {
             try {
                 //Guardado en disco de la imagen tomada con la foto
-                Utils.saveBitmapToFile(LocalImageBitmap)
+//                Utils.saveBitmapToFile(LocalImageBitmap)
                 //Guardado de la imagen en Firebase
-                Utils.saveBitmapToFirebase(
-                    mStorage, FirebaseImageBitmap,
-                    fileImagePath,
-                    firebaseAuth.currentUser?.uid!!
-                )
+//                Utils.saveBitmapToFirebase(
+//                    mStorage, FirebaseImageBitmap,
+//                    fileImagePath,
+//                    firebaseAuth.currentUser?.uid!!
+//                )
             } catch (ex: Exception) {
                 Log.e(TAG, "Error guarando la imagen en Firebase", ex)
             }
             when (mViewPager.currentItem) {
                 0 -> {
-                    guias[imagePosition].imagePath = fileImagePath
+                    guias[imagePosition].imagePath =
+                        fileImagePath
                     guiaArrayAdapter!!.notifyDataSetChanged()
                 }
                 1 -> {
-                    compras.get(imagePosition).imagePath = fileImagePath
+                    compras.get(
+                        imagePosition
+                    ).imagePath =
+                        fileImagePath
                     compraArrayAdapter!!.notifyDataSetChanged()
                 }
             }
@@ -825,9 +829,13 @@ class FragmentMainContent: Fragment() {
 
             val rootView =
                 inflater.inflate(R.layout.main_content_list_view_layout, container, false)
-            listView = rootView.findViewById(R.id.list_view)
+            listView = rootView.findViewById(
+                R.id.list_view
+            )
 
-            tiradaCountDown = rootView.findViewById(R.id.pager_tirada_countdown)
+            tiradaCountDown = rootView.findViewById(
+                R.id.pager_tirada_countdown
+            )
             try {
                 if (tiradaCountDown != null) {
                     tiradaCountDown!!.setTextColor(
@@ -842,23 +850,35 @@ class FragmentMainContent: Fragment() {
                 )) {
                     0 -> {
                         (tiradaCountDown as View).visibility = View.GONE
-                        guiaArrayAdapter = GuiaArrayAdapter(activity, R.layout.guia_item, guias)
-                        (listView as ListView).adapter = guiaArrayAdapter
+                        guiaArrayAdapter = GuiaArrayAdapter(
+                            activity,
+                            R.layout.guia_item,
+                            guias
+                        )
+                        (listView as ListView).adapter =
+                            guiaArrayAdapter
                     }
                     1 -> {
                         (tiradaCountDown as View).visibility = View.GONE
                         compraArrayAdapter =
-                            CompraArrayAdapter(activity, R.layout.compra_item, compras)
-                        (listView as ListView).adapter = compraArrayAdapter
+                            CompraArrayAdapter(
+                                activity,
+                                R.layout.compra_item,
+                                compras
+                            )
+                        (listView as ListView).adapter =
+                            compraArrayAdapter
                     }
                     2 -> try {
                         (tiradaCountDown as View).visibility = View.GONE
                         licenciaArrayAdapter =
                             LicenciaArrayAdapter(
                                 activity,
-                                R.layout.licencia_item, licencias
+                                R.layout.licencia_item,
+                                licencias
                             )
-                        (listView as ListView).adapter = licenciaArrayAdapter
+                        (listView as ListView).adapter =
+                            licenciaArrayAdapter
                     } catch (ex: Exception) {
                         Log.e(TAG, ex.message)
                         firebaseCrashlytics.recordException(ex)
@@ -874,7 +894,8 @@ class FragmentMainContent: Fragment() {
                                 activity, R.layout.tirada_item,
                                 tiradas
                             )
-                        (listView as ListView).adapter = tiradaArrayAdapter
+                        (listView as ListView).adapter =
+                            tiradaArrayAdapter
                         updateInfoTirada()
                     } catch (ex: Exception) {
                         Log.e(
@@ -897,7 +918,9 @@ class FragmentMainContent: Fragment() {
                         mActionMode =
                             requireActivity().startActionMode(mActionModeCallback)
                         assert(mActionMode != null)
-                        mActionMode!!.setTitle(R.string.menu_cab_title)
+                        mActionMode!!.setTitle(
+                            R.string.menu_cab_title
+                        )
                         mActionMode!!.tag = position
                         true
                     }
@@ -927,7 +950,8 @@ class FragmentMainContent: Fragment() {
                 sectionNumber: Int,
                 mContext: Context?
             ): PlaceholderFragment {
-                val fragment = PlaceholderFragment()
+                val fragment =
+                    PlaceholderFragment()
                 val args = Bundle().apply {
                     putInt(ARG_SECTION_NUMBER, sectionNumber)
                 }
@@ -1023,46 +1047,47 @@ class FragmentMainContent: Fragment() {
      */
     class GuiaDialogFragment : DialogFragment() {
         //https://developer.android.com/guide/topics/ui/dialogs.html
-        private var selectedLicense = 0
-        override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-            val builder =
-                AlertDialog.Builder((activity)!!)
-
-            // Set title
-            builder.setTitle(R.string.dialog_licencia_title) // Set items
-                .setSingleChoiceItems(
-                    Utils.getLicenseName(activity), 0
-                ) { _: DialogInterface?, i: Int ->
-                    //                            Toast.makeText(getActivity(), "Seleccionado: " + (String) getGuiaName()[i], Toast.LENGTH_SHORT).show();
-                    selectedLicense = i
-                } // Add action buttons
-                .setPositiveButton(android.R.string.ok) { _: DialogInterface?, _: Int ->
-                    // Alberto H (10/1/2017):
-                    // Comentada la condicion de obligar al usuario a tener la licencia
-                    // federativa para poder crear la licencia F - Tiro olimpico.
-                    //                            String tipoLicencia = (String) Utils.getLicenseName(getActivity())[selectedLicense];
-                    //                            if (tipoLicencia.equals("F - Tiro olimpico")) {
-                    //                                if (Utils.isLicenciaFederativa(getActivity())) {
-                    //                                    Intent form = new Intent(getActivity(), GuiaFormActivity.class);
-                    //                                    form.putExtra("tipo_licencia", (String) Utils.getLicenseName(getActivity())[selectedLicense]);
-                    //                                    getActivity().startActivityForResult(form, FragmentMainActivity.GUIA_COMPLETED);
-                    //                                } else {
-                    //                                    Toast.makeText(getActivity(), R.string.dialog_guia_licencia_federativa, Toast.LENGTH_LONG).show();
-                    //                                    GuiaDialogFragment.this.getDialog().dismiss();
-                    //                                }
-                    //                            } else {
-                    val form = Intent(requireActivity(), GuiaFormActivity::class.java)
-                    form.putExtra(
-                        "tipo_licencia",
-                        Utils.getLicenseName(requireActivity())[selectedLicense] as String?
-                    )
-                    requireActivity().startActivityForResult(form, GUIA_COMPLETED)
-                }
-                .setNegativeButton(android.R.string.cancel) { _: DialogInterface?, _: Int ->
-                    dialog!!.cancel()
-                }
-            return builder.create()
-        }
+//        private var selectedLicense = 0
+//        override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+//            val builder =
+//                AlertDialog.Builder((activity)!!)
+//
+//            // Set title
+//            builder.setTitle(R.string.dialog_licencia_title) // Set items
+//                .setSingleChoiceItems(Utils.getLicenseName(activity), 0) { _: DialogInterface?, i: Int ->
+//                    //                            Toast.makeText(getActivity(), "Seleccionado: " + (String) getGuiaName()[i], Toast.LENGTH_SHORT).show();
+//                    selectedLicense = i
+//                } // Add action buttons
+//                .setPositiveButton(android.R.string.ok) { _: DialogInterface?, _: Int ->
+//                    // Alberto H (10/1/2017):
+//                    // Comentada la condicion de obligar al usuario a tener la licencia
+//                    // federativa para poder crear la licencia F - Tiro olimpico.
+//                    //                            String tipoLicencia = (String) Utils.getLicenseName(getActivity())[selectedLicense];
+//                    //                            if (tipoLicencia.equals("F - Tiro olimpico")) {
+//                    //                                if (Utils.isLicenciaFederativa(getActivity())) {
+//                    //                                    Intent form = new Intent(getActivity(), GuiaFormActivity.class);
+//                    //                                    form.putExtra("tipo_licencia", (String) Utils.getLicenseName(getActivity())[selectedLicense]);
+//                    //                                    getActivity().startActivityForResult(form, FragmentMainActivity.GUIA_COMPLETED);
+//                    //                                } else {
+//                    //                                    Toast.makeText(getActivity(), R.string.dialog_guia_licencia_federativa, Toast.LENGTH_LONG).show();
+//                    //                                    GuiaDialogFragment.this.getDialog().dismiss();
+//                    //                                }
+//                    //                            } else {
+//                    val form = Intent(requireActivity(), GuiaFormActivity::class.java)
+//                    form.putExtra(
+//                        "tipo_licencia",
+//                        Utils.getLicenseName(requireActivity())[selectedLicense] as String?
+//                    )
+//                    requireActivity().startActivityForResult(
+//                        form,
+//                        GUIA_COMPLETED
+//                    )
+//                }
+//                .setNegativeButton(android.R.string.cancel) { _: DialogInterface?, _: Int ->
+//                    dialog!!.cancel()
+//                }
+//            return builder.create()
+//        }
     }
 
     /**
@@ -1112,7 +1137,10 @@ class FragmentMainContent: Fragment() {
         override fun getItem(position: Int): Fragment {
             // getItem is called to instantiate the fragment for the given page.
             // Return a PlaceholderFragment (defined as a static inner class below).
-            return PlaceholderFragment.newInstance(position, requireContext())
+            return PlaceholderFragment.newInstance(
+                position,
+                requireContext()
+            )
         }
 
         override fun getCount(): Int {
@@ -1124,7 +1152,7 @@ class FragmentMainContent: Fragment() {
                 0 -> return getString(R.string.section_guias_title)
                 1 -> return getString(R.string.section_compras_title)
                 2 -> return getString(R.string.section_licencias_title)
-                3 -> return getString(R.string.section_competiciones_title)
+                3 -> return getString(R.string.section_tiradas_title)
             }
             return null
         }

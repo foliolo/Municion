@@ -1,4 +1,4 @@
-package al.ahgitdevelopment.municion.licencias;
+package al.ahgitdevelopment.municion.ui.licencias;
 
 import android.content.Context;
 import android.os.Build;

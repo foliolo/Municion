@@ -2,14 +2,14 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".licencias.LicenciasFragment"
+    tools:context=".ui.licencias.LicenciasFragment"
     >
 
     <data>
 
         <variable
             name="viewModel"
-            type="al.ahgitdevelopment.municion.licencias.LicenciasViewModel"
+            type="al.ahgitdevelopment.municion.ui.licencias.LicenciasViewModel"
             />
     </data>
 

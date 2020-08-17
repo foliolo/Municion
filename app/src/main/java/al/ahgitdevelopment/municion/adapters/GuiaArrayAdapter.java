@@ -26,12 +26,11 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
-import al.ahgitdevelopment.municion.FragmentMainContent;
 import al.ahgitdevelopment.municion.NavigationActivity;
 import al.ahgitdevelopment.municion.R;
-import al.ahgitdevelopment.municion.Utils;
 import al.ahgitdevelopment.municion.datamodel.Guia;
-import al.ahgitdevelopment.municion.repository.DataBaseSQLiteHelper;
+import al.ahgitdevelopment.municion.sandbox.FragmentMainContent;
+import al.ahgitdevelopment.municion.sandbox.Utils;
 
 /**
  * Created by Alberto on 28/05/2016.
@@ -103,8 +102,8 @@ public class GuiaArrayAdapter extends ArrayAdapter<Guia> {
                             guia.setImagePath(null);
                             notifyDataSetChanged();
 
-                            DataBaseSQLiteHelper dbSqlHelper = new DataBaseSQLiteHelper(context.getApplicationContext());
-                            dbSqlHelper.saveListGuias(null, FragmentMainContent.guias);
+//                            DataBaseSQLiteHelper dbSqlHelper = new DataBaseSQLiteHelper(context.getApplicationContext());
+//                            dbSqlHelper.saveListGuias(null, FragmentMainContent.guias);
                         })
                         .setPositiveButton(android.R.string.ok, null)
                         .show();

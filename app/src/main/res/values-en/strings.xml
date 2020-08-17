@@ -24,7 +24,7 @@
     <string name="section_guias_title">Property Documents</string>
     <string name="section_compras_title">Purchases</string>
     <string name="section_licencias_title">License</string>
-    <string name="section_competiciones_title">Competition</string>
+    <string name="section_tiradas_title">Competition</string>
 
     <!--String Guias Form-->
     <string name="title_nueva_guia">New Property Document</string>

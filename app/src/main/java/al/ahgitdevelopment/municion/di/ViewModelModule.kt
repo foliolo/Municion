@@ -1,8 +1,10 @@
 package al.ahgitdevelopment.municion.di
 
-import al.ahgitdevelopment.municion.compras.ComprasViewModel
-import al.ahgitdevelopment.municion.licencias.LicenciasViewModel
-import al.ahgitdevelopment.municion.login.LoginViewModel
+import al.ahgitdevelopment.municion.ui.compras.ComprasViewModel
+import al.ahgitdevelopment.municion.ui.guias.GuiasViewModel
+import al.ahgitdevelopment.municion.ui.licencias.LicenciasViewModel
+import al.ahgitdevelopment.municion.ui.login.LoginViewModel
+import al.ahgitdevelopment.municion.ui.tiradas.TiradasViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import dagger.Binds
@@ -23,13 +25,23 @@ abstract class ViewModelModule {
 
     @Binds
     @IntoMap
-    @ViewModelKey(LicenciasViewModel::class)
-    abstract fun bindLicenciasViewModel(licenciasViewModel: LicenciasViewModel): ViewModel
+    @ViewModelKey(GuiasViewModel::class)
+    abstract fun bindGuiasViewModel(guiasViewModel: GuiasViewModel): ViewModel
 
     @Binds
     @IntoMap
     @ViewModelKey(ComprasViewModel::class)
     abstract fun bindComprasViewModel(comprasViewModel: ComprasViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(LicenciasViewModel::class)
+    abstract fun bindLicenciasViewModel(licenciasViewModel: LicenciasViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(TiradasViewModel::class)
+    abstract fun bindTiradasViewModel(tiradasViewModel: TiradasViewModel): ViewModel
 
     @Binds
     abstract fun bindsModelFactory(factory: ViewModelFactory): ViewModelProvider.Factory

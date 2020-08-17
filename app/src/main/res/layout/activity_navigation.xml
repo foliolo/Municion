@@ -50,6 +50,7 @@
         android:id="@+id/nav_view"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        style="@style/Widget.MaterialComponents.BottomNavigationView.PrimarySurface"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"

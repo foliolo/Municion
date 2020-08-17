@@ -13,6 +13,7 @@ import androidx.fragment.app.FragmentActivity;
 import al.ahgitdevelopment.municion.dialogs.ChangePasswordDialog;
 import al.ahgitdevelopment.municion.dialogs.ResetPasswordDialog;
 import al.ahgitdevelopment.municion.dialogs.SecurityQuestionDialog;
+import al.ahgitdevelopment.municion.sandbox.FragmentTutorialActivity;
 
 /**
  * A simple {@link FragmentActivity} subclass.

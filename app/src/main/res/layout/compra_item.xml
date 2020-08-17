@@ -58,6 +58,7 @@
                 <TextView
                     android:id="@+id/item_unidades_compra"
                     style="@style/letter_black"
+
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:gravity="center"

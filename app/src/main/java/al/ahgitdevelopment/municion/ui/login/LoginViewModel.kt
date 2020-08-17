@@ -1,4 +1,4 @@
-package al.ahgitdevelopment.municion.login
+package al.ahgitdevelopment.municion.ui.login
 
 import al.ahgitdevelopment.municion.SingleLiveEvent
 import al.ahgitdevelopment.municion.di.SharedPrefsModule.Companion.PREFS_PASSWORD
@@ -84,7 +84,6 @@ class LoginViewModel @Inject constructor(private val prefs: SharedPreferences) :
             _password1Error.postValue(ErrorMessages.SHORT_PASSWORD)
             _password2Error.postValue(ErrorMessages.SHORT_PASSWORD)
             _passwordState.postValue(PasswordState.INVALID)
-
         } else {
             _password1Error.postValue(ErrorMessages.NONE)
             _password2Error.postValue(ErrorMessages.NONE)

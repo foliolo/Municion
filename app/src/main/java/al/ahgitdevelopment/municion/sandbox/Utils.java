@@ -1,4 +1,4 @@
-package al.ahgitdevelopment.municion;
+package al.ahgitdevelopment.municion.sandbox;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
@@ -42,11 +42,12 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.NoSuchElementException;
 
+import al.ahgitdevelopment.municion.R;
 import al.ahgitdevelopment.municion.datamodel.Guia;
 import al.ahgitdevelopment.municion.datamodel.Licencia;
 import al.ahgitdevelopment.municion.datamodel.NotificationData;
 
-import static al.ahgitdevelopment.municion.FragmentMainContent.fileImagePath;
+import static al.ahgitdevelopment.municion.sandbox.FragmentMainContent.fileImagePath;
 
 /**
  * Created by ahidalgog on 07/07/2016.

@@ -75,7 +75,7 @@
         <!--        </receiver>-->
 
         <activity
-            android:name=".FragmentTutorialActivity"
+            android:name=".sandbox.FragmentTutorialActivity"
             android:screenOrientation="fullSensor"
             android:theme="@style/AppTheme" />
 

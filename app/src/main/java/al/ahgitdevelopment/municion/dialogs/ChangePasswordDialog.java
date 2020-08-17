@@ -16,7 +16,7 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
 import al.ahgitdevelopment.municion.R;
-import al.ahgitdevelopment.municion.login.LoginPasswordFragment;
+import al.ahgitdevelopment.municion.ui.login.LoginPasswordFragment;
 
 /**
  * Created by ahidalgog on 06/07/2016.

@@ -1,4 +1,4 @@
-package al.ahgitdevelopment.municion.compras
+package al.ahgitdevelopment.municion.ui.compras
 
 import androidx.lifecycle.ViewModel
 import javax.inject.Inject

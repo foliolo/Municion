@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/loginPasswordFragment"
-        android:name="al.ahgitdevelopment.municion.login.LoginPasswordFragment"
+        android:name="al.ahgitdevelopment.municion.ui.login.LoginPasswordFragment"
         android:label="fragment_login"
         tools:layout="@layout/fragment_login">
 
@@ -17,15 +17,27 @@
     </fragment>
 
     <fragment
+        android:id="@+id/guiasFragment"
+        android:name="al.ahgitdevelopment.municion.ui.guias.GuiasFragment"
+        android:label="guias_fragment"
+        tools:layout="@layout/guias_fragment" />
+
+    <fragment
+        android:id="@+id/comprasFragment"
+        android:name="al.ahgitdevelopment.municion.ui.compras.ComprasFragment"
+        android:label="compras_fragment"
+        tools:layout="@layout/compras_fragment" />
+
+    <fragment
         android:id="@+id/licenciasFragment"
-        android:name="al.ahgitdevelopment.municion.licencias.LicenciasFragment"
+        android:name="al.ahgitdevelopment.municion.ui.licencias.LicenciasFragment"
         android:label="licencias_fragment"
         tools:layout="@layout/licencias_fragment" />
 
     <fragment
-        android:id="@+id/comprasFragment"
-        android:name="al.ahgitdevelopment.municion.compras.ComprasFragment"
-        android:label="compras_fragment"
-        tools:layout="@layout/compras_fragment" />
+        android:id="@+id/tiradasFragment"
+        android:name="al.ahgitdevelopment.municion.ui.tiradas.TiradasFragment"
+        android:label="tiradas_fragment"
+        tools:layout="@layout/tiradas_fragment" />
 
 </navigation>

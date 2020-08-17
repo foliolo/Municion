@@ -1,4 +1,4 @@
-package al.ahgitdevelopment.municion.login
+package al.ahgitdevelopment.municion.ui.login
 
 import al.ahgitdevelopment.municion.R
 import al.ahgitdevelopment.municion.databinding.FragmentLoginBinding

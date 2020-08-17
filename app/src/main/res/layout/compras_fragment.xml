@@ -2,14 +2,14 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".compras.ComprasFragment"
+    tools:context=".ui.compras.ComprasFragment"
     >
 
     <data>
 
         <variable
             name="viewModel"
-            type="al.ahgitdevelopment.municion.compras.ComprasViewModel"
+            type="al.ahgitdevelopment.municion.ui.compras.ComprasViewModel"
             />
     </data>
 

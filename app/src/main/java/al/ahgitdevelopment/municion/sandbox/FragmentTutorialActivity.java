@@ -1,4 +1,4 @@
-package al.ahgitdevelopment.municion;
+package al.ahgitdevelopment.municion.sandbox;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -16,6 +16,8 @@ import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
 import java.util.Locale;
+
+import al.ahgitdevelopment.municion.R;
 
 public class FragmentTutorialActivity extends AppCompatActivity {
 

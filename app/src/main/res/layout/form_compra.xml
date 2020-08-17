@@ -103,8 +103,7 @@
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/layout_form_fecha_compra"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:onClick="callDatePickerFragment">
+                android:layout_height="wrap_content">
 
                 <EditText
                     android:id="@+id/form_fecha"

@@ -25,7 +25,7 @@ public class ListNotificationDialog extends DialogFragment {
         View view = inflater.inflate(android.R.layout.list_content, null);
 
         try {
-            ArrayAdapter adapter = new ArrayAdapter(getActivity(), R.layout.notification_data_item, R.id.item_nombre_licencia, Utils.listNotificationData) {
+            ArrayAdapter adapter = new ArrayAdapter(getActivity(), R.layout.notification_data_item, R.id.item_nombre_licencia, new Object[]{}) {
                 @Override
                 public View getView(int position, View convertView, ViewGroup parent) {
                     View view = super.getView(position, convertView, parent);
@@ -36,9 +36,9 @@ public class ListNotificationDialog extends DialogFragment {
                     if (position % 2 == 0)
                         view.setBackgroundColor(0xE7DFEBFF);
 
-                    nombre.setText(Utils.listNotificationData.get(position).getLicencia());
-                    numero.setText(Utils.listNotificationData.get(position).getId());
-                    fecha.setText(Utils.listNotificationData.get(position).getFecha());
+//                    nombre.setText(Utils.listNotificationData.get(position).getLicencia());
+//                    numero.setText(Utils.listNotificationData.get(position).getId());
+//                    fecha.setText(Utils.listNotificationData.get(position).getFecha());
 
                     return view;
                 }

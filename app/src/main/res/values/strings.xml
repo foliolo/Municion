@@ -25,7 +25,7 @@
     <string name="section_guias_title">Guías</string>
     <string name="section_compras_title">Compras</string>
     <string name="section_licencias_title">Licencias</string>
-    <string name="section_competiciones_title">Tiradas</string>
+    <string name="section_tiradas_title">Tiradas</string>
 
     <!--String Guias Form-->
     <string name="title_nueva_guia">Nueva guía de arma</string>
@@ -199,7 +199,7 @@
     <string name="delete_image">Borrar</string>
     <string name="sin_conexion">Sin conexión a internet</string>
 
-    <string name="title_activity_navigation">NavigationActivity</string>
+    <string name="title_activity_navigation" translatable="false">NavigationActivity</string>
     <string name="error" translatable="false">Error</string>
-    <string name="menu_sign_out">Sign out</string>
+    <string name="menu_sign_out" translatable="false">Sign out</string>
 </resources>

@@ -1,17 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <!--    <item-->
-    <!--        android:id="@+id/comprasFragment"-->
-    <!--        android:title="@string/section_guias_title" />-->
+    <item
+        android:id="@+id/guiasFragment"
+        android:icon="@drawable/ic_nav_menu_guia"
+        android:title="@string/section_guias_title" />
     <item
         android:id="@id/comprasFragment"
+        android:icon="@drawable/ic_nav_menu_compra"
         android:title="@string/section_compras_title" />
     <item
         android:id="@id/licenciasFragment"
+        android:icon="@drawable/ic_nav_menu_licencia"
         android:title="@string/section_licencias_title" />
-    <!--    <item-->
-    <!--        android:id="@+id/listViewFragmentTiradas"-->
-    <!--        android:title="@string/section_competiciones_title" />-->
+    <item
+        android:id="@+id/tiradasFragment"
+        android:icon="@drawable/ic_nav_menu_tirada"
+        android:title="@string/section_tiradas_title" />
 
 </menu>

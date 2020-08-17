@@ -13,14 +13,14 @@
 
         <variable
             name="viewModel"
-            type="al.ahgitdevelopment.municion.login.LoginViewModel"
+            type="al.ahgitdevelopment.municion.ui.login.LoginViewModel"
             />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".login.LoginPasswordFragment"
+        tools:context=".ui.login.LoginPasswordFragment"
         >
 
         <LinearLayout
