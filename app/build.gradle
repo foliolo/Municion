@@ -29,13 +29,13 @@ android {
     compileSdkVersion 29
 
     defaultConfig {
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         applicationId "al.ahgitdevelopment.municion"
         buildToolsVersion = '29.0.3'
         minSdkVersion 23
         targetSdkVersion 29
         versionCode 32
-        versionName '2.0.0'
+        versionName '2.0.1'
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
         vectorDrawables.useSupportLibrary = true
         multiDexEnabled true
@@ -67,7 +67,6 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
-    buildToolsVersion '29.0.3'
 }
 
 dependencies {
@@ -106,14 +105,14 @@ dependencies {
     // Firebase
     implementation 'com.firebaseui:firebase-ui-auth:6.1.0'
     implementation 'com.google.android.gms:play-services-ads:19.3.0'
+    implementation 'com.google.firebase:firebase-analytics-ktx:17.4.4'
     implementation 'com.google.firebase:firebase-auth-ktx:19.3.2'
+    implementation 'com.google.firebase:firebase-core:17.4.4'
+    implementation 'com.google.firebase:firebase-crashlytics:17.1.1'
     implementation 'com.google.firebase:firebase-database-ktx:19.3.1'
     implementation 'com.google.firebase:firebase-firestore-ktx:21.5.0'
-    implementation 'com.google.firebase:firebase-storage-ktx:19.1.1'
     implementation 'com.google.firebase:firebase-messaging:20.2.4'
-    implementation 'com.google.firebase:firebase-core:17.4.4'
-    implementation 'com.google.firebase:firebase-analytics-ktx:17.4.4'
-    implementation 'com.google.firebase:firebase-crashlytics:17.1.1'
+    implementation 'com.google.firebase:firebase-storage-ktx:19.1.1'
 
     // Room components
     implementation "androidx.room:room-ktx:${rootProject.ext.room}"

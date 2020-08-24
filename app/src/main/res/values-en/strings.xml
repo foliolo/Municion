@@ -23,8 +23,8 @@
     <!--String sections-->
     <string name="section_guias_title">Property Documents</string>
     <string name="section_compras_title">Purchases</string>
-    <string name="section_licencias_title">License</string>
-    <string name="section_tiradas_title">Competition</string>
+    <string name="section_licencias_title">Licenses</string>
+    <string name="section_tiradas_title">Competitions</string>
 
     <!--String Guias Form-->
     <string name="title_nueva_guia">New Property Document</string>
