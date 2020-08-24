@@ -111,13 +111,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-                <EditText
+                <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/form_num_licencia"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/lbl_num_licencia"
                     android:inputType="text|textCapSentences"
-                    android:maxLength="@integer/max_num_licencia_length"/>
+                    android:maxLength="@integer/max_num_licencia_length" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <!--EDAD CONDUCTOR-->
@@ -126,13 +126,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-                <EditText
+                <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/form_edad"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/lbl_edad"
                     android:inputType="number"
-                    android:maxLength="3"/>
+                    android:maxLength="3" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <!--FECHA EXPEDICION-->
@@ -142,13 +142,13 @@
                 android:layout_height="wrap_content"
                 android:focusableInTouchMode="true">
 
-                <EditText
+                <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/form_fecha_expedicion"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:editable="false"
                     android:hint="@string/fecha_expedicion"
-                    android:inputType="none"/>
+                    android:inputType="none" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <!--FECHA CADUCIDAD-->
@@ -159,13 +159,13 @@
                 android:clickable="false"
                 android:focusable="false">
 
-                <EditText
+                <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/form_fecha_caducidad"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:focusable="false"
                     android:hint="@string/fecha_caducidad"
-                    android:inputType="none"/>
+                    android:inputType="none" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <!--NUMERO DE ABONADO-->
@@ -174,13 +174,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-                <EditText
+                <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/form_num_abonado"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/lbl_num_abonado"
                     android:inputType="number"
-                    android:maxLength="@integer/max_num_abonado_guia"/>
+                    android:maxLength="@integer/max_num_abonado_guia" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <!--NUMERO DE POLIZA-->
@@ -189,14 +189,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-                <EditText
+                <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/form_num_poliza"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/lbl_num_poliza"
                     android:inputType="text|textCapSentences"
-                    android:maxLength="@integer/max_poliza_seguro_licencia"
-                    />
+                    android:maxLength="@integer/max_poliza_seguro_licencia" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <!--COMUNIDAD AUTONOMA-->
@@ -253,22 +252,22 @@
                     android:entries="@array/tipo_escala"
                     android:hint="@string/tipo_escala"
                     android:inputType="text"
-                    android:spinnerMode="dropdown"/>
+                    android:spinnerMode="dropdown" />
             </LinearLayout>
 
         </LinearLayout>
     </ScrollView>
 
-    <com.google.android.gms.ads.AdView
-        android:id="@+id/login_adView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:visibility="gone"
-        app:adSize="SMART_BANNER"
-        app:adUnitId="@string/banner_formularios_id">
-    </com.google.android.gms.ads.AdView>
+    <!--    <com.google.android.gms.ads.AdView-->
+    <!--        android:id="@+id/login_adView"-->
+    <!--        android:layout_width="match_parent"-->
+    <!--        android:layout_height="wrap_content"-->
+    <!--        android:layout_alignParentBottom="true"-->
+    <!--        android:layout_centerHorizontal="true"-->
+    <!--        android:visibility="gone"-->
+    <!--        app:adSize="SMART_BANNER"-->
+    <!--        app:adUnitId="@string/banner_formularios_id">-->
+    <!--    </com.google.android.gms.ads.AdView>-->
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab_form_save"

@@ -2,6 +2,7 @@ package al.ahgitdevelopment.municion.di
 
 import al.ahgitdevelopment.municion.ui.compras.ComprasViewModel
 import al.ahgitdevelopment.municion.ui.guias.GuiasViewModel
+import al.ahgitdevelopment.municion.ui.licencias.LicenciasFormViewModel
 import al.ahgitdevelopment.municion.ui.licencias.LicenciasViewModel
 import al.ahgitdevelopment.municion.ui.login.LoginViewModel
 import al.ahgitdevelopment.municion.ui.tiradas.TiradasViewModel
@@ -44,8 +45,12 @@ abstract class ViewModelModule {
     abstract fun bindTiradasViewModel(tiradasViewModel: TiradasViewModel): ViewModel
 
     @Binds
-    abstract fun bindsModelFactory(factory: ViewModelFactory): ViewModelProvider.Factory
+    @IntoMap
+    @ViewModelKey(LicenciasFormViewModel::class)
+    abstract fun bindLicenciasFormViewModel(licenciasFormViewModel: LicenciasFormViewModel): ViewModel
 
+    @Binds
+    abstract fun bindsModelFactory(factory: ViewModelFactory): ViewModelProvider.Factory
 }
 
 @Target(

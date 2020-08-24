@@ -10,10 +10,6 @@
         android:name="al.ahgitdevelopment.municion.ui.login.LoginPasswordFragment"
         android:label="fragment_login"
         tools:layout="@layout/fragment_login">
-
-        <action
-            android:id="@+id/action_loginPasswordFragment_to_licencias_fragment"
-            app:destination="@id/licenciasFragment" />
     </fragment>
 
     <fragment
@@ -32,12 +28,22 @@
         android:id="@+id/licenciasFragment"
         android:name="al.ahgitdevelopment.municion.ui.licencias.LicenciasFragment"
         android:label="licencias_fragment"
-        tools:layout="@layout/licencias_fragment" />
+        tools:layout="@layout/licencias_fragment">
+        <action
+            android:id="@+id/action_licenciasFragment_to_licenciaFormFragment"
+            app:destination="@id/licenciaFormFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/tiradasFragment"
         android:name="al.ahgitdevelopment.municion.ui.tiradas.TiradasFragment"
         android:label="tiradas_fragment"
         tools:layout="@layout/tiradas_fragment" />
+
+    <fragment
+        android:id="@+id/licenciaFormFragment"
+        android:name="al.ahgitdevelopment.municion.ui.licencias.LicenciaFormFragment"
+        android:label="LicenciaFormFragment"
+        tools:layout="@layout/form_licencia" />
 
 </navigation>
