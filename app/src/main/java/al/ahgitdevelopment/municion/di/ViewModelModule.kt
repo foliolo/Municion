@@ -2,8 +2,8 @@ package al.ahgitdevelopment.municion.di
 
 import al.ahgitdevelopment.municion.ui.compras.ComprasViewModel
 import al.ahgitdevelopment.municion.ui.guias.GuiasViewModel
-import al.ahgitdevelopment.municion.ui.licencias.LicenciasFormViewModel
 import al.ahgitdevelopment.municion.ui.licencias.LicenciasViewModel
+import al.ahgitdevelopment.municion.ui.licencias.LicenseFormViewModel
 import al.ahgitdevelopment.municion.ui.login.LoginViewModel
 import al.ahgitdevelopment.municion.ui.tiradas.TiradasViewModel
 import androidx.lifecycle.ViewModel
@@ -46,8 +46,8 @@ abstract class ViewModelModule {
 
     @Binds
     @IntoMap
-    @ViewModelKey(LicenciasFormViewModel::class)
-    abstract fun bindLicenciasFormViewModel(licenciasFormViewModel: LicenciasFormViewModel): ViewModel
+    @ViewModelKey(LicenseFormViewModel::class)
+    abstract fun bindLicenciasFormViewModel(licenseFormViewModel: LicenseFormViewModel): ViewModel
 
     @Binds
     abstract fun bindsModelFactory(factory: ViewModelFactory): ViewModelProvider.Factory
