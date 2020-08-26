@@ -1,3 +1,10 @@
 package al.ahgitdevelopment.municion.ui.licencias.types
 
-class ALicense : BaseLicense()
+class ALicense(
+
+    /**
+     * Profisonal rank
+     */
+    val escala: Int
+
+) : BaseLicense()

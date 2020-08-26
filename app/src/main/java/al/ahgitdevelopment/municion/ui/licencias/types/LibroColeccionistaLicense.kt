@@ -1,3 +1,5 @@
 package al.ahgitdevelopment.municion.ui.licencias.types
 
-class LibroColeccionistaLicense : BaseLicense()
+class LibroColeccionistaLicense(
+    val expiryDate: String
+) : BaseLicense()

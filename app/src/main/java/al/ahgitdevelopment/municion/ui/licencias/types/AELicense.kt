@@ -1,3 +1,8 @@
 package al.ahgitdevelopment.municion.ui.licencias.types
 
-class AELicense : BaseLicense()
+/**
+ * Professional license for military and police
+ */
+data class AELicense(
+    val expiryDate: String
+) : BaseLicense()

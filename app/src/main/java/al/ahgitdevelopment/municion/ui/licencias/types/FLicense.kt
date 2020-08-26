@@ -1,3 +1,5 @@
 package al.ahgitdevelopment.municion.ui.licencias.types
 
-class FLicense : BaseLicense()
+class FLicense(
+    val expiryDate: String
+) : BaseLicense()

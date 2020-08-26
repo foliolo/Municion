@@ -2,17 +2,13 @@ package al.ahgitdevelopment.municion.ui.licencias.types
 
 abstract class BaseLicense(
     val licenseType: LicenseType,
-    val name: String,
-    val age: Int,
-    val dateIssue: String,
-    val dateExpiracy: String
+    val licenseNumber: String,
+    val dateIssue: String
 ) {
     constructor() : this(
         licenseType = LicenseType.A_profesionales,
-        name = "",
-        age = 0,
-        dateIssue = "",
-        dateExpiracy = ""
+        licenseNumber = "",
+        dateIssue = ""
     )
 }
 

@@ -1,3 +1,5 @@
 package al.ahgitdevelopment.municion.ui.licencias.types
 
-class AERLicense : BaseLicense()
+class AERLicense(
+    val expiryDate: String
+) : BaseLicense()
