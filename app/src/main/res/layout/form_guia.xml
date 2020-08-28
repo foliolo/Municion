@@ -215,7 +215,7 @@
         app:adUnitId="@string/banner_formularios_id" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fab_form_save"
+        android:id="@+id/form_license_fab_save"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignWithParentIfMissing="true"

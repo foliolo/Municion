@@ -55,7 +55,7 @@
     <string name="lbl_edad">Age</string>
     <string name="lbl_num_dni">National Identity Document Number</string>
     <string name="lbl_num_abonado">Subscriber Number</string>
-    <string name="lbl_num_poliza">Insurance Policy Number</string>
+    <string name="lbl_num_poliza">Insurance Number</string>
     <string name="lbl_expedicion_licencia">Date of issue</string>
     <string name="lbl_caducidad_licencia">Date of expiry</string>
     <string name="item_apodo_guia">Nick</string>

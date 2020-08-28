@@ -1,14 +1,18 @@
 package al.ahgitdevelopment.municion.datamodel
 
-import al.ahgitdevelopment.municion.repository.dao.*
-import al.ahgitdevelopment.municion.sandbox.Utils
+import al.ahgitdevelopment.municion.repository.dao.KEY_ID
+import al.ahgitdevelopment.municion.repository.dao.KEY_TIRADAS_DESCRIPCION
+import al.ahgitdevelopment.municion.repository.dao.KEY_TIRADAS_FECHA
+import al.ahgitdevelopment.municion.repository.dao.KEY_TIRADAS_PUNTUACION
+import al.ahgitdevelopment.municion.repository.dao.KEY_TIRADAS_RANGO
+import al.ahgitdevelopment.municion.repository.dao.TABLE_TIRADAS
 import android.os.Bundle
 import androidx.annotation.NonNull
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import java.io.Serializable
-import java.util.*
+import java.util.Calendar
 
 /**
  * Created by ahidalgog on 12/01/2017.
@@ -52,7 +56,7 @@ data class Tirada(
      */
     fun millisUntilExpiracy(tirada: Tirada): Long {
         val ultimaTirada = Calendar.getInstance()
-        ultimaTirada.time = Utils.getDateFromString(tirada.fecha)
+        // ultimaTirada.time = Utils.getDateFromString(tirada.fecha)
         val expiracy = Calendar.getInstance()
         expiracy.time = ultimaTirada.time
         expiracy[Calendar.YEAR] = expiracy[Calendar.YEAR] + 1

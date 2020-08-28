@@ -31,7 +31,7 @@ public class ListNotificationDialog extends DialogFragment {
                     View view = super.getView(position, convertView, parent);
                     TextView nombre = view.findViewById(R.id.item_nombre_licencia);
                     TextView numero = view.findViewById(R.id.item_num_licencia);
-                    TextView fecha = view.findViewById(R.id.item_caducidad_licencia);
+                    TextView fecha = view.findViewById(R.id.item_license_expiry_date);
 
                     if (position % 2 == 0)
                         view.setBackgroundColor(0xE7DFEBFF);

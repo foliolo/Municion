@@ -37,22 +37,9 @@
             </intent-filter>
         </activity>
 
-        <!--        <activity-->
-        <!--            android:name=".FragmentMainContent"-->
-        <!--            android:windowSoftInputMode="stateHidden"-->
-        <!--            />-->
-        <!--        <activity-->
-        <!--            android:name="forms.GuiaFormActivity"-->
-        <!--            android:label="@string/title_nueva_guia"-->
-        <!--            android:windowSoftInputMode="stateHidden"-->
-        <!--            />-->
         <activity
             android:name=".forms.CompraFormActivity"
             android:label="@string/title_nueva_compra"
-            android:windowSoftInputMode="stateHidden" />
-        <activity
-            android:name=".forms.LicenciaFormActivity"
-            android:label="@string/title_nueva_licencia"
             android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".forms.TiradaFormActivity"

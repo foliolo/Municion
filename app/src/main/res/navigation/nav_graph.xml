@@ -44,6 +44,6 @@
         android:id="@+id/licenciaFormFragment"
         android:name="al.ahgitdevelopment.municion.ui.licencias.LicenseFormFragment"
         android:label="LicenciaFormFragment"
-        tools:layout="@layout/form_licencia" />
+        tools:layout="@layout/fragment_form_license" />
 
 </navigation>
