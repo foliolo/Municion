@@ -4,7 +4,6 @@ import al.ahgitdevelopment.municion.R
 import al.ahgitdevelopment.municion.SettingsFragment
 import al.ahgitdevelopment.municion.databinding.LicenciasFragmentBinding
 import al.ahgitdevelopment.municion.di.AppComponent
-import al.ahgitdevelopment.municion.sandbox.Utils
 import android.content.Context
 import android.content.Intent
 import android.graphics.BitmapFactory
@@ -21,10 +20,12 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.firebase.ui.auth.AuthUI
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.crashlytics.FirebaseCrashlytics
+import kotlinx.android.synthetic.main.licencias_fragment.*
 import javax.inject.Inject
 
 class LicenciasFragment : Fragment() {
@@ -41,7 +42,9 @@ class LicenciasFragment : Fragment() {
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
 
-    private val viewModel: LicenciasViewModel by viewModels {
+    private var licensesAdapter: LicenseAdapter? = null
+
+    private val viewModel: LicensesViewModel by viewModels {
         viewModelFactory
     }
 
@@ -70,7 +73,19 @@ class LicenciasFragment : Fragment() {
             findNavController().navigate(R.id.licenciaFormFragment)
         })
 
-        viewModel.onCreatedView()
+        viewModel.licenses.observe(viewLifecycleOwner) {
+            licensesAdapter = LicenseAdapter().apply { submitList(it) }
+
+            licenses_recycler_view.apply {
+                adapter = licensesAdapter
+                layoutManager = LinearLayoutManager(requireContext())
+            }
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.getLicenses()
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -89,7 +104,7 @@ class LicenciasFragment : Fragment() {
             }
             R.id.tabla_tiradas -> try {
                 val bitmap = BitmapFactory.decodeResource(resources, R.drawable.image_table)
-                Utils.showImage(requireContext(), bitmap, "table")
+                // Utils.showImage(requireContext(), bitmap, "table")
             } catch (ex: Exception) {
                 Log.e(TAG, "Error mostrando la tabla de tiradas")
                 firebaseCrashlytics.recordException(ex)

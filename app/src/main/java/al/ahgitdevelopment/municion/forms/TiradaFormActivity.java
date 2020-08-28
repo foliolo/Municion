@@ -31,7 +31,6 @@ import javax.inject.Inject;
 import al.ahgitdevelopment.municion.R;
 import al.ahgitdevelopment.municion.datamodel.Tirada;
 import al.ahgitdevelopment.municion.sandbox.FragmentMainContent;
-import al.ahgitdevelopment.municion.sandbox.Utils;
 
 import static al.ahgitdevelopment.municion.di.SharedPrefsModule.PREFS_SHOW_ADS;
 
@@ -120,7 +119,7 @@ public class TiradaFormActivity extends AppCompatActivity {
         if (prefs.getBoolean(PREFS_SHOW_ADS, true)) {
             mAdView.setVisibility(View.VISIBLE);
             mAdView.setEnabled(true);
-            mAdView.loadAd(Utils.getAdRequest(mAdView));
+//            mAdView.loadAd(Utils.getAdRequest(mAdView));
         } else {
             mAdView.setVisibility(View.GONE);
             mAdView.setEnabled(false);
@@ -241,7 +240,8 @@ public class TiradaFormActivity extends AppCompatActivity {
                 month = calendar.get(Calendar.MONTH);
                 day = calendar.get(Calendar.DAY_OF_MONTH);
             } else {
-                calendar.setTime(Utils.getDateFromString(fecha.getEditText().getText().toString()));
+                calendar.setTime(Calendar.getInstance().getTime());
+//                        Utils.getDateFromString(fecha.getEditText().getText().toString()));
                 year = calendar.get(Calendar.YEAR);
                 month = calendar.get(Calendar.MONTH);
                 day = calendar.get(Calendar.DAY_OF_MONTH);

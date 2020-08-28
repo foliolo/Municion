@@ -7,16 +7,19 @@ import al.ahgitdevelopment.municion.adapters.GuiaArrayAdapter
 import al.ahgitdevelopment.municion.adapters.TiradaArrayAdapter
 import al.ahgitdevelopment.municion.datamodel.Compra
 import al.ahgitdevelopment.municion.datamodel.Guia
-import al.ahgitdevelopment.municion.datamodel.Licencia
+import al.ahgitdevelopment.municion.datamodel.License
 import al.ahgitdevelopment.municion.datamodel.Tirada
 import al.ahgitdevelopment.municion.di.SharedPrefsModule.Companion.PREFS_SHOW_ADS
 import al.ahgitdevelopment.municion.repository.Repository
-import al.ahgitdevelopment.municion.ui.licencias.LicenciaArrayAdapter
 import android.Manifest
 import android.app.Activity.RESULT_CANCELED
 import android.app.Activity.RESULT_OK
 import android.app.Dialog
-import android.content.*
+import android.content.ContentUris
+import android.content.Context
+import android.content.DialogInterface
+import android.content.Intent
+import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.database.Cursor
 import android.graphics.Bitmap
@@ -29,9 +32,19 @@ import android.provider.BaseColumns
 import android.provider.CalendarContract
 import android.provider.MediaStore
 import android.util.Log
-import android.view.*
-import android.widget.*
+import android.view.ActionMode
+import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
+import android.widget.AbsListView
+import android.widget.AdapterView
 import android.widget.AdapterView.OnItemLongClickListener
+import android.widget.ListView
+import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -52,7 +65,10 @@ import kotlinx.android.synthetic.main.activity_fragment_main.view.*
 import java.io.File
 import java.text.ParseException
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.ArrayList
+import java.util.Calendar
+import java.util.Comparator
+import java.util.Locale
 import javax.inject.Inject
 
 class FragmentMainContent : Fragment() {
@@ -231,8 +247,8 @@ class FragmentMainContent : Fragment() {
         if (prefs!!.getBoolean(PREFS_SHOW_ADS, true)) {
             login_adView.visibility = View.VISIBLE
             login_adView.isEnabled = true
-            login_adView.loadAd(Utils.getAdRequest(login_adView))
-            mInterstitialAd.loadAd(Utils.getAdRequest(login_adView))
+            // login_adView.loadAd(Utils.getAdRequest(login_adView))
+            // mInterstitialAd.loadAd(Utils.getAdRequest(login_adView))
             if (mInterstitialAd.isLoaded) {
                 mInterstitialAd.show()
             }
@@ -265,7 +281,7 @@ class FragmentMainContent : Fragment() {
 //            compras = activity?.intent?.getParcelableArrayListExtra("compras")
 //            compras = repository.getCompras()
         }
-        if (licencias == null) {
+        if (licenses == null) {
 //            licencias = activity?.intent?.getParcelableArrayListExtra("licencias")
 //            licencias = repository.getLicencias()
         }
@@ -286,7 +302,7 @@ class FragmentMainContent : Fragment() {
                 textEmptyList!!.visibility = View.VISIBLE
                 textEmptyList!!.setText(R.string.compra_empty_list)
             } else textEmptyList!!.visibility = View.GONE
-            2 -> if (licencias.size == 0) {
+            2 -> if (licenses.size == 0) {
                 textEmptyList!!.visibility = View.VISIBLE
                 textEmptyList!!.setText(R.string.licencia_empty_list)
             } else textEmptyList!!.visibility = View.GONE
@@ -349,7 +365,7 @@ class FragmentMainContent : Fragment() {
             }
             2 -> {
                 //Si existe alguna conexion, no se podra eliminar la licencia
-                if (Utils.licenseCanBeDeleted(position)) {
+                if (true) {
                     Toast.makeText(
                         requireContext(),
                         R.string.delete_license_fail,
@@ -367,8 +383,8 @@ class FragmentMainContent : Fragment() {
                     // Eliminacion evento Calendario
                     deleteSameDayEventCalendar(position)
                     deleteMonthBeforeEventCalendar(position)
-                    licencias.removeAt(position)
-                    licenciaArrayAdapter!!.notifyDataSetChanged()
+                    licenses.removeAt(position)
+                    // licenciaArrayAdapter!!.notifyDataSetChanged()
                 }
                 if (tiradas != null && tiradas.size > 0) {
                     tiradas.removeAt(position)
@@ -414,7 +430,7 @@ class FragmentMainContent : Fragment() {
                 // Fecha inicio evento
                 val beginTime = Calendar.getInstance()
                 beginTime.time = SimpleDateFormat("dd/MM/yyyy")
-                    .parse(licencias[position].fechaCaducidad)
+                    .parse(licenses[position].expiryDate)
                 beginTime[Calendar.HOUR_OF_DAY] = 0
                 beginTime[Calendar.MINUTE] = 0
                 beginTime[Calendar.SECOND] = 0
@@ -422,7 +438,7 @@ class FragmentMainContent : Fragment() {
                 // Fecha final evento
                 val endTime = Calendar.getInstance()
                 endTime.time = SimpleDateFormat("dd/MM/yyyy")
-                    .parse(licencias[position].fechaCaducidad)
+                    .parse(licenses[position].expiryDate)
                 endTime[Calendar.HOUR_OF_DAY] = 23
                 endTime[Calendar.MINUTE] = 59
                 endTime[Calendar.SECOND] = 59
@@ -433,11 +449,11 @@ class FragmentMainContent : Fragment() {
             }
             // Preparacion de la query
             val title = "Tu licencia caduca hoy"
-            val description =
-                Utils.getStringLicenseFromId(
-                    requireContext(),
-                    licencias[position].tipo.toLong()
-                ) + ": " + licencias[position].numLicencia
+            val description = ""
+            // Utils.getStringLicenseFromId(
+            //     requireContext(),
+            //     0// licenses[position].tipo.toLong()
+            // ) + ": " + licenses[position].licenseNumber
             val projection =
                 arrayOf(
                     BaseColumns._ID, CalendarContract.Events.TITLE,
@@ -445,7 +461,7 @@ class FragmentMainContent : Fragment() {
                 )
             val selection =
                 (CalendarContract.Events.DTSTART + " >= ? AND " + CalendarContract.Events.DTSTART + " <= ? AND "
-                        + CalendarContract.Events.TITLE + " = ? AND " + CalendarContract.Events.DESCRIPTION + " = ? ")
+                    + CalendarContract.Events.TITLE + " = ? AND " + CalendarContract.Events.DESCRIPTION + " = ? ")
             val selectionArgs =
                 arrayOf(
                     java.lang.Long.toString(startDay), java.lang.Long.toString(endDay), title,
@@ -487,7 +503,7 @@ class FragmentMainContent : Fragment() {
                 // Fecha inicio evento
                 val beginTime = Calendar.getInstance()
                 beginTime.time = SimpleDateFormat("dd/MM/yyyy")
-                    .parse(licencias[position].fechaCaducidad)
+                    .parse(licenses[position].expiryDate)
                 // Un mes de antelacion
                 beginTime.add(Calendar.MONTH, -1)
                 beginTime[Calendar.HOUR_OF_DAY] = 0
@@ -497,7 +513,7 @@ class FragmentMainContent : Fragment() {
                 // Fecha final evento
                 val endTime = Calendar.getInstance()
                 endTime.time = SimpleDateFormat("dd/MM/yyyy")
-                    .parse(licencias[position].fechaCaducidad)
+                    .parse(licenses[position].expiryDate)
                 // Un mes de antelacion
                 endTime.add(Calendar.MONTH, -1)
                 endTime[Calendar.HOUR_OF_DAY] = 23
@@ -510,11 +526,11 @@ class FragmentMainContent : Fragment() {
             }
             // Preparacion de la query
             val title = "Tu licencia caduca dentro de un mes"
-            val description =
-                Utils.getStringLicenseFromId(
-                    requireContext(),
-                    licencias[position].tipo.toLong()
-                ) + ": " + licencias[position].numLicencia
+            val description = ""
+            // Utils.getStringLicenseFromId(
+            //     requireContext(),
+            //     0//licenses[position].tipo.toLong()
+            // ) + ": " + licenses[position].licenseNumber
             val projection =
                 arrayOf(
                     BaseColumns._ID, CalendarContract.Events.TITLE,
@@ -522,7 +538,7 @@ class FragmentMainContent : Fragment() {
                 )
             val selection =
                 (CalendarContract.Events.DTSTART + " >= ? AND " + CalendarContract.Events.DTSTART + " <= ? AND "
-                        + CalendarContract.Events.TITLE + " = ? AND " + CalendarContract.Events.DESCRIPTION + " = ? ")
+                    + CalendarContract.Events.TITLE + " = ? AND " + CalendarContract.Events.DESCRIPTION + " = ? ")
             val selectionArgs =
                 arrayOf(
                     java.lang.Long.toString(startDay), java.lang.Long.toString(endDay), title,
@@ -570,7 +586,7 @@ class FragmentMainContent : Fragment() {
                     resources,
                     R.drawable.image_table
                 )
-                Utils.showImage(requireContext(), bitmap, "table")
+                // Utils.showImage(requireContext(), bitmap, "table")
             } catch (ex: Exception) {
                 Log.e(TAG, "Error mostrando la tabla de tiradas")
                 Log.e(
@@ -675,7 +691,7 @@ class FragmentMainContent : Fragment() {
                 userRef!!.child("db").removeValue { databaseError, databaseReference ->
                     userRef!!.child("db").child("guias").setValue(guias)
                     userRef!!.child("db").child("compras").setValue(compras)
-                    userRef!!.child("db").child("licencias").setValue(licencias)
+                    userRef!!.child("db").child("licencias").setValue(licenses)
                     userRef!!.child("db").child("tiradas").setValue(tiradas)
                     Log.i(TAG, "Guardado de listas en Firebase")
                 }
@@ -871,14 +887,14 @@ class FragmentMainContent : Fragment() {
                     }
                     2 -> try {
                         (tiradaCountDown as View).visibility = View.GONE
-                        licenciaArrayAdapter =
-                            LicenciaArrayAdapter(
-                                activity,
-                                R.layout.licencia_item,
-                                licencias
-                            )
-                        (listView as ListView).adapter =
-                            licenciaArrayAdapter
+                        // licenciaArrayAdapter =
+                        //     LicenciaArrayAdapter(
+                        //         activity,
+                        //         R.layout.licencia_item,
+                        //         licenses
+                        //     )
+                        // (listView as ListView).adapter =
+                        //     licenciaArrayAdapter
                     } catch (ex: Exception) {
                         Log.e(TAG, ex.message)
                         firebaseCrashlytics.recordException(ex)
@@ -979,12 +995,13 @@ class FragmentMainContent : Fragment() {
                 try {
                     // Ordenamos el array de tiradas por fecha descendente (la mas actual arriba)
                     tiradas.sortWith(Comparator { date1, date2 ->
-                        Utils.getDateFromString(date2.fecha)
-                            .compareTo(
-                                Utils.getDateFromString(
-                                    date1.fecha
-                                )
-                            )
+                        // Utils.getDateFromString(date2.fecha)
+                        //     .compareTo(
+                        //         Utils.getDateFromString(
+                        //             date1.fecha
+                        //         )
+                        //     )
+                        1
                     })
                     if (tiradas.size > 0 && tiradaCountDown != null) {
                         tiradaCountDown!!.visibility = View.VISIBLE
@@ -1180,7 +1197,7 @@ class FragmentMainContent : Fragment() {
 
         lateinit var guias: ArrayList<Guia>
         lateinit var compras: ArrayList<Compra>
-        lateinit var licencias: ArrayList<Licencia>
+        lateinit var licenses: ArrayList<License>
         lateinit var tiradas: ArrayList<Tirada>
 
         /**
@@ -1188,7 +1205,8 @@ class FragmentMainContent : Fragment() {
          */
         private var guiaArrayAdapter: GuiaArrayAdapter? = null
         private var compraArrayAdapter: CompraArrayAdapter? = null
-        private var licenciaArrayAdapter: LicenciaArrayAdapter? = null
+
+        // private var licenciaArrayAdapter: LicenciaArrayAdapter? = null
         private var tiradaArrayAdapter: TiradaArrayAdapter? = null
         private var listView: ListView? = null
         private var dbSqlHelper: DataBaseSQLiteHelper? = null

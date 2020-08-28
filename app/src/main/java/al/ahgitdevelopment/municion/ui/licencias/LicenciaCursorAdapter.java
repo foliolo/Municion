@@ -10,16 +10,10 @@ import android.widget.TextView;
 
 import al.ahgitdevelopment.municion.R;
 
-import static al.ahgitdevelopment.municion.repository.dao.DbConstantsKt.KEY_LICENCIAS_AUTONOMIA;
-import static al.ahgitdevelopment.municion.repository.dao.DbConstantsKt.KEY_LICENCIAS_CATEGORIA;
-import static al.ahgitdevelopment.municion.repository.dao.DbConstantsKt.KEY_LICENCIAS_EDAD;
 import static al.ahgitdevelopment.municion.repository.dao.DbConstantsKt.KEY_LICENCIAS_FECHA_CADUCIDAD;
 import static al.ahgitdevelopment.municion.repository.dao.DbConstantsKt.KEY_LICENCIAS_FECHA_EXPEDICION;
-import static al.ahgitdevelopment.municion.repository.dao.DbConstantsKt.KEY_LICENCIAS_NUM_ABONADO;
 import static al.ahgitdevelopment.municion.repository.dao.DbConstantsKt.KEY_LICENCIAS_NUM_LICENCIA;
 import static al.ahgitdevelopment.municion.repository.dao.DbConstantsKt.KEY_LICENCIAS_NUM_SEGURO;
-import static al.ahgitdevelopment.municion.repository.dao.DbConstantsKt.KEY_LICENCIAS_TIPO;
-import static al.ahgitdevelopment.municion.repository.dao.DbConstantsKt.KEY_LICENCIAS_TIPO_PERMISO_CONDUCCION;
 
 /**
  * Created by Alberto on 24/05/2016.
@@ -32,28 +26,15 @@ public class LicenciaCursorAdapter extends CursorAdapter {
 
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
-        TextView tipo = view.findViewById(R.id.item_tipo_licencia);
-        TextView numLicencia = view.findViewById(R.id.item_num_guia);
-        TextView expedicion = view.findViewById(R.id.item_expedicion_licencia);
-        TextView caducidad = view.findViewById(R.id.item_caducidad_licencia);
-        TextView numAbonado = view.findViewById(R.id.item_num_abonado);
-        TextView numSeguro = view.findViewById(R.id.item_num_poliza);
-        TextView autonomia = view.findViewById(R.id.item_ccaa);
-        TextView tipoPermisoConducir = view.findViewById(R.id.item_tipo_permiso_conducir);
-        TextView edad = view.findViewById(R.id.item_edad);
-        TextView categoria = view.findViewById(R.id.item_categoria);
+        TextView numLicencia = view.findViewById(R.id.item_license_number);
+        TextView expedicion = view.findViewById(R.id.item_license_issue_date);
+        TextView caducidad = view.findViewById(R.id.item_license_expiry_date);
+        TextView numSeguro = view.findViewById(R.id.item_license_insurance_number);
 
-        tipo.setText(cursor.getString(cursor.getColumnIndex(KEY_LICENCIAS_TIPO)));
         numLicencia.setText(String.valueOf(cursor.getInt(cursor.getColumnIndex(KEY_LICENCIAS_NUM_LICENCIA))));
         expedicion.setText(String.valueOf(cursor.getString(cursor.getColumnIndex(KEY_LICENCIAS_FECHA_EXPEDICION))));
         caducidad.setText(String.valueOf(cursor.getString(cursor.getColumnIndex(KEY_LICENCIAS_FECHA_CADUCIDAD))));
-        numAbonado.setText(String.valueOf(cursor.getInt(cursor.getColumnIndex(KEY_LICENCIAS_NUM_ABONADO))));
         numSeguro.setText(String.valueOf(cursor.getString(cursor.getColumnIndex(KEY_LICENCIAS_NUM_SEGURO))));
-        autonomia.setText(String.valueOf(cursor.getInt(cursor.getColumnIndex(KEY_LICENCIAS_AUTONOMIA))));
-        tipoPermisoConducir.setText(String.valueOf(cursor.getInt(cursor.getColumnIndex(KEY_LICENCIAS_TIPO_PERMISO_CONDUCCION))));
-        edad.setText(String.valueOf(cursor.getInt(cursor.getColumnIndex(KEY_LICENCIAS_EDAD))));
-        categoria.setText(String.valueOf(cursor.getInt(cursor.getColumnIndex(KEY_LICENCIAS_CATEGORIA))));
-
     }
 
     @Override

@@ -2,19 +2,19 @@ package al.ahgitdevelopment.municion.repository
 
 import al.ahgitdevelopment.municion.datamodel.Compra
 import al.ahgitdevelopment.municion.datamodel.Guia
-import al.ahgitdevelopment.municion.datamodel.Licencia
+import al.ahgitdevelopment.municion.datamodel.License
 import al.ahgitdevelopment.municion.datamodel.Tirada
 import androidx.lifecycle.LiveData
 
 interface RepositoryInterface {
     fun getGuias(): LiveData<List<Guia>>?
     fun getCompras(): LiveData<List<Compra>>?
-    fun getLicencias(): LiveData<List<Licencia>>?
+    suspend fun getLicenses(): LiveData<List<License>>?
     fun getTiradas(): LiveData<List<Tirada>>?
 
     fun saveGuias(guia: Guia)
     fun saveCompras(compra: Compra)
-    fun saveLicencias(licencia: Licencia)
+    suspend fun saveLicense(license: License)
     fun saveTiradas(tirada: Tirada)
 
     fun fetchDataFromFirebase()

@@ -14,7 +14,8 @@ import dagger.Component
     modules = [
         SharedPrefsModule::class,
         ViewModelModule::class,
-        FirebaseModule::class
+        FirebaseModule::class,
+        DatabaseModule::class
     ]
 )
 interface AppComponent {
@@ -34,6 +35,7 @@ interface AppComponent {
             return DaggerAppComponent.builder()
                 .firebaseModule(FirebaseModule())
                 .sharedPrefsModule(SharedPrefsModule(context))
+                .databaseModule(DatabaseModule(context))
                 .build()
         }
     }

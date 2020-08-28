@@ -64,7 +64,7 @@
                     android:textAppearance="?android:attr/textAppearanceSmall"/>
 
                 <TextView
-                    android:id="@+id/item_caducidad_licencia"
+                    android:id="@+id/item_license_expiry_date"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center"

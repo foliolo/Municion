@@ -2,22 +2,13 @@ package al.ahgitdevelopment.municion.repository
 
 import al.ahgitdevelopment.municion.datamodel.Compra
 import al.ahgitdevelopment.municion.datamodel.Guia
-import al.ahgitdevelopment.municion.datamodel.Licencia
+import al.ahgitdevelopment.municion.datamodel.License
 import al.ahgitdevelopment.municion.datamodel.Tirada
 import al.ahgitdevelopment.municion.repository.dao.AppDatabase
-import al.ahgitdevelopment.municion.repository.dao.DATABASE_NAME
-import android.content.Context
 import androidx.lifecycle.LiveData
-import androidx.room.Room
 import javax.inject.Inject
 
-class Repository @Inject constructor(var context: Context, var db: AppDatabase) : RepositoryInterface {
-
-    init {
-        db = Room.databaseBuilder(context,
-                AppDatabase::class.java,
-                DATABASE_NAME).build()
-    }
+class Repository @Inject constructor(private val db: AppDatabase) : RepositoryInterface {
 
     override fun getGuias(): LiveData<List<Guia>>? {
         return db.guiaDao()?.retrieveGuias()
@@ -27,8 +18,8 @@ class Repository @Inject constructor(var context: Context, var db: AppDatabase) 
         return db.compraDao()?.retrieveCompras()
     }
 
-    override fun getLicencias(): LiveData<List<Licencia>>? {
-        return db.licenciaDao()?.retrieveLicencias()
+    override suspend fun getLicenses(): LiveData<List<License>>? {
+        return db.licenciaDao()?.getLicenses()
     }
 
     override fun getTiradas(): LiveData<List<Tirada>>? {
@@ -43,8 +34,8 @@ class Repository @Inject constructor(var context: Context, var db: AppDatabase) 
         db.compraDao()?.insert(compra)
     }
 
-    override fun saveLicencias(licencia: Licencia) {
-        db.licenciaDao()?.insert(licencia)
+    override suspend fun saveLicense(license: License) {
+        db.licenciaDao()?.insert(license)
     }
 
     override fun saveTiradas(tirada: Tirada) {
@@ -58,5 +49,4 @@ class Repository @Inject constructor(var context: Context, var db: AppDatabase) 
     override fun uploadDataToFirebase() {
         TODO("Not yet implemented")
     }
-
 }

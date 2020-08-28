@@ -1,6 +1,20 @@
 package al.ahgitdevelopment.municion.datamodel
 
-import al.ahgitdevelopment.municion.repository.dao.*
+import al.ahgitdevelopment.municion.repository.dao.KEY_GUIA_APODO
+import al.ahgitdevelopment.municion.repository.dao.KEY_GUIA_CALIBRE1
+import al.ahgitdevelopment.municion.repository.dao.KEY_GUIA_CALIBRE2
+import al.ahgitdevelopment.municion.repository.dao.KEY_GUIA_CUPO
+import al.ahgitdevelopment.municion.repository.dao.KEY_GUIA_GASTADO
+import al.ahgitdevelopment.municion.repository.dao.KEY_GUIA_ID_COMPRA
+import al.ahgitdevelopment.municion.repository.dao.KEY_GUIA_ID_LICENCIA
+import al.ahgitdevelopment.municion.repository.dao.KEY_GUIA_IMAGEN
+import al.ahgitdevelopment.municion.repository.dao.KEY_GUIA_MARCA
+import al.ahgitdevelopment.municion.repository.dao.KEY_GUIA_MODELO
+import al.ahgitdevelopment.municion.repository.dao.KEY_GUIA_NUM_ARMA
+import al.ahgitdevelopment.municion.repository.dao.KEY_GUIA_NUM_GUIA
+import al.ahgitdevelopment.municion.repository.dao.KEY_GUIA_TIPO_ARMA
+import al.ahgitdevelopment.municion.repository.dao.KEY_ID
+import al.ahgitdevelopment.municion.repository.dao.TABLE_GUIAS
 import android.os.Bundle
 import androidx.annotation.NonNull
 import androidx.room.ColumnInfo
@@ -13,19 +27,21 @@ import androidx.room.PrimaryKey
  */
 
 @Entity(
-        tableName = TABLE_GUIAS,
-        foreignKeys = [
-            ForeignKey(
-                    entity = Compra::class,
-                    parentColumns = [KEY_ID],
-                    childColumns = [KEY_GUIA_ID_COMPRA],
-                    onDelete = ForeignKey.CASCADE
-            ),
-            ForeignKey(entity = Licencia::class,
-                    parentColumns = [KEY_ID],
-                    childColumns = [KEY_GUIA_ID_LICENCIA],
-                    onDelete = ForeignKey.CASCADE)
-        ]
+    tableName = TABLE_GUIAS,
+    foreignKeys = [
+        ForeignKey(
+            entity = Compra::class,
+            parentColumns = [KEY_ID],
+            childColumns = [KEY_GUIA_ID_COMPRA],
+            onDelete = ForeignKey.CASCADE
+        ),
+        ForeignKey(
+            entity = License::class,
+            parentColumns = [KEY_ID],
+            childColumns = [KEY_GUIA_ID_LICENCIA],
+            onDelete = ForeignKey.CASCADE
+        )
+    ]
 )
 open class Guia(
 

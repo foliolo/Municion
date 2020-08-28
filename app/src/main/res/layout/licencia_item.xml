@@ -1,307 +1,145 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:orientation="horizontal"
-              android:paddingBottom="8dp"
-              android:paddingTop="7dp">
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    android:backgroundTint="@color/light_yellow"
+    app:cardCornerRadius="4dp"
+    >
 
-    <LinearLayout
-        android:layout_width="130dp"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        android:orientation="vertical">
-
-        <TextView
-            android:id="@+id/lbl_tipo_licencia"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="@string/lbl_tipo_licencia"
-            android:textAppearance="?android:attr/textAppearanceSmall"/>
-
-        <TextView
-            android:id="@+id/item_tipo_licencia"
-            style="@style/letter_black"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="@string/libro_coleccionista"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textStyle="bold"/>
-
-        <TextView
-            android:id="@+id/form_lbl_categoria"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="@string/lbl_categoria"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:visibility="gone"/>
-
-        <TextView
-            android:id="@+id/item_categoria"
-            style="@style/letter_black"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textStyle="bold"
-            android:visibility="gone"/>
-
-        <TextView
-            android:id="@+id/lbl_tipo_permiso_conducir"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="15dp"
-            android:gravity="center"
-            android:text="@string/tipo_permiso_conducir"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:visibility="gone"/>
-
-        <TextView
-            android:id="@+id/item_tipo_permiso_conducir"
-            style="@style/letter_black"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textStyle="bold"
-            android:visibility="gone"/>
-
-    </LinearLayout>
-
-
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:gravity="center_vertical"
-        android:orientation="vertical">
+        >
 
-        <LinearLayout
-            android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/item_license_lbl_number"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="16dp"
+            android:gravity="end"
+            android:text="@string/lbl_num_licencia"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            app:layout_constraintEnd_toStartOf="@+id/item_license_number"
+            app:layout_constraintHorizontal_chainStyle="packed"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            />
 
-            <TextView
-                android:id="@+id/lbl_num_licencia"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="end"
-                android:paddingRight="@dimen/activity_vertical_margin"
-                android:text="@string/lbl_num_licencia"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                />
-
-            <TextView
-                android:id="@+id/item_num_guia"
-                style="@style/letter_black"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="start"
-                android:text="1234"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:textStyle="bold"/>
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/item_license_number"
+            style="@style/letter_black"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:gravity="start"
+            android:text="1234"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/item_license_lbl_number"
+            app:layout_constraintTop_toTopOf="@+id/item_license_lbl_number"
+            />
 
-            <TextView
-                android:id="@+id/lbl_edad"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="end"
-                android:paddingRight="@dimen/activity_vertical_margin"
-                android:text="@string/lbl_edad"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:visibility="gone"
-                />
 
-            <TextView
-                android:id="@+id/item_edad"
-                style="@style/letter_black"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="start"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:textStyle="bold"
-                android:visibility="gone"/>
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/item_license_lbl_issue_date"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="16dp"
+            android:gravity="end"
+            android:text="@string/lbl_expedicion_licencia"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            app:layout_constraintEnd_toStartOf="@+id/item_license_issue_date"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintHorizontal_chainStyle="packed"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/item_license_lbl_number"
+            />
 
-            <TextView
-                android:id="@+id/lbl_expedicion_licencia"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="end"
-                android:paddingRight="@dimen/activity_vertical_margin"
-                android:text="@string/lbl_expedicion_licencia"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                />
-
-            <TextView
-                android:id="@+id/item_expedicion_licencia"
-                style="@style/letter_black"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="start"
-                android:text="15/05/2016"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:textStyle="bold"/>
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/layout_fecha_caducidad"
-            android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/item_license_issue_date"
+            style="@style/letter_black"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/lbl_caducidad_licencia"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="end"
-                android:paddingRight="@dimen/activity_vertical_margin"
-                android:text="@string/lbl_caducidad_licencia"
-                android:textAppearance="?android:attr/textAppearanceSmall"/>
-
-            <TextView
-                android:id="@+id/item_caducidad_licencia"
-                style="@style/letter_black"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="start"
-                android:text="15/05/2017"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:textStyle="bold"/>
-        </LinearLayout>
+            android:gravity="start"
+            android:text="15/05/2016"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/item_license_lbl_issue_date"
+            app:layout_constraintTop_toTopOf="@+id/item_license_lbl_issue_date"
+            />
 
 
-        <LinearLayout
-            android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/item_license_lbl_expiry_date"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="16dp"
+            android:gravity="end"
+            android:text="@string/lbl_caducidad_licencia"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            app:layout_constraintEnd_toStartOf="@+id/item_license_expiry_date"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintHorizontal_chainStyle="packed"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/item_license_lbl_issue_date"
+            />
 
-            <TextView
-                android:id="@+id/lbl_num_abonado"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="end"
-                android:paddingRight="@dimen/activity_vertical_margin"
-                android:text="@string/lbl_num_abonado"
-                android:textAppearance="?android:attr/textAppearanceSmall"/>
-
-            <TextView
-                android:id="@+id/item_num_abonado"
-                style="@style/letter_black"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="start"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:textStyle="bold"/>
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/item_license_expiry_date"
+            style="@style/letter_black"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:gravity="start"
+            android:text="15/05/2017"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/item_license_lbl_expiry_date"
+            app:layout_constraintTop_toTopOf="@+id/item_license_lbl_expiry_date"
+            />
 
-            <TextView
-                android:id="@+id/lbl_num_poliza"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="end"
-                android:paddingRight="@dimen/activity_vertical_margin"
-                android:text="@string/lbl_num_poliza"
-                android:textAppearance="?android:attr/textAppearanceSmall"/>
 
-            <TextView
-                android:id="@+id/item_num_poliza"
-                style="@style/letter_black"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="start"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:textStyle="bold"/>
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/layout_ccaa"
-            android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/item_license_lbl_insurance_number"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:visibility="gone">
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="8dp"
+            android:gravity="end"
+            android:text="@string/lbl_num_poliza"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/item_license_insurance_number"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintHorizontal_chainStyle="packed"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/item_license_lbl_expiry_date"
+            />
 
-            <TextView
-                android:id="@+id/form_lbl_ccaa"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="end"
-                android:paddingRight="@dimen/activity_vertical_margin"
-                android:text="@string/lbl_ccaa"
-                android:textAppearance="?android:attr/textAppearanceSmall"/>
-
-            <TextView
-                android:id="@+id/item_ccaa"
-                style="@style/letter_black"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="start"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:textStyle="bold"/>
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/layout_escala"
-            android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/item_license_insurance_number"
+            style="@style/letter_black"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:visibility="gone">
+            android:gravity="start"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/item_license_lbl_insurance_number"
+            app:layout_constraintTop_toTopOf="@+id/item_license_lbl_insurance_number"
+            />
 
-            <TextView
-                android:id="@+id/form_lbl_escala"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="end"
-                android:paddingRight="@dimen/activity_vertical_margin"
-                android:text="@string/lbl_escala"
-                android:textAppearance="?android:attr/textAppearanceSmall"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <TextView
-                android:id="@+id/item_escala"
-                style="@style/letter_black"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="start"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:textStyle="bold"/>
-        </LinearLayout>
-    </LinearLayout>
+</androidx.cardview.widget.CardView>
 
-</LinearLayout>

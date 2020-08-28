@@ -44,7 +44,6 @@ import java.util.NoSuchElementException;
 
 import al.ahgitdevelopment.municion.R;
 import al.ahgitdevelopment.municion.datamodel.Guia;
-import al.ahgitdevelopment.municion.datamodel.Licencia;
 import al.ahgitdevelopment.municion.datamodel.NotificationData;
 
 import static al.ahgitdevelopment.municion.sandbox.FragmentMainContent.fileImagePath;
@@ -64,14 +63,14 @@ public final class Utils {
     @NonNull
     static CharSequence[] getLicenseName(Context context) {
         ArrayList<String> list = new ArrayList<>();
-        for (Licencia licencia : FragmentMainContent.licencias) {
-            String licenseName = Utils.getStringLicenseFromId(context, licencia.getTipo());
-            if (!licenseName.equals("Autonómica de Caza") &&
-                    !licenseName.equals("Autonómica de Pesca") &&
-                    !licenseName.equals("Permiso Conducir") &&
-                    !licenseName.equals("Federativa de tiro"))
-                list.add(licenseName);
-        }
+//        for (Licencia licencia : FragmentMainContent.licencias) {
+//            String licenseName = Utils.getStringLicenseFromId(context, licencia.getTipo());
+//            if (!licenseName.equals("Autonómica de Caza") &&
+//                    !licenseName.equals("Autonómica de Pesca") &&
+//                    !licenseName.equals("Permiso Conducir") &&
+//                    !licenseName.equals("Federativa de tiro"))
+//                list.add(licenseName);
+//        }
         return list.toArray(new CharSequence[list.size()]);
     }
 
@@ -135,9 +134,9 @@ public final class Utils {
     public static boolean licenseCanBeDeleted(int position) {
         // Si alguna guía tiene el id de la licencia que queremos borrar, no se podra eliminar la licencia
         for (Guia guia : FragmentMainContent.guias) {
-            if (guia.getTipoLicencia() == FragmentMainContent.licencias.get(position).getTipo()) {
-                return true;
-            }
+//            if (guia.getTipoLicencia() == FragmentMainContent.licencias.get(position).getTipo()) {
+//                return true;
+//            }
         }
         return false;
     }
@@ -221,12 +220,12 @@ public final class Utils {
      * @param context Contexto de la actividad
      */
     public static boolean isLicenciaFederativa(Context context) {
-        for (Licencia licencia : FragmentMainContent.licencias) {
-            String licenseName = Utils.getStringLicenseFromId(context, licencia.getTipo());
-            if (licenseName.equals("Federativa de tiro")) {
-                return true;
-            }
-        }
+//        for (Licencia licencia : FragmentMainContent.licencias) {
+//            String licenseName = Utils.getStringLicenseFromId(context, licencia.getTipo());
+//            if (licenseName.equals("Federativa de tiro")) {
+//                return true;
+//            }
+//        }
         return false;
     }
 
@@ -238,12 +237,12 @@ public final class Utils {
     public static int getMaxCategoria(Context context) {
         try {
             ArrayList<Integer> list = new ArrayList<>();
-            for (Licencia licencia : FragmentMainContent.licencias) {
-                int categoria = Utils.getCategoriaId(context, licencia.getCategoria());
-                if (categoria != -1) {
-                    list.add(categoria);
-                }
-            } // Devuelve el numero menor que seria la licencia de mas categoria
+//            for (Licencia licencia : FragmentMainContent.licencias) {
+//                int categoria = Utils.getCategoriaId(context, licencia.getCategoria());
+//                if (categoria != -1) {
+//                    list.add(categoria);
+//                }
+//            } // Devuelve el numero menor que seria la licencia de mas categoria
             return Collections.min(list);
 
         } catch (NoSuchElementException ex) {
