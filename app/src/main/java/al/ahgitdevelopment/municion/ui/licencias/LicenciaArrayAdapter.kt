@@ -4,10 +4,10 @@ import al.ahgitdevelopment.municion.R
 import al.ahgitdevelopment.municion.datamodel.License
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import kotlinx.android.synthetic.main.licencia_item.view.*
 
 /**
  * Created by Alberto on 28/05/2016.
@@ -26,26 +26,17 @@ class LicenseAdapter : ListAdapter<License, LicenseAdapter.LicenseViewHolder>(DI
     }
 
     class LicenseViewHolder(parent: ViewGroup) : RecyclerView.ViewHolder(parent) {
-        private val licenseNumber: TextView
-        private val issueDate: TextView
-        private val expiryDate: TextView
-        private val insuranceNumber: TextView
-
-        init {
-            LayoutInflater.from(parent.context).inflate(R.layout.licencia_item, parent, false)
-            licenseNumber = itemView.findViewById(R.id.item_license_number)
-            issueDate = itemView.findViewById(R.id.item_license_issue_date)
-            expiryDate = itemView.findViewById(R.id.item_license_expiry_date)
-            insuranceNumber = itemView.findViewById(R.id.item_license_insurance_number)
-        }
 
         fun bindTo(item: License) {
-            licenseNumber.text = item.licenseNumber
-            issueDate.text = item.issueDate
-            expiryDate.text = item.expiryDate
-            insuranceNumber.text = item.insuranceNumber
+            itemView.item_license_number.text = item.licenseNumber
+            itemView.item_license_issue_date.text = item.issueDate
+            itemView.item_license_expiry_date.text = item.expiryDate
+            itemView.item_license_insurance_number.text = item.insuranceNumber
         }
     }
+
+    override fun getItemId(position: Int): Long =
+        currentList[position].id
 
     companion object {
         @JvmStatic

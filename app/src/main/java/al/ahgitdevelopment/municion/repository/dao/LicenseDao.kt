@@ -19,6 +19,9 @@ interface LicenseDao {
     @Query("DELETE FROM $TABLE_LICENCIAS")
     fun deleteAll()
 
+    @Query("DELETE FROM $TABLE_LICENCIAS WHERE $KEY_ID = :id")
+    suspend fun delete(id: Long)
+
     @Query("SELECT * from $TABLE_LICENCIAS")
     fun getLicenses(): LiveData<List<License>>
 
