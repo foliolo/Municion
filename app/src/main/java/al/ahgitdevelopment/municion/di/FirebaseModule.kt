@@ -1,7 +1,5 @@
 package al.ahgitdevelopment.municion.di
 
-import android.content.Context
-import com.google.firebase.FirebaseApp
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.auth.FirebaseAuth
@@ -37,4 +35,8 @@ class FirebaseModule {
     @Provides
     @Reusable
     fun provideStorage(): FirebaseStorage = Firebase.storage
+
+    companion object {
+        const val EVENT_LOGOUT = "logout"
+    }
 }

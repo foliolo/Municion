@@ -35,8 +35,7 @@ class LicenseAdapter : ListAdapter<License, LicenseAdapter.LicenseViewHolder>(DI
         }
     }
 
-    override fun getItemId(position: Int): Long =
-        currentList[position].id
+    override fun getItemId(position: Int): Long = currentList[position].id
 
     companion object {
         @JvmStatic

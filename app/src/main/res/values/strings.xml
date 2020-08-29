@@ -202,4 +202,6 @@
     <string name="title_activity_navigation" translatable="false">NavigationActivity</string>
     <string name="error" translatable="false">Error</string>
     <string name="menu_sign_out" translatable="false">Sign out</string>
+    <string name="snackbar_undo_delete_message">Deshacer la eliminación</string>
+    <string name="snackbar_undo_delete">Deshacer</string>
 </resources>

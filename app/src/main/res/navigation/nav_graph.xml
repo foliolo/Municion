@@ -26,9 +26,9 @@
 
     <fragment
         android:id="@+id/licenciasFragment"
-        android:name="al.ahgitdevelopment.municion.ui.licencias.LicenciasFragment"
+        android:name="al.ahgitdevelopment.municion.ui.licencias.LicensesFragment"
         android:label="licencias_fragment"
-        tools:layout="@layout/licencias_fragment">
+        tools:layout="@layout/licenses_fragment">
         <action
             android:id="@+id/action_licenciasFragment_to_licenciaFormFragment"
             app:destination="@id/licenciaFormFragment" />
