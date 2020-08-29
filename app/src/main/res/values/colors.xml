@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#13747d</color>
+    <color name="colorPrimary">#757575</color>
     <color name="colorPrimaryDark">#ff29221f</color>
-    <color name="colorAccent">#fffc354c</color>
+    <color name="colorAccent">#C34352</color>
     <color name="statusBarColor">#ff29221f</color>
     <color name="navigation">#ff29221f</color>
 
     <color name="selected">#acb3b4</color>
     <color name="control_background">#cc4285f4</color>
-    <color name="light_yellow">#FAFAEB</color>
+    <color name="light_yellow">#BFBFBF</color>
 
     <color name="toolbar_text_color">#FFFFFF</color>
     <color name="white">#FFFFFF</color>

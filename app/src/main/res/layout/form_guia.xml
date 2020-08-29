@@ -2,12 +2,14 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    >
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@+id/login_adView">
+        android:layout_above="@+id/login_adView"
+        >
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -16,20 +18,23 @@
             android:paddingLeft="@dimen/activity_horizontal_margin"
             android:paddingTop="@dimen/activity_vertical_margin"
             android:paddingRight="@dimen/activity_horizontal_margin"
-            android:paddingBottom="@dimen/activity_vertical_margin">
+            android:paddingBottom="@dimen/activity_vertical_margin"
+            >
 
             <!--Mensaje de error formulario-->
             <TextView
                 android:id="@+id/form_mensaje_guia"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:visibility="gone" />
+                android:visibility="gone"
+                />
 
             <!--MARCA-->
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/text_input_layout_marca"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                >
 
                 <EditText
                     android:id="@+id/form_marca"
@@ -37,14 +42,16 @@
                     android:layout_height="wrap_content"
                     android:hint="@string/marca"
                     android:imeOptions="actionNext"
-                    android:inputType="text|textCapSentences" />
+                    android:inputType="text|textCapSentences"
+                    />
             </com.google.android.material.textfield.TextInputLayout>
 
             <!--MODELO-->
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/text_input_layout_modelo"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                >
 
                 <EditText
                     android:id="@+id/form_modelo"
@@ -52,14 +59,16 @@
                     android:layout_height="wrap_content"
                     android:hint="@string/modelo"
                     android:imeOptions="actionNext"
-                    android:inputType="text|textCapSentences" />
+                    android:inputType="text|textCapSentences"
+                    />
             </com.google.android.material.textfield.TextInputLayout>
 
             <!--APODO-->
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/text_input_layout_apodo"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                >
 
                 <EditText
                     android:id="@+id/form_apodo_arma"
@@ -67,7 +76,8 @@
                     android:layout_height="wrap_content"
                     android:hint="@string/apodo"
                     android:imeOptions="actionNext"
-                    android:inputType="text|textCapSentences" />
+                    android:inputType="text|textCapSentences"
+                    />
             </com.google.android.material.textfield.TextInputLayout>
 
             <!--TIPO ARMA-->
@@ -76,7 +86,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/form_lbl_tipo_arma"
-                android:textAppearance="?android:attr/textAppearanceSmall" />
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                />
 
             <androidx.appcompat.widget.AppCompatSpinner
                 android:id="@+id/form_tipo_arma"
@@ -85,13 +96,15 @@
                 android:entries="@array/tipo_armas"
                 android:hint="@string/tipoArma"
                 android:inputType="text"
-                android:spinnerMode="dropdown" />
+                android:spinnerMode="dropdown"
+                />
 
             <!--CALIBRE 1-->
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/text_input_layout_calibre1"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                >
 
                 <AutoCompleteTextView
                     android:id="@+id/form_calibre1"
@@ -100,7 +113,8 @@
                     android:hint="@string/calibre"
                     android:imeOptions="actionNext"
                     android:inputType="text|textCapSentences"
-                    android:maxLines="1" />
+                    android:maxLines="1"
+                    />
             </com.google.android.material.textfield.TextInputLayout>
 
             <!--CHECK BOX CALIBRE 2-->
@@ -109,11 +123,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:checked="false"
-                android:text="@string/check_segundo_calibre" />
+                android:text="@string/check_segundo_calibre"
+                />
             <!--CALIBRE 2-->
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                >
 
                 <AutoCompleteTextView
                     android:id="@+id/form_calibre2"
@@ -122,14 +138,16 @@
                     android:hint="@string/calibre2"
                     android:inputType="text|textCapSentences"
                     android:maxLines="1"
-                    android:visibility="gone" />
+                    android:visibility="gone"
+                    />
             </com.google.android.material.textfield.TextInputLayout>
 
             <!--NUMERO DE GUIA-->
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/text_input_layout_num_guia"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                >
 
                 <EditText
                     android:id="@+id/form_num_guia"
@@ -138,14 +156,16 @@
                     android:hint="@string/numGuia"
                     android:imeOptions="actionNext"
                     android:inputType="text|textCapSentences"
-                    android:maxLength="@integer/max_num_guia_form_guias" />
+                    android:maxLength="@integer/max_num_guia_form_guias"
+                    />
             </com.google.android.material.textfield.TextInputLayout>
 
             <!--NUMERO DE ARMA-->
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/text_input_layout_num_arma"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                >
 
                 <EditText
                     android:id="@+id/form_num_arma"
@@ -154,7 +174,8 @@
                     android:hint="@string/num_arma"
                     android:imeOptions="actionNext"
                     android:inputType="text|textCapSentences"
-                    android:maxLength="@integer/max_num_arma_form_guias" />
+                    android:maxLength="@integer/max_num_arma_form_guias"
+                    />
             </com.google.android.material.textfield.TextInputLayout>
 
             <!--CHECK BOX AUMENTO DE CUPO-->
@@ -163,7 +184,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:checked="false"
-                android:text="@string/aumento_cupo" />
+                android:text="@string/aumento_cupo"
+                />
 
             <!--CUPO-->
             <com.google.android.material.textfield.TextInputLayout
@@ -171,7 +193,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:clickable="false"
-                android:focusable="false">
+                android:focusable="false"
+                >
 
                 <EditText
                     android:id="@+id/form_cupo_anual"
@@ -181,14 +204,16 @@
                     android:hint="@string/cupo_anual"
                     android:imeOptions="actionNext"
                     android:inputType="none"
-                    android:maxLength="5" />
+                    android:maxLength="5"
+                    />
             </com.google.android.material.textfield.TextInputLayout>
 
             <!--CARTUCHOS GASTADOS-->
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/text_input_layout_cartuchos_gastados"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                >
 
                 <EditText
                     android:id="@+id/form_cartuchos_gastados"
@@ -198,7 +223,8 @@
                     android:hint="@string/cartuchos_comprados"
                     android:imeOptions="actionDone"
                     android:inputType="number"
-                    android:maxLength="5" />
+                    android:maxLength="5"
+                    />
             </com.google.android.material.textfield.TextInputLayout>
 
         </LinearLayout>
@@ -212,7 +238,8 @@
         android:layout_centerHorizontal="true"
         android:visibility="gone"
         app:adSize="SMART_BANNER"
-        app:adUnitId="@string/banner_formularios_id" />
+        app:adUnitId="@string/banner_formularios_id"
+        />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/form_license_fab_save"
@@ -223,10 +250,13 @@
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
         android:layout_margin="12dp"
+        android:backgroundTint="@color/colorAccent"
         android:clickable="true"
         android:focusable="true"
         android:onClick="fabSaveOnClick"
         app:fabSize="normal"
-        app:srcCompat="@android:drawable/ic_menu_save" />
+        app:srcCompat="@drawable/ic_save"
+        app:tint="@color/white"
+        />
 
 </RelativeLayout>
