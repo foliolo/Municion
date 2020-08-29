@@ -38,6 +38,38 @@
             >
 
             <TextView
+                android:id="@+id/item_license_lbl_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="16dp"
+                android:gravity="end"
+                android:text="@string/lbl_license_name"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                app:layout_constraintEnd_toStartOf="@+id/item_license_name"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintHorizontal_chainStyle="packed"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                />
+
+            <TextView
+                android:id="@+id/item_license_name"
+                style="@style/letter_black"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="start"
+                android:text="name"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/item_license_lbl_name"
+                app:layout_constraintTop_toTopOf="@+id/item_license_lbl_name"
+                />
+
+
+            <TextView
                 android:id="@+id/item_license_lbl_number"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -49,7 +81,7 @@
                 app:layout_constraintEnd_toStartOf="@+id/item_license_number"
                 app:layout_constraintHorizontal_chainStyle="packed"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/item_license_lbl_name"
                 />
 
             <TextView

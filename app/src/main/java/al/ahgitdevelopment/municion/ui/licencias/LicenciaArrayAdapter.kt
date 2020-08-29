@@ -28,6 +28,7 @@ class LicenseAdapter : ListAdapter<License, LicenseAdapter.LicenseViewHolder>(DI
     class LicenseViewHolder(parent: ViewGroup) : RecyclerView.ViewHolder(parent) {
 
         fun bindTo(item: License) {
+            itemView.item_license_name.text = item.licenseName
             itemView.item_license_number.text = item.licenseNumber
             itemView.item_license_issue_date.text = item.issueDate
             itemView.item_license_expiry_date.text = item.expiryDate

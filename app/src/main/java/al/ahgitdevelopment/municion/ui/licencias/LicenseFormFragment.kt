@@ -35,11 +35,6 @@ class LicenseFormFragment : Fragment() {
         AppComponent.create(requireContext()).inject(this)
     }
 
-    /**
-     * Inicializa la actividad
-     *
-     * @param savedInstanceState Instancia del estado de la activity
-     */
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
 
         val binding: FragmentFormLicenseBinding =
@@ -64,12 +59,13 @@ class LicenseFormFragment : Fragment() {
         viewModel.expiryDate.observe(viewLifecycleOwner) {
             DatePickerFragment { _, year, month, dayOfMonth ->
                 "$dayOfMonth/$month/$year".let { form_license_date_expiry.editText?.setText(it) }
-            }.show(parentFragmentManager, ISSUE_DATE_PICKER)
+            }.show(parentFragmentManager, EXPIRY_DATE_PICKER)
         }
 
         viewModel.fabSaveLicenseClicked.observe(viewLifecycleOwner) {
             License(
                 id = 0,
+                licenseName = form_license_name.editText?.text.toString(),
                 licenseNumber = form_license_number.editText?.text.toString(),
                 issueDate = form_license_date_issue.editText?.text.toString(),
                 expiryDate = form_license_date_expiry.editText?.text.toString(),

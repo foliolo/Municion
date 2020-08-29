@@ -188,5 +188,6 @@
     <string name="sin_conexion">Without internet connection</string>
     <string name="snackbar_undo_delete_message">Undo the deletion</string>
     <string name="snackbar_undo_delete">Undo</string>
+    <string name="lbl_license_name">Name</string>
 
 </resources>
