@@ -133,9 +133,11 @@
             android:layout_above="@+id/login_adView"
             android:layout_gravity="bottom|end"
             android:layout_margin="@dimen/fab_margin"
+            android:backgroundTint="@color/colorAccent"
             android:onClick="@{viewModel::fabSaveLicenseClicked}"
             app:fabSize="normal"
-            app:srcCompat="@android:drawable/ic_menu_save"
+            app:srcCompat="@drawable/ic_save"
+            app:tint="@color/white"
             />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>

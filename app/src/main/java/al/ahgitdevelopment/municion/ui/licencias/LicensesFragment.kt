@@ -139,7 +139,7 @@ class LicensesFragment : Fragment(), RecyclerInterface {
             Snackbar.make(
                 licenses_layout,
                 R.string.snackbar_undo_delete_message,
-                Snackbar.LENGTH_INDEFINITE
+                Snackbar.LENGTH_LONG
             ).setAction(R.string.snackbar_undo_delete) {
                 viewModel.addLicense(license)
                 this?.adapter?.notifyDataSetChanged()

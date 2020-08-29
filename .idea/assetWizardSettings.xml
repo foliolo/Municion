@@ -334,7 +334,7 @@
                                 <PersistentState>
                                   <option name="values">
                                     <map>
-                                      <entry key="url" value="jar:file:/Applications/Android%20Studio.app/Contents/plugins/android/lib/android.jar!/images/material/icons/materialicons/menu_book/baseline_menu_book_24.xml" />
+                                      <entry key="url" value="jar:file:/Applications/Android%20Studio.app/Contents/plugins/android/lib/android.jar!/images/material/icons/materialicons/save/baseline_save_24.xml" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -344,7 +344,7 @@
                         </option>
                         <option name="values">
                           <map>
-                            <entry key="outputName" value="ic_guia" />
+                            <entry key="outputName" value="ic_save" />
                           </map>
                         </option>
                       </PersistentState>

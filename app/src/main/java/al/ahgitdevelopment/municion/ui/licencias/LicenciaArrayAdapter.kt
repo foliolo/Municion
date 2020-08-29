@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.android.synthetic.main.licencia_item.view.*
+import kotlinx.android.synthetic.main.license_item.view.*
 
 /**
  * Created by Alberto on 28/05/2016.
@@ -16,7 +16,7 @@ class LicenseAdapter : ListAdapter<License, LicenseAdapter.LicenseViewHolder>(DI
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): LicenseViewHolder {
         val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.licencia_item, parent, false) as ViewGroup
+            .inflate(R.layout.license_item, parent, false) as ViewGroup
 
         return LicenseViewHolder(view)
     }

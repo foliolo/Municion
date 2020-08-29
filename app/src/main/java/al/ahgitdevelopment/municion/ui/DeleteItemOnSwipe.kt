@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.ItemTouchHelper.ACTION_STATE_SWIPE
 import androidx.recyclerview.widget.ItemTouchHelper.RIGHT
 import androidx.recyclerview.widget.ItemTouchHelper.SimpleCallback
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.android.synthetic.main.licencia_item.view.*
+import kotlinx.android.synthetic.main.license_item.view.*
 
 class DeleteItemOnSwipe(private val deleteCallback: DeleteLicenseCallback) : SimpleCallback(0, RIGHT) {
 
