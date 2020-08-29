@@ -78,7 +78,7 @@ dependencies {
     implementation 'com.google.android.material:material:1.2.0'
 
     implementation "androidx.collection:collection-ktx:1.1.0"
-    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.1'
     implementation 'androidx.core:core-ktx:1.3.1'
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:${rootProject.ext.androidx_lifecycle}"
     implementation "androidx.lifecycle:lifecycle-runtime-ktx:${rootProject.ext.androidx_lifecycle}"
@@ -109,10 +109,10 @@ dependencies {
     implementation 'com.google.firebase:firebase-auth-ktx:19.3.2'
     implementation 'com.google.firebase:firebase-core:17.5.0'
     implementation 'com.google.firebase:firebase-crashlytics:17.2.1'
-    implementation 'com.google.firebase:firebase-database-ktx:19.3.1'
-    implementation 'com.google.firebase:firebase-firestore-ktx:21.5.0'
+    implementation 'com.google.firebase:firebase-database-ktx:19.4.0'
+    implementation 'com.google.firebase:firebase-firestore-ktx:21.6.0'
     implementation 'com.google.firebase:firebase-messaging:20.2.4'
-    implementation 'com.google.firebase:firebase-storage-ktx:19.1.1'
+    implementation 'com.google.firebase:firebase-storage-ktx:19.2.0'
 
     // Room components
     implementation "androidx.room:room-ktx:${rootProject.ext.room}"

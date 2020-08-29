@@ -1,10 +1,24 @@
 package al.ahgitdevelopment.municion.datamodel
 
-import al.ahgitdevelopment.municion.repository.dao.*
+import al.ahgitdevelopment.municion.repository.dao.KEY_COMPRA_CALIBRE1
+import al.ahgitdevelopment.municion.repository.dao.KEY_COMPRA_CALIBRE2
+import al.ahgitdevelopment.municion.repository.dao.KEY_COMPRA_FECHA
+import al.ahgitdevelopment.municion.repository.dao.KEY_COMPRA_ID_POS_GUIA
+import al.ahgitdevelopment.municion.repository.dao.KEY_COMPRA_IMAGEN
+import al.ahgitdevelopment.municion.repository.dao.KEY_COMPRA_MARCA
+import al.ahgitdevelopment.municion.repository.dao.KEY_COMPRA_PESO
+import al.ahgitdevelopment.municion.repository.dao.KEY_COMPRA_PRECIO
+import al.ahgitdevelopment.municion.repository.dao.KEY_COMPRA_TIENDA
+import al.ahgitdevelopment.municion.repository.dao.KEY_COMPRA_TIPO
+import al.ahgitdevelopment.municion.repository.dao.KEY_COMPRA_UNIDADES
+import al.ahgitdevelopment.municion.repository.dao.KEY_COMPRA_VALORACION
+import al.ahgitdevelopment.municion.repository.dao.KEY_ID
+import al.ahgitdevelopment.municion.repository.dao.TABLE_COMPRAS
 import androidx.annotation.NonNull
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import java.io.Serializable
 
 /**
  * Created by Alberto on 12/05/2016.
@@ -39,4 +53,4 @@ open class Compra(
         @ColumnInfo(name = KEY_COMPRA_VALORACION) var valoracion: Float,
 
         @ColumnInfo(name = KEY_COMPRA_IMAGEN) var imagePath: String
-)
+) : Serializable

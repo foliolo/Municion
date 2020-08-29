@@ -10,21 +10,21 @@ import javax.inject.Inject
 
 class Repository @Inject constructor(private val db: AppDatabase) : RepositoryInterface {
 
-    override fun getGuias(): LiveData<List<Guia>>? {
-        return db.guiaDao()?.retrieveGuias()
-    }
-
-    override fun getCompras(): LiveData<List<Compra>>? {
-        return db.compraDao()?.retrieveCompras()
-    }
+    // override suspend fun getGuias(): LiveData<List<Guia>>? {
+    //     return db.guiaDao()?.retrieveGuias()
+    // }
+    //
+    // override suspend fun getCompras(): LiveData<List<Compra>>? {
+    //     return db.compraDao()?.retrieveCompras()
+    // }
 
     override suspend fun getLicenses(): LiveData<List<License>>? {
         return db.licenciaDao()?.getLicenses()
     }
 
-    override fun getTiradas(): LiveData<List<Tirada>>? {
-        return db.tiradaDao()?.retrieveTiradas()
-    }
+    // override suspend fun getTiradas(): LiveData<List<Tirada>>? {
+    //     return db.tiradaDao()?.retrieveTiradas()
+    // }
 
     override fun saveGuias(guia: Guia) {
         db.guiaDao()?.insert(guia)
@@ -41,6 +41,11 @@ class Repository @Inject constructor(private val db: AppDatabase) : RepositoryIn
     override fun saveTiradas(tirada: Tirada) {
         db.tiradaDao()?.insert(tirada)
     }
+
+    override fun removeGuias(id: Long) = db.guiaDao()?.delete(id)!!
+    override fun removeCompra(id: Long) = db.compraDao()?.delete(id)!!
+    override suspend fun removeLicense(id: Long) = db.licenciaDao()?.delete(id)!!
+    override fun removeTirada(id: Long) = db.tiradaDao()?.delete(id)!!
 
     override fun fetchDataFromFirebase() {
         TODO("Not yet implemented")

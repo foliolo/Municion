@@ -31,4 +31,10 @@ class LicensesViewModel @Inject constructor(
     fun fabClick(view: View) {
         addLicense.call()
     }
+
+    fun deleteLicense(licenseId: Long) {
+        viewModelScope.launch {
+            repository.removeLicense(licenseId)
+        }
+    }
 }

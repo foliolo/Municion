@@ -1,4 +1,4 @@
-package al.ahgitdevelopment.municion.ui.licencias;
+package al.ahgitdevelopment.municion.sandbox;
 
 import android.content.Context;
 import android.database.Cursor;

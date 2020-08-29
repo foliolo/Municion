@@ -4,6 +4,7 @@ import al.ahgitdevelopment.municion.R
 import al.ahgitdevelopment.municion.SettingsFragment
 import al.ahgitdevelopment.municion.databinding.LicenciasFragmentBinding
 import al.ahgitdevelopment.municion.di.AppComponent
+import al.ahgitdevelopment.municion.ui.DeleteItemOnSwipe
 import android.content.Context
 import android.content.Intent
 import android.graphics.BitmapFactory
@@ -20,6 +21,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.firebase.ui.auth.AuthUI
 import com.google.firebase.analytics.FirebaseAnalytics
@@ -74,11 +76,23 @@ class LicenciasFragment : Fragment() {
         })
 
         viewModel.licenses.observe(viewLifecycleOwner) {
-            licensesAdapter = LicenseAdapter().apply { submitList(it) }
+            licensesAdapter = LicenseAdapter().apply {
+                submitList(it)
+                setHasStableIds(true)
+            }
 
             licenses_recycler_view.apply {
                 adapter = licensesAdapter
                 layoutManager = LinearLayoutManager(requireContext())
+
+                ItemTouchHelper(
+                    DeleteItemOnSwipe(object : DeleteItemOnSwipe.DeleteLicenseCallback {
+                        override fun deleteLicenseOnSwipe(viewHolder: LicenseAdapter.LicenseViewHolder) {
+                            viewModel.deleteLicense(viewHolder.itemId)
+                            adapter?.notifyDataSetChanged()
+                        }
+                    })
+                ).attachToRecyclerView(this)
             }
         }
     }

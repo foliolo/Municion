@@ -2,7 +2,11 @@ package al.ahgitdevelopment.municion.repository.dao
 
 import al.ahgitdevelopment.municion.datamodel.Compra
 import androidx.lifecycle.LiveData
-import androidx.room.*
+import androidx.room.Dao
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
+import androidx.room.Query
+import androidx.room.Update
 
 @Dao
 interface CompraDao {
@@ -14,6 +18,9 @@ interface CompraDao {
 
     @Query("DELETE FROM $TABLE_COMPRAS")
     fun deleteAll()
+
+    @Query("DELETE FROM $TABLE_COMPRAS WHERE $KEY_ID = :id")
+    fun delete(id: Long)
 
     @Query("SELECT * from $TABLE_COMPRAS")
     fun retrieveCompras(): LiveData<List<Compra>>
