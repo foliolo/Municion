@@ -31,6 +31,23 @@
                 android:padding="@dimen/form_layout_margin"
                 >
 
+                <!--LICENSE NAME-->
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/form_license_name"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/form_fields_separation"
+                    >
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/lbl_license_name"
+                        android:inputType="text|textCapSentences"
+                        />
+                </com.google.android.material.textfield.TextInputLayout>
+
                 <!--LICENSE NUMBER-->
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/form_license_number"

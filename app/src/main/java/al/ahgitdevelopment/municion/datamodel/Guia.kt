@@ -13,6 +13,7 @@ import al.ahgitdevelopment.municion.repository.dao.KEY_GUIA_MODELO
 import al.ahgitdevelopment.municion.repository.dao.KEY_GUIA_NUM_ARMA
 import al.ahgitdevelopment.municion.repository.dao.KEY_GUIA_NUM_GUIA
 import al.ahgitdevelopment.municion.repository.dao.KEY_GUIA_TIPO_ARMA
+import al.ahgitdevelopment.municion.repository.dao.KEY_ID
 import al.ahgitdevelopment.municion.repository.dao.TABLE_GUIAS
 import android.os.Bundle
 import androidx.annotation.NonNull

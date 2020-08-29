@@ -59,7 +59,7 @@ const val KEY_TIRADAS_FECHA = "fecha"
 const val KEY_TIRADAS_PUNTUACION = "puntuacion"
 
 // Database Version
-const val DATABASE_VERSION = 22
+const val DATABASE_VERSION = 1
 
 // Database Name
 const val DATABASE_NAME = "DBMunicion.db"

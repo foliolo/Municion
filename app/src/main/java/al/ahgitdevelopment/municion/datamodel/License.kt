@@ -3,6 +3,7 @@ package al.ahgitdevelopment.municion.datamodel
 import al.ahgitdevelopment.municion.repository.dao.KEY_ID
 import al.ahgitdevelopment.municion.repository.dao.KEY_LICENCIAS_FECHA_CADUCIDAD
 import al.ahgitdevelopment.municion.repository.dao.KEY_LICENCIAS_FECHA_EXPEDICION
+import al.ahgitdevelopment.municion.repository.dao.KEY_LICENCIAS_NOMBRE
 import al.ahgitdevelopment.municion.repository.dao.KEY_LICENCIAS_NUM_LICENCIA
 import al.ahgitdevelopment.municion.repository.dao.KEY_LICENCIAS_NUM_SEGURO
 import al.ahgitdevelopment.municion.repository.dao.TABLE_LICENCIAS
@@ -21,6 +22,8 @@ data class License(
     @PrimaryKey(autoGenerate = true)
     @NonNull
     @ColumnInfo(name = KEY_ID) var id: Long,
+
+    @ColumnInfo(name = KEY_LICENCIAS_NOMBRE) var licenseName: String,
 
     @ColumnInfo(name = KEY_LICENCIAS_NUM_LICENCIA) var licenseNumber: String,
 

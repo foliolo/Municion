@@ -204,4 +204,5 @@
     <string name="menu_sign_out" translatable="false">Sign out</string>
     <string name="snackbar_undo_delete_message">Deshacer la eliminación</string>
     <string name="snackbar_undo_delete">Deshacer</string>
+    <string name="lbl_license_name">Nombre</string>
 </resources>
