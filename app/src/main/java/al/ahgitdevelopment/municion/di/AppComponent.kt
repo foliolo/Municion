@@ -3,8 +3,8 @@ package al.ahgitdevelopment.municion.di
 import al.ahgitdevelopment.municion.NavigationActivity
 import al.ahgitdevelopment.municion.ui.compras.ComprasFragment
 import al.ahgitdevelopment.municion.ui.guias.GuiasFragment
-import al.ahgitdevelopment.municion.ui.licencias.LicenciasFragment
 import al.ahgitdevelopment.municion.ui.licencias.LicenseFormFragment
+import al.ahgitdevelopment.municion.ui.licencias.LicensesFragment
 import al.ahgitdevelopment.municion.ui.login.LoginPasswordFragment
 import al.ahgitdevelopment.municion.ui.tiradas.TiradasFragment
 import android.content.Context
@@ -25,7 +25,7 @@ interface AppComponent {
     fun inject(loginPasswordFragment: LoginPasswordFragment)
     fun inject(guiasFragment: GuiasFragment)
     fun inject(comprasFragment: ComprasFragment)
-    fun inject(licenciasFragment: LicenciasFragment)
+    fun inject(licensesFragment: LicensesFragment)
     fun inject(tiradasFragment: TiradasFragment)
 
     fun inject(licenciasFormFragment: LicenseFormFragment)

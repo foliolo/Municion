@@ -186,5 +186,7 @@
     <string name="change_image">Change</string>
     <string name="delete_image">Delete</string>
     <string name="sin_conexion">Without internet connection</string>
+    <string name="snackbar_undo_delete_message">Undo the deletion</string>
+    <string name="snackbar_undo_delete">Undo</string>
 
 </resources>
