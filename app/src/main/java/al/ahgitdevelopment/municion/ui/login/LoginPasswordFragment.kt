@@ -1,8 +1,11 @@
 package al.ahgitdevelopment.municion.ui.login
 
+import al.ahgitdevelopment.municion.BuildConfig
 import al.ahgitdevelopment.municion.R
 import al.ahgitdevelopment.municion.databinding.FragmentLoginBinding
 import al.ahgitdevelopment.municion.di.AppComponent
+import al.ahgitdevelopment.municion.di.FirebaseModule.Companion.EVENT_LOGOUT
+import al.ahgitdevelopment.municion.di.FirebaseModule.Companion.PARAM_USER_UID
 import android.Manifest
 import android.app.Activity
 import android.content.Context
@@ -12,7 +15,12 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
-import android.view.*
+import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -72,29 +80,27 @@ class LoginPasswordFragment : Fragment() {
         return binding.root
     }
 
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel.userState.observe(viewLifecycleOwner,
-            androidx.lifecycle.Observer { userState: LoginViewModel.UserState ->
-                login_password_2.visibility = when (userState) {
-                    LoginViewModel.UserState.NEW_USER -> View.VISIBLE
-                    LoginViewModel.UserState.ACTIVE_USER -> View.GONE
-                }
-            })
+        viewModel.userState.observe(viewLifecycleOwner) { userState ->
+            login_password_2.visibility = when (userState) {
+                LoginViewModel.UserState.NEW_USER -> View.VISIBLE
+                LoginViewModel.UserState.ACTIVE_USER -> View.GONE
+            }
+        }
 
-        viewModel.password1Error.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
+        viewModel.password1Error.observe(viewLifecycleOwner) {
             login_password_1.error = getErrorMessage(it)
-        })
+        }
 
-        viewModel.password2Error.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
+        viewModel.password2Error.observe(viewLifecycleOwner) {
             login_password_2.error = getErrorMessage(it)
-        })
+        }
 
-        viewModel.navigateIntoApp.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
-            launchAppContent()
-        })
+        viewModel.navigateIntoApp.observe(viewLifecycleOwner) {
+            findNavController().navigate(R.id.licenciasFragment)
+        }
 
         viewModel.onCreateView()
     }
@@ -108,16 +114,13 @@ class LoginPasswordFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         setUpUser()
-    }
 
-    //    override fun onDestroy() {
-//        // Gestión del año actual para actualizar los cupos y las compras
-//        val calendar = Calendar.getInstance()
-//        val yearPref = calendar[Calendar.YEAR]
-//        prefs.edit().putInt("year", yearPref).apply()
-//
-//        super.onDestroy()
-//    }
+        if (BuildConfig.DEBUG) {
+            login_button.visibility = View.VISIBLE
+            login_password_1.editText?.setText(BuildConfig.PASSWORD)
+            login_button.performClick()
+        }
+    }
 
     private fun getErrorMessage(error: LoginViewModel.ErrorMessages): String? {
         return when (error) {
@@ -170,75 +173,6 @@ class LoginPasswordFragment : Fragment() {
         //Lanza el tutorial la primera vez
         showTutorial()
     }
-
-    //    @AddTrace(name = "launchActivity", enabled = true/*Optional*/)
-    private fun launchAppContent() {
-//        val dbSqlHelper = DataBaseSQLiteHelper(requireContext())
-        //Lanzamiento del Intent
-//        val intent = Intent(this@LoginPasswordFragment, FragmentMainActivity::class.java)
-//        intent.putParcelableArrayListExtra("guias", dbSqlHelper.getListGuias(null))
-//        intent.putParcelableArrayListExtra("compras", dbSqlHelper.getListCompras(null))
-//        intent.putParcelableArrayListExtra("licencias", dbSqlHelper.getListLicencias(null))
-//        intent.putParcelableArrayListExtra("tiradas", dbSqlHelper.getListTiradas(null))
-//        checkYearCupo(intent)
-//        startActivity(intent)
-//        dbSqlHelper.close()
-
-        findNavController().navigate(R.id.licenciasFragment)
-
-        // Registrar Login - Analytics
-//        val androidId = Settings.Secure.getString(requireContext().contentResolver, Settings.Secure.ANDROID_ID)
-//        val bundle = Bundle()
-//        bundle.putString(FirebaseAnalytics.Param.VALUE, androidId)
-//        mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.LOGIN, bundle)
-    }
-
-//    private fun checkYearCupo(intent: Intent) { // Comprobar year para renovar los cupos
-//        val yearPref = prefs.getInt("year", 0)
-//        val year = Calendar.getInstance()[Calendar.YEAR] // Year actual
-//        if (yearPref != 0 && year > yearPref) {
-//            val listaGuias: ArrayList<Guia>? = intent.getParcelableArrayListExtra("guias")
-//            listaGuias?.let {
-//
-//                if (listaGuias.size > 0) {
-//                    for (guia in listaGuias) {
-//                        val nombreLicencia = Utils.getStringLicenseFromId(requireContext(), guia.tipoLicencia)
-//                        val idNombreLicencia = nombreLicencia.split(" ").toTypedArray()[0]
-//                        val tipoArma = guia.tipoArma
-//                        when (idNombreLicencia) {
-//                            "A", "Libro" -> when (tipoArma) {
-//                                0, 3 -> guia.cupo = 100
-//                                1 -> guia.cupo = 5000
-//                                2, 4 -> guia.cupo = 1000
-//                            }
-//                            "B" -> when (tipoArma) {
-//                                0, 1 -> guia.cupo = 100
-//                            }
-//                            "C" -> guia.cupo = 100
-//                            "D" -> guia.cupo = 1000
-//                            "E" -> when (tipoArma) {
-//                                0 -> guia.cupo = 5000
-//                                1 -> guia.cupo = 1000
-//                            }
-//                            "F", "Federativa" -> when (tipoArma) {
-//                                0, 3 -> guia.cupo = 100
-//                                1 -> guia.cupo = 5000
-//                                2 -> guia.cupo = 1000
-//                            }
-//                            "AE" -> guia.cupo = 1000
-//                            "AER" -> when (tipoArma) {
-//                                0, 2 -> {
-//                                    guia.cupo = 100
-//                                    guia.cupo = 1000
-//                                }
-//                                1 -> guia.cupo = 1000
-//                            }
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//    }
 
     /**
      * Lanza el tutorial la primera vez que se inicia la aplicación.
@@ -297,16 +231,9 @@ class LoginPasswordFragment : Fragment() {
 
     private fun signIn() {
         val providers = arrayListOf(
-            AuthUI.IdpConfig.GoogleBuilder()
-                .setSignInOptions(
-                    GoogleSignInOptions.Builder()
-                        .build()
-                )
-                .build(),
-            AuthUI.IdpConfig.AnonymousBuilder()
-                .build(),
-            AuthUI.IdpConfig.EmailBuilder()
-                .build()
+            AuthUI.IdpConfig.GoogleBuilder().setSignInOptions(GoogleSignInOptions.Builder().build()).build(),
+            AuthUI.IdpConfig.AnonymousBuilder().build(),
+            AuthUI.IdpConfig.EmailBuilder().build()
         )
 
         startActivityForResult(
@@ -351,12 +278,8 @@ class LoginPasswordFragment : Fragment() {
         }
     }
 
-
     companion object {
         private const val TAG = "LoginPasswordActivity"
-        const val MIN_PASS_LENGTH = 6
         private const val RC_SIGN_IN = 100
-        private const val PARAM_USER_UID = "user_uid"
-        private const val EVENT_LOGOUT = "logout"
     }
 }
