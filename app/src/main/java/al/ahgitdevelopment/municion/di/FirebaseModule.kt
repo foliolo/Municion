@@ -37,6 +37,8 @@ class FirebaseModule {
     fun provideStorage(): FirebaseStorage = Firebase.storage
 
     companion object {
+        const val PARAM_USER_UID = "user_uid"
         const val EVENT_LOGOUT = "logout"
+        const val MIN_PASS_LENGTH = 6
     }
 }

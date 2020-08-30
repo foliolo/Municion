@@ -16,7 +16,8 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
 import al.ahgitdevelopment.municion.R;
-import al.ahgitdevelopment.municion.ui.login.LoginPasswordFragment;
+
+import static al.ahgitdevelopment.municion.di.FirebaseModule.MIN_PASS_LENGTH;
 
 /**
  * Created by ahidalgog on 06/07/2016.
@@ -89,12 +90,6 @@ public class ChangePasswordDialog extends DialogFragment {
         }
     }
 
-//    @Override
-//    public void onDismiss(DialogInterface dialog) {
-//        if(saveStatus)
-//            super.onDismiss(dialog);
-//    }
-
     /**
      * Guarda el password introducido por el usuario para cambiar la contraseña
      *
@@ -102,7 +97,7 @@ public class ChangePasswordDialog extends DialogFragment {
      */
     private boolean savePassword() {
         boolean flag = false;
-        if (passwordOld.getText() != null && passwordOld.getText().toString().length() >= LoginPasswordFragment.MIN_PASS_LENGTH) {
+        if (passwordOld.getText() != null && passwordOld.getText().toString().length() >= MIN_PASS_LENGTH) {
             if (checkPasswordOld() && checkPasswordNew()) {
                 // Ha ido correcto
                 SharedPreferences.Editor editor = preferences.edit();
@@ -147,9 +142,9 @@ public class ChangePasswordDialog extends DialogFragment {
             layoutPass1.setError(getString(R.string.settings_password_empty));
         } else if ("".equals(passwordNew2.getText().toString())) {
             layoutPass2.setError(getString(R.string.settings_password_empty));
-        } else if (passwordNew1.getText().toString().length() < LoginPasswordFragment.MIN_PASS_LENGTH) {
+        } else if (passwordNew1.getText().toString().length() < MIN_PASS_LENGTH) {
             layoutPass1.setError(getString(R.string.login_short_password_error));
-        } else if (passwordNew2.getText().toString().length() < LoginPasswordFragment.MIN_PASS_LENGTH) {
+        } else if (passwordNew2.getText().toString().length() < MIN_PASS_LENGTH) {
             layoutPass2.setError(getString(R.string.login_short_password_error));
         } else if (!passwordNew1.getText().toString().equals(passwordNew2.getText().toString())) {
             layoutPass2.setError(getString(R.string.login_not_matching_password_error));
