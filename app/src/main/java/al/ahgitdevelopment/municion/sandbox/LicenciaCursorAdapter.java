@@ -10,10 +10,10 @@ import android.widget.TextView;
 
 import al.ahgitdevelopment.municion.R;
 
-import static al.ahgitdevelopment.municion.repository.dao.DbConstantsKt.KEY_LICENCIAS_FECHA_CADUCIDAD;
-import static al.ahgitdevelopment.municion.repository.dao.DbConstantsKt.KEY_LICENCIAS_FECHA_EXPEDICION;
-import static al.ahgitdevelopment.municion.repository.dao.DbConstantsKt.KEY_LICENCIAS_NUM_LICENCIA;
-import static al.ahgitdevelopment.municion.repository.dao.DbConstantsKt.KEY_LICENCIAS_NUM_SEGURO;
+import static al.ahgitdevelopment.municion.repository.dao.DbConstantsKt.KEY_LICENSE_DATE_EXPIRY;
+import static al.ahgitdevelopment.municion.repository.dao.DbConstantsKt.KEY_LICENSE_DATE_ISSUE;
+import static al.ahgitdevelopment.municion.repository.dao.DbConstantsKt.KEY_LICENSE_INSURANCE_NUMBER;
+import static al.ahgitdevelopment.municion.repository.dao.DbConstantsKt.KEY_LICENSE_NUMBER;
 
 /**
  * Created by Alberto on 24/05/2016.
@@ -31,10 +31,10 @@ public class LicenciaCursorAdapter extends CursorAdapter {
         TextView caducidad = view.findViewById(R.id.item_license_expiry_date);
         TextView numSeguro = view.findViewById(R.id.item_license_insurance_number);
 
-        numLicencia.setText(String.valueOf(cursor.getInt(cursor.getColumnIndex(KEY_LICENCIAS_NUM_LICENCIA))));
-        expedicion.setText(String.valueOf(cursor.getString(cursor.getColumnIndex(KEY_LICENCIAS_FECHA_EXPEDICION))));
-        caducidad.setText(String.valueOf(cursor.getString(cursor.getColumnIndex(KEY_LICENCIAS_FECHA_CADUCIDAD))));
-        numSeguro.setText(String.valueOf(cursor.getString(cursor.getColumnIndex(KEY_LICENCIAS_NUM_SEGURO))));
+        numLicencia.setText(String.valueOf(cursor.getInt(cursor.getColumnIndex(KEY_LICENSE_NUMBER))));
+        expedicion.setText(String.valueOf(cursor.getString(cursor.getColumnIndex(KEY_LICENSE_DATE_ISSUE))));
+        caducidad.setText(String.valueOf(cursor.getString(cursor.getColumnIndex(KEY_LICENSE_DATE_EXPIRY))));
+        numSeguro.setText(String.valueOf(cursor.getString(cursor.getColumnIndex(KEY_LICENSE_INSURANCE_NUMBER))));
     }
 
     @Override

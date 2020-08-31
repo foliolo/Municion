@@ -1,6 +1,6 @@
 package al.ahgitdevelopment.municion.ui
 
-import al.ahgitdevelopment.municion.ui.licencias.LicenseAdapter.LicenseViewHolder
+import al.ahgitdevelopment.municion.ui.licenses.LicenseAdapter.LicenseViewHolder
 import android.graphics.Canvas
 import android.view.View
 import androidx.recyclerview.widget.ItemTouchHelper.ACTION_STATE_SWIPE

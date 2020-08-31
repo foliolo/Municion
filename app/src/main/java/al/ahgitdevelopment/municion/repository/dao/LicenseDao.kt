@@ -16,15 +16,15 @@ interface LicenseDao {
     @Update
     fun update(vararg license: License)
 
-    @Query("DELETE FROM $TABLE_LICENCIAS")
+    @Query("DELETE FROM $TABLE_LICENSES")
     fun deleteAll()
 
-    @Query("DELETE FROM $TABLE_LICENCIAS WHERE $KEY_ID = :id")
+    @Query("DELETE FROM $TABLE_LICENSES WHERE $KEY_ID = :id")
     suspend fun delete(id: Long)
 
-    @Query("SELECT * from $TABLE_LICENCIAS")
+    @Query("SELECT * from $TABLE_LICENSES")
     fun getLicenses(): LiveData<List<License>>
 
-    @Query("SELECT * from $TABLE_LICENCIAS WHERE $KEY_ID = :licenseId")
+    @Query("SELECT * from $TABLE_LICENSES WHERE $KEY_ID = :licenseId")
     fun getLicenseById(licenseId: Long): LiveData<License>
 }

@@ -29,7 +29,7 @@ import java.util.Date;
 import javax.inject.Inject;
 
 import al.ahgitdevelopment.municion.R;
-import al.ahgitdevelopment.municion.datamodel.Tirada;
+import al.ahgitdevelopment.municion.datamodel.Competition;
 import al.ahgitdevelopment.municion.sandbox.FragmentMainContent;
 
 import static al.ahgitdevelopment.municion.di.SharedPrefsModule.PREFS_SHOW_ADS;
@@ -79,11 +79,11 @@ public class TiradaFormActivity extends AppCompatActivity {
         //Carga de datos (en caso de modificacion)
         if (getIntent().getExtras() != null) {
             try {
-                Tirada tirada = new Tirada(getIntent().getExtras().getParcelable("modify_tirada"));
-                descripcion.getEditText().setText(tirada.getDescripcion());
-                rango.setSelection(getRangePositionFromString(tirada.getRango()));
-                fecha.getEditText().setText(tirada.getFecha());
-                puntuacion.getEditText().setText(String.valueOf(tirada.getPuntuacion()));
+                Competition competition = new Competition(getIntent().getExtras().getParcelable("modify_tirada"));
+                descripcion.getEditText().setText(competition.getDescription());
+                rango.setSelection(getRangePositionFromString(competition.getRanking()));
+                fecha.getEditText().setText(competition.getDate());
+//                puntuacion.getEditText().setText(String.valueOf(competition.getPuntuacion()));
             } catch (NullPointerException ex) {
                 Log.e(TAG, "Fallo al modificar una tirada en el formulario");
                 firebaseCrashlytics.recordException(ex);
@@ -156,7 +156,7 @@ public class TiradaFormActivity extends AppCompatActivity {
      *
      * @return Objeto Tirada con todos los datos del formulario
      */
-    private Tirada getCurrenteTirada() {
+    private Competition getCurrenteTirada() {
 //        Tirada tirada = new Tirada();
 //        try {
 //            tirada.setDescripcion(descripcion.getEditText().getText().toString());

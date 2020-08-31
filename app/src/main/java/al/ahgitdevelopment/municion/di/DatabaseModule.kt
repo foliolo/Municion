@@ -21,7 +21,7 @@ class DatabaseModule(val context: Context) {
     fun providesRoomDatabase(): AppDatabase = database
 
     @Provides
-    fun providesLicenseDao(): LicenseDao = database.licenciaDao()!!
+    fun providesLicenseDao(): LicenseDao = database.licenseDao()!!
 
     companion object {
         // EXAMPLE, NOT NEEDED YET

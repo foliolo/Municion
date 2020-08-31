@@ -1,4 +1,4 @@
-package al.ahgitdevelopment.municion.ui.licencias
+package al.ahgitdevelopment.municion.ui.licenses
 
 import al.ahgitdevelopment.municion.R
 import al.ahgitdevelopment.municion.SettingsFragment
@@ -41,7 +41,7 @@ class LicensesFragment : Fragment(), RecyclerInterface {
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
 
-    private var licensesAdapter: LicenseAdapter? = null
+    private lateinit var licensesAdapter: LicenseAdapter
 
     private val viewModel: LicensesViewModel by viewModels {
         viewModelFactory
@@ -135,7 +135,7 @@ class LicensesFragment : Fragment(), RecyclerInterface {
     }
 
     override fun RecyclerView?.undoDelete(viewHolder: LicenseAdapter.LicenseViewHolder) {
-        licensesAdapter?.currentList?.get(viewHolder.adapterPosition)?.let { license ->
+        licensesAdapter.currentList.get(viewHolder.adapterPosition)?.let { license ->
             Snackbar.make(
                 licenses_layout,
                 R.string.snackbar_undo_delete_message,

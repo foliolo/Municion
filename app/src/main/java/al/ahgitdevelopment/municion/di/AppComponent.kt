@@ -1,11 +1,11 @@
 package al.ahgitdevelopment.municion.di
 
 import al.ahgitdevelopment.municion.NavigationActivity
-import al.ahgitdevelopment.municion.ui.compras.ComprasFragment
-import al.ahgitdevelopment.municion.ui.guias.GuiasFragment
-import al.ahgitdevelopment.municion.ui.licencias.LicenseFormFragment
-import al.ahgitdevelopment.municion.ui.licencias.LicensesFragment
+import al.ahgitdevelopment.municion.ui.licenses.LicenseFormFragment
+import al.ahgitdevelopment.municion.ui.licenses.LicensesFragment
 import al.ahgitdevelopment.municion.ui.login.LoginPasswordFragment
+import al.ahgitdevelopment.municion.ui.properties.PropertyFragment
+import al.ahgitdevelopment.municion.ui.purchases.PurchasesFragment
 import al.ahgitdevelopment.municion.ui.tiradas.TiradasFragment
 import android.content.Context
 import dagger.Component
@@ -23,8 +23,8 @@ interface AppComponent {
     fun inject(navigationActivity: NavigationActivity)
 
     fun inject(loginPasswordFragment: LoginPasswordFragment)
-    fun inject(guiasFragment: GuiasFragment)
-    fun inject(comprasFragment: ComprasFragment)
+    fun inject(propertyFragment: PropertyFragment)
+    fun inject(purchasesFragment: PurchasesFragment)
     fun inject(licensesFragment: LicensesFragment)
     fun inject(tiradasFragment: TiradasFragment)
 

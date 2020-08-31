@@ -43,8 +43,8 @@ import java.util.Locale;
 import java.util.NoSuchElementException;
 
 import al.ahgitdevelopment.municion.R;
-import al.ahgitdevelopment.municion.datamodel.Guia;
 import al.ahgitdevelopment.municion.datamodel.NotificationData;
+import al.ahgitdevelopment.municion.datamodel.Property;
 
 import static al.ahgitdevelopment.municion.sandbox.FragmentMainContent.fileImagePath;
 
@@ -133,7 +133,7 @@ public final class Utils {
      */
     public static boolean licenseCanBeDeleted(int position) {
         // Si alguna guía tiene el id de la licencia que queremos borrar, no se podra eliminar la licencia
-        for (Guia guia : FragmentMainContent.guias) {
+        for (Property property : FragmentMainContent.properties) {
 //            if (guia.getTipoLicencia() == FragmentMainContent.licencias.get(position).getTipo()) {
 //                return true;
 //            }
@@ -279,12 +279,12 @@ public final class Utils {
      */
     public static int getNumGuias(Context context) {
         ArrayList<String> list = new ArrayList<>();
-        for (Guia guia : FragmentMainContent.guias) {
-            String licenseName = Utils.getStringLicenseFromId(context, (int) guia.getTipoLicencia());
-            if (licenseName.equals("F - Tiro olimpico")) {
-                list.add(guia.getNumGuia());
-            }
-        }
+//        for (Property property : FragmentMainContent.properties) {
+//            String licenseName = Utils.getStringLicenseFromId(context, (int) property.getTipoLicencia());
+//            if (licenseName.equals("F - Tiro olimpico")) {
+//                list.add(property.getNumGuia());
+//            }
+//        }
         return list.size();
     }
 

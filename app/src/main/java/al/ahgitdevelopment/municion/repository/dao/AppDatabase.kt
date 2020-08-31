@@ -1,26 +1,26 @@
 package al.ahgitdevelopment.municion.repository.dao
 
-import al.ahgitdevelopment.municion.datamodel.Compra
-import al.ahgitdevelopment.municion.datamodel.Guia
+import al.ahgitdevelopment.municion.datamodel.Competition
 import al.ahgitdevelopment.municion.datamodel.License
-import al.ahgitdevelopment.municion.datamodel.Tirada
+import al.ahgitdevelopment.municion.datamodel.Property
+import al.ahgitdevelopment.municion.datamodel.Purchase
 import androidx.room.Database
 import androidx.room.RoomDatabase
 
 @Database(
     entities = [
-        Guia::class,
-        Compra::class,
+        Property::class,
+        Purchase::class,
         License::class,
-        Tirada::class
+        Competition::class
     ],
     version = DATABASE_VERSION,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
 
-    abstract fun compraDao(): CompraDao?
-    abstract fun guiaDao(): GuiaDao?
-    abstract fun licenciaDao(): LicenseDao?
-    abstract fun tiradaDao(): TiradaDao?
+    abstract fun purchaseDao(): PurchaseDao?
+    abstract fun propertyDao(): PropertyDao?
+    abstract fun licenseDao(): LicenseDao?
+    abstract fun tiradaDao(): CompetitionDao?
 }
