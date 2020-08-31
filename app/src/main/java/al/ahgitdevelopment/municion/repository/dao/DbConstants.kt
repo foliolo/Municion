@@ -1,62 +1,47 @@
 package al.ahgitdevelopment.municion.repository.dao
 
 // Table Names
-const val TABLE_GUIAS = "guias"
-const val TABLE_COMPRAS = "compras"
-const val TABLE_LICENCIAS = "licencias"
-const val TABLE_TIRADAS = "tiradas"
+const val TABLE_PROPERTIES = "properties"
+const val TABLE_PURCHASES = "purchases"
+const val TABLE_LICENSES = "licencias"
+const val TABLE_COMPETITION = "tiradas"
 
 // Common column names
 const val KEY_ID = "id"
 
-// Table GUIAS  - column names
-const val KEY_GUIA_ID_COMPRA = "id_compra"
-const val KEY_GUIA_ID_LICENCIA = "id_licencia"
-const val KEY_GUIA_APODO = "apodo"
-const val KEY_GUIA_MARCA = "marca"
-const val KEY_GUIA_MODELO = "modelo"
-const val KEY_GUIA_TIPO_ARMA = "tipo_arma"
-const val KEY_GUIA_CALIBRE1 = "calibre1"
-const val KEY_GUIA_CALIBRE2 = "calibre2"
-const val KEY_GUIA_NUM_GUIA = "num_guia"
-const val KEY_GUIA_NUM_ARMA = "num_arma"
-const val KEY_GUIA_IMAGEN = "imagen_uri"
-const val KEY_GUIA_CUPO = "cupo"
-const val KEY_GUIA_GASTADO = "gastado"
+// Table PROPERTY  - column names
+const val KEY_PROPERTY_NICKNAME = "nickname"
+const val KEY_PROPERTY_BRAND = "brand"
+const val KEY_PROPERTY_MODEL = "model"
+const val KEY_PROPERTY_BORE1 = "bore1"
+const val KEY_PROPERTY_BORE2 = "bore2"
+const val KEY_PROPERTY_NUM_ID = "num_id"
+const val KEY_PROPERTY_IMAGE = "image"
 
-// Table COMPRAS  - column names
-const val KEY_COMPRA_ID_POS_GUIA = "idPosGuia"
-const val KEY_COMPRA_CALIBRE1 = "calibre1"
-const val KEY_COMPRA_CALIBRE2 = "calibre2"
-const val KEY_COMPRA_UNIDADES = "unidades"
-const val KEY_COMPRA_PRECIO = "precio"
-const val KEY_COMPRA_FECHA = "fecha"
-const val KEY_COMPRA_TIPO = "tipo"
-const val KEY_COMPRA_PESO = "peso"
-const val KEY_COMPRA_MARCA = "marca"
-const val KEY_COMPRA_TIENDA = "tienda"
-const val KEY_COMPRA_IMAGEN = "imagen_uri"
-const val KEY_COMPRA_VALORACION = "valoracion"
+// Table PURCHASE  - column names
+const val KEY_PURCHASE_BORE1 = "bore1"
+const val KEY_PURCHASE_BORE2 = "bore2"
+const val KEY_PURCHASE_UNITS = "units"
+const val KEY_PURCHASE_PRICE = "price"
+const val KEY_PURCHASE_DATE = "date"
+const val KEY_PURCHASE_WEIGHT = "weight"
+const val KEY_PURCHASE_BRAND = "brand"
+const val KEY_PURCHASE_STORE = "store"
+const val KEY_PURCHASE_RATING = "rating"
+const val KEY_PURCHASE_IMAGE = "image"
 
-// Table LICENCIAS  - column names
-const val KEY_LICENCIAS_TIPO = "tipo"
-const val KEY_LICENCIAS_NOMBRE = "nombre"
-const val KEY_LICENCIAS_TIPO_PERMISO_CONDUCCION = "tipo_permiso_conduccion"
-const val KEY_LICENCIAS_EDAD = "edad"
-const val KEY_LICENCIAS_FECHA_EXPEDICION = "fecha_expedicion"
-const val KEY_LICENCIAS_FECHA_CADUCIDAD = "fecha_caducidad"
-const val KEY_LICENCIAS_NUM_LICENCIA = "num_licencia"
-const val KEY_LICENCIAS_NUM_ABONADO = "num_abonado"
-const val KEY_LICENCIAS_NUM_SEGURO = "num_seguro"
-const val KEY_LICENCIAS_AUTONOMIA = "autonomia"
-const val KEY_LICENCIAS_ESCALA = "escala"
-const val KEY_LICENCIAS_CATEGORIA = "categoria"
+// Table LICENSE  - column names
+const val KEY_LICENSE_NAME = "name"
+const val KEY_LICENSE_DATE_ISSUE = "date_issue"
+const val KEY_LICENSE_DATE_EXPIRY = "date_expiry"
+const val KEY_LICENSE_NUMBER = "number"
+const val KEY_LICENSE_INSURANCE_NUMBER = "insurance_number"
 
 // Table TIRADAS  - column names
-const val KEY_TIRADAS_DESCRIPCION = "descripcion"
-const val KEY_TIRADAS_RANGO = "rango"
-const val KEY_TIRADAS_FECHA = "fecha"
-const val KEY_TIRADAS_PUNTUACION = "puntuacion"
+const val KEY_COMPETITION_DESCRIPTION = "description"
+const val KEY_COMPETITION_RANKING = "ranking"
+const val KEY_COMPETITION_DATE = "date"
+const val KEY_COMPETITION_POINTS = "points"
 
 // Database Version
 const val DATABASE_VERSION = 1

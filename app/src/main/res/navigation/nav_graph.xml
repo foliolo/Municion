@@ -14,19 +14,19 @@
 
     <fragment
         android:id="@+id/guiasFragment"
-        android:name="al.ahgitdevelopment.municion.ui.guias.GuiasFragment"
+        android:name="al.ahgitdevelopment.municion.ui.properties.PropertyFragment"
         android:label="guias_fragment"
-        tools:layout="@layout/guias_fragment" />
+        tools:layout="@layout/properties_fragment" />
 
     <fragment
         android:id="@+id/comprasFragment"
-        android:name="al.ahgitdevelopment.municion.ui.compras.ComprasFragment"
+        android:name="al.ahgitdevelopment.municion.ui.purchases.PurchasesFragment"
         android:label="compras_fragment"
-        tools:layout="@layout/compras_fragment" />
+        tools:layout="@layout/purchases_fragment" />
 
     <fragment
         android:id="@+id/licenciasFragment"
-        android:name="al.ahgitdevelopment.municion.ui.licencias.LicensesFragment"
+        android:name="al.ahgitdevelopment.municion.ui.licenses.LicensesFragment"
         android:label="licencias_fragment"
         tools:layout="@layout/licenses_fragment">
         <action
@@ -42,7 +42,7 @@
 
     <fragment
         android:id="@+id/licenciaFormFragment"
-        android:name="al.ahgitdevelopment.municion.ui.licencias.LicenseFormFragment"
+        android:name="al.ahgitdevelopment.municion.ui.licenses.LicenseFormFragment"
         android:label="LicenciaFormFragment"
         tools:layout="@layout/fragment_form_license" />
 

@@ -1,4 +1,4 @@
-package al.ahgitdevelopment.municion.ui.licencias
+package al.ahgitdevelopment.municion.ui.licenses
 
 import al.ahgitdevelopment.municion.SingleLiveEvent
 import al.ahgitdevelopment.municion.datamodel.License

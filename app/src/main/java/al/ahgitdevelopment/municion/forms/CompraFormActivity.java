@@ -34,8 +34,8 @@ import java.util.Calendar;
 import java.util.Date;
 
 import al.ahgitdevelopment.municion.R;
-import al.ahgitdevelopment.municion.datamodel.Compra;
-import al.ahgitdevelopment.municion.datamodel.Guia;
+import al.ahgitdevelopment.municion.datamodel.Property;
+import al.ahgitdevelopment.municion.datamodel.Purchase;
 import al.ahgitdevelopment.municion.sandbox.FragmentMainContent;
 import al.ahgitdevelopment.municion.sandbox.Utils;
 
@@ -104,30 +104,29 @@ public class CompraFormActivity extends AppCompatActivity {
             //Carga de datos (en caso de modificacion)
             if (getIntent().getExtras().get("position_guia") == null) {
                 try {
-                    Compra compra = getIntent().getExtras().getParcelable("modify_compra");
+                    Purchase purchase = getIntent().getExtras().getParcelable("modify_compra");
                     // Para la fecha de compra
-                    layoutCalibre1.getEditText().setText(compra.getCalibre1());
-                    if (compra.getCalibre2() != null && !"null".equals(compra.getCalibre2())) {
-                        if (!"".equals(compra.getCalibre2())) {
+                    layoutCalibre1.getEditText().setText(purchase.getBore1());
+                    if (purchase.getBore2() != null && !"null".equals(purchase.getBore2())) {
+                        if (!"".equals(purchase.getBore2())) {
                             checkSegundoCalibre.setChecked(true);
                             layoutCalibre2.setVisibility(View.VISIBLE);
-                            layoutCalibre2.getEditText().setText(compra.getCalibre2());
+                            layoutCalibre2.getEditText().setText(purchase.getBore2());
                         } else {
                             checkSegundoCalibre.setChecked(false);
                             layoutCalibre2.setVisibility(View.GONE);
                             layoutCalibre2.getEditText().setText("");
                         }
                     }
-                    layoutUnidades.getEditText().setText(String.valueOf(compra.getUnidades()));
-                    layoutPrecio.getEditText().setText(compra.getPrecio() + "€");
-                    layoutFecha.getEditText().setText(compra.getFecha());
-                    layoutTipoMunicion.getEditText().setText(compra.getTipo());
-                    layoutPesoMunicion.getEditText().setText(String.valueOf(compra.getPeso()));
-                    layoutMarcaMunicion.getEditText().setText(compra.getMarca());
-                    layoutTienda.getEditText().setText(compra.getTienda());
-                    valoracion.setRating(compra.getValoracion());
+                    layoutUnidades.getEditText().setText(String.valueOf(purchase.getUnits()));
+                    layoutPrecio.getEditText().setText(purchase.getPrice() + "€");
+                    layoutFecha.getEditText().setText(purchase.getDate());
+                    layoutPesoMunicion.getEditText().setText(String.valueOf(purchase.getWeight()));
+                    layoutMarcaMunicion.getEditText().setText(purchase.getBrand());
+                    layoutTienda.getEditText().setText(purchase.getStore());
+                    valoracion.setRating(purchase.getRating());
 //                imagen.setImageBitmap(BitmapFactory.decodeFile(compra.getImagePath()));
-                    imagePath = compra.getImagePath();
+                    imagePath = purchase.getImage();
                 } catch (NullPointerException e) {
                     e.printStackTrace();
                 }
@@ -136,12 +135,12 @@ public class CompraFormActivity extends AppCompatActivity {
             else {
                 posicionGuia = getIntent().getExtras().getInt("position_guia", -1);
                 if (posicionGuia != -1) {
-                    Guia guia = getIntent().getExtras().getParcelable("guia");
-                    layoutCalibre1.getEditText().setText(guia.getCalibre1());
-                    if (guia.getCalibre2() != null && !guia.getCalibre2().equals("") && !"null".equals(guia.getCalibre2())) {
+                    Property property = getIntent().getExtras().getParcelable("guia");
+                    layoutCalibre1.getEditText().setText(property.getBore1());
+                    if (property.getBore2() != null && !property.getBore2().equals("") && !"null".equals(property.getBore2())) {
                         checkSegundoCalibre.setChecked(true);
                         layoutCalibre2.setVisibility(View.VISIBLE);
-                        layoutCalibre2.getEditText().setText(guia.getCalibre2());
+                        layoutCalibre2.getEditText().setText(property.getBore2());
                     } else {
                         checkSegundoCalibre.setChecked(false);
                         layoutCalibre2.setVisibility(View.GONE);
@@ -326,7 +325,6 @@ public class CompraFormActivity extends AppCompatActivity {
         if (getIntent().getExtras().get("position_guia") == null) {
             int pos = getIntent().getExtras().getInt("position", -1);
             bundle.putInt("position", pos);
-            bundle.putInt("idPosGuia", FragmentMainContent.compras.get(pos).getIdPosGuia());
         } else { // Nuevo elemento
             bundle.putInt("idPosGuia", getIntent().getExtras().getInt("position_guia"));
         }

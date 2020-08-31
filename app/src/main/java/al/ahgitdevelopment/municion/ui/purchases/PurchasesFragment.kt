@@ -1,7 +1,7 @@
-package al.ahgitdevelopment.municion.ui.compras
+package al.ahgitdevelopment.municion.ui.purchases
 
 import al.ahgitdevelopment.municion.R
-import al.ahgitdevelopment.municion.databinding.ComprasFragmentBinding
+import al.ahgitdevelopment.municion.databinding.PurchasesFragmentBinding
 import al.ahgitdevelopment.municion.di.AppComponent
 import android.content.Context
 import android.os.Bundle
@@ -14,12 +14,14 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import javax.inject.Inject
 
-class ComprasFragment : Fragment() {
+class PurchasesFragment : Fragment() {
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
 
-    private val viewModel: ComprasViewModel by viewModels {
+    // private lateinit var purchasesAdapter: PurchasesAdapter
+
+    private val viewModel: PurchasesViewModel by viewModels {
         viewModelFactory
     }
 
@@ -31,8 +33,8 @@ class ComprasFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
 
-        val binding: ComprasFragmentBinding =
-                DataBindingUtil.inflate(inflater, R.layout.compras_fragment, container, false)
+        val binding: PurchasesFragmentBinding =
+            DataBindingUtil.inflate(inflater, R.layout.purchases_fragment, container, false)
         binding.viewModel = this.viewModel
         binding.lifecycleOwner = viewLifecycleOwner
 

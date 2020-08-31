@@ -2,13 +2,10 @@ package al.ahgitdevelopment.municion.sandbox
 
 import al.ahgitdevelopment.municion.R
 import al.ahgitdevelopment.municion.SettingsFragment
-import al.ahgitdevelopment.municion.adapters.CompraArrayAdapter
-import al.ahgitdevelopment.municion.adapters.GuiaArrayAdapter
-import al.ahgitdevelopment.municion.adapters.TiradaArrayAdapter
-import al.ahgitdevelopment.municion.datamodel.Compra
-import al.ahgitdevelopment.municion.datamodel.Guia
+import al.ahgitdevelopment.municion.datamodel.Competition
 import al.ahgitdevelopment.municion.datamodel.License
-import al.ahgitdevelopment.municion.datamodel.Tirada
+import al.ahgitdevelopment.municion.datamodel.Property
+import al.ahgitdevelopment.municion.datamodel.Purchase
 import al.ahgitdevelopment.municion.di.SharedPrefsModule.Companion.PREFS_SHOW_ADS
 import al.ahgitdevelopment.municion.repository.Repository
 import android.Manifest
@@ -91,7 +88,6 @@ class FragmentMainContent : Fragment() {
 
     private var userRef: DatabaseReference? = null
     private val mStorage = FirebaseStorage.getInstance()
-
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -273,11 +269,11 @@ class FragmentMainContent : Fragment() {
      */
     private fun loadLists() {
         // Obtenemos las estructuras de datos
-        if (guias == null) {
+        if (properties == null) {
 //            guias = activity?.intent?.getParcelableArrayListExtra("guias")
 //            guias = repository.getGuias()
         }
-        if (compras == null) {
+        if (purchases == null) {
 //            compras = activity?.intent?.getParcelableArrayListExtra("compras")
 //            compras = repository.getCompras()
         }
@@ -285,7 +281,7 @@ class FragmentMainContent : Fragment() {
 //            licencias = activity?.intent?.getParcelableArrayListExtra("licencias")
 //            licencias = repository.getLicencias()
         }
-        if (tiradas == null) {
+        if (competitions == null) {
 //            tiradas = activity?.intent?.getParcelableArrayListExtra("tiradas")
 //            tiradas = repository.getTiradas()
         }
@@ -294,11 +290,11 @@ class FragmentMainContent : Fragment() {
     private fun showTextEmptyList() {
         textEmptyList!!.visibility = View.GONE
         when (mViewPager.currentItem) {
-            0 -> if (guias.size == 0) {
+            0 -> if (properties.size == 0) {
                 textEmptyList!!.visibility = View.VISIBLE
                 textEmptyList!!.setText(R.string.guia_empty_list)
             } else textEmptyList!!.visibility = View.GONE
-            1 -> if (compras.size == 0) {
+            1 -> if (purchases.size == 0) {
                 textEmptyList!!.visibility = View.VISIBLE
                 textEmptyList!!.setText(R.string.compra_empty_list)
             } else textEmptyList!!.visibility = View.GONE
@@ -306,7 +302,7 @@ class FragmentMainContent : Fragment() {
                 textEmptyList!!.visibility = View.VISIBLE
                 textEmptyList!!.setText(R.string.licencia_empty_list)
             } else textEmptyList!!.visibility = View.GONE
-            3 -> if (tiradas.size == 0) {
+            3 -> if (competitions.size == 0) {
                 textEmptyList!!.visibility = View.VISIBLE
                 textEmptyList!!.setText(R.string.tiradas_empty_list)
             } else textEmptyList!!.visibility = View.GONE
@@ -346,20 +342,18 @@ class FragmentMainContent : Fragment() {
 
     private fun deleteSelectedItems(position: Int) {
         when (mViewPager.currentItem) {
-            0 -> if (guias != null && guias.size > 0) {
-                guias.removeAt(position)
-                guiaArrayAdapter!!.notifyDataSetChanged()
+            0 -> if (properties != null && properties.size > 0) {
+                properties.removeAt(position)
+                // guiaArrayAdapter!!.notifyDataSetChanged()
             }
             1 -> try {
                 //Actualizar cupo de la guia correspondiente
-                val guia = guias[compras[position].idPosGuia]
-                val unidadesComprada = compras[position].unidades
-                guia.gastado = guia.gastado - unidadesComprada
+                val unidadesComprada = purchases[position].units
 
                 //Borrado de la compra
-                compras.removeAt(position)
-                compraArrayAdapter!!.notifyDataSetChanged()
-                guiaArrayAdapter!!.notifyDataSetChanged()
+                purchases.removeAt(position)
+                // compraArrayAdapter!!.notifyDataSetChanged()
+                // guiaArrayAdapter!!.notifyDataSetChanged()
             } catch (ex: IndexOutOfBoundsException) {
                 Log.e(activity?.packageName, "Fallo con los index al borrar una compra", ex)
             }
@@ -386,15 +380,15 @@ class FragmentMainContent : Fragment() {
                     licenses.removeAt(position)
                     // licenciaArrayAdapter!!.notifyDataSetChanged()
                 }
-                if (tiradas != null && tiradas.size > 0) {
-                    tiradas.removeAt(position)
-                    tiradaArrayAdapter!!.notifyDataSetChanged()
+                if (competitions != null && competitions.size > 0) {
+                    competitions.removeAt(position)
+                    // tiradaArrayAdapter!!.notifyDataSetChanged()
                     PlaceholderFragment.updateInfoTirada()
                 }
             }
-            3 -> if (tiradas != null && tiradas.size > 0) {
-                tiradas.removeAt(position)
-                tiradaArrayAdapter!!.notifyDataSetChanged()
+            3 -> if (competitions != null && competitions.size > 0) {
+                competitions.removeAt(position)
+                // tiradaArrayAdapter!!.notifyDataSetChanged()
                 PlaceholderFragment.updateInfoTirada()
             }
         }
@@ -689,10 +683,10 @@ class FragmentMainContent : Fragment() {
             //Borrado de la base de datos actual;
             if (userRef != null) {
                 userRef!!.child("db").removeValue { databaseError, databaseReference ->
-                    userRef!!.child("db").child("guias").setValue(guias)
-                    userRef!!.child("db").child("compras").setValue(compras)
+                    userRef!!.child("db").child("guias").setValue(properties)
+                    userRef!!.child("db").child("compras").setValue(purchases)
                     userRef!!.child("db").child("licencias").setValue(licenses)
-                    userRef!!.child("db").child("tiradas").setValue(tiradas)
+                    userRef!!.child("db").child("tiradas").setValue(competitions)
                     Log.i(TAG, "Guardado de listas en Firebase")
                 }
             } else {
@@ -708,14 +702,9 @@ class FragmentMainContent : Fragment() {
      * Recalculamos el gasto de municion de todas las guias, recorriendo las compras
      */
     private fun updateGastoMunicion() {
-        //Reseteo de los gastos de todas las guias
-        for (guia: Guia in guias) {
-            guia.gastado = 0
-        }
 
         // Recalculamos todos los gastos
-        for (comp: Compra in compras) {
-            val guia: Guia = guias[comp.idPosGuia]
+        for (comp: Purchase in purchases) {
             val currentYear: Int =
                 activity?.getSharedPreferences("Preferences", Context.MODE_PRIVATE)
                     ?.getInt("year", 0)!!
@@ -724,22 +713,15 @@ class FragmentMainContent : Fragment() {
                     //Sumaamos solo las compras del año en el que estamos
                     val fechaCompra = Calendar.getInstance()
                     fechaCompra.time = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-                        .parse(comp.fecha)
-                    if (currentYear == fechaCompra[Calendar.YEAR]) {
-                        guia.gastado = guia.gastado + comp.unidades
-                    }
+                        .parse(comp.date)
                 }
             } catch (e: ParseException) {
                 e.printStackTrace()
             }
         }
-        if (guiaArrayAdapter == null) guiaArrayAdapter =
-            GuiaArrayAdapter(
-                requireContext(),
-                R.layout.guia_item,
-                guias
-            )
-        guiaArrayAdapter!!.notifyDataSetChanged()
+        // if (guiaArrayAdapter == null)
+        //     guiaArrayAdapter = GuiaArrayAdapter(requireContext(), R.layout.guia_item, guias)
+        // guiaArrayAdapter!!.notifyDataSetChanged()
     }
 
     private fun updateImage(LocalImageBitmap: Bitmap?, FirebaseImageBitmap: Bitmap?) {
@@ -758,16 +740,12 @@ class FragmentMainContent : Fragment() {
             }
             when (mViewPager.currentItem) {
                 0 -> {
-                    guias[imagePosition].imagePath =
-                        fileImagePath
-                    guiaArrayAdapter!!.notifyDataSetChanged()
+                    properties[imagePosition].image = fileImagePath
+                    // guiaArrayAdapter!!.notifyDataSetChanged()
                 }
                 1 -> {
-                    compras.get(
-                        imagePosition
-                    ).imagePath =
-                        fileImagePath
-                    compraArrayAdapter!!.notifyDataSetChanged()
+                    purchases[imagePosition].image = fileImagePath
+                    // compraArrayAdapter!!.notifyDataSetChanged()
                 }
             }
         } else Log.e(TAG, "Imagen Null. No se han guardado las imagenes")
@@ -828,7 +806,6 @@ class FragmentMainContent : Fragment() {
 //        }
     }
 
-
     /**
      * A placeholder fragment containing a simple view.
      */
@@ -866,24 +843,13 @@ class FragmentMainContent : Fragment() {
                 )) {
                     0 -> {
                         (tiradaCountDown as View).visibility = View.GONE
-                        guiaArrayAdapter = GuiaArrayAdapter(
-                            activity,
-                            R.layout.guia_item,
-                            guias
-                        )
-                        (listView as ListView).adapter =
-                            guiaArrayAdapter
+                        // guiaArrayAdapter = GuiaArrayAdapter(activity, R.layout.guia_item, guias)
+                        // (listView as ListView).adapter = guiaArrayAdapter
                     }
                     1 -> {
                         (tiradaCountDown as View).visibility = View.GONE
-                        compraArrayAdapter =
-                            CompraArrayAdapter(
-                                activity,
-                                R.layout.compra_item,
-                                compras
-                            )
-                        (listView as ListView).adapter =
-                            compraArrayAdapter
+                        // compraArrayAdapter = CompraArrayAdapter(activity, R.layout.compra_item, compras)
+                        // (listView as ListView).adapter = compraArrayAdapter
                     }
                     2 -> try {
                         (tiradaCountDown as View).visibility = View.GONE
@@ -900,18 +866,13 @@ class FragmentMainContent : Fragment() {
                         firebaseCrashlytics.recordException(ex)
                     }
                     3 -> try {
-                        if (tiradas.size > 0) {
+                        if (competitions.size > 0) {
                             (tiradaCountDown as View).visibility = View.VISIBLE
                         } else {
                             (tiradaCountDown as View).visibility = View.GONE
                         }
-                        tiradaArrayAdapter =
-                            TiradaArrayAdapter(
-                                activity, R.layout.tirada_item,
-                                tiradas
-                            )
-                        (listView as ListView).adapter =
-                            tiradaArrayAdapter
+                        // tiradaArrayAdapter = TiradaArrayAdapter(activity, R.layout.tirada_item, tiradas)
+                        // (listView as ListView).adapter = tiradaArrayAdapter
                         updateInfoTirada()
                     } catch (ex: Exception) {
                         Log.e(
@@ -994,7 +955,7 @@ class FragmentMainContent : Fragment() {
             fun updateInfoTirada() {
                 try {
                     // Ordenamos el array de tiradas por fecha descendente (la mas actual arriba)
-                    tiradas.sortWith(Comparator { date1, date2 ->
+                    competitions.sortWith(Comparator { date1, date2 ->
                         // Utils.getDateFromString(date2.fecha)
                         //     .compareTo(
                         //         Utils.getDateFromString(
@@ -1003,12 +964,12 @@ class FragmentMainContent : Fragment() {
                         //     )
                         1
                     })
-                    if (tiradas.size > 0 && tiradaCountDown != null) {
+                    if (competitions.size > 0 && tiradaCountDown != null) {
                         tiradaCountDown!!.visibility = View.VISIBLE
                     } else {
                         if (tiradaCountDown != null) tiradaCountDown!!.visibility = View.GONE
                     }
-                    if (tiradas.size > 0) updateCaducidadLicenciaTirada()
+                    if (competitions.size > 0) updateCaducidadLicenciaTirada()
                 } catch (ex: IndexOutOfBoundsException) {
                     Log.e(TAG, "Error calculando la caducidad de la tirada", ex)
 //                  FirebaseCrash.logcat(Log.ERROR, TAG, "Error calculando la caducidad de la tirada");
@@ -1138,8 +1099,8 @@ class FragmentMainContent : Fragment() {
         private val guiaName: Array<CharSequence>
             get() {
                 val list = ArrayList<String>()
-                for (guia: Guia in guias) {
-                    list.add(guia.apodo)
+                for (property: Property in properties) {
+                    list.add(property.nickname)
                 }
                 return list.toTypedArray()
             }
@@ -1195,19 +1156,18 @@ class FragmentMainContent : Fragment() {
         @JvmField
         var imagePosition = 0
 
-        lateinit var guias: ArrayList<Guia>
-        lateinit var compras: ArrayList<Compra>
+        lateinit var properties: ArrayList<Property>
+        lateinit var purchases: ArrayList<Purchase>
         lateinit var licenses: ArrayList<License>
-        lateinit var tiradas: ArrayList<Tirada>
+        lateinit var competitions: ArrayList<Competition>
 
         /**
          * Constante de la referencia push() del usuario en funcion del correo del dispositivo
          */
-        private var guiaArrayAdapter: GuiaArrayAdapter? = null
-        private var compraArrayAdapter: CompraArrayAdapter? = null
-
+        // private var guiaArrayAdapter: GuiaArrayAdapter? = null
+        // private var compraArrayAdapter: CompraArrayAdapter? = null
         // private var licenciaArrayAdapter: LicenciaArrayAdapter? = null
-        private var tiradaArrayAdapter: TiradaArrayAdapter? = null
+        // private var tiradaArrayAdapter: TiradaArrayAdapter? = null
         private var listView: ListView? = null
         private var dbSqlHelper: DataBaseSQLiteHelper? = null
         private var tiradaCountDown: TextView? = null
