@@ -30,7 +30,7 @@ class PropertiesFragment : Fragment(), RecyclerInterface {
 
     private lateinit var propertiesAdapter: PropertyAdapter
 
-    private val viewModel: PropertyViewModel by viewModels {
+    private val viewModel: PropertiesViewModel by viewModels {
         viewModelFactory
     }
 

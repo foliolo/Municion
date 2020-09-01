@@ -6,13 +6,9 @@
         android:name="android.hardware.camera"
         android:required="true" />
 
-    <uses-permission android:name="com.android.vending.BILLING" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.VIBRATE" />
-    <uses-permission android:name="android.permission.WAKE_LOCK" />
-    <uses-permission android:name="android.permission.READ_CALENDAR" />
-    <uses-permission android:name="android.permission.WRITE_CALENDAR" />
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
 
     <application
@@ -38,43 +34,26 @@
         </activity>
 
         <activity
-            android:name=".forms.CompraFormActivity"
-            android:label="@string/title_nueva_compra"
-            android:windowSoftInputMode="stateHidden" />
-        <activity
-            android:name=".forms.TiradaFormActivity"
-            android:label="@string/title_nueva_tirada"
-            android:windowSoftInputMode="stateHidden" />
-        <activity
             android:name=".SettingsFragment"
             android:label="@string/title_activity_settings"
-            android:theme="@style/Theme.AppCompat.Light.DarkActionBar" />
-
-        <!--        <receiver-->
-        <!--            android:name=".NotificationPublisher"-->
-        <!--            android:label="BroadcastReceiverAux"-->
-        <!--            >-->
-        <!--            <intent-filter>-->
-        <!--                <action android:name="ALARM" />-->
-
-        <!--                <category android:name="android.intent.category.DEFAULT" />-->
-        <!--            </intent-filter>-->
-        <!--        </receiver>-->
+            android:theme="@style/Theme.AppCompat.Light.DarkActionBar"
+            />
 
         <activity
             android:name=".sandbox.FragmentTutorialActivity"
             android:screenOrientation="fullSensor"
-            android:theme="@style/AppTheme" />
+            android:theme="@style/AppTheme"
+            />
 
-        <provider
-            android:name="androidx.core.content.FileProvider"
-            android:authorities="al.ahgitdevelopment.municion.fileprovider"
-            android:exported="false"
-            android:grantUriPermissions="true">
-            <meta-data
-                android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/file_paths" />
-        </provider>
+        <!--        <provider-->
+        <!--            android:name="androidx.core.content.FileProvider"-->
+        <!--            android:authorities="al.ahgitdevelopment.municion.fileprovider"-->
+        <!--            android:exported="false"-->
+        <!--            android:grantUriPermissions="true">-->
+        <!--            <meta-data-->
+        <!--                android:name="android.support.FILE_PROVIDER_PATHS"-->
+        <!--                android:resource="@xml/file_paths" />-->
+        <!--        </provider>-->
 
     </application>
 

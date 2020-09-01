@@ -14,12 +14,13 @@
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/purchases_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         >
 
-        <ListView
-            android:id="@+id/compras_list_view"
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/purchases_recycler_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:paddingLeft="@dimen/activity_horizontal_margin"
@@ -33,17 +34,16 @@
             />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/compras_fab"
+            android:id="@+id/purchases_fab_add"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
             android:layout_marginBottom="16dp"
             android:backgroundTint="@color/colorAccent"
-            android:clickable="true"
-            android:focusable="true"
+            android:onClick="@{viewModel::fabClick}"
+            android:src="@drawable/ic_cross"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:srcCompat="@drawable/ic_cross"
             app:tint="@color/white"
             />
 

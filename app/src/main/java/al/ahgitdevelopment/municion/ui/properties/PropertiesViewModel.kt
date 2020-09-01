@@ -13,7 +13,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @Suppress("UNUSED_PARAMETER")
-class PropertyViewModel @Inject constructor(
+class PropertiesViewModel @Inject constructor(
     private val repository: Repository,
     firebaseAnalytics: FirebaseAnalytics,
     firebaseCrashlytics: FirebaseCrashlytics

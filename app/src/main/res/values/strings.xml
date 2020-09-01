@@ -180,4 +180,8 @@
     <string name="menu_sign_out" translatable="false">Sign out</string>
     <string name="snackbar_undo_delete_message">Deshacer la eliminación</string>
     <string name="snackbar_undo_delete">Deshacer</string>
+    <string name="purchase_lbl_brand">Marca</string>
+    <string name="purchase_lbl_bore">Calibre</string>
+    <string name="purchase_lbl_price">Precio</string>
+    <string name="purchase_lbl_date">Fecha de compra</string>
 </resources>

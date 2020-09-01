@@ -2,7 +2,6 @@ package al.ahgitdevelopment.municion.datamodel
 
 import al.ahgitdevelopment.municion.repository.dao.KEY_ID
 import al.ahgitdevelopment.municion.repository.dao.KEY_PURCHASE_BORE1
-import al.ahgitdevelopment.municion.repository.dao.KEY_PURCHASE_BORE2
 import al.ahgitdevelopment.municion.repository.dao.KEY_PURCHASE_BRAND
 import al.ahgitdevelopment.municion.repository.dao.KEY_PURCHASE_DATE
 import al.ahgitdevelopment.municion.repository.dao.KEY_PURCHASE_IMAGE
@@ -28,9 +27,11 @@ open class Purchase(
         @NonNull
         @ColumnInfo(name = KEY_ID) var id: Long,
 
-        @ColumnInfo(name = KEY_PURCHASE_BORE1) var bore1: String,
+        @ColumnInfo(name = KEY_PURCHASE_BRAND) var brand: String,
 
-        @ColumnInfo(name = KEY_PURCHASE_BORE2) var bore2: String,
+        @ColumnInfo(name = KEY_PURCHASE_STORE) var store: String,
+
+        @ColumnInfo(name = KEY_PURCHASE_BORE1) var bore: String,
 
         @ColumnInfo(name = KEY_PURCHASE_UNITS) var units: Int,
 
@@ -38,13 +39,10 @@ open class Purchase(
 
         @ColumnInfo(name = KEY_PURCHASE_DATE) var date: String,
 
-        @ColumnInfo(name = KEY_PURCHASE_WEIGHT) var weight: Int,
-
-        @ColumnInfo(name = KEY_PURCHASE_BRAND) var brand: String,
-
-        @ColumnInfo(name = KEY_PURCHASE_STORE) var store: String,
-
         @ColumnInfo(name = KEY_PURCHASE_RATING) var rating: Float,
 
+        @ColumnInfo(name = KEY_PURCHASE_WEIGHT) var weight: Int,
+
         @ColumnInfo(name = KEY_PURCHASE_IMAGE) var image: String
+
 ) : Serializable
