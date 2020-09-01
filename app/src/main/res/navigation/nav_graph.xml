@@ -13,37 +13,46 @@
     </fragment>
 
     <fragment
-        android:id="@+id/guiasFragment"
-        android:name="al.ahgitdevelopment.municion.ui.properties.PropertyFragment"
-        android:label="guias_fragment"
-        tools:layout="@layout/properties_fragment" />
-
-    <fragment
-        android:id="@+id/comprasFragment"
-        android:name="al.ahgitdevelopment.municion.ui.purchases.PurchasesFragment"
-        android:label="compras_fragment"
-        tools:layout="@layout/purchases_fragment" />
-
-    <fragment
-        android:id="@+id/licenciasFragment"
-        android:name="al.ahgitdevelopment.municion.ui.licenses.LicensesFragment"
-        android:label="licencias_fragment"
-        tools:layout="@layout/licenses_fragment">
+        android:id="@+id/propertiesFragment"
+        android:name="al.ahgitdevelopment.municion.ui.properties.PropertiesFragment"
+        android:label="properties_fragment"
+        tools:layout="@layout/properties_fragment">
         <action
-            android:id="@+id/action_licenciasFragment_to_licenciaFormFragment"
-            app:destination="@id/licenciaFormFragment" />
+            android:id="@+id/action_propertiesFragment_to_propertyFormFragment"
+            app:destination="@id/propertyFormFragment" />
     </fragment>
 
     <fragment
-        android:id="@+id/tiradasFragment"
-        android:name="al.ahgitdevelopment.municion.ui.tiradas.TiradasFragment"
-        android:label="tiradas_fragment"
-        tools:layout="@layout/tiradas_fragment" />
+        android:id="@+id/purchasesFragment"
+        android:name="al.ahgitdevelopment.municion.ui.purchases.PurchasesFragment"
+        android:label="purchases_fragment"
+        tools:layout="@layout/purchases_fragment" />
 
     <fragment
-        android:id="@+id/licenciaFormFragment"
+        android:id="@+id/licensesFragment"
+        android:name="al.ahgitdevelopment.municion.ui.licenses.LicensesFragment"
+        android:label="licenses_fragment"
+        tools:layout="@layout/licenses_fragment">
+        <action
+            android:id="@+id/action_licensesFragment_to_licenseFormFragment"
+            app:destination="@id/licenseFormFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/competitionsFragment"
+        android:name="al.ahgitdevelopment.municion.ui.competitions.CompetitionFragment"
+        android:label="competitions_fragment"
+        tools:layout="@layout/competitions_fragment" />
+
+    <fragment
+        android:id="@+id/licenseFormFragment"
         android:name="al.ahgitdevelopment.municion.ui.licenses.LicenseFormFragment"
-        android:label="LicenciaFormFragment"
+        android:label="LicenseFormFragment"
         tools:layout="@layout/fragment_form_license" />
+    <fragment
+        android:id="@+id/propertyFormFragment"
+        android:name="al.ahgitdevelopment.municion.ui.properties.PropertyFormFragment"
+        android:label="fragment_form_property"
+        tools:layout="@layout/fragment_form_property" />
 
 </navigation>

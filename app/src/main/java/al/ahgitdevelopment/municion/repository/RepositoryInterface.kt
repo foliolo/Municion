@@ -10,17 +10,17 @@ interface RepositoryInterface {
     suspend fun getProperties(): LiveData<List<Property>>?
     suspend fun getPurchases(): LiveData<List<Purchase>>?
     suspend fun getLicenses(): LiveData<List<License>>?
-    suspend fun getTiradas(): LiveData<List<Competition>>?
+    suspend fun getCompetition(): LiveData<List<Competition>>?
 
-    fun saveProperty(property: Property)
-    fun savePurchase(purchase: Purchase)
+    suspend fun saveProperty(property: Property)
+    suspend fun savePurchase(purchase: Purchase)
     suspend fun saveLicense(license: License)
-    fun saveTiradas(competition: Competition)
+    suspend fun saveCompetition(competition: Competition)
 
-    suspend fun removeProperties(id: Long)
+    suspend fun removeProperty(id: Long)
     suspend fun removePurchase(id: Long)
     suspend fun removeLicense(id: Long)
-    suspend fun removeTirada(id: Long)
+    suspend fun removeCompetition(id: Long)
 
     fun fetchDataFromFirebase()
     fun uploadDataToFirebase()

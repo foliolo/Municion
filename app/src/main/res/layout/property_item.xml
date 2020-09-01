@@ -6,12 +6,12 @@
     >
 
     <ImageView
-        android:id="@+id/item_license_delete_icon"
+        android:id="@+id/item_property_delete_icon"
         android:layout_width="32dp"
         android:layout_height="32dp"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/item_license_cardView"
+        app:layout_constraintEnd_toStartOf="@+id/item_property_cardView"
         app:layout_constraintHorizontal_chainStyle="packed"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -19,7 +19,7 @@
         />
 
     <androidx.cardview.widget.CardView
-        android:id="@+id/item_license_cardView"
+        android:id="@+id/item_property_cardView"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_margin="8dp"
@@ -27,37 +27,51 @@
         app:cardCornerRadius="4dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/item_license_delete_icon"
+        app:layout_constraintStart_toEndOf="@+id/item_property_delete_icon"
         app:layout_constraintTop_toTopOf="parent"
         >
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             >
 
+            <ImageView
+                android:id="@+id/item_property_image"
+                android:layout_width="110dp"
+                android:layout_height="110dp"
+                android:layout_gravity="center"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:scaleType="centerCrop"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/item_property_lbl_nickname"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                />
+
             <TextView
-                android:id="@+id/item_license_lbl_name"
+                android:id="@+id/item_property_lbl_nickname"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
-                android:layout_marginTop="4dp"
                 android:layout_marginEnd="8dp"
                 android:gravity="end"
-                android:text="@string/license_lbl_name"
+                android:text="@string/property_lbl_nickname"
                 android:textAppearance="?android:attr/textAppearanceSmall"
-                android:textStyle="bold"
-                app:layout_constraintBottom_toTopOf="@+id/item_license_lbl_number"
-                app:layout_constraintEnd_toStartOf="@+id/item_license_name"
+                app:layout_constraintBottom_toTopOf="@+id/item_property_lbl_num_id"
+                app:layout_constraintEnd_toStartOf="@+id/item_property_nickname"
                 app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintHorizontal_chainStyle="packed"
-                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintHorizontal_chainStyle="spread_inside"
+                app:layout_constraintStart_toEndOf="@+id/item_property_image"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintVertical_chainStyle="spread"
                 />
 
             <TextView
-                android:id="@+id/item_license_name"
+                android:id="@+id/item_property_nickname"
                 style="@style/letter_black"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -68,65 +82,30 @@
                 android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintStart_toEndOf="@+id/item_license_lbl_name"
-                app:layout_constraintTop_toTopOf="@+id/item_license_lbl_name"
+                app:layout_constraintStart_toEndOf="@+id/item_property_lbl_nickname"
+                app:layout_constraintTop_toTopOf="@+id/item_property_lbl_nickname"
                 />
 
             <TextView
-                android:id="@+id/item_license_lbl_number"
+                android:id="@+id/item_property_lbl_num_id"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="4dp"
                 android:layout_marginEnd="8dp"
                 android:gravity="end"
-                android:text="@string/license_lbl_number"
+                android:text="@string/item_property_lbl_num_id"
                 android:textAppearance="?android:attr/textAppearanceSmall"
-                android:textStyle="bold"
-                app:layout_constraintBottom_toTopOf="@+id/item_license_lbl_issue_date"
-                app:layout_constraintEnd_toStartOf="@+id/item_license_number"
+                app:layout_constraintBottom_toTopOf="@+id/item_property_lbl_brand"
+                app:layout_constraintEnd_toStartOf="@+id/item_property_num_id"
                 app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintHorizontal_chainStyle="packed"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/item_license_lbl_name"
+                app:layout_constraintHorizontal_chainStyle="spread_inside"
+                app:layout_constraintStart_toEndOf="@+id/item_property_image"
+                app:layout_constraintTop_toBottomOf="@+id/item_property_lbl_nickname"
                 />
 
             <TextView
-                android:id="@+id/item_license_number"
-                style="@style/letter_black"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginEnd="8dp"
-                android:gravity="start"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:textStyle="bold"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/item_license_lbl_number"
-                app:layout_constraintTop_toTopOf="@+id/item_license_lbl_number"
-                />
-
-            <TextView
-                android:id="@+id/item_license_lbl_issue_date"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="4dp"
-                android:layout_marginEnd="8dp"
-                android:gravity="end"
-                android:text="@string/license_lbl_issue_date"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:textStyle="bold"
-                app:layout_constraintBottom_toTopOf="@+id/item_license_lbl_expiry_date"
-                app:layout_constraintEnd_toStartOf="@+id/item_license_issue_date"
-                app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintHorizontal_chainStyle="packed"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/item_license_lbl_number"
-                />
-
-            <TextView
-                android:id="@+id/item_license_issue_date"
+                android:id="@+id/item_property_num_id"
                 style="@style/letter_black"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -137,31 +116,30 @@
                 android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintStart_toEndOf="@+id/item_license_lbl_issue_date"
-                app:layout_constraintTop_toTopOf="@+id/item_license_lbl_issue_date"
+                app:layout_constraintStart_toEndOf="@+id/item_property_lbl_num_id"
+                app:layout_constraintTop_toTopOf="@+id/item_property_lbl_num_id"
                 />
 
             <TextView
-                android:id="@+id/item_license_lbl_expiry_date"
+                android:id="@+id/item_property_lbl_brand"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="4dp"
                 android:layout_marginEnd="8dp"
                 android:gravity="end"
-                android:text="@string/license_lbl_expiry_date"
+                android:text="@string/property_lbl_brand"
                 android:textAppearance="?android:attr/textAppearanceSmall"
-                android:textStyle="bold"
-                app:layout_constraintBottom_toTopOf="@+id/item_license_lbl_insurance_number"
-                app:layout_constraintEnd_toStartOf="@+id/item_license_expiry_date"
+                app:layout_constraintBottom_toTopOf="@+id/item_property_lbl_model"
+                app:layout_constraintEnd_toStartOf="@+id/item_property_brand"
                 app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintHorizontal_chainStyle="packed"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/item_license_lbl_issue_date"
+                app:layout_constraintHorizontal_chainStyle="spread_inside"
+                app:layout_constraintStart_toEndOf="@+id/item_property_image"
+                app:layout_constraintTop_toBottomOf="@+id/item_property_lbl_num_id"
                 />
 
             <TextView
-                android:id="@+id/item_license_expiry_date"
+                android:id="@+id/item_property_brand"
                 style="@style/letter_black"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -172,33 +150,65 @@
                 android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintStart_toEndOf="@+id/item_license_lbl_expiry_date"
-                app:layout_constraintTop_toTopOf="@+id/item_license_lbl_expiry_date"
+                app:layout_constraintStart_toEndOf="@+id/item_property_lbl_brand"
+                app:layout_constraintTop_toTopOf="@+id/item_property_lbl_brand"
                 />
 
-
             <TextView
-                android:id="@+id/item_license_lbl_insurance_number"
+                android:id="@+id/item_property_lbl_model"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="4dp"
                 android:layout_marginEnd="8dp"
-                android:layout_marginBottom="8dp"
                 android:gravity="end"
-                android:text="@string/license_lbl_insurance_number"
+                android:text="@string/property_lbl_model"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                app:layout_constraintBottom_toTopOf="@+id/item_property_lbl_bore"
+                app:layout_constraintEnd_toStartOf="@+id/item_property_model"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintHorizontal_chainStyle="spread_inside"
+                app:layout_constraintStart_toEndOf="@+id/item_property_image"
+                app:layout_constraintTop_toBottomOf="@+id/item_property_lbl_brand"
+                />
+
+            <TextView
+                android:id="@+id/item_property_model"
+                style="@style/letter_black"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:gravity="start"
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/item_property_lbl_model"
+                app:layout_constraintTop_toTopOf="@+id/item_property_lbl_model"
+                />
+
+
+            <TextView
+                android:id="@+id/item_property_lbl_bore"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginEnd="8dp"
+                android:gravity="end"
+                android:text="@string/property_lbl_bore_1"
+                android:textAppearance="?android:attr/textAppearanceSmall"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/item_license_insurance_number"
+                app:layout_constraintEnd_toStartOf="@+id/item_property_bore"
                 app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintHorizontal_chainStyle="packed"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/item_license_lbl_expiry_date"
+                app:layout_constraintHorizontal_chainStyle="spread_inside"
+                app:layout_constraintStart_toEndOf="@+id/item_property_image"
+                app:layout_constraintTop_toBottomOf="@+id/item_property_lbl_model"
                 />
 
             <TextView
-                android:id="@+id/item_license_insurance_number"
+                android:id="@+id/item_property_bore"
                 style="@style/letter_black"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -209,8 +219,8 @@
                 android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintStart_toEndOf="@+id/item_license_lbl_insurance_number"
-                app:layout_constraintTop_toTopOf="@+id/item_license_lbl_insurance_number"
+                app:layout_constraintStart_toEndOf="@+id/item_property_lbl_bore"
+                app:layout_constraintTop_toTopOf="@+id/item_property_lbl_bore"
                 />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
@@ -218,5 +228,3 @@
     </androidx.cardview.widget.CardView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
-
-

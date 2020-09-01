@@ -48,7 +48,7 @@ class LicenseFormFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        activity?.toolbar?.title = getString(R.string.title_nueva_licencia)
+        activity?.toolbar?.title = getString(R.string.license_toolbar_title_new)
 
         viewModel.issueDate.observe(viewLifecycleOwner) {
             DatePickerFragment { _, year, month, dayOfMonth ->

@@ -22,7 +22,7 @@ class NavigationActivity : AppCompatActivity() {
         val navController = findNavController(R.id.nav_host_fragment)
         val appBarConfiguration = AppBarConfiguration(
             setOf(
-                R.id.guiasFragment, R.id.comprasFragment, R.id.licenciasFragment, R.id.tiradasFragment
+                R.id.propertiesFragment, R.id.purchasesFragment, R.id.licensesFragment, R.id.competitionsFragment
             )
         )
 
@@ -39,16 +39,16 @@ class NavigationActivity : AppCompatActivity() {
                     setToolbarSubtitle(getString(R.string.login))
                     nav_view.visibility = View.GONE
                 }
-                R.id.guiasFragment -> {
+                R.id.propertiesFragment -> {
                     nav_view.visibility = View.VISIBLE
                 }
-                R.id.comprasFragment -> {
+                R.id.purchasesFragment -> {
                     nav_view.visibility = View.VISIBLE
                 }
-                R.id.licenciasFragment -> {
+                R.id.licensesFragment -> {
                     nav_view.visibility = View.VISIBLE
                 }
-                R.id.tiradasFragment -> {
+                R.id.competitionsFragment -> {
                     nav_view.visibility = View.VISIBLE
                 }
             }

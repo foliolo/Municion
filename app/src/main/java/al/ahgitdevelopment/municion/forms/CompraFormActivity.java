@@ -90,8 +90,8 @@ public class CompraFormActivity extends AppCompatActivity {
         mensajeError = findViewById(R.id.form_mensaje_compra);
         imagePath = null;
         layoutFecha = findViewById(R.id.layout_form_fecha_compra);
-        layoutCalibre1 = findViewById(R.id.text_input_layout_calibre1);
-        layoutCalibre2 = findViewById(R.id.text_input_layout_calibre2);
+        layoutCalibre1 = findViewById(R.id.form_property_model);
+        layoutCalibre2 = findViewById(R.id.form_property_bore_2);
         layoutUnidades = findViewById(R.id.text_input_layout_unidades);
         layoutPrecio = findViewById(R.id.text_input_layout_precio);
         layoutTipoMunicion = findViewById(R.id.text_input_layout_tipo_municion);

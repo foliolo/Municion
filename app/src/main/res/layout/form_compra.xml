@@ -33,7 +33,7 @@
 
             <!--CALIBRE 1-->
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/text_input_layout_calibre1"
+                android:id="@+id/form_property_model"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 >
@@ -43,7 +43,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:enabled="false"
-                    android:hint="@string/calibre"
+                    android:hint="@string/property_lbl_bore_1"
                     android:imeOptions="actionNext"
                     android:inputType="none|textCapSentences"
                     />
@@ -60,7 +60,7 @@
                 />
             <!--CALIBRE 2-->
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/text_input_layout_calibre2"
+                android:id="@+id/form_property_bore_2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 >
@@ -70,7 +70,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:enabled="false"
-                    android:hint="@string/calibre2"
+                    android:hint="@string/property_lbl_bore_2"
                     android:imeOptions="actionNext"
                     android:inputType="none|textCapSentences"
                     />
@@ -176,7 +176,7 @@
                     android:id="@+id/form_marca_municion"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/marca"
+                    android:hint="@string/property_lbl_brand"
                     android:imeOptions="actionNext"
                     android:inputType="text|textCapSentences"
                     />

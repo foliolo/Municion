@@ -6,8 +6,7 @@
     <string name="lbl3_insert_password">Introduce tu contraseña actual</string>
     <string name="lbl4_insert_password">Introduce tu nueva contraseña</string>
     <string name="lbl5_insert_password">Repite la nueva contraseña</string>
-    <string name="password_save">Contraseña guardada, recuerda registrar una pregunta de seguridad
-        para poder resetear la contraseña en caso de olvido</string>
+    <string name="password_save">Contraseña guardada, recuerda registrar una pregunta de seguridad para poder resetear la contraseña en caso de olvido</string>
     <string name="password_fail">Contraseña incorrecta</string>
     <string name="password_save_fail">Contraseña invalida</string>
     <string name="login_short_password_error">Contraseña demasiado corta</string>
@@ -27,42 +26,23 @@
     <string name="section_licencias_title">Licencias</string>
     <string name="section_tiradas_title">Tiradas</string>
 
-    <!--String Guias Form-->
-    <string name="title_nueva_guia">Nueva guía de arma</string>
-    <string name="menu_form_save">Guardar</string>
+    <!--String Property Form-->
+    <string name="property_toolbar_title_new">Nueva guía de arma</string>
     <string name="labelInfoGuia">Información de la nueva guia</string>
-    <string name="apodo">Apodo</string>
-    <string name="marca">Marca</string>
-    <string name="modelo">Modelo  </string>
-    <string name="tipoArma">Tipo</string>
-    <string name="calibre">Calibre</string>
-    <string name="calibre2">Calibre2</string>
-    <string name="numGuia">Numero de guia</string>
-    <string name="num_arma">Numero de serie del arma</string>
-    <string name="cupo">Cupo de la guia</string>
-    <string name="cupo_anual">Cupo Anual</string>
-    <string name="cartuchos_gastados">Cartuchos gastados</string>
+    <string name="property_lbl_num_id">Numero de serie del arma</string>
+    <string name="property_lbl_brand">Marca</string>
+    <string name="property_lbl_model">Modelo</string>
+    <string name="property_lbl_bore_1">Calibre</string>
+    <string name="property_lbl_bore_2">Calibre2</string>
     <string name="error_before_save">Este campo es obligatorio</string>
     <string name="error_mensaje_cabecera">Antes de guardar debes rellenar los campos obligatorios</string>
 
-    <!--String Guias Item-->
-    <string name="label_apodo">Apodo</string>
-    <string name="label_cupo">Cupo</string>
-    <string name="label_gastado">Gastado</string>
-    <string name="form_lbl_tipo_arma">Tipo de arma</string>
-    <string name="lbl_tipo_licencia">Tipo de licencia</string>
-    <string name="lbl_tipo_permiso_conducir">Tipo de permiso de conducción</string>
-    <string name="lbl_num_licencia">Num licencia</string>
-    <string name="lbl_edad">Edad</string>
-    <string name="lbl_num_dni">Num dni sin letra</string>
-    <string name="lbl_num_abonado">Num abonado</string>
-    <string name="lbl_num_poliza">Póliza seguro</string>
-    <string name="lbl_expedicion_licencia">Expedicion</string>
-    <string name="lbl_caducidad_licencia">Caducidad</string>
-    <string name="item_apodo_guia">Apodo</string>
+    <!--String Property Item-->
+    <string name="property_lbl_nickname">Apodo</string>
+    <string name="item_property_nickname">Apodo</string>
     <string name="check_segundo_calibre">Tiene segundo calibre</string>
-    <string name="item_num_guia">12345</string>
-    <string name="label_num_guia">Num guia</string>
+    <string name="item_property_num_id">12345</string>
+    <string name="item_property_lbl_num_id">Num guia</string>
 
     <!--String Compras Form-->
     <string name="title_nueva_compra">Nueva compra</string>
@@ -79,20 +59,16 @@
     <string name="valoracion">Valoracion</string>
 
     <!--String Licencias Form-->
-    <string name="title_nueva_licencia">Nueva Licencia</string>
-    <string name="tipo_licencia">Tipo de licencia</string>
-    <string name="tipo_permiso_conducir">Carnet de conducir</string>
-    <string name="lbl_ccaa">Com. Autónoma</string>
-    <string name="lbl_categoria">Categoria</string>
-    <string name="fecha_expedicion">Fecha de expedición</string>
-    <string name="fecha_caducidad">Fecha de caducidad</string>
-    <string name="libro_coleccionista">Libro de coleccionista</string>
-    <string name="lbl_escala">Escala</string>
-    <string name="msg_err_num_licencia">Introduce el numero de licencia</string>
-    <string name="msg_err_fecha_exp">Introduce la fecha de expedición</string>
-    <string name="msg_err_fecha_cad">Introduce la fecha de caducidad</string>
-    <string name="msg_err_poliza_seg">Introduce el número de la poliza del seguro</string>
-    <string name="msg_err_edad">Introduce la edad</string>
+    <string name="license_toolbar_title_new">Nueva Licencia</string>
+    <string name="license_lbl_name">Nombre</string>
+    <string name="license_lbl_number">Num licencia</string>
+    <string name="license_lbl_issue_date">Expedicion</string>
+    <string name="license_lbl_expiry_date">Caducidad</string>
+    <string name="license_lbl_insurance_number">Numero seguro</string>
+    <string name="license_error_msg_number">Introduce el numero de licencia</string>
+    <string name="license_error_msg_issue_date">Introduce la fecha de expedición</string>
+    <string name="license_error_msg_expiry_date">Introduce la fecha de caducidad</string>
+    <string name="license_error_msg_insurance">Introduce el número de la poliza del seguro</string>
 
     <!--String Tirada Form-->
     <string name="title_nueva_tirada">Nueva Tirada</string>
@@ -204,5 +180,4 @@
     <string name="menu_sign_out" translatable="false">Sign out</string>
     <string name="snackbar_undo_delete_message">Deshacer la eliminación</string>
     <string name="snackbar_undo_delete">Deshacer</string>
-    <string name="lbl_license_name">Nombre</string>
 </resources>

@@ -16,7 +16,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:text="@string/calibre"
+            android:text="@string/property_lbl_bore_1"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textStyle="bold"/>
 
@@ -37,7 +37,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/lbl_num_licencia"
+                    android:text="@string/license_lbl_number"
                     android:textAppearance="?android:attr/textAppearanceSmall"/>
 
                 <TextView
@@ -60,7 +60,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:text="@string/lbl_caducidad_licencia"
+                    android:text="@string/license_lbl_expiry_date"
                     android:textAppearance="?android:attr/textAppearanceSmall"/>
 
                 <TextView
