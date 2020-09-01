@@ -99,7 +99,7 @@ class LoginPasswordFragment : Fragment() {
         }
 
         viewModel.navigateIntoApp.observe(viewLifecycleOwner) {
-            findNavController().navigate(R.id.licenciasFragment)
+            findNavController().navigate(R.id.licensesFragment)
         }
 
         viewModel.onCreateView()

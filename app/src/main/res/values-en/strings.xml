@@ -26,47 +26,25 @@
     <string name="section_licencias_title">Licenses</string>
     <string name="section_tiradas_title">Competitions</string>
 
-    <!--String Guias Form-->
-    <string name="title_nueva_guia">New Property Document</string>
-    <string name="menu_form_save">Save</string>
+    <!--String Properties-->
+    <string name="property_toolbar_title_new">New Property Document</string>
     <string name="labelInfoGuia">Information of New Property Documents</string>
-    <string name="apodo">Nick</string>
-    <string name="marca">Brand of the weapon</string>
-    <string name="modelo">Model </string>
-    <string name="tipoArma">Type</string>
-    <string name="calibre">Diameter Bore</string>
-    <string name="calibre2">Diameter Bore (Additional)</string>
-    <string name="numGuia">Number of Property Documents</string>
-    <string name="num_arma">Weapon Serial Number</string>
-    <string name="cupo">Amount of Legal Ammunition</string>
-    <string name="cupo_anual">Amount of Legal Ammunition per Year</string>
-    <string name="cartuchos_gastados">Ammunition Amount Used</string>
+    <string name="property_lbl_nickname">Nick</string>
+    <string name="property_lbl_brand">Brand of the weapon</string>
+    <string name="property_lbl_model">Model </string>
+    <string name="property_lbl_bore_1">Diameter Bore</string>
+    <string name="property_lbl_bore_2">Diameter Bore (Additional)</string>
+    <string name="property_lbl_num_id">Weapon Serial Number</string>
     <string name="error_before_save">This field is required</string>
     <string name="error_mensaje_cabecera">Before saving you must write all fields</string>
-
-    <!--String Guias Item-->
-    <string name="label_apodo">Nick</string>
-    <string name="label_cupo">Legal Amount Allowed</string>
-    <string name="label_gastado">Quantity Consumed</string>
-    <string name="form_lbl_tipo_arma">Type of Weapon</string>
-    <string name="lbl_tipo_licencia">Type of License</string>
-    <string name="lbl_tipo_permiso_conducir">Type of Driving License</string>
-    <string name="lbl_num_licencia">License Number</string>
-    <string name="lbl_edad">Age</string>
-    <string name="lbl_num_dni">National Identity Document Number</string>
-    <string name="lbl_num_abonado">Subscriber Number</string>
-    <string name="lbl_num_poliza">Insurance Number</string>
-    <string name="lbl_expedicion_licencia">Date of issue</string>
-    <string name="lbl_caducidad_licencia">Date of expiry</string>
-    <string name="item_apodo_guia">Nick</string>
+    <string name="item_property_nickname">Nick</string>
     <string name="check_segundo_calibre">Second Bore Allowed</string>
-    <string name="item_num_guia">12345</string>
-    <string name="label_num_guia">Number of Document Property</string>
+    <string name="item_property_num_id">12345</string>
+    <string name="item_property_lbl_num_id">Number of Document Property</string>
 
     <!--String Compras Form-->
     <string name="title_nueva_compra">New Purchase</string>
     <string name="labelInfoCompra">New Purchase Info</string>
-
     <string name="precio">Price</string>
     <string name="cartuchos_comprados">Number of Cartridges Purchased</string>
     <string name="municion_propia">Previous Ammunition Purchase this Year</string>
@@ -77,21 +55,17 @@
     <string name="tienda">Store Location</string>
     <string name="valoracion">Appreciation</string>
 
-    <!--String Licencias Form-->
-    <string name="title_nueva_licencia">New License</string>
-    <string name="tipo_licencia">License Type</string>
-    <string name="tipo_permiso_conducir">Driving License</string>
-    <string name="lbl_ccaa">Com. Autónoma</string>
-    <string name="lbl_categoria">Category</string>
-    <string name="fecha_expedicion">Date of issue</string>
-    <string name="fecha_caducidad">Date of expiry</string>
-    <string name="lbl_escala">Official Rank</string>
-    <string name="libro_coleccionista">Collector\'s book</string>
-    <string name="msg_err_num_licencia">Enter the License Number</string>
-    <string name="msg_err_fecha_exp">Enter Date of Issue</string>
-    <string name="msg_err_fecha_cad">Enter Date of Expiry</string>
-    <string name="msg_err_poliza_seg">Insert Number Insurance Policy</string>
-    <string name="msg_err_edad">Enter your Age</string>
+    <!--String Licenses-->
+    <string name="license_toolbar_title_new">New License</string>
+    <string name="license_lbl_name">Name</string>
+    <string name="license_lbl_number">License Number</string>
+    <string name="license_lbl_insurance_number">Insurance Number</string>
+    <string name="license_lbl_issue_date">Date of issue</string>
+    <string name="license_lbl_expiry_date">Date of expiry</string>
+    <string name="license_error_msg_number">Enter the License Number</string>
+    <string name="license_error_msg_issue_date">Enter Date of Issue</string>
+    <string name="license_error_msg_expiry_date">Enter Date of Expiry</string>
+    <string name="license_error_msg_insurance">Insert Number Insurance Policy</string>
 
     <!--String Tirada Form-->
     <string name="title_nueva_tirada">New Competition</string>
@@ -188,6 +162,5 @@
     <string name="sin_conexion">Without internet connection</string>
     <string name="snackbar_undo_delete_message">Undo the deletion</string>
     <string name="snackbar_undo_delete">Undo</string>
-    <string name="lbl_license_name">Name</string>
 
 </resources>

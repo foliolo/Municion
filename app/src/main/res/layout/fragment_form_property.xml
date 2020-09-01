@@ -2,17 +2,16 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".ui.licenses.LicenseFormFragment"
+    tools:context=".ui.properties.PropertyFormFragment"
     >
 
     <data>
 
         <variable
             name="viewModel"
-            type="al.ahgitdevelopment.municion.ui.licenses.LicenseFormViewModel"
+            type="al.ahgitdevelopment.municion.ui.properties.PropertyFormViewModel"
             />
     </data>
-
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
@@ -22,6 +21,7 @@
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_above="@+id/login_adView"
             >
 
             <LinearLayout
@@ -31,110 +31,122 @@
                 android:padding="@dimen/form_layout_margin"
                 >
 
-                <!--LICENSE NAME-->
+                <!--APODO-->
                 <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/form_license_name"
+                    android:id="@+id/form_property_nickname"
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="@dimen/form_fields_separation"
                     >
 
-                    <com.google.android.material.textfield.TextInputEditText
+                    <EditText
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="@string/license_lbl_name"
+                        android:hint="@string/property_lbl_nickname"
+                        android:imeOptions="actionNext"
                         android:inputType="text|textCapSentences"
                         />
                 </com.google.android.material.textfield.TextInputLayout>
 
-                <!--LICENSE NUMBER-->
+                <!--MARCA-->
                 <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/form_license_number"
+                    android:id="@+id/form_property_brand"
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="@dimen/form_fields_separation"
                     >
 
-                    <com.google.android.material.textfield.TextInputEditText
+                    <EditText
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="@string/license_lbl_number"
+                        android:hint="@string/property_lbl_brand"
+                        android:imeOptions="actionNext"
                         android:inputType="text|textCapSentences"
-                        android:maxLength="@integer/max_num_licencia_length"
                         />
                 </com.google.android.material.textfield.TextInputLayout>
 
-                <!--ISSUE DATE-->
+                <!--MODELO-->
                 <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/form_license_date_issue"
+                    android:id="@+id/form_property_model"
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="@dimen/form_fields_separation"
                     >
 
-                    <com.google.android.material.textfield.TextInputEditText
+                    <EditText
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:focusableInTouchMode="false"
-                        android:hint="@string/license_lbl_issue_date"
-                        android:inputType="none"
-                        android:onClick="@{viewModel::selectIssueDate}"
-                        />
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <!--EXPIRY DATE-->
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/form_license_date_expiry"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="@dimen/form_fields_separation"
-                    >
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:focusableInTouchMode="false"
-                        android:hint="@string/license_lbl_expiry_date"
-                        android:inputType="none"
-                        android:onClick="@{viewModel::selectExpiryDate}"
-                        />
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <!--INSURANCE NUMBER-->
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/form_license_insurance_number"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="@dimen/form_fields_separation"
-                    >
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:hint="@string/license_lbl_insurance_number"
+                        android:hint="@string/property_lbl_model"
+                        android:imeOptions="actionNext"
                         android:inputType="text|textCapSentences"
-                        android:maxLength="@integer/max_poliza_seguro_licencia"
+                        />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <!--CALIBRE 1-->
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/form_property_bore_1"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    >
+
+                    <EditText
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/property_lbl_bore_1"
+                        android:imeOptions="actionNext"
+                        android:inputType="text|textCapSentences"
+                        android:maxLines="1"
+                        />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <!--CALIBRE 2-->
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/form_property_bore_2"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    >
+
+                    <EditText
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/property_lbl_bore_2"
+                        android:inputType="text|textCapSentences"
+                        android:maxLines="1"
+                        />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <!--NUMERO DE ARMA-->
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/form_property_num_id"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    >
+
+                    <EditText
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/property_lbl_num_id"
+                        android:imeOptions="actionNext"
+                        android:inputType="text|textCapSentences"
+                        android:maxLength="@integer/max_num_arma_form_guias"
                         />
                 </com.google.android.material.textfield.TextInputLayout>
 
             </LinearLayout>
-
         </ScrollView>
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/form_license_fab_save"
+            android:id="@+id/form_property_fab_save"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_above="@+id/login_adView"
+            android:layout_alignWithParentIfMissing="true"
             android:layout_gravity="bottom|end"
-            android:layout_margin="@dimen/fab_margin"
+            android:layout_margin="12dp"
             android:backgroundTint="@color/colorAccent"
-            android:onClick="@{viewModel::fabSaveLicenseClicked}"
+            android:onClick="@{viewModel::fabSavePropertyClicked}"
             app:fabSize="normal"
             app:srcCompat="@drawable/ic_save"
             app:tint="@color/white"

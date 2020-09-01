@@ -1,11 +1,12 @@
 package al.ahgitdevelopment.municion.di
 
+import al.ahgitdevelopment.municion.ui.competitions.CompetitionViewModel
 import al.ahgitdevelopment.municion.ui.licenses.LicenseFormViewModel
 import al.ahgitdevelopment.municion.ui.licenses.LicensesViewModel
 import al.ahgitdevelopment.municion.ui.login.LoginViewModel
+import al.ahgitdevelopment.municion.ui.properties.PropertyFormViewModel
 import al.ahgitdevelopment.municion.ui.properties.PropertyViewModel
 import al.ahgitdevelopment.municion.ui.purchases.PurchasesViewModel
-import al.ahgitdevelopment.municion.ui.tiradas.TiradasViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import dagger.Binds
@@ -27,27 +28,32 @@ abstract class ViewModelModule {
     @Binds
     @IntoMap
     @ViewModelKey(PropertyViewModel::class)
-    abstract fun bindGuiasViewModel(propertyViewModel: PropertyViewModel): ViewModel
+    abstract fun bindPropertyViewModel(propertyViewModel: PropertyViewModel): ViewModel
 
     @Binds
     @IntoMap
     @ViewModelKey(PurchasesViewModel::class)
-    abstract fun bindComprasViewModel(purchasesViewModel: PurchasesViewModel): ViewModel
+    abstract fun bindPurchaseViewModel(purchasesViewModel: PurchasesViewModel): ViewModel
 
     @Binds
     @IntoMap
     @ViewModelKey(LicensesViewModel::class)
-    abstract fun bindLicenciasViewModel(licensesViewModel: LicensesViewModel): ViewModel
+    abstract fun bindLicensesViewModel(licensesViewModel: LicensesViewModel): ViewModel
 
     @Binds
     @IntoMap
-    @ViewModelKey(TiradasViewModel::class)
-    abstract fun bindTiradasViewModel(tiradasViewModel: TiradasViewModel): ViewModel
+    @ViewModelKey(CompetitionViewModel::class)
+    abstract fun bindCompetitionsViewModel(competitionViewModel: CompetitionViewModel): ViewModel
 
     @Binds
     @IntoMap
     @ViewModelKey(LicenseFormViewModel::class)
-    abstract fun bindLicenciasFormViewModel(licenseFormViewModel: LicenseFormViewModel): ViewModel
+    abstract fun bindLicenseFormViewModel(licenseFormViewModel: LicenseFormViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(PropertyFormViewModel::class)
+    abstract fun bindPropertyFormViewModel(propertyFormViewModel: PropertyFormViewModel): ViewModel
 
     @Binds
     abstract fun bindsModelFactory(factory: ViewModelFactory): ViewModelProvider.Factory

@@ -9,6 +9,7 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+@Suppress("UNUSED_PARAMETER")
 class LicenseFormViewModel @Inject constructor(
     private val repository: Repository
 ) : ViewModel() {
@@ -31,7 +32,7 @@ class LicenseFormViewModel @Inject constructor(
     }
 
     fun saveLicense(license: License) {
-        // TODO: perform fields validations
+        // TODO: perform field validations
         viewModelScope.launch {
             repository.saveLicense(license)
             closeForm.call()

@@ -11,7 +11,7 @@ import androidx.room.Update
 @Dao
 interface PropertyDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(vararg property: Property)
+    suspend fun insert(vararg property: Property)
 
     @Update
     fun update(vararg property: Property)
@@ -20,7 +20,7 @@ interface PropertyDao {
     fun deleteAll()
 
     @Query("DELETE FROM $TABLE_PROPERTIES WHERE $KEY_ID = :id")
-    fun delete(id: Long)
+    suspend fun delete(id: Long)
 
     @Query("SELECT * from $TABLE_PROPERTIES")
     fun getProperties(): LiveData<List<Property>>

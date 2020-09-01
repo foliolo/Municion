@@ -69,7 +69,7 @@ class LicensesFragment : Fragment(), RecyclerInterface {
         super.onViewCreated(view, savedInstanceState)
 
         viewModel.addLicense.observe(viewLifecycleOwner, {
-            findNavController().navigate(R.id.licenciaFormFragment)
+            findNavController().navigate(R.id.licenseFormFragment)
         })
 
         viewModel.licenses.observe(viewLifecycleOwner) {
@@ -83,8 +83,8 @@ class LicensesFragment : Fragment(), RecyclerInterface {
                 layoutManager = LinearLayoutManager(requireContext())
 
                 ItemTouchHelper(
-                    DeleteItemOnSwipe(object : DeleteItemOnSwipe.DeleteLicenseCallback {
-                        override fun deleteLicenseOnSwipe(viewHolder: LicenseAdapter.LicenseViewHolder) {
+                    DeleteItemOnSwipe(object : DeleteItemOnSwipe.DeleteCallback {
+                        override fun deleteOnSwipe(viewHolder: RecyclerView.ViewHolder) {
                             viewModel.deleteLicense(viewHolder.itemId)
 
                             undoDelete(viewHolder)
@@ -134,8 +134,8 @@ class LicensesFragment : Fragment(), RecyclerInterface {
         return super.onOptionsItemSelected(item)
     }
 
-    override fun RecyclerView?.undoDelete(viewHolder: LicenseAdapter.LicenseViewHolder) {
-        licensesAdapter.currentList.get(viewHolder.adapterPosition)?.let { license ->
+    override fun RecyclerView?.undoDelete(viewHolder: RecyclerView.ViewHolder) {
+        licensesAdapter.currentList[(viewHolder as LicenseAdapter.LicenseViewHolder).adapterPosition]?.let { license ->
             Snackbar.make(
                 licenses_layout,
                 R.string.snackbar_undo_delete_message,

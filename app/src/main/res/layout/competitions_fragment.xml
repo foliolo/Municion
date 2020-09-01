@@ -1,14 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".ui.tiradas.TiradasFragment">
+    tools:context=".ui.competitions.CompetitionFragment"
+    >
 
-    <!--    <data>-->
+    <data>
 
-    <!--        <variable-->
-    <!--            name="viewModel"-->
-    <!--            type="al.ahgitdevelopment.municion.ui.tiradas.TiradasViewModel" />-->
-    <!--    </data>-->
+        <variable
+            name="viewModel"
+            type="al.ahgitdevelopment.municion.ui.competitions.CompetitionViewModel"
+            />
+    </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"

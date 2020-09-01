@@ -1,12 +1,13 @@
 package al.ahgitdevelopment.municion.di
 
 import al.ahgitdevelopment.municion.NavigationActivity
+import al.ahgitdevelopment.municion.ui.competitions.CompetitionFragment
 import al.ahgitdevelopment.municion.ui.licenses.LicenseFormFragment
 import al.ahgitdevelopment.municion.ui.licenses.LicensesFragment
 import al.ahgitdevelopment.municion.ui.login.LoginPasswordFragment
-import al.ahgitdevelopment.municion.ui.properties.PropertyFragment
+import al.ahgitdevelopment.municion.ui.properties.PropertiesFragment
+import al.ahgitdevelopment.municion.ui.properties.PropertyFormFragment
 import al.ahgitdevelopment.municion.ui.purchases.PurchasesFragment
-import al.ahgitdevelopment.municion.ui.tiradas.TiradasFragment
 import android.content.Context
 import dagger.Component
 
@@ -23,12 +24,13 @@ interface AppComponent {
     fun inject(navigationActivity: NavigationActivity)
 
     fun inject(loginPasswordFragment: LoginPasswordFragment)
-    fun inject(propertyFragment: PropertyFragment)
+    fun inject(propertiesFragment: PropertiesFragment)
     fun inject(purchasesFragment: PurchasesFragment)
     fun inject(licensesFragment: LicensesFragment)
-    fun inject(tiradasFragment: TiradasFragment)
+    fun inject(competitionFragment: CompetitionFragment)
 
-    fun inject(licenciasFormFragment: LicenseFormFragment)
+    fun inject(propertyFormFragment: PropertyFormFragment)
+    fun inject(licenseFormFragment: LicenseFormFragment)
 
     companion object {
         fun create(context: Context): AppComponent {

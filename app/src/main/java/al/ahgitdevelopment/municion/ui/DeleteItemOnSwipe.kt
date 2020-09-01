@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.ItemTouchHelper.SimpleCallback
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.license_item.view.*
 
-class DeleteItemOnSwipe(private val deleteCallback: DeleteLicenseCallback) : SimpleCallback(0, RIGHT) {
+class DeleteItemOnSwipe(private val deleteCallback: DeleteCallback) : SimpleCallback(0, RIGHT) {
 
     override fun onChildDraw(
         c: Canvas,
@@ -42,12 +42,12 @@ class DeleteItemOnSwipe(private val deleteCallback: DeleteLicenseCallback) : Sim
 
         when (direction) {
             RIGHT -> {
-                deleteCallback.deleteLicenseOnSwipe(viewHolder as LicenseViewHolder)
+                deleteCallback.deleteOnSwipe(viewHolder)
             }
         }
     }
 
-    interface DeleteLicenseCallback {
-        fun deleteLicenseOnSwipe(viewHolder: LicenseViewHolder)
+    interface DeleteCallback {
+        fun deleteOnSwipe(viewHolder: RecyclerView.ViewHolder)
     }
 }
