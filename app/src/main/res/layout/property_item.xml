@@ -6,7 +6,7 @@
     >
 
     <ImageView
-        android:id="@+id/item_property_delete_icon"
+        android:id="@+id/item_delete_icon"
         android:layout_width="32dp"
         android:layout_height="32dp"
         android:visibility="gone"
@@ -27,7 +27,7 @@
         app:cardCornerRadius="4dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/item_property_delete_icon"
+        app:layout_constraintStart_toEndOf="@+id/item_delete_icon"
         app:layout_constraintTop_toTopOf="parent"
         >
 
