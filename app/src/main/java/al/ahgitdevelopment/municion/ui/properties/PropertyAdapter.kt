@@ -8,13 +8,13 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.android.synthetic.main.property_item.view.*
+import kotlinx.android.synthetic.main.adapter_item_property.view.*
 
 class PropertyAdapter : ListAdapter<Property, PropertyAdapter.PropertyViewHolder>(DIFF_CALLBACK) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PropertyViewHolder {
         val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.property_item, parent, false) as ViewGroup
+            .inflate(R.layout.adapter_item_property, parent, false) as ViewGroup
 
         return PropertyViewHolder(view)
     }

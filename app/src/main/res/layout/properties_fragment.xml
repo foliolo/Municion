@@ -9,7 +9,7 @@
 
         <variable
             name="viewModel"
-            type="al.ahgitdevelopment.municion.ui.properties.PropertyViewModel"
+            type="al.ahgitdevelopment.municion.ui.properties.PropertiesViewModel"
             />
     </data>
 

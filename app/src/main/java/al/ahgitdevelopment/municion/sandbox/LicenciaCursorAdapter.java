@@ -40,7 +40,7 @@ public class LicenciaCursorAdapter extends CursorAdapter {
     @Override
     public View newView(Context context, Cursor cursor, ViewGroup parent) {
         LayoutInflater inflater = LayoutInflater.from(context);
-        View view = inflater.inflate(R.layout.license_item, parent, false);
+        View view = inflater.inflate(R.layout.adapter_item_license, parent, false);
         return view;
     }
 }

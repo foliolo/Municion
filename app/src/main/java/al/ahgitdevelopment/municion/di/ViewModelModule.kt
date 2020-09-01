@@ -4,8 +4,8 @@ import al.ahgitdevelopment.municion.ui.competitions.CompetitionViewModel
 import al.ahgitdevelopment.municion.ui.licenses.LicenseFormViewModel
 import al.ahgitdevelopment.municion.ui.licenses.LicensesViewModel
 import al.ahgitdevelopment.municion.ui.login.LoginViewModel
+import al.ahgitdevelopment.municion.ui.properties.PropertiesViewModel
 import al.ahgitdevelopment.municion.ui.properties.PropertyFormViewModel
-import al.ahgitdevelopment.municion.ui.properties.PropertyViewModel
 import al.ahgitdevelopment.municion.ui.purchases.PurchasesViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -27,8 +27,8 @@ abstract class ViewModelModule {
 
     @Binds
     @IntoMap
-    @ViewModelKey(PropertyViewModel::class)
-    abstract fun bindPropertyViewModel(propertyViewModel: PropertyViewModel): ViewModel
+    @ViewModelKey(PropertiesViewModel::class)
+    abstract fun bindPropertyViewModel(propertiesViewModel: PropertiesViewModel): ViewModel
 
     @Binds
     @IntoMap
