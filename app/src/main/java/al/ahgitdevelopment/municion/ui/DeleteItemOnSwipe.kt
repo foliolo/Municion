@@ -1,6 +1,5 @@
 package al.ahgitdevelopment.municion.ui
 
-import al.ahgitdevelopment.municion.ui.licenses.LicenseAdapter.LicenseViewHolder
 import android.graphics.Canvas
 import android.view.View
 import androidx.recyclerview.widget.ItemTouchHelper.ACTION_STATE_SWIPE
@@ -22,9 +21,9 @@ class DeleteItemOnSwipe(private val deleteCallback: DeleteCallback) : SimpleCall
     ) {
         if (actionState == ACTION_STATE_SWIPE) {
             if (dX > 0) {
-                (viewHolder as LicenseViewHolder).itemView.item_license_delete_icon.visibility = View.VISIBLE
+                viewHolder.itemView.item_delete_icon.visibility = View.VISIBLE
             } else {
-                (viewHolder as LicenseViewHolder).itemView.item_license_delete_icon.visibility = View.GONE
+                viewHolder.itemView.item_delete_icon.visibility = View.GONE
             }
         }
         super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
