@@ -44,9 +44,6 @@ import java.util.NoSuchElementException;
 
 import al.ahgitdevelopment.municion.R;
 import al.ahgitdevelopment.municion.datamodel.NotificationData;
-import al.ahgitdevelopment.municion.datamodel.Property;
-
-import static al.ahgitdevelopment.municion.sandbox.FragmentMainContent.fileImagePath;
 
 /**
  * Created by ahidalgog on 07/07/2016.
@@ -133,11 +130,11 @@ public final class Utils {
      */
     public static boolean licenseCanBeDeleted(int position) {
         // Si alguna guía tiene el id de la licencia que queremos borrar, no se podra eliminar la licencia
-        for (Property property : FragmentMainContent.properties) {
+//        for (Property property : FragmentMainContent.properties) {
 //            if (guia.getTipoLicencia() == FragmentMainContent.licencias.get(position).getTipo()) {
 //                return true;
 //            }
-        }
+//        }
         return false;
     }
 
@@ -480,7 +477,7 @@ public final class Utils {
     static void saveBitmapToFile(Bitmap imageBitmap) {
         FileOutputStream out = null;
         try {
-            out = new FileOutputStream(fileImagePath);
+            out = new FileOutputStream(/*fileImagePath*/ "");
             imageBitmap.compress(Bitmap.CompressFormat.JPEG, 70, out); // imageBitmap is your Bitmap instance
         } catch (Exception e) {
             e.printStackTrace();
