@@ -26,7 +26,11 @@
         android:id="@+id/purchasesFragment"
         android:name="al.ahgitdevelopment.municion.ui.purchases.PurchasesFragment"
         android:label="purchases_fragment"
-        tools:layout="@layout/purchases_fragment" />
+        tools:layout="@layout/purchases_fragment">
+        <action
+            android:id="@+id/action_purchasesFragment_to_purchaseFormFragment"
+            app:destination="@id/purchaseFormFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/licensesFragment"
@@ -43,7 +47,6 @@
         android:name="al.ahgitdevelopment.municion.ui.competitions.CompetitionFragment"
         android:label="competitions_fragment"
         tools:layout="@layout/competitions_fragment" />
-
     <fragment
         android:id="@+id/licenseFormFragment"
         android:name="al.ahgitdevelopment.municion.ui.licenses.LicenseFormFragment"
@@ -54,5 +57,10 @@
         android:name="al.ahgitdevelopment.municion.ui.properties.PropertyFormFragment"
         android:label="fragment_form_property"
         tools:layout="@layout/fragment_form_property" />
+    <fragment
+        android:id="@+id/purchaseFormFragment"
+        android:name="al.ahgitdevelopment.municion.ui.purchases.PurchaseFormFragment"
+        android:label="PurchaseFormFragment"
+        tools:layout="@layout/fragment_form_purchase" />
 
 </navigation>

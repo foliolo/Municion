@@ -4,18 +4,18 @@
     <item
         android:id="@+id/propertiesFragment"
         android:icon="@drawable/ic_nav_menu_guia"
-        android:title="@string/section_guias_title" />
+        android:title="@string/section_properties_title" />
     <item
         android:id="@id/purchasesFragment"
         android:icon="@drawable/ic_nav_menu_compra"
-        android:title="@string/section_compras_title" />
+        android:title="@string/section_purchases_title" />
     <item
         android:id="@id/licensesFragment"
         android:icon="@drawable/ic_nav_menu_licencia"
-        android:title="@string/section_licencias_title" />
+        android:title="@string/section_licenses_title" />
     <item
         android:id="@+id/competitionsFragment"
         android:icon="@drawable/ic_nav_menu_tirada"
-        android:title="@string/section_tiradas_title" />
+        android:title="@string/section_competitions_title" />
 
 </menu>

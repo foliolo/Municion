@@ -11,7 +11,7 @@ import androidx.room.Update
 @Dao
 interface PurchaseDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(vararg purchase: Purchase)
+    suspend fun insert(vararg purchase: Purchase)
 
     @Update
     fun update(vararg purchase: Purchase)
@@ -20,7 +20,7 @@ interface PurchaseDao {
     fun deleteAll()
 
     @Query("DELETE FROM $TABLE_PURCHASES WHERE $KEY_ID = :id")
-    fun delete(id: Long)
+    suspend fun delete(id: Long)
 
     @Query("SELECT * from $TABLE_PURCHASES")
     fun getPurchases(): LiveData<List<Purchase>>

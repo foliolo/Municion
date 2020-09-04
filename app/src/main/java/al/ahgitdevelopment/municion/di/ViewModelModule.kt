@@ -6,6 +6,7 @@ import al.ahgitdevelopment.municion.ui.licenses.LicensesViewModel
 import al.ahgitdevelopment.municion.ui.login.LoginViewModel
 import al.ahgitdevelopment.municion.ui.properties.PropertiesViewModel
 import al.ahgitdevelopment.municion.ui.properties.PropertyFormViewModel
+import al.ahgitdevelopment.municion.ui.purchases.PurchaseFormViewModel
 import al.ahgitdevelopment.municion.ui.purchases.PurchasesViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -54,6 +55,11 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(PropertyFormViewModel::class)
     abstract fun bindPropertyFormViewModel(propertyFormViewModel: PropertyFormViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(PurchaseFormViewModel::class)
+    abstract fun bindPurchaseFormViewModel(purchaseFormViewModel: PurchaseFormViewModel): ViewModel
 
     @Binds
     abstract fun bindsModelFactory(factory: ViewModelFactory): ViewModelProvider.Factory

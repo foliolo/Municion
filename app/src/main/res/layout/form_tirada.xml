@@ -78,7 +78,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:editable="false"
-                    android:hint="@string/fecha"
+                    android:hint="@string/form_purchase_date"
                     android:inputType="none"
                     />
             </com.google.android.material.textfield.TextInputLayout>

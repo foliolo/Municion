@@ -1,5 +1,6 @@
 package al.ahgitdevelopment.municion.ui.properties
 
+import al.ahgitdevelopment.municion.NavigationActivity
 import al.ahgitdevelopment.municion.R
 import al.ahgitdevelopment.municion.databinding.FragmentFormPropertyBinding
 import al.ahgitdevelopment.municion.datamodel.Property
@@ -14,7 +15,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import kotlinx.android.synthetic.main.fragment_form_property.*
-import kotlinx.android.synthetic.main.fragment_tutorial.*
 import javax.inject.Inject
 
 /**
@@ -47,7 +47,7 @@ class PropertyFormFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        activity?.toolbar?.title = getString(R.string.property_toolbar_title_new)
+        (activity as NavigationActivity).actionBar?.title = getString(R.string.property_toolbar_title_new)
 
         viewModel.fabSavePropertyClicked.observe(viewLifecycleOwner) {
             Property(
