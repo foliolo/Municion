@@ -15,11 +15,11 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
-import kotlinx.android.synthetic.main.properties_fragment.*
 import kotlinx.android.synthetic.main.purchases_fragment.*
 import javax.inject.Inject
 
@@ -56,7 +56,7 @@ class PurchasesFragment : Fragment(), RecyclerInterface {
         super.onViewCreated(view, savedInstanceState)
 
         viewModel.addPurchase.observe(viewLifecycleOwner, {
-            // findNavController().navigate(R.id.purchaseFormFragment)
+            findNavController().navigate(R.id.purchaseFormFragment)
         })
 
         viewModel.purchases.observe(viewLifecycleOwner) {
@@ -65,7 +65,7 @@ class PurchasesFragment : Fragment(), RecyclerInterface {
                 setHasStableIds(true)
             }
 
-            properties_recycler_view.apply {
+            purchases_recycler_view.apply {
                 adapter = purchasesAdapter
                 layoutManager = LinearLayoutManager(requireContext())
 

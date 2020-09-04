@@ -7,6 +7,7 @@ import al.ahgitdevelopment.municion.ui.licenses.LicensesFragment
 import al.ahgitdevelopment.municion.ui.login.LoginPasswordFragment
 import al.ahgitdevelopment.municion.ui.properties.PropertiesFragment
 import al.ahgitdevelopment.municion.ui.properties.PropertyFormFragment
+import al.ahgitdevelopment.municion.ui.purchases.PurchaseFormFragment
 import al.ahgitdevelopment.municion.ui.purchases.PurchasesFragment
 import android.content.Context
 import dagger.Component
@@ -31,6 +32,7 @@ interface AppComponent {
 
     fun inject(propertyFormFragment: PropertyFormFragment)
     fun inject(licenseFormFragment: LicenseFormFragment)
+    fun inject(purchaseFormFragment: PurchaseFormFragment)
 
     companion object {
         fun create(context: Context): AppComponent {

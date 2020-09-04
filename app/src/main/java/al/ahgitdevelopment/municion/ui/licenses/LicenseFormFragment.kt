@@ -1,5 +1,6 @@
 package al.ahgitdevelopment.municion.ui.licenses
 
+import al.ahgitdevelopment.municion.NavigationActivity
 import al.ahgitdevelopment.municion.R
 import al.ahgitdevelopment.municion.databinding.FragmentFormLicenseBinding
 import al.ahgitdevelopment.municion.datamodel.License
@@ -15,7 +16,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import kotlinx.android.synthetic.main.fragment_form_license.*
-import kotlinx.android.synthetic.main.fragment_tutorial.*
 import javax.inject.Inject
 
 /**
@@ -48,7 +48,7 @@ class LicenseFormFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        activity?.toolbar?.title = getString(R.string.license_toolbar_title_new)
+        (activity as NavigationActivity).actionBar?.title = getString(R.string.license_toolbar_title_new)
 
         viewModel.issueDate.observe(viewLifecycleOwner) {
             DatePickerFragment { _, year, month, dayOfMonth ->

@@ -13,46 +13,41 @@
     <string name="login_not_matching_password_error">Passwords don´t match</string>
     <string name="title_activity_fragment_main">Ammunition</string>
     <string name="action_settings">Setting</string>
-    <string name="guardar">Save</string>
-    <string name="cancelar">Cancel</string>
+    <string name="save">Save</string>
+    <string name="cancel">Cancel</string>
     <string name="login">Login</string>
     <string name="login_ok">Correct login</string>
     <string name="title_activity_settings">Setting</string>
     <string name="title_activity_notifications">Notifications</string>
 
     <!--String sections-->
-    <string name="section_guias_title">Property Documents</string>
-    <string name="section_compras_title">Purchases</string>
-    <string name="section_licencias_title">Licenses</string>
-    <string name="section_tiradas_title">Competitions</string>
+    <string name="section_properties_title">Property Documents</string>
+    <string name="section_purchases_title">Purchases</string>
+    <string name="section_licenses_title">Licenses</string>
+    <string name="section_competitions_title">Competitions</string>
 
     <!--String Properties-->
     <string name="property_toolbar_title_new">New Property Document</string>
     <string name="labelInfoGuia">Information of New Property Documents</string>
-    <string name="property_lbl_nickname">Nick</string>
-    <string name="property_lbl_brand">Brand of the weapon</string>
-    <string name="property_lbl_model">Model </string>
-    <string name="property_lbl_bore_1">Diameter Bore</string>
+    <string name="item_property_lbl_nickname">Nick</string>
+    <string name="form_purchase_brand">Brand of the weapon</string>
+    <string name="item_property_lbl_model">Model </string>
+    <string name="form_purchase_bore">Diameter Bore</string>
     <string name="property_lbl_bore_2">Diameter Bore (Additional)</string>
     <string name="property_lbl_num_id">Weapon Serial Number</string>
-    <string name="error_before_save">This field is required</string>
-    <string name="error_mensaje_cabecera">Before saving you must write all fields</string>
-    <string name="item_property_nickname">Nick</string>
-    <string name="check_segundo_calibre">Second Bore Allowed</string>
-    <string name="item_property_num_id">12345</string>
     <string name="item_property_lbl_num_id">Number of Document Property</string>
 
     <!--String Compras Form-->
     <string name="title_nueva_compra">New Purchase</string>
     <string name="labelInfoCompra">New Purchase Info</string>
-    <string name="precio">Price</string>
+    <string name="form_purchase_price">Price</string>
     <string name="cartuchos_comprados">Number of Cartridges Purchased</string>
     <string name="municion_propia">Previous Ammunition Purchase this Year</string>
-    <string name="unidades">Units</string>
-    <string name="fecha">Date</string>
+    <string name="form_purchase_units">Units</string>
+    <string name="form_purchase_date">Date</string>
     <string name="tipo_municion">Tip Type</string>
-    <string name="peso_municion">Weight (Grains)</string>
-    <string name="tienda">Store Location</string>
+    <string name="form_purchase_weight">Weight (Grains)</string>
+    <string name="form_purchase_store">Store Location</string>
     <string name="valoracion">Appreciation</string>
 
     <!--String Licenses-->
@@ -162,5 +157,12 @@
     <string name="sin_conexion">Without internet connection</string>
     <string name="snackbar_undo_delete_message">Undo the deletion</string>
     <string name="snackbar_undo_delete">Undo</string>
+    <string name="purchase_toolbar_title_new">New purchase</string>
+    <string name="purchase_lbl_date">Purchase date</string>
+    <string name="purchase_lbl_price">Price</string>
+    <string name="purchase_lbl_bore">Bore</string>
+    <string name="purchase_lbl_brand">Brand</string>
+    <string name="item_property_lbl_brand">Brand</string>
+    <string name="item_property_lbl_bore">Bore</string>
 
 </resources>

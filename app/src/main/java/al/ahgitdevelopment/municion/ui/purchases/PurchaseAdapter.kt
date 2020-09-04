@@ -8,7 +8,6 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.android.synthetic.main.adapter_item_property.view.*
 import kotlinx.android.synthetic.main.adapter_item_purchase.view.*
 
 class PurchaseAdapter : ListAdapter<Purchase, PurchaseAdapter.PurchaseViewHolder>(DIFF_CALLBACK) {
@@ -33,9 +32,9 @@ class PurchaseAdapter : ListAdapter<Purchase, PurchaseAdapter.PurchaseViewHolder
             itemView.item_purchase_date.text = item.date
 
             if (item.image.isNullOrBlank()) {
-                itemView.item_property_image.visibility = View.GONE
+                itemView.item_purchase_image.visibility = View.GONE
             } else {
-                itemView.item_property_image.visibility = View.VISIBLE
+                itemView.item_purchase_image.visibility = View.VISIBLE
                 // itemView.item_purchase_image.setImageResource(item.image)
             }
         }

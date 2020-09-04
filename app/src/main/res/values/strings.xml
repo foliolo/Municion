@@ -13,50 +13,51 @@
     <string name="login_not_matching_password_error">Las contraseñas no coinciden</string>
     <string name="title_activity_fragment_main">Munición</string>
     <string name="action_settings">Configuración</string>
-    <string name="guardar">Guardar</string>
-    <string name="cancelar">Cancelar</string>
+    <string name="save">Guardar</string>
+    <string name="cancel">Cancelar</string>
     <string name="login">Login</string>
     <string name="login_ok">Login correcto</string>
     <string name="title_activity_settings">Configuración</string>
     <string name="title_activity_notifications">Notificaciones</string>
 
     <!--String sections-->
-    <string name="section_guias_title">Guías</string>
-    <string name="section_compras_title">Compras</string>
-    <string name="section_licencias_title">Licencias</string>
-    <string name="section_tiradas_title">Tiradas</string>
+    <string name="section_properties_title">Guías</string>
+    <string name="section_purchases_title">Compras</string>
+    <string name="section_licenses_title">Licencias</string>
+    <string name="section_competitions_title">Tiradas</string>
 
     <!--String Property Form-->
     <string name="property_toolbar_title_new">Nueva guía de arma</string>
-    <string name="labelInfoGuia">Información de la nueva guia</string>
-    <string name="property_lbl_num_id">Numero de serie del arma</string>
-    <string name="property_lbl_brand">Marca</string>
-    <string name="property_lbl_model">Modelo</string>
-    <string name="property_lbl_bore_1">Calibre</string>
-    <string name="property_lbl_bore_2">Calibre2</string>
-    <string name="error_before_save">Este campo es obligatorio</string>
-    <string name="error_mensaje_cabecera">Antes de guardar debes rellenar los campos obligatorios</string>
-
-    <!--String Property Item-->
-    <string name="property_lbl_nickname">Apodo</string>
-    <string name="item_property_nickname">Apodo</string>
-    <string name="check_segundo_calibre">Tiene segundo calibre</string>
-    <string name="item_property_num_id">12345</string>
+    <string name="item_property_lbl_nickname">Apodo</string>
+    <string name="item_property_lbl_model">Modelo</string>
     <string name="item_property_lbl_num_id">Num guia</string>
+    <string name="item_property_lbl_brand">Marca</string>
+    <string name="item_property_lbl_bore">Calibre</string>
+    <string name="property_lbl_num_id">Numero de serie del arma</string>
+    <string name="property_lbl_bore_2">Calibre2</string>
+    <string name="form_purchase_brand">Marca</string>
+    <string name="form_purchase_bore">Calibre</string>
 
-    <!--String Compras Form-->
+
+    <!--String Purchase -->
     <string name="title_nueva_compra">Nueva compra</string>
     <string name="labelInfoCompra">Información de la nueva compra</string>
 
-    <string name="precio">Precio</string>
+    <string name="form_purchase_price">Precio</string>
     <string name="cartuchos_comprados">Numero de cartuchos comprados</string>
     <string name="municion_propia">Municion propia</string>
-    <string name="unidades">Unidades</string>
-    <string name="fecha">Fecha</string>
+    <string name="form_purchase_units">Unidades</string>
+    <string name="form_purchase_date">Fecha</string>
     <string name="tipo_municion">Tipo de munición</string>
-    <string name="peso_municion">Peso (grains)</string>
-    <string name="tienda">Ubicación de la tienda</string>
+    <string name="form_purchase_weight">Peso (grains)</string>
+    <string name="form_purchase_store">Ubicación de la tienda</string>
     <string name="valoracion">Valoracion</string>
+
+    <string name="purchase_lbl_brand">Marca</string>
+    <string name="purchase_lbl_bore">Calibre</string>
+    <string name="purchase_lbl_price">Precio</string>
+    <string name="purchase_lbl_date">Fecha de compra</string>
+    <string name="purchase_toolbar_title_new">Nueva compra</string>
 
     <!--String Licencias Form-->
     <string name="license_toolbar_title_new">Nueva Licencia</string>
@@ -180,8 +181,5 @@
     <string name="menu_sign_out" translatable="false">Sign out</string>
     <string name="snackbar_undo_delete_message">Deshacer la eliminación</string>
     <string name="snackbar_undo_delete">Deshacer</string>
-    <string name="purchase_lbl_brand">Marca</string>
-    <string name="purchase_lbl_bore">Calibre</string>
-    <string name="purchase_lbl_price">Precio</string>
-    <string name="purchase_lbl_date">Fecha de compra</string>
+    <string name="labelInfoGuia">Weapon identificacion number</string>
 </resources>

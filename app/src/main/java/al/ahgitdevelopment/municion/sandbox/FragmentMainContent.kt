@@ -1127,10 +1127,10 @@ class FragmentMainContent : Fragment() {
 
         override fun getPageTitle(position: Int): CharSequence? {
             when (position) {
-                0 -> return getString(R.string.section_guias_title)
-                1 -> return getString(R.string.section_compras_title)
-                2 -> return getString(R.string.section_licencias_title)
-                3 -> return getString(R.string.section_tiradas_title)
+                0 -> return getString(R.string.section_properties_title)
+                1 -> return getString(R.string.section_purchases_title)
+                2 -> return getString(R.string.section_licenses_title)
+                3 -> return getString(R.string.section_competitions_title)
             }
             return null
         }
