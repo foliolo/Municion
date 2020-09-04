@@ -2,6 +2,7 @@ package al.ahgitdevelopment.municion.datamodel
 
 import al.ahgitdevelopment.municion.repository.dao.KEY_COMPETITION_DATE
 import al.ahgitdevelopment.municion.repository.dao.KEY_COMPETITION_DESCRIPTION
+import al.ahgitdevelopment.municion.repository.dao.KEY_COMPETITION_PLACE
 import al.ahgitdevelopment.municion.repository.dao.KEY_COMPETITION_POINTS
 import al.ahgitdevelopment.municion.repository.dao.KEY_COMPETITION_RANKING
 import al.ahgitdevelopment.municion.repository.dao.KEY_ID
@@ -29,7 +30,9 @@ data class Competition(
 
     @ColumnInfo(name = KEY_COMPETITION_RANKING) var ranking: String,
 
-    @ColumnInfo(name = KEY_COMPETITION_POINTS) var points: Int
+    @ColumnInfo(name = KEY_COMPETITION_POINTS) var points: Int,
+
+    @ColumnInfo(name = KEY_COMPETITION_PLACE) var place: String
 
 ) : Serializable {
 
@@ -38,12 +41,14 @@ data class Competition(
         description = "",
         date = "",
         ranking = "",
-        points = 0
+        points = 0,
+        place = "",
     ) {
         id = bundle.getLong(KEY_ID)
         description = bundle.getString(KEY_COMPETITION_DESCRIPTION) ?: ""
         date = bundle.getString(KEY_COMPETITION_DATE) ?: ""
         ranking = bundle.getString(KEY_COMPETITION_RANKING) ?: ""
         points = bundle.getInt(KEY_COMPETITION_POINTS)
+        place = bundle.getString(KEY_COMPETITION_PLACE) ?: ""
     }
 }

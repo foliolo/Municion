@@ -129,15 +129,10 @@
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/form_license_fab_save"
             android:layout_width="wrap_content"
+            style="@style/FloatingActionButton"
             android:layout_height="wrap_content"
-            android:layout_above="@+id/login_adView"
-            android:layout_gravity="bottom|end"
-            android:layout_margin="@dimen/fab_margin"
-            android:backgroundTint="@color/colorAccent"
             android:onClick="@{viewModel::fabSaveLicenseClicked}"
-            app:fabSize="normal"
             app:srcCompat="@drawable/ic_save"
-            app:tint="@color/white"
             />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>

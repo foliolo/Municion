@@ -1,6 +1,7 @@
 package al.ahgitdevelopment.municion.di
 
-import al.ahgitdevelopment.municion.ui.competitions.CompetitionViewModel
+import al.ahgitdevelopment.municion.ui.competitions.CompetitionFormViewModel
+import al.ahgitdevelopment.municion.ui.competitions.CompetitionsViewModel
 import al.ahgitdevelopment.municion.ui.licenses.LicenseFormViewModel
 import al.ahgitdevelopment.municion.ui.licenses.LicensesViewModel
 import al.ahgitdevelopment.municion.ui.login.LoginViewModel
@@ -43,8 +44,8 @@ abstract class ViewModelModule {
 
     @Binds
     @IntoMap
-    @ViewModelKey(CompetitionViewModel::class)
-    abstract fun bindCompetitionsViewModel(competitionViewModel: CompetitionViewModel): ViewModel
+    @ViewModelKey(CompetitionsViewModel::class)
+    abstract fun bindCompetitionsViewModel(competitionsViewModel: CompetitionsViewModel): ViewModel
 
     @Binds
     @IntoMap
@@ -60,6 +61,11 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(PurchaseFormViewModel::class)
     abstract fun bindPurchaseFormViewModel(purchaseFormViewModel: PurchaseFormViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(CompetitionFormViewModel::class)
+    abstract fun bindCompetitionFormViewModel(competitionFormViewModel: CompetitionFormViewModel): ViewModel
 
     @Binds
     abstract fun bindsModelFactory(factory: ViewModelFactory): ViewModelProvider.Factory

@@ -9,7 +9,7 @@
 
         <variable
             name="viewModel"
-            type="al.ahgitdevelopment.municion.ui.purchases.PurchaseFormViewModel"
+            type="al.ahgitdevelopment.municion.ui.competitions.CompetitionFormViewModel"
             />
     </data>
 
@@ -31,9 +31,9 @@
                 android:padding="@dimen/form_layout_margin"
                 >
 
-                <!--BRAND-->
+                <!--DESCRIPTION-->
                 <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/form_purchase_brand"
+                    android:id="@+id/form_competition_description"
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -42,92 +42,21 @@
                     <EditText
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="@string/form_purchase_brand"
-                        android:imeOptions="actionNext"
+                        android:hint="@string/form_competition_lbl_description"
                         android:inputType="text|textCapSentences"
-                        />
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <!--STORE-->
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/form_purchase_store"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    >
-
-                    <EditText
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:hint="@string/form_purchase_store"
-                        android:imeOptions="actionNext"
-                        android:inputType="text|textCapSentences"
-                        />
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <!--BORE 1-->
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/form_purchase_bore"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    >
-
-                    <EditText
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:hint="@string/form_purchase_bore"
-                        android:imeOptions="actionNext"
-                        android:inputType="textCapSentences"
-                        />
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <!--UNITS-->
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/form_purchase_units"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    >
-
-                    <EditText
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:hint="@string/form_purchase_units"
-                        android:imeOptions="actionNext"
-                        android:inputType="number"
-                        android:maxLength="@integer/max_unidades_compra_length"
-                        />
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <!--PRICE-->
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/form_purchase_price"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    >
-
-                    <EditText
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:hint="@string/form_purchase_price"
-                        android:imeOptions="actionNext"
-                        android:inputType="numberDecimal"
-                        android:maxLength="@integer/max_unidades_precio_length"
                         />
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <!--DATE-->
                 <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/form_purchase_date"
+                    android:id="@+id/form_competition_date"
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="@dimen/form_fields_separation"
+                    android:focusableInTouchMode="true"
                     >
 
-                    <com.google.android.material.textfield.TextInputEditText
+                    <EditText
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:focusableInTouchMode="false"
@@ -137,9 +66,10 @@
                         />
                 </com.google.android.material.textfield.TextInputLayout>
 
-                <!--WEIGHT-->
+
+                <!--RANKING-->
                 <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/form_purchase_weight"
+                    android:id="@+id/form_competition_ranking"
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -148,21 +78,42 @@
                     <EditText
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="@string/form_purchase_weight"
-                        android:imeOptions="actionNext"
-                        android:inputType="numberDecimal"
-                        android:maxLength="@integer/max_peso_municion_compra"
+                        android:hint="@string/form_competition_lbl_ranking"
+                        android:inputType="number"
+                        android:maxLength="@integer/max_num_abonado_guia"
                         />
                 </com.google.android.material.textfield.TextInputLayout>
 
-                <!--RATING-->
-                <RatingBar
-                    android:id="@+id/form_purchase_rating"
-                    android:layout_width="wrap_content"
+                <!--POINTS-->
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/form_competition_points"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_margin="16dp"
-                    />
+                    >
+
+                    <EditText
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/form_competition_lbl_points"
+                        android:inputType="number"
+                        />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <!--PLACE-->
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/form_competition_place"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    >
+
+                    <EditText
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/form_competition_lbl_place"
+                        />
+                </com.google.android.material.textfield.TextInputLayout>
 
             </LinearLayout>
 
@@ -173,7 +124,7 @@
             style="@style/FloatingActionButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:onClick="@{viewModel::fabSavePurchaseClicked}"
+            android:onClick="@{viewModel::fabSaveCompetitionClicked}"
             app:srcCompat="@drawable/ic_save"
             />
 
