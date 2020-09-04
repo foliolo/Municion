@@ -11,7 +11,7 @@ import androidx.room.Update
 @Dao
 interface CompetitionDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(vararg competition: Competition)
+    suspend fun insert(vararg competition: Competition)
 
     @Update
     fun update(vararg competition: Competition)
@@ -20,7 +20,7 @@ interface CompetitionDao {
     fun deleteAll()
 
     @Query("DELETE FROM $TABLE_COMPETITION WHERE $KEY_ID = :id")
-    fun delete(id: Long)
+    suspend fun delete(id: Long)
 
     @Query("SELECT * from $TABLE_COMPETITION")
     fun getCompetitions(): LiveData<List<Competition>>

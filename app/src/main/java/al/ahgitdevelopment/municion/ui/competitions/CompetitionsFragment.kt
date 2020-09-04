@@ -1,7 +1,7 @@
-package al.ahgitdevelopment.municion.ui.purchases
+package al.ahgitdevelopment.municion.ui.competitions
 
 import al.ahgitdevelopment.municion.R
-import al.ahgitdevelopment.municion.databinding.PurchasesFragmentBinding
+import al.ahgitdevelopment.municion.databinding.CompetitionsFragmentBinding
 import al.ahgitdevelopment.municion.di.AppComponent
 import al.ahgitdevelopment.municion.ui.DeleteItemOnSwipe
 import al.ahgitdevelopment.municion.ui.RecyclerInterface
@@ -20,17 +20,17 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
-import kotlinx.android.synthetic.main.purchases_fragment.*
+import kotlinx.android.synthetic.main.competitions_fragment.*
 import javax.inject.Inject
 
-class PurchasesFragment : Fragment(), RecyclerInterface {
+class CompetitionsFragment : Fragment(), RecyclerInterface {
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
 
-    private lateinit var purchaseAdapter: PurchaseAdapter
+    private lateinit var competitionAdapter: CompetitionAdapter
 
-    private val viewModel: PurchasesViewModel by viewModels {
+    private val viewModel: CompetitionsViewModel by viewModels {
         viewModelFactory
     }
 
@@ -42,12 +42,11 @@ class PurchasesFragment : Fragment(), RecyclerInterface {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
 
-        val binding: PurchasesFragmentBinding =
-            DataBindingUtil.inflate(inflater, R.layout.purchases_fragment, container, false)
+        val binding: CompetitionsFragmentBinding =
+            DataBindingUtil.inflate(inflater, R.layout.competitions_fragment, container, false)
+
         binding.viewModel = this.viewModel
         binding.lifecycleOwner = viewLifecycleOwner
-
-        // setHasOptionsMenu(true)
 
         return binding.root
     }
@@ -55,18 +54,18 @@ class PurchasesFragment : Fragment(), RecyclerInterface {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel.addPurchase.observe(viewLifecycleOwner, {
-            findNavController().navigate(R.id.purchaseFormFragment)
+        viewModel.addCompetition.observe(viewLifecycleOwner, {
+            findNavController().navigate(R.id.competitionFormFragment)
         })
 
-        viewModel.purchases.observe(viewLifecycleOwner) {
-            purchaseAdapter = PurchaseAdapter().apply {
+        viewModel.competitions.observe(viewLifecycleOwner) {
+            competitionAdapter = CompetitionAdapter().apply {
                 submitList(it)
                 setHasStableIds(true)
             }
 
-            purchases_recycler_view.apply {
-                adapter = purchaseAdapter
+            competitions_recycler_view.apply {
+                adapter = competitionAdapter
                 layoutManager = LinearLayoutManager(requireContext())
 
                 ItemTouchHelper(
@@ -94,13 +93,13 @@ class PurchasesFragment : Fragment(), RecyclerInterface {
     }
 
     override fun RecyclerView?.undoDelete(viewHolder: RecyclerView.ViewHolder) {
-        purchaseAdapter.currentList[(viewHolder as PurchaseAdapter.PurchaseViewHolder).adapterPosition]?.let { purchase ->
+        competitionAdapter.currentList[(viewHolder as CompetitionAdapter.CompetitionViewHolder).adapterPosition]?.let { competition ->
             Snackbar.make(
-                purchases_layout,
+                competitions_layout,
                 R.string.snackbar_undo_delete_message,
                 Snackbar.LENGTH_LONG
             ).setAction(R.string.snackbar_undo_delete) {
-                viewModel.addPurchase(purchase)
+                viewModel.addPurchase(competition)
                 this?.adapter?.notifyDataSetChanged()
             }.show()
         }

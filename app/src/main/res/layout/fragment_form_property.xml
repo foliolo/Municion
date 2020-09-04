@@ -140,16 +140,11 @@
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/form_property_fab_save"
+            style="@style/FloatingActionButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignWithParentIfMissing="true"
-            android:layout_gravity="bottom|end"
-            android:layout_margin="12dp"
-            android:backgroundTint="@color/colorAccent"
             android:onClick="@{viewModel::fabSavePropertyClicked}"
-            app:fabSize="normal"
             app:srcCompat="@drawable/ic_save"
-            app:tint="@color/white"
             />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>

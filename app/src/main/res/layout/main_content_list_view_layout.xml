@@ -9,7 +9,6 @@
         android:layout_height="match_parent"
         android:gravity="center"
         android:textAlignment="center"
-        android:textAppearance="?android:attr/textAppearanceMedium"
         android:textStyle="normal|bold"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"

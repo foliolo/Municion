@@ -20,11 +20,9 @@
 
     <androidx.cardview.widget.CardView
         android:id="@+id/item_license_cardView"
+        style="@style/CardViewItem"
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_margin="8dp"
-        android:backgroundTint="@color/light_yellow"
-        app:cardCornerRadius="4dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/item_delete_icon"
@@ -34,19 +32,16 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:padding="4dp"
             >
 
             <TextView
                 android:id="@+id/item_license_lbl_name"
+                style="@style/CardviewItemLabelText"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="4dp"
-                android:layout_marginEnd="8dp"
                 android:gravity="end"
                 android:text="@string/license_lbl_name"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:textStyle="bold"
                 app:layout_constraintBottom_toTopOf="@+id/item_license_lbl_number"
                 app:layout_constraintEnd_toStartOf="@+id/item_license_name"
                 app:layout_constraintHorizontal_bias="0.5"
@@ -58,13 +53,12 @@
 
             <TextView
                 android:id="@+id/item_license_name"
-                style="@style/letter_black"
+                style="@style/CardviewItemText"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginEnd="8dp"
                 android:gravity="start"
-                android:textAppearance="?android:attr/textAppearanceSmall"
                 android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"
@@ -74,6 +68,7 @@
 
             <TextView
                 android:id="@+id/item_license_lbl_number"
+                style="@style/CardviewItemLabelText"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
@@ -81,8 +76,6 @@
                 android:layout_marginEnd="8dp"
                 android:gravity="end"
                 android:text="@string/license_lbl_number"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:textStyle="bold"
                 app:layout_constraintBottom_toTopOf="@+id/item_license_lbl_issue_date"
                 app:layout_constraintEnd_toStartOf="@+id/item_license_number"
                 app:layout_constraintHorizontal_bias="0.5"
@@ -93,13 +86,12 @@
 
             <TextView
                 android:id="@+id/item_license_number"
-                style="@style/letter_black"
+                style="@style/CardviewItemText"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginEnd="8dp"
                 android:gravity="start"
-                android:textAppearance="?android:attr/textAppearanceSmall"
                 android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/item_license_lbl_number"
@@ -108,6 +100,7 @@
 
             <TextView
                 android:id="@+id/item_license_lbl_issue_date"
+                style="@style/CardviewItemLabelText"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
@@ -115,8 +108,6 @@
                 android:layout_marginEnd="8dp"
                 android:gravity="end"
                 android:text="@string/license_lbl_issue_date"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:textStyle="bold"
                 app:layout_constraintBottom_toTopOf="@+id/item_license_lbl_expiry_date"
                 app:layout_constraintEnd_toStartOf="@+id/item_license_issue_date"
                 app:layout_constraintHorizontal_bias="0.5"
@@ -127,13 +118,12 @@
 
             <TextView
                 android:id="@+id/item_license_issue_date"
-                style="@style/letter_black"
+                style="@style/CardviewItemText"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginEnd="8dp"
                 android:gravity="start"
-                android:textAppearance="?android:attr/textAppearanceSmall"
                 android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"
@@ -143,6 +133,7 @@
 
             <TextView
                 android:id="@+id/item_license_lbl_expiry_date"
+                style="@style/CardviewItemLabelText"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
@@ -150,8 +141,6 @@
                 android:layout_marginEnd="8dp"
                 android:gravity="end"
                 android:text="@string/license_lbl_expiry_date"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:textStyle="bold"
                 app:layout_constraintBottom_toTopOf="@+id/item_license_lbl_insurance_number"
                 app:layout_constraintEnd_toStartOf="@+id/item_license_expiry_date"
                 app:layout_constraintHorizontal_bias="0.5"
@@ -162,13 +151,12 @@
 
             <TextView
                 android:id="@+id/item_license_expiry_date"
-                style="@style/letter_black"
+                style="@style/CardviewItemText"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginEnd="8dp"
                 android:gravity="start"
-                android:textAppearance="?android:attr/textAppearanceSmall"
                 android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"
@@ -179,6 +167,7 @@
 
             <TextView
                 android:id="@+id/item_license_lbl_insurance_number"
+                style="@style/CardviewItemLabelText"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
@@ -187,8 +176,6 @@
                 android:layout_marginBottom="8dp"
                 android:gravity="end"
                 android:text="@string/license_lbl_insurance_number"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/item_license_insurance_number"
                 app:layout_constraintHorizontal_bias="0.5"
@@ -199,13 +186,12 @@
 
             <TextView
                 android:id="@+id/item_license_insurance_number"
-                style="@style/letter_black"
+                style="@style/CardviewItemText"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginEnd="8dp"
                 android:gravity="start"
-                android:textAppearance="?android:attr/textAppearanceSmall"
                 android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"

@@ -1,7 +1,8 @@
 package al.ahgitdevelopment.municion.di
 
 import al.ahgitdevelopment.municion.NavigationActivity
-import al.ahgitdevelopment.municion.ui.competitions.CompetitionFragment
+import al.ahgitdevelopment.municion.ui.competitions.CompetitionFormFragment
+import al.ahgitdevelopment.municion.ui.competitions.CompetitionsFragment
 import al.ahgitdevelopment.municion.ui.licenses.LicenseFormFragment
 import al.ahgitdevelopment.municion.ui.licenses.LicensesFragment
 import al.ahgitdevelopment.municion.ui.login.LoginPasswordFragment
@@ -28,11 +29,12 @@ interface AppComponent {
     fun inject(propertiesFragment: PropertiesFragment)
     fun inject(purchasesFragment: PurchasesFragment)
     fun inject(licensesFragment: LicensesFragment)
-    fun inject(competitionFragment: CompetitionFragment)
+    fun inject(competitionsFragment: CompetitionsFragment)
 
     fun inject(propertyFormFragment: PropertyFormFragment)
     fun inject(licenseFormFragment: LicenseFormFragment)
     fun inject(purchaseFormFragment: PurchaseFormFragment)
+    fun inject(competitionFormFragment: CompetitionFormFragment)
 
     companion object {
         fun create(context: Context): AppComponent {

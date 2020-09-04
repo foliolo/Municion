@@ -9,8 +9,7 @@
         android:id="@+id/loginPasswordFragment"
         android:name="al.ahgitdevelopment.municion.ui.login.LoginPasswordFragment"
         android:label="fragment_login"
-        tools:layout="@layout/fragment_login">
-    </fragment>
+        tools:layout="@layout/fragment_login" />
 
     <fragment
         android:id="@+id/propertiesFragment"
@@ -44,9 +43,14 @@
 
     <fragment
         android:id="@+id/competitionsFragment"
-        android:name="al.ahgitdevelopment.municion.ui.competitions.CompetitionFragment"
+        android:name="al.ahgitdevelopment.municion.ui.competitions.CompetitionsFragment"
         android:label="competitions_fragment"
-        tools:layout="@layout/competitions_fragment" />
+        tools:layout="@layout/competitions_fragment">
+        <action
+            android:id="@+id/action_competitionsFragment_to_competitionFormFragment"
+            app:destination="@id/competitionFormFragment" />
+    </fragment>
+
     <fragment
         android:id="@+id/licenseFormFragment"
         android:name="al.ahgitdevelopment.municion.ui.licenses.LicenseFormFragment"
@@ -62,5 +66,10 @@
         android:name="al.ahgitdevelopment.municion.ui.purchases.PurchaseFormFragment"
         android:label="PurchaseFormFragment"
         tools:layout="@layout/fragment_form_purchase" />
+    <fragment
+        android:id="@+id/competitionFormFragment"
+        android:name="al.ahgitdevelopment.municion.ui.competitions.CompetitionFormFragment"
+        android:label="CompetitionFormFragment"
+        tools:layout="@layout/fragment_form_competition" />
 
 </navigation>

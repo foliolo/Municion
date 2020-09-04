@@ -28,7 +28,6 @@
 
     <!--String Properties-->
     <string name="property_toolbar_title_new">New Property Document</string>
-    <string name="labelInfoGuia">Information of New Property Documents</string>
     <string name="item_property_lbl_nickname">Nick</string>
     <string name="form_purchase_brand">Brand of the weapon</string>
     <string name="item_property_lbl_model">Model </string>
@@ -65,8 +64,8 @@
     <!--String Tirada Form-->
     <string name="title_nueva_tirada">New Competition</string>
     <string name="lbl_rango_tirada">Range</string>
-    <string name="lbl_descripcion_tirada">Description</string>
-    <string name="lbl_puntuacion_tirada">Score [0–600]</string>
+    <string name="form_competition_lbl_description">Description</string>
+    <string name="form_competition_lbl_ranking">Ranking</string>
     <string name="msg_countdown_ultima_tirada">Update your licence! Go shooting before it expire in the following days:</string>
     <string name="form_tirada_aviso_puntuacion">Score too hight</string>
 
@@ -164,5 +163,11 @@
     <string name="purchase_lbl_brand">Brand</string>
     <string name="item_property_lbl_brand">Brand</string>
     <string name="item_property_lbl_bore">Bore</string>
+    <string name="form_competition_lbl_points">Points</string>
+    <string name="form_competition_lbl_place">Place</string>
+    <string name="competition_lbl_date">Date</string>
+    <string name="competition_lbl_ranking">Ranking</string>
+    <string name="competition_lbl_points">Points</string>
+    <string name="competition_lbl_place">Place</string>
 
 </resources>

@@ -9,16 +9,19 @@
     <dimen name="form_layout_margin">16dp</dimen>
     <dimen name="form_fields_separation">8dp</dimen>
 
-    <!-- Constantes numéricas -->
+    <!-- Numeric constants -->
     <integer name="password_max_length">12</integer>
     <integer name="max_num_licencia_length">12</integer>
     <integer name="max_unidades_compra_length">5</integer>
     <integer name="max_unidades_precio_length">5</integer>
-    <integer name="max_num_guia_form_guias">12</integer>
     <integer name="max_num_arma_form_guias">12</integer>
     <integer name="max_peso_municion_compra">5</integer>
     <integer name="max_poliza_seguro_licencia">12</integer>
     <integer name="max_num_abonado_guia">12</integer>
     <integer name="question_max_length">20</integer>
+
+    <!--Cardview-->
+    <dimen name="cardview_margin">8dp</dimen>
+
 
 </resources>

@@ -22,5 +22,5 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun purchaseDao(): PurchaseDao?
     abstract fun propertyDao(): PropertyDao?
     abstract fun licenseDao(): LicenseDao?
-    abstract fun tiradaDao(): CompetitionDao?
+    abstract fun competitionDao(): CompetitionDao?
 }

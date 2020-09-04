@@ -20,11 +20,9 @@
 
     <androidx.cardview.widget.CardView
         android:id="@+id/item_property_cardView"
+        style="@style/CardViewItem"
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_margin="8dp"
-        android:backgroundTint="@color/light_yellow"
-        app:cardCornerRadius="4dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/item_delete_icon"
@@ -34,6 +32,7 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:padding="4dp"
             >
 
             <ImageView
@@ -54,13 +53,13 @@
 
             <TextView
                 android:id="@+id/item_property_lbl_nickname"
+                style="@style/CardviewItemLabelText"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginEnd="8dp"
                 android:gravity="end"
                 android:text="@string/item_property_lbl_nickname"
-                android:textAppearance="?android:attr/textAppearanceSmall"
                 app:layout_constraintBottom_toTopOf="@+id/item_property_lbl_num_id"
                 app:layout_constraintEnd_toStartOf="@+id/item_property_nickname"
                 app:layout_constraintHorizontal_bias="0.5"
@@ -72,13 +71,12 @@
 
             <TextView
                 android:id="@+id/item_property_nickname"
-                style="@style/letter_black"
+                style="@style/CardviewItemText"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginEnd="8dp"
                 android:gravity="start"
-                android:textAppearance="?android:attr/textAppearanceSmall"
                 android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"
@@ -88,6 +86,7 @@
 
             <TextView
                 android:id="@+id/item_property_lbl_num_id"
+                style="@style/CardviewItemLabelText"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
@@ -95,7 +94,6 @@
                 android:layout_marginEnd="8dp"
                 android:gravity="end"
                 android:text="@string/item_property_lbl_num_id"
-                android:textAppearance="?android:attr/textAppearanceSmall"
                 app:layout_constraintBottom_toTopOf="@+id/item_property_lbl_brand"
                 app:layout_constraintEnd_toStartOf="@+id/item_property_num_id"
                 app:layout_constraintHorizontal_bias="0.5"
@@ -106,13 +104,12 @@
 
             <TextView
                 android:id="@+id/item_property_num_id"
-                style="@style/letter_black"
+                style="@style/CardviewItemText"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginEnd="8dp"
                 android:gravity="start"
-                android:textAppearance="?android:attr/textAppearanceSmall"
                 android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"
@@ -122,6 +119,7 @@
 
             <TextView
                 android:id="@+id/item_property_lbl_brand"
+                style="@style/CardviewItemLabelText"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
@@ -129,7 +127,6 @@
                 android:layout_marginEnd="8dp"
                 android:gravity="end"
                 android:text="@string/item_property_lbl_brand"
-                android:textAppearance="?android:attr/textAppearanceSmall"
                 app:layout_constraintBottom_toTopOf="@+id/item_property_lbl_model"
                 app:layout_constraintEnd_toStartOf="@+id/item_property_brand"
                 app:layout_constraintHorizontal_bias="0.5"
@@ -140,13 +137,12 @@
 
             <TextView
                 android:id="@+id/item_property_brand"
-                style="@style/letter_black"
+                style="@style/CardviewItemText"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginEnd="8dp"
                 android:gravity="start"
-                android:textAppearance="?android:attr/textAppearanceSmall"
                 android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"
@@ -156,6 +152,7 @@
 
             <TextView
                 android:id="@+id/item_property_lbl_model"
+                style="@style/CardviewItemLabelText"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
@@ -163,7 +160,6 @@
                 android:layout_marginEnd="8dp"
                 android:gravity="end"
                 android:text="@string/item_property_lbl_model"
-                android:textAppearance="?android:attr/textAppearanceSmall"
                 app:layout_constraintBottom_toTopOf="@+id/item_property_lbl_bore"
                 app:layout_constraintEnd_toStartOf="@+id/item_property_model"
                 app:layout_constraintHorizontal_bias="0.5"
@@ -174,13 +170,12 @@
 
             <TextView
                 android:id="@+id/item_property_model"
-                style="@style/letter_black"
+                style="@style/CardviewItemText"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginEnd="8dp"
                 android:gravity="start"
-                android:textAppearance="?android:attr/textAppearanceSmall"
                 android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"
@@ -191,6 +186,7 @@
 
             <TextView
                 android:id="@+id/item_property_lbl_bore"
+                style="@style/CardviewItemLabelText"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
@@ -198,7 +194,6 @@
                 android:layout_marginEnd="8dp"
                 android:gravity="end"
                 android:text="@string/item_property_lbl_bore"
-                android:textAppearance="?android:attr/textAppearanceSmall"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/item_property_bore"
                 app:layout_constraintHorizontal_bias="0.5"
@@ -209,13 +204,12 @@
 
             <TextView
                 android:id="@+id/item_property_bore"
-                style="@style/letter_black"
+                style="@style/CardviewItemText"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginEnd="8dp"
                 android:gravity="start"
-                android:textAppearance="?android:attr/textAppearanceSmall"
                 android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"
