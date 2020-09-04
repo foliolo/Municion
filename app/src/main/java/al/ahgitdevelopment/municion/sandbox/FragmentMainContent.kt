@@ -153,7 +153,7 @@ class FragmentMainContent : Fragment() {
 //        textEmptyList = findViewById(R.id.textEmptyList)
 
         // Instanciamos la base de datos
-        dbSqlHelper = null//DataBaseSQLiteHelper(requireContext())
+        // dbSqlHelper = null DataBaseSQLiteHelper(requireContext())
 
         // Carga de las listas en funcion de la conectividad:
         // - Con conexion: Firebase
@@ -560,8 +560,8 @@ class FragmentMainContent : Fragment() {
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.menu_fragment_main, menu)
         when (mViewPager.currentItem) {
-            0, 1, 2 -> menu.findItem(R.id.tabla_tiradas).isVisible = false
-            3 -> menu.findItem(R.id.tabla_tiradas).isVisible = true
+            // 0, 1, 2 -> menu.findItem(R.id.tabla_tiradas).isVisible = false
+            // 3 -> menu.findItem(R.id.tabla_tiradas).isVisible = true
         }
         super.onCreateOptionsMenu(menu, inflater)
     }
@@ -1169,7 +1169,8 @@ class FragmentMainContent : Fragment() {
         // private var licenciaArrayAdapter: LicenciaArrayAdapter? = null
         // private var tiradaArrayAdapter: TiradaArrayAdapter? = null
         private var listView: ListView? = null
-        private var dbSqlHelper: DataBaseSQLiteHelper? = null
+
+        // private var dbSqlHelper: DataBaseSQLiteHelper? = null
         private var tiradaCountDown: TextView? = null
     }
 }
