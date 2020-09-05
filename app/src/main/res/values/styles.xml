@@ -33,4 +33,9 @@
         <item name="android:textStyle">normal|bold</item>
     </style>
 
+    <style name="TutorialContainer">
+        <item name="android:background">@color/white</item>
+    </style>
+
+
 </resources>

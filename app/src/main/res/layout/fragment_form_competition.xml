@@ -110,6 +110,7 @@
 
                     <EditText
                         android:layout_width="match_parent"
+                        android:inputType="text"
                         android:layout_height="wrap_content"
                         android:hint="@string/form_competition_lbl_place"
                         />
