@@ -1,17 +1,13 @@
 package al.ahgitdevelopment.municion.ui.licenses
 
 import al.ahgitdevelopment.municion.R
-import al.ahgitdevelopment.municion.SettingsFragment
 import al.ahgitdevelopment.municion.databinding.LicensesFragmentBinding
 import al.ahgitdevelopment.municion.di.AppComponent
 import al.ahgitdevelopment.municion.ui.DeleteItemOnSwipe
 import al.ahgitdevelopment.municion.ui.RecyclerInterface
 import android.content.Context
 import android.content.Context.INPUT_METHOD_SERVICE
-import android.content.Intent
-import android.graphics.BitmapFactory
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
@@ -19,6 +15,7 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
+import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -117,15 +114,7 @@ class LicensesFragment : Fragment(), RecyclerInterface {
         // as you specify a parent activity in AndroidManifest.xml.
         when (item.itemId) {
             R.id.action_settings -> {
-                val intent = Intent(requireContext(), SettingsFragment::class.java)
-                startActivity(intent)
-            }
-            R.id.tabla_tiradas -> try {
-                val bitmap = BitmapFactory.decodeResource(resources, R.drawable.image_table)
-                // Utils.showImage(requireContext(), bitmap, "table")
-            } catch (ex: Exception) {
-                Log.e(TAG, "Error mostrando la tabla de tiradas")
-                firebaseCrashlytics.recordException(ex)
+                Toast.makeText(requireContext(), "Settings click", Toast.LENGTH_SHORT).show()
             }
             R.id.log_out -> {
                 signOut()

@@ -34,13 +34,7 @@
         </activity>
 
         <activity
-            android:name=".SettingsFragment"
-            android:label="@string/title_activity_settings"
-            android:theme="@style/Theme.AppCompat.Light.DarkActionBar"
-            />
-
-        <activity
-            android:name=".sandbox.FragmentTutorialActivity"
+            android:name=".tutorial.FragmentTutorialActivity"
             android:screenOrientation="fullSensor"
             android:theme="@style/AppTheme"
             />
