@@ -1,8 +1,8 @@
 package al.ahgitdevelopment.municion.ui.login
 
+import al.ahgitdevelopment.municion.SingleLiveEvent
 import al.ahgitdevelopment.municion.di.SharedPrefsModule.Companion.PREFS_PASSWORD
 import al.ahgitdevelopment.municion.di.SharedPrefsModule.Companion.PREFS_SHOW_TUTORIAL
-import al.ahgitdevelopment.municion.utils.SingleLiveEvent
 import android.content.SharedPreferences
 import android.util.Log
 import android.view.View
@@ -103,7 +103,7 @@ class LoginViewModel @Inject constructor(private val prefs: SharedPreferences) :
     }
 
     fun showTutorial() {
-        if (!prefs.getBoolean(PREFS_SHOW_TUTORIAL, true)) {
+        if (prefs.getBoolean(PREFS_SHOW_TUTORIAL, true)) {
             prefs.edit().apply {
                 putBoolean(PREFS_SHOW_TUTORIAL, false)
                 navigateIntoTutorial.call()

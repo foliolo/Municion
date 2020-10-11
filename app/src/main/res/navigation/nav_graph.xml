@@ -12,6 +12,12 @@
         tools:layout="@layout/fragment_login" />
 
     <fragment
+        android:id="@+id/tutorialViewPagerFragment"
+        android:name="al.ahgitdevelopment.municion.tutorial.TutorialViewPagerFragment"
+        android:label="TutorialViewPagerFragment"
+        tools:layout="@layout/fragment_tutorial_viewpager" />
+
+    <fragment
         android:id="@+id/propertiesFragment"
         android:name="al.ahgitdevelopment.municion.ui.properties.PropertiesFragment"
         android:label="properties_fragment"
