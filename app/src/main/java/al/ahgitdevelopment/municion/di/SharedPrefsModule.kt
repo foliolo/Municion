@@ -17,5 +17,6 @@ class SharedPrefsModule(private val context: Context) {
     companion object {
         const val PREFS_PASSWORD = "password"
         const val PREFS_SHOW_ADS = "show_ads"
+        const val PREFS_SHOW_TUTORIAL = "tutorial"
     }
 }

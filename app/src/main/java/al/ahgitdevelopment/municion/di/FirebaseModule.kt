@@ -1,5 +1,9 @@
 package al.ahgitdevelopment.municion.di
 
+import al.ahgitdevelopment.municion.firebase.FirebaseImageRepository
+import al.ahgitdevelopment.municion.tutorial.TutorialImagesRepository
+import android.content.Context
+import android.net.ConnectivityManager
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.auth.FirebaseAuth
@@ -14,7 +18,7 @@ import dagger.Provides
 import dagger.Reusable
 
 @Module
-class FirebaseModule {
+class FirebaseModule(val context: Context) {
 
     @Provides
     @Reusable
@@ -36,9 +40,23 @@ class FirebaseModule {
     @Reusable
     fun provideStorage(): FirebaseStorage = Firebase.storage
 
+    @Provides
+    @Reusable
+    fun provideConnectivityManager(): ConnectivityManager =
+        context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+
+    @Provides
+    @Reusable
+    fun provideTutorialImagesRepository(): TutorialImagesRepository = FirebaseImageRepository(
+        context,
+        provideAuth(),
+        provideStorage(),
+        provideCrashlytics(),
+        provideConnectivityManager()
+    )
+
     companion object {
         const val PARAM_USER_UID = "user_uid"
         const val EVENT_LOGOUT = "logout"
-        const val MIN_PASS_LENGTH = 6
     }
 }
