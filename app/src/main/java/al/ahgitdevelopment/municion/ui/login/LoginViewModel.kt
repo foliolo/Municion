@@ -1,9 +1,10 @@
 package al.ahgitdevelopment.municion.ui.login
 
-import al.ahgitdevelopment.municion.SingleLiveEvent
 import al.ahgitdevelopment.municion.di.SharedPrefsModule.Companion.PREFS_PASSWORD
-import al.ahgitdevelopment.municion.di.SharedPrefsModule.Companion.PREFS_SHOW_ADS
+import al.ahgitdevelopment.municion.di.SharedPrefsModule.Companion.PREFS_SHOW_TUTORIAL
+import al.ahgitdevelopment.municion.utils.SingleLiveEvent
 import android.content.SharedPreferences
+import android.util.Log
 import android.view.View
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -13,8 +14,9 @@ import javax.inject.Inject
 class LoginViewModel @Inject constructor(private val prefs: SharedPreferences) : ViewModel() {
 
     val navigateIntoApp = SingleLiveEvent<Void>()
+    val navigateIntoTutorial = SingleLiveEvent<Void>()
 
-    val showAds = SingleLiveEvent<Boolean>()
+    // val showAds = SingleLiveEvent<Boolean>()
 
     private val _userState = MutableLiveData<UserState>()
     val userState: LiveData<UserState> = _userState
@@ -34,7 +36,7 @@ class LoginViewModel @Inject constructor(private val prefs: SharedPreferences) :
     private var password1 = ""
 
     fun onCreateView() {
-        showAds.postValue(prefs.getBoolean(PREFS_SHOW_ADS, true))
+        // showAds.postValue(prefs.getBoolean(PREFS_SHOW_ADS, true))
         _userState.postValue(isUserLogged())
     }
 
@@ -54,7 +56,8 @@ class LoginViewModel @Inject constructor(private val prefs: SharedPreferences) :
         } else {
 
             if (s.toString() != prefs.getString(PREFS_PASSWORD, "") &&
-                    _userState.value == UserState.ACTIVE_USER) {
+                _userState.value == UserState.ACTIVE_USER
+            ) {
                 _password1Error.postValue(ErrorMessages.NOT_MATCHING_PASSWORD)
                 _passwordState.postValue(PasswordState.INVALID)
             } else if (_userState.value == UserState.NEW_USER) {
@@ -99,11 +102,23 @@ class LoginViewModel @Inject constructor(private val prefs: SharedPreferences) :
         }.apply()
     }
 
+    fun showTutorial() {
+        if (!prefs.getBoolean(PREFS_SHOW_TUTORIAL, true)) {
+            prefs.edit().apply {
+                putBoolean(PREFS_SHOW_TUTORIAL, false)
+                navigateIntoTutorial.call()
+            }.apply()
+        } else {
+            Log.v(TAG, "Tutorial not show")
+        }
+    }
+
     enum class UserState { NEW_USER, ACTIVE_USER }
     enum class PasswordState { VALID, INVALID }
     enum class ErrorMessages { SHORT_PASSWORD, NOT_MATCHING_PASSWORD, NONE }
 
     companion object {
+        private val TAG = LoginViewModel::class.java.name
         private const val MIN_PASS_LENGTH = 6
     }
 }
