@@ -1,6 +1,5 @@
 package al.ahgitdevelopment.municion.ui.login
 
-import al.ahgitdevelopment.municion.BuildConfig
 import al.ahgitdevelopment.municion.R
 import al.ahgitdevelopment.municion.databinding.FragmentLoginBinding
 import al.ahgitdevelopment.municion.di.AppComponent
@@ -102,6 +101,10 @@ class LoginPasswordFragment : Fragment() {
             findNavController().navigate(R.id.licensesFragment)
         }
 
+        viewModel.navigateIntoTutorial.observe(viewLifecycleOwner) {
+            findNavController().navigate(R.id.tutorialViewPagerFragment)
+        }
+
         viewModel.onCreateView()
     }
 
@@ -115,11 +118,11 @@ class LoginPasswordFragment : Fragment() {
         super.onResume()
         setUpUser()
 
-        if (BuildConfig.DEBUG) {
-            login_button.visibility = View.VISIBLE
-            login_password_1.editText?.setText(BuildConfig.PASSWORD)
-            login_button.performClick()
-        }
+        // if (BuildConfig.DEBUG) {
+        //     login_button.visibility = View.VISIBLE
+        //     login_password_1.editText?.setText(BuildConfig.PASSWORD)
+        //     login_button.performClick()
+        // }
     }
 
     private fun getErrorMessage(error: LoginViewModel.ErrorMessages): String? {
@@ -170,20 +173,6 @@ class LoginPasswordFragment : Fragment() {
                 }
             }
         }
-        //Lanza el tutorial la primera vez
-        showTutorial()
-    }
-
-    /**
-     * Lanza el tutorial la primera vez que se inicia la aplicación.
-     */
-    private fun showTutorial() { // Para que no se muestre el tutorial cuando se ha reseteado el password
-//        var isTutorial = true
-//        if (requireActivity().intent.hasExtra("tutorial")) isTutorial = requireActivity().intent.getBooleanExtra("tutorial", true)
-//        if (prefs.getBoolean("show_tutorial", true) && isTutorial) {
-//            val intent = Intent(this, FragmentTutorialActivity::class.java)
-//            startActivity(intent)
-//        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -225,8 +214,12 @@ class LoginPasswordFragment : Fragment() {
     private fun setUpUser() {
         val user = firebaseAuth.currentUser
 
-        if (user != null) recordUserData(user)
-        else signIn()
+        if (user != null) {
+            recordUserData(user)
+            viewModel.showTutorial()
+        } else {
+            signIn()
+        }
     }
 
     private fun signIn() {
@@ -264,6 +257,7 @@ class LoginPasswordFragment : Fragment() {
                 if (user != null) {
                     recordUserData(user)
                     recordLoginEvent(user)
+                    viewModel.showTutorial()
                 }
             } else {
                 response?.error?.cause?.let(firebaseCrashlytics::recordException)

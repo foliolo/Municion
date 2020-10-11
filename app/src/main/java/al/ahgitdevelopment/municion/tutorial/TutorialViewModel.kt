@@ -1,6 +1,6 @@
 package al.ahgitdevelopment.municion.tutorial
 
-import al.ahgitdevelopment.municion.utils.SingleLiveEvent
+import al.ahgitdevelopment.municion.SingleLiveEvent
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel

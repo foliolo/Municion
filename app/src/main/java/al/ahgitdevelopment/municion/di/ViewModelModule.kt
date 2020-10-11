@@ -1,5 +1,6 @@
 package al.ahgitdevelopment.municion.di
 
+import al.ahgitdevelopment.municion.tutorial.TutorialViewModel
 import al.ahgitdevelopment.municion.ui.competitions.CompetitionFormViewModel
 import al.ahgitdevelopment.municion.ui.competitions.CompetitionsViewModel
 import al.ahgitdevelopment.municion.ui.licenses.LicenseFormViewModel
@@ -26,6 +27,11 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(LoginViewModel::class)
     abstract fun bindLogingViewModel(loginViewModel: LoginViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(TutorialViewModel::class)
+    abstract fun bindTutorialViewModel(tutorialViewModel: TutorialViewModel): ViewModel
 
     @Binds
     @IntoMap
