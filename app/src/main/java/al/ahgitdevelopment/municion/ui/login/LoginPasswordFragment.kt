@@ -216,7 +216,6 @@ class LoginPasswordFragment : Fragment() {
 
         if (user != null) {
             recordUserData(user)
-            viewModel.showTutorial()
         } else {
             signIn()
         }
@@ -240,11 +239,6 @@ class LoginPasswordFragment : Fragment() {
         )
     }
 
-    private fun recordUserData(user: FirebaseUser) {
-        firebaseAnalytics.setUserId(user.uid)
-        firebaseCrashlytics.setUserId(user.uid)
-    }
-
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
@@ -257,12 +251,16 @@ class LoginPasswordFragment : Fragment() {
                 if (user != null) {
                     recordUserData(user)
                     recordLoginEvent(user)
-                    viewModel.showTutorial()
                 }
             } else {
                 response?.error?.cause?.let(firebaseCrashlytics::recordException)
             }
         }
+    }
+
+    private fun recordUserData(user: FirebaseUser) {
+        firebaseAnalytics.setUserId(user.uid)
+        firebaseCrashlytics.setUserId(user.uid)
     }
 
     private fun recordLoginEvent(user: FirebaseUser) {

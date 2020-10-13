@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.viewModels
@@ -61,6 +62,13 @@ class TutorialViewPagerFragment : Fragment() {
         }
     }
 
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+
+        val imm = requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(view?.windowToken, 0)
+    }
+
     class SectionsPagerAdapter(
         private val images: List<File>,
         fragmentActivity: FragmentActivity
@@ -70,13 +78,6 @@ class TutorialViewPagerFragment : Fragment() {
             TutorialScreenshotFragment.newInstance(images[position])
 
         override fun getItemCount(): Int = images.count()
-    }
-
-    override fun onDetach() {
-        super.onDetach()
-
-        activity?.window?.decorView?.systemUiVisibility = View.SYSTEM_UI_FLAG_VISIBLE
-        requireActivity().toolbar.visibility = View.VISIBLE
     }
 
     companion object {

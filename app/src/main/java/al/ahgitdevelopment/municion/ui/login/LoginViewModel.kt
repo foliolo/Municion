@@ -4,7 +4,6 @@ import al.ahgitdevelopment.municion.SingleLiveEvent
 import al.ahgitdevelopment.municion.di.SharedPrefsModule.Companion.PREFS_PASSWORD
 import al.ahgitdevelopment.municion.di.SharedPrefsModule.Companion.PREFS_SHOW_TUTORIAL
 import android.content.SharedPreferences
-import android.util.Log
 import android.view.View
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -92,7 +91,7 @@ class LoginViewModel @Inject constructor(private val prefs: SharedPreferences) :
             _password2Error.postValue(ErrorMessages.NONE)
 
             storePassword()
-            navigateIntoApp.call()
+            showTutorialOrApp()
         }
     }
 
@@ -102,14 +101,14 @@ class LoginViewModel @Inject constructor(private val prefs: SharedPreferences) :
         }.apply()
     }
 
-    fun showTutorial() {
-        if (prefs.getBoolean(PREFS_SHOW_TUTORIAL, true)) {
+    fun showTutorialOrApp() {
+        if (!prefs.getBoolean(PREFS_SHOW_TUTORIAL, true)) {
             prefs.edit().apply {
                 putBoolean(PREFS_SHOW_TUTORIAL, false)
                 navigateIntoTutorial.call()
             }.apply()
         } else {
-            Log.v(TAG, "Tutorial not show")
+            navigateIntoApp.call()
         }
     }
 
