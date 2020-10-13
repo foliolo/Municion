@@ -27,6 +27,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.firebase.ui.auth.AuthUI
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.crashlytics.FirebaseCrashlytics
+import kotlinx.android.synthetic.main.activity_navigation.*
 import kotlinx.android.synthetic.main.licenses_fragment.*
 import javax.inject.Inject
 
@@ -48,6 +49,9 @@ class LicensesFragment : Fragment(), RecyclerInterface {
         super.onAttach(context)
 
         AppComponent.create(requireContext()).inject(this)
+
+        activity?.window?.decorView?.systemUiVisibility = View.SYSTEM_UI_FLAG_VISIBLE
+        requireActivity().toolbar.visibility = View.VISIBLE
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
