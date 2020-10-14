@@ -1,6 +1,5 @@
 package al.ahgitdevelopment.municion.di
 
-import al.ahgitdevelopment.municion.tutorial.TutorialViewModel
 import al.ahgitdevelopment.municion.ui.competitions.CompetitionFormViewModel
 import al.ahgitdevelopment.municion.ui.competitions.CompetitionsViewModel
 import al.ahgitdevelopment.municion.ui.licenses.LicenseFormViewModel
@@ -10,6 +9,7 @@ import al.ahgitdevelopment.municion.ui.properties.PropertiesViewModel
 import al.ahgitdevelopment.municion.ui.properties.PropertyFormViewModel
 import al.ahgitdevelopment.municion.ui.purchases.PurchaseFormViewModel
 import al.ahgitdevelopment.municion.ui.purchases.PurchasesViewModel
+import al.ahgitdevelopment.municion.ui.tutorial.TutorialViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import dagger.Binds

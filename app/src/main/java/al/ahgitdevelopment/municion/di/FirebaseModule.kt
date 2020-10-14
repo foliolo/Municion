@@ -1,7 +1,7 @@
 package al.ahgitdevelopment.municion.di
 
 import al.ahgitdevelopment.municion.firebase.FirebaseImageRepository
-import al.ahgitdevelopment.municion.tutorial.TutorialImagesRepository
+import al.ahgitdevelopment.municion.ui.tutorial.TutorialImagesRepository
 import android.content.Context
 import android.net.ConnectivityManager
 import com.google.firebase.analytics.FirebaseAnalytics
@@ -54,9 +54,4 @@ class FirebaseModule(val context: Context) {
         provideCrashlytics(),
         provideConnectivityManager()
     )
-
-    companion object {
-        const val PARAM_USER_UID = "user_uid"
-        const val EVENT_LOGOUT = "logout"
-    }
 }

@@ -3,19 +3,19 @@
 
     <item
         android:id="@+id/propertiesFragment"
-        android:icon="@drawable/ic_nav_menu_guia"
+        android:icon="@drawable/ic_nav_menu_property"
         android:title="@string/section_properties_title" />
     <item
         android:id="@id/purchasesFragment"
-        android:icon="@drawable/ic_nav_menu_compra"
+        android:icon="@drawable/ic_nav_menu_purchase"
         android:title="@string/section_purchases_title" />
     <item
         android:id="@id/licensesFragment"
-        android:icon="@drawable/ic_nav_menu_licencia"
+        android:icon="@drawable/ic_nav_menu_license"
         android:title="@string/section_licenses_title" />
     <item
         android:id="@+id/competitionsFragment"
-        android:icon="@drawable/ic_nav_menu_tirada"
+        android:icon="@drawable/ic_nav_menu_competition"
         android:title="@string/section_competitions_title" />
 
 </menu>

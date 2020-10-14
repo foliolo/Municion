@@ -102,7 +102,7 @@ class LoginViewModel @Inject constructor(private val prefs: SharedPreferences) :
     }
 
     fun showTutorialOrApp() {
-        if (!prefs.getBoolean(PREFS_SHOW_TUTORIAL, true)) {
+        if (prefs.getBoolean(PREFS_SHOW_TUTORIAL, true)) {
             prefs.edit().apply {
                 putBoolean(PREFS_SHOW_TUTORIAL, false)
                 navigateIntoTutorial.call()

@@ -1,23 +1,18 @@
 package al.ahgitdevelopment.municion.ui.licenses
 
+import al.ahgitdevelopment.municion.BaseFragment
 import al.ahgitdevelopment.municion.R
 import al.ahgitdevelopment.municion.databinding.LicensesFragmentBinding
 import al.ahgitdevelopment.municion.di.AppComponent
 import al.ahgitdevelopment.municion.ui.DeleteItemOnSwipe
 import al.ahgitdevelopment.municion.ui.RecyclerInterface
 import android.content.Context
-import android.content.Context.INPUT_METHOD_SERVICE
 import android.os.Bundle
 import android.view.LayoutInflater
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
@@ -27,11 +22,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.firebase.ui.auth.AuthUI
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.crashlytics.FirebaseCrashlytics
-import kotlinx.android.synthetic.main.activity_navigation.*
 import kotlinx.android.synthetic.main.licenses_fragment.*
 import javax.inject.Inject
 
-class LicensesFragment : Fragment(), RecyclerInterface {
+class LicensesFragment : BaseFragment(), RecyclerInterface {
 
     @Inject
     lateinit var firebaseCrashlytics: FirebaseCrashlytics
@@ -49,19 +43,19 @@ class LicensesFragment : Fragment(), RecyclerInterface {
         super.onAttach(context)
 
         AppComponent.create(requireContext()).inject(this)
-
-        activity?.window?.decorView?.systemUiVisibility = View.SYSTEM_UI_FLAG_VISIBLE
-        requireActivity().toolbar.visibility = View.VISIBLE
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        super.onCreateView(inflater, container, savedInstanceState)
 
         val binding: LicensesFragmentBinding =
             DataBindingUtil.inflate(inflater, R.layout.licenses_fragment, container, false)
         binding.viewModel = this.viewModel
         binding.lifecycleOwner = viewLifecycleOwner
-
-        setHasOptionsMenu(true)
 
         return binding.root
     }
@@ -101,30 +95,29 @@ class LicensesFragment : Fragment(), RecyclerInterface {
     override fun onResume() {
         super.onResume()
         viewModel.getLicenses()
-
-        (requireContext().getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager).let {
-            it.hideSoftInputFromWindow(view?.rootView?.windowToken, 0)
-        }
     }
 
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.menu_fragment_main, menu)
-        super.onCreateOptionsMenu(menu, inflater)
+    override fun signOut() {
+        AuthUI.getInstance()
+            .signOut(requireContext())
+            .addOnCompleteListener {
+                viewModel.recordLogoutEvent()
+                viewModel.clearUserData()
+                findNavController().navigate(R.id.loginPasswordFragment)
+            }
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        when (item.itemId) {
-            R.id.action_settings -> {
-                Toast.makeText(requireContext(), "Settings click", Toast.LENGTH_SHORT).show()
-            }
-            R.id.log_out -> {
-                signOut()
-            }
-        }
-        return super.onOptionsItemSelected(item)
+    override fun settings() {
+        Toast.makeText(requireContext(), "Settings click", Toast.LENGTH_SHORT).show()
+    }
+
+    override fun tutorial() {
+        findNavController().navigate(R.id.tutorialViewPagerFragment)
+    }
+
+    override fun finish() {
+        viewModel.closeApp()
+        requireActivity().finish()
     }
 
     override fun RecyclerView?.undoDelete(viewHolder: RecyclerView.ViewHolder) {
@@ -140,17 +133,7 @@ class LicensesFragment : Fragment(), RecyclerInterface {
         }
     }
 
-    private fun signOut() {
-        AuthUI.getInstance()
-            .signOut(requireContext())
-            .addOnCompleteListener {
-                viewModel.recordLogoutEvent()
-                viewModel.clearUserData()
-                findNavController().navigate(R.id.loginPasswordFragment)
-            }
-    }
-
     companion object {
-        private const val TAG = "LicensesFragment"
+        private val TAG = LicensesFragment::class.java.name
     }
 }

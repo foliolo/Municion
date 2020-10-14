@@ -1,4 +1,4 @@
-package al.ahgitdevelopment.municion.tutorial
+package al.ahgitdevelopment.municion.ui.tutorial
 
 import al.ahgitdevelopment.municion.R
 import al.ahgitdevelopment.municion.di.AppComponent

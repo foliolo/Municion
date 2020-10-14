@@ -1,8 +1,6 @@
 package al.ahgitdevelopment.municion.di
 
 import al.ahgitdevelopment.municion.NavigationActivity
-import al.ahgitdevelopment.municion.tutorial.TutorialScreenshotFragment
-import al.ahgitdevelopment.municion.tutorial.TutorialViewPagerFragment
 import al.ahgitdevelopment.municion.ui.competitions.CompetitionFormFragment
 import al.ahgitdevelopment.municion.ui.competitions.CompetitionsFragment
 import al.ahgitdevelopment.municion.ui.licenses.LicenseFormFragment
@@ -12,6 +10,8 @@ import al.ahgitdevelopment.municion.ui.properties.PropertiesFragment
 import al.ahgitdevelopment.municion.ui.properties.PropertyFormFragment
 import al.ahgitdevelopment.municion.ui.purchases.PurchaseFormFragment
 import al.ahgitdevelopment.municion.ui.purchases.PurchasesFragment
+import al.ahgitdevelopment.municion.ui.tutorial.TutorialScreenshotFragment
+import al.ahgitdevelopment.municion.ui.tutorial.TutorialViewPagerFragment
 import android.content.Context
 import dagger.Component
 

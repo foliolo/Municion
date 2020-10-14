@@ -33,12 +33,6 @@
             </intent-filter>
         </activity>
 
-        <activity
-            android:name=".tutorial.FragmentTutorialActivity"
-            android:screenOrientation="fullSensor"
-            android:theme="@style/AppTheme"
-            />
-
     </application>
 
 </manifest>

@@ -87,10 +87,7 @@
     <string name="aumento_cupo">Increase legal amount allowed</string>
 
     <!--MENU-->
-    <string name="menu_cab_title">Options</string>
-    <string name="modify">Change</string>
-    <string name="delete">Delete</string>
-    <string name="guardadoBBDD">Updated Database</string>
+    <string name="menu_tutorial">Tutorial</string>
 
     <string name="dialog_licencia_title">Select One license</string>
     <string name="select_licencia">Select One License</string>

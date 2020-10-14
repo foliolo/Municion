@@ -1,6 +1,7 @@
 package al.ahgitdevelopment.municion.ui
 
-import al.ahgitdevelopment.municion.di.FirebaseModule
+import al.ahgitdevelopment.municion.firebase.FirebaseImageRepository.Companion.EVENT_CLOSE_APP
+import al.ahgitdevelopment.municion.firebase.FirebaseImageRepository.Companion.EVENT_LOGOUT
 import androidx.lifecycle.ViewModel
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
@@ -11,11 +12,15 @@ open class BaseViewModel(
 ) : ViewModel() {
 
     fun recordLogoutEvent() {
-        firebaseAnalytics.logEvent(FirebaseModule.EVENT_LOGOUT, null)
+        firebaseAnalytics.logEvent(EVENT_LOGOUT, null)
     }
 
     fun clearUserData() {
         firebaseAnalytics.setUserId(null)
         firebaseCrashlytics.setUserId("")
+    }
+
+    fun closeApp() {
+        firebaseAnalytics.logEvent(EVENT_CLOSE_APP, null)
     }
 }
