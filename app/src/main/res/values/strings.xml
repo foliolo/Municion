@@ -100,10 +100,7 @@
     <string name="aumento_cupo">Aumento de cupo</string>
 
     <!--MENU-->
-    <string name="menu_cab_title">Opciones</string>
-    <string name="modify">Modifciar</string>
-    <string name="delete">Eliminar</string>
-    <string name="guardadoBBDD">Base de datos actualizada</string>
+    <string name="menu_tutorial">Tutorial</string>
 
     <string name="dialog_licencia_title">Selecciona una licencia</string>
     <string name="select_licencia">Selecciona una licencia</string>

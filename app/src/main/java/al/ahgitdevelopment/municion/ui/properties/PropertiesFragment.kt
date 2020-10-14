@@ -1,5 +1,6 @@
 package al.ahgitdevelopment.municion.ui.properties
 
+import al.ahgitdevelopment.municion.BaseFragment
 import al.ahgitdevelopment.municion.R
 import al.ahgitdevelopment.municion.databinding.PropertiesFragmentBinding
 import al.ahgitdevelopment.municion.di.AppComponent
@@ -11,19 +12,20 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
+import android.widget.Toast
 import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.firebase.ui.auth.AuthUI
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.properties_fragment.*
 import javax.inject.Inject
 
-class PropertiesFragment : Fragment(), RecyclerInterface {
+class PropertiesFragment : BaseFragment(), RecyclerInterface {
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
@@ -91,6 +93,29 @@ class PropertiesFragment : Fragment(), RecyclerInterface {
         (requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager).let {
             it.hideSoftInputFromWindow(view?.rootView?.windowToken, 0)
         }
+    }
+
+    override fun signOut() {
+        AuthUI.getInstance()
+            .signOut(requireContext())
+            .addOnCompleteListener {
+                viewModel.recordLogoutEvent()
+                viewModel.clearUserData()
+                findNavController().navigate(R.id.loginPasswordFragment)
+            }
+    }
+
+    override fun settings() {
+        Toast.makeText(requireContext(), "Settings click", Toast.LENGTH_SHORT).show()
+    }
+
+    override fun tutorial() {
+        findNavController().navigate(R.id.tutorialViewPagerFragment)
+    }
+
+    override fun finish() {
+        viewModel.closeApp()
+        requireActivity().finish()
     }
 
     override fun RecyclerView?.undoDelete(viewHolder: RecyclerView.ViewHolder) {

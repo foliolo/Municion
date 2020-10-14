@@ -1,10 +1,11 @@
 package al.ahgitdevelopment.municion.ui.login
 
+import al.ahgitdevelopment.municion.BuildConfig
 import al.ahgitdevelopment.municion.R
 import al.ahgitdevelopment.municion.databinding.FragmentLoginBinding
 import al.ahgitdevelopment.municion.di.AppComponent
-import al.ahgitdevelopment.municion.di.FirebaseModule.Companion.EVENT_LOGOUT
-import al.ahgitdevelopment.municion.di.FirebaseModule.Companion.PARAM_USER_UID
+import al.ahgitdevelopment.municion.firebase.FirebaseImageRepository.Companion.EVENT_LOGOUT
+import al.ahgitdevelopment.municion.firebase.FirebaseImageRepository.Companion.PARAM_USER_UID
 import android.Manifest
 import android.app.Activity
 import android.content.Context
@@ -118,11 +119,11 @@ class LoginPasswordFragment : Fragment() {
         super.onResume()
         setUpUser()
 
-        // if (BuildConfig.DEBUG) {
-        //     login_button.visibility = View.VISIBLE
-        //     login_password_1.editText?.setText(BuildConfig.PASSWORD)
-        //     login_button.performClick()
-        // }
+        if (BuildConfig.DEBUG) {
+            login_button.visibility = View.VISIBLE
+            login_password_1.editText?.setText(BuildConfig.PASSWORD)
+            login_button.performClick()
+        }
     }
 
     private fun getErrorMessage(error: LoginViewModel.ErrorMessages): String? {
@@ -185,7 +186,7 @@ class LoginPasswordFragment : Fragment() {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         when (item.itemId) {
-            R.id.log_out -> {
+            R.id.menu_log_out -> {
                 signOut()
             }
         }

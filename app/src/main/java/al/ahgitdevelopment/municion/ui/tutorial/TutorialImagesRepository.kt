@@ -1,4 +1,4 @@
-package al.ahgitdevelopment.municion.tutorial
+package al.ahgitdevelopment.municion.ui.tutorial
 
 import java.io.File
 

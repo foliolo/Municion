@@ -13,7 +13,7 @@
 
     <fragment
         android:id="@+id/tutorialViewPagerFragment"
-        android:name="al.ahgitdevelopment.municion.tutorial.TutorialViewPagerFragment"
+        android:name="al.ahgitdevelopment.municion.ui.tutorial.TutorialViewPagerFragment"
         android:label="TutorialViewPagerFragment"
         tools:layout="@layout/fragment_tutorial_viewpager" />
 

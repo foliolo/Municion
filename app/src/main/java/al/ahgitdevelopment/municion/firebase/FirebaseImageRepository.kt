@@ -1,6 +1,6 @@
 package al.ahgitdevelopment.municion.firebase
 
-import al.ahgitdevelopment.municion.tutorial.TutorialImagesRepository
+import al.ahgitdevelopment.municion.ui.tutorial.TutorialImagesRepository
 import android.content.Context
 import android.net.ConnectivityManager
 import android.util.Log
@@ -83,5 +83,9 @@ class FirebaseImageRepository @Inject constructor(
     companion object {
         private val TAG = FirebaseImageRepository::class.java.name
         private const val STORAGE_ROOT_PATH = "TutorialImages"
+
+        val PARAM_USER_UID = "user_uid"
+        val EVENT_LOGOUT = "logout"
+        val EVENT_CLOSE_APP = "close_app"
     }
 }
