@@ -225,7 +225,7 @@ class LoginPasswordFragment : Fragment() {
     private fun signIn() {
         val providers = arrayListOf(
             AuthUI.IdpConfig.GoogleBuilder().setSignInOptions(GoogleSignInOptions.Builder().build()).build(),
-            AuthUI.IdpConfig.AnonymousBuilder().build(),
+            // AuthUI.IdpConfig.AnonymousBuilder().build(),
             AuthUI.IdpConfig.EmailBuilder().build()
         )
 

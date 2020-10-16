@@ -1,184 +1,173 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Tu Armería</string>
-    <string name="lbl_password">Guarda una contraseña</string>
-    <string name="lbl_insert_password">Introduce tu contraseña</string>
-    <string name="lbl2_insert_password">Introduce tu contraseña de nuevo</string>
-    <string name="lbl3_insert_password">Introduce tu contraseña actual</string>
-    <string name="lbl4_insert_password">Introduce tu nueva contraseña</string>
-    <string name="lbl5_insert_password">Repite la nueva contraseña</string>
-    <string name="password_save">Contraseña guardada, recuerda registrar una pregunta de seguridad para poder resetear la contraseña en caso de olvido</string>
-    <string name="password_fail">Contraseña incorrecta</string>
-    <string name="password_save_fail">Contraseña invalida</string>
-    <string name="login_short_password_error">Contraseña demasiado corta</string>
-    <string name="login_not_matching_password_error">Las contraseñas no coinciden</string>
-    <string name="title_activity_fragment_main">Munición</string>
-    <string name="action_settings">Configuración</string>
-    <string name="save">Guardar</string>
-    <string name="cancel">Cancelar</string>
+    <string name="app_name">Weapons manager</string>
+    <string name="lbl_password">Save password</string>
+    <string name="lbl_insert_password">Enter your password</string>
+    <string name="lbl2_insert_password">Enter your password again</string>
+    <string name="lbl3_insert_password">Enter your current password</string>
+    <string name="lbl4_insert_password">Enter your new password</string>
+    <string name="lbl5_insert_password">Enter your new password again</string>
+    <string name="password_save">Password saved. Remember saving a security question</string>
+    <string name="password_fail">Wrong password</string>
+    <string name="password_save_fail">Wrong password error</string>
+    <string name="login_short_password_error">Short passsword length</string>
+    <string name="login_not_matching_password_error">Passwords don´t match</string>
+    <string name="title_activity_fragment_main">Ammunition</string>
+    <string name="action_settings">Setting</string>
+    <string name="save">Save</string>
+    <string name="cancel">Cancel</string>
     <string name="login">Login</string>
-    <string name="login_ok">Login correcto</string>
-    <string name="title_activity_settings">Configuración</string>
-    <string name="title_activity_notifications">Notificaciones</string>
+    <string name="login_ok">Correct login</string>
+    <string name="title_activity_settings">Setting</string>
+    <string name="title_activity_notifications">Notifications</string>
 
-    <!--Sections-->
-    <string name="section_properties_title">Guías</string>
-    <string name="section_purchases_title">Compras</string>
-    <string name="section_licenses_title">Licencias</string>
-    <string name="section_competitions_title">Tiradas</string>
+    <!--String sections-->
+    <string name="section_properties_title">Property Documents</string>
+    <string name="section_purchases_title">Purchases</string>
+    <string name="section_licenses_title">Licenses</string>
+    <string name="section_competitions_title">Competitions</string>
 
-    <!--Properties-->
-    <string name="property_toolbar_title_new">Nueva guía de arma</string>
-    <string name="item_property_lbl_nickname">Apodo</string>
-    <string name="item_property_lbl_model">Modelo</string>
-    <string name="item_property_lbl_num_id">Num guia</string>
-    <string name="item_property_lbl_brand">Marca</string>
-    <string name="item_property_lbl_bore">Calibre</string>
-    <string name="property_lbl_num_id">Numero de serie del arma</string>
-    <string name="property_lbl_bore_2">Calibre2</string>
-    <string name="form_purchase_brand">Marca</string>
-    <string name="form_purchase_bore">Calibre</string>
+    <!--String Properties-->
+    <string name="property_toolbar_title_new">New Property Document</string>
+    <string name="item_property_lbl_nickname">Nick</string>
+    <string name="form_purchase_brand">Brand of the weapon</string>
+    <string name="item_property_lbl_model">Model </string>
+    <string name="form_purchase_bore">Diameter Bore</string>
+    <string name="property_lbl_bore_2">Diameter Bore (Additional)</string>
+    <string name="property_lbl_num_id">Weapon Serial Number</string>
+    <string name="item_property_lbl_num_id">Number of Document Property</string>
 
-    <!--Purchase -->
-    <string name="title_nueva_compra">Nueva compra</string>
-    <string name="labelInfoCompra">Información de la nueva compra</string>
+    <!--String Compras Form-->
+    <string name="title_nueva_compra">New Purchase</string>
+    <string name="labelInfoCompra">New Purchase Info</string>
+    <string name="form_purchase_price">Price</string>
+    <string name="cartuchos_comprados">Number of Cartridges Purchased</string>
+    <string name="municion_propia">Previous Ammunition Purchase this Year</string>
+    <string name="form_purchase_units">Units</string>
+    <string name="form_purchase_date">Date</string>
+    <string name="tipo_municion">Tip Type</string>
+    <string name="form_purchase_weight">Weight (Grains)</string>
+    <string name="form_purchase_store">Store Location</string>
+    <string name="valoracion">Appreciation</string>
 
-    <string name="form_purchase_price">Precio</string>
-    <string name="cartuchos_comprados">Numero de cartuchos comprados</string>
-    <string name="municion_propia">Municion propia</string>
-    <string name="form_purchase_units">Unidades</string>
-    <string name="form_purchase_date">Fecha</string>
-    <string name="tipo_municion">Tipo de munición</string>
-    <string name="form_purchase_weight">Peso (grains)</string>
-    <string name="form_purchase_store">Ubicación de la tienda</string>
-    <string name="valoracion">Valoracion</string>
+    <!--String Licenses-->
+    <string name="license_toolbar_title_new">New License</string>
+    <string name="license_lbl_name">Name</string>
+    <string name="license_lbl_number">License Number</string>
+    <string name="license_lbl_insurance_number">Insurance Number</string>
+    <string name="license_lbl_issue_date">Date of issue</string>
+    <string name="license_lbl_expiry_date">Date of expiry</string>
+    <string name="license_error_msg_number">Enter the License Number</string>
+    <string name="license_error_msg_issue_date">Enter Date of Issue</string>
+    <string name="license_error_msg_expiry_date">Enter Date of Expiry</string>
+    <string name="license_error_msg_insurance">Insert Number Insurance Policy</string>
 
-    <string name="purchase_lbl_brand">Marca</string>
-    <string name="purchase_lbl_bore">Calibre</string>
-    <string name="purchase_lbl_price">Precio</string>
-    <string name="purchase_lbl_date">Fecha de compra</string>
-    <string name="purchase_toolbar_title_new">Nueva compra</string>
+    <!--String Tirada Form-->
+    <string name="title_nueva_tirada">New Competition</string>
+    <string name="lbl_rango_tirada">Range</string>
+    <string name="form_competition_lbl_description">Description</string>
+    <string name="form_competition_lbl_ranking">Ranking</string>
+    <string name="msg_countdown_ultima_tirada">Update your licence! Go shooting before it expire in the following days:</string>
+    <string name="form_tirada_aviso_puntuacion">Score too hight</string>
 
-    <!--Licenses-->
-    <string name="license_toolbar_title_new">Nueva Licencia</string>
-    <string name="license_lbl_name">Nombre</string>
-    <string name="license_lbl_number">Num licencia</string>
-    <string name="license_lbl_issue_date">Expedicion</string>
-    <string name="license_lbl_expiry_date">Caducidad</string>
-    <string name="license_lbl_insurance_number">Numero seguro</string>
-    <string name="license_error_msg_number">Introduce el numero de licencia</string>
-    <string name="license_error_msg_issue_date">Introduce la fecha de expedición</string>
-    <string name="license_error_msg_expiry_date">Introduce la fecha de caducidad</string>
-    <string name="license_error_msg_insurance">Introduce el número de la poliza del seguro</string>
-
-    <!--Competitions-->
-    <string name="title_nueva_tirada">Nueva Tirada</string>
-    <string name="lbl_rango_tirada">Rango</string>
-    <string name="form_competition_lbl_description">Descripción</string>
-    <string name="form_competition_lbl_ranking">Clasificacion</string>
-    <string name="msg_countdown_ultima_tirada">Para renovar tu licencia necesitas una tirada antes de éstos días:</string>
-    <string name="form_tirada_aviso_puntuacion">Puntuación por encima de rango (600 pts)</string>
-    <string name="lbl_caducidad_tirada">Tiempo máximo permitido hasta la próxima tirada %s días</string>
-    <string name="form_competition_lbl_points">Puntos</string>
-    <string name="form_competition_lbl_place">Lugar</string>
-    <string name="competition_lbl_date">Fecha</string>
-    <string name="competition_lbl_ranking">Posición</string>
-    <string name="competition_lbl_points">Puntos</string>
-    <string name="competition_lbl_place">Lugar</string>
+    <!--TIRADAS-->
+    <string name="lbl_caducidad_tirada">Maximum time allowed until the next competition %s days</string>
 
     <!-- General settings -->
-    <string name="settings_title_change_password">Gestión de contraseñas</string>
-    <string name="password_equal_actual">Las contraseña no es correcta, vuelve a escribirla</string>
-    <string name="settings_password_save">Contraseña modificada correctamente</string>
-    <string name="settings_password_unlogin">Primero debes registrar tu contraseña</string>
-    <string name="settings_password_empty">Debes rellenar la nueva contraseña</string>
-    <string name="password_update">Contraseña actualizada</string>
+    <string name="settings_title_change_password">Change of Password</string>
+    <string name="password_equal_actual">The password is not Correct, Retype it</string>
+    <string name="settings_password_save">Password Modified Correctly</string>
+    <string name="settings_password_unlogin">First you must register your Password</string>
+    <string name="settings_password_empty">You must fill in the new Password</string>
+    <string name="password_update">Password Updated</string>
 
-    <string name="pref_password_old">Modificar contraseña</string>
-    <string name="pref_password_new">Escribe tu nueva contraseña</string>
-    <string name="pref_boton">Guardar contraseña</string>
+    <string name="pref_password_old">Modify Password</string>
+    <string name="pref_password_new">Enter your New Password</string>
+    <string name="pref_boton">Save Password</string>
 
-    <string name="aumento_cupo">Aumento de cupo</string>
+    <string name="aumento_cupo">Increase legal amount allowed</string>
 
     <!--MENU-->
     <string name="menu_tutorial">Tutorial</string>
 
-    <string name="dialog_licencia_title">Selecciona una licencia</string>
-    <string name="select_licencia">Selecciona una licencia</string>
+    <string name="dialog_licencia_title">Select One license</string>
+    <string name="select_licencia">Select One License</string>
 
-    <string name="dialog_guia_title">Selecciona una guía</string>
+    <string name="dialog_guia_title">Select a Property Document</string>
 
-    <string name="delete_license_fail">Primero deben borrarse las guias asociadas a esta licencia</string>
-    <string name="dialog_guia_fail">Debe introducir una licencia de armas primero</string>
-    <string name="dialog_guia_licencia_tipoE">Para la licencia de tipo E el límite de guias es de 12</string>
-    <string name="dialog_guia_licencia_tipoE_escopeta">Para la licencia de tipo E con escopeta el límite de guias es de 6</string>
-    <string name="dialog_guia_licencia_tipoE_rifle">Para la licencia de tipo E con rifle el límite de guias es de 6</string>
-    <string name="dialog_guia_licencia_federativa_categoria1">Para las licencias federativas de 1ª Categoría el máximo de guias permitidas es de 10</string>
-    <string name="dialog_guia_licencia_federativa_categoria2">Para las licencias federativas de 2ª Categoría el máximo de guias permitidas es de 6</string>
-    <string name="dialog_guia_licencia_federativa_categoria3">Para las licencias federativas de 3ª Categoría el máximo de guias permitidas es de 1</string>
-    <string name="dialog_guia_licencia_federativa">Primero debe seleccionar una licencia Federativa con su respectiva Categoría</string>
-    <string name="dialog_licencia_no_permiso">Para guardar la Licencia es necesario permiso de lectura/escritura en el Calendario del dispositivo</string>
-    <string name="lbl_tipo_escala">Escala</string>
-    <string name="tipo_escala">Selecciona la escala del agente</string>
-    <string name="pref_list_notification">Lista de notificaciones</string>
+    <string name="delete_license_fail">First document property associated with this license must be deleted</string>
+    <string name="dialog_guia_fail">You must enter a gun license first</string>
+    <string name="dialog_guia_licencia_tipoE">For the type E license the document of property limit is 12</string>
+    <string name="dialog_guia_licencia_tipoE_escopeta">For type E license with shotgun the limit of document os property is 6</string>
+    <string name="dialog_guia_licencia_tipoE_rifle">For type E license with rifle the limit of document os property is 6</string>
+    <string name="dialog_guia_licencia_federativa_categoria1">For federative licenses of 1st Category the maximum of allowed documents of property is of 10</string>
+    <string name="dialog_guia_licencia_federativa_categoria2">For federative licenses of 2nd Category the maximum of allowed documents of property is 6</string>
+    <string name="dialog_guia_licencia_federativa_categoria3">For federative licenses of 3rd Category the maximum of allowed documents of property is 1</string>
+    <string name="dialog_guia_licencia_federativa">You must first select a Federative license with its respective Category</string>
+    <string name="dialog_licencia_no_permiso">To save the License, a read / write permission is required in the Calendar of the device</string>
+    <string name="lbl_tipo_escala">Official Rank</string>
+    <string name="tipo_escala">Select the agent\'s Officer Rank</string>
+    <string name="pref_list_notification">Notifications list</string>
 
+    <string name="guia_empty_list">Create a weapons LICENSE before adding a document of property</string>
+    <string name="compra_empty_list">Create a DOCUMENT OF PROPERTY to associate the PURCHASE</string>
+    <string name="licencia_empty_list">What are you waiting for? Create your first license</string>
+    <string name="tiradas_empty_list">Come On!!! Insert a new competition</string>
 
-    <!--ADMOB ID ANUNCIOS-->
-    <string name="admob_id" translatable="false">ca-app-pub-8582752139018186~4798397758</string>
-    <string name="banner_login_id" translatable="false">ca-app-pub-8582752139018186/6275130957</string>
-    <string name="banner_main_id" translatable="false">ca-app-pub-8582752139018186/4700666152</string>
-    <string name="banner_formularios_id" translatable="false">ca-app-pub-8582752139018186/6177399356</string>
-    <string name="banner_configuracion_id" translatable="false">ca-app-pub-8582752139018186/7654132558</string>
-    <string name="banner_login_intersticial_id" translatable="false">ca-app-pub-8582752139018186/3022096555</string>
+    <string name="auth_usuario_existente">Existing User</string>
+    <string name="auth_usuario_logado">User is already logged in</string>
+    <string name="login_text_info">Please enter at least 6 digits</string>
+    <string name="description_login_button">Login Button</string>
 
-    <string name="guia_empty_list">Crea una LICENCIA de armas antes de añadir una GUIA</string>
-    <string name="compra_empty_list">Crea una GUIA a la que asociar la COMPRA</string>
-    <string name="licencia_empty_list">¿A qué esperas? Crea tu primera LICENCIA</string>
-    <string name="tiradas_empty_list">¡¡Adelante!! Agrega una COMPETICIÓN</string>
+    <string name="settings_title_show_tutorial">Show Tutorial Now</string>
+    <string name="btn_tutorial_entrar">Enter</string>
 
-    <string name="auth_usuario_existente">Usuario ya existente</string>
-    <string name="auth_usuario_logado">El usuario ya esta logado</string>
-    <string name="login_text_info">Introduce 6 dígitos como mínimo</string>
-    <string name="description_login_button">Botón de login</string>
+    <!-- Security Question -->
+    <string name="settings_title_security_question">Security Question</string>
+    <string name="settings_type_security_question">Choose a security question</string>
+    <string name="settings_question_save">Save question</string>
+    <string name="settings_answer_empty">You have to respond the question</string>
+    <string name="settings_answer_fail">Answer too short</string>
+    <string name="settings_answer_equal_fail">Answers are not the same</string>
+    <string name="lbl_question_type">Security Question</string>
+    <string name="lbl_insert_answer">Write your answer</string>
+    <string name="lbl_confirm_answer">Repeat your answer</string>
+    <string name="answer_save">Answer save</string>
 
-    <string name="settings_title_show_tutorial">Mostrar tutorial</string>
-    <string name="btn_tutorial_entrar">Entrar</string>
+    <!-- Reset password -->
+    <string name="settings_title_reset_password">Reset Password</string>
+    <string name="settings_empty_question_security">First you have to answer a security question </string>
+    <string name="settings_reset_password">It is reset your password</string>
+    <string name="settings_reset_answer_fail">The answer is not correct</string>
+    <string name="year">Year</string>
+    <string name="date">Date</string>
 
-    <!-- Pregunta de seguridad -->
-    <string name="settings_title_security_question">Pregunta de seguridad</string>
-    <string name="settings_type_security_question">Selecciona una pregunta de seguridad</string>
-    <string name="settings_question_save">Pregunta guardada</string>
-    <string name="settings_answer_empty">Debes responder a la pregunta</string>
-    <string name="settings_answer_fail">Respuesta demasiado corta</string>
-    <string name="settings_answer_equal_fail">Las respuestas no coinciden</string>
-    <string name="lbl_question_type">Pregunta de Seguridad</string>
-    <string name="lbl_insert_answer">Introduce tu respuesta</string>
-    <string name="lbl_confirm_answer">Repite tu respuesta</string>
-    <string name="answer_save">Respuesta guardada</string>
-
-    <!-- Reiniciar password -->
-    <string name="settings_title_reset_password">Reiniciar contraseña</string>
-    <string name="settings_empty_question_security">Primero debe responder a una pregunta de seguridad</string>
-    <string name="settings_reset_password">Se ha reseteado su password</string>
-    <string name="settings_reset_answer_fail">La respuesta no es correcta</string>
-    <string name="year">Año</string>
-    <string name="date">Fecha</string>
-
-    <!--IN-APP BILLING-->
-    <string name="app_public_key" translatable="false">MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAvDvqFcMgylgnwiMHai3DqTiCEobhOp5Sx6i0TqiXpcOeB/H0AjPL7+6uqFRjrKmrxrNh0H6dw6oHPcuvO4M0WjIRfTyMOxnj/77APaVKYFJfQkebS19NxeldRiK67zVLrNVx5FWTpg4iwzOot6las7QxzAVG+CCy0KULP4q3khwZ/d0UKgJSvZwDpY6c9071tL6Vo1UTqbfAQf8lm1pinGPltZVJIQzvrCz1GAngEHU+eo4JHAUomVHJNTt7HlTABmhGUpOEG0MtMRSmlIq9yjoYvvO8PXcsFqF12z9LmMBH57Sw7mP3+9aeR6hMUS8N/Rqi6vw6KQivzeTqr0MyxwIDAQAB</string>
-    <string name="settings_title_remove_ads">Eliminar publicidad</string>
-    <string name="purchase_cancel">Compra cancelada</string>
-    <string name="purchase_done">Ya has eliminado la publicidad</string>
-    <string name="purchase_not_support">Tu dispositivo no soporta compras integradas</string>
-    <string name="tabla_tiradas">Puntuaciones de ascenso</string>
-    <string name="storage_element_tabla_tiradas" translatable="false">Resources/tabla_ventana_tiradas3.png</string>
-    <string name="error_downloading_image">Error descargando la imagen</string>
-    <string name="change_image">Cambiar</string>
-    <string name="delete_image">Borrar</string>
-    <string name="sin_conexion">Sin conexión a internet</string>
-
-    <string name="title_activity_navigation" translatable="false">NavigationActivity</string>
+    <!--PURCHASE-->
+    <string name="settings_title_remove_ads">Remove Ads</string>
+    <string name="purchase_cancel">Purchase Cancel</string>
+    <string name="purchase_done">Ads already removed</string>
+    <string name="purchase_not_support">This device not support purchases</string>
+    <string name="tabla_tiradas">Promotions scores</string>
+    <string name="error_downloading_image">Error downloading the image</string>
+    <string name="change_image">Change</string>
+    <string name="delete_image">Delete</string>
+    <string name="sin_conexion">Without internet connection</string>
+    <string name="snackbar_undo_delete_message">Undo the deletion</string>
+    <string name="snackbar_undo_delete">Undo</string>
+    <string name="purchase_toolbar_title_new">New purchase</string>
+    <string name="purchase_lbl_date">Purchase date</string>
+    <string name="purchase_lbl_price">Price</string>
+    <string name="purchase_lbl_bore">Bore</string>
+    <string name="purchase_lbl_brand">Brand</string>
+    <string name="item_property_lbl_brand">Brand</string>
+    <string name="item_property_lbl_bore">Bore</string>
+    <string name="form_competition_lbl_points">Points</string>
+    <string name="form_competition_lbl_place">Place</string>
+    <string name="competition_lbl_date">Date</string>
+    <string name="competition_lbl_ranking">Ranking</string>
+    <string name="competition_lbl_points">Points</string>
+    <string name="competition_lbl_place">Place</string>
     <string name="error" translatable="false">Error</string>
     <string name="menu_sign_out" translatable="false">Sign out</string>
-    <string name="snackbar_undo_delete_message">Deshacer la eliminación</string>
-    <string name="snackbar_undo_delete">Deshacer</string>
+    <string name="admob_id" translatable="false">ca-app-pub-8582752139018186~4798397758</string>
 </resources>

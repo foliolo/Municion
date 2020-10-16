@@ -6,7 +6,7 @@ import androidx.annotation.Nullable
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
-import java.util.concurrent.atomic.*
+import java.util.concurrent.atomic.AtomicBoolean
 
 /**
  * A lifecycle-aware observable that sends only new updates after subscription, used for events like
@@ -29,9 +29,9 @@ class SingleLiveEvent<T> : MutableLiveData<T>() {
         if (hasActiveObservers()) {
             Log.w(TAG, "Multiple observers registered but only one will be notified of changes.")
         }
-        super.observe(
-                owner,
-                Observer { if (mPending.compareAndSet(true, false)) observer.onChanged(it) })
+        super.observe(owner) {
+            if (mPending.compareAndSet(true, false)) observer.onChanged(it)
+        }
     }
 
     @MainThread
