@@ -43,7 +43,7 @@ class CompetitionAdapter : ListAdapter<Competition, CompetitionAdapter.Competiti
             }
 
             override fun areContentsTheSame(oldItem: Competition, newItem: Competition): Boolean {
-                return oldItem.equals(newItem)
+                return oldItem == newItem
             }
         }
     }

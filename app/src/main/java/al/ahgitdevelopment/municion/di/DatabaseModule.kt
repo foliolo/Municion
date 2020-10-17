@@ -29,18 +29,18 @@ class DatabaseModule(val context: Context) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL(
                     """
-                CREATE TABLE new_Song (
-                    id INTEGER PRIMARY KEY NOT NULL,
-                    name TEXT,
-                    tag TEXT NOT NULL DEFAULT ''
-                )
-                """.trimIndent()
+                    CREATE TABLE new_Song (
+                        id INTEGER PRIMARY KEY NOT NULL,
+                        name TEXT,
+                        tag TEXT NOT NULL DEFAULT ''
+                    )
+                    """.trimIndent()
                 )
                 database.execSQL(
                     """
-                INSERT INTO new_Song (id, name, tag)
-                SELECT id, name, tag FROM Song
-                """.trimIndent()
+                    INSERT INTO new_Song (id, name, tag)
+                    SELECT id, name, tag FROM Song
+                    """.trimIndent()
                 )
                 database.execSQL("DROP TABLE Song")
                 database.execSQL("ALTER TABLE new_Song RENAME TO Song")
@@ -48,5 +48,3 @@ class DatabaseModule(val context: Context) {
         }
     }
 }
-
-// https://developer.android.com/training/data-storage/room/migrating-db-versions

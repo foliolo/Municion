@@ -1,42 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="settings_options">
-        <item>Gestion de contraseñas</item>
-        <item>Mostrar tutorial</item>
-        <item>Pregunta de seguridad</item>
-        <item>Reiniciar contraseña</item>
-        <item>Eliminar publicidad</item>
-        <!--<item>Consumir publicidad</item>-->
+        <item>Password Manager</item>
+        <item>Show Tutorial</item>
+        <item>Security Question</item>
+        <item>Reset Password</item>
+        <item>Remove Ads</item>
+        <!--<item>Consume Ads</item>-->
     </string-array>
 
     <string-array name="tipo_armas">
-        <item>Pistola</item>
-        <item>Escopeta</item>
+        <item>Gun</item>
+        <item>Shotgun</item>
         <item>Rifle</item>
         <item>Revolver</item>
         <item>Avancarga</item>
     </string-array>
 
     <string-array name="rango_tirada">
-        <item>Nacional</item>
-        <item>Autonómica</item>
-        <item>Local/Social</item>
+        <item>National</item>
+        <item>Autonomic</item>
+        <item>Local</item>
     </string-array>
 
     <string-array name="tipo_licencias">
-        <item>A - Profesionales, agentes de la autoridad</item>
-        <item>B - Defensa</item>
-        <item>C - Vigilante de seguridad / Escoltas</item>
-        <item>D - Caza mayor</item>
-        <item>E - Escopeta</item>
-        <item>F - Tiro olimpico</item>
-        <item>AE - Autorización especial</item>
-        <item>AER - Autorización especial replicas</item>
-        <item>Libro de coleccionista</item>
-        <item>Autonómica de Caza</item>
-        <item>Autonómica de Pesca</item>
-        <item>Federativa de tiro</item>
-        <item>Permiso Conducir</item>
+        <item>A - Professionals / police</item>
+        <item>B - Defence</item>
+        <item>C - Security / Bodyguards</item>
+        <item>D - Big game hunting</item>
+        <item>E - Shotgun</item>
+        <item>F - Olympic shooting</item>
+        <item>AE - Special Authorization</item>
+        <item>AER - Special authorization replicas</item>
+        <item>Book Collector</item>
+        <item>Regional Hunting</item>
+        <item>Regional Fishing</item>
+        <item>Federative shooting</item>
+        <item>Driving license</item>
     </string-array>
 
     <string-array name="ccaa">
@@ -64,7 +64,7 @@
     <string-array name="tipo_escala">
         <item>Tropa</item>
         <item>Suboficiales</item>
-        <item>Oficiales</item>
+        <item>Oficilales</item>
     </string-array>
 
     <string-array name="tipo_permiso_conducir">
@@ -86,15 +86,15 @@
     </string-array>
 
     <string-array name="A">
-        <item>Pistola</item>
-        <item>Escopeta</item>
+        <item>Gun</item>
+        <item>Shotgun</item>
         <item>Rifle</item>
         <item>Revolver</item>
         <item>Avancarga</item>
     </string-array>
 
     <string-array name="B">
-        <item>Pistola</item>
+        <item>Gun</item>
         <item>Revolver</item>
     </string-array>
 
@@ -107,13 +107,13 @@
     </string-array>
 
     <string-array name="E">
-        <item>Escopeta</item>
+        <item>Shotgun</item>
         <item>Rifle</item>
     </string-array>
 
     <string-array name="F">
-        <item>Pistola</item>
-        <item>Escopeta</item>
+        <item>Gun</item>
+        <item>Shotgun</item>
         <item>Rifle</item>
         <item>Revolver</item>
     </string-array>
@@ -123,22 +123,22 @@
     </string-array>
 
     <string-array name="AER">
-        <item>Pistola</item>
+        <item>Gun</item>
         <item>Rifle</item>
         <item>Revolver</item>
     </string-array>
 
     <string-array name="Libro">
-        <item>Pistola</item>
-        <item>Escopeta</item>
+        <item>Gun</item>
+        <item>Shotgun</item>
         <item>Rifle</item>
         <item>Revolver</item>
         <item>Avancarga</item>
     </string-array>
 
     <string-array name="Federativa">
-        <item>Pistola</item>
-        <item>Escopeta</item>
+        <item>Gun</item>
+        <item>Shotgun</item>
         <item>Rifle</item>
         <item>Revolver</item>
     </string-array>
@@ -149,12 +149,11 @@
         <item>3ª Categoría</item>
     </string-array>
 
-
     <string-array name="preguntas_seguridad">
-        <item>¿Cómo se llama tu mascota?</item>
-        <item>¿En qué colegio estudiaste?</item>
-        <item>¿Cuál es tu película preferida?</item>
-        <item>¿Cuál es tu libro favorito?</item>
+        <item>What is the name of your pet?</item>
+        <item>What is the name of your school?</item>
+        <item>What is your favorite film?</item>
+        <item>What is your favorite book?</item>
     </string-array>
 
     <string-array name="calibres">

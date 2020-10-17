@@ -153,7 +153,7 @@ class LoginPasswordFragment : Fragment() {
                     arrayOf(
                         Manifest.permission.GET_ACCOUNTS
                     ),
-                    100 //Codigo de respuesta de
+                    100
                 )
             }
         }
