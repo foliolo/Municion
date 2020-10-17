@@ -34,7 +34,11 @@ class PropertyFormFragment : Fragment() {
         AppComponent.create(requireContext()).inject(this)
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
 
         val binding: FragmentFormPropertyBinding =
             DataBindingUtil.inflate(inflater, R.layout.fragment_form_property, container, false)

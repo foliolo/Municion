@@ -10,6 +10,7 @@ import androidx.room.Update
 
 @Dao
 interface PurchaseDao {
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(vararg purchase: Purchase)
 

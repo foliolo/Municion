@@ -63,9 +63,9 @@ class LicensesFragment : BaseFragment(), RecyclerInterface {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel.addLicense.observe(viewLifecycleOwner, {
+        viewModel.addLicense.observe(viewLifecycleOwner) {
             findNavController().navigate(R.id.licenseFormFragment)
-        })
+        }
 
         viewModel.licenses.observe(viewLifecycleOwner) {
             licensesAdapter = LicenseAdapter().apply {

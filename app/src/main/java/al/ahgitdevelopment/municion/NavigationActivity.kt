@@ -59,5 +59,3 @@ class NavigationActivity : AppCompatActivity() {
         supportActionBar?.subtitle = subtitle
     }
 }
-
-//https://developer.android.com/guide/navigation/navigation-migrate#integrate

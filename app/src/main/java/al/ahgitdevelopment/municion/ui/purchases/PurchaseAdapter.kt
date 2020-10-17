@@ -50,7 +50,7 @@ class PurchaseAdapter : ListAdapter<Purchase, PurchaseAdapter.PurchaseViewHolder
             }
 
             override fun areContentsTheSame(oldItem: Purchase, newItem: Purchase): Boolean {
-                return oldItem.equals(newItem)
+                return oldItem == newItem
             }
         }
     }

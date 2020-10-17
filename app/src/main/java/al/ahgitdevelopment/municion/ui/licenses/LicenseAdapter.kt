@@ -46,7 +46,7 @@ class LicenseAdapter : ListAdapter<License, LicenseAdapter.LicenseViewHolder>(DI
             }
 
             override fun areContentsTheSame(oldItem: License, newItem: License): Boolean {
-                return oldItem.equals(newItem)
+                return oldItem == newItem
             }
         }
     }

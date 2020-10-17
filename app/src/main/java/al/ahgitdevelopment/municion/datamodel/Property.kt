@@ -44,6 +44,7 @@ open class Property(
     @ColumnInfo(name = KEY_PROPERTY_IMAGE) var image: String = "",
 
     ) : Serializable {
+
     constructor(bundle: Bundle) : this(
         id = 0L,
         nickname = "",

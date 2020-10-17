@@ -56,9 +56,9 @@ class PurchasesFragment : BaseFragment(), RecyclerInterface {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel.addPurchase.observe(viewLifecycleOwner, {
+        viewModel.addPurchase.observe(viewLifecycleOwner) {
             findNavController().navigate(R.id.purchaseFormFragment)
-        })
+        }
 
         viewModel.purchases.observe(viewLifecycleOwner) {
             purchaseAdapter = PurchaseAdapter().apply {
