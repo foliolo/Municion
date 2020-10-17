@@ -170,4 +170,6 @@
     <string name="error" translatable="false">Error</string>
     <string name="menu_sign_out" translatable="false">Sign out</string>
     <string name="admob_id" translatable="false">ca-app-pub-8582752139018186~4798397758</string>
+    <string name="tutorialScreenshotButtonText">Close</string>
+    <string name="tutorialScreenshotTitleText">Tutorial</string>
 </resources>
