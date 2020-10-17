@@ -57,9 +57,9 @@ class PropertiesFragment : BaseFragment(), RecyclerInterface {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel.addProperty.observe(viewLifecycleOwner, {
+        viewModel.addProperty.observe(viewLifecycleOwner) {
             findNavController().navigate(R.id.propertyFormFragment)
-        })
+        }
 
         viewModel.properties.observe(viewLifecycleOwner) {
             propertiesAdapter = PropertyAdapter().apply {

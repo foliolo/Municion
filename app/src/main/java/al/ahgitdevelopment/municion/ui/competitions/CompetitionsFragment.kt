@@ -54,9 +54,9 @@ class CompetitionsFragment : BaseFragment(), RecyclerInterface {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel.addCompetition.observe(viewLifecycleOwner, {
+        viewModel.addCompetition.observe(viewLifecycleOwner) {
             findNavController().navigate(R.id.competitionFormFragment)
-        })
+        }
 
         viewModel.competitions.observe(viewLifecycleOwner) {
             competitionAdapter = CompetitionAdapter().apply {

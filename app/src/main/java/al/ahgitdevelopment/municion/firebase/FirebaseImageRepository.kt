@@ -84,8 +84,8 @@ class FirebaseImageRepository @Inject constructor(
         private val TAG = FirebaseImageRepository::class.java.name
         private const val STORAGE_ROOT_PATH = "TutorialImages"
 
-        val PARAM_USER_UID = "user_uid"
-        val EVENT_LOGOUT = "logout"
-        val EVENT_CLOSE_APP = "close_app"
+        const val PARAM_USER_UID = "user_uid"
+        const val EVENT_LOGOUT = "logout"
+        const val EVENT_CLOSE_APP = "close_app"
     }
 }
