@@ -171,5 +171,7 @@
 
     <string name="snackbar_undo_delete_message">Deshacer la eliminación</string>
     <string name="snackbar_undo_delete">Deshacer</string>
+    <string name="tutorialScreenshotButtonText">Cerrar</string>
+    <string name="tutorialScreenshotTitleText">Tutorial</string>
 
 </resources>

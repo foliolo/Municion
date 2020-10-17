@@ -23,5 +23,6 @@
 
     <color name="toolbar_text_color">#FFFFFF</color>
     <color name="white">#FFFFFF</color>
+    <color name="background_tutorial">#DCDBDB</color>
 
 </resources>
