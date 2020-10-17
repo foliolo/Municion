@@ -33,10 +33,10 @@ class TutorialScreenshotFragment : Fragment() {
 
             val file = args.getSerializable(ARG_IMAGE) as File
             val bitmap = BitmapFactory.decodeFile(file.absolutePath)
-            screenshotImageView.setImageBitmap(bitmap)
+            tutorialScreenshotImageView.setImageBitmap(bitmap)
         }
 
-        screenshotImageView.startAnimation(fadeInAnimation)
+        tutorialScreenshotImageView.startAnimation(fadeInAnimation)
     }
 
     companion object {

@@ -12,6 +12,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import kotlinx.android.synthetic.main.activity_navigation.*
 import kotlinx.android.synthetic.main.fragment_tutorial_viewpager.*
@@ -71,6 +72,10 @@ class TutorialViewPagerFragment : Fragment() {
 
         val imm = requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(view?.windowToken, 0)
+
+        tutorialScreenshotButton.setOnClickListener {
+            findNavController().popBackStack()
+        }
 
         hiddenDrawerNavigationMenu()
     }
