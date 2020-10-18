@@ -1,5 +1,6 @@
 package al.ahgitdevelopment.municion.datamodel
 
+import al.ahgitdevelopment.municion.repository.dao.KEY_ID
 import al.ahgitdevelopment.municion.repository.dao.KEY_PROPERTY_BORE1
 import al.ahgitdevelopment.municion.repository.dao.KEY_PROPERTY_BORE2
 import al.ahgitdevelopment.municion.repository.dao.KEY_PROPERTY_BRAND
