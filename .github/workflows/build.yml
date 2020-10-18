@@ -3,18 +3,110 @@ name: Android Build
 on: pull_request
 
 jobs:
-  builds:
+
+  test_job:
+    name: Test
     runs-on: ubuntu-latest
     steps:
-      - uses:  actions/checkout@v1
 
-      - name: Set Up JDK
-        uses: actions/setup-java@v1
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Restore Cache
+        uses: actions/cache@v2
         with:
-          java-version: 1.8
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
 
-      - name: Run Tests
-        run: ./gradlew test
+      - name: Run Debug Tests
+        run: ./gradlew testDebugUnitTest --continue
 
-      - name: Build Project
-        run: ./gradlew assemble
+      - name: Upload Test Reports
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v2
+        with:
+          name: test-reports
+          path: '**/build/reports/tests/'
+
+  lint_job:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Restore Cache
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - name: Run Debug Lint
+        run: ./gradlew lintDebug
+
+      - name: Upload Lint Reports
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v2
+        with:
+          name: lint-report
+          path: '**/build/reports/lint-results-*'
+
+  assemble_job:
+    needs: [test_job, lint_job]
+    name: Assemble and Upload to Firebase
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Restore Cache
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - name: Assemble
+        env:
+          VERSION_CODE: ${{ github.run_id }}
+        run: ./gradlew assembleDebug
+
+#  publish_job:
+#    needs: [assemble_job]
+#    name: Assemble and Upload to Firebase
+#    runs-on: ubuntu-latest
+#    steps:
+#
+#      - name: Checkout
+#        uses: actions/checkout@v2
+#
+#      - name: Restore Cache
+#        uses: actions/cache@v2
+#        with:
+#          path: |
+#            ~/.gradle/caches
+#            ~/.gradle/wrapper
+#          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
+#          restore-keys: |
+#            ${{ runner.os }}-gradle-
+#
+#      - name: Upload to Firebase App Distribution
+#        uses: wzieba/Firebase-Distribution-Github-Action@v1.2.1
+#        with:
+#          appId: ${{ secrets.FIREBASE_APP_ID }}
+#          token: ${{ secrets.FIREBASE_TOKEN }}
+#          groups: qa
+#          file: app/build/outputs/apk/debug/app-debug.apk
