@@ -23,7 +23,8 @@ jobs:
             ${{ runner.os }}-gradle-
 
       - name: Run Debug Tests
-        run: ./gradlew testDebugUnitTest --continue
+        run: ./gradlew test --continue
+      #        run: ./gradlew testDebugUnitTest --continue
 
       - name: Upload Test Reports
         if: ${{ always() }}
