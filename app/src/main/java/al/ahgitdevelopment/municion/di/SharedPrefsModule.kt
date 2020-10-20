@@ -5,18 +5,21 @@ import android.content.SharedPreferences
 import androidx.preference.PreferenceManager
 import dagger.Module
 import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.android.components.ActivityComponent
+import dagger.hilt.android.qualifiers.ApplicationContext
 
+@InstallIn(ActivityComponent::class)
 @Module
-class SharedPrefsModule(private val context: Context) {
+class SharedPrefsModule {
 
     @Provides
-    fun provideSharedPrefs(): SharedPreferences {
-        return PreferenceManager.getDefaultSharedPreferences(context)
+    fun provideSharedPrefs(@ApplicationContext appContext: Context): SharedPreferences {
+        return PreferenceManager.getDefaultSharedPreferences(appContext)
     }
 
     companion object {
         const val PREFS_PASSWORD = "password"
-        const val PREFS_SHOW_ADS = "show_ads"
         const val PREFS_SHOW_TUTORIAL = "tutorial"
     }
 }

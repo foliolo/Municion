@@ -1,7 +1,6 @@
 package al.ahgitdevelopment.municion.ui.tutorial
 
 import al.ahgitdevelopment.municion.R
-import al.ahgitdevelopment.municion.di.AppComponent
 import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -11,28 +10,17 @@ import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.adapter.FragmentStateAdapter
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_navigation.*
 import kotlinx.android.synthetic.main.fragment_tutorial_viewpager.*
 import java.io.File
-import javax.inject.Inject
 
+@AndroidEntryPoint
 class TutorialViewPagerFragment : Fragment() {
 
-    @Inject
-    lateinit var viewModelFactory: ViewModelProvider.Factory
-
-    private val viewModel: TutorialViewModel by viewModels {
-        viewModelFactory
-    }
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-
-        AppComponent.create(requireContext()).inject(this)
-    }
+    private val viewModel: TutorialViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,

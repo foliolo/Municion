@@ -5,18 +5,21 @@ import al.ahgitdevelopment.municion.datamodel.Property
 import al.ahgitdevelopment.municion.repository.Repository
 import al.ahgitdevelopment.municion.ui.BaseViewModel
 import android.view.View
+import androidx.hilt.Assisted
+import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @Suppress("UNUSED_PARAMETER")
-class PropertiesViewModel @Inject constructor(
+class PropertiesViewModel @ViewModelInject constructor(
     private val repository: Repository,
     firebaseAnalytics: FirebaseAnalytics,
-    firebaseCrashlytics: FirebaseCrashlytics
+    firebaseCrashlytics: FirebaseCrashlytics,
+    @Assisted private val savedStateHandle: SavedStateHandle
 ) : BaseViewModel(firebaseAnalytics, firebaseCrashlytics) {
 
     lateinit var properties: LiveData<List<Property>>

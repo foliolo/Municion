@@ -41,9 +41,9 @@ open class Property(
 
     @ColumnInfo(name = KEY_PROPERTY_NUM_ID) var numId: String,
 
-    @ColumnInfo(name = KEY_PROPERTY_IMAGE) var image: String = "",
+    @ColumnInfo(name = KEY_PROPERTY_IMAGE) var image: String = ""
 
-    ) : Serializable {
+) : Serializable {
 
     constructor(bundle: Bundle) : this(
         id = 0L,

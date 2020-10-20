@@ -3,12 +3,10 @@ package al.ahgitdevelopment.municion.ui.login
 import al.ahgitdevelopment.municion.BuildConfig
 import al.ahgitdevelopment.municion.R
 import al.ahgitdevelopment.municion.databinding.FragmentLoginBinding
-import al.ahgitdevelopment.municion.di.AppComponent
 import al.ahgitdevelopment.municion.firebase.FirebaseImageRepository.Companion.EVENT_LOGOUT
 import al.ahgitdevelopment.municion.firebase.FirebaseImageRepository.Companion.PARAM_USER_UID
 import android.Manifest
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
@@ -24,7 +22,6 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.IdpResponse
@@ -34,9 +31,11 @@ import com.google.firebase.analytics.ktx.logEvent
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.crashlytics.FirebaseCrashlytics
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_login.*
 import javax.inject.Inject
 
+@AndroidEntryPoint
 class LoginPasswordFragment : Fragment() {
 
     @Inject
@@ -51,18 +50,7 @@ class LoginPasswordFragment : Fragment() {
     @Inject
     lateinit var firebaseCrashlytics: FirebaseCrashlytics
 
-    @Inject
-    lateinit var viewModelFactory: ViewModelProvider.Factory
-
-    private val viewModel: LoginViewModel by viewModels {
-        viewModelFactory
-    }
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-
-        AppComponent.create(requireContext()).inject(this)
-    }
+    private val viewModel: LoginViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,

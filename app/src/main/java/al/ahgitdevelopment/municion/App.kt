@@ -1,11 +1,7 @@
 package al.ahgitdevelopment.municion
 
-import al.ahgitdevelopment.municion.di.AppComponent
 import android.app.Application
+import dagger.hilt.android.HiltAndroidApp
 
-open class App : Application() {
-
-    val appComponent: AppComponent by lazy {
-        AppComponent.create(applicationContext)
-    }
-}
+@HiltAndroidApp
+open class App : Application()

@@ -3,10 +3,8 @@ package al.ahgitdevelopment.municion.ui.licenses
 import al.ahgitdevelopment.municion.BaseFragment
 import al.ahgitdevelopment.municion.R
 import al.ahgitdevelopment.municion.databinding.LicensesFragmentBinding
-import al.ahgitdevelopment.municion.di.AppComponent
 import al.ahgitdevelopment.municion.ui.DeleteItemOnSwipe
 import al.ahgitdevelopment.municion.ui.RecyclerInterface
-import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -14,7 +12,6 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -22,28 +19,19 @@ import androidx.recyclerview.widget.RecyclerView
 import com.firebase.ui.auth.AuthUI
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.crashlytics.FirebaseCrashlytics
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.licenses_fragment.*
 import javax.inject.Inject
 
-class LicensesFragment : BaseFragment(), RecyclerInterface {
+@AndroidEntryPoint
+class LicensesFragment @Inject constructor() : BaseFragment(), RecyclerInterface {
 
     @Inject
     lateinit var firebaseCrashlytics: FirebaseCrashlytics
 
-    @Inject
-    lateinit var viewModelFactory: ViewModelProvider.Factory
-
     private lateinit var licensesAdapter: LicenseAdapter
 
-    private val viewModel: LicensesViewModel by viewModels {
-        viewModelFactory
-    }
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-
-        AppComponent.create(requireContext()).inject(this)
-    }
+    private val viewModel: LicensesViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,

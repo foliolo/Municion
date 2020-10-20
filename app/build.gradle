@@ -3,6 +3,7 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 apply plugin: "androidx.navigation.safeargs.kotlin"
+apply plugin: 'dagger.hilt.android.plugin'
 apply plugin: 'com.google.firebase.crashlytics'
 apply plugin: 'com.google.gms.google-services'
 
@@ -35,7 +36,7 @@ android {
         targetSdkVersion 29
         versionCode 2
         versionName '0.2.1'
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner "al.ahgitdevelopment.municion.CustomTestRunner"
 
         vectorDrawables.useSupportLibrary = true
         multiDexEnabled true
@@ -69,10 +70,6 @@ android {
 //            dimension "version"
 //            applicationIdSuffix ""
 //            versionNameSuffix "-spain"
-//            versionCode
-//            versionName
-//            versionCode 33
-//            versionName '2.1.0'
 //        }
 
         global {
@@ -99,6 +96,10 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
+
+//    configurations.all {
+//        resolutionStrategy.force 'com.goolge.code.findbugs:jsr35:3.0.0'
+//    }
 }
 
 configurations {
@@ -110,6 +111,8 @@ dependencies {
     ktlint "com.pinterest:ktlint:0.39.0"
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:${rootProject.ext.kotlin_version}"
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.1.1'
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.9"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.9"
 
     implementation 'com.google.android.material:material:1.2.1'
 
@@ -120,6 +123,7 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-runtime-ktx:${rootProject.ext.androidx_lifecycle}"
     implementation 'androidx.preference:preference-ktx:1.1.1'
     implementation "androidx.fragment:fragment-ktx:1.2.5"
+    debugImplementation 'androidx.fragment:fragment-testing:1.2.5'
 
     // Kotlin
     implementation "androidx.navigation:navigation-fragment-ktx:${rootProject.ext.nav_version}"
@@ -129,19 +133,26 @@ dependencies {
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation "androidx.lifecycle:lifecycle-extensions:${rootProject.ext.androidx_lifecycle}"
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:${rootProject.ext.androidx_lifecycle}"
-    implementation 'androidx.navigation:navigation-fragment-ktx:2.3.0'
-    implementation 'androidx.navigation:navigation-ui-ktx:2.3.0'
+    implementation 'androidx.navigation:navigation-fragment-ktx:2.3.1'
+    implementation 'androidx.navigation:navigation-ui-ktx:2.3.1'
     implementation 'androidx.vectordrawable:vectordrawable:1.1.0'
 
-    // Dagger
-    implementation "com.google.dagger:dagger:${rootProject.ext.dagger}"
-    kapt "com.google.dagger:dagger-compiler:${rootProject.ext.dagger}"
+    // Hilt
+    implementation "com.google.dagger:hilt-android:2.28-alpha"
+    testImplementation 'com.google.dagger:hilt-android-testing:2.28-alpha'
+
+    implementation 'androidx.hilt:hilt-lifecycle-viewmodel:1.0.0-alpha02'
+    kapt "com.google.dagger:hilt-android-compiler:2.28-alpha"
+    kapt 'androidx.hilt:hilt-compiler:1.0.0-alpha02'
+    kaptTest 'com.google.dagger:hilt-android-compiler:2.28-alpha'
+    kaptAndroidTest 'com.google.dagger:hilt-android-compiler:2.28-alpha'
+    androidTestImplementation 'com.google.dagger:hilt-android-testing:2.28-alpha'
 
     // Firebase
     implementation platform('com.google.firebase:firebase-bom:25.12.0')
     implementation 'com.firebaseui:firebase-ui-auth:6.2.0'
-    implementation 'com.google.android.gms:play-services-basement:17.4.0'
-    implementation 'com.google.android.gms:play-services-ads:19.4.0'
+    implementation 'com.google.android.gms:play-services-basement:17.5.0'
+    implementation 'com.google.android.gms:play-services-ads:19.5.0'
     implementation 'com.google.firebase:firebase-analytics-ktx:17.6.0'
     implementation 'com.google.firebase:firebase-auth-ktx:19.4.0'
     implementation 'com.google.firebase:firebase-core:17.5.1'
@@ -159,26 +170,41 @@ dependencies {
 
     // Third parties
     implementation 'com.github.bumptech.glide:glide:4.11.0'
-    annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
+    kapt 'com.github.bumptech.glide:compiler:4.11.0'
 
     // Testing
     testImplementation 'junit:junit:4.13'
+    androidTestImplementation 'junit:junit:4.13'
+    testImplementation "androidx.arch.core:core-testing:2.1.0"
+    testImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.4.0-M1'
 
     // Core library
-    androidTestImplementation 'androidx.test:core:1.3.0'
-
-    // AndroidJUnitRunner and JUnit Rules
+//    androidTestImplementation 'androidx.test:core:1.3.0'
+//    androidTestImplementation 'androidx.test:core:1.3.1-alpha01'
+//    androidTestImplementation "androidx.test:monitor:1.3.1-alpha01"
+//
+//    // AndroidJUnitRunner and JUnit Rules
     androidTestImplementation 'androidx.test:runner:1.3.0'
     androidTestImplementation 'androidx.test:rules:1.3.0'
+//
+//    // Assertions
+//    androidTestImplementation 'androidx.test.ext:junit:1.1.2'
+//    androidTestImplementation 'androidx.test.ext:truth:1.3.0'
+//    androidTestImplementation 'com.google.truth:truth:1.0'
+//
+//    // Espresso dependencies
+//    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
+//    androidTestImplementation 'androidx.test:rules:1.3.0'
+//
+//    // Mockito
+//    testImplementation "org.mockito:mockito-core:$mockito_version"
+////    testImplementation "com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0"
+//    androidTestImplementation "org.mockito:mockito-core:$mockito_version"
 
-    // Assertions
-    androidTestImplementation 'androidx.test.ext:junit:1.1.2'
-    androidTestImplementation 'androidx.test.ext:truth:1.3.0'
-    androidTestImplementation 'com.google.truth:truth:1.0'
+}
 
-    // Espresso dependencies
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
-    androidTestImplementation 'androidx.test:rules:1.3.0'
+kapt{
+    correctErrorTypes true
 }
 
 task ktlint(type: JavaExec, group: "verification") {

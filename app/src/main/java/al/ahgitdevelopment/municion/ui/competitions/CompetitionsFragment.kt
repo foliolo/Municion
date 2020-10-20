@@ -3,7 +3,6 @@ package al.ahgitdevelopment.municion.ui.competitions
 import al.ahgitdevelopment.municion.BaseFragment
 import al.ahgitdevelopment.municion.R
 import al.ahgitdevelopment.municion.databinding.CompetitionsFragmentBinding
-import al.ahgitdevelopment.municion.di.AppComponent
 import al.ahgitdevelopment.municion.ui.DeleteItemOnSwipe
 import al.ahgitdevelopment.municion.ui.RecyclerInterface
 import android.content.Context
@@ -15,26 +14,21 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.firebase.ui.auth.AuthUI
 import com.google.android.material.snackbar.Snackbar
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.competitions_fragment.*
-import javax.inject.Inject
 
+@AndroidEntryPoint
 class CompetitionsFragment : BaseFragment(), RecyclerInterface {
-
-    @Inject
-    lateinit var viewModelFactory: ViewModelProvider.Factory
 
     private lateinit var competitionAdapter: CompetitionAdapter
 
-    private val viewModel: CompetitionsViewModel by viewModels {
-        viewModelFactory
-    }
+    private val viewModel: CompetitionsViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -113,12 +107,6 @@ class CompetitionsFragment : BaseFragment(), RecyclerInterface {
     override fun finish() {
         viewModel.closeApp()
         requireActivity().finish()
-    }
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-
-        AppComponent.create(requireContext()).inject(this)
     }
 
     override fun RecyclerView?.undoDelete(viewHolder: RecyclerView.ViewHolder) {
