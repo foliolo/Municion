@@ -2,7 +2,7 @@ package al.ahgitdevelopment.municion.ui.licenses
 
 import al.ahgitdevelopment.municion.SingleLiveEvent
 import al.ahgitdevelopment.municion.datamodel.License
-import al.ahgitdevelopment.municion.repository.Repository
+import al.ahgitdevelopment.municion.repository.RepositoryInterface
 import al.ahgitdevelopment.municion.ui.BaseViewModel
 import android.view.View
 import androidx.hilt.Assisted
@@ -10,17 +10,13 @@ import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
-import com.google.firebase.analytics.FirebaseAnalytics
-import com.google.firebase.crashlytics.FirebaseCrashlytics
 import kotlinx.coroutines.launch
 
 @Suppress("UNUSED_PARAMETER")
 class LicensesViewModel @ViewModelInject constructor(
-    private val repository: Repository,
-    firebaseAnalytics: FirebaseAnalytics,
-    firebaseCrashlytics: FirebaseCrashlytics,
+    private val repository: RepositoryInterface,
     @Assisted private val savedStateHandle: SavedStateHandle
-) : BaseViewModel(firebaseAnalytics, firebaseCrashlytics) {
+) : BaseViewModel() {
 
     lateinit var licenses: LiveData<List<License>>
 

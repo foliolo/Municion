@@ -28,7 +28,11 @@ class PurchasesFragment : BaseFragment(), RecyclerInterface {
 
     private val viewModel: PurchasesViewModel by viewModels()
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
 
         val binding: PurchasesFragmentBinding =
             DataBindingUtil.inflate(inflater, R.layout.purchases_fragment, container, false)
@@ -76,8 +80,8 @@ class PurchasesFragment : BaseFragment(), RecyclerInterface {
         AuthUI.getInstance()
             .signOut(requireContext())
             .addOnCompleteListener {
-                viewModel.recordLogoutEvent()
-                viewModel.clearUserData()
+                viewModel.recordLogoutEvent(analytics)
+                viewModel.clearUserData(analytics, crashlytics)
                 findNavController().navigate(R.id.loginPasswordFragment)
             }
     }
@@ -91,7 +95,7 @@ class PurchasesFragment : BaseFragment(), RecyclerInterface {
     }
 
     override fun finish() {
-        viewModel.closeApp()
+        viewModel.closeApp(analytics)
         requireActivity().finish()
     }
 

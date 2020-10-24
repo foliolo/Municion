@@ -18,16 +18,12 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.firebase.ui.auth.AuthUI
 import com.google.android.material.snackbar.Snackbar
-import com.google.firebase.crashlytics.FirebaseCrashlytics
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.licenses_fragment.*
 import javax.inject.Inject
 
 @AndroidEntryPoint
 class LicensesFragment @Inject constructor() : BaseFragment(), RecyclerInterface {
-
-    @Inject
-    lateinit var firebaseCrashlytics: FirebaseCrashlytics
 
     private lateinit var licensesAdapter: LicenseAdapter
 
@@ -89,8 +85,8 @@ class LicensesFragment @Inject constructor() : BaseFragment(), RecyclerInterface
         AuthUI.getInstance()
             .signOut(requireContext())
             .addOnCompleteListener {
-                viewModel.recordLogoutEvent()
-                viewModel.clearUserData()
+                viewModel.recordLogoutEvent(analytics)
+                viewModel.clearUserData(analytics, crashlytics)
                 findNavController().navigate(R.id.loginPasswordFragment)
             }
     }
@@ -104,7 +100,7 @@ class LicensesFragment @Inject constructor() : BaseFragment(), RecyclerInterface
     }
 
     override fun finish() {
-        viewModel.closeApp()
+        viewModel.closeApp(analytics)
         requireActivity().finish()
     }
 

@@ -81,17 +81,18 @@ class CompetitionsFragment : BaseFragment(), RecyclerInterface {
         super.onResume()
         viewModel.getPurchases()
 
-        (requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager).let {
-            it.hideSoftInputFromWindow(view?.rootView?.windowToken, 0)
-        }
+        (requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager).hideSoftInputFromWindow(
+            view?.rootView?.windowToken,
+            0
+        )
     }
 
     override fun signOut() {
         AuthUI.getInstance()
             .signOut(requireContext())
             .addOnCompleteListener {
-                viewModel.recordLogoutEvent()
-                viewModel.clearUserData()
+                viewModel.recordLogoutEvent(analytics)
+                viewModel.clearUserData(analytics, crashlytics)
                 findNavController().navigate(R.id.loginPasswordFragment)
             }
     }
@@ -105,7 +106,7 @@ class CompetitionsFragment : BaseFragment(), RecyclerInterface {
     }
 
     override fun finish() {
-        viewModel.closeApp()
+        viewModel.closeApp(analytics)
         requireActivity().finish()
     }
 

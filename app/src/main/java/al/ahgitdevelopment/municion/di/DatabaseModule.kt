@@ -13,18 +13,14 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.components.ActivityComponent
+import dagger.hilt.android.components.ApplicationComponent
 import dagger.hilt.android.qualifiers.ApplicationContext
 
 private lateinit var INSTANCE: AppDatabase
 
-@InstallIn(ActivityComponent::class)
 @Module
+@InstallIn(ApplicationComponent::class)
 class DatabaseModule {
-
-    /**
-     * Instantiate a database from a context.
-     */
 
     @Provides
     fun providesRoomDatabase(@ApplicationContext appContext: Context): AppDatabase {

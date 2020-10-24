@@ -6,11 +6,11 @@ import androidx.preference.PreferenceManager
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.components.ActivityComponent
+import dagger.hilt.android.components.ApplicationComponent
 import dagger.hilt.android.qualifiers.ApplicationContext
 
-@InstallIn(ActivityComponent::class)
 @Module
+@InstallIn(ApplicationComponent::class)
 class SharedPrefsModule {
 
     @Provides

@@ -30,7 +30,11 @@ class PropertiesFragment : BaseFragment(), RecyclerInterface {
 
     private val viewModel: PropertiesViewModel by viewModels()
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
 
         val binding: PropertiesFragmentBinding =
             DataBindingUtil.inflate(inflater, R.layout.properties_fragment, container, false)
@@ -87,8 +91,8 @@ class PropertiesFragment : BaseFragment(), RecyclerInterface {
         AuthUI.getInstance()
             .signOut(requireContext())
             .addOnCompleteListener {
-                viewModel.recordLogoutEvent()
-                viewModel.clearUserData()
+                viewModel.recordLogoutEvent(analytics)
+                viewModel.clearUserData(analytics, crashlytics)
                 findNavController().navigate(R.id.loginPasswordFragment)
             }
     }
@@ -102,7 +106,7 @@ class PropertiesFragment : BaseFragment(), RecyclerInterface {
     }
 
     override fun finish() {
-        viewModel.closeApp()
+        viewModel.closeApp(analytics)
         requireActivity().finish()
     }
 

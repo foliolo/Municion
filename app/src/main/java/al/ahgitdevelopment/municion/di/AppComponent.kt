@@ -1,12 +1,19 @@
 package al.ahgitdevelopment.municion.di
 
-import dagger.Component
-
-@Component(
-    modules = [
-        SharedPrefsModule::class,
-        FirebaseModule::class,
-        DatabaseModule::class
-    ]
-)
-interface AppComponent
+// @Component(
+//     modules = [
+//         SharedPrefsModule::class,
+//         FirebaseModule::class,
+//         DatabaseModule::class,
+//         RepositoryModule::class
+//     ]
+// )
+// interface AppComponent{
+//     @Qualifier
+//     @Retention(AnnotationRetention.RUNTIME)
+//     annotation class RemoteTasksDataSource
+//
+//     @Qualifier
+//     @Retention(AnnotationRetention.RUNTIME)
+//     annotation class LocalTasksDataSource
+// }
