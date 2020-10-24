@@ -22,8 +22,13 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
 
+      - name: Decode google-services.json
+        env:
+          FIREBASE_SECRET: ${{ secrets.FIREBASE_SECRET }}
+        run: echo $FIREBASE_SECRET > app/google-services.json
+
       - name: Run Debug Tests
-        run: ./gradlew testGlobalTestDebug --continue
+        run: ./gradlew testGlobalDebug --continue
 
       - name: Upload Test Reports
         if: ${{ always() }}
@@ -78,6 +83,11 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
+
+      - name: Decode google-services.json
+        env:
+          FIREBASE_SECRET: ${{ secrets.FIREBASE_SECRET }}
+        run: echo $FIREBASE_SECRET > app/google-services.json
 
       - name: Assemble
         env:
