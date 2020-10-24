@@ -16,9 +16,13 @@ import com.google.firebase.storage.ktx.storage
 import dagger.Module
 import dagger.Provides
 import dagger.Reusable
+import dagger.hilt.InstallIn
+import dagger.hilt.android.components.ApplicationComponent
+import dagger.hilt.android.qualifiers.ApplicationContext
 
 @Module
-class FirebaseModule(val context: Context) {
+@InstallIn(ApplicationComponent::class)
+class FirebaseModule {
 
     @Provides
     @Reusable
@@ -42,16 +46,17 @@ class FirebaseModule(val context: Context) {
 
     @Provides
     @Reusable
-    fun provideConnectivityManager(): ConnectivityManager =
-        context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+    fun provideConnectivityManager(@ApplicationContext appContext: Context): ConnectivityManager =
+        appContext.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
 
     @Provides
     @Reusable
-    fun provideTutorialImagesRepository(): TutorialImagesRepository = FirebaseImageRepository(
-        context,
-        provideAuth(),
-        provideStorage(),
-        provideCrashlytics(),
-        provideConnectivityManager()
-    )
+    fun provideTutorialImagesRepository(@ApplicationContext appContext: Context): TutorialImagesRepository =
+        FirebaseImageRepository(
+            appContext,
+            provideAuth(),
+            provideStorage(),
+            provideCrashlytics(),
+            provideConnectivityManager(appContext)
+        )
 }

@@ -1,29 +1,59 @@
 package al.ahgitdevelopment.municion.di
 
 import al.ahgitdevelopment.municion.repository.dao.AppDatabase
+import al.ahgitdevelopment.municion.repository.dao.CompetitionDao
 import al.ahgitdevelopment.municion.repository.dao.DATABASE_NAME
 import al.ahgitdevelopment.municion.repository.dao.LicenseDao
+import al.ahgitdevelopment.municion.repository.dao.PropertyDao
+import al.ahgitdevelopment.municion.repository.dao.PurchaseDao
 import android.content.Context
 import androidx.room.Room
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import dagger.Module
 import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.android.components.ApplicationComponent
+import dagger.hilt.android.qualifiers.ApplicationContext
+
+private lateinit var INSTANCE: AppDatabase
 
 @Module
-class DatabaseModule(val context: Context) {
-
-    private val database = Room.databaseBuilder(context, AppDatabase::class.java, DATABASE_NAME)
-        // .addMigrations(MIGRATION_1_2)
-        .build()
+@InstallIn(ApplicationComponent::class)
+class DatabaseModule {
 
     @Provides
-    fun providesRoomDatabase(): AppDatabase = database
+    fun providesRoomDatabase(@ApplicationContext appContext: Context): AppDatabase {
+        synchronized(AppDatabase::class) {
+            if (!::INSTANCE.isInitialized) {
+                INSTANCE = Room
+                    .databaseBuilder(
+                        appContext,
+                        AppDatabase::class.java,
+                        DATABASE_NAME
+                    )
+                    // .addMigrations(MIGRATION_1_2)
+                    .fallbackToDestructiveMigration()
+                    .build()
+            }
+        }
+        return INSTANCE
+    }
 
     @Provides
-    fun providesLicenseDao(): LicenseDao = database.licenseDao()!!
+    fun providesLicenseDao(): LicenseDao = INSTANCE.licenseDao()!!
+
+    @Provides
+    fun providesPropertyDao(): PropertyDao = INSTANCE.propertyDao()!!
+
+    @Provides
+    fun providesPurchaseDao(): PurchaseDao = INSTANCE.purchaseDao()!!
+
+    @Provides
+    fun providesCompetitionDao(): CompetitionDao = INSTANCE.competitionDao()!!
 
     companion object {
+
         // EXAMPLE, NOT NEEDED YET
         val MIGRATION_1_2 = object : Migration(1, 2) {
             override fun migrate(database: SupportSQLiteDatabase) {

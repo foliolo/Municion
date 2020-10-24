@@ -4,13 +4,16 @@ import al.ahgitdevelopment.municion.SingleLiveEvent
 import al.ahgitdevelopment.municion.datamodel.Purchase
 import al.ahgitdevelopment.municion.repository.Repository
 import android.view.View
+import androidx.hilt.Assisted
+import androidx.hilt.lifecycle.ViewModelInject
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
-class PurchaseFormViewModel @Inject constructor(
-    private val repository: Repository
+class PurchaseFormViewModel @ViewModelInject constructor(
+    private val repository: Repository,
+    @Assisted private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
     val fabSavePurchaseClicked = SingleLiveEvent<Unit>()

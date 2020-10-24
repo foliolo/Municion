@@ -4,9 +4,7 @@ import al.ahgitdevelopment.municion.NavigationActivity
 import al.ahgitdevelopment.municion.R
 import al.ahgitdevelopment.municion.databinding.FragmentFormLicenseBinding
 import al.ahgitdevelopment.municion.datamodel.License
-import al.ahgitdevelopment.municion.di.AppComponent
 import al.ahgitdevelopment.municion.ui.dialogs.DatePickerFragment
-import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -14,28 +12,22 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModelProvider
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_form_license.*
-import javax.inject.Inject
 
 /**
  * Created by Alberto on 24/05/2016.
  */
+@AndroidEntryPoint
 class LicenseFormFragment : Fragment() {
 
-    @Inject
-    lateinit var viewModelFactory: ViewModelProvider.Factory
+    private val viewModel: LicenseFormViewModel by viewModels()
 
-    private val viewModel: LicenseFormViewModel by viewModels {
-        viewModelFactory
-    }
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        AppComponent.create(requireContext()).inject(this)
-    }
-
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
 
         val binding: FragmentFormLicenseBinding =
             DataBindingUtil.inflate(inflater, R.layout.fragment_form_license, container, false)
