@@ -51,7 +51,7 @@ jobs:
             ${{ runner.os }}-gradle-
 
       - name: Run Debug Lint
-        run: ./gradlew lintDebug
+        run: ./gradlew app:ktlint
 
       - name: Upload Lint Reports
         if: ${{ always() }}
