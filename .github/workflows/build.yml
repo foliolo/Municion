@@ -65,7 +65,7 @@ jobs:
           name: lint-report
           path: '**/build/reports/lint-results-*'
 
-  assemble_job:
+  publish_job:
     needs: [test_job, lint_job]
     name: Assemble and Upload to Firebase
     runs-on: ubuntu-latest
@@ -94,33 +94,10 @@ jobs:
           VERSION_CODE: ${{ github.run_id }}
         run: ./gradlew assembleDebug
 
-  publish_job:
-    needs: [assemble_job]
-    name: Assemble and Upload to Firebase
-    runs-on: ubuntu-latest
-    steps:
-
-      - name: Checkout
-        uses: actions/checkout@v2
-
-      - name: Restore Cache
-        uses: actions/cache@v2
-        with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
-
       - name: Upload to Firebase App Distribution
         uses: wzieba/Firebase-Distribution-Github-Action@v1.2.2
         with:
           appId: ${{ secrets.FIREBASE_APP_ID }}
           token: ${{ secrets.FIREBASE_TOKEN }}
           groups: Developers
-          file: app/build/outputs/apk/global/debug/app-globla-debug.apk
-          debug: true
-
-
-#https://www.youtube.com/watch?v=mj1sq8TdMXc
+          file: app/build/outputs/apk/global/debug/app-global-debug.apk
