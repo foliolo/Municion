@@ -89,6 +89,12 @@ android {
             applicationIdSuffix ".global"
             versionNameSuffix "-global"
         }
+
+        globalTest {
+            dimension "version"
+            applicationIdSuffix ".global"
+            versionNameSuffix "-global"
+        }
     }
 
     compileOptions {
@@ -112,6 +118,15 @@ android {
     configurations.all {
         resolutionStrategy {
             force "androidx.test:monitor:1.3.0"
+        }
+    }
+
+    applicationVariants.all { variant ->
+//        renameAPK(variant)
+
+        // Disable google-services.json parsing for development builds
+        if (variant.flavorName == 'globalTest') {
+            project.tasks.getByName('process' + variant.name.capitalize() + 'GoogleServices').enabled = false
         }
     }
 }
@@ -227,4 +242,14 @@ task ktlintFormat(type: JavaExec, group: "formatting") {
     classpath = configurations.ktlint
     main = "com.pinterest.ktlint.Main"
     args "-F", "src/**/*.kt"
+}
+
+def renameAPK(variant) {
+    variant.outputs.all {
+        def variantName = variant.name
+        def versionName = variant.versionName
+        def versionCode = variant.versionCode
+        def applicationId = variant.applicationId
+        outputFileName = applicationId + "_" + (variantName != "release" ? variantName + "_" : "") + versionName + "_" + versionCode + ".apk"
+    }
 }
