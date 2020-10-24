@@ -12,20 +12,15 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      #      - name: set up JDK 1.8
-      #        uses: actions/setup-java@v1
-      #        with:
-      #          java-version: 1.8
-      #
-      #      - name: Restore Cache
-      #        uses: actions/cache@v2
-      #        with:
-      #          path: |
-      #            ~/.gradle/caches
-      #            ~/.gradle/wrapper
-      #          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
-      #          restore-keys: |
-      #            ${{ runner.os }}-gradle-
+      - name: Restore Cache
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
 
       - name: Run Debug Tests
         run: ./gradlew testGlobalTestDebug --continue
@@ -37,67 +32,57 @@ jobs:
           name: test-reports
           path: '**/build/reports/tests/'
 
-#  lint_job:
-#    name: Lint
-#    runs-on: ubuntu-latest
-#    steps:
-#
-#      - name: Checkout
-#        uses: actions/checkout@v2
-#
-#      - name: set up JDK 1.8
-#        uses: actions/setup-java@v1
-#        with:
-#          java-version: 1.8
-#
-#      - name: Restore Cache
-#        uses: actions/cache@v2
-#        with:
-#          path: |
-#            ~/.gradle/caches
-#            ~/.gradle/wrapper
-#          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
-#          restore-keys: |
-#            ${{ runner.os }}-gradle-
-#
-#      - name: Run Debug Lint
-#        run: bash ./gradlew lintDebug
-#
-#      - name: Upload Lint Reports
-#        if: ${{ always() }}
-#        uses: actions/upload-artifact@v2
-#        with:
-#          name: lint-report
-#          path: '**/build/reports/lint-results-*'
-#
-#  assemble_job:
-#    needs: [test_job, lint_job]
-#    name: Assemble and Upload to Firebase
-#    runs-on: ubuntu-latest
-#    steps:
-#
-#      - name: Checkout
-#        uses: actions/checkout@v2
-#
-#      - name: set up JDK 1.8
-#        uses: actions/setup-java@v1
-#        with:
-#          java-version: 1.8
-#
-#      - name: Restore Cache
-#        uses: actions/cache@v2
-#        with:
-#          path: |
-#            ~/.gradle/caches
-#            ~/.gradle/wrapper
-#          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
-#          restore-keys: |
-#            ${{ runner.os }}-gradle-
-#
-#      - name: Assemble
-#        env:
-#          VERSION_CODE: ${{ github.run_id }}
-#        run: bash ./gradlew assembleDebug
+  lint_job:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Restore Cache
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - name: Run Debug Lint
+        run: ./gradlew lintDebug
+
+      - name: Upload Lint Reports
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v2
+        with:
+          name: lint-report
+          path: '**/build/reports/lint-results-*'
+
+  assemble_job:
+    needs: [test_job, lint_job]
+    name: Assemble and Upload to Firebase
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Restore Cache
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - name: Assemble
+        env:
+          VERSION_CODE: ${{ github.run_id }}
+        run: ./gradlew assembleDebug
 
 #  publish_job:
 #    needs: [assemble_job]
