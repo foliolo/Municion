@@ -8,17 +8,19 @@ import al.ahgitdevelopment.municion.repository.dao.AppDatabase
 import androidx.lifecycle.LiveData
 import javax.inject.Inject
 
-class Repository @Inject constructor(private val db: AppDatabase) : RepositoryInterface {
+open class Repository @Inject constructor(private val db: AppDatabase) : RepositoryInterface {
 
     override suspend fun getProperties(): LiveData<List<Property>>? = db.propertyDao()?.getProperties()
     override suspend fun getPurchases(): LiveData<List<Purchase>>? = db.purchaseDao()?.getPurchases()
     override suspend fun getLicenses(): LiveData<List<License>>? = db.licenseDao()?.getLicenses()
-    override suspend fun getCompetition(): LiveData<List<Competition>>? = db.competitionDao()?.getCompetitions()
+    override suspend fun getCompetition(): LiveData<List<Competition>>? =
+        db.competitionDao()?.getCompetitions()
 
     override suspend fun saveProperty(property: Property) = db.propertyDao()?.insert(property)!!
     override suspend fun savePurchase(purchase: Purchase) = db.purchaseDao()?.insert(purchase)!!
     override suspend fun saveLicense(license: License) = db.licenseDao()?.insert(license)!!
-    override suspend fun saveCompetition(competition: Competition) = db.competitionDao()?.insert(competition)!!
+    override suspend fun saveCompetition(competition: Competition) =
+        db.competitionDao()?.insert(competition)!!
 
     override suspend fun removeProperty(id: Long) = db.propertyDao()?.delete(id)!!
     override suspend fun removePurchase(id: Long) = db.purchaseDao()?.delete(id)!!

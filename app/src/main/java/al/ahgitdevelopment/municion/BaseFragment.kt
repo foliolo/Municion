@@ -9,9 +9,18 @@ import android.view.View
 import android.view.inputmethod.InputMethodManager
 import androidx.activity.addCallback
 import androidx.fragment.app.Fragment
+import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import kotlinx.android.synthetic.main.activity_navigation.*
+import javax.inject.Inject
 
 abstract class BaseFragment : Fragment() {
+
+    @Inject
+    lateinit var analytics: FirebaseAnalytics
+
+    @Inject
+    lateinit var crashlytics: FirebaseCrashlytics
 
     abstract fun signOut()
     abstract fun settings()

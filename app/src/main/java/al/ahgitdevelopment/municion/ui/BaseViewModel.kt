@@ -6,21 +6,18 @@ import androidx.lifecycle.ViewModel
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 
-open class BaseViewModel(
-    private val firebaseAnalytics: FirebaseAnalytics,
-    private val firebaseCrashlytics: FirebaseCrashlytics
-) : ViewModel() {
+open class BaseViewModel : ViewModel() {
 
-    fun recordLogoutEvent() {
-        firebaseAnalytics.logEvent(EVENT_LOGOUT, null)
+    fun recordLogoutEvent(analytics: FirebaseAnalytics) {
+        analytics.logEvent(EVENT_LOGOUT, null)
     }
 
-    fun clearUserData() {
-        firebaseAnalytics.setUserId(null)
-        firebaseCrashlytics.setUserId("")
+    fun clearUserData(analytics: FirebaseAnalytics, crashlytics: FirebaseCrashlytics) {
+        analytics.setUserId(null)
+        crashlytics.setUserId("")
     }
 
-    fun closeApp() {
-        firebaseAnalytics.logEvent(EVENT_CLOSE_APP, null)
+    fun closeApp(analytics: FirebaseAnalytics) {
+        analytics.logEvent(EVENT_CLOSE_APP, null)
     }
 }

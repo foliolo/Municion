@@ -4,14 +4,17 @@ import al.ahgitdevelopment.municion.SingleLiveEvent
 import al.ahgitdevelopment.municion.datamodel.License
 import al.ahgitdevelopment.municion.repository.Repository
 import android.view.View
+import androidx.hilt.Assisted
+import androidx.hilt.lifecycle.ViewModelInject
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @Suppress("UNUSED_PARAMETER")
-class LicenseFormViewModel @Inject constructor(
-    private val repository: Repository
+class LicenseFormViewModel @ViewModelInject constructor(
+    private val repository: Repository,
+    @Assisted private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
     val issueDate = SingleLiveEvent<Unit>()

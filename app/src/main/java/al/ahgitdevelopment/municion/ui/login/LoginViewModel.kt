@@ -5,12 +5,17 @@ import al.ahgitdevelopment.municion.di.SharedPrefsModule.Companion.PREFS_PASSWOR
 import al.ahgitdevelopment.municion.di.SharedPrefsModule.Companion.PREFS_SHOW_TUTORIAL
 import android.content.SharedPreferences
 import android.view.View
+import androidx.hilt.Assisted
+import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import javax.inject.Inject
 
-class LoginViewModel @Inject constructor(private val prefs: SharedPreferences) : ViewModel() {
+class LoginViewModel @ViewModelInject constructor(
+    private val prefs: SharedPreferences,
+    @Assisted private val savedStateHandle: SavedStateHandle
+) : ViewModel() {
 
     val navigateIntoApp = SingleLiveEvent<Void>()
     val navigateIntoTutorial = SingleLiveEvent<Void>()

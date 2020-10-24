@@ -7,12 +7,15 @@ import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_navigation.*
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 
+@ExperimentalCoroutinesApi
+@AndroidEntryPoint
 class NavigationActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        (application as App).appComponent.inject(this)
 
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_navigation)
@@ -22,7 +25,10 @@ class NavigationActivity : AppCompatActivity() {
         val navController = findNavController(R.id.nav_host_fragment)
         val appBarConfiguration = AppBarConfiguration(
             setOf(
-                R.id.propertiesFragment, R.id.purchasesFragment, R.id.licensesFragment, R.id.competitionsFragment
+                R.id.propertiesFragment,
+                R.id.purchasesFragment,
+                R.id.licensesFragment,
+                R.id.competitionsFragment
             )
         )
 
