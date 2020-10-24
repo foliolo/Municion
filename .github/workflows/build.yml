@@ -4,69 +4,98 @@ on: pull_request
 
 jobs:
 
-  test_job:
-    name: Test
-    runs-on: ubuntu-latest
-    steps:
+  #  test_job:
+  #    name: Test
+  #    runs-on: ubuntu-latest
+  #    steps:
+  #
+  #      - name: Checkout
+  #        uses: actions/checkout@v2
+  #
+  #      - name: Restore Cache
+  #        uses: actions/cache@v2
+  #        with:
+  #          path: |
+  #            ~/.gradle/caches
+  #            ~/.gradle/wrapper
+  #          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
+  #          restore-keys: |
+  #            ${{ runner.os }}-gradle-
+  #
+  #      - name: Decode google-services.json
+  #        env:
+  #          FIREBASE_SECRET: ${{ secrets.FIREBASE_SECRET }}
+  #        run: echo $FIREBASE_SECRET > app/google-services.json
+  #
+  #      - name: Run Debug Tests
+  #        run: ./gradlew testGlobalDebug --continue
+  #
+  #      - name: Upload Test Reports
+  #        if: ${{ always() }}
+  #        uses: actions/upload-artifact@v2
+  #        with:
+  #          name: test-reports
+  #          path: '**/build/reports/tests/'
+  #
+  #  lint_job:
+  #    name: Lint
+  #    runs-on: ubuntu-latest
+  #    steps:
+  #
+  #      - name: Checkout
+  #        uses: actions/checkout@v2
+  #
+  #      - name: Restore Cache
+  #        uses: actions/cache@v2
+  #        with:
+  #          path: |
+  #            ~/.gradle/caches
+  #            ~/.gradle/wrapper
+  #          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
+  #          restore-keys: |
+  #            ${{ runner.os }}-gradle-
+  #
+  #      - name: Run Debug Lint
+  #        run: ./gradlew app:ktlint
+  #
+  #      - name: Upload Lint Reports
+  #        if: ${{ always() }}
+  #        uses: actions/upload-artifact@v2
+  #        with:
+  #          name: lint-report
+  #          path: '**/build/reports/lint-results-*'
+  #
+  #  assemble_job:
+  #    needs: [test_job, lint_job]
+  #    name: Assemble and Upload to Firebase
+  #    runs-on: ubuntu-latest
+  #    steps:
+  #
+  #      - name: Checkout
+  #        uses: actions/checkout@v2
+  #
+  #      - name: Restore Cache
+  #        uses: actions/cache@v2
+  #        with:
+  #          path: |
+  #            ~/.gradle/caches
+  #            ~/.gradle/wrapper
+  #          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
+  #          restore-keys: |
+  #            ${{ runner.os }}-gradle-
+  #
+  #      - name: Decode google-services.json
+  #        env:
+  #          FIREBASE_SECRET: ${{ secrets.FIREBASE_SECRET }}
+  #        run: echo $FIREBASE_SECRET > app/google-services.json
+  #
+  #      - name: Assemble
+  #        env:
+  #          VERSION_CODE: ${{ github.run_id }}
+  #        run: ./gradlew assembleDebug
 
-      - name: Checkout
-        uses: actions/checkout@v2
-
-      - name: Restore Cache
-        uses: actions/cache@v2
-        with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
-
-      - name: Decode google-services.json
-        env:
-          FIREBASE_SECRET: ${{ secrets.FIREBASE_SECRET }}
-        run: echo $FIREBASE_SECRET > app/google-services.json
-
-      - name: Run Debug Tests
-        run: ./gradlew testGlobalDebug --continue
-
-      - name: Upload Test Reports
-        if: ${{ always() }}
-        uses: actions/upload-artifact@v2
-        with:
-          name: test-reports
-          path: '**/build/reports/tests/'
-
-  lint_job:
-    name: Lint
-    runs-on: ubuntu-latest
-    steps:
-
-      - name: Checkout
-        uses: actions/checkout@v2
-
-      - name: Restore Cache
-        uses: actions/cache@v2
-        with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
-
-      - name: Run Debug Lint
-        run: ./gradlew app:ktlint
-
-      - name: Upload Lint Reports
-        if: ${{ always() }}
-        uses: actions/upload-artifact@v2
-        with:
-          name: lint-report
-          path: '**/build/reports/lint-results-*'
-
-  assemble_job:
-    needs: [test_job, lint_job]
+  publish_job:
+    #    needs: [assemble_job]
     name: Assemble and Upload to Firebase
     runs-on: ubuntu-latest
     steps:
@@ -84,42 +113,13 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
 
-      - name: Decode google-services.json
-        env:
-          FIREBASE_SECRET: ${{ secrets.FIREBASE_SECRET }}
-        run: echo $FIREBASE_SECRET > app/google-services.json
-
-      - name: Assemble
-        env:
-          VERSION_CODE: ${{ github.run_id }}
-        run: ./gradlew assembleDebug
-
-#  publish_job:
-#    needs: [assemble_job]
-#    name: Assemble and Upload to Firebase
-#    runs-on: ubuntu-latest
-#    steps:
-#
-#      - name: Checkout
-#        uses: actions/checkout@v2
-#
-#      - name: Restore Cache
-#        uses: actions/cache@v2
-#        with:
-#          path: |
-#            ~/.gradle/caches
-#            ~/.gradle/wrapper
-#          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
-#          restore-keys: |
-#            ${{ runner.os }}-gradle-
-#
-#      - name: Upload to Firebase App Distribution
-#        uses: wzieba/Firebase-Distribution-Github-Action@v1.2.1
-#        with:
-#          appId: ${{ secrets.FIREBASE_APP_ID }}
-#          token: ${{ secrets.FIREBASE_TOKEN }}
-#          groups: qa
-#          file: app/build/outputs/apk/debug/app-debug.apk
+      - name: Upload to Firebase App Distribution
+        uses: wzieba/Firebase-Distribution-Github-Action@v1.2.1
+        with:
+          appId: ${{ secrets.FIREBASE_APP_ID }}
+          token: ${{ secrets.FIREBASE_TOKEN }}
+          groups: Developers
+          file: app/build/outputs/apk/global/debug/app-globla-debug.apk
 
 
 #https://www.youtube.com/watch?v=mj1sq8TdMXc
