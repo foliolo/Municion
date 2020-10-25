@@ -62,11 +62,10 @@ jobs:
 
       - name: Run Debug Lint
         run: ./gradlew app:check
-      #        run: ./gradlew app:ktlint
 
       - name: Upload Lint Reports
         if: ${{ always() }}
         uses: actions/upload-artifact@v2
         with:
           name: lint-report
-          path: app/build/reports/lint-results-*
+          path: '**/build/reports/*.*'

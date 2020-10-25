@@ -34,13 +34,13 @@ jobs:
         run: echo $FIREBASE_JSON > app/google-services.json
 
       - name: Assemble
-        run: ./gradlew assembleDebug
+        run: ./gradlew assembleDebug bundleRelease
 
-      # https://github.com/r0adkll/sign-android-release
+        # https://github.com/r0adkll/sign-android-release
       - name: Sign Release
         uses: r0adkll/sign-android-release@v1
         with:
-          releaseDirectory: app/global/release/app-global-release.aab
+          releaseDirectory: app/build/outputs/bundle/globalRelease
           signingKeyBase64: ${{ secrets.SIGNING_KEY_B64 }}
           alias:  ${{ secrets.SIGNING_ALIAS }}
           keyStorePassword: ${{ secrets.SIGNING_KEY_STORE_PASSWORD }}
@@ -51,20 +51,20 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: apks
-          path:
-            app/global/**/**.aab
-            app/build/outputs/apk/global/**/**.apk
+          path: |
+            app/build/outputs/bundle/**/*.aab
+            app/build/outputs/apk/
 
       # https://github.com/r0adkll/upload-google-play
-      - name: Publish to Google Play Console¡
+      - name: Publish to Google Play Console
         uses: r0adkll/upload-google-play@v1
         with:
-          serviceAccountJson: ${{ secrets.SERVICE_ACCOUNT_GOOGLE_PLAY_CONSOLE_JSON }}
+          serviceAccountJsonPlainText: ${{ secrets.SERVICE_ACCOUNT_GOOGLE_PLAY_CONSOLE_JSON }}
           packageName: al.ahgitdevelopment.municion.global
-          releaseFile: app/global/release/app-global-release.aab
+          releaseFile: app/build/outputs/bundle/globalRelease/app-global-release.aab
           track: internal
-          userFraction: 1.0
-          whatsNewDirectory: workflows/whatsNew
+          userFraction: 0.99
+          whatsNewDirectory: distribution/whatsnew
           mappingFile: app/build/outputs/mapping/globalRelease/mapping.txt
 
       # https://github.com/marketplace/actions/firebase-app-distribution
@@ -74,7 +74,7 @@ jobs:
           appId: ${{ secrets.FIREBASE_APP_ID }}
           token: ${{ secrets.FIREBASE_TOKEN }}
           groups: Developers
-          file: app/build/outputs/apk/global/debug/app-global-debug.apk
+          file: '**/build/outputs/apk/global/debug/app-global-debug.apk'
 
 # TUTORIALS:
 # https://github.com/marketplace/actions/upload-android-release-to-play-store
