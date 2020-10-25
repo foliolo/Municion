@@ -17,8 +17,7 @@ apply plugin: 'com.google.gms.google-services'
 // Load your keystore.properties file into the keystoreProperties object.
 //keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 
-android {
-//    signingConfigs {
+//    android.signingConfigs {
 //        config {
 //            keyAlias keystoreProperties['keyAlias']
 //            keyPassword keystoreProperties['keyPassword']
@@ -26,6 +25,8 @@ android {
 //            storePassword keystoreProperties['storePassword']
 //        }
 //    }
+
+android {
 
     compileSdkVersion 30
 
@@ -72,6 +73,11 @@ android {
 
     flavorDimensions "version"
     productFlavors {
+        global {
+            dimension "version"
+            applicationIdSuffix ".global"
+            versionNameSuffix "-global"
+        }
 //        demo {
 //            dimension "version"
 //            applicationIdSuffix ".demo"
@@ -83,12 +89,6 @@ android {
 //            applicationIdSuffix ""
 //            versionNameSuffix "-spain"
 //        }
-
-        global {
-            dimension "version"
-            applicationIdSuffix ".global"
-            versionNameSuffix "-global"
-        }
     }
 
     compileOptions {
@@ -193,12 +193,12 @@ dependencies {
     testImplementation "androidx.arch.core:core-testing:$archTestingVersion"
     androidTestImplementation "androidx.arch.core:core-testing:$archTestingVersion"
 
-//    // Assertions
+    // Assertions
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.ext:truth:1.3.0'
     androidTestImplementation 'com.google.truth:truth:1.0'
 
-//    // Espresso dependencies
+    // Espresso dependencies
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
 
     // Mockito
