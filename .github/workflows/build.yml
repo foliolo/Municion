@@ -63,7 +63,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: lint-report
-          path: '**/build/reports/lint-results-*'
+          path: 'app/build/reports/lint-results-*'
 
   publish_job:
     needs: [test_job, lint_job]
