@@ -63,7 +63,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: lint-report
-          path: 'app/build/reports/lint-results-*'
+          path: app/build/reports/lint-results-*
 
   publish_job:
     needs: [test_job, lint_job]
@@ -94,10 +94,10 @@ jobs:
           VERSION_CODE: ${{ github.run_id }}
         run: ./gradlew assembleDebug
 
-      - name: Upload to Firebase App Distribution
-        uses: wzieba/Firebase-Distribution-Github-Action@v1.2.2
-        with:
-          appId: ${{ secrets.FIREBASE_APP_ID }}
-          token: ${{ secrets.FIREBASE_TOKEN }}
-          groups: Developers
-          file: app/build/outputs/apk/global/debug/app-global-debug.apk
+#      - name: Upload to Firebase App Distribution
+#        uses: wzieba/Firebase-Distribution-Github-Action@v1.2.2
+#        with:
+#          appId: ${{ secrets.FIREBASE_APP_ID }}
+#          token: ${{ secrets.FIREBASE_TOKEN }}
+#          groups: Developers
+#          file: app/build/outputs/apk/global/debug/app-global-debug.apk
