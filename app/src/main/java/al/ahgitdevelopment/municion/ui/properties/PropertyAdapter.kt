@@ -50,7 +50,7 @@ class PropertyAdapter : ListAdapter<Property, PropertyAdapter.PropertyViewHolder
             }
 
             override fun areContentsTheSame(oldItem: Property, newItem: Property): Boolean {
-                return oldItem == newItem
+                return oldItem.equals(newItem)
             }
         }
     }
