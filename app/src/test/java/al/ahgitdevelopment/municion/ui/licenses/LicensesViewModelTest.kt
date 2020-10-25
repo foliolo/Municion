@@ -67,6 +67,5 @@ class LicensesViewModelTest {
 
         // Verify repository is called ones
         assertEquals(repository.licenses[0], fakeLicense)
-
     }
 }

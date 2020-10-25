@@ -1,0 +1,81 @@
+name: Android Build
+
+on:
+  ## That fires when creating a release on github (manually?)
+  release:
+    types: [published]
+
+## Don't know how this works
+#  push:
+#    tags:
+jobs:
+
+  build_sing_job:
+    name: Build and sign app
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Restore Cache
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - name: Decode google-services.json
+        env:
+          FIREBASE_JSON: ${{ secrets.FIREBASE_JSON }}
+        run: echo $FIREBASE_JSON > app/google-services.json
+
+      - name: Assemble
+        run: ./gradlew assembleDebug bundleRelease
+
+        # https://github.com/r0adkll/sign-android-release
+      - name: Sign Release
+        uses: r0adkll/sign-android-release@v1
+        with:
+          releaseDirectory: app/build/outputs/bundle/globalRelease
+          signingKeyBase64: ${{ secrets.SIGNING_KEY_B64 }}
+          alias:  ${{ secrets.SIGNING_ALIAS }}
+          keyStorePassword: ${{ secrets.SIGNING_KEY_STORE_PASSWORD }}
+          keyPassword:  ${{ secrets.SIGNING_KEY_PASSWORD }}
+
+      # https://github.com/actions/upload-artifact
+      - name: Upload APK
+        uses: actions/upload-artifact@v2
+        with:
+          name: apks
+          path: |
+            app/build/outputs/bundle/**/*.aab
+            app/build/outputs/apk/
+
+      # https://github.com/r0adkll/upload-google-play
+      - name: Publish to Google Play Console
+        uses: r0adkll/upload-google-play@v1
+        with:
+          serviceAccountJsonPlainText: ${{ secrets.SERVICE_ACCOUNT_GOOGLE_PLAY_CONSOLE_JSON }}
+          packageName: al.ahgitdevelopment.municion.global
+          releaseFile: app/build/outputs/bundle/globalRelease/app-global-release.aab
+          track: internal
+          userFraction: 0.99
+          whatsNewDirectory: distribution/whatsnew
+          mappingFile: app/build/outputs/mapping/globalRelease/mapping.txt
+
+      # https://github.com/marketplace/actions/firebase-app-distribution
+      - name: Upload to Firebase App Distribution
+        uses: wzieba/Firebase-Distribution-Github-Action@v1.2.2
+        with:
+          appId: ${{ secrets.FIREBASE_APP_ID }}
+          token: ${{ secrets.FIREBASE_TOKEN }}
+          groups: Developers
+          file: app/build/outputs/apk/global/debug/app-global-debug.apk
+
+# TUTORIALS:
+# https://github.com/marketplace/actions/upload-android-release-to-play-store
+# https://www.youtube.com/watch?v=f3_bkhQRrtU&list=PLEPZdzLLJH951c23xTdB2wpeSikkarDkk&index=12&t=2165s
