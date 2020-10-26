@@ -1,22 +1,32 @@
 ![Android Build](https://github.com/foliolo/Municion/workflows/Android%20Build/badge.svg)
 
-# Munición
+Weapons manager
+===============
 
-Gestión de munición
+Weapons manager is an easy-to-use and dynamic application that will help you maintain control over your weapon, purchases, competitions and much more.
 
 ## Change Log
 
-- Refactorización en la version 2.x.x (lanzamiento a finales de 2020 aprox)
-  - Actualización de librerias y migración a AndroidX
-  - Refactorización de código para hacerlo mantenible
-  - Eliminación de lógica y elementos innecesarios
-  - Migración de la BBDD a Room
+#### Version 0.2.2 (26/10/2020)
+  - Added Github actions.
+  - CI implemented to run:
+    - Pull request: **test** & **ktlint**
+    - Tag: Publish apk to **Firebase distribution** & **Google play console**.
 
-- Cosas a implementar para la proxima actualización (1.2.1):
-  - Añadir campo de comentarios para la compras realizadas
+#### Version 0.2.1 (18/10/2020)
+  - Fixed tutorial feature.
+  - Added ktlint configuration.
 
-- Cosas a implementar para la proxima actualización (1.0.1):
-  - Prioritario: Actualizar los cupos cada año (1 de enero) (Hecho)
-  - Recuperación de la contraseña (Hecho). Recordarselo al usuario por un toast la primera vez que se registra
-  - Poder hacer fotos a las armas
-  - Modulo de micro pagos y configuración personalizada de publicidad.
+#### Version 0.2.0 (14/10/2020)
+  - Create new elements (licenses, competitions, weapon properties and purchases).
+  - Delete elements doing swipe.
+  - New tutorial images in the cloud.
+  - Update toolbar buttons.
+
+## App Refactoring doing it from scratch practically.
+It will starts from version 0.x.x again. Some key notes are:
+  - Launch will be release at the end of 2020.
+  - Code refactoring to make it readable and maintainable.
+  - Remove of useless logic and unnecessary elements.
+  - Internal database migration to Room.
+

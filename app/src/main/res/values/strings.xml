@@ -10,7 +10,7 @@
     <string name="password_save">Password saved. Remember saving a security question</string>
     <string name="password_fail">Wrong password</string>
     <string name="password_save_fail">Wrong password error</string>
-    <string name="login_short_password_error">Short passsword length</string>
+    <string name="login_short_password_error">Short password length</string>
     <string name="login_not_matching_password_error">Passwords don´t match</string>
     <string name="title_activity_fragment_main">Ammunition</string>
     <string name="action_settings">Setting</string>
