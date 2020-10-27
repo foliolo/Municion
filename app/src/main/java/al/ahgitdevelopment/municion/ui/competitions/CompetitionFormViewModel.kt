@@ -1,8 +1,8 @@
 package al.ahgitdevelopment.municion.ui.competitions
 
-import al.ahgitdevelopment.municion.SingleLiveEvent
 import al.ahgitdevelopment.municion.datamodel.Competition
 import al.ahgitdevelopment.municion.repository.Repository
+import al.ahgitdevelopment.municion.utils.SingleLiveEvent
 import android.view.View
 import androidx.hilt.Assisted
 import androidx.hilt.lifecycle.ViewModelInject

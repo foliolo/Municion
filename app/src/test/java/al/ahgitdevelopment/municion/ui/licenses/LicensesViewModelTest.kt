@@ -16,7 +16,7 @@ import org.mockito.Mock
 @ExperimentalCoroutinesApi
 class LicensesViewModelTest {
 
-    // Subject under test
+    // System under test
     private lateinit var licensesViewModel: LicensesViewModel
 
     // Use a fake repository to be injected into the viewmodel

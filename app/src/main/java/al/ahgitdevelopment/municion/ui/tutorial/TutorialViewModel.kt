@@ -1,6 +1,6 @@
 package al.ahgitdevelopment.municion.ui.tutorial
 
-import al.ahgitdevelopment.municion.SingleLiveEvent
+import al.ahgitdevelopment.municion.utils.SingleLiveEvent
 import androidx.hilt.Assisted
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData

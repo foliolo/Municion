@@ -1,10 +1,12 @@
 package al.ahgitdevelopment.municion.ui.login
 
-import al.ahgitdevelopment.municion.SingleLiveEvent
 import al.ahgitdevelopment.municion.di.SharedPrefsModule.Companion.PREFS_PASSWORD
 import al.ahgitdevelopment.municion.di.SharedPrefsModule.Companion.PREFS_SHOW_TUTORIAL
+import al.ahgitdevelopment.municion.utils.Event
 import android.content.SharedPreferences
 import android.view.View
+import androidx.annotation.VisibleForTesting
+import androidx.annotation.VisibleForTesting.PRIVATE
 import androidx.hilt.Assisted
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData
@@ -17,12 +19,20 @@ class LoginViewModel @ViewModelInject constructor(
     @Assisted private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
-    val navigateIntoApp = SingleLiveEvent<Void>()
-    val navigateIntoTutorial = SingleLiveEvent<Void>()
+    @VisibleForTesting(otherwise = PRIVATE)
+    private val _navigateIntoApp = MutableLiveData<Event<Unit>>()
+    val navigateIntoApp: LiveData<Event<Unit>>
+        get() = _navigateIntoApp
+
+    @VisibleForTesting(otherwise = PRIVATE)
+    private val _navigateIntoTutorial = MutableLiveData<Event<Unit>>()
+    val navigateIntoTutorial: LiveData<Event<Unit>>
+        get() = _navigateIntoTutorial
 
     // val showAds = SingleLiveEvent<Boolean>()
 
-    private val _userState = MutableLiveData<UserState>()
+    @VisibleForTesting(otherwise = PRIVATE)
+    val _userState = MutableLiveData<UserState>()
     val userState: LiveData<UserState> = _userState
 
     private val _passwordState = MutableLiveData<PasswordState>()
@@ -58,13 +68,12 @@ class LoginViewModel @ViewModelInject constructor(
             _password1Error.postValue(ErrorMessages.NONE)
             _passwordState.postValue(PasswordState.INVALID)
         } else {
-
-            if (s.toString() != prefs.getString(PREFS_PASSWORD, "") &&
+            if (_userState.value == UserState.NEW_USER) {
+                _passwordState.postValue(PasswordState.INVALID)
+            } else if (s.toString() != prefs.getString(PREFS_PASSWORD, "") &&
                 _userState.value == UserState.ACTIVE_USER
             ) {
                 _password1Error.postValue(ErrorMessages.NOT_MATCHING_PASSWORD)
-                _passwordState.postValue(PasswordState.INVALID)
-            } else if (_userState.value == UserState.NEW_USER) {
                 _passwordState.postValue(PasswordState.INVALID)
             } else {
                 _password1Error.postValue(ErrorMessages.NONE)
@@ -86,7 +95,7 @@ class LoginViewModel @ViewModelInject constructor(
     }
 
     @Suppress("UNUSED_PARAMETER")
-    fun onButtonClick(view: View) {
+    fun onButtonClick(view: View?) {
         if (password1.length < MIN_PASS_LENGTH) {
             _password1Error.postValue(ErrorMessages.SHORT_PASSWORD)
             _password2Error.postValue(ErrorMessages.SHORT_PASSWORD)
@@ -106,14 +115,15 @@ class LoginViewModel @ViewModelInject constructor(
         }.apply()
     }
 
-    private fun showTutorialOrApp() {
+    @VisibleForTesting(otherwise = PRIVATE)
+    fun showTutorialOrApp() {
         if (prefs.getBoolean(PREFS_SHOW_TUTORIAL, true)) {
             prefs.edit().apply {
                 putBoolean(PREFS_SHOW_TUTORIAL, false)
-                navigateIntoTutorial.call()
+                _navigateIntoTutorial.postValue(Event(Unit))
             }.apply()
         } else {
-            navigateIntoApp.call()
+            _navigateIntoApp.postValue(Event(Unit))
         }
     }
 

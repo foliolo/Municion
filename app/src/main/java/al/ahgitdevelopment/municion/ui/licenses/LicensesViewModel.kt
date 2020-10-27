@@ -1,9 +1,9 @@
 package al.ahgitdevelopment.municion.ui.licenses
 
-import al.ahgitdevelopment.municion.SingleLiveEvent
 import al.ahgitdevelopment.municion.datamodel.License
 import al.ahgitdevelopment.municion.repository.RepositoryInterface
 import al.ahgitdevelopment.municion.ui.BaseViewModel
+import al.ahgitdevelopment.municion.utils.SingleLiveEvent
 import android.view.View
 import androidx.hilt.Assisted
 import androidx.hilt.lifecycle.ViewModelInject
