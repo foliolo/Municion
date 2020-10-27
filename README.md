@@ -1,4 +1,5 @@
 ![Android Build](https://github.com/foliolo/Municion/workflows/Android%20Build/badge.svg)
+![GitHub release](https://img.shields.io/github/release/foliolo/Municion.svg?maxAge=60)
 
 Weapons manager
 ===============
