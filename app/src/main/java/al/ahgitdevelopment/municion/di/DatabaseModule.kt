@@ -1,11 +1,11 @@
 package al.ahgitdevelopment.municion.di
 
-import al.ahgitdevelopment.municion.repository.dao.AppDatabase
-import al.ahgitdevelopment.municion.repository.dao.CompetitionDao
-import al.ahgitdevelopment.municion.repository.dao.DATABASE_NAME
-import al.ahgitdevelopment.municion.repository.dao.LicenseDao
-import al.ahgitdevelopment.municion.repository.dao.PropertyDao
-import al.ahgitdevelopment.municion.repository.dao.PurchaseDao
+import al.ahgitdevelopment.municion.repository.database.dao.AppDatabase
+import al.ahgitdevelopment.municion.repository.database.dao.CompetitionDao
+import al.ahgitdevelopment.municion.repository.database.dao.DATABASE_NAME
+import al.ahgitdevelopment.municion.repository.database.dao.LicenseDao
+import al.ahgitdevelopment.municion.repository.database.dao.PropertyDao
+import al.ahgitdevelopment.municion.repository.database.dao.PurchaseDao
 import android.content.Context
 import androidx.room.Room
 import androidx.room.migration.Migration

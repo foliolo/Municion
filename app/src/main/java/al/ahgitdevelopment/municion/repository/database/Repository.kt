@@ -1,10 +1,10 @@
-package al.ahgitdevelopment.municion.repository
+package al.ahgitdevelopment.municion.repository.database
 
 import al.ahgitdevelopment.municion.datamodel.Competition
 import al.ahgitdevelopment.municion.datamodel.License
 import al.ahgitdevelopment.municion.datamodel.Property
 import al.ahgitdevelopment.municion.datamodel.Purchase
-import al.ahgitdevelopment.municion.repository.dao.AppDatabase
+import al.ahgitdevelopment.municion.repository.database.dao.AppDatabase
 import androidx.lifecycle.LiveData
 import javax.inject.Inject
 

@@ -4,5 +4,6 @@ ext {
     kotlin_version = '1.4.10'
     nav_version = '2.3.0'
     room = '2.3.0-alpha03'
-    mockito_version = '3.2.4'
+    mockito_version = '3.6.0'
+    powermock_version = '1.7.4'
 }

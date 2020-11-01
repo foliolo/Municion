@@ -1,4 +1,4 @@
-package al.ahgitdevelopment.municion.firebase
+package al.ahgitdevelopment.municion.repository.firebase
 
 import al.ahgitdevelopment.municion.ui.tutorial.TutorialImagesRepository
 import android.content.Context

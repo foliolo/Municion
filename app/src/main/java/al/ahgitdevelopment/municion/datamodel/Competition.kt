@@ -1,12 +1,12 @@
 package al.ahgitdevelopment.municion.datamodel
 
-import al.ahgitdevelopment.municion.repository.dao.KEY_COMPETITION_DATE
-import al.ahgitdevelopment.municion.repository.dao.KEY_COMPETITION_DESCRIPTION
-import al.ahgitdevelopment.municion.repository.dao.KEY_COMPETITION_PLACE
-import al.ahgitdevelopment.municion.repository.dao.KEY_COMPETITION_POINTS
-import al.ahgitdevelopment.municion.repository.dao.KEY_COMPETITION_RANKING
-import al.ahgitdevelopment.municion.repository.dao.KEY_ID
-import al.ahgitdevelopment.municion.repository.dao.TABLE_COMPETITION
+import al.ahgitdevelopment.municion.repository.database.dao.KEY_COMPETITION_DATE
+import al.ahgitdevelopment.municion.repository.database.dao.KEY_COMPETITION_DESCRIPTION
+import al.ahgitdevelopment.municion.repository.database.dao.KEY_COMPETITION_PLACE
+import al.ahgitdevelopment.municion.repository.database.dao.KEY_COMPETITION_POINTS
+import al.ahgitdevelopment.municion.repository.database.dao.KEY_COMPETITION_RANKING
+import al.ahgitdevelopment.municion.repository.database.dao.KEY_ID
+import al.ahgitdevelopment.municion.repository.database.dao.TABLE_COMPETITION
 import android.os.Bundle
 import androidx.annotation.NonNull
 import androidx.room.ColumnInfo

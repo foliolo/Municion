@@ -1,4 +1,4 @@
-package al.ahgitdevelopment.municion.repository
+package al.ahgitdevelopment.municion.repository.database
 
 import al.ahgitdevelopment.municion.datamodel.Competition
 import al.ahgitdevelopment.municion.datamodel.License

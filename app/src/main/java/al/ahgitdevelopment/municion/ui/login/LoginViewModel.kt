@@ -1,9 +1,7 @@
 package al.ahgitdevelopment.municion.ui.login
 
-import al.ahgitdevelopment.municion.di.SharedPrefsModule.Companion.PREFS_PASSWORD
-import al.ahgitdevelopment.municion.di.SharedPrefsModule.Companion.PREFS_SHOW_TUTORIAL
+import al.ahgitdevelopment.municion.repository.preferences.SharedPreferencesManager
 import al.ahgitdevelopment.municion.utils.Event
-import android.content.SharedPreferences
 import android.view.View
 import androidx.annotation.VisibleForTesting
 import androidx.annotation.VisibleForTesting.PRIVATE
@@ -15,7 +13,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 
 class LoginViewModel @ViewModelInject constructor(
-    private val prefs: SharedPreferences,
+    private val prefs: SharedPreferencesManager,
     @Assisted private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
@@ -55,7 +53,7 @@ class LoginViewModel @ViewModelInject constructor(
     }
 
     private fun isUserLogged(): UserState {
-        return if (prefs.contains(PREFS_PASSWORD) && prefs.getString(PREFS_PASSWORD, "")!!.isNotBlank()) {
+        return if (prefs.existUser()) {
             UserState.ACTIVE_USER
         } else {
             UserState.NEW_USER
@@ -70,9 +68,7 @@ class LoginViewModel @ViewModelInject constructor(
         } else {
             if (_userState.value == UserState.NEW_USER) {
                 _passwordState.postValue(PasswordState.INVALID)
-            } else if (s.toString() != prefs.getString(PREFS_PASSWORD, "") &&
-                _userState.value == UserState.ACTIVE_USER
-            ) {
+            } else if (s.toString() != prefs.getPassword() && _userState.value == UserState.ACTIVE_USER) {
                 _password1Error.postValue(ErrorMessages.NOT_MATCHING_PASSWORD)
                 _passwordState.postValue(PasswordState.INVALID)
             } else {
@@ -110,22 +106,19 @@ class LoginViewModel @ViewModelInject constructor(
     }
 
     private fun storePassword() {
-        prefs.edit().apply {
-            putString(PREFS_PASSWORD, password1)
-        }.apply()
+        prefs.setPassword(password1)
     }
 
     @VisibleForTesting(otherwise = PRIVATE)
-    fun showTutorialOrApp() {
-        if (prefs.getBoolean(PREFS_SHOW_TUTORIAL, true)) {
-            prefs.edit().apply {
-                putBoolean(PREFS_SHOW_TUTORIAL, false)
+    fun showTutorialOrApp() =
+        prefs.getShowTutorial().let { showTutorial ->
+            if (showTutorial) {
+                prefs.setShowTutorial(!showTutorial)
                 _navigateIntoTutorial.postValue(Event(Unit))
-            }.apply()
-        } else {
-            _navigateIntoApp.postValue(Event(Unit))
+            } else {
+                _navigateIntoApp.postValue(Event(Unit))
+            }
         }
-    }
 
     enum class UserState { NEW_USER, ACTIVE_USER }
     enum class PasswordState { VALID, INVALID }

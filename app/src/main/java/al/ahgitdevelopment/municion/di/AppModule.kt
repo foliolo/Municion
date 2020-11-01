@@ -1,6 +1,6 @@
 package al.ahgitdevelopment.municion.di
 
-import al.ahgitdevelopment.municion.repository.preferences.SharedPreferencesManager
+import al.ahgitdevelopment.municion.utils.SimpleCountingIdlingResource
 import android.content.Context
 import dagger.Module
 import dagger.Provides
@@ -10,10 +10,11 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 
 @Module
 @InstallIn(ApplicationComponent::class)
-class SharedPrefsModule {
+class AppModule {
 
     @Provides
-    fun provideSharedPrefs(@ApplicationContext appContext: Context): SharedPreferencesManager {
-        return SharedPreferencesManager(appContext)
-    }
+    fun providesIdleResource(): SimpleCountingIdlingResource = SimpleCountingIdlingResource("Global")
+
+    @Provides
+    fun providesContext(@ApplicationContext appContext: Context): Context = appContext
 }

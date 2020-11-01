@@ -1,7 +1,7 @@
 package al.ahgitdevelopment.municion.ui.purchases
 
 import al.ahgitdevelopment.municion.datamodel.Purchase
-import al.ahgitdevelopment.municion.repository.Repository
+import al.ahgitdevelopment.municion.repository.database.Repository
 import al.ahgitdevelopment.municion.utils.SingleLiveEvent
 import android.view.View
 import androidx.hilt.Assisted

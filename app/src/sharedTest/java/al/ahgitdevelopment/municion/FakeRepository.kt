@@ -19,7 +19,7 @@ import al.ahgitdevelopment.municion.datamodel.Competition
 import al.ahgitdevelopment.municion.datamodel.License
 import al.ahgitdevelopment.municion.datamodel.Property
 import al.ahgitdevelopment.municion.datamodel.Purchase
-import al.ahgitdevelopment.municion.repository.RepositoryInterface
+import al.ahgitdevelopment.municion.repository.database.RepositoryInterface
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 

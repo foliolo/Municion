@@ -1,8 +1,8 @@
 package al.ahgitdevelopment.municion.di
 
-import al.ahgitdevelopment.municion.repository.Repository
-import al.ahgitdevelopment.municion.repository.RepositoryInterface
-import al.ahgitdevelopment.municion.repository.dao.AppDatabase
+import al.ahgitdevelopment.municion.repository.database.Repository
+import al.ahgitdevelopment.municion.repository.database.RepositoryInterface
+import al.ahgitdevelopment.municion.repository.database.dao.AppDatabase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

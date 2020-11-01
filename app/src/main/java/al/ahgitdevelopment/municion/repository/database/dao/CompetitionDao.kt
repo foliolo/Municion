@@ -1,4 +1,4 @@
-package al.ahgitdevelopment.municion.repository.dao
+package al.ahgitdevelopment.municion.repository.database.dao
 
 import al.ahgitdevelopment.municion.datamodel.Competition
 import androidx.lifecycle.LiveData

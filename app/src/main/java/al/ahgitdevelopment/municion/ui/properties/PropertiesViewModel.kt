@@ -1,7 +1,7 @@
 package al.ahgitdevelopment.municion.ui.properties
 
 import al.ahgitdevelopment.municion.datamodel.Property
-import al.ahgitdevelopment.municion.repository.Repository
+import al.ahgitdevelopment.municion.repository.database.Repository
 import al.ahgitdevelopment.municion.ui.BaseViewModel
 import al.ahgitdevelopment.municion.utils.SingleLiveEvent
 import android.view.View

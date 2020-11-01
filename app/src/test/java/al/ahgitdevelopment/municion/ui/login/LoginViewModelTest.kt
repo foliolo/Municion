@@ -1,9 +1,9 @@
 package al.ahgitdevelopment.municion.ui.login
 
 import al.ahgitdevelopment.municion.ext.getOrAwaitValue
+import al.ahgitdevelopment.municion.repository.preferences.SharedPreferencesManager
 import al.ahgitdevelopment.municion.ui.login.LoginViewModel.UserState.ACTIVE_USER
 import al.ahgitdevelopment.municion.ui.login.LoginViewModel.UserState.NEW_USER
-import android.content.SharedPreferences
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.SavedStateHandle
 import org.junit.Assert.assertEquals
@@ -15,6 +15,8 @@ import org.mockito.ArgumentMatchers.anyBoolean
 import org.mockito.ArgumentMatchers.anyString
 import org.mockito.Mock
 import org.mockito.Mockito.`when`
+import org.mockito.Mockito.times
+import org.mockito.Mockito.verify
 import org.mockito.junit.MockitoJUnitRunner
 
 @RunWith(MockitoJUnitRunner::class)
@@ -28,25 +30,21 @@ class LoginViewModelTest {
     private lateinit var loginViewModel: LoginViewModel
 
     @Mock(lenient = true)
-    lateinit var prefs: SharedPreferences
-
-    @Mock(lenient = true)
-    lateinit var editor: SharedPreferences.Editor
+    lateinit var prefs: SharedPreferencesManager
 
     @Mock
     lateinit var savedStateHandle: SavedStateHandle
 
     @Before
     fun setUp() {
-        // MockitoAnnotations.initMocks(this)
         loginViewModel = LoginViewModel(prefs, savedStateHandle)
     }
 
     @Test
     fun `onCreateView login with user logged`() {
         // Arrange
-        `when`(prefs.contains(anyString())).then { true }
-        `when`(prefs.getString(anyString(), anyString())).then { "user" }
+        `when`(prefs.existUser()).then { true }
+        `when`(prefs.getPassword()).then { "user" }
         // Act
         loginViewModel.onCreateView()
         // Assert
@@ -56,8 +54,8 @@ class LoginViewModelTest {
     @Test
     fun `onCreateView login with new user`() {
         // Arrange
-        `when`(prefs.contains(anyString())).then { false }
-        `when`(prefs.getString(anyString(), anyString())).then { "user" }
+        `when`(prefs.existUser()).then { false }
+        `when`(prefs.getPassword()).then { "user" }
         // Act
         loginViewModel.onCreateView()
         // Assert
@@ -67,8 +65,8 @@ class LoginViewModelTest {
     @Test
     fun `onCreateView login with user empty in shared prefs`() {
         // Arrange
-        `when`(prefs.contains(anyString())).then { false }
-        `when`(prefs.getString(anyString(), anyString())).then { anyString() }
+        `when`(prefs.existUser()).then { false }
+        `when`(prefs.getPassword()).then { anyString() }
         // Act
         loginViewModel.onCreateView()
         // Assert
@@ -78,7 +76,7 @@ class LoginViewModelTest {
     @Test
     fun `onPassword1TextChanged() empty password`() {
         // Arrange
-        `when`(prefs.contains(anyString())).then { true }
+        `when`(prefs.existUser()).then { true }
         val password = ""
         // Act
         loginViewModel.onPassword1TextChanged(password, 0, 0, 0)
@@ -102,7 +100,7 @@ class LoginViewModelTest {
     fun `onPassword1TextChanged() wrong password and active user`() {
         // Arrange
         loginViewModel._userState.postValue(ACTIVE_USER)
-        `when`(prefs.getString(anyString(), anyString())).then { "pass" }
+        `when`(prefs.getPassword()).then { "pass" }
         val password = "password"
         // Act
         loginViewModel.onPassword1TextChanged(password, 0, 0, 0)
@@ -118,7 +116,7 @@ class LoginViewModelTest {
     fun `onPassword1TextChanged() correct password and active user`() {
         // Arrange
         loginViewModel._userState.postValue(ACTIVE_USER)
-        `when`(prefs.getString(anyString(), anyString())).then { "password" }
+        `when`(prefs.getPassword()).then { "password" }
         val password = "password"
         // Act
         loginViewModel.onPassword1TextChanged(password, 0, 0, 0)
@@ -178,8 +176,7 @@ class LoginViewModelTest {
     fun `onButtonClick() password1 long enough`() {
         // Arrange
         val password1 = "password"
-        `when`(editor.putString(anyString(), anyString())).then { editor }
-        `when`(prefs.edit()).thenReturn(editor)
+        `when`(prefs.getPassword()).thenReturn(password1)
         loginViewModel.onPassword1TextChanged(password1, 0, 0, 0)
         // Act
         loginViewModel.onButtonClick(null)
@@ -192,40 +189,33 @@ class LoginViewModelTest {
     fun `storePassword() when clicking button and passwords are correct`() {
         // Arrange
         val password = "password"
-        `when`(prefs.getString(anyString(), anyString())).then { password }
-        `when`(prefs.edit()).thenReturn(editor)
+        `when`(prefs.getPassword()).thenReturn(password)
         loginViewModel.onPassword1TextChanged(password, 0, 0, 0)
         // Act
         loginViewModel.onButtonClick(null)
         // Assert
-        assertEquals(password, prefs.getString(anyString(), anyString()))
+        assertEquals(password, prefs.getPassword())
     }
 
     @Test
     fun `showTutorialOrApp() if opening the first time then show tutorial and update tutorial flag`() {
         // Arrange
-        loginViewModel.navigateIntoTutorial.observeForever { }
-        `when`(prefs.getBoolean(anyString(), anyBoolean())).then { true }
-        `when`(editor.putBoolean(anyString(), anyBoolean())).then { editor }
-        `when`(prefs.edit()).thenReturn(editor)
-        loginViewModel.navigateIntoTutorial.observeForever { }
+        `when`(prefs.getShowTutorial()).then { true }
         // Act
         loginViewModel.showTutorialOrApp()
         // Assert
+        verify(prefs, times(1)).setShowTutorial(anyBoolean())
         assertEquals(Unit, loginViewModel.navigateIntoTutorial.getOrAwaitValue().getContentIfNotHandled())
     }
 
     @Test
     fun `showTutorialOrApp() if app already launched then don't show tutorial and launch app`() {
         // Arrange
-        loginViewModel.navigateIntoTutorial.observeForever { }
-        `when`(prefs.getBoolean(anyString(), anyBoolean())).then { false }
-        `when`(editor.putBoolean(anyString(), anyBoolean())).then { editor }
-        `when`(prefs.edit()).thenReturn(editor)
-        loginViewModel.navigateIntoTutorial.observeForever { }
+        `when`(prefs.getShowTutorial()).then { false }
         // Act
         loginViewModel.showTutorialOrApp()
         // Assert
+        verify(prefs, times(0)).setShowTutorial(anyBoolean())
         assertEquals(Unit, loginViewModel.navigateIntoApp.getOrAwaitValue().getContentIfNotHandled())
     }
 }

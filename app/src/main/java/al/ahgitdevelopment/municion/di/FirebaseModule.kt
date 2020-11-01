@@ -1,6 +1,6 @@
 package al.ahgitdevelopment.municion.di
 
-import al.ahgitdevelopment.municion.firebase.FirebaseImageRepository
+import al.ahgitdevelopment.municion.repository.firebase.FirebaseImageRepository
 import al.ahgitdevelopment.municion.ui.tutorial.TutorialImagesRepository
 import android.content.Context
 import android.net.ConnectivityManager

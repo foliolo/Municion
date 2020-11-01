@@ -1,4 +1,4 @@
-package al.ahgitdevelopment.municion.repository.dao
+package al.ahgitdevelopment.municion.repository.database.dao
 
 // Table Names
 const val TABLE_PROPERTIES = "properties"

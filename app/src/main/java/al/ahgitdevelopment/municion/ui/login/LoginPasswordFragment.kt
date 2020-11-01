@@ -2,12 +2,12 @@ package al.ahgitdevelopment.municion.ui.login
 
 import al.ahgitdevelopment.municion.R
 import al.ahgitdevelopment.municion.databinding.FragmentLoginBinding
-import al.ahgitdevelopment.municion.firebase.FirebaseImageRepository.Companion.EVENT_LOGOUT
-import al.ahgitdevelopment.municion.firebase.FirebaseImageRepository.Companion.PARAM_USER_UID
+import al.ahgitdevelopment.municion.repository.firebase.FirebaseImageRepository.Companion.EVENT_LOGOUT
+import al.ahgitdevelopment.municion.repository.firebase.FirebaseImageRepository.Companion.PARAM_USER_UID
+import al.ahgitdevelopment.municion.utils.SimpleCountingIdlingResource
 import android.Manifest
 import android.app.Activity
 import android.content.Intent
-import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
@@ -18,6 +18,8 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.VisibleForTesting
+import androidx.annotation.VisibleForTesting.PRIVATE
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -32,13 +34,12 @@ import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_login.*
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import javax.inject.Inject
 
+@ExperimentalCoroutinesApi
 @AndroidEntryPoint
 class LoginPasswordFragment : Fragment() {
-
-    @Inject
-    lateinit var prefs: SharedPreferences
 
     @Inject
     lateinit var firebaseAuth: FirebaseAuth
@@ -49,7 +50,11 @@ class LoginPasswordFragment : Fragment() {
     @Inject
     lateinit var firebaseCrashlytics: FirebaseCrashlytics
 
-    private val viewModel: LoginViewModel by viewModels()
+    @Inject
+    lateinit var idlingResource: SimpleCountingIdlingResource
+
+    @VisibleForTesting(otherwise = PRIVATE)
+    val viewModel: LoginViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -210,6 +215,7 @@ class LoginPasswordFragment : Fragment() {
     }
 
     private fun signIn() {
+        idlingResource.increment()
         val providers = arrayListOf(
             AuthUI.IdpConfig.GoogleBuilder().setSignInOptions(GoogleSignInOptions.Builder().build()).build(),
             // AuthUI.IdpConfig.AnonymousBuilder().build(),
@@ -225,6 +231,19 @@ class LoginPasswordFragment : Fragment() {
                 .build(),
             RC_SIGN_IN
         )
+
+        // FIXME: This fix the obsolete startActivityForResult but has to be called before the fragment is created.
+        // AuthUI.getInstance()
+        //     .createSignInIntentBuilder()
+        //     .setLogo(R.mipmap.ic_launcher_3_light)
+        //     .setTheme(R.style.AppTheme)
+        //     .setAvailableProviders(providers)
+        //     .build().apply {
+        //         this@LoginPasswordFragment
+        //             .registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+        //                 this@LoginPasswordFragment
+        //             }
+        //     }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -244,6 +263,8 @@ class LoginPasswordFragment : Fragment() {
                 response?.error?.cause?.let(firebaseCrashlytics::recordException)
             }
         }
+
+        idlingResource.decrement()
     }
 
     private fun recordUserData(user: FirebaseUser) {

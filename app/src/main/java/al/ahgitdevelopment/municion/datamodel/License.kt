@@ -1,12 +1,12 @@
 package al.ahgitdevelopment.municion.datamodel
 
-import al.ahgitdevelopment.municion.repository.dao.KEY_ID
-import al.ahgitdevelopment.municion.repository.dao.KEY_LICENSE_DATE_EXPIRY
-import al.ahgitdevelopment.municion.repository.dao.KEY_LICENSE_DATE_ISSUE
-import al.ahgitdevelopment.municion.repository.dao.KEY_LICENSE_INSURANCE_NUMBER
-import al.ahgitdevelopment.municion.repository.dao.KEY_LICENSE_NAME
-import al.ahgitdevelopment.municion.repository.dao.KEY_LICENSE_NUMBER
-import al.ahgitdevelopment.municion.repository.dao.TABLE_LICENSES
+import al.ahgitdevelopment.municion.repository.database.dao.KEY_ID
+import al.ahgitdevelopment.municion.repository.database.dao.KEY_LICENSE_DATE_EXPIRY
+import al.ahgitdevelopment.municion.repository.database.dao.KEY_LICENSE_DATE_ISSUE
+import al.ahgitdevelopment.municion.repository.database.dao.KEY_LICENSE_INSURANCE_NUMBER
+import al.ahgitdevelopment.municion.repository.database.dao.KEY_LICENSE_NAME
+import al.ahgitdevelopment.municion.repository.database.dao.KEY_LICENSE_NUMBER
+import al.ahgitdevelopment.municion.repository.database.dao.TABLE_LICENSES
 import androidx.annotation.NonNull
 import androidx.room.ColumnInfo
 import androidx.room.Entity
