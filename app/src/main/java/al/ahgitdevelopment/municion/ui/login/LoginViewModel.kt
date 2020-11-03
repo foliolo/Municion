@@ -13,7 +13,8 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 
 class LoginViewModel @ViewModelInject constructor(
-    private val prefs: SharedPreferencesManager,
+    @VisibleForTesting(otherwise = PRIVATE)
+    var prefs: SharedPreferencesManager,
     @Assisted private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 

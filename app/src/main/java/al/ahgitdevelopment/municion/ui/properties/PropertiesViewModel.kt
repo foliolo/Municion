@@ -4,10 +4,12 @@ import al.ahgitdevelopment.municion.datamodel.Property
 import al.ahgitdevelopment.municion.repository.database.Repository
 import al.ahgitdevelopment.municion.ui.BaseViewModel
 import al.ahgitdevelopment.municion.utils.SingleLiveEvent
+import al.ahgitdevelopment.municion.utils.wrapEspressoIdlingResource
 import android.view.View
 import androidx.hilt.Assisted
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
@@ -18,7 +20,8 @@ class PropertiesViewModel @ViewModelInject constructor(
     @Assisted private val savedStateHandle: SavedStateHandle
 ) : BaseViewModel() {
 
-    lateinit var properties: LiveData<List<Property>>
+    private val _properties = MutableLiveData<List<Property>>()
+    val properties: LiveData<List<Property>> = _properties
 
     val addProperty = SingleLiveEvent<Unit>()
 
@@ -28,7 +31,7 @@ class PropertiesViewModel @ViewModelInject constructor(
 
     fun getProperties() {
         viewModelScope.launch {
-            properties = repository.getProperties()!!
+            _properties.postValue(repository.getProperties())
         }
     }
 
@@ -43,8 +46,11 @@ class PropertiesViewModel @ViewModelInject constructor(
     }
 
     fun addProperty(property: Property) {
-        viewModelScope.launch {
-            repository.saveProperty(property)
+        wrapEspressoIdlingResource {
+            viewModelScope.launch {
+                repository.saveProperty(property)
+                getProperties()
+            }
         }
     }
 }

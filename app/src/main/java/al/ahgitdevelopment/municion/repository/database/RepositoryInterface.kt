@@ -4,13 +4,13 @@ import al.ahgitdevelopment.municion.datamodel.Competition
 import al.ahgitdevelopment.municion.datamodel.License
 import al.ahgitdevelopment.municion.datamodel.Property
 import al.ahgitdevelopment.municion.datamodel.Purchase
-import androidx.lifecycle.LiveData
+import kotlinx.coroutines.flow.Flow
 
 interface RepositoryInterface {
-    suspend fun getProperties(): LiveData<List<Property>>?
-    suspend fun getPurchases(): LiveData<List<Purchase>>?
-    suspend fun getLicenses(): LiveData<List<License>>?
-    suspend fun getCompetition(): LiveData<List<Competition>>?
+    suspend fun getProperties(): List<Property>?
+    suspend fun getPurchases(): List<Purchase>?
+    suspend fun getLicenses(): Flow<List<License>>
+    suspend fun getCompetitions(): Flow<List<Competition>>
 
     suspend fun saveProperty(property: Property)
     suspend fun savePurchase(purchase: Purchase)

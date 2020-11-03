@@ -79,7 +79,6 @@ class CompetitionsFragment : BaseFragment(), RecyclerInterface {
 
     override fun onResume() {
         super.onResume()
-        viewModel.getPurchases()
 
         (requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager).hideSoftInputFromWindow(
             view?.rootView?.windowToken,
@@ -118,7 +117,6 @@ class CompetitionsFragment : BaseFragment(), RecyclerInterface {
                 Snackbar.LENGTH_LONG
             ).setAction(R.string.snackbar_undo_delete) {
                 viewModel.addPurchase(competition)
-                this?.adapter?.notifyDataSetChanged()
             }.show()
         }
     }

@@ -4,10 +4,12 @@ import al.ahgitdevelopment.municion.datamodel.Purchase
 import al.ahgitdevelopment.municion.repository.database.Repository
 import al.ahgitdevelopment.municion.ui.BaseViewModel
 import al.ahgitdevelopment.municion.utils.SingleLiveEvent
+import al.ahgitdevelopment.municion.utils.wrapEspressoIdlingResource
 import android.view.View
 import androidx.hilt.Assisted
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
@@ -18,7 +20,8 @@ class PurchasesViewModel @ViewModelInject constructor(
     @Assisted private val savedStateHandle: SavedStateHandle
 ) : BaseViewModel() {
 
-    lateinit var purchases: LiveData<List<Purchase>>
+    private val _purchases = MutableLiveData<List<Purchase>>()
+    val purchases: LiveData<List<Purchase>> = _purchases
 
     val addPurchase = SingleLiveEvent<Unit>()
 
@@ -26,9 +29,9 @@ class PurchasesViewModel @ViewModelInject constructor(
         getPurchases()
     }
 
-    fun getPurchases() {
+    private fun getPurchases() {
         viewModelScope.launch {
-            purchases = repository.getPurchases()!!
+            _purchases.postValue(repository.getPurchases())
         }
     }
 
@@ -43,8 +46,11 @@ class PurchasesViewModel @ViewModelInject constructor(
     }
 
     fun addPurchase(purchase: Purchase) {
-        viewModelScope.launch {
-            repository.savePurchase(purchase)
+        wrapEspressoIdlingResource {
+            viewModelScope.launch {
+                repository.savePurchase(purchase)
+                getPurchases()
+            }
         }
     }
 }

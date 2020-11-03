@@ -18,9 +18,8 @@ import androidx.room.RoomDatabase
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
-
-    abstract fun purchaseDao(): PurchaseDao?
-    abstract fun propertyDao(): PropertyDao?
-    abstract fun licenseDao(): LicenseDao?
-    abstract fun competitionDao(): CompetitionDao?
+    abstract fun purchaseDao(): PurchaseDao
+    abstract fun propertyDao(): PropertyDao
+    abstract fun licenseDao(): LicenseDao
+    abstract fun competitionDao(): CompetitionDao
 }

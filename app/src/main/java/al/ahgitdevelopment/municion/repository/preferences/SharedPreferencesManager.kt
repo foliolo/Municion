@@ -20,7 +20,7 @@ open class SharedPreferencesManager @Inject constructor(context: Context) : Shar
     override fun getShowTutorial(): Boolean = prefs.getBoolean(PREFS_SHOW_TUTORIAL, true)
 
     override fun setShowTutorial(show: Boolean) =
-        prefs.edit().apply { putBoolean(PREFS_PASSWORD, show) }.apply()
+        prefs.edit().apply { putBoolean(PREFS_SHOW_TUTORIAL, show) }.apply()
 
     companion object {
         const val PREFS_PASSWORD = "password"

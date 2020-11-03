@@ -15,7 +15,11 @@
         android:id="@+id/tutorialViewPagerFragment"
         android:name="al.ahgitdevelopment.municion.ui.tutorial.TutorialViewPagerFragment"
         android:label="TutorialViewPagerFragment"
-        tools:layout="@layout/fragment_tutorial_viewpager" />
+        tools:layout="@layout/fragment_tutorial_viewpager">
+        <action
+            android:id="@+id/action_tutorialViewPagerFragment_to_licensesFragment"
+            app:destination="@id/licensesFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/propertiesFragment"
@@ -44,7 +48,9 @@
         tools:layout="@layout/licenses_fragment">
         <action
             android:id="@+id/action_licensesFragment_to_licenseFormFragment"
-            app:destination="@id/licenseFormFragment" />
+            app:destination="@id/licenseFormFragment"
+            app:popUpTo="@id/licensesFragment"
+            app:popUpToInclusive="true" />
     </fragment>
 
     <fragment

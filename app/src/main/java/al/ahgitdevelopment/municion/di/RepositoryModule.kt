@@ -1,7 +1,6 @@
 package al.ahgitdevelopment.municion.di
 
 import al.ahgitdevelopment.municion.repository.database.Repository
-import al.ahgitdevelopment.municion.repository.database.RepositoryInterface
 import al.ahgitdevelopment.municion.repository.database.dao.AppDatabase
 import dagger.Module
 import dagger.Provides
@@ -13,6 +12,6 @@ import dagger.hilt.android.components.ApplicationComponent
 class RepositoryModule {
 
     @Provides
-    fun providesRepository(database: AppDatabase): RepositoryInterface =
+    fun providesRepository(database: AppDatabase): Repository =
         Repository(database)
 }

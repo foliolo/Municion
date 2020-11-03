@@ -41,16 +41,16 @@ class DatabaseModule {
     }
 
     @Provides
-    fun providesLicenseDao(): LicenseDao = INSTANCE.licenseDao()!!
+    fun providesLicenseDao(): LicenseDao = INSTANCE.licenseDao()
 
     @Provides
-    fun providesPropertyDao(): PropertyDao = INSTANCE.propertyDao()!!
+    fun providesPropertyDao(): PropertyDao = INSTANCE.propertyDao()
 
     @Provides
-    fun providesPurchaseDao(): PurchaseDao = INSTANCE.purchaseDao()!!
+    fun providesPurchaseDao(): PurchaseDao = INSTANCE.purchaseDao()
 
     @Provides
-    fun providesCompetitionDao(): CompetitionDao = INSTANCE.competitionDao()!!
+    fun providesCompetitionDao(): CompetitionDao = INSTANCE.competitionDao()
 
     companion object {
 
