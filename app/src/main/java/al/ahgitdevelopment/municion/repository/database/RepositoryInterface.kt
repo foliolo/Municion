@@ -7,8 +7,8 @@ import al.ahgitdevelopment.municion.datamodel.Purchase
 import kotlinx.coroutines.flow.Flow
 
 interface RepositoryInterface {
-    suspend fun getProperties(): List<Property>?
-    suspend fun getPurchases(): List<Purchase>?
+    suspend fun getProperties(): Flow<List<Property>>
+    suspend fun getPurchases(): Flow<List<Purchase>>
     suspend fun getLicenses(): Flow<List<License>>
     suspend fun getCompetitions(): Flow<List<Competition>>
 

@@ -6,6 +6,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface PurchaseDao {
@@ -23,7 +24,7 @@ interface PurchaseDao {
     suspend fun delete(id: Long)
 
     @Query("SELECT * from $TABLE_PURCHASES")
-    fun getPurchases(): List<Purchase>
+    fun getPurchases(): Flow<List<Purchase>>
 
     @Query("SELECT * from $TABLE_PURCHASES WHERE $KEY_ID = :purchaseId")
     fun getPurchaseById(purchaseId: Long): Purchase

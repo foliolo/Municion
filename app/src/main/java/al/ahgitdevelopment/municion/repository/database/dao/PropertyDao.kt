@@ -6,6 +6,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface PropertyDao {
@@ -22,7 +23,7 @@ interface PropertyDao {
     suspend fun delete(id: Long)
 
     @Query("SELECT * from $TABLE_PROPERTIES")
-    fun getProperties(): List<Property>
+    fun getProperties(): Flow<List<Property>>
 
     @Query("SELECT * from $TABLE_PROPERTIES WHERE $KEY_ID = :propertyId")
     fun getPropertyById(propertyId: Long): Property

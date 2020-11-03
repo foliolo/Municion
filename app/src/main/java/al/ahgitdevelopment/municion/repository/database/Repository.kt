@@ -11,13 +11,13 @@ import javax.inject.Inject
 
 open class Repository @Inject constructor(private val db: AppDatabase) : RepositoryInterface {
 
-    // val properties:     Flow<List<Property>> = propertyDao.getProperties()
-    // val purchases:      Flow<List<Purchase>> = purchaseDao.getPurchases()
+    val properties: Flow<List<Property>> = db.propertyDao().getProperties()
+    val purchases: Flow<List<Purchase>> = db.purchaseDao().getPurchases()
     val licenses: Flow<List<License>> = db.licenseDao().getLicenses()
     val competitions: Flow<List<Competition>> = db.competitionDao().getCompetitions()
 
-    override suspend fun getProperties(): List<Property> = db.propertyDao().getProperties()
-    override suspend fun getPurchases(): List<Purchase> = db.purchaseDao().getPurchases()
+    override suspend fun getProperties(): Flow<List<Property>> = db.propertyDao().getProperties()
+    override suspend fun getPurchases(): Flow<List<Purchase>> = db.purchaseDao().getPurchases()
     override suspend fun getLicenses(): Flow<List<License>> = db.licenseDao().getLicenses()
     override suspend fun getCompetitions(): Flow<List<Competition>> = db.competitionDao().getCompetitions()
 
