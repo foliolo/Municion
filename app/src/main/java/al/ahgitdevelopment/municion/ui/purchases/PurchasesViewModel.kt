@@ -27,12 +27,12 @@ class PurchasesViewModel @ViewModelInject constructor(
         .catch { error.postValue(it.message) }
         .asLiveData()
 
-    val addPurchase = SingleLiveEvent<Unit>()
+    val navigateToForm = SingleLiveEvent<Unit>()
 
     val error = SingleLiveEvent<String>()
 
-    fun fabClick(view: View) {
-        addPurchase.call()
+    fun fabClick(view: View?) {
+        navigateToForm.call()
     }
 
     fun deletePurchase(purchaseId: Long) = viewModelScope.launch(ioDispatcher) {

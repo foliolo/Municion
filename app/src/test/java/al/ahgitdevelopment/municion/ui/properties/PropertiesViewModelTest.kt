@@ -13,7 +13,6 @@ import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
-import org.junit.Assert
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
@@ -45,11 +44,11 @@ class PropertiesViewModelTest {
         // ACT
         val result = SUT.properties.getOrAwaitValue()
         // VERIFY
-        Assert.assertEquals(FAKE_PROPERTIES, result)
+        assertEquals(FAKE_PROPERTIES, result)
     }
 
     @Test
-    fun fabClick() {
+    fun fabClick_navigateToForm_success() {
         // GIVEN
         SUT = PropertiesViewModel(repository, ioDispatcher, savedStateHandle)
         // ACT
@@ -59,7 +58,7 @@ class PropertiesViewModelTest {
     }
 
     @Test
-    fun deleteProperty() {
+    fun deleteProperty_validatePropertyIdPassedToTheRepository_success() {
         // GIVEN
         SUT = PropertiesViewModel(repository, ioDispatcher, savedStateHandle)
         // ACT
@@ -75,7 +74,7 @@ class PropertiesViewModelTest {
     }
 
     @Test
-    fun addProperty() {
+    fun addProperty_validatePropertyPassedToRepository() {
         // GIVEN
         SUT = PropertiesViewModel(repository, ioDispatcher, savedStateHandle)
         // ACT
