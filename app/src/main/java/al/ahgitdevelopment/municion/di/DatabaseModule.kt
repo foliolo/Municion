@@ -1,11 +1,11 @@
 package al.ahgitdevelopment.municion.di
 
-import al.ahgitdevelopment.municion.repository.dao.AppDatabase
-import al.ahgitdevelopment.municion.repository.dao.CompetitionDao
-import al.ahgitdevelopment.municion.repository.dao.DATABASE_NAME
-import al.ahgitdevelopment.municion.repository.dao.LicenseDao
-import al.ahgitdevelopment.municion.repository.dao.PropertyDao
-import al.ahgitdevelopment.municion.repository.dao.PurchaseDao
+import al.ahgitdevelopment.municion.repository.database.AppDatabase
+import al.ahgitdevelopment.municion.repository.database.DATABASE_NAME
+import al.ahgitdevelopment.municion.repository.database.dao.CompetitionDao
+import al.ahgitdevelopment.municion.repository.database.dao.LicenseDao
+import al.ahgitdevelopment.municion.repository.database.dao.PropertyDao
+import al.ahgitdevelopment.municion.repository.database.dao.PurchaseDao
 import android.content.Context
 import androidx.room.Room
 import androidx.room.migration.Migration
@@ -23,7 +23,7 @@ private lateinit var INSTANCE: AppDatabase
 class DatabaseModule {
 
     @Provides
-    fun providesRoomDatabase(@ApplicationContext appContext: Context): AppDatabase {
+    fun provideDataBase(@ApplicationContext appContext: Context): AppDatabase {
         synchronized(AppDatabase::class) {
             if (!::INSTANCE.isInitialized) {
                 INSTANCE = Room
@@ -41,16 +41,16 @@ class DatabaseModule {
     }
 
     @Provides
-    fun providesLicenseDao(): LicenseDao = INSTANCE.licenseDao()!!
+    fun providesLicenseDao(): LicenseDao = INSTANCE.licenseDao()
 
     @Provides
-    fun providesPropertyDao(): PropertyDao = INSTANCE.propertyDao()!!
+    fun providesPropertyDao(): PropertyDao = INSTANCE.propertyDao()
 
     @Provides
-    fun providesPurchaseDao(): PurchaseDao = INSTANCE.purchaseDao()!!
+    fun providesPurchaseDao(): PurchaseDao = INSTANCE.purchaseDao()
 
     @Provides
-    fun providesCompetitionDao(): CompetitionDao = INSTANCE.competitionDao()!!
+    fun providesCompetitionDao(): CompetitionDao = INSTANCE.competitionDao()
 
     companion object {
 

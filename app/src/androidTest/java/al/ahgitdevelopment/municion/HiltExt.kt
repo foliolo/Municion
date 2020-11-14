@@ -14,7 +14,6 @@ package al.ahgitdevelopment.municion
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 import android.content.ComponentName
 import android.content.Intent
 import android.os.Bundle
@@ -60,3 +59,5 @@ inline fun <reified T : Fragment> launchFragmentInHiltContainer(
         fragment.action()
     }
 }
+
+// https://youtu.be/vVJeOACGSOU?t=1215

@@ -15,11 +15,13 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_form_competition.*
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 /**
  * Created by Alberto on 24/05/2016.
  */
 @AndroidEntryPoint
+@ExperimentalCoroutinesApi
 class CompetitionFormFragment : Fragment() {
 
     private val viewModel: CompetitionFormViewModel by viewModels()

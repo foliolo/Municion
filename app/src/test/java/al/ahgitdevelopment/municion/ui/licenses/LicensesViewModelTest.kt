@@ -1,71 +1,111 @@
 package al.ahgitdevelopment.municion.ui.licenses
 
-import al.ahgitdevelopment.municion.FakeRepository
-import al.ahgitdevelopment.municion.MainCoroutineRule
-import al.ahgitdevelopment.municion.datamodel.License
+import al.ahgitdevelopment.municion.FakeRepository.Companion.FAKE_LICENSE
+import al.ahgitdevelopment.municion.FakeRepository.Companion.FAKE_LICENSES
+import al.ahgitdevelopment.municion.ext.getOrAwaitValue
+import al.ahgitdevelopment.municion.ext.toFlow
+import al.ahgitdevelopment.municion.repository.RepositoryContract
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.SavedStateHandle
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.runBlockingTest
+import io.mockk.MockKAnnotations
+import io.mockk.coVerify
+import io.mockk.every
+import io.mockk.impl.annotations.MockK
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.mockito.Mock
 
-@ExperimentalCoroutinesApi
+// @ExperimentalCoroutinesApi
+// @RunWith(MockitoJUnitRunner::class)
 class LicensesViewModelTest {
-
-    // Subject under test
-    private lateinit var licensesViewModel: LicensesViewModel
-
-    // Use a fake repository to be injected into the viewmodel
-    // private lateinit var repository: FakeRepository
-    @Mock
-    lateinit var repository: FakeRepository
-
-    // Set the main coroutines dispatcher for unit testing.
-    @ExperimentalCoroutinesApi
-    @get:Rule
-    var mainCoroutineRule = MainCoroutineRule()
 
     // Executes each task synchronously using Architecture Components.
     @get:Rule
     var instantExecutorRule = InstantTaskExecutorRule()
 
+    // Set the main coroutines dispatcher for unit testing.
+    // @get:Rule
+    // var mainCoroutineRule = MainCoroutineRule()
+
+    // @Mock
+    // lateinit var idlingResource: SimpleCountingIdlingResource
+
+    @MockK
+    lateinit var savedStateHandle: SavedStateHandle
+
+    @MockK
+    lateinit var repository: RepositoryContract
+
+    var ioDispatcher: CoroutineDispatcher = Dispatchers.IO
+
     @Before
     fun setUp() {
-        repository = FakeRepository()
-        licensesViewModel = LicensesViewModel(repository, SavedStateHandle())
+        // IdlingRegistry.getInstance().register(idlingResource)
+        MockKAnnotations.init(this, relaxed = true)
+    }
+
+    // @After
+    // fun unregisterIdlingResource() {
+    //     IdlingRegistry.getInstance().unregister(idlingResource)
+    // }
+
+    @Test
+    fun `get licenses retrieves data`() {
+        // GIVEN
+        every { repository.getLicenses(false) }.returns(FAKE_LICENSES.toFlow())
+        SUT = LicensesViewModel(repository, ioDispatcher, savedStateHandle)
+        // ACT
+        val result = SUT.licenses.getOrAwaitValue()
+        // VERIFY
+        assertEquals(FAKE_LICENSES, result)
     }
 
     @Test
-    fun getLicenses() {
+    fun fabClick_clickButton_navigateToForm() {
+        // GIVEN
+        SUT = LicensesViewModel(repository, ioDispatcher, savedStateHandle)
+        // ACT
+        SUT.fabClick(null)
+        // VERIFY
+        assertEquals(null, SUT.navigateToForm.getOrAwaitValue())
     }
 
     @Test
-    fun fabClick() {
+    fun deleteLicense_passingTheLicenseId_theIdIsPassedToTheRepository() {
+        // GIVEN
+        SUT = LicensesViewModel(repository, ioDispatcher, savedStateHandle)
+        // ACT
+        SUT.deleteLicense(FAKE_LICENSE.id)
+        // VERIFY
+        coVerify {
+            repository.removeLicense(
+                withArg { id ->
+                    assertEquals(FAKE_LICENSE.id, id)
+                }
+            )
+        }
     }
 
     @Test
-    fun deleteLicense() {
+    fun `viewmodel add license into the repository`() {
+        // GIVEN
+        SUT = LicensesViewModel(repository, ioDispatcher, savedStateHandle)
+        // ACT
+        SUT.addLicense(FAKE_LICENSE)
+        // VERIFY
+        coVerify {
+            repository.saveLicense(
+                withArg { license ->
+                    assertEquals(FAKE_LICENSE, license)
+                }
+            )
+        }
     }
 
-    @Test
-    fun `viewmodel add license into the repository`() = mainCoroutineRule.runBlockingTest {
-        val fakeLicense = License(
-            1,
-            "License1",
-            "12345",
-            "10/10/2014",
-            "15/15/2020",
-            "98765"
-        )
-
-        // When license is save
-        licensesViewModel.addLicense(fakeLicense)
-
-        // Verify repository is called ones
-        assertEquals(repository.licenses[0], fakeLicense)
+    companion object {
+        private lateinit var SUT: LicensesViewModel
     }
 }

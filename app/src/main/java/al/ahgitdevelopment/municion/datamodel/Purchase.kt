@@ -1,16 +1,16 @@
 package al.ahgitdevelopment.municion.datamodel
 
-import al.ahgitdevelopment.municion.repository.dao.KEY_ID
-import al.ahgitdevelopment.municion.repository.dao.KEY_PURCHASE_BORE1
-import al.ahgitdevelopment.municion.repository.dao.KEY_PURCHASE_BRAND
-import al.ahgitdevelopment.municion.repository.dao.KEY_PURCHASE_DATE
-import al.ahgitdevelopment.municion.repository.dao.KEY_PURCHASE_IMAGE
-import al.ahgitdevelopment.municion.repository.dao.KEY_PURCHASE_PRICE
-import al.ahgitdevelopment.municion.repository.dao.KEY_PURCHASE_RATING
-import al.ahgitdevelopment.municion.repository.dao.KEY_PURCHASE_STORE
-import al.ahgitdevelopment.municion.repository.dao.KEY_PURCHASE_UNITS
-import al.ahgitdevelopment.municion.repository.dao.KEY_PURCHASE_WEIGHT
-import al.ahgitdevelopment.municion.repository.dao.TABLE_PURCHASES
+import al.ahgitdevelopment.municion.repository.database.KEY_ID
+import al.ahgitdevelopment.municion.repository.database.KEY_PURCHASE_BORE1
+import al.ahgitdevelopment.municion.repository.database.KEY_PURCHASE_BRAND
+import al.ahgitdevelopment.municion.repository.database.KEY_PURCHASE_DATE
+import al.ahgitdevelopment.municion.repository.database.KEY_PURCHASE_IMAGE
+import al.ahgitdevelopment.municion.repository.database.KEY_PURCHASE_PRICE
+import al.ahgitdevelopment.municion.repository.database.KEY_PURCHASE_RATING
+import al.ahgitdevelopment.municion.repository.database.KEY_PURCHASE_STORE
+import al.ahgitdevelopment.municion.repository.database.KEY_PURCHASE_UNITS
+import al.ahgitdevelopment.municion.repository.database.KEY_PURCHASE_WEIGHT
+import al.ahgitdevelopment.municion.repository.database.TABLE_PURCHASES
 import androidx.annotation.NonNull
 import androidx.room.ColumnInfo
 import androidx.room.Entity

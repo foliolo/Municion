@@ -62,7 +62,9 @@ class TutorialViewPagerFragment : Fragment() {
         imm.hideSoftInputFromWindow(view?.windowToken, 0)
 
         tutorialScreenshotButton.setOnClickListener {
-            findNavController().popBackStack()
+            findNavController().navigate(
+                TutorialViewPagerFragmentDirections.actionTutorialViewPagerFragmentToLicensesFragment()
+            )
         }
 
         hiddenDrawerNavigationMenu()

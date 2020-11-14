@@ -1,6 +1,5 @@
-package al.ahgitdevelopment.municion.firebase
+package al.ahgitdevelopment.municion.repository.firebase
 
-import al.ahgitdevelopment.municion.ui.tutorial.TutorialImagesRepository
 import android.content.Context
 import android.net.ConnectivityManager
 import android.util.Log
@@ -10,19 +9,18 @@ import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import kotlinx.coroutines.tasks.await
 import java.io.File
-import javax.inject.Inject
 
-class FirebaseImageRepository @Inject constructor(
+class RemoteStorageDataSource constructor(
     context: Context,
     private val auth: FirebaseAuth,
     private val storage: FirebaseStorage,
     private val crashlytics: FirebaseCrashlytics,
     private val connectivityManager: ConnectivityManager,
-) : TutorialImagesRepository {
+) : RemoteStorageDataSourceContract {
 
     private val imagesRootDir = context.externalCacheDir
 
-    override suspend fun getImages(): List<File> {
+    override suspend fun getTutorialImages(): List<File> {
         val imageReference = storage.reference.child(STORAGE_ROOT_PATH)
 
         return auth.currentUser.let { currentUser ->
@@ -81,7 +79,7 @@ class FirebaseImageRepository @Inject constructor(
     }
 
     companion object {
-        private val TAG = FirebaseImageRepository::class.java.name
+        private val TAG = RemoteStorageDataSource::class.java.name
         private const val STORAGE_ROOT_PATH = "TutorialImages"
 
         const val PARAM_USER_UID = "user_uid"

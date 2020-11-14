@@ -1,12 +1,12 @@
 package al.ahgitdevelopment.municion.datamodel
 
-import al.ahgitdevelopment.municion.repository.dao.KEY_COMPETITION_DATE
-import al.ahgitdevelopment.municion.repository.dao.KEY_COMPETITION_DESCRIPTION
-import al.ahgitdevelopment.municion.repository.dao.KEY_COMPETITION_PLACE
-import al.ahgitdevelopment.municion.repository.dao.KEY_COMPETITION_POINTS
-import al.ahgitdevelopment.municion.repository.dao.KEY_COMPETITION_RANKING
-import al.ahgitdevelopment.municion.repository.dao.KEY_ID
-import al.ahgitdevelopment.municion.repository.dao.TABLE_COMPETITION
+import al.ahgitdevelopment.municion.repository.database.KEY_COMPETITION_DATE
+import al.ahgitdevelopment.municion.repository.database.KEY_COMPETITION_DESCRIPTION
+import al.ahgitdevelopment.municion.repository.database.KEY_COMPETITION_PLACE
+import al.ahgitdevelopment.municion.repository.database.KEY_COMPETITION_POINTS
+import al.ahgitdevelopment.municion.repository.database.KEY_COMPETITION_RANKING
+import al.ahgitdevelopment.municion.repository.database.KEY_ID
+import al.ahgitdevelopment.municion.repository.database.TABLE_COMPETITION
 import android.os.Bundle
 import androidx.annotation.NonNull
 import androidx.room.ColumnInfo
@@ -34,7 +34,7 @@ data class Competition(
 
     @ColumnInfo(name = KEY_COMPETITION_PLACE) var place: String
 
-) : Serializable {
+) : Serializable, Comparable<Competition> {
 
     constructor(bundle: Bundle) : this(
         id = 0L,
@@ -50,5 +50,27 @@ data class Competition(
         ranking = bundle.getString(KEY_COMPETITION_RANKING) ?: ""
         points = bundle.getInt(KEY_COMPETITION_POINTS)
         place = bundle.getString(KEY_COMPETITION_PLACE) ?: ""
+    }
+
+    override fun compareTo(other: Competition): Int = when {
+        this.id < other.id -> -1
+        this.id > other.id -> 1
+        else -> 0
+    }
+
+    companion object {
+        private val COMPARATOR = Comparator<Competition> { o1, o2 ->
+            when {
+                o1.description < o2.description -> -1
+                o1.description > o2.description -> 1
+                else -> 0
+            }
+        }.thenComparator { o1, o2 ->
+            when {
+                o1.id < o2.id -> -1
+                o1.id > o2.id -> 1
+                else -> 0
+            }
+        }
     }
 }

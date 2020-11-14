@@ -99,11 +99,6 @@ class PurchasesFragment : BaseFragment(), RecyclerInterface {
         requireActivity().finish()
     }
 
-    override fun onResume() {
-        super.onResume()
-        viewModel.getPurchases()
-    }
-
     override fun RecyclerView?.undoDelete(viewHolder: RecyclerView.ViewHolder) {
         purchaseAdapter.currentList[(viewHolder as PurchaseAdapter.PurchaseViewHolder).adapterPosition]?.let { purchase ->
             Snackbar.make(

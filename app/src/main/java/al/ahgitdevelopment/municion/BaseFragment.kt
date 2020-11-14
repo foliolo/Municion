@@ -31,16 +31,12 @@ abstract class BaseFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         activity?.window?.decorView?.systemUiVisibility = View.SYSTEM_UI_FLAG_VISIBLE
-        requireActivity().toolbar.visibility = View.VISIBLE
+        requireActivity().toolbar?.visibility = View.VISIBLE
 
         setHasOptionsMenu(true)
 
         (requireContext().getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager)
             .hideSoftInputFromWindow(view.rootView?.windowToken, 0)
-    }
-
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
 
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
             finish()

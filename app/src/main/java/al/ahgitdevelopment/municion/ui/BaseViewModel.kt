@@ -1,7 +1,7 @@
 package al.ahgitdevelopment.municion.ui
 
-import al.ahgitdevelopment.municion.firebase.FirebaseImageRepository.Companion.EVENT_CLOSE_APP
-import al.ahgitdevelopment.municion.firebase.FirebaseImageRepository.Companion.EVENT_LOGOUT
+import al.ahgitdevelopment.municion.repository.firebase.RemoteStorageDataSource.Companion.EVENT_CLOSE_APP
+import al.ahgitdevelopment.municion.repository.firebase.RemoteStorageDataSource.Companion.EVENT_LOGOUT
 import androidx.lifecycle.ViewModel
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
