@@ -9,7 +9,6 @@ import al.ahgitdevelopment.municion.utils.wrapEspressoIdlingResource
 import android.view.View
 import androidx.hilt.Assisted
 import androidx.hilt.lifecycle.ViewModelInject
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
@@ -24,22 +23,16 @@ class PropertiesViewModel @ViewModelInject constructor(
     @Assisted private val savedStateHandle: SavedStateHandle
 ) : BaseViewModel() {
 
-    lateinit var properties: LiveData<List<Property>>
+    val properties = repository.getProperties()
+        .catch { error.postValue(it.message) }
+        .asLiveData()
 
-    val addProperty = SingleLiveEvent<Unit>()
+    val navigateToForm = SingleLiveEvent<Unit>()
 
     val error = SingleLiveEvent<String>()
 
-    init {
-        viewModelScope.launch(ioDispatcher) {
-            properties = repository.getProperties()
-                .catch { error.postValue(it.message) }
-                .asLiveData()
-        }
-    }
-
-    fun fabClick(view: View) {
-        addProperty.call()
+    fun fabClick(view: View?) {
+        navigateToForm.call()
     }
 
     fun deleteProperty(propertyId: Long) = viewModelScope.launch(ioDispatcher) {
