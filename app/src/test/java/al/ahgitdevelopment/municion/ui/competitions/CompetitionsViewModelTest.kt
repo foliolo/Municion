@@ -44,14 +44,12 @@ class CompetitionsViewModelTest {
     }
 
     @Test
-    fun init_getCompetitions_Success() {
+    fun init_getCompetitions_success() {
         // GIVEN
         every { repository.getCompetitions() }.returns(FAKE_COMPETITIONS.toFlow())
         SUT = CompetitionsViewModel(repository, ioDispatcher, savedStateHandle)
-
         // ACT
         val result = SUT.competitions.getOrAwaitValue()
-
         // VERIFY
         assertEquals(FAKE_COMPETITIONS, result)
     }
@@ -95,7 +93,6 @@ class CompetitionsViewModelTest {
         // ACT
         SUT.deleteCompetition(FAKE_COMPETITION.id)
         // VERIFY
-        // assert(SUT.competitions.getOrAwaitValue().isEmpty())
         coVerify {
             repository.removeCompetition(
                 withArg {
