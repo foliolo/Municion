@@ -1,12 +1,14 @@
-package al.ahgitdevelopment.municion.repository.dao
+package al.ahgitdevelopment.municion.repository.database.dao
 
 import al.ahgitdevelopment.municion.datamodel.License
-import androidx.lifecycle.LiveData
+import al.ahgitdevelopment.municion.repository.database.KEY_ID
+import al.ahgitdevelopment.municion.repository.database.TABLE_LICENSES
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface LicenseDao {
@@ -14,17 +16,17 @@ interface LicenseDao {
     suspend fun insert(vararg license: License)
 
     @Update
-    fun update(vararg license: License)
+    suspend fun update(vararg license: License)
 
     @Query("DELETE FROM $TABLE_LICENSES")
-    fun deleteAll()
+    suspend fun deleteAll()
 
     @Query("DELETE FROM $TABLE_LICENSES WHERE $KEY_ID = :id")
     suspend fun delete(id: Long)
 
     @Query("SELECT * from $TABLE_LICENSES")
-    fun getLicenses(): LiveData<List<License>>
+    fun getLicenses(): Flow<List<License>>
 
     @Query("SELECT * from $TABLE_LICENSES WHERE $KEY_ID = :licenseId")
-    fun getLicenseById(licenseId: Long): LiveData<License>
+    fun getLicenseById(licenseId: Long): Flow<License>
 }

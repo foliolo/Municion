@@ -19,138 +19,55 @@ import al.ahgitdevelopment.municion.datamodel.Competition
 import al.ahgitdevelopment.municion.datamodel.License
 import al.ahgitdevelopment.municion.datamodel.Property
 import al.ahgitdevelopment.municion.datamodel.Purchase
-import al.ahgitdevelopment.municion.repository.RepositoryInterface
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
+import al.ahgitdevelopment.municion.repository.RepositoryContract
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 
 /**
  * Implementation of a remote data source with static access to the data for easy testing.
  */
-class FakeRepository : RepositoryInterface {
+class FakeRepository : RepositoryContract {
 
-    var licenses: ArrayList<License> = arrayListOf()
-    var property: ArrayList<Property> = arrayListOf()
-    var purchase: ArrayList<Purchase> = arrayListOf()
-    var competition: ArrayList<Competition> = arrayListOf()
+    var retrieveLocalData: Boolean = true
+    var shouldReturnError = false
 
-    private var shouldReturnError = false
+    val properties = ArrayList<Property>()
+    val purchases = ArrayList<Purchase>()
+    val licenses = ArrayList<License>()
+    val competitions = ArrayList<Competition>()
 
-    // private val observableTasks = MutableLiveData<Result<List<T>>>()
-
-    fun setReturnError(value: Boolean) {
-        shouldReturnError = value
-    }
-    //
-    // override suspend fun refreshTask(taskId: String) {
-    //     refreshTasks()
-    // }
-    //
-    // override fun observeTasks(): LiveData<Result<List<Task>>> {
-    //     runBlocking { refreshTasks() }
-    //     return observableTasks
-    // }
-    //
-    // override fun observeTask(taskId: String): LiveData<Result<Task>> {
-    //     runBlocking { refreshTasks() }
-    //     return observableTasks.map { tasks ->
-    //         when (tasks) {
-    //             is Result.Loading -> Result.Loading
-    //             is Error -> Error(tasks.exception)
-    //             is Success -> {
-    //                 val task = tasks.data.firstOrNull() { it.id == taskId }
-    //                     ?: return@map Error(Exception("Not found"))
-    //                 Success(task)
-    //             }
-    //         }
-    //     }
-    // }
-    //
-    // override suspend fun getTask(taskId: String, forceUpdate: Boolean): Result<Task> {
-    //     if (shouldReturnError) {
-    //         return Error(Exception("Test exception"))
-    //     }
-    //     tasksServiceData[taskId]?.let {
-    //         return Success(it)
-    //     }
-    //     return Error(Exception("Could not find task"))
-    // }
-    //
-    // override suspend fun getTasks(forceUpdate: Boolean): Result<List<Task>> {
-    //     if (shouldReturnError) {
-    //         return Error(Exception("Test exception"))
-    //     }
-    //     return Success(tasksServiceData.values.toList())
-    // }
-    //
-    // override suspend fun saveTask(task: Task) {
-    //     tasksServiceData[task.id] = task
-    // }
-    //
-    // override suspend fun completeTask(task: Task) {
-    //     val completedTask = Task(task.title, task.description, true, task.id)
-    //     tasksServiceData[task.id] = completedTask
-    //     refreshTasks()
-    // }
-    //
-    // override suspend fun completeTask(taskId: String) {
-    //     // Not required for the remote data source.
-    //     throw NotImplementedError()
-    // }
-    //
-    // override suspend fun activateTask(task: Task) {
-    //     val activeTask = Task(task.title, task.description, false, task.id)
-    //     tasksServiceData[task.id] = activeTask
-    //     refreshTasks()
-    // }
-    //
-    // override suspend fun activateTask(taskId: String) {
-    //     throw NotImplementedError()
-    // }
-    //
-    // override suspend fun clearCompletedTasks() {
-    //     tasksServiceData = tasksServiceData.filterValues {
-    //         !it.isCompleted
-    //     } as LinkedHashMap<String, Task>
-    // }
-    //
-    // override suspend fun deleteTask(taskId: String) {
-    //     tasksServiceData.remove(taskId)
-    //     refreshTasks()
-    // }
-    //
-    // override suspend fun deleteAllTasks() {
-    //     tasksServiceData.clear()
-    //     refreshTasks()
-    // }
-    //
-    // @VisibleForTesting
-    // fun addTasks(vararg tasks: Task) {
-    //     for (task in tasks) {
-    //         tasksServiceData[task.id] = task
-    //     }
-    //     runBlocking { refreshTasks() }
-    // }
-
-    override suspend fun getProperties(): LiveData<List<Property>>? {
-        TODO("Not yet implemented")
-    }
-
-    override suspend fun getPurchases(): LiveData<List<Purchase>>? {
-        TODO("Not yet implemented")
-    }
-
-    override suspend fun getLicenses(): LiveData<List<License>>? {
-        if (shouldReturnError) {
-            return null
-        }
-
-        return MutableLiveData<List<License>>().apply {
-            value = licenses
+    override fun getProperties(): Flow<List<Property>> {
+        return if (shouldReturnError && !retrieveLocalData) {
+            throw Exception(ERROR_MESSAGE)
+        } else {
+            properties.getFlow()
         }
     }
 
-    override suspend fun getCompetition(): LiveData<List<Competition>>? {
-        TODO("Not yet implemented")
+    override fun getPurchases(): Flow<List<Purchase>> {
+        return if (shouldReturnError && !retrieveLocalData) {
+            throw Exception(ERROR_MESSAGE)
+        } else {
+            purchases.getFlow()
+        }
+    }
+
+    override fun getLicenses(forceUpdate: Boolean): Flow<List<License>> {
+        return if (shouldReturnError && !retrieveLocalData) {
+            throw Exception(ERROR_MESSAGE)
+        } else {
+            licenses.getFlow()
+        }
+    }
+
+    override fun getCompetitions(): Flow<List<Competition>> {
+        return if (shouldReturnError && !retrieveLocalData) {
+            throw Exception(ERROR_MESSAGE)
+        } else {
+            competitions.getFlow()
+        }
     }
 
     override suspend fun saveProperty(property: Property) {
@@ -162,11 +79,11 @@ class FakeRepository : RepositoryInterface {
     }
 
     override suspend fun saveLicense(license: License) {
-        licenses.add(license)
+        TODO("Not yet implemented")
     }
 
     override suspend fun saveCompetition(competition: Competition) {
-        TODO("Not yet implemented")
+        competitions.add(FAKE_COMPETITION)
     }
 
     override suspend fun removeProperty(id: Long) {
@@ -182,14 +99,57 @@ class FakeRepository : RepositoryInterface {
     }
 
     override suspend fun removeCompetition(id: Long) {
-        TODO("Not yet implemented")
+        // Thread {
+        competitions.clear()
+        // }.start()
     }
 
-    override fun fetchDataFromFirebase() {
-        TODO("Not yet implemented")
-    }
+    companion object {
+        val FAKE_COMPETITION = Competition(
+            1,
+            "Description",
+            "12345",
+            "Ranking",
+            100,
+            "Place"
+        )
+        val FAKE_LICENSE = License(
+            1,
+            "License 1",
+            "12345",
+            "10/10/2014",
+            "15/15/2020",
+            "98765"
+        )
+        val FAKE_PROPERTY = Property(
+            1,
+            "Nickname",
+            "Brand",
+            "Model",
+            "Bore 1",
+            "Bore 2",
+            "Num id",
+            "Image"
+        )
+        val FAKE_PURCHASE = Purchase(
+            1,
+            "Brand",
+            "Store",
+            "Bore",
+            10,
+            10.10,
+            "15/15/2020",
+            3.4F,
+            10,
+            "Image"
+        )
 
-    override fun uploadDataToFirebase() {
-        TODO("Not yet implemented")
+        val FAKE_LICENSES = arrayListOf(FAKE_LICENSE)
+        val FAKE_COMPETITIONS = arrayListOf(FAKE_COMPETITION)
+        val ERROR_MESSAGE = "Exception test"
     }
 }
+
+private fun <E> ArrayList<E>.getFlow(): Flow<List<E>> = flow {
+    emit(this@getFlow)
+}.flowOn(Dispatchers.IO)

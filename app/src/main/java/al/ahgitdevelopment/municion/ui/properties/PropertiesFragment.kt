@@ -80,11 +80,9 @@ class PropertiesFragment : BaseFragment(), RecyclerInterface {
 
     override fun onResume() {
         super.onResume()
-        viewModel.getProperties()
 
-        (requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager).let {
-            it.hideSoftInputFromWindow(view?.rootView?.windowToken, 0)
-        }
+        (requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager)
+            .hideSoftInputFromWindow(view?.rootView?.windowToken, 0)
     }
 
     override fun signOut() {

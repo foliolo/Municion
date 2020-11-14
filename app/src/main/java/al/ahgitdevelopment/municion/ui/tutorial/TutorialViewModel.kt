@@ -1,6 +1,7 @@
 package al.ahgitdevelopment.municion.ui.tutorial
 
-import al.ahgitdevelopment.municion.SingleLiveEvent
+import al.ahgitdevelopment.municion.repository.firebase.RemoteStorageDataSourceContract
+import al.ahgitdevelopment.municion.utils.SingleLiveEvent
 import androidx.hilt.Assisted
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData
@@ -12,7 +13,7 @@ import kotlinx.coroutines.launch
 import java.io.File
 
 class TutorialViewModel @ViewModelInject constructor(
-    tutorialImagesRepository: TutorialImagesRepository,
+    remoteStorageDataSourceContract: RemoteStorageDataSourceContract,
     @Assisted private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
@@ -24,7 +25,7 @@ class TutorialViewModel @ViewModelInject constructor(
     init {
         viewModelScope.launch {
             progressBar.postValue(true)
-            _images.postValue(tutorialImagesRepository.getImages())
+            _images.postValue(remoteStorageDataSourceContract.getTutorialImages())
             progressBar.postValue(false)
         }
     }

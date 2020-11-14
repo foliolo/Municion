@@ -1,48 +1,47 @@
 package al.ahgitdevelopment.municion.ui.competitions
 
-import al.ahgitdevelopment.municion.SingleLiveEvent
 import al.ahgitdevelopment.municion.datamodel.Competition
-import al.ahgitdevelopment.municion.repository.Repository
+import al.ahgitdevelopment.municion.di.IoDispatcher
+import al.ahgitdevelopment.municion.repository.RepositoryContract
 import al.ahgitdevelopment.municion.ui.BaseViewModel
+import al.ahgitdevelopment.municion.utils.SingleLiveEvent
+import al.ahgitdevelopment.municion.utils.wrapEspressoIdlingResource
 import android.view.View
 import androidx.hilt.Assisted
 import androidx.hilt.lifecycle.ViewModelInject
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
 
 class CompetitionsViewModel @ViewModelInject constructor(
-    private val repository: Repository,
+    private val repository: RepositoryContract,
+    @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
     @Assisted private val savedStateHandle: SavedStateHandle
 ) : BaseViewModel() {
 
-    lateinit var competitions: LiveData<List<Competition>>
+    val competitions = repository.getCompetitions()
+        .catch { error.postValue(it.message) }
+        .asLiveData()
 
-    val addCompetition = SingleLiveEvent<Unit>()
+    val navigateToForm = SingleLiveEvent<Unit>()
 
-    init {
-        getPurchases()
+    val error = SingleLiveEvent<String>()
+
+    fun fabClick(view: View?) {
+        navigateToForm.call()
     }
 
-    fun getPurchases() {
-        viewModelScope.launch {
-            competitions = repository.getCompetition()!!
-        }
-    }
-
-    fun fabClick(view: View) {
-        addCompetition.call()
-    }
-
-    fun deletePurchase(competitionId: Long) {
-        viewModelScope.launch {
+    fun deleteCompetition(competitionId: Long) = viewModelScope.launch(ioDispatcher) {
+        wrapEspressoIdlingResource {
             repository.removeCompetition(competitionId)
         }
     }
 
-    fun addPurchase(competition: Competition) {
-        viewModelScope.launch {
+    fun addCompetition(competition: Competition) = viewModelScope.launch(ioDispatcher) {
+        wrapEspressoIdlingResource {
             repository.saveCompetition(competition)
         }
     }

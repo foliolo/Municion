@@ -1,20 +1,26 @@
 package al.ahgitdevelopment.municion.ui.properties
 
-import al.ahgitdevelopment.municion.SingleLiveEvent
 import al.ahgitdevelopment.municion.datamodel.Property
-import al.ahgitdevelopment.municion.repository.Repository
+import al.ahgitdevelopment.municion.di.IoDispatcher
+import al.ahgitdevelopment.municion.repository.RepositoryContract
 import al.ahgitdevelopment.municion.ui.BaseViewModel
+import al.ahgitdevelopment.municion.utils.SingleLiveEvent
+import al.ahgitdevelopment.municion.utils.wrapEspressoIdlingResource
 import android.view.View
 import androidx.hilt.Assisted
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
 
 @Suppress("UNUSED_PARAMETER")
 class PropertiesViewModel @ViewModelInject constructor(
-    private val repository: Repository,
+    private val repository: RepositoryContract,
+    @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
     @Assisted private val savedStateHandle: SavedStateHandle
 ) : BaseViewModel() {
 
@@ -22,13 +28,13 @@ class PropertiesViewModel @ViewModelInject constructor(
 
     val addProperty = SingleLiveEvent<Unit>()
 
-    init {
-        getProperties()
-    }
+    val error = SingleLiveEvent<String>()
 
-    fun getProperties() {
-        viewModelScope.launch {
-            properties = repository.getProperties()!!
+    init {
+        viewModelScope.launch(ioDispatcher) {
+            properties = repository.getProperties()
+                .catch { error.postValue(it.message) }
+                .asLiveData()
         }
     }
 
@@ -36,14 +42,14 @@ class PropertiesViewModel @ViewModelInject constructor(
         addProperty.call()
     }
 
-    fun deleteProperty(propertyId: Long) {
-        viewModelScope.launch {
+    fun deleteProperty(propertyId: Long) = viewModelScope.launch(ioDispatcher) {
+        wrapEspressoIdlingResource {
             repository.removeProperty(propertyId)
         }
     }
 
-    fun addProperty(property: Property) {
-        viewModelScope.launch {
+    fun addProperty(property: Property) = viewModelScope.launch(ioDispatcher) {
+        wrapEspressoIdlingResource {
             repository.saveProperty(property)
         }
     }

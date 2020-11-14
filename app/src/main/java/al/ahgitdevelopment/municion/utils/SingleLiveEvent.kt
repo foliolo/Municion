@@ -1,4 +1,4 @@
-package al.ahgitdevelopment.municion
+package al.ahgitdevelopment.municion.utils
 
 import android.util.Log
 import androidx.annotation.MainThread

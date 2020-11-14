@@ -47,8 +47,14 @@ class LicensesFragment @Inject constructor() : BaseFragment(), RecyclerInterface
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel.addLicense.observe(viewLifecycleOwner) {
-            findNavController().navigate(R.id.licenseFormFragment)
+        viewModel.navigateToForm.observe(viewLifecycleOwner) {
+            findNavController().navigate(
+                LicensesFragmentDirections.actionLicensesFragmentToLicenseFormFragment()
+            )
+        }
+
+        viewModel.error.observe(viewLifecycleOwner) {
+            Toast.makeText(requireContext(), it, Toast.LENGTH_LONG).show()
         }
 
         viewModel.licenses.observe(viewLifecycleOwner) {
@@ -74,11 +80,6 @@ class LicensesFragment @Inject constructor() : BaseFragment(), RecyclerInterface
                 ).attachToRecyclerView(this)
             }
         }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        viewModel.getLicenses()
     }
 
     override fun signOut() {

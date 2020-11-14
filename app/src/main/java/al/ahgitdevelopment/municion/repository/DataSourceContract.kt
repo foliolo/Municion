@@ -4,13 +4,14 @@ import al.ahgitdevelopment.municion.datamodel.Competition
 import al.ahgitdevelopment.municion.datamodel.License
 import al.ahgitdevelopment.municion.datamodel.Property
 import al.ahgitdevelopment.municion.datamodel.Purchase
-import androidx.lifecycle.LiveData
+import kotlinx.coroutines.flow.Flow
 
-interface RepositoryInterface {
-    suspend fun getProperties(): LiveData<List<Property>>?
-    suspend fun getPurchases(): LiveData<List<Purchase>>?
-    suspend fun getLicenses(): LiveData<List<License>>?
-    suspend fun getCompetition(): LiveData<List<Competition>>?
+interface DataSourceContract {
+
+    var properties: Flow<List<Property>>
+    var purchases: Flow<List<Purchase>>
+    var licenses: Flow<List<License>>
+    var competitions: Flow<List<Competition>>
 
     suspend fun saveProperty(property: Property)
     suspend fun savePurchase(purchase: Purchase)
@@ -22,6 +23,5 @@ interface RepositoryInterface {
     suspend fun removeLicense(id: Long)
     suspend fun removeCompetition(id: Long)
 
-    fun fetchDataFromFirebase()
-    fun uploadDataToFirebase()
+    suspend fun removeAllLicenses()
 }
