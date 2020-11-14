@@ -9,7 +9,6 @@ import al.ahgitdevelopment.municion.utils.wrapEspressoIdlingResource
 import android.view.View
 import androidx.hilt.Assisted
 import androidx.hilt.lifecycle.ViewModelInject
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
@@ -24,19 +23,13 @@ class PurchasesViewModel @ViewModelInject constructor(
     @Assisted private val savedStateHandle: SavedStateHandle
 ) : BaseViewModel() {
 
-    lateinit var purchases: LiveData<List<Purchase>>
+    val purchases = repository.getPurchases()
+        .catch { error.postValue(it.message) }
+        .asLiveData()
 
     val addPurchase = SingleLiveEvent<Unit>()
 
     val error = SingleLiveEvent<String>()
-
-    init {
-        viewModelScope.launch(ioDispatcher) {
-            purchases = repository.getPurchases()
-                .catch { error.postValue(it.message) }
-                .asLiveData()
-        }
-    }
 
     fun fabClick(view: View) {
         addPurchase.call()
