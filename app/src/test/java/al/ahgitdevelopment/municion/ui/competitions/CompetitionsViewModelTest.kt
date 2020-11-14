@@ -8,8 +8,8 @@ import al.ahgitdevelopment.municion.repository.RepositoryContract
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.SavedStateHandle
 import io.mockk.MockKAnnotations
-import io.mockk.coEvery
 import io.mockk.coVerify
+import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -46,9 +46,7 @@ class CompetitionsViewModelTest {
     @Test
     fun init_getCompetitions_Success() {
         // GIVEN
-        coEvery { repository.getCompetitions() }.returns(
-            FAKE_COMPETITIONS.toFlow()
-        )
+        every { repository.getCompetitions() }.returns(FAKE_COMPETITIONS.toFlow())
         SUT = CompetitionsViewModel(repository, ioDispatcher, savedStateHandle)
 
         // ACT
@@ -85,7 +83,8 @@ class CompetitionsViewModelTest {
             repository.saveCompetition(
                 withArg {
                     assertEquals(FAKE_COMPETITION, it)
-                })
+                }
+            )
         }
     }
 
@@ -101,7 +100,8 @@ class CompetitionsViewModelTest {
             repository.removeCompetition(
                 withArg {
                     assertEquals(FAKE_COMPETITION.id, it)
-                })
+                }
+            )
         }
     }
 

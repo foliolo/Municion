@@ -47,9 +47,10 @@ class LicensesFragment @Inject constructor() : BaseFragment(), RecyclerInterface
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel.addLicense.observe(viewLifecycleOwner) {
-            findNavController()
-                .navigate(LicensesFragmentDirections.actionLicensesFragmentToLicenseFormFragment())
+        viewModel.navigateToForm.observe(viewLifecycleOwner) {
+            findNavController().navigate(
+                LicensesFragmentDirections.actionLicensesFragmentToLicenseFormFragment()
+            )
         }
 
         viewModel.error.observe(viewLifecycleOwner) {
