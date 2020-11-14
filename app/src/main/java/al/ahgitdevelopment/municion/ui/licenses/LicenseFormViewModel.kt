@@ -2,7 +2,7 @@ package al.ahgitdevelopment.municion.ui.licenses
 
 import al.ahgitdevelopment.municion.datamodel.License
 import al.ahgitdevelopment.municion.di.IoDispatcher
-import al.ahgitdevelopment.municion.repository.database.Repository
+import al.ahgitdevelopment.municion.repository.RepositoryContract
 import al.ahgitdevelopment.municion.utils.Event
 import al.ahgitdevelopment.municion.utils.SingleLiveEvent
 import android.view.View
@@ -19,7 +19,7 @@ import kotlinx.coroutines.launch
 
 @Suppress("UNUSED_PARAMETER")
 class LicenseFormViewModel @ViewModelInject constructor(
-    private val repository: Repository,
+    private val repository: RepositoryContract,
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
     @Assisted private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {

@@ -2,8 +2,8 @@ package al.ahgitdevelopment.municion.ui.login
 
 import al.ahgitdevelopment.municion.R
 import al.ahgitdevelopment.municion.databinding.FragmentLoginBinding
-import al.ahgitdevelopment.municion.repository.firebase.FirebaseImageRepository.Companion.EVENT_LOGOUT
-import al.ahgitdevelopment.municion.repository.firebase.FirebaseImageRepository.Companion.PARAM_USER_UID
+import al.ahgitdevelopment.municion.repository.firebase.RemoteStorageDataSource.Companion.EVENT_LOGOUT
+import al.ahgitdevelopment.municion.repository.firebase.RemoteStorageDataSource.Companion.PARAM_USER_UID
 import al.ahgitdevelopment.municion.utils.SimpleCountingIdlingResource
 import android.Manifest
 import android.app.Activity

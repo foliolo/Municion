@@ -1,6 +1,8 @@
 package al.ahgitdevelopment.municion.repository.database.dao
 
 import al.ahgitdevelopment.municion.datamodel.Purchase
+import al.ahgitdevelopment.municion.repository.database.KEY_ID
+import al.ahgitdevelopment.municion.repository.database.TABLE_PURCHASES
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy

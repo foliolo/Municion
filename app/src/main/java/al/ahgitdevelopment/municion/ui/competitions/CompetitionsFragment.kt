@@ -7,6 +7,7 @@ import al.ahgitdevelopment.municion.ui.DeleteItemOnSwipe
 import al.ahgitdevelopment.municion.ui.RecyclerInterface
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -48,8 +49,11 @@ class CompetitionsFragment : BaseFragment(), RecyclerInterface {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel.addCompetition.observe(viewLifecycleOwner) {
+        viewModel.navigateToForm.observe(viewLifecycleOwner) {
             findNavController().navigate(R.id.competitionFormFragment)
+        }
+        viewModel.error.observe(viewLifecycleOwner) {
+            Log.e(TAG, it)
         }
 
         viewModel.competitions.observe(viewLifecycleOwner) {
@@ -65,7 +69,7 @@ class CompetitionsFragment : BaseFragment(), RecyclerInterface {
                 ItemTouchHelper(
                     DeleteItemOnSwipe(object : DeleteItemOnSwipe.DeleteCallback {
                         override fun deleteOnSwipe(viewHolder: RecyclerView.ViewHolder) {
-                            viewModel.deletePurchase(viewHolder.itemId)
+                            viewModel.deleteCompetition(viewHolder.itemId)
 
                             undoDelete(viewHolder)
 
@@ -116,8 +120,12 @@ class CompetitionsFragment : BaseFragment(), RecyclerInterface {
                 R.string.snackbar_undo_delete_message,
                 Snackbar.LENGTH_LONG
             ).setAction(R.string.snackbar_undo_delete) {
-                viewModel.addPurchase(competition)
+                viewModel.addCompetition(competition)
             }.show()
         }
+    }
+
+    companion object {
+        val TAG: String = CompetitionsFragment::class.java.name
     }
 }

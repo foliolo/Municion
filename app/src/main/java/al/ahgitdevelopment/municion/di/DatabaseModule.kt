@@ -1,8 +1,8 @@
 package al.ahgitdevelopment.municion.di
 
-import al.ahgitdevelopment.municion.repository.database.dao.AppDatabase
+import al.ahgitdevelopment.municion.repository.database.AppDatabase
+import al.ahgitdevelopment.municion.repository.database.DATABASE_NAME
 import al.ahgitdevelopment.municion.repository.database.dao.CompetitionDao
-import al.ahgitdevelopment.municion.repository.database.dao.DATABASE_NAME
 import al.ahgitdevelopment.municion.repository.database.dao.LicenseDao
 import al.ahgitdevelopment.municion.repository.database.dao.PropertyDao
 import al.ahgitdevelopment.municion.repository.database.dao.PurchaseDao
@@ -23,7 +23,7 @@ private lateinit var INSTANCE: AppDatabase
 class DatabaseModule {
 
     @Provides
-    fun providesRoomDatabase(@ApplicationContext appContext: Context): AppDatabase {
+    fun provideDataBase(@ApplicationContext appContext: Context): AppDatabase {
         synchronized(AppDatabase::class) {
             if (!::INSTANCE.isInitialized) {
                 INSTANCE = Room

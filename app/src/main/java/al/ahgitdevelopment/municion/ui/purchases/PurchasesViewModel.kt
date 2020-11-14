@@ -2,7 +2,7 @@ package al.ahgitdevelopment.municion.ui.purchases
 
 import al.ahgitdevelopment.municion.datamodel.Purchase
 import al.ahgitdevelopment.municion.di.IoDispatcher
-import al.ahgitdevelopment.municion.repository.database.Repository
+import al.ahgitdevelopment.municion.repository.RepositoryContract
 import al.ahgitdevelopment.municion.ui.BaseViewModel
 import al.ahgitdevelopment.municion.utils.SingleLiveEvent
 import al.ahgitdevelopment.municion.utils.wrapEspressoIdlingResource
@@ -14,18 +14,29 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
 
 @Suppress("UNUSED_PARAMETER")
 class PurchasesViewModel @ViewModelInject constructor(
-    private val repository: Repository,
+    private val repository: RepositoryContract,
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
     @Assisted private val savedStateHandle: SavedStateHandle
 ) : BaseViewModel() {
 
-    val purchases: LiveData<List<Purchase>> = repository.purchases.asLiveData()
+    lateinit var purchases: LiveData<List<Purchase>>
 
     val addPurchase = SingleLiveEvent<Unit>()
+
+    val error = SingleLiveEvent<String>()
+
+    init {
+        viewModelScope.launch(ioDispatcher) {
+            purchases = repository.getPurchases()
+                .catch { error.postValue(it.message) }
+                .asLiveData()
+        }
+    }
 
     fun fabClick(view: View) {
         addPurchase.call()

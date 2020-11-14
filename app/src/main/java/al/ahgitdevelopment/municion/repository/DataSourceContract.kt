@@ -1,4 +1,4 @@
-package al.ahgitdevelopment.municion.repository.database
+package al.ahgitdevelopment.municion.repository
 
 import al.ahgitdevelopment.municion.datamodel.Competition
 import al.ahgitdevelopment.municion.datamodel.License
@@ -6,11 +6,12 @@ import al.ahgitdevelopment.municion.datamodel.Property
 import al.ahgitdevelopment.municion.datamodel.Purchase
 import kotlinx.coroutines.flow.Flow
 
-interface RepositoryInterface {
-    suspend fun getProperties(): Flow<List<Property>>
-    suspend fun getPurchases(): Flow<List<Purchase>>
-    suspend fun getLicenses(): Flow<List<License>>
-    suspend fun getCompetitions(): Flow<List<Competition>>
+interface DataSourceContract {
+
+    var properties: Flow<List<Property>>
+    var purchases: Flow<List<Purchase>>
+    var licenses: Flow<List<License>>
+    var competitions: Flow<List<Competition>>
 
     suspend fun saveProperty(property: Property)
     suspend fun savePurchase(purchase: Purchase)
@@ -22,6 +23,5 @@ interface RepositoryInterface {
     suspend fun removeLicense(id: Long)
     suspend fun removeCompetition(id: Long)
 
-    fun fetchDataFromFirebase()
-    fun uploadDataToFirebase()
+    suspend fun removeAllLicenses()
 }

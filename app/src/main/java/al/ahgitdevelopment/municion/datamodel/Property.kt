@@ -1,14 +1,14 @@
 package al.ahgitdevelopment.municion.datamodel
 
-import al.ahgitdevelopment.municion.repository.database.dao.KEY_ID
-import al.ahgitdevelopment.municion.repository.database.dao.KEY_PROPERTY_BORE1
-import al.ahgitdevelopment.municion.repository.database.dao.KEY_PROPERTY_BORE2
-import al.ahgitdevelopment.municion.repository.database.dao.KEY_PROPERTY_BRAND
-import al.ahgitdevelopment.municion.repository.database.dao.KEY_PROPERTY_IMAGE
-import al.ahgitdevelopment.municion.repository.database.dao.KEY_PROPERTY_MODEL
-import al.ahgitdevelopment.municion.repository.database.dao.KEY_PROPERTY_NICKNAME
-import al.ahgitdevelopment.municion.repository.database.dao.KEY_PROPERTY_NUM_ID
-import al.ahgitdevelopment.municion.repository.database.dao.TABLE_PROPERTIES
+import al.ahgitdevelopment.municion.repository.database.KEY_ID
+import al.ahgitdevelopment.municion.repository.database.KEY_PROPERTY_BORE1
+import al.ahgitdevelopment.municion.repository.database.KEY_PROPERTY_BORE2
+import al.ahgitdevelopment.municion.repository.database.KEY_PROPERTY_BRAND
+import al.ahgitdevelopment.municion.repository.database.KEY_PROPERTY_IMAGE
+import al.ahgitdevelopment.municion.repository.database.KEY_PROPERTY_MODEL
+import al.ahgitdevelopment.municion.repository.database.KEY_PROPERTY_NICKNAME
+import al.ahgitdevelopment.municion.repository.database.KEY_PROPERTY_NUM_ID
+import al.ahgitdevelopment.municion.repository.database.TABLE_PROPERTIES
 import android.os.Bundle
 import androidx.annotation.NonNull
 import androidx.room.ColumnInfo

@@ -1,6 +1,8 @@
 package al.ahgitdevelopment.municion.repository.database.dao
 
 import al.ahgitdevelopment.municion.datamodel.License
+import al.ahgitdevelopment.municion.repository.database.KEY_ID
+import al.ahgitdevelopment.municion.repository.database.TABLE_LICENSES
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy

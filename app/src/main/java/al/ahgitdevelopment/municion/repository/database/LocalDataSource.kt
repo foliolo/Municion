@@ -4,22 +4,16 @@ import al.ahgitdevelopment.municion.datamodel.Competition
 import al.ahgitdevelopment.municion.datamodel.License
 import al.ahgitdevelopment.municion.datamodel.Property
 import al.ahgitdevelopment.municion.datamodel.Purchase
-import al.ahgitdevelopment.municion.repository.database.dao.AppDatabase
+import al.ahgitdevelopment.municion.repository.DataSourceContract
 import androidx.annotation.WorkerThread
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
-open class Repository @Inject constructor(private val db: AppDatabase) : RepositoryInterface {
-
-    val properties: Flow<List<Property>> = db.propertyDao().getProperties()
-    val purchases: Flow<List<Purchase>> = db.purchaseDao().getPurchases()
-    val licenses: Flow<List<License>> = db.licenseDao().getLicenses()
-    val competitions: Flow<List<Competition>> = db.competitionDao().getCompetitions()
-
-    override suspend fun getProperties(): Flow<List<Property>> = db.propertyDao().getProperties()
-    override suspend fun getPurchases(): Flow<List<Purchase>> = db.purchaseDao().getPurchases()
-    override suspend fun getLicenses(): Flow<List<License>> = db.licenseDao().getLicenses()
-    override suspend fun getCompetitions(): Flow<List<Competition>> = db.competitionDao().getCompetitions()
+class LocalDataSource @Inject constructor(private val db: AppDatabase) : DataSourceContract {
+    override var properties: Flow<List<Property>> = db.propertyDao().getProperties()
+    override var purchases: Flow<List<Purchase>> = db.purchaseDao().getPurchases()
+    override var licenses: Flow<List<License>> = db.licenseDao().getLicenses()
+    override var competitions: Flow<List<Competition>> = db.competitionDao().getCompetitions()
 
     override suspend fun saveProperty(property: Property) = db.propertyDao().insert(property)
     override suspend fun savePurchase(purchase: Purchase) = db.purchaseDao().insert(purchase)
@@ -35,11 +29,5 @@ open class Repository @Inject constructor(private val db: AppDatabase) : Reposit
     override suspend fun removeLicense(id: Long) = db.licenseDao().delete(id)
     override suspend fun removeCompetition(id: Long) = db.competitionDao().delete(id)
 
-    override fun fetchDataFromFirebase() {
-        TODO("Not yet implemented")
-    }
-
-    override fun uploadDataToFirebase() {
-        TODO("Not yet implemented")
-    }
+    override suspend fun removeAllLicenses() = db.licenseDao().deleteAll()
 }

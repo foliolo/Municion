@@ -52,6 +52,10 @@ class LicensesFragment @Inject constructor() : BaseFragment(), RecyclerInterface
                 .navigate(LicensesFragmentDirections.actionLicensesFragmentToLicenseFormFragment())
         }
 
+        viewModel.error.observe(viewLifecycleOwner) {
+            Toast.makeText(requireContext(), it, Toast.LENGTH_LONG).show()
+        }
+
         viewModel.licenses.observe(viewLifecycleOwner) {
             licensesAdapter = LicenseAdapter().apply {
                 submitList(it)

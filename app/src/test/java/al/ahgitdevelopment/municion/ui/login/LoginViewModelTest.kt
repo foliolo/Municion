@@ -22,12 +22,12 @@ import org.mockito.junit.MockitoJUnitRunner
 @RunWith(MockitoJUnitRunner::class)
 class LoginViewModelTest {
 
+    // System under test
+    private lateinit var loginViewModel: LoginViewModel
+
     // Executes each task synchronously using Architecture Components.
     @get:Rule
     var instantExecutorRule = InstantTaskExecutorRule()
-
-    // System under test
-    private lateinit var loginViewModel: LoginViewModel
 
     @Mock(lenient = true)
     lateinit var prefs: SharedPreferencesManager
