@@ -71,7 +71,7 @@
     <fragment
         android:id="@+id/propertyFormFragment"
         android:name="al.ahgitdevelopment.municion.ui.properties.PropertyFormFragment"
-        android:label="fragment_form_property"
+        android:label="PropertyFormFragment"
         tools:layout="@layout/fragment_form_property" />
     <fragment
         android:id="@+id/purchaseFormFragment"
