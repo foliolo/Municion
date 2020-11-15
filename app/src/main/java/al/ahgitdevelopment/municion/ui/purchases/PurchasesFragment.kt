@@ -48,7 +48,9 @@ class PurchasesFragment : BaseFragment(), RecyclerInterface {
         super.onViewCreated(view, savedInstanceState)
 
         viewModel.navigateToForm.observe(viewLifecycleOwner) {
-            findNavController().navigate(R.id.purchaseFormFragment)
+            findNavController().navigate(
+                PurchasesFragmentDirections.actionPurchasesFragmentToPurchaseFormFragment()
+            )
         }
 
         viewModel.purchases.observe(viewLifecycleOwner) {

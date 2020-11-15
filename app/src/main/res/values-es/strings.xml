@@ -28,7 +28,7 @@
     <string name="section_competitions_title">Tiradas</string>
 
     <!--Properties-->
-    <string name="property_toolbar_title_new">Nueva guía de arma</string>
+    <string name="property_toolbar_subtitle_new">Nueva guía de arma</string>
     <string name="item_property_lbl_nickname">Apodo</string>
     <string name="item_property_lbl_model">Modelo</string>
     <string name="item_property_lbl_num_id">Num guia</string>
@@ -40,7 +40,6 @@
     <string name="form_purchase_bore">Calibre</string>
 
     <!--Purchase -->
-    <string name="title_nueva_compra">Nueva compra</string>
     <string name="labelInfoCompra">Información de la nueva compra</string>
 
     <string name="form_purchase_price">Precio</string>
@@ -57,10 +56,10 @@
     <string name="purchase_lbl_bore">Calibre</string>
     <string name="purchase_lbl_price">Precio</string>
     <string name="purchase_lbl_date">Fecha de compra</string>
-    <string name="purchase_toolbar_title_new">Nueva compra</string>
+    <string name="purchase_toolbar_subtitle_new">Nueva compra</string>
 
     <!--Licenses-->
-    <string name="license_toolbar_title_new">Nueva Licencia</string>
+    <string name="license_toolbar_subtitle_new">Nueva Licencia</string>
     <string name="license_lbl_name">Nombre</string>
     <string name="license_lbl_number">Num licencia</string>
     <string name="license_lbl_issue_date">Expedicion</string>
@@ -72,7 +71,7 @@
     <string name="license_error_msg_insurance">Introduce el número de la poliza del seguro</string>
 
     <!--Competitions-->
-    <string name="title_nueva_tirada">Nueva Tirada</string>
+    <string name="competition_toolbar_subtitle_new">Nueva Tirada</string>
     <string name="lbl_rango_tirada">Rango</string>
     <string name="form_competition_lbl_description">Descripción</string>
     <string name="form_competition_lbl_ranking">Clasificacion</string>
