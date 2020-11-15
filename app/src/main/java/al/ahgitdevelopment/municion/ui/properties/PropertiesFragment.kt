@@ -50,7 +50,9 @@ class PropertiesFragment : BaseFragment(), RecyclerInterface {
         super.onViewCreated(view, savedInstanceState)
 
         viewModel.navigateToForm.observe(viewLifecycleOwner) {
-            findNavController().navigate(R.id.propertyFormFragment)
+            findNavController().navigate(
+                PropertiesFragmentDirections.actionPropertiesFragmentToPropertyFormFragment()
+            )
         }
 
         viewModel.properties.observe(viewLifecycleOwner) {

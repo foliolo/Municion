@@ -14,6 +14,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.android.synthetic.main.activity_navigation.*
 import kotlinx.android.synthetic.main.fragment_form_competition.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
@@ -33,6 +34,8 @@ class CompetitionFormFragment : Fragment() {
         binding.viewModel = this.viewModel
         binding.lifecycleOwner = viewLifecycleOwner
 
+        activity?.toolbar?.subtitle = getString(R.string.competition_toolbar_subtitle_new)
+
         return binding.root
     }
 
@@ -40,7 +43,7 @@ class CompetitionFormFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        (activity as NavigationActivity).actionBar?.title = getString(R.string.property_toolbar_title_new)
+        (activity as NavigationActivity).actionBar?.title = getString(R.string.property_toolbar_subtitle_new)
 
         viewModel.fabSaveCompetitionClicked.observe(viewLifecycleOwner) {
             Competition(

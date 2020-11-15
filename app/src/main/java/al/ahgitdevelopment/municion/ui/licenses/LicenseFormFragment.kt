@@ -13,6 +13,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.android.synthetic.main.activity_navigation.*
 import kotlinx.android.synthetic.main.fragment_form_license.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
@@ -36,13 +37,15 @@ class LicenseFormFragment : Fragment() {
         binding.viewModel = this.viewModel
         binding.lifecycleOwner = viewLifecycleOwner
 
+        activity?.toolbar?.subtitle = getString(R.string.license_toolbar_subtitle_new)
+
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        (activity as NavigationActivity).actionBar?.title = getString(R.string.license_toolbar_title_new)
+        (activity as NavigationActivity).actionBar?.title = getString(R.string.license_toolbar_subtitle_new)
 
         viewModel.issueDate.observe(viewLifecycleOwner) {
             DatePickerFragment { _, year, month, dayOfMonth ->

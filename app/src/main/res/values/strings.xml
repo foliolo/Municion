@@ -28,7 +28,7 @@
     <string name="section_competitions_title">Competitions</string>
 
     <!--String Properties-->
-    <string name="property_toolbar_title_new">New Property Document</string>
+    <string name="property_toolbar_subtitle_new">New Property Document</string>
     <string name="item_property_lbl_nickname">Nick</string>
     <string name="form_purchase_brand">Brand of the weapon</string>
     <string name="item_property_lbl_model">Model </string>
@@ -37,8 +37,7 @@
     <string name="property_lbl_num_id">Weapon Serial Number</string>
     <string name="item_property_lbl_num_id">Number of Document Property</string>
 
-    <!--String Compras Form-->
-    <string name="title_nueva_compra">New Purchase</string>
+    <!--String Purchases Form-->
     <string name="labelInfoCompra">New Purchase Info</string>
     <string name="form_purchase_price">Price</string>
     <string name="cartuchos_comprados">Number of Cartridges Purchased</string>
@@ -51,7 +50,7 @@
     <string name="valoracion">Appreciation</string>
 
     <!--String Licenses-->
-    <string name="license_toolbar_title_new">New License</string>
+    <string name="license_toolbar_subtitle_new">New License</string>
     <string name="license_lbl_name">Name</string>
     <string name="license_lbl_number">License Number</string>
     <string name="license_lbl_insurance_number">Insurance Number</string>
@@ -63,7 +62,7 @@
     <string name="license_error_msg_insurance">Insert Number Insurance Policy</string>
 
     <!--String Tirada Form-->
-    <string name="title_nueva_tirada">New Competition</string>
+    <string name="competition_toolbar_subtitle_new">New Competition</string>
     <string name="lbl_rango_tirada">Range</string>
     <string name="form_competition_lbl_description">Description</string>
     <string name="form_competition_lbl_ranking">Ranking</string>
@@ -154,7 +153,7 @@
     <string name="sin_conexion">Without internet connection</string>
     <string name="snackbar_undo_delete_message">Undo the deletion</string>
     <string name="snackbar_undo_delete">Undo</string>
-    <string name="purchase_toolbar_title_new">New purchase</string>
+    <string name="purchase_toolbar_subtitle_new">New purchase</string>
     <string name="purchase_lbl_date">Purchase date</string>
     <string name="purchase_lbl_price">Price</string>
     <string name="purchase_lbl_bore">Bore</string>
