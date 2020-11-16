@@ -117,8 +117,4 @@ class LicensesFragment @Inject constructor() : BaseFragment(), RecyclerInterface
             }.show()
         }
     }
-
-    companion object {
-        private val TAG = LicensesFragment::class.java.name
-    }
 }

@@ -23,12 +23,12 @@ class CompetitionsViewModel @ViewModelInject constructor(
 ) : BaseViewModel() {
 
     val competitions = repository.getCompetitions()
-        .catch { error.postValue(it.message) }
+        .catch { error.postValue(it) }
         .asLiveData()
 
     val navigateToForm = SingleLiveEvent<Unit>()
 
-    val error = SingleLiveEvent<String>()
+    val error = SingleLiveEvent<Throwable>()
 
     fun fabClick(view: View?) {
         navigateToForm.call()

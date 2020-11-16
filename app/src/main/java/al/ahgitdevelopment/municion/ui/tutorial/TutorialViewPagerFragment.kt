@@ -84,8 +84,4 @@ class TutorialViewPagerFragment : Fragment() {
 
         override fun getItemCount(): Int = images.count()
     }
-
-    companion object {
-        private val TAG = TutorialViewPagerFragment::class.java.name
-    }
 }

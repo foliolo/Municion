@@ -7,7 +7,6 @@ import al.ahgitdevelopment.municion.ui.DeleteItemOnSwipe
 import al.ahgitdevelopment.municion.ui.RecyclerInterface
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -23,6 +22,7 @@ import com.firebase.ui.auth.AuthUI
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.competitions_fragment.*
+import timber.log.Timber
 
 @AndroidEntryPoint
 class CompetitionsFragment : BaseFragment(), RecyclerInterface {
@@ -53,7 +53,7 @@ class CompetitionsFragment : BaseFragment(), RecyclerInterface {
             findNavController().navigate(R.id.competitionFormFragment)
         }
         viewModel.error.observe(viewLifecycleOwner) {
-            Log.e(TAG, it)
+            Timber.e(it, "Error: ${it.message}")
         }
 
         viewModel.competitions.observe(viewLifecycleOwner) {

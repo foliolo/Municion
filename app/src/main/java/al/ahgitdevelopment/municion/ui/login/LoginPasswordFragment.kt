@@ -11,7 +11,6 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
@@ -35,6 +34,7 @@ import com.google.firebase.crashlytics.FirebaseCrashlytics
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_login.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import timber.log.Timber
 import javax.inject.Inject
 
 @ExperimentalCoroutinesApi
@@ -162,7 +162,7 @@ class LoginPasswordFragment : Fragment() {
                 if (grantResults[0] == PackageManager.PERMISSION_DENIED) {
                     checkAccountPermission()
                 } else {
-                    Log.w(TAG, "Permisos de correo no concedidos")
+                    Timber.w("Permisos de correo no concedidos")
                 }
             }
         }
@@ -280,7 +280,6 @@ class LoginPasswordFragment : Fragment() {
     }
 
     companion object {
-        private const val TAG = "LoginPasswordActivity"
         private const val RC_SIGN_IN = 100
     }
 }

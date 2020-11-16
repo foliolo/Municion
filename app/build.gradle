@@ -226,32 +226,9 @@ dependencies {
     kapt "androidx.room:room-compiler:${room}"
     testImplementation "androidx.room:room-testing:${rootProject.ext.room}"
     androidTestImplementation "androidx.room:room-testing:${rootProject.ext.room}"
-/*
-    // Testing
-    debugImplementation 'junit:junit:4.13.1'
 
-    // AndroidX Test - JVM testing
-    androidTestImplementation "androidx.test:core-ktx:1.3.0"
-    androidTestImplementation "androidx.test.ext:junit-ktx:1.1.2"
-    androidTestImplementation "androidx.test:rules:1.3.0"
-    androidTestImplementation "androidx.test.ext:truth:1.3.0"
-
-    def archTestingVersion = '2.1.0'
-    testImplementation "androidx.arch.core:core-testing:$archTestingVersion"
-    androidTestImplementation "androidx.arch.core:core-testing:$archTestingVersion"
-
-    // Espresso dependencies
-    def espressoVersion = '3.3.0'
-    implementation "androidx.test.espresso:espresso-idling-resource:$espressoVersion"
-    androidTestImplementation "androidx.test.espresso.idling:idling-concurrent:$espressoVersion"
-    androidTestImplementation "androidx.test.espresso:espresso-core:$espressoVersion"
-
-    // Mockito
-    androidTestImplementation('com.linkedin.dexmaker:dexmaker-mockito:2.12.1')
-    implementation("org.mockito:mockito-core:$mockito_version")
-//    testImplementation "org.mockito:mockito-core:$mockito_version"
-    androidTestImplementation("org.mockito:mockito-core:$mockito_version")
-*/
+    // Timber
+    implementation 'com.jakewharton.timber:timber:4.7.1'
 
     // Espresso idling-resources
     androidTestImplementation('com.linkedin.dexmaker:dexmaker-mockito:2.12.1')
