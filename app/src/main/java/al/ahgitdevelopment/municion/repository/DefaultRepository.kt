@@ -5,10 +5,10 @@ import al.ahgitdevelopment.municion.datamodel.License
 import al.ahgitdevelopment.municion.datamodel.Property
 import al.ahgitdevelopment.municion.datamodel.Purchase
 import al.ahgitdevelopment.municion.utils.wrapEspressoIdlingResource
-import android.util.Log
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
+import timber.log.Timber
 
 open class DefaultRepository(
     private val localDataSource: DataSourceContract,
@@ -70,15 +70,11 @@ open class DefaultRepository(
         // Real apps might want to do a proper sync, deleting, modifying or adding each task.
         localDataSource.removeAllLicenses()
         remoteLicenses
-            .catch { Log.e(TAG, "Error getting licenses", it) }
+            .catch { Timber.e(it, "Error getting licenses") }
             .collect {
                 it.forEach { license ->
                     localDataSource.saveLicense(license)
                 }
             }
-    }
-
-    companion object {
-        private val TAG = DefaultRepository.javaClass.name
     }
 }

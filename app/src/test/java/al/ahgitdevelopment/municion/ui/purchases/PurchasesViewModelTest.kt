@@ -3,8 +3,8 @@ package al.ahgitdevelopment.municion.ui.purchases
 import al.ahgitdevelopment.municion.FakeRepository.Companion.FAKE_PURCHASE
 import al.ahgitdevelopment.municion.FakeRepository.Companion.FAKE_PURCHASES
 import al.ahgitdevelopment.municion.ext.getOrAwaitValue
-import al.ahgitdevelopment.municion.ext.toFlow
 import al.ahgitdevelopment.municion.repository.RepositoryContract
+import al.ahgitdevelopment.municion.utils.toFlow
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.SavedStateHandle
 import io.mockk.MockKAnnotations

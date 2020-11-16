@@ -126,7 +126,6 @@ class LoginViewModel @ViewModelInject constructor(
     enum class ErrorMessages { SHORT_PASSWORD, NOT_MATCHING_PASSWORD, NONE }
 
     companion object {
-        private val TAG = LoginViewModel::class.java.name
         private const val MIN_PASS_LENGTH = 6
     }
 }
