@@ -2,12 +2,12 @@ package al.ahgitdevelopment.municion.repository.firebase
 
 import android.content.Context
 import android.net.ConnectivityManager
-import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import kotlinx.coroutines.tasks.await
+import timber.log.Timber
 import java.io.File
 
 class RemoteStorageDataSource constructor(
@@ -26,10 +26,10 @@ class RemoteStorageDataSource constructor(
         return auth.currentUser.let { currentUser ->
             @Suppress("DEPRECATION")
             if (currentUser != null && connectivityManager.activeNetworkInfo?.isConnected == true) {
-                Log.d(TAG, "Retrieve images")
+                Timber.d("Retrieve images")
                 verifyMetadataOrDownload(imageReference)
             } else {
-                Log.w(TAG, "Not authenticated")
+                Timber.w("Not authenticated")
                 crashlytics.recordException(IllegalStateException("Not authenticated"))
                 arrayListOf()
             }
@@ -48,7 +48,7 @@ class RemoteStorageDataSource constructor(
                 val md5File = File(imagesRootDir, "images/$imagePath.md5")
 
                 if (imageFile.exists() && md5File.verifyMd5Hash(image.metadata.await().md5Hash)) {
-                    Log.d(TAG, "Using existing image: $imagePath (md5 OK)")
+                    Timber.d("Using existing image: $imagePath (md5 OK)")
                     imageUrls.add(imageFile)
                 } else {
                     md5File.saveMd5Hash(image.metadata.await().md5Hash)
@@ -65,7 +65,7 @@ class RemoteStorageDataSource constructor(
         md5File.delete()
 
         return image.getFile(imageFile).await().let {
-            Log.d(TAG, "Image downloaded: ${image.name}")
+            Timber.d("Image downloaded: ${image.name}")
             md5File.saveMd5Hash(image.metadata.await().md5Hash)
             imageFile
         }
@@ -79,7 +79,6 @@ class RemoteStorageDataSource constructor(
     }
 
     companion object {
-        private val TAG = RemoteStorageDataSource::class.java.name
         private const val STORAGE_ROOT_PATH = "TutorialImages"
 
         const val PARAM_USER_UID = "user_uid"

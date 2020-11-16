@@ -2,9 +2,6 @@ package al.ahgitdevelopment.municion.ext
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOn
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeoutException
@@ -33,7 +30,3 @@ fun <T> LiveData<T>.getOrAwaitValue(
     @Suppress("UNCHECKED_CAST")
     return data as T
 }
-
-fun <E> List<E>.toFlow() = flow {
-    emit(this@toFlow)
-}.flowOn(Dispatchers.IO)
