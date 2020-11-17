@@ -6,28 +6,27 @@ Weapons manager
 
 Weapons manager is an easy-to-use and dynamic application that will help you maintain control over your weapon, purchases, competitions and much more.
 
-## Change Log
+## Characteristics
+ * High security to protect all your information through a unique and personal key (even if someone physically access your phone, they will not be able to read your information if they do not have your password)
+ * Description of where, how and what price you bought each ammo box to help you with your expenses. You can also rate the ammunition so that you remember the degree of satisfaction of the purchase made.
 
-#### Version 0.2.2 (26/10/2020)
-  - Added Github actions.
-  - CI implemented to run:
-    - Pull request: **test** & **ktlint**
-    - Tag: Publish apk to **Firebase distribution** & **Google play console**.
+## Screenshots
 
-#### Version 0.2.1 (18/10/2020)
-  - Fixed tutorial feature.
-  - Added ktlint configuration.
+Firebase Signup | Login | Dashboard
+-- | -- | --
+<img src="https://firebasestorage.googleapis.com/v0/b/municion-95caa.appspot.com/o/TutorialImages%2F01-Firebase_signup.png?alt=media&token=637aca35-06c7-455c-9dda-4d71cb943b7b" width="300"> | <img src="https://firebasestorage.googleapis.com/v0/b/municion-95caa.appspot.com/o/TutorialImages%2F02-Login.png?alt=media&token=a5e78d35-fb26-4df6-b03a-4e84b9fcf390" width="300"> | <img src="https://firebasestorage.googleapis.com/v0/b/municion-95caa.appspot.com/o/TutorialImages%2F03-Dashboard.png?alt=media&token=7304c171-fe35-4d22-8864-55986d4422e7" width="300"> 
 
-#### Version 0.2.0 (14/10/2020)
-  - Create new elements (licenses, competitions, weapon properties and purchases).
-  - Delete elements doing swipe.
-  - New tutorial images in the cloud.
-  - Update toolbar buttons.
+Add License | Add Property Document | Add Purchase
+-- | -- | --
+<img src="https://firebasestorage.googleapis.com/v0/b/municion-95caa.appspot.com/o/TutorialImages%2F04-Form_license.png?alt=media&token=4ea95f92-7361-407f-b014-46fa4cd95036" width="300" > | <img src="https://firebasestorage.googleapis.com/v0/b/municion-95caa.appspot.com/o/TutorialImages%2F05-Form_property_documents.png?alt=media&token=b4cc9128-1ee6-4c30-bb2b-281616686a3b" width="300"> | <img src="https://firebasestorage.googleapis.com/v0/b/municion-95caa.appspot.com/o/TutorialImages%2F06-Form_purchases.png?alt=media&token=e1ea3cff-4181-4c32-9a3d-117631940ec5" width="300"> 
 
-## App Refactoring doing it from scratch practically.
-It will starts from version 0.x.x again. Some key notes are:
-  - Launch will be release at the end of 2020.
-  - Code refactoring to make it readable and maintainable.
-  - Remove of useless logic and unnecessary elements.
-  - Internal database migration to Room.
+Add Competition| Delete elements 
+-- | -- 
+<img src="https://firebasestorage.googleapis.com/v0/b/municion-95caa.appspot.com/o/TutorialImages%2F07-Form_competitios.png?alt=media&token=66459364-60ce-4667-878d-65472337d539" width="300" > | <img src="https://firebasestorage.googleapis.com/v0/b/municion-95caa.appspot.com/o/TutorialImages%2F08-Delete_elements.png?alt=media&token=982b8a82-d9c0-41a0-a7b1-070cec583ed8" width="300"> 
+
+## Participants
+- Concept Makers: Antonio David Luque Flores
+- Developer: Alberto Hidalgo García
+- Designer: Jorge Gómez Cobacho
+
 
