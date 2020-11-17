@@ -1,6 +1,8 @@
 ![Android Build](https://github.com/foliolo/Municion/workflows/Android%20Build/badge.svg)
 ![GitHub release](https://img.shields.io/github/release/foliolo/Municion.svg?maxAge=60)
 
+<img src="https://lh3.googleusercontent.com/2-BKTgB-2F3vaqE51K58ndeDmZ3g4U-03_tP3ho_ozvwst_1s-s-qB7r2BzCj_YNypg" width="175" style="display: block; margin-left: auto; margin-right: auto; width: 50%;">
+
 Weapons manager
 ===============
 
@@ -25,8 +27,8 @@ Add Competition| Delete elements
 <img src="https://firebasestorage.googleapis.com/v0/b/municion-95caa.appspot.com/o/TutorialImages%2F07-Form_competitios.png?alt=media&token=66459364-60ce-4667-878d-65472337d539" width="300" > | <img src="https://firebasestorage.googleapis.com/v0/b/municion-95caa.appspot.com/o/TutorialImages%2F08-Delete_elements.png?alt=media&token=982b8a82-d9c0-41a0-a7b1-070cec583ed8" width="300"> 
 
 ## Participants
-- Concept Makers: Antonio David Luque Flores
-- Developer: Alberto Hidalgo García
-- Designer: Jorge Gómez Cobacho
+- Concept Makers: **Antonio David Luque Flores**
+- Developer: **Alberto Hidalgo García**
+- Designer: **Jorge Gómez Cobacho**
 
 
