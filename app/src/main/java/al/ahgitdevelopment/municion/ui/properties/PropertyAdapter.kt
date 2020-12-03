@@ -40,8 +40,6 @@ class PropertyAdapter : ListAdapter<Property, PropertyAdapter.PropertyViewHolder
         }
     }
 
-    override fun getItemId(position: Int): Long = currentList[position].id
-
     companion object {
         @JvmStatic
         val DIFF_CALLBACK = object : DiffUtil.ItemCallback<Property>() {

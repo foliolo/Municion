@@ -22,7 +22,7 @@ interface LicenseDao {
     suspend fun deleteAll()
 
     @Query("DELETE FROM $TABLE_LICENSES WHERE $KEY_ID = :id")
-    suspend fun delete(id: Long)
+    suspend fun delete(id: String)
 
     @Query("SELECT * from $TABLE_LICENSES")
     fun getLicenses(): Flow<List<License>>

@@ -6,9 +6,7 @@ import al.ahgitdevelopment.municion.datamodel.Property
 import al.ahgitdevelopment.municion.datamodel.Purchase
 import al.ahgitdevelopment.municion.utils.wrapEspressoIdlingResource
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.collect
-import timber.log.Timber
+import kotlinx.coroutines.flow.map
 
 open class DefaultRepository(
     private val localDataSource: DataSourceContract,
@@ -24,8 +22,62 @@ open class DefaultRepository(
     }
 
     override fun getLicenses(forceUpdate: Boolean): Flow<List<License>> {
-        return wrapEspressoIdlingResource { localDataSource.licenses }
+        return wrapEspressoIdlingResource {
+
+            // Retrieve data locally and from firebase
+            // val remoteLicenses = remoteDataSource.licenses
+            // val localLicenses = localDataSource.licenses
+
+            if (forceUpdate) {
+                remoteDataSource.licenses.map { licenses ->
+                    localDataSource.removeAllLicenses()
+                    licenses.forEach { localDataSource.saveLicense(it) }
+                    licenses
+                }
+            } else {
+                localDataSource.licenses
+            }
+
+            /*
+            remoteLicenses.combineTransform(localLicenses) { remote, local ->
+
+                remote.forEach { remoteLicense ->
+                    // If license.id already exist in local database, then update the element
+                    local.find { it.id == remoteLicense.id }?.let { localLicense ->
+                        localDataSource.removeLicense(localLicense!!.id)
+                        localDataSource.saveLicense(remoteLicense)
+                        local.toMutableList().remove(localLicense)
+                        local.toMutableList().add(remoteLicense)
+                    }
+
+                    // Otherwise, add the new element
+                    if (!local.contains(remoteLicense)) {
+                        localDataSource.saveLicense(remoteLicense)
+                        local.toMutableList().add(remoteLicense)
+                    }
+                }
+
+                emit(local)
+            }
+            */
+        }
     }
+    //
+    // private suspend fun addLicense(remote: List<License>, local: List<License>) {
+    //     remote.forEach { remoteLicense ->
+    //         !local.contains(remoteLicense).apply {
+    //             localDataSource.saveLicense(remoteLicense)
+    //         }
+    //     }
+    // }
+    //
+    // private suspend fun updateLicense(remote: List<License>, local: List<License>) {
+    //     remote.forEach { remoteLicense ->
+    //         !local.contains(remoteLicense).apply {
+    //             localDataSource.saveLicense(remoteLicense)
+    //         }
+    //     }
+    // }
 
     override fun getCompetitions(): Flow<List<Competition>> {
         return wrapEspressoIdlingResource { localDataSource.competitions }
@@ -33,48 +85,41 @@ open class DefaultRepository(
 
     override suspend fun saveProperty(property: Property) {
         localDataSource.saveProperty(property)
+        remoteDataSource.saveProperty(property)
     }
 
     override suspend fun savePurchase(purchase: Purchase) {
         localDataSource.savePurchase(purchase)
+        remoteDataSource.savePurchase(purchase)
     }
 
     override suspend fun saveLicense(license: License) {
         localDataSource.saveLicense(license)
+        remoteDataSource.saveLicense(license)
     }
 
     override suspend fun saveCompetition(competition: Competition) {
         localDataSource.saveCompetition(competition)
+        remoteDataSource.saveCompetition(competition)
     }
 
-    override suspend fun removeProperty(id: Long) {
+    override suspend fun removeProperty(id: String) {
         localDataSource.removeProperty(id)
+        remoteDataSource.removeProperty(id)
     }
 
-    override suspend fun removePurchase(id: Long) {
+    override suspend fun removePurchase(id: String) {
         localDataSource.removePurchase(id)
+        remoteDataSource.removePurchase(id)
     }
 
-    override suspend fun removeLicense(id: Long) {
+    override suspend fun removeLicense(id: String) {
         localDataSource.removeLicense(id)
+        remoteDataSource.removeLicense(id)
     }
 
-    override suspend fun removeCompetition(id: Long) {
+    override suspend fun removeCompetition(id: String) {
         localDataSource.removeCompetition(id)
-    }
-
-    open suspend fun updateLicensesFromRemoteDataSource() {
-
-        val remoteLicenses = remoteDataSource.licenses
-
-        // Real apps might want to do a proper sync, deleting, modifying or adding each task.
-        localDataSource.removeAllLicenses()
-        remoteLicenses
-            .catch { Timber.e(it, "Error getting licenses") }
-            .collect {
-                it.forEach { license ->
-                    localDataSource.saveLicense(license)
-                }
-            }
+        remoteDataSource.removeCompetition(id)
     }
 }

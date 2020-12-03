@@ -15,17 +15,17 @@ import androidx.annotation.NonNull
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import java.io.Serializable
+import java.util.UUID
 
 /**
  * Created by Alberto on 12/05/2016.
  */
 @Entity(tableName = TABLE_PURCHASES)
-open class Purchase(
+data class Purchase(
 
-    @PrimaryKey(autoGenerate = true)
+    @PrimaryKey
     @NonNull
-    @ColumnInfo(name = KEY_ID) var id: Long,
+    @ColumnInfo(name = KEY_ID) var id: String = UUID.randomUUID().toString(),
 
     @ColumnInfo(name = KEY_PURCHASE_BRAND) var brand: String,
 
@@ -45,4 +45,17 @@ open class Purchase(
 
     @ColumnInfo(name = KEY_PURCHASE_IMAGE) var image: String
 
-) : Serializable
+) {
+    constructor() : this(
+        id = "",
+        brand = "",
+        store = "",
+        bore = "",
+        units = 0,
+        price = 0.0,
+        date = "",
+        rating = 0F,
+        weight = 0,
+        image = ""
+    )
+}

@@ -34,7 +34,7 @@ class LicensesViewModel @ViewModelInject constructor(
         navigateToForm.call()
     }
 
-    fun deleteLicense(licenseId: Long) = viewModelScope.launch(ioDispatcher) {
+    fun deleteLicense(licenseId: String) = viewModelScope.launch(ioDispatcher) {
         wrapEspressoIdlingResource {
             repository.removeLicense(licenseId)
         }

@@ -34,7 +34,7 @@ class CompetitionsViewModel @ViewModelInject constructor(
         navigateToForm.call()
     }
 
-    fun deleteCompetition(competitionId: Long) = viewModelScope.launch(ioDispatcher) {
+    fun deleteCompetition(competitionId: String) = viewModelScope.launch(ioDispatcher) {
         wrapEspressoIdlingResource {
             repository.removeCompetition(competitionId)
         }

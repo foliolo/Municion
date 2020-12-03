@@ -22,12 +22,12 @@ class LocalDataSource @Inject constructor(private val db: AppDatabase) : DataSou
     override suspend fun saveLicense(license: License) = db.licenseDao().insert(license)
     override suspend fun saveCompetition(competition: Competition) = db.competitionDao().insert(competition)
 
-    override suspend fun removeProperty(id: Long) = db.propertyDao().delete(id)
-    override suspend fun removePurchase(id: Long) = db.purchaseDao().delete(id)
+    override suspend fun removeProperty(id: String) = db.propertyDao().delete(id)
+    override suspend fun removePurchase(id: String) = db.purchaseDao().delete(id)
 
     @WorkerThread
-    override suspend fun removeLicense(id: Long) = db.licenseDao().delete(id)
-    override suspend fun removeCompetition(id: Long) = db.competitionDao().delete(id)
+    override suspend fun removeLicense(id: String) = db.licenseDao().delete(id)
+    override suspend fun removeCompetition(id: String) = db.competitionDao().delete(id)
 
     override suspend fun removeAllLicenses() = db.licenseDao().deleteAll()
 }

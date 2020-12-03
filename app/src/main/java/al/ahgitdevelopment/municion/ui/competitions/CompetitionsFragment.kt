@@ -58,7 +58,7 @@ class CompetitionsFragment : BaseFragment(), RecyclerInterface {
 
         viewModel.competitions.observe(viewLifecycleOwner) {
             competitionAdapter = CompetitionAdapter().apply {
-                submitList(it)
+                submitList(it.sortedBy { it.description })
                 setHasStableIds(true)
             }
 
@@ -69,7 +69,9 @@ class CompetitionsFragment : BaseFragment(), RecyclerInterface {
                 ItemTouchHelper(
                     DeleteItemOnSwipe(object : DeleteItemOnSwipe.DeleteCallback {
                         override fun deleteOnSwipe(viewHolder: RecyclerView.ViewHolder) {
-                            viewModel.deleteCompetition(viewHolder.itemId)
+                            competitionAdapter.currentList[viewHolder.adapterPosition]?.let {
+                                viewModel.deleteCompetition(it.id)
+                            }
 
                             undoDelete(viewHolder)
 

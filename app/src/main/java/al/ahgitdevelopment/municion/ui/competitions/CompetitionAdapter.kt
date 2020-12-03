@@ -33,8 +33,6 @@ class CompetitionAdapter : ListAdapter<Competition, CompetitionAdapter.Competiti
         }
     }
 
-    override fun getItemId(position: Int): Long = currentList[position].id
-
     companion object {
         @JvmStatic
         val DIFF_CALLBACK = object : DiffUtil.ItemCallback<Competition>() {

@@ -13,6 +13,7 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_navigation.*
 import kotlinx.android.synthetic.main.fragment_form_purchase.*
@@ -27,7 +28,11 @@ class PurchaseFormFragment : Fragment() {
 
     private val viewModel: PurchaseFormViewModel by viewModels()
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
 
         val binding: FragmentFormPurchaseBinding =
             DataBindingUtil.inflate(inflater, R.layout.fragment_form_purchase, container, false)
@@ -47,7 +52,6 @@ class PurchaseFormFragment : Fragment() {
 
         viewModel.fabSavePurchaseClicked.observe(viewLifecycleOwner) {
             Purchase(
-                id = 0,
                 brand = form_purchase_brand.editText?.text.toString(),
                 store = form_purchase_store.editText?.text.toString(),
                 bore = form_purchase_bore.editText?.text.toString(),
@@ -69,7 +73,9 @@ class PurchaseFormFragment : Fragment() {
         }
 
         viewModel.closeForm.observe(viewLifecycleOwner) {
-            parentFragmentManager.popBackStack()
+            findNavController().navigate(
+                PurchaseFormFragmentDirections.actionPurchaseFormFragmentToPurchasesFragment()
+            )
         }
     }
 

@@ -54,7 +54,7 @@ class PropertiesViewModelTest {
         // ACT
         SUT.fabClick(null)
         // VERIFY
-        assertEquals(null, SUT.navigateToForm.getOrAwaitValue())
+        assertEquals(Unit, SUT.navigateToForm.getOrAwaitValue().getContentIfNotHandled())
     }
 
     @Test

@@ -57,7 +57,7 @@ class PropertiesFragment : BaseFragment(), RecyclerInterface {
 
         viewModel.properties.observe(viewLifecycleOwner) {
             propertiesAdapter = PropertyAdapter().apply {
-                submitList(it)
+                submitList(it.sortedBy { it.nickname })
                 setHasStableIds(true)
             }
 
@@ -68,7 +68,9 @@ class PropertiesFragment : BaseFragment(), RecyclerInterface {
                 ItemTouchHelper(
                     DeleteItemOnSwipe(object : DeleteItemOnSwipe.DeleteCallback {
                         override fun deleteOnSwipe(viewHolder: RecyclerView.ViewHolder) {
-                            viewModel.deleteProperty(viewHolder.itemId)
+                            propertiesAdapter.currentList[viewHolder.adapterPosition]?.let {
+                                viewModel.deleteProperty(it.id)
+                            }
 
                             undoDelete(viewHolder)
 
