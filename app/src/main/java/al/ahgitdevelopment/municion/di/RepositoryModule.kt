@@ -7,6 +7,7 @@ import al.ahgitdevelopment.municion.repository.database.AppDatabase
 import al.ahgitdevelopment.municion.repository.database.LocalDataSource
 import al.ahgitdevelopment.municion.repository.firebase.RemoteDataSource
 import android.content.Context
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import dagger.Module
 import dagger.Provides
@@ -30,8 +31,8 @@ class RepositoryModule {
 
     @TypeRemoteDataSource
     @Provides
-    fun providesRemoteDataSource(firebase: FirebaseDatabase): DataSourceContract {
-        return RemoteDataSource(firebase)
+    fun providesRemoteDataSource(firebase: FirebaseDatabase, auth: FirebaseAuth): DataSourceContract {
+        return RemoteDataSource(firebase, auth)
     }
 }
 

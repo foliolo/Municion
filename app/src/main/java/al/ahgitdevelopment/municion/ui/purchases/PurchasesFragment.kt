@@ -55,7 +55,7 @@ class PurchasesFragment : BaseFragment(), RecyclerInterface {
 
         viewModel.purchases.observe(viewLifecycleOwner) {
             purchaseAdapter = PurchaseAdapter().apply {
-                submitList(it)
+                submitList(it.sortedBy { it.brand })
                 setHasStableIds(true)
             }
 
@@ -66,7 +66,9 @@ class PurchasesFragment : BaseFragment(), RecyclerInterface {
                 ItemTouchHelper(
                     DeleteItemOnSwipe(object : DeleteItemOnSwipe.DeleteCallback {
                         override fun deleteOnSwipe(viewHolder: RecyclerView.ViewHolder) {
-                            viewModel.deletePurchase(viewHolder.itemId)
+                            purchaseAdapter.currentList[viewHolder.adapterPosition]?.let {
+                                viewModel.deletePurchase(it.id)
+                            }
 
                             undoDelete(viewHolder)
 

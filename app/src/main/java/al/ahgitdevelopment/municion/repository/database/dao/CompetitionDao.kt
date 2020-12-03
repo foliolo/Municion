@@ -22,7 +22,7 @@ interface CompetitionDao {
     suspend fun deleteAll()
 
     @Query("DELETE FROM $TABLE_COMPETITION WHERE $KEY_ID = :id")
-    suspend fun delete(id: Long)
+    suspend fun delete(id: String)
 
     @Query("SELECT * from $TABLE_COMPETITION")
     fun getCompetitions(): Flow<List<Competition>>

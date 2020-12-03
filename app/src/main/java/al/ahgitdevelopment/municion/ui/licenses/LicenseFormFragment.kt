@@ -12,6 +12,7 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_navigation.*
 import kotlinx.android.synthetic.main.fragment_form_license.*
@@ -61,7 +62,6 @@ class LicenseFormFragment : Fragment() {
 
         viewModel.fabSaveLicenseClicked.observe(viewLifecycleOwner) {
             License(
-                id = 0,
                 licenseName = form_license_name.editText?.text.toString(),
                 licenseNumber = form_license_number.editText?.text.toString(),
                 issueDate = form_license_date_issue.editText?.text.toString(),
@@ -73,7 +73,9 @@ class LicenseFormFragment : Fragment() {
         }
 
         viewModel.closeForm.observe(viewLifecycleOwner) {
-            parentFragmentManager.popBackStack()
+            findNavController().navigate(
+                LicenseFormFragmentDirections.actionLicenseFormFragmentToLicensesFragment()
+            )
         }
     }
 

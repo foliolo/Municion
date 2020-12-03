@@ -44,7 +44,7 @@ const val KEY_COMPETITION_POINTS = "points"
 const val KEY_COMPETITION_PLACE = "place"
 
 // Database Version
-const val DATABASE_VERSION = 1
+const val DATABASE_VERSION = 2
 
 // Database Name
 const val DATABASE_NAME = "Weapons.db"

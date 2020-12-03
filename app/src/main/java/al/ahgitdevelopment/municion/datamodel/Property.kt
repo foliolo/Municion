@@ -9,25 +9,22 @@ import al.ahgitdevelopment.municion.repository.database.KEY_PROPERTY_MODEL
 import al.ahgitdevelopment.municion.repository.database.KEY_PROPERTY_NICKNAME
 import al.ahgitdevelopment.municion.repository.database.KEY_PROPERTY_NUM_ID
 import al.ahgitdevelopment.municion.repository.database.TABLE_PROPERTIES
-import android.os.Bundle
 import androidx.annotation.NonNull
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import java.io.Serializable
+import java.util.UUID
 
 /**
  * Created by Alberto on 13/05/2016.
  */
 
-@Entity(
-    tableName = TABLE_PROPERTIES
-)
-open class Property(
+@Entity(tableName = TABLE_PROPERTIES)
+data class Property(
 
-    @PrimaryKey(autoGenerate = true)
+    @PrimaryKey
     @NonNull
-    @ColumnInfo(name = KEY_ID) var id: Long,
+    @ColumnInfo(name = KEY_ID) var id: String = UUID.randomUUID().toString(),
 
     @ColumnInfo(name = KEY_PROPERTY_NICKNAME) var nickname: String,
 
@@ -41,26 +38,17 @@ open class Property(
 
     @ColumnInfo(name = KEY_PROPERTY_NUM_ID) var numId: String,
 
-    @ColumnInfo(name = KEY_PROPERTY_IMAGE) var image: String = ""
+    @ColumnInfo(name = KEY_PROPERTY_IMAGE) var image: String
 
-) : Serializable {
-
-    constructor(bundle: Bundle) : this(
-        id = 0L,
+) {
+    constructor() : this(
+        id = "",
         nickname = "",
         brand = "",
         model = "",
         bore1 = "",
         bore2 = "",
         numId = "",
-        image = "",
-    ) {
-        nickname = bundle.getString(KEY_PROPERTY_NICKNAME) ?: ""
-        brand = bundle.getString(KEY_PROPERTY_BRAND) ?: ""
-        model = bundle.getString(KEY_PROPERTY_MODEL) ?: ""
-        bore1 = bundle.getString(KEY_PROPERTY_BORE1) ?: ""
-        bore2 = bundle.getString(KEY_PROPERTY_BORE2) ?: ""
-        numId = bundle.getString(KEY_PROPERTY_NUM_ID) ?: ""
-        image = bundle.getString(KEY_PROPERTY_IMAGE) ?: ""
-    }
+        image = ""
+    )
 }

@@ -13,15 +13,17 @@ interface DataSourceContract {
     var licenses: Flow<List<License>>
     var competitions: Flow<List<Competition>>
 
+    // suspend fun getLicenses(): Flow<List<License>>
+
     suspend fun saveProperty(property: Property)
     suspend fun savePurchase(purchase: Purchase)
     suspend fun saveLicense(license: License)
     suspend fun saveCompetition(competition: Competition)
 
-    suspend fun removeProperty(id: Long)
-    suspend fun removePurchase(id: Long)
-    suspend fun removeLicense(id: Long)
-    suspend fun removeCompetition(id: Long)
+    suspend fun removeProperty(id: String)
+    suspend fun removePurchase(id: String)
+    suspend fun removeLicense(id: String)
+    suspend fun removeCompetition(id: String)
 
     suspend fun removeAllLicenses()
 }

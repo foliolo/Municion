@@ -1,5 +1,6 @@
 package al.ahgitdevelopment.municion.ui.login
 
+import al.ahgitdevelopment.municion.BuildConfig
 import al.ahgitdevelopment.municion.R
 import al.ahgitdevelopment.municion.databinding.FragmentLoginBinding
 import al.ahgitdevelopment.municion.repository.firebase.RemoteStorageDataSource.Companion.EVENT_LOGOUT
@@ -99,23 +100,40 @@ class LoginPasswordFragment : Fragment() {
         }
 
         viewModel.onCreateView()
-    }
-
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
 
         loadAppVersion()
+
+        /* Password 1 edittext listeners
+        login_password_1.editText?.setOnEditorActionListener { v, actionId, event ->
+            when (actionId) {
+                IME_ACTION_DONE -> {
+                    viewModel.onButtonClick(null)
+                    true
+                }
+                else -> false
+            }
+        }
+
+        login_password_1.editText?.setOnKeyListener { v, keyCode, event ->
+            if (keyCode == KeyEvent.KEYCODE_ENTER && event.action == KeyEvent.ACTION_DOWN) {
+                viewModel.onButtonClick(null)
+                true
+            } else {
+                false
+            }
+        }
+        */
     }
 
     override fun onResume() {
         super.onResume()
         setUpUser()
 
-        // if (BuildConfig.DEBUG) {
-        //     login_button.visibility = View.VISIBLE
-        //     login_password_1.editText?.setText(BuildConfig.PASSWORD)
-        //     login_button.performClick()
-        // }
+        if (BuildConfig.DEBUG) {
+            login_button.visibility = View.VISIBLE
+            login_password_1.editText?.setText(BuildConfig.PASSWORD)
+            // login_button.performClick()
+        }
     }
 
     private fun getErrorMessage(error: LoginViewModel.ErrorMessages): String? {
