@@ -22,8 +22,8 @@ interface RepositoryContract {
     suspend fun saveLicense(license: License)
     suspend fun saveCompetition(competition: Competition)
 
-    suspend fun removeProperty(id: Long)
-    suspend fun removePurchase(id: Long)
-    suspend fun removeLicense(id: Long)
-    suspend fun removeCompetition(id: Long)
+    suspend fun removeProperty(id: String)
+    suspend fun removePurchase(id: String)
+    suspend fun removeLicense(id: String)
+    suspend fun removeCompetition(id: String)
 }

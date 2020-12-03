@@ -13,6 +13,7 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_navigation.*
 import kotlinx.android.synthetic.main.fragment_form_competition.*
@@ -27,7 +28,11 @@ class CompetitionFormFragment : Fragment() {
 
     private val viewModel: CompetitionFormViewModel by viewModels()
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
 
         val binding: FragmentFormCompetitionBinding =
             DataBindingUtil.inflate(inflater, R.layout.fragment_form_competition, container, false)
@@ -47,7 +52,6 @@ class CompetitionFormFragment : Fragment() {
 
         viewModel.fabSaveCompetitionClicked.observe(viewLifecycleOwner) {
             Competition(
-                id = 0,
                 description = form_competition_description.editText?.text.toString(),
                 date = form_competition_date.editText?.text.toString(),
                 ranking = form_competition_ranking.editText?.text.toString(),
@@ -65,7 +69,9 @@ class CompetitionFormFragment : Fragment() {
         }
 
         viewModel.closeForm.observe(viewLifecycleOwner) {
-            parentFragmentManager.popBackStack()
+            findNavController().navigate(
+                CompetitionFormFragmentDirections.actionCompetitionFormFragmentToCompetitionsFragment()
+            )
         }
     }
 

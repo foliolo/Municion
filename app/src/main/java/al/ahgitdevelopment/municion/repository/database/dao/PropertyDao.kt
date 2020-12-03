@@ -22,7 +22,7 @@ interface PropertyDao {
     suspend fun deleteAll()
 
     @Query("DELETE FROM $TABLE_PROPERTIES WHERE $KEY_ID = :id")
-    suspend fun delete(id: Long)
+    suspend fun delete(id: String)
 
     @Query("SELECT * from $TABLE_PROPERTIES")
     fun getProperties(): Flow<List<Property>>

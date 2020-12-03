@@ -40,8 +40,6 @@ class PurchaseAdapter : ListAdapter<Purchase, PurchaseAdapter.PurchaseViewHolder
         }
     }
 
-    override fun getItemId(position: Int): Long = currentList[position].id
-
     companion object {
         @JvmStatic
         val DIFF_CALLBACK = object : DiffUtil.ItemCallback<Purchase>() {

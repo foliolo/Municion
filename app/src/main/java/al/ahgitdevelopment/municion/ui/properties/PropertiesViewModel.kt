@@ -4,11 +4,14 @@ import al.ahgitdevelopment.municion.datamodel.Property
 import al.ahgitdevelopment.municion.di.IoDispatcher
 import al.ahgitdevelopment.municion.repository.RepositoryContract
 import al.ahgitdevelopment.municion.ui.BaseViewModel
+import al.ahgitdevelopment.municion.utils.Event
 import al.ahgitdevelopment.municion.utils.SingleLiveEvent
 import al.ahgitdevelopment.municion.utils.wrapEspressoIdlingResource
 import android.view.View
 import androidx.hilt.Assisted
 import androidx.hilt.lifecycle.ViewModelInject
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
@@ -27,15 +30,16 @@ class PropertiesViewModel @ViewModelInject constructor(
         .catch { error.postValue(it.message) }
         .asLiveData()
 
-    val navigateToForm = SingleLiveEvent<Unit>()
+    private val _navigateToForm = MutableLiveData<Event<Unit>>()
+    val navigateToForm: LiveData<Event<Unit>> = _navigateToForm
 
     val error = SingleLiveEvent<String>()
 
     fun fabClick(view: View?) {
-        navigateToForm.call()
+        _navigateToForm.postValue(Event(Unit))
     }
 
-    fun deleteProperty(propertyId: Long) = viewModelScope.launch(ioDispatcher) {
+    fun deleteProperty(propertyId: String) = viewModelScope.launch(ioDispatcher) {
         wrapEspressoIdlingResource {
             repository.removeProperty(propertyId)
         }

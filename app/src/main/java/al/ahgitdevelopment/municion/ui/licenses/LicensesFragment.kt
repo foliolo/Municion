@@ -59,7 +59,7 @@ class LicensesFragment @Inject constructor() : BaseFragment(), RecyclerInterface
 
         viewModel.licenses.observe(viewLifecycleOwner) {
             licensesAdapter = LicenseAdapter().apply {
-                submitList(it)
+                submitList(it.sortedBy { it.licenseName })
                 setHasStableIds(true)
             }
 
@@ -70,7 +70,9 @@ class LicensesFragment @Inject constructor() : BaseFragment(), RecyclerInterface
                 ItemTouchHelper(
                     DeleteItemOnSwipe(object : DeleteItemOnSwipe.DeleteCallback {
                         override fun deleteOnSwipe(viewHolder: RecyclerView.ViewHolder) {
-                            viewModel.deleteLicense(viewHolder.itemId)
+                            licensesAdapter.currentList[viewHolder.adapterPosition]?.let {
+                                viewModel.deleteLicense(it.id)
+                            }
 
                             undoDelete(viewHolder)
 

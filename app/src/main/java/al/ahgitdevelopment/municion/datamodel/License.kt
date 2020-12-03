@@ -11,7 +11,7 @@ import androidx.annotation.NonNull
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import java.io.Serializable
+import java.util.UUID
 
 /**
  * Created by Alberto on 13/05/2016.
@@ -19,9 +19,9 @@ import java.io.Serializable
 @Entity(tableName = TABLE_LICENSES)
 data class License(
 
-    @PrimaryKey(autoGenerate = true)
+    @PrimaryKey
     @NonNull
-    @ColumnInfo(name = KEY_ID) var id: Long,
+    @ColumnInfo(name = KEY_ID) var id: String = UUID.randomUUID().toString(),
 
     @ColumnInfo(name = KEY_LICENSE_NAME) var licenseName: String,
 
@@ -32,5 +32,13 @@ data class License(
     @ColumnInfo(name = KEY_LICENSE_DATE_EXPIRY) var expiryDate: String,
 
     @ColumnInfo(name = KEY_LICENSE_INSURANCE_NUMBER) var insuranceNumber: String
-
-) : Serializable
+) {
+    constructor() : this(
+        id = "",
+        licenseName = "",
+        licenseNumber = "",
+        issueDate = "",
+        expiryDate = "",
+        insuranceNumber = ""
+    )
+}

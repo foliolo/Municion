@@ -20,10 +20,8 @@ import al.ahgitdevelopment.municion.datamodel.License
 import al.ahgitdevelopment.municion.datamodel.Property
 import al.ahgitdevelopment.municion.datamodel.Purchase
 import al.ahgitdevelopment.municion.repository.RepositoryContract
-import kotlinx.coroutines.Dispatchers
+import al.ahgitdevelopment.municion.utils.toFlow
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOn
 
 /**
  * Implementation of a remote data source with static access to the data for easy testing.
@@ -31,7 +29,7 @@ import kotlinx.coroutines.flow.flowOn
 class FakeRepository : RepositoryContract {
 
     var retrieveLocalData: Boolean = true
-    var shouldReturnError = false
+    private var shouldReturnError = false
 
     val properties = ArrayList<Property>()
     val purchases = ArrayList<Purchase>()
@@ -42,7 +40,7 @@ class FakeRepository : RepositoryContract {
         return if (shouldReturnError && !retrieveLocalData) {
             throw Exception(ERROR_MESSAGE)
         } else {
-            properties.getFlow()
+            properties.toFlow()
         }
     }
 
@@ -50,7 +48,7 @@ class FakeRepository : RepositoryContract {
         return if (shouldReturnError && !retrieveLocalData) {
             throw Exception(ERROR_MESSAGE)
         } else {
-            purchases.getFlow()
+            purchases.toFlow()
         }
     }
 
@@ -58,7 +56,7 @@ class FakeRepository : RepositoryContract {
         return if (shouldReturnError && !retrieveLocalData) {
             throw Exception(ERROR_MESSAGE)
         } else {
-            licenses.getFlow()
+            licenses.toFlow()
         }
     }
 
@@ -66,7 +64,7 @@ class FakeRepository : RepositoryContract {
         return if (shouldReturnError && !retrieveLocalData) {
             throw Exception(ERROR_MESSAGE)
         } else {
-            competitions.getFlow()
+            competitions.toFlow()
         }
     }
 
@@ -86,19 +84,19 @@ class FakeRepository : RepositoryContract {
         competitions.add(FAKE_COMPETITION)
     }
 
-    override suspend fun removeProperty(id: Long) {
+    override suspend fun removeProperty(id: String) {
         TODO("Not yet implemented")
     }
 
-    override suspend fun removePurchase(id: Long) {
+    override suspend fun removePurchase(id: String) {
         TODO("Not yet implemented")
     }
 
-    override suspend fun removeLicense(id: Long) {
+    override suspend fun removeLicense(id: String) {
         TODO("Not yet implemented")
     }
 
-    override suspend fun removeCompetition(id: Long) {
+    override suspend fun removeCompetition(id: String) {
         // Thread {
         competitions.clear()
         // }.start()
@@ -106,7 +104,7 @@ class FakeRepository : RepositoryContract {
 
     companion object {
         val FAKE_COMPETITION = Competition(
-            1,
+            "id",
             "Description",
             "12345",
             "Ranking",
@@ -114,7 +112,7 @@ class FakeRepository : RepositoryContract {
             "Place"
         )
         val FAKE_LICENSE = License(
-            1,
+            "id",
             "License 1",
             "12345",
             "10/10/2014",
@@ -122,7 +120,7 @@ class FakeRepository : RepositoryContract {
             "98765"
         )
         val FAKE_PROPERTY = Property(
-            1,
+            "id",
             "Nickname",
             "Brand",
             "Model",
@@ -132,7 +130,7 @@ class FakeRepository : RepositoryContract {
             "Image"
         )
         val FAKE_PURCHASE = Purchase(
-            1,
+            "id",
             "Brand",
             "Store",
             "Bore",
@@ -151,7 +149,3 @@ class FakeRepository : RepositoryContract {
         val ERROR_MESSAGE = "Exception test"
     }
 }
-
-private fun <E> ArrayList<E>.getFlow(): Flow<List<E>> = flow {
-    emit(this@getFlow)
-}.flowOn(Dispatchers.IO)

@@ -30,8 +30,7 @@ class LicenseFormViewModel @ViewModelInject constructor(
 
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     private val _closeForm = MutableLiveData<Event<Unit>>()
-    val closeForm: LiveData<Event<Unit>>
-        get() = _closeForm
+    val closeForm: LiveData<Event<Unit>> = _closeForm
 
     fun selectIssueDate(view: View) {
         issueDate.call()
@@ -41,7 +40,7 @@ class LicenseFormViewModel @ViewModelInject constructor(
         expiryDate.call()
     }
 
-    fun fabSaveLicenseClicked(view: View) {
+    fun fabSaveLicenseClicked(view: View?) {
         fabSaveLicenseClicked.call()
     }
 

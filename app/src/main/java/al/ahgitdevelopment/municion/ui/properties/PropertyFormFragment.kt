@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_navigation.*
 import kotlinx.android.synthetic.main.fragment_form_property.*
@@ -48,20 +49,22 @@ class PropertyFormFragment : Fragment() {
 
         viewModel.fabSavePropertyClicked.observe(viewLifecycleOwner) {
             Property(
-                id = 0,
                 nickname = form_property_nickname.editText?.text.toString(),
                 brand = form_property_brand.editText?.text.toString(),
                 model = form_property_model.editText?.text.toString(),
                 bore1 = form_property_bore_1.editText?.text.toString(),
                 bore2 = form_property_bore_2.editText?.text.toString(),
-                numId = form_property_num_id.editText?.text.toString()
+                numId = form_property_num_id.editText?.text.toString(),
+                image = ""
             ).run {
                 viewModel.saveProperty(this)
             }
         }
 
         viewModel.closeForm.observe(viewLifecycleOwner) {
-            parentFragmentManager.popBackStack()
+            findNavController().navigate(
+                PropertyFormFragmentDirections.actionPropertyFormFragmentToPropertiesFragment()
+            )
         }
     }
 }

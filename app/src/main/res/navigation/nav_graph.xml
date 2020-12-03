@@ -48,9 +48,7 @@
         tools:layout="@layout/licenses_fragment">
         <action
             android:id="@+id/action_licensesFragment_to_licenseFormFragment"
-            app:destination="@id/licenseFormFragment"
-            app:popUpTo="@id/licensesFragment"
-            app:popUpToInclusive="true" />
+            app:destination="@id/licenseFormFragment" />
     </fragment>
 
     <fragment
@@ -67,21 +65,41 @@
         android:id="@+id/licenseFormFragment"
         android:name="al.ahgitdevelopment.municion.ui.licenses.LicenseFormFragment"
         android:label="LicenseFormFragment"
-        tools:layout="@layout/fragment_form_license" />
+        tools:layout="@layout/fragment_form_license">
+        <action
+            android:id="@+id/action_licenseFormFragment_to_licensesFragment"
+            app:destination="@id/licensesFragment"
+            app:launchSingleTop="true" />
+    </fragment>
     <fragment
         android:id="@+id/propertyFormFragment"
         android:name="al.ahgitdevelopment.municion.ui.properties.PropertyFormFragment"
         android:label="PropertyFormFragment"
-        tools:layout="@layout/fragment_form_property" />
+        tools:layout="@layout/fragment_form_property">
+        <action
+            android:id="@+id/action_propertyFormFragment_to_propertiesFragment"
+            app:destination="@id/propertiesFragment"
+            app:launchSingleTop="true" />
+    </fragment>
     <fragment
         android:id="@+id/purchaseFormFragment"
         android:name="al.ahgitdevelopment.municion.ui.purchases.PurchaseFormFragment"
         android:label="PurchaseFormFragment"
-        tools:layout="@layout/fragment_form_purchase" />
+        tools:layout="@layout/fragment_form_purchase">
+        <action
+            android:id="@+id/action_purchaseFormFragment_to_purchasesFragment"
+            app:destination="@id/purchasesFragment"
+            app:launchSingleTop="true" />
+    </fragment>
     <fragment
         android:id="@+id/competitionFormFragment"
         android:name="al.ahgitdevelopment.municion.ui.competitions.CompetitionFormFragment"
         android:label="CompetitionFormFragment"
-        tools:layout="@layout/fragment_form_competition" />
+        tools:layout="@layout/fragment_form_competition">
+        <action
+            android:id="@+id/action_competitionFormFragment_to_competitionsFragment"
+            app:destination="@id/competitionsFragment"
+            app:launchSingleTop="true" />
+    </fragment>
 
 </navigation>

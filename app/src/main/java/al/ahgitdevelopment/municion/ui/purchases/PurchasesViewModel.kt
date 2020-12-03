@@ -35,7 +35,7 @@ class PurchasesViewModel @ViewModelInject constructor(
         navigateToForm.call()
     }
 
-    fun deletePurchase(purchaseId: Long) = viewModelScope.launch(ioDispatcher) {
+    fun deletePurchase(purchaseId: String) = viewModelScope.launch(ioDispatcher) {
         wrapEspressoIdlingResource {
             repository.removePurchase(purchaseId)
         }
