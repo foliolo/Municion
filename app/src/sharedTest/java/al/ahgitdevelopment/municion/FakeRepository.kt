@@ -52,7 +52,7 @@ class FakeRepository : RepositoryContract {
         }
     }
 
-    override fun getLicenses(forceUpdate: Boolean): Flow<List<License>> {
+    override fun getLicenses(): Flow<List<License>> {
         return if (shouldReturnError && !retrieveLocalData) {
             throw Exception(ERROR_MESSAGE)
         } else {

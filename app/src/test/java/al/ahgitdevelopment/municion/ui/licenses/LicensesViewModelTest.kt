@@ -58,7 +58,7 @@ class LicensesViewModelTest {
     @Test
     fun `get licenses retrieves data`() = runBlocking {
         // GIVEN
-        every { repository.getLicenses(false) }.returns(FAKE_LICENSES.toFlow())
+        every { repository.getLicenses() }.returns(FAKE_LICENSES.toFlow())
         SUT = LicensesViewModel(repository, ioDispatcher, savedStateHandle)
         // ACT
         val result = SUT.licenses.getOrAwaitValue(500, TimeUnit.MILLISECONDS)

@@ -26,4 +26,7 @@ interface DataSourceContract {
     suspend fun removeCompetition(id: String)
 
     suspend fun removeAllLicenses()
+    suspend fun removeAllProperties()
+    suspend fun removeAllPurchases()
+    suspend fun removeAllCompetitions()
 }

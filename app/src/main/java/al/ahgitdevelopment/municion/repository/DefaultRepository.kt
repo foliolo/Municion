@@ -5,30 +5,50 @@ import al.ahgitdevelopment.municion.datamodel.License
 import al.ahgitdevelopment.municion.datamodel.Property
 import al.ahgitdevelopment.municion.datamodel.Purchase
 import al.ahgitdevelopment.municion.utils.wrapEspressoIdlingResource
+import android.content.Context
+import android.net.ConnectivityManager
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
 open class DefaultRepository(
+    private val context: Context,
     private val localDataSource: DataSourceContract,
     private val remoteDataSource: DataSourceContract
 ) : RepositoryContract {
 
     override fun getProperties(): Flow<List<Property>> {
-        return wrapEspressoIdlingResource { localDataSource.properties }
+        return wrapEspressoIdlingResource {
+
+            if (isConnected()) {
+                remoteDataSource.properties.map { properties ->
+                    localDataSource.removeAllProperties()
+                    properties.forEach { localDataSource.saveProperty(it) }
+                    properties
+                }
+            } else {
+                localDataSource.properties
+            }
+        }
     }
 
     override fun getPurchases(): Flow<List<Purchase>> {
-        return wrapEspressoIdlingResource { localDataSource.purchases }
+        return wrapEspressoIdlingResource {
+            if (isConnected()) {
+                remoteDataSource.purchases.map { purchases ->
+                    localDataSource.removeAllPurchases()
+                    purchases.forEach { localDataSource.savePurchase(it) }
+                    purchases
+                }
+            } else {
+                localDataSource.purchases
+            }
+        }
     }
 
-    override fun getLicenses(forceUpdate: Boolean): Flow<List<License>> {
+    override fun getLicenses(): Flow<List<License>> {
         return wrapEspressoIdlingResource {
 
-            // Retrieve data locally and from firebase
-            // val remoteLicenses = remoteDataSource.licenses
-            // val localLicenses = localDataSource.licenses
-
-            if (forceUpdate) {
+            if (isConnected()) {
                 remoteDataSource.licenses.map { licenses ->
                     localDataSource.removeAllLicenses()
                     licenses.forEach { localDataSource.saveLicense(it) }
@@ -37,50 +57,22 @@ open class DefaultRepository(
             } else {
                 localDataSource.licenses
             }
-
-            /*
-            remoteLicenses.combineTransform(localLicenses) { remote, local ->
-
-                remote.forEach { remoteLicense ->
-                    // If license.id already exist in local database, then update the element
-                    local.find { it.id == remoteLicense.id }?.let { localLicense ->
-                        localDataSource.removeLicense(localLicense!!.id)
-                        localDataSource.saveLicense(remoteLicense)
-                        local.toMutableList().remove(localLicense)
-                        local.toMutableList().add(remoteLicense)
-                    }
-
-                    // Otherwise, add the new element
-                    if (!local.contains(remoteLicense)) {
-                        localDataSource.saveLicense(remoteLicense)
-                        local.toMutableList().add(remoteLicense)
-                    }
-                }
-
-                emit(local)
-            }
-            */
         }
     }
-    //
-    // private suspend fun addLicense(remote: List<License>, local: List<License>) {
-    //     remote.forEach { remoteLicense ->
-    //         !local.contains(remoteLicense).apply {
-    //             localDataSource.saveLicense(remoteLicense)
-    //         }
-    //     }
-    // }
-    //
-    // private suspend fun updateLicense(remote: List<License>, local: List<License>) {
-    //     remote.forEach { remoteLicense ->
-    //         !local.contains(remoteLicense).apply {
-    //             localDataSource.saveLicense(remoteLicense)
-    //         }
-    //     }
-    // }
 
     override fun getCompetitions(): Flow<List<Competition>> {
-        return wrapEspressoIdlingResource { localDataSource.competitions }
+        return wrapEspressoIdlingResource {
+
+            if (isConnected()) {
+                remoteDataSource.competitions.map { competitions ->
+                    localDataSource.removeAllCompetitions()
+                    competitions.forEach { localDataSource.saveCompetition(it) }
+                    competitions
+                }
+            } else {
+                localDataSource.competitions
+            }
+        }
     }
 
     override suspend fun saveProperty(property: Property) {
@@ -121,5 +113,15 @@ open class DefaultRepository(
     override suspend fun removeCompetition(id: String) {
         localDataSource.removeCompetition(id)
         remoteDataSource.removeCompetition(id)
+    }
+
+    private fun isConnected(): Boolean {
+
+        val cm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        if (cm.activeNetworkInfo != null && cm.activeNetworkInfo!!.isConnected) {
+            return true
+        }
+
+        return false
     }
 }
