@@ -22,10 +22,7 @@ class RepositoryModule {
 
     @TypeLocalDataSource
     @Provides
-    fun providesLocalDataSource(
-        @ApplicationContext appContext: Context,
-        database: AppDatabase
-    ): DataSourceContract {
+    fun providesLocalDataSource(database: AppDatabase): DataSourceContract {
         return LocalDataSource(database)
     }
 
@@ -45,10 +42,11 @@ object GenericRepositoryModule {
 
     @Provides
     fun providesRepository(
+        @ApplicationContext appContext: Context,
         @TypeLocalDataSource localDataSource: DataSourceContract,
         @TypeRemoteDataSource remoteDataSource: DataSourceContract
     ): RepositoryContract {
-        return DefaultRepository(localDataSource, remoteDataSource)
+        return DefaultRepository(appContext, localDataSource, remoteDataSource)
     }
 }
 

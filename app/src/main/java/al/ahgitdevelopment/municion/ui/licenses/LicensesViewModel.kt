@@ -23,7 +23,7 @@ class LicensesViewModel @ViewModelInject constructor(
     @Assisted private val savedStateHandle: SavedStateHandle
 ) : BaseViewModel() {
 
-    val licenses = repository.getLicenses(false)
+    var licenses = repository.getLicenses()
         .catch { error.postValue(it.message) }
         .asLiveData()
 
@@ -44,5 +44,11 @@ class LicensesViewModel @ViewModelInject constructor(
         wrapEspressoIdlingResource {
             repository.saveLicense(license)
         }
+    }
+
+    fun sync() {
+        // repository.getLicenses(true)
+        //     .catch { error.postValue(it.message) }
+        //     .asLiveData()
     }
 }

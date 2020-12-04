@@ -6,62 +6,20 @@ import al.ahgitdevelopment.municion.datamodel.Property
 import al.ahgitdevelopment.municion.datamodel.Purchase
 import al.ahgitdevelopment.municion.repository.DataSourceContract
 import al.ahgitdevelopment.municion.repository.database.KEY_ID
+import al.ahgitdevelopment.municion.utils.queryCompetitionsAsFlow
+import al.ahgitdevelopment.municion.utils.queryLicensesAsFlow
+import al.ahgitdevelopment.municion.utils.queryPropertiesAsFlow
+import al.ahgitdevelopment.municion.utils.queryPurchasesAsFlow
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.Query
 import com.google.firebase.database.ValueEventListener
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.callbackFlow
 import timber.log.Timber
 import javax.inject.Inject
-
-// @ExperimentalCoroutinesApi
-// private fun DatabaseReference.perform(): Flow<ArrayList<License>> = callbackFlow {
-//     addValueEventListener(object : ValueEventListener {
-//         override fun onDataChange(snapshot: DataSnapshot) {
-//             val licenses = arrayListOf<License>()
-//             snapshot.children.forEach { dataSnapshot ->
-//                 dataSnapshot.getValue(License::class.java)?.let { license ->
-//                     licenses.add(license)
-//                 }
-//             }
-//             offer(licenses)
-//         }
-//
-//         override fun onCancelled(error: DatabaseError) {
-//             offer(listOf<ArrayList<License>>())
-//         }
-//     })
-// }
-
-@ExperimentalCoroutinesApi
-inline fun <reified T : Any> DatabaseReference.queryAsFlow(nodeSelector: DatabaseReference.() -> DatabaseReference = { this }): Flow<T> =
-    callbackFlow {
-        val valueEventListener = object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                val licenses = arrayListOf<License>()
-                snapshot.children.forEach { dataSnapshot ->
-                    dataSnapshot.getValue(License::class.java)?.let { license ->
-                        licenses.add(license)
-                    }
-                }
-                offer(licenses)
-            }
-
-            override fun onCancelled(error: DatabaseError) {
-                close(error.toException())
-            }
-        }
-        addValueEventListener(valueEventListener)
-
-        awaitClose { removeEventListener(valueEventListener) }
-        // nodeSelector.removeEventListener(valueEventListener)
-    }
 
 @ExperimentalCoroutinesApi
 class RemoteDataSource @Inject internal constructor(
@@ -69,114 +27,18 @@ class RemoteDataSource @Inject internal constructor(
     private val auth: FirebaseAuth
 ) : DataSourceContract {
 
-    // override var licenses: Flow<List<License>> = auth.currentUser?.let { userId ->
-    //     database.reference.child(ROOT).child(userId.uid).child(LICENSES).queryAsFlow()
-    // }
     override var licenses: Flow<List<License>> =
-        database.reference.child(ROOT).child(auth.currentUser!!.uid).child(LICENSES).queryAsFlow()
+        database.reference.child(ROOT).child(auth.currentUser!!.uid).child(LICENSES).queryLicensesAsFlow()
 
-    override var properties: Flow<List<Property>>
-        get() = TODO("Not yet implemented")
-        set(value) {}
+    override var properties: Flow<List<Property>> =
+        database.reference.child(ROOT).child(auth.currentUser!!.uid).child(PROPERTIES).queryPropertiesAsFlow()
 
-    override var purchases: Flow<List<Purchase>>
-        get() = TODO("Not yet implemented")
-        set(value) {}
+    override var purchases: Flow<List<Purchase>> =
+        database.reference.child(ROOT).child(auth.currentUser!!.uid).child(PURCHASES).queryPurchasesAsFlow()
 
-    // override var licenses: Flow<List<License>> = flow<List<License>> {
-    //     auth.currentUser?.let { userId ->
-    //         database.reference.child(ROOT).child(userId.uid).child(LICENSES)
-    //             .addValueEventListener(object : ValueEventListener {
-    //                 override fun onDataChange(snapshot: DataSnapshot) {
-    //                     val licenses = arrayListOf<License>()
-    //                     snapshot.children.forEach { dataSnapshot ->
-    //                         dataSnapshot.getValue(License::class.java)?.let { license ->
-    //                             licenses.add(license)
-    //                         }
-    //                     }
-    //                     GlobalScope.launch() {
-    //                         emit(licenses)
-    //                     }
-    //                 }
-    //
-    //                 override fun onCancelled(error: DatabaseError) {
-    //                     GlobalScope.launch() {
-    //                         emit(listOf())
-    //                     }
-    //                 }
-    //             })
-    //     }
-    // }.flowOn(Dispatchers.IO)
-
-    // override suspend fun getLicenses(): Flow<List<License>> =  flow<List<License>> {
-    //     auth.currentUser?.let { userId ->
-    //         database.reference.child(ROOT).child(userId.uid).child(LICENSES)
-    //             .addValueEventListener(object : ValueEventListener {
-    //                 override fun onDataChange(snapshot: DataSnapshot) {
-    //                     val licenses = arrayListOf<License>()
-    //                     snapshot.children.forEach { dataSnapshot ->
-    //                         dataSnapshot.getValue(License::class.java)?.let { license ->
-    //                             licenses.add(license)
-    //                         }
-    //                     }
-    //                     this@flow.emit(value = licenses)
-    //                 }
-    //
-    //                 override fun onCancelled(error: DatabaseError) {
-    //                     this@flow.emit( listOf())
-    //                 }
-    //             })
-    //     }
-    // }.flowOn(Dispatchers.IO)
-
-// override var licenses: Flow<List<License>> = channelFlow {
-//     auth.currentUser?.let { userId ->
-//         database.reference.child(ROOT).child(userId.uid).child(LICENSES)
-//             .addValueEventListener(object : ValueEventListener {
-//                 override fun onDataChange(snapshot: DataSnapshot) {
-//                     val licenses = arrayListOf<License>()
-//                     snapshot.children.forEach { dataSnapshot ->
-//                         dataSnapshot.getValue(License::class.java)?.let { license ->
-//                             licenses.add(license)
-//                         }
-//                     }
-//                     GlobalScope.launch(Dispatchers.Default) {
-//                         this@channelFlow.send(licenses)
-//                     }
-//                 }
-//
-//                 override fun onCancelled(error: DatabaseError) {
-//                     GlobalScope.launch(Dispatchers.Default) {
-//                         this@channelFlow.send(listOf())
-//                     }
-//                 }
-//             })
-//     }
-//     this.channel.invokeOnClose { it?.stackTrace }
-// }
-
-    // override var licenses: Flow<List<License>> = flow<List<License>> {
-    //     auth.currentUser?.let { userId ->
-    //         database.reference.child(ROOT).child(userId.uid).child("licenses")
-    //         object : ValueEventListener {
-    //             override fun onDataChange(snapshot: DataSnapshot) {
-    //                 // this@flow.emit(snapshot.getValue(List::class.java) as List<License> )
-    //                 this@flow.emit(listOf<License>())
-    //                 // snapshot.children.forEach{
-    //                 //     arrayListOf<License>().add(it.getValue<License>())
-    //                 // }
-    //             }
-    //
-    //             override fun onCancelled(error: DatabaseError) {
-    //                 TODO("Not yet implemented")
-    //             }
-    //         }
-    //     }
-    // }.flowOn(Dispatchers.IO)
-
-    override var competitions: Flow<List<Competition>>
-        get() = TODO("Not yet implemented")
-        set(value) {}
+    override var competitions: Flow<List<Competition>> =
+        database.reference.child(ROOT).child(auth.currentUser!!.uid).child(COMPETITIONS)
+            .queryCompetitionsAsFlow()
 
     override suspend fun saveProperty(property: Property) {
         Timber.v("Save Purchase on Firebase with id: ${property.id}")
@@ -251,15 +113,30 @@ class RemoteDataSource @Inject internal constructor(
         Timber.v("Remove All License on Firebase")
         auth.currentUser?.let { userId ->
             val ref = database.reference.child(ROOT).child(userId.uid).child(LICENSES).ref.removeValue()
-            // val query = ref.orderByChild(License::id.name)
-            //
-            // query.ref.removeValue { error, _ ->
-            //     if (error != null) {
-            //         Timber.v("License removed from Firebase")
-            //     } else {
-            //         Timber.v("Error removing license from Firebase")
-            //     }
-            // }
+        }
+    }
+
+    override suspend fun removeAllProperties() {
+        // TODO: to be implemented and tested
+        Timber.v("Remove All Properties on Firebase")
+        auth.currentUser?.let { userId ->
+            val ref = database.reference.child(ROOT).child(userId.uid).child(PROPERTIES).ref.removeValue()
+        }
+    }
+
+    override suspend fun removeAllPurchases() {
+        // TODO: to be implemented and tested
+        Timber.v("Remove All Purchases on Firebase")
+        auth.currentUser?.let { userId ->
+            val ref = database.reference.child(ROOT).child(userId.uid).child(PURCHASES).ref.removeValue()
+        }
+    }
+
+    override suspend fun removeAllCompetitions() {
+        // TODO: to be implemented and tested
+        Timber.v("Remove All Competitions on Firebase")
+        auth.currentUser?.let { userId ->
+            val ref = database.reference.child(ROOT).child(userId.uid).child(COMPETITIONS).ref.removeValue()
         }
     }
 // override var properties: Flow<List<Property>> = db.propertyDao().getProperties()
