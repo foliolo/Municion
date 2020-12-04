@@ -14,7 +14,7 @@ interface RepositoryContract {
 
     fun getProperties(): Flow<List<Property>>
     fun getPurchases(): Flow<List<Purchase>>
-    fun getLicenses(forceUpdate: Boolean): Flow<List<License>>
+    fun getLicenses(): Flow<List<License>>
     fun getCompetitions(): Flow<List<Competition>>
 
     suspend fun saveProperty(property: Property)
