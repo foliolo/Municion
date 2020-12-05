@@ -10,6 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.widget.ContentLoadingProgressBar
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -57,6 +58,13 @@ class LicensesFragment @Inject constructor() : BaseFragment(), RecyclerInterface
             Toast.makeText(requireContext(), it, Toast.LENGTH_LONG).show()
         }
 
+        viewModel.progressBar.observe(viewLifecycleOwner) {
+            when (it.getContentIfNotHandled()) {
+                true -> activity?.findViewById<ContentLoadingProgressBar>(R.id.progressBar)?.show()
+                false -> activity?.findViewById<ContentLoadingProgressBar>(R.id.progressBar)?.hide()
+            }
+        }
+
         viewModel.licenses.observe(viewLifecycleOwner) {
             licensesAdapter = LicenseAdapter().apply {
                 submitList(it.sortedBy { it.licenseName })
@@ -80,6 +88,8 @@ class LicensesFragment @Inject constructor() : BaseFragment(), RecyclerInterface
                         }
                     })
                 ).attachToRecyclerView(this)
+
+                viewModel.hideProgressBar()
             }
         }
     }
