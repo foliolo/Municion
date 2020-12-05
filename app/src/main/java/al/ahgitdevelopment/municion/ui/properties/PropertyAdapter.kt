@@ -3,11 +3,12 @@ package al.ahgitdevelopment.municion.ui.properties
 import al.ahgitdevelopment.municion.R
 import al.ahgitdevelopment.municion.datamodel.Property
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import kotlinx.android.synthetic.main.adapter_item_property.view.*
 
 class PropertyAdapter : ListAdapter<Property, PropertyAdapter.PropertyViewHolder>(DIFF_CALLBACK) {
@@ -23,7 +24,7 @@ class PropertyAdapter : ListAdapter<Property, PropertyAdapter.PropertyViewHolder
         holder.bindTo(getItem(position))
     }
 
-    class PropertyViewHolder(parent: ViewGroup) : RecyclerView.ViewHolder(parent) {
+    class PropertyViewHolder(private val parent: ViewGroup) : RecyclerView.ViewHolder(parent) {
 
         fun bindTo(item: Property) {
             itemView.item_property_nickname.text = item.nickname
@@ -31,13 +32,20 @@ class PropertyAdapter : ListAdapter<Property, PropertyAdapter.PropertyViewHolder
             itemView.item_property_brand.text = item.brand
             itemView.item_property_model.text = item.model
             itemView.item_property_bore.text = item.bore1
-            if (item.image.isNullOrBlank()) {
-                itemView.item_property_image.visibility = View.GONE
-            } else {
-                itemView.item_property_image.visibility = View.VISIBLE
-                // itemView.item_property_image.setImageResource(item.image)
-            }
+
+            Glide.with(parent.context)
+                .load(item.image)
+                .error(getRandomImage())
+                .into(itemView.item_property_image)
         }
+
+        private fun getRandomImage() = arrayListOf(
+            ContextCompat.getDrawable(parent.context, R.drawable.ic_avancarga),
+            ContextCompat.getDrawable(parent.context, R.drawable.ic_pistola),
+            ContextCompat.getDrawable(parent.context, R.drawable.ic_revolver),
+            ContextCompat.getDrawable(parent.context, R.drawable.ic_rifle),
+            ContextCompat.getDrawable(parent.context, R.drawable.ic_shotgun)
+        ).random()?.current
     }
 
     companion object {

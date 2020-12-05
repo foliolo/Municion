@@ -37,8 +37,8 @@
 
             <ImageView
                 android:id="@+id/item_property_image"
-                android:layout_width="110dp"
-                android:layout_height="110dp"
+                android:layout_width="@dimen/image_item_adapter"
+                android:layout_height="@dimen/image_item_adapter"
                 android:layout_gravity="center"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"

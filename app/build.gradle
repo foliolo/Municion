@@ -230,6 +230,10 @@ dependencies {
     // Timber
     implementation 'com.jakewharton.timber:timber:4.7.1'
 
+    // Glide
+    implementation 'com.github.bumptech.glide:glide:4.11.0'
+    kapt 'com.github.bumptech.glide:compiler:4.11.0'
+
     // Espresso idling-resources
     androidTestImplementation('com.linkedin.dexmaker:dexmaker-mockito:2.12.1')
     def espressoVersion = '3.3.0'

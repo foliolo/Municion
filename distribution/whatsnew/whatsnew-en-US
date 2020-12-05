@@ -1,2 +1,3 @@
 Synchronise firebase database when reconnecting network.
-Added progress bar when loading items from Firebase
+Added progress bar when loading items from Firebase.
+Added empty images.
