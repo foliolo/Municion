@@ -47,7 +47,6 @@ open class DefaultRepository(
 
     override fun getLicenses(): Flow<List<License>> {
         return wrapEspressoIdlingResource {
-
             if (isConnected()) {
                 remoteDataSource.licenses.map { licenses ->
                     localDataSource.removeAllLicenses()

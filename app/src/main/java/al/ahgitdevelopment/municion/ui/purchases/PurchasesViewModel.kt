@@ -31,6 +31,10 @@ class PurchasesViewModel @ViewModelInject constructor(
 
     val error = SingleLiveEvent<String>()
 
+    init {
+        showProgressBar()
+    }
+
     fun fabClick(view: View?) {
         navigateToForm.call()
     }

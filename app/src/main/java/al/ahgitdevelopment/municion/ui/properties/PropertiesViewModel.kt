@@ -35,6 +35,10 @@ class PropertiesViewModel @ViewModelInject constructor(
 
     val error = SingleLiveEvent<String>()
 
+    init {
+        showProgressBar()
+    }
+
     fun fabClick(view: View?) {
         _navigateToForm.postValue(Event(Unit))
     }
