@@ -30,6 +30,10 @@ class CompetitionsViewModel @ViewModelInject constructor(
 
     val error = SingleLiveEvent<Throwable>()
 
+    init {
+        showProgressBar()
+    }
+
     fun fabClick(view: View?) {
         navigateToForm.call()
     }

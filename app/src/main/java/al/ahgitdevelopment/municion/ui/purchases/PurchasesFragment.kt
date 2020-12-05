@@ -10,6 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.widget.ContentLoadingProgressBar
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -53,6 +54,13 @@ class PurchasesFragment : BaseFragment(), RecyclerInterface {
             )
         }
 
+        viewModel.progressBar.observe(viewLifecycleOwner) {
+            when (it.getContentIfNotHandled()) {
+                true -> activity?.findViewById<ContentLoadingProgressBar>(R.id.progressBar)?.show()
+                false -> activity?.findViewById<ContentLoadingProgressBar>(R.id.progressBar)?.hide()
+            }
+        }
+
         viewModel.purchases.observe(viewLifecycleOwner) {
             purchaseAdapter = PurchaseAdapter().apply {
                 submitList(it.sortedBy { it.brand })
@@ -76,6 +84,8 @@ class PurchasesFragment : BaseFragment(), RecyclerInterface {
                         }
                     })
                 ).attachToRecyclerView(this)
+
+                viewModel.hideProgressBar()
             }
         }
     }

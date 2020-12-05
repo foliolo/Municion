@@ -30,6 +30,10 @@ class LicensesViewModel @ViewModelInject constructor(
     val navigateToForm = SingleLiveEvent<Unit>()
     val error = SingleLiveEvent<String>()
 
+    init {
+        showProgressBar()
+    }
+
     fun fabClick(view: View?) {
         navigateToForm.call()
     }
@@ -44,11 +48,5 @@ class LicensesViewModel @ViewModelInject constructor(
         wrapEspressoIdlingResource {
             repository.saveLicense(license)
         }
-    }
-
-    fun sync() {
-        // repository.getLicenses(true)
-        //     .catch { error.postValue(it.message) }
-        //     .asLiveData()
     }
 }
