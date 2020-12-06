@@ -11,20 +11,22 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import kotlinx.android.synthetic.main.adapter_item_property.view.*
 
-class PropertyAdapter : ListAdapter<Property, PropertyAdapter.PropertyViewHolder>(DIFF_CALLBACK) {
+class PropertyAdapter(private val listener: PropertyAdapterListener) :
+    ListAdapter<Property, PropertyAdapter.PropertyViewHolder>(DIFF_CALLBACK) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PropertyViewHolder {
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.adapter_item_property, parent, false) as ViewGroup
 
-        return PropertyViewHolder(view)
+        return PropertyViewHolder(view, listener)
     }
 
     override fun onBindViewHolder(holder: PropertyViewHolder, position: Int) {
         holder.bindTo(getItem(position))
     }
 
-    class PropertyViewHolder(private val parent: ViewGroup) : RecyclerView.ViewHolder(parent) {
+    class PropertyViewHolder(private val parent: ViewGroup, private val listener: PropertyAdapterListener) :
+        RecyclerView.ViewHolder(parent) {
 
         fun bindTo(item: Property) {
             itemView.item_property_nickname.text = item.nickname
@@ -37,6 +39,10 @@ class PropertyAdapter : ListAdapter<Property, PropertyAdapter.PropertyViewHolder
                 .load(item.image)
                 .error(getRandomImage())
                 .into(itemView.item_property_image)
+
+            itemView.item_property_image.setOnClickListener {
+                listener.updateImage(item)
+            }
         }
 
         private fun getRandomImage() = arrayListOf(

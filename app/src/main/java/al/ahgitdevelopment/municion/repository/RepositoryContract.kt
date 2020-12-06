@@ -26,4 +26,7 @@ interface RepositoryContract {
     suspend fun removePurchase(id: String)
     suspend fun removeLicense(id: String)
     suspend fun removeCompetition(id: String)
+
+    fun savePropertyImageItem(itemId: String, imageUrl: String)
+    fun savePurchaseImageItem(itemId: String, imageUrl: String)
 }

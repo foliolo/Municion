@@ -33,4 +33,10 @@ class LocalDataSource @Inject constructor(private val db: AppDatabase) : DataSou
     override suspend fun removeAllProperties() = db.propertyDao().deleteAll()
     override suspend fun removeAllPurchases() = db.purchaseDao().deleteAll()
     override suspend fun removeAllCompetitions() = db.competitionDao().deleteAll()
+
+    override fun savePropertyImageItem(itemId: String, imageUrl: String) =
+        db.propertyDao().savePropertyImageItem(itemId, imageUrl)
+
+    override fun savePurchaseImageItem(itemId: String, imageUrl: String) =
+        db.purchaseDao().savePurchaseImageItem(itemId, imageUrl)
 }

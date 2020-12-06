@@ -1,13 +1,17 @@
 package al.ahgitdevelopment.municion.repository.firebase
 
 import android.content.Context
+import android.graphics.Bitmap
 import android.net.ConnectivityManager
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
+import com.google.firebase.storage.UploadTask
+import com.google.firebase.storage.ktx.storageMetadata
 import kotlinx.coroutines.tasks.await
 import timber.log.Timber
+import java.io.ByteArrayOutputStream
 import java.io.File
 
 class RemoteStorageDataSource constructor(
@@ -21,7 +25,7 @@ class RemoteStorageDataSource constructor(
     private val imagesRootDir = context.externalCacheDir
 
     override suspend fun getTutorialImages(): List<File> {
-        val imageReference = storage.reference.child(STORAGE_ROOT_PATH)
+        val imageReference = storage.reference.child(TUTORIAL_ROOT_PATH)
 
         return auth.currentUser.let { currentUser ->
             @Suppress("DEPRECATION")
@@ -35,6 +39,32 @@ class RemoteStorageDataSource constructor(
             }
         }
     }
+
+    override fun saveItemImage(bitmap: Bitmap, itemId: String): UploadTask {
+        val imageReference = storage.reference.child(DATABASE_V2_ROOT_PATH).child(USER_IMAGES_ROOT_PATH)
+        lateinit var uploadTask: UploadTask
+
+        auth.currentUser.let { currentUser ->
+            @Suppress("DEPRECATION")
+            if (currentUser != null && connectivityManager.activeNetworkInfo?.isConnected == true) {
+                Timber.d("Retrieve images")
+
+                storageMetadata { contentType = "image/jpg" }.let { metadata ->
+
+                    uploadTask = imageReference.child(currentUser.uid).child("$itemId.jpg").putBytes(
+                        getBytesOf(bitmap), metadata
+                    )
+                }
+            } else {
+                Timber.w("Not authenticated")
+                crashlytics.recordException(IllegalStateException("Not authenticated"))
+            }
+        }
+
+        return uploadTask
+    }
+
+    override fun getReference(path: String?): StorageReference = storage.reference.child(path ?: "")
 
     private suspend fun verifyMetadataOrDownload(imageReference: StorageReference): List<File> {
 
@@ -78,9 +108,16 @@ class RemoteStorageDataSource constructor(
         writeText(text = md5Hash.orEmpty())
     }
 
-    companion object {
-        private const val STORAGE_ROOT_PATH = "TutorialImages"
+    private fun getBytesOf(bitmap: Bitmap) = ByteArrayOutputStream().apply {
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, this)
+    }.toByteArray()
 
+    companion object {
+        private const val TUTORIAL_ROOT_PATH = "TutorialImages"
+        private const val DATABASE_V2_ROOT_PATH = "GlobalDatabase_v2"
+        private const val USER_IMAGES_ROOT_PATH = "UserImages"
+
+        // FIXME: Move this variables out of here
         const val PARAM_USER_UID = "user_uid"
         const val EVENT_LOGOUT = "logout"
         const val EVENT_CLOSE_APP = "close_app"

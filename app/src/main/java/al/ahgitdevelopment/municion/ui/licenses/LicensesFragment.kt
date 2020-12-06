@@ -99,7 +99,7 @@ class LicensesFragment @Inject constructor() : BaseFragment(), RecyclerInterface
             .signOut(requireContext())
             .addOnCompleteListener {
                 viewModel.recordLogoutEvent(analytics)
-                viewModel.clearUserData(analytics, crashlytics)
+                viewModel.clearUserData(analytics)
                 findNavController().navigate(R.id.loginPasswordFragment)
             }
     }
