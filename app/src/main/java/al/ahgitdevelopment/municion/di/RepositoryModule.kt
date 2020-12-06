@@ -12,12 +12,12 @@ import com.google.firebase.database.FirebaseDatabase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.components.ApplicationComponent
 import dagger.hilt.android.qualifiers.ApplicationContext
+import dagger.hilt.components.SingletonComponent
 import javax.inject.Qualifier
 
 @Module
-@InstallIn(ApplicationComponent::class)
+@InstallIn(SingletonComponent::class)
 class RepositoryModule {
 
     @TypeLocalDataSource
@@ -37,7 +37,7 @@ class RepositoryModule {
  * The binding for Repository is on its own module so that we can replace it easily in tests.
  */
 @Module
-@InstallIn(ApplicationComponent::class)
+@InstallIn(SingletonComponent::class)
 object GenericRepositoryModule {
 
     @Provides

@@ -55,7 +55,7 @@ class PurchasesViewModel @ViewModelInject constructor(
         }
     }
 
-    fun savePicture(bitmap: Bitmap, purchase: Purchase) {
+    fun savePicture(bitmap: Bitmap?, purchase: Purchase) {
         wrapEspressoIdlingResource {
             showProgressBar()
             // Upload de image to firebase store and get the link

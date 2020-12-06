@@ -59,7 +59,7 @@ class PropertiesViewModel @ViewModelInject constructor(
         }
     }
 
-    fun savePicture(bitmap: Bitmap, property: Property) {
+    fun savePicture(bitmap: Bitmap?, property: Property) {
         wrapEspressoIdlingResource {
             showProgressBar()
             // Upload de image to firebase store and get the link

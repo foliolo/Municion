@@ -40,7 +40,7 @@ class RemoteStorageDataSource constructor(
         }
     }
 
-    override fun saveItemImage(bitmap: Bitmap, itemId: String): UploadTask {
+    override fun saveItemImage(bitmap: Bitmap?, itemId: String): UploadTask {
         val imageReference = storage.reference.child(DATABASE_V2_ROOT_PATH).child(USER_IMAGES_ROOT_PATH)
         lateinit var uploadTask: UploadTask
 
@@ -108,8 +108,8 @@ class RemoteStorageDataSource constructor(
         writeText(text = md5Hash.orEmpty())
     }
 
-    private fun getBytesOf(bitmap: Bitmap) = ByteArrayOutputStream().apply {
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, this)
+    private fun getBytesOf(bitmap: Bitmap?) = ByteArrayOutputStream().apply {
+        bitmap?.compress(Bitmap.CompressFormat.JPEG, 100, this)
     }.toByteArray()
 
     companion object {
