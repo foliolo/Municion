@@ -46,15 +46,19 @@ class NavigationActivity : AppCompatActivity() {
                     nav_view.visibility = View.GONE
                 }
                 R.id.propertiesFragment -> {
+                    setToolbarSubtitle(getString(R.string.section_properties_title))
                     nav_view.visibility = View.VISIBLE
                 }
                 R.id.purchasesFragment -> {
+                    setToolbarSubtitle(getString(R.string.section_purchases_title))
                     nav_view.visibility = View.VISIBLE
                 }
                 R.id.licensesFragment -> {
+                    setToolbarSubtitle(getString(R.string.section_licenses_title))
                     nav_view.visibility = View.VISIBLE
                 }
                 R.id.competitionsFragment -> {
+                    setToolbarSubtitle(getString(R.string.section_competitions_title))
                     nav_view.visibility = View.VISIBLE
                 }
             }
