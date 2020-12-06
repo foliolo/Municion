@@ -37,7 +37,7 @@ class PropertiesFragment : BaseFragment(), RecyclerInterface, PropertyAdapterLis
     private lateinit var auxProperty: Property
 
     private val getContent =
-        registerForActivityResult(ActivityResultContracts.TakePicturePreview()) { bitmap: Bitmap ->
+        registerForActivityResult(ActivityResultContracts.TakePicturePreview()) { bitmap: Bitmap? ->
             viewModel.savePicture(bitmap, auxProperty)
         }
 
