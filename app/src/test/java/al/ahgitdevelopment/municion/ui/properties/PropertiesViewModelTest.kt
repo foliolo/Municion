@@ -4,6 +4,7 @@ import al.ahgitdevelopment.municion.FakeRepository.Companion.FAKE_PROPERTIES
 import al.ahgitdevelopment.municion.FakeRepository.Companion.FAKE_PROPERTY
 import al.ahgitdevelopment.municion.ext.getOrAwaitValue
 import al.ahgitdevelopment.municion.repository.RepositoryContract
+import al.ahgitdevelopment.municion.repository.firebase.RemoteStorageDataSourceContract
 import al.ahgitdevelopment.municion.utils.toFlow
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.SavedStateHandle
@@ -29,6 +30,9 @@ class PropertiesViewModelTest {
     @MockK
     lateinit var repository: RepositoryContract
 
+    @MockK
+    lateinit var storageRepository: RemoteStorageDataSourceContract
+
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 
     @Before
@@ -40,7 +44,7 @@ class PropertiesViewModelTest {
     fun init_getProperties_success() {
         // GIVEN
         every { repository.getProperties() }.returns(FAKE_PROPERTIES.toFlow())
-        SUT = PropertiesViewModel(repository, ioDispatcher, savedStateHandle)
+        SUT = PropertiesViewModel(repository, storageRepository, ioDispatcher, savedStateHandle)
         // ACT
         val result = SUT.properties.getOrAwaitValue()
         // VERIFY
@@ -50,7 +54,7 @@ class PropertiesViewModelTest {
     @Test
     fun fabClick_navigateToForm_success() {
         // GIVEN
-        SUT = PropertiesViewModel(repository, ioDispatcher, savedStateHandle)
+        SUT = PropertiesViewModel(repository, storageRepository, ioDispatcher, savedStateHandle)
         // ACT
         SUT.fabClick(null)
         // VERIFY
@@ -60,7 +64,7 @@ class PropertiesViewModelTest {
     @Test
     fun deleteProperty_validatePropertyIdPassedToTheRepository_success() {
         // GIVEN
-        SUT = PropertiesViewModel(repository, ioDispatcher, savedStateHandle)
+        SUT = PropertiesViewModel(repository, storageRepository, ioDispatcher, savedStateHandle)
         // ACT
         SUT.deleteProperty(FAKE_PROPERTY.id)
         // VERIFY
@@ -76,7 +80,7 @@ class PropertiesViewModelTest {
     @Test
     fun addProperty_validatePropertyPassedToRepository() {
         // GIVEN
-        SUT = PropertiesViewModel(repository, ioDispatcher, savedStateHandle)
+        SUT = PropertiesViewModel(repository, storageRepository, ioDispatcher, savedStateHandle)
         // ACT
         SUT.addProperty(FAKE_PROPERTY)
         // VERIFY

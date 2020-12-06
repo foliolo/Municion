@@ -114,6 +114,14 @@ open class DefaultRepository(
         remoteDataSource.removeCompetition(id)
     }
 
+    override fun savePropertyImageItem(itemId: String, imageUrl: String) {
+        remoteDataSource.savePropertyImageItem(itemId, imageUrl)
+    }
+
+    override fun savePurchaseImageItem(itemId: String, imageUrl: String) {
+        remoteDataSource.savePurchaseImageItem(itemId, imageUrl)
+    }
+
     private fun isConnected(): Boolean {
 
         val cm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager

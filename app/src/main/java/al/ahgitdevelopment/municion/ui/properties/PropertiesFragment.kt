@@ -3,15 +3,18 @@ package al.ahgitdevelopment.municion.ui.properties
 import al.ahgitdevelopment.municion.BaseFragment
 import al.ahgitdevelopment.municion.R
 import al.ahgitdevelopment.municion.databinding.PropertiesFragmentBinding
+import al.ahgitdevelopment.municion.datamodel.Property
 import al.ahgitdevelopment.municion.ui.DeleteItemOnSwipe
 import al.ahgitdevelopment.municion.ui.RecyclerInterface
 import android.content.Context
+import android.graphics.Bitmap
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.widget.ContentLoadingProgressBar
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.viewModels
@@ -25,11 +28,18 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.properties_fragment.*
 
 @AndroidEntryPoint
-class PropertiesFragment : BaseFragment(), RecyclerInterface {
+class PropertiesFragment : BaseFragment(), RecyclerInterface, PropertyAdapterListener {
 
     private lateinit var propertiesAdapter: PropertyAdapter
 
     private val viewModel: PropertiesViewModel by viewModels()
+
+    private lateinit var auxProperty: Property
+
+    private val getContent =
+        registerForActivityResult(ActivityResultContracts.TakePicturePreview()) { bitmap: Bitmap ->
+            viewModel.savePicture(bitmap, auxProperty)
+        }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -64,7 +74,7 @@ class PropertiesFragment : BaseFragment(), RecyclerInterface {
         }
 
         viewModel.properties.observe(viewLifecycleOwner) {
-            propertiesAdapter = PropertyAdapter().apply {
+            propertiesAdapter = PropertyAdapter(this).apply {
                 submitList(it.sortedBy { it.nickname })
                 setHasStableIds(true)
             }
@@ -86,9 +96,9 @@ class PropertiesFragment : BaseFragment(), RecyclerInterface {
                         }
                     })
                 ).attachToRecyclerView(this)
-
-                viewModel.hideProgressBar()
             }
+
+            viewModel.hideProgressBar()
         }
     }
 
@@ -104,7 +114,7 @@ class PropertiesFragment : BaseFragment(), RecyclerInterface {
             .signOut(requireContext())
             .addOnCompleteListener {
                 viewModel.recordLogoutEvent(analytics)
-                viewModel.clearUserData(analytics, crashlytics)
+                viewModel.clearUserData(analytics)
                 findNavController().navigate(R.id.loginPasswordFragment)
             }
     }
@@ -133,5 +143,11 @@ class PropertiesFragment : BaseFragment(), RecyclerInterface {
                 this?.adapter?.notifyDataSetChanged()
             }.show()
         }
+    }
+
+    override fun updateImage(property: Property) {
+        // https://adambennett.dev/2020/03/introducing-the-activity-result-apis/
+        auxProperty = property
+        getContent.launch(null)
     }
 }

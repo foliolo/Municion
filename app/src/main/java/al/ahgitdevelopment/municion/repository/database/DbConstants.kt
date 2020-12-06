@@ -8,6 +8,7 @@ const val TABLE_COMPETITION = "competitions"
 
 // Common column names
 const val KEY_ID = "id"
+const val KEY_IMAGE = "image"
 
 // Table PROPERTY - column names
 const val KEY_PROPERTY_NICKNAME = "nickname"
@@ -16,7 +17,7 @@ const val KEY_PROPERTY_MODEL = "model"
 const val KEY_PROPERTY_BORE1 = "bore1"
 const val KEY_PROPERTY_BORE2 = "bore2"
 const val KEY_PROPERTY_NUM_ID = "num_id"
-const val KEY_PROPERTY_IMAGE = "image"
+const val KEY_PROPERTY_IMAGE = KEY_IMAGE
 
 // Table PURCHASE - column names
 const val KEY_PURCHASE_BORE1 = "bore1"
@@ -27,7 +28,7 @@ const val KEY_PURCHASE_WEIGHT = "weight"
 const val KEY_PURCHASE_BRAND = "brand"
 const val KEY_PURCHASE_STORE = "store"
 const val KEY_PURCHASE_RATING = "rating"
-const val KEY_PURCHASE_IMAGE = "image"
+const val KEY_PURCHASE_IMAGE = KEY_IMAGE
 
 // Table LICENSE - column names
 const val KEY_LICENSE_NAME = "name"
@@ -36,7 +37,7 @@ const val KEY_LICENSE_DATE_EXPIRY = "date_expiry"
 const val KEY_LICENSE_NUMBER = "number"
 const val KEY_LICENSE_INSURANCE_NUMBER = "insurance_number"
 
-// Table TIRADAS - column names
+// Table COMPETITION - column names
 const val KEY_COMPETITION_DESCRIPTION = "description"
 const val KEY_COMPETITION_RANKING = "ranking"
 const val KEY_COMPETITION_DATE = "date"

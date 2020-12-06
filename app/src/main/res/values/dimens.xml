@@ -22,6 +22,7 @@
 
     <!--Cardview-->
     <dimen name="cardview_margin">8dp</dimen>
+    <dimen name="image_item_adapter">90dp</dimen>
 
 
 </resources>

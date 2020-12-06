@@ -13,8 +13,6 @@ interface DataSourceContract {
     var licenses: Flow<List<License>>
     var competitions: Flow<List<Competition>>
 
-    // suspend fun getLicenses(): Flow<List<License>>
-
     suspend fun saveProperty(property: Property)
     suspend fun savePurchase(purchase: Purchase)
     suspend fun saveLicense(license: License)
@@ -29,4 +27,7 @@ interface DataSourceContract {
     suspend fun removeAllProperties()
     suspend fun removeAllPurchases()
     suspend fun removeAllCompetitions()
+
+    fun savePropertyImageItem(itemId: String, imageUrl: String)
+    fun savePurchaseImageItem(itemId: String, imageUrl: String)
 }
