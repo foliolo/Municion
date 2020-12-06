@@ -35,7 +35,7 @@
     <string name="form_purchase_bore">Diameter Bore</string>
     <string name="property_lbl_bore_2">Diameter Bore (Additional)</string>
     <string name="property_lbl_num_id">Weapon Serial Number</string>
-    <string name="item_property_lbl_num_id">Number of Document Property</string>
+    <string name="item_property_lbl_num_id">Document id</string>
 
     <!--String Purchases Form-->
     <string name="labelInfoCompra">New Purchase Info</string>

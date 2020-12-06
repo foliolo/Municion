@@ -2,6 +2,7 @@ package al.ahgitdevelopment.municion.repository.database.dao
 
 import al.ahgitdevelopment.municion.datamodel.Purchase
 import al.ahgitdevelopment.municion.repository.database.KEY_ID
+import al.ahgitdevelopment.municion.repository.database.KEY_PURCHASE_IMAGE
 import al.ahgitdevelopment.municion.repository.database.TABLE_PURCHASES
 import androidx.room.Dao
 import androidx.room.Insert
@@ -30,4 +31,7 @@ interface PurchaseDao {
 
     @Query("SELECT * from $TABLE_PURCHASES WHERE $KEY_ID = :purchaseId")
     fun getPurchaseById(purchaseId: Long): Purchase
+
+    @Query("UPDATE $TABLE_PURCHASES SET $KEY_PURCHASE_IMAGE=:imageUrl WHERE $KEY_ID=:itemId")
+    fun savePurchaseImageItem(itemId: String, imageUrl: String)
 }

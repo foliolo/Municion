@@ -3,13 +3,16 @@ package al.ahgitdevelopment.municion.ui.purchases
 import al.ahgitdevelopment.municion.BaseFragment
 import al.ahgitdevelopment.municion.R
 import al.ahgitdevelopment.municion.databinding.PurchasesFragmentBinding
+import al.ahgitdevelopment.municion.datamodel.Purchase
 import al.ahgitdevelopment.municion.ui.DeleteItemOnSwipe
 import al.ahgitdevelopment.municion.ui.RecyclerInterface
+import android.graphics.Bitmap
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.widget.ContentLoadingProgressBar
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.viewModels
@@ -23,11 +26,19 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.purchases_fragment.*
 
 @AndroidEntryPoint
-class PurchasesFragment : BaseFragment(), RecyclerInterface {
+class PurchasesFragment : BaseFragment(), RecyclerInterface, PurchaseAdapterListener {
 
     private lateinit var purchaseAdapter: PurchaseAdapter
 
     private val viewModel: PurchasesViewModel by viewModels()
+
+    private lateinit var auxPurchase: Purchase
+
+    @SuppressWarnings
+    private val getContent =
+        registerForActivityResult(ActivityResultContracts.TakePicturePreview()) { bitmap: Bitmap ->
+            viewModel.savePicture(bitmap, auxPurchase)
+        }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -62,7 +73,7 @@ class PurchasesFragment : BaseFragment(), RecyclerInterface {
         }
 
         viewModel.purchases.observe(viewLifecycleOwner) {
-            purchaseAdapter = PurchaseAdapter().apply {
+            purchaseAdapter = PurchaseAdapter(this).apply {
                 submitList(it.sortedBy { it.brand })
                 setHasStableIds(true)
             }
@@ -84,9 +95,9 @@ class PurchasesFragment : BaseFragment(), RecyclerInterface {
                         }
                     })
                 ).attachToRecyclerView(this)
-
-                viewModel.hideProgressBar()
             }
+
+            viewModel.hideProgressBar()
         }
     }
 
@@ -95,7 +106,7 @@ class PurchasesFragment : BaseFragment(), RecyclerInterface {
             .signOut(requireContext())
             .addOnCompleteListener {
                 viewModel.recordLogoutEvent(analytics)
-                viewModel.clearUserData(analytics, crashlytics)
+                viewModel.clearUserData(analytics)
                 findNavController().navigate(R.id.loginPasswordFragment)
             }
     }
@@ -124,5 +135,11 @@ class PurchasesFragment : BaseFragment(), RecyclerInterface {
                 this?.adapter?.notifyDataSetChanged()
             }.show()
         }
+    }
+
+    override fun updateImage(purchase: Purchase) {
+        // https://adambennett.dev/2020/03/introducing-the-activity-result-apis/
+        auxPurchase = purchase
+        getContent.launch(null)
     }
 }

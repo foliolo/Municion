@@ -102,6 +102,14 @@ class FakeRepository : RepositoryContract {
         // }.start()
     }
 
+    override fun savePropertyImageItem(itemId: String, imageUrl: String) {
+        TODO("Not yet implemented")
+    }
+
+    override fun savePurchaseImageItem(itemId: String, imageUrl: String) {
+        TODO("Not yet implemented")
+    }
+
     companion object {
         val FAKE_COMPETITION = Competition(
             "id",

@@ -1,2 +1,4 @@
 Synchronise firebase database when reconnecting network.
-Added progress bar when loading items from Firebase
+Added progress bar when loading items from the database.
+Added random images when there is nothing uploaded.
+Added new feature of adding photos of your weapons and your ammo purchases.

@@ -7,7 +7,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.firebase.analytics.FirebaseAnalytics
-import com.google.firebase.crashlytics.FirebaseCrashlytics
 
 open class BaseViewModel : ViewModel() {
 
@@ -18,9 +17,8 @@ open class BaseViewModel : ViewModel() {
         analytics.logEvent(EVENT_LOGOUT, null)
     }
 
-    fun clearUserData(analytics: FirebaseAnalytics, crashlytics: FirebaseCrashlytics) {
+    fun clearUserData(analytics: FirebaseAnalytics) {
         analytics.setUserId(null)
-        crashlytics.setUserId("")
     }
 
     fun closeApp(analytics: FirebaseAnalytics) {
