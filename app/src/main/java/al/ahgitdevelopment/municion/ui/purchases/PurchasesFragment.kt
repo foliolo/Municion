@@ -34,6 +34,7 @@ class PurchasesFragment : BaseFragment(), RecyclerInterface, PurchaseAdapterList
 
     private lateinit var auxPurchase: Purchase
 
+    @SuppressWarnings
     private val getContent =
         registerForActivityResult(ActivityResultContracts.TakePicturePreview()) { bitmap: Bitmap ->
             viewModel.savePicture(bitmap, auxPurchase)

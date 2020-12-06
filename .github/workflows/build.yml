@@ -61,7 +61,7 @@ jobs:
         run: echo $FIREBASE_JSON > app/google-services.json
 
       - name: Run Debug Lint
-        run: ./gradlew app:check
+        run: ./gradlew app:ktlint
 
       - name: Upload Lint Reports
         if: ${{ always() }}
