@@ -88,9 +88,9 @@ class CompetitionsFragment : BaseFragment(), RecyclerInterface {
                         }
                     })
                 ).attachToRecyclerView(this)
-
-                viewModel.hideProgressBar()
             }
+
+            viewModel.hideProgressBar()
         }
     }
 

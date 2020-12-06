@@ -96,9 +96,9 @@ class PropertiesFragment : BaseFragment(), RecyclerInterface, PropertyAdapterLis
                         }
                     })
                 ).attachToRecyclerView(this)
-
-                viewModel.hideProgressBar()
             }
+
+            viewModel.hideProgressBar()
         }
     }
 

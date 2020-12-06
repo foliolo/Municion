@@ -88,9 +88,9 @@ class LicensesFragment @Inject constructor() : BaseFragment(), RecyclerInterface
                         }
                     })
                 ).attachToRecyclerView(this)
-
-                viewModel.hideProgressBar()
             }
+
+            viewModel.hideProgressBar()
         }
     }
 

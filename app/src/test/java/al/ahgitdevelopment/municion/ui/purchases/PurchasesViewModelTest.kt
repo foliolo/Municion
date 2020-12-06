@@ -4,6 +4,7 @@ import al.ahgitdevelopment.municion.FakeRepository.Companion.FAKE_PURCHASE
 import al.ahgitdevelopment.municion.FakeRepository.Companion.FAKE_PURCHASES
 import al.ahgitdevelopment.municion.ext.getOrAwaitValue
 import al.ahgitdevelopment.municion.repository.RepositoryContract
+import al.ahgitdevelopment.municion.repository.firebase.RemoteStorageDataSourceContract
 import al.ahgitdevelopment.municion.utils.toFlow
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.SavedStateHandle
@@ -30,6 +31,9 @@ class PurchasesViewModelTest {
     @MockK
     lateinit var repository: RepositoryContract
 
+    @MockK
+    lateinit var storageRepository: RemoteStorageDataSourceContract
+
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 
     @Before
@@ -41,7 +45,7 @@ class PurchasesViewModelTest {
     fun init_getPurchases_success() {
         // GIVEN
         every { repository.getPurchases() }.returns(FAKE_PURCHASES.toFlow())
-        SUT = PurchasesViewModel(repository, ioDispatcher, savedStateHandle)
+        SUT = PurchasesViewModel(repository, storageRepository, ioDispatcher, savedStateHandle)
         // ACT
         val result = SUT.purchases.getOrAwaitValue()
         // VERIFY
@@ -51,7 +55,7 @@ class PurchasesViewModelTest {
     @Test
     fun addPurchase_validatePurchasePassedToRepository() {
         // GIVEN
-        SUT = PurchasesViewModel(repository, ioDispatcher, savedStateHandle)
+        SUT = PurchasesViewModel(repository, storageRepository, ioDispatcher, savedStateHandle)
         // ACT
         SUT.addPurchase(FAKE_PURCHASE)
         // VERIFY
@@ -76,7 +80,7 @@ class PurchasesViewModelTest {
     @Test
     fun fabClick_navigateToForm_success() {
         // GIVEN
-        SUT = PurchasesViewModel(repository, ioDispatcher, savedStateHandle)
+        SUT = PurchasesViewModel(repository, storageRepository, ioDispatcher, savedStateHandle)
         // ACT
         SUT.fabClick(null)
         // VERIFY
@@ -84,9 +88,9 @@ class PurchasesViewModelTest {
     }
 
     @Test
-    fun deletePurchase_validatePurchaseIdPassedToTheRepository_successs() {
+    fun deletePurchase_validatePurchaseIdPassedToTheRepository_success() {
         // GIVEN
-        SUT = PurchasesViewModel(repository, ioDispatcher, savedStateHandle)
+        SUT = PurchasesViewModel(repository, storageRepository, ioDispatcher, savedStateHandle)
         // ACT
         SUT.deletePurchase(FAKE_PURCHASE.id)
         // VERIFY
@@ -102,7 +106,7 @@ class PurchasesViewModelTest {
     @Test
     fun addPurchase_validatePurchasePassedToRepository_success() {
         // GIVEN
-        SUT = PurchasesViewModel(repository, ioDispatcher, savedStateHandle)
+        SUT = PurchasesViewModel(repository, storageRepository, ioDispatcher, savedStateHandle)
         // ACT
         SUT.addPurchase(FAKE_PURCHASE)
         // VERIFY
