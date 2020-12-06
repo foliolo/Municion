@@ -181,7 +181,7 @@ class LoginPasswordFragmentTest {
 
     // // Needs to be an inner class
     // @Module
-    // @InstallIn(ApplicationComponent::class)
+    // @InstallIn(SingletonComponent::class)
     // class MockSharedPreferenceModule {
     //
     //     // @Provides

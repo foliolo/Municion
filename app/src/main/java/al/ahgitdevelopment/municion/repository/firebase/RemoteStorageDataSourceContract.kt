@@ -7,6 +7,6 @@ import java.io.File
 
 interface RemoteStorageDataSourceContract {
     suspend fun getTutorialImages(): List<File>
-    fun saveItemImage(bitmap: Bitmap, itemId: String): UploadTask
+    fun saveItemImage(bitmap: Bitmap?, itemId: String): UploadTask
     fun getReference(path: String?): StorageReference
 }
