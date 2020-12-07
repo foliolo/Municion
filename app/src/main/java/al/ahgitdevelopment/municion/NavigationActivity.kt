@@ -7,6 +7,7 @@ import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
+import com.google.android.gms.ads.AdRequest
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_navigation.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -62,6 +63,11 @@ class NavigationActivity : AppCompatActivity() {
                     nav_view.visibility = View.VISIBLE
                 }
             }
+        }
+
+        AdRequest.Builder().build().let {
+            adView.adListener = ManageAds(adView)
+            adView.loadAd(it)
         }
     }
 
