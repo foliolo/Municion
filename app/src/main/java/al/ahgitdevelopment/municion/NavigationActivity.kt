@@ -1,25 +1,32 @@
 package al.ahgitdevelopment.municion
 
+import al.ahgitdevelopment.municion.databinding.ActivityNavigationBinding
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.gms.ads.AdRequest
+import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.activity_navigation.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 @ExperimentalCoroutinesApi
 @AndroidEntryPoint
 class NavigationActivity : AppCompatActivity() {
 
+    private lateinit var binding: ActivityNavigationBinding
+    private val viewModel: NavigationActivityViewModel by viewModels()
+
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_navigation)
+        binding = ActivityNavigationBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         setSupportActionBar(findViewById(R.id.toolbar))
 
@@ -34,7 +41,7 @@ class NavigationActivity : AppCompatActivity() {
         )
 
         setupActionBarWithNavController(navController, appBarConfiguration)
-        nav_view?.setupWithNavController(navController)
+        binding.navView.setupWithNavController(navController)
 
         navController.addOnDestinationChangedListener { _, destination, _ ->
             supportActionBar?.title = getString(R.string.app_name)
@@ -44,31 +51,49 @@ class NavigationActivity : AppCompatActivity() {
             when (destination.id) {
                 R.id.loginPasswordFragment -> {
                     setToolbarSubtitle(getString(R.string.login))
-                    nav_view.visibility = View.GONE
+                    binding.navView.visibility = View.GONE
                 }
                 R.id.propertiesFragment -> {
                     setToolbarSubtitle(getString(R.string.section_properties_title))
-                    nav_view.visibility = View.VISIBLE
+                    binding.navView.visibility = View.VISIBLE
                 }
                 R.id.purchasesFragment -> {
                     setToolbarSubtitle(getString(R.string.section_purchases_title))
-                    nav_view.visibility = View.VISIBLE
+                    binding.navView.visibility = View.VISIBLE
                 }
                 R.id.licensesFragment -> {
                     setToolbarSubtitle(getString(R.string.section_licenses_title))
-                    nav_view.visibility = View.VISIBLE
+                    binding.navView.visibility = View.VISIBLE
                 }
                 R.id.competitionsFragment -> {
                     setToolbarSubtitle(getString(R.string.section_competitions_title))
-                    nav_view.visibility = View.VISIBLE
+                    binding.navView.visibility = View.VISIBLE
                 }
             }
         }
 
         AdRequest.Builder().build().let {
-            adView.adListener = ManageAds(adView)
-            adView.loadAd(it)
+            binding.adView.adListener = BannerAdManager(binding)
+            binding.adView.loadAd(it)
         }
+    }
+
+    override fun onStart() {
+        super.onStart()
+
+        viewModel.snackBar.observe(
+            this,
+            {
+                //TODO: Show a dialog instead of a SnackBar
+                Snackbar.make(
+                    binding.container,
+                    "Watch and Ad to help the developer and get rid off the banner the next hour",
+                    Snackbar.LENGTH_INDEFINITE
+                ).setAction(android.R.string.ok) {
+                    Toast.makeText(this, "Show interstitial Ad", Toast.LENGTH_LONG).show() // TODO
+                }.show()
+            }
+        )
     }
 
     private fun setToolbarSubtitle(subtitle: String) {

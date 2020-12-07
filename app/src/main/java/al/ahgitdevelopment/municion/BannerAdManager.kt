@@ -1,14 +1,15 @@
 package al.ahgitdevelopment.municion
 
+import al.ahgitdevelopment.municion.databinding.ActivityNavigationBinding
 import android.view.View
 import com.google.android.gms.ads.AdListener
 import com.google.android.gms.ads.LoadAdError
 import timber.log.Timber
 
-class ManageAds(private val view: View) : AdListener() {
+class BannerAdManager(private val binding: ActivityNavigationBinding) : AdListener() {
     override fun onAdLoaded() {
         Timber.v("onAdLoaded")
-        view.visibility = View.VISIBLE
+        binding.adView.visibility = View.VISIBLE
     }
 
     override fun onAdFailedToLoad(adError: LoadAdError) {
