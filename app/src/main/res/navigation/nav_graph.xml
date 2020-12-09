@@ -102,4 +102,9 @@
             app:launchSingleTop="true" />
     </fragment>
 
+    <dialog
+        android:id="@+id/adsRewardDialogFragment"
+        android:name="al.ahgitdevelopment.municion.dialogs.AdsRewardDialogFragment"
+        android:label="AdsRewardDialogFragment" />
+
 </navigation>

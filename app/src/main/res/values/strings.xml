@@ -156,4 +156,9 @@
     <string name="tutorialScreenshotTitleText">Tutorial</string>
     <string name="admob_id" translatable="false">ca-app-pub-8582752139018186~3605663398</string>
     <string name="admob_activity_bottom_banner" translatable="false">ca-app-pub-8582752139018186/8341878505</string>
+    <string name="rewarded_ads_id" translatable="false">ca-app-pub-8582752139018186/5003971559</string>
+    <string name="dialog_ads_reward_title">Support the developer</string>
+    <string name="dialog_ads_reward_btn_show">Show Ads</string>
+    <string name="dialog_ads_reward_btn_remove">Remove Ads</string>
+    <string name="dialog_ads_reward_btn_cancel">Cancel</string>
 </resources>

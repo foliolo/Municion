@@ -1,9 +1,11 @@
 package al.ahgitdevelopment.municion
 
+import al.ahgitdevelopment.municion.ads.BannerAdCallbacks
+import al.ahgitdevelopment.municion.ads.RewardedAdCallbackManager
+import al.ahgitdevelopment.municion.ads.RewardedAdLoadCallbackManager
 import al.ahgitdevelopment.municion.databinding.ActivityNavigationBinding
 import android.os.Bundle
 import android.view.View
-import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
@@ -11,9 +13,10 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.gms.ads.AdRequest
-import com.google.android.material.snackbar.Snackbar
+import com.google.android.gms.ads.rewarded.RewardedAd
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import javax.inject.Inject
 
 @ExperimentalCoroutinesApi
 @AndroidEntryPoint
@@ -21,6 +24,14 @@ class NavigationActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityNavigationBinding
     private val viewModel: NavigationActivityViewModel by viewModels()
+
+    @Inject
+    lateinit var rewardedAdLoadCallbackManager: RewardedAdLoadCallbackManager
+
+    @Inject
+    lateinit var rewardedAdCallbackManager: RewardedAdCallbackManager
+
+    private lateinit var rewardedAd: RewardedAd
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -72,31 +83,53 @@ class NavigationActivity : AppCompatActivity() {
             }
         }
 
-        AdRequest.Builder().build().let {
-            binding.adView.adListener = BannerAdManager(binding)
-            binding.adView.loadAd(it)
-        }
+        setupAds()
     }
 
     override fun onStart() {
         super.onStart()
+        rewardedAdLoadCallbackManager.setViewModel(viewModel)
+        rewardedAdCallbackManager.setViewModel(viewModel)
 
-        viewModel.snackBar.observe(
+        viewModel.showAdDialog.observe(
             this,
             {
-                //TODO: Show a dialog instead of a SnackBar
-                Snackbar.make(
-                    binding.container,
-                    "Watch and Ad to help the developer and get rid off the banner the next hour",
-                    Snackbar.LENGTH_INDEFINITE
-                ).setAction(android.R.string.ok) {
-                    Toast.makeText(this, "Show interstitial Ad", Toast.LENGTH_LONG).show() // TODO
-                }.show()
+                findNavController(R.id.nav_host_fragment).navigate(R.id.adsRewardDialogFragment)
+            }
+        )
+
+        viewModel.loadRewardedAd.observe(
+            this,
+            {
+                rewardedAd = RewardedAd(this@NavigationActivity, getString(R.string.rewarded_ads_id)).apply {
+                    loadAd(AdRequest.Builder().build(), rewardedAdLoadCallbackManager)
+                }
+            }
+        )
+
+        viewModel.showRewardedAd.observe(
+            this,
+            {
+                rewardedAd.show(this@NavigationActivity, rewardedAdCallbackManager)
+            }
+        )
+
+        viewModel.removeAds.observe(
+            this,
+            {
+                TODO("Not yet implemented")
             }
         )
     }
 
     private fun setToolbarSubtitle(subtitle: String) {
         supportActionBar?.subtitle = subtitle
+    }
+
+    private fun setupAds() {
+        AdRequest.Builder().build().let {
+            binding.adView.adListener = BannerAdCallbacks(binding)
+            binding.adView.loadAd(it)
+        }
     }
 }
