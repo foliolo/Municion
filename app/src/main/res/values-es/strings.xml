@@ -156,5 +156,14 @@
     <string name="snackbar_undo_delete">Deshacer</string>
     <string name="tutorialScreenshotButtonText">Cerrar</string>
     <string name="tutorialScreenshotTitleText">Tutorial</string>
+    <string name="dialog_support_developer_title">Support the developer</string>
+    <string name="dialog_support_developer_message">Invite him for a beer.\nIt will help to keep on improving the app.</string>
+    <string name="dialog_ads_reward_title">Añadir nuevo elemento</string>
+    <string name="dialog_ads_reward_message">Ayuda al desarrollador a mejorar la app viendo un pequeño anuncio para añdir un nuevo elemento.\n\nTambién puedes hacer una pequeña donación para añadir todos los elementos que quieras.\n\nMuchas gracias por el apoyo.</string>
+    <string name="dialog_ads_reward_btn_show">Muestra anuncios</string>
+    <string name="dialog_ads_reward_btn_remove_max_limitation">Elimina limitación</string>
+    <string name="dialog_ads_reward_btn_cancel">Cancelar</string>
+    <string name="menu_support_developer">Hacer una donación</string>
+    <string name="toast_under_construction">En construcción</string>
 
 </resources>

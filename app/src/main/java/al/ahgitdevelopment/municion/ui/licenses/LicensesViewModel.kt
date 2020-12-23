@@ -3,8 +3,11 @@ package al.ahgitdevelopment.municion.ui.licenses
 import al.ahgitdevelopment.municion.datamodel.License
 import al.ahgitdevelopment.municion.di.IoDispatcher
 import al.ahgitdevelopment.municion.repository.RepositoryContract
+import al.ahgitdevelopment.municion.repository.preferences.SharedPreferencesManager
 import al.ahgitdevelopment.municion.ui.BaseViewModel
+import al.ahgitdevelopment.municion.utils.Event
 import al.ahgitdevelopment.municion.utils.SingleLiveEvent
+import al.ahgitdevelopment.municion.utils.checkMaxFreeItems
 import al.ahgitdevelopment.municion.utils.wrapEspressoIdlingResource
 import android.view.View
 import androidx.hilt.Assisted
@@ -19,6 +22,7 @@ import kotlinx.coroutines.launch
 @Suppress("UNUSED_PARAMETER")
 class LicensesViewModel @ViewModelInject constructor(
     private val repository: RepositoryContract,
+    private val prefs: SharedPreferencesManager,
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
     @Assisted private val savedStateHandle: SavedStateHandle
 ) : BaseViewModel() {
@@ -32,10 +36,15 @@ class LicensesViewModel @ViewModelInject constructor(
 
     init {
         showProgressBar()
+        loadRewardedAd()
     }
 
     fun fabClick(view: View?) {
-        navigateToForm.call()
+        if (licenses.value!!.checkMaxFreeItems()) {
+            navigateToForm.call()
+        } else {
+            showRewardedAdDialog()
+        }
     }
 
     fun deleteLicense(licenseId: String) = viewModelScope.launch(ioDispatcher) {
@@ -48,5 +57,25 @@ class LicensesViewModel @ViewModelInject constructor(
         wrapEspressoIdlingResource {
             repository.saveLicense(license)
         }
+    }
+
+    override fun loadRewardedAd() {
+        _loadRewardedAd.postValue(Event(Unit))
+    }
+
+    override fun showRewardedAdDialog() {
+        _showRewardedAdDialog.postValue(Event(Unit))
+    }
+
+    override fun showRewardedAd() {
+        _showRewardedAd.postValue(Event(Unit))
+    }
+
+    override fun rewardObtain() {
+        navigateToForm.call()
+    }
+
+    override fun rewardCancel() {
+        error.value = "Watch the full video to add a new item"
     }
 }

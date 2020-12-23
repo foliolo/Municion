@@ -75,4 +75,24 @@ class PurchasesViewModel @ViewModelInject constructor(
                 }
         }
     }
+
+    override fun showRewardedAdDialog() {
+        TODO("Not yet implemented")
+    }
+
+    override fun showRewardedAd() {
+        TODO("Not yet implemented")
+    }
+
+    override fun loadRewardedAd() {
+        TODO("Not yet implemented")
+    }
+
+    override fun rewardObtain() {
+        TODO("Not yet implemented")
+    }
+
+    override fun rewardCancel() {
+        TODO("Not yet implemented")
+    }
 }

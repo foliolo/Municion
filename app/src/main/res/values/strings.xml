@@ -157,8 +157,13 @@
     <string name="admob_id" translatable="false">ca-app-pub-8582752139018186~3605663398</string>
     <string name="admob_activity_bottom_banner" translatable="false">ca-app-pub-8582752139018186/8341878505</string>
     <string name="rewarded_ads_id" translatable="false">ca-app-pub-8582752139018186/5003971559</string>
-    <string name="dialog_ads_reward_title">Support the developer</string>
+    <string name="dialog_ads_reward_title">Add new element</string>
+    <string name="dialog_ads_reward_message">Help the developer to improve the app seeing a small video to add a new element.\n\nYou can also make a small donation to add all the elements you want.\n\nThank you for your support.</string>
     <string name="dialog_ads_reward_btn_show">Show Ads</string>
-    <string name="dialog_ads_reward_btn_remove">Remove Ads</string>
+    <string name="dialog_ads_reward_btn_remove_max_limitation">Remove limitation</string>
     <string name="dialog_ads_reward_btn_cancel">Cancel</string>
+    <string name="menu_support_developer">Make a donation</string>
+    <string name="dialog_support_developer_title">Support the developer</string>
+    <string name="dialog_support_developer_message">Invite him for a beer.\nIt will help to keep on improving the app.</string>
+    <string name="toast_under_construction">Under Construction</string>
 </resources>
