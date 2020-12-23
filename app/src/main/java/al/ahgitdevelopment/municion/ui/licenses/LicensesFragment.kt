@@ -56,8 +56,24 @@ class LicensesFragment @Inject constructor() : BaseFragment(), RecyclerInterface
             )
         }
 
-        viewModel.error.observe(viewLifecycleOwner) {
-            Toast.makeText(requireContext(), it, Toast.LENGTH_LONG).show()
+        viewModel.message.observe(viewLifecycleOwner) {
+            it.getContentIfNotHandled()?.let { message ->
+                Toast.makeText(
+                    requireContext(),
+                    requireContext().getString(message),
+                    Toast.LENGTH_LONG
+                ).show()
+            }
+        }
+
+        viewModel.exception.observe(viewLifecycleOwner) {
+            it.getContentIfNotHandled()?.let { exception ->
+                Toast.makeText(
+                    requireContext(),
+                    exception.message,
+                    Toast.LENGTH_LONG
+                ).show()
+            }
         }
 
         viewModel.progressBar.observe(viewLifecycleOwner) {

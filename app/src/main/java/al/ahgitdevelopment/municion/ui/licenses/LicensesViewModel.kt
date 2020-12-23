@@ -3,10 +3,8 @@ package al.ahgitdevelopment.municion.ui.licenses
 import al.ahgitdevelopment.municion.datamodel.License
 import al.ahgitdevelopment.municion.di.IoDispatcher
 import al.ahgitdevelopment.municion.repository.RepositoryContract
-import al.ahgitdevelopment.municion.repository.preferences.SharedPreferencesManager
 import al.ahgitdevelopment.municion.ui.BaseViewModel
 import al.ahgitdevelopment.municion.utils.Event
-import al.ahgitdevelopment.municion.utils.SingleLiveEvent
 import al.ahgitdevelopment.municion.utils.checkMaxFreeItems
 import al.ahgitdevelopment.municion.utils.wrapEspressoIdlingResource
 import android.view.View
@@ -22,17 +20,13 @@ import kotlinx.coroutines.launch
 @Suppress("UNUSED_PARAMETER")
 class LicensesViewModel @ViewModelInject constructor(
     private val repository: RepositoryContract,
-    private val prefs: SharedPreferencesManager,
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
     @Assisted private val savedStateHandle: SavedStateHandle
 ) : BaseViewModel() {
 
     var licenses = repository.getLicenses()
-        .catch { error.postValue(it.message) }
+        .catch { _exception.postValue(Event(it)) }
         .asLiveData()
-
-    val navigateToForm = SingleLiveEvent<Unit>()
-    val error = SingleLiveEvent<String>()
 
     init {
         showProgressBar()
@@ -41,7 +35,7 @@ class LicensesViewModel @ViewModelInject constructor(
 
     fun fabClick(view: View?) {
         if (licenses.value!!.checkMaxFreeItems()) {
-            navigateToForm.call()
+            navigateToForm()
         } else {
             showRewardedAdDialog()
         }
@@ -59,23 +53,11 @@ class LicensesViewModel @ViewModelInject constructor(
         }
     }
 
-    override fun loadRewardedAd() {
-        _loadRewardedAd.postValue(Event(Unit))
-    }
-
-    override fun showRewardedAdDialog() {
-        _showRewardedAdDialog.postValue(Event(Unit))
+    override fun navigateToForm() {
+        _navigateToForm.postValue(Event(Unit))
     }
 
     override fun showRewardedAd() {
         _showRewardedAd.postValue(Event(Unit))
-    }
-
-    override fun rewardObtain() {
-        navigateToForm.call()
-    }
-
-    override fun rewardCancel() {
-        error.value = "Watch the full video to add a new item"
     }
 }

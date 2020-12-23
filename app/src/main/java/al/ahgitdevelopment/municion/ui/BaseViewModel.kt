@@ -1,5 +1,6 @@
 package al.ahgitdevelopment.municion.ui
 
+import al.ahgitdevelopment.municion.R
 import al.ahgitdevelopment.municion.repository.firebase.RemoteStorageDataSource.Companion.EVENT_CLOSE_APP
 import al.ahgitdevelopment.municion.repository.firebase.RemoteStorageDataSource.Companion.EVENT_LOGOUT
 import al.ahgitdevelopment.municion.utils.Event
@@ -14,7 +15,7 @@ abstract class BaseViewModel : ViewModel(), Serializable {
     private val _progressBar = MutableLiveData<Event<Boolean>>()
     val progressBar: LiveData<Event<Boolean>> = _progressBar
 
-    val _showRewardedAdDialog = MutableLiveData<Event<Unit>>()
+    private val _showRewardedAdDialog = MutableLiveData<Event<Unit>>()
     val showRewardedAdDialog: LiveData<Event<Unit>> = _showRewardedAdDialog
 
     val _loadRewardedAd = MutableLiveData<Event<Unit>>()
@@ -26,11 +27,17 @@ abstract class BaseViewModel : ViewModel(), Serializable {
     private val _removeAds = MutableLiveData<Event<Unit>>()
     val removeAds: LiveData<Event<Unit>> = _removeAds
 
-    abstract fun showRewardedAdDialog()
+    val _navigateToForm = MutableLiveData<Event<Unit>>()
+    val navigateToForm: LiveData<Event<Unit>> = _navigateToForm
+
+    private val _message = MutableLiveData<Event<Int>>()
+    val message: LiveData<Event<Int>> = _message
+
+    val _exception = MutableLiveData<Event<Throwable>>()
+    val exception: LiveData<Event<Throwable>> = _exception
+
+    abstract fun navigateToForm()
     abstract fun showRewardedAd()
-    abstract fun loadRewardedAd()
-    abstract fun rewardObtain()
-    abstract fun rewardCancel()
 
     fun recordLogoutEvent(analytics: FirebaseAnalytics) {
         analytics.logEvent(EVENT_LOGOUT, null)
@@ -52,7 +59,19 @@ abstract class BaseViewModel : ViewModel(), Serializable {
         _progressBar.postValue(Event(false))
     }
 
+    fun rewardCancel() {
+        _message.postValue(Event(R.string.ad_error_message))
+    }
+
+    fun showRewardedAdDialog() {
+        _showRewardedAdDialog.postValue(Event(Unit))
+    }
+
     fun removeMaxLimitation() {
-        _removeAds.postValue(Event(Unit))
+        _message.postValue(Event(R.string.toast_under_construction))
+    }
+
+    fun loadRewardedAd() {
+        _loadRewardedAd.postValue(Event(Unit))
     }
 }

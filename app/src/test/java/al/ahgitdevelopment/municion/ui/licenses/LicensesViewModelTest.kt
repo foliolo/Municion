@@ -1,5 +1,6 @@
 package al.ahgitdevelopment.municion.ui.licenses
 
+import al.ahgitdevelopment.municion.FakeRepository.Companion.FAKE_3_LICENSES
 import al.ahgitdevelopment.municion.FakeRepository.Companion.FAKE_LICENSE
 import al.ahgitdevelopment.municion.FakeRepository.Companion.FAKE_LICENSES
 import al.ahgitdevelopment.municion.MainCoroutineRule
@@ -69,11 +70,25 @@ class LicensesViewModelTest {
     @Test
     fun fabClick_clickButton_navigateToForm() {
         // GIVEN
+        every { repository.getLicenses() }.returns(FAKE_LICENSES.toFlow())
         SUT = LicensesViewModel(repository, ioDispatcher, savedStateHandle)
+        SUT.licenses.getOrAwaitValue()
         // ACT
         SUT.fabClick(null)
         // VERIFY
-        assertEquals(null, SUT.navigateToForm.getOrAwaitValue())
+        assertEquals(Unit, SUT.navigateToForm.getOrAwaitValue().getContentIfNotHandled())
+    }
+
+    @Test
+    fun fabClick_clickButton_navigateToAdDialog() {
+        // GIVEN
+        every { repository.getLicenses() }.returns(FAKE_3_LICENSES.toFlow())
+        SUT = LicensesViewModel(repository, ioDispatcher, savedStateHandle)
+        SUT.licenses.getOrAwaitValue()
+        // ACT
+        SUT.fabClick(null)
+        // VERIFY
+        assertEquals(Unit, SUT.showRewardedAdDialog.getOrAwaitValue().getContentIfNotHandled())
     }
 
     @Test

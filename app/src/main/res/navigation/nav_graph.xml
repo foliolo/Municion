@@ -29,6 +29,9 @@
         <action
             android:id="@+id/action_propertiesFragment_to_propertyFormFragment"
             app:destination="@id/propertyFormFragment" />
+        <action
+            android:id="@+id/action_propertiesFragment_to_adsRewardDialogFragment"
+            app:destination="@id/adsRewardDialogFragment" />
     </fragment>
 
     <fragment
@@ -39,6 +42,9 @@
         <action
             android:id="@+id/action_purchasesFragment_to_purchaseFormFragment"
             app:destination="@id/purchaseFormFragment" />
+        <action
+            android:id="@+id/action_purchasesFragment_to_adsRewardDialogFragment"
+            app:destination="@id/adsRewardDialogFragment" />
     </fragment>
 
     <fragment
@@ -62,6 +68,9 @@
         <action
             android:id="@+id/action_competitionsFragment_to_competitionFormFragment"
             app:destination="@id/competitionFormFragment" />
+        <action
+            android:id="@+id/action_competitionsFragment_to_adsRewardDialogFragment"
+            app:destination="@id/adsRewardDialogFragment" />
     </fragment>
 
     <fragment
@@ -115,6 +124,15 @@
         <argument
             android:name="viewModel"
             app:argType="al.ahgitdevelopment.municion.ui.BaseViewModel" />
+        <action
+            android:id="@+id/action_adsRewardDialogFragment_to_competitionFormFragment"
+            app:destination="@id/competitionFormFragment" />
+        <action
+            android:id="@+id/action_adsRewardDialogFragment_to_purchaseFormFragment"
+            app:destination="@id/purchaseFormFragment" />
+        <action
+            android:id="@+id/action_adsRewardDialogFragment_to_propertyFormFragment"
+            app:destination="@id/propertyFormFragment" />
     </dialog>
 
     <dialog

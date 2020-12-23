@@ -166,4 +166,5 @@
     <string name="dialog_support_developer_title">Support the developer</string>
     <string name="dialog_support_developer_message">Invite him for a beer.\nIt will help to keep on improving the app.</string>
     <string name="toast_under_construction">Under Construction</string>
+    <string name="ad_error_message">Watch the full video to add a new item</string>
 </resources>

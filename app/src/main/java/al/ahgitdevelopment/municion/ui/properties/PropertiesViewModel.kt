@@ -7,13 +7,12 @@ import al.ahgitdevelopment.municion.repository.firebase.RemoteStorageDataSourceC
 import al.ahgitdevelopment.municion.ui.BaseViewModel
 import al.ahgitdevelopment.municion.utils.Event
 import al.ahgitdevelopment.municion.utils.SingleLiveEvent
+import al.ahgitdevelopment.municion.utils.checkMaxFreeItems
 import al.ahgitdevelopment.municion.utils.wrapEspressoIdlingResource
 import android.graphics.Bitmap
 import android.view.View
 import androidx.hilt.Assisted
 import androidx.hilt.lifecycle.ViewModelInject
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
@@ -31,20 +30,22 @@ class PropertiesViewModel @ViewModelInject constructor(
 ) : BaseViewModel() {
 
     val properties = repository.getProperties()
-        .catch { error.postValue(it.message) }
+        .catch { _exception.postValue(Event(it)) }
         .asLiveData()
-
-    private val _navigateToForm = MutableLiveData<Event<Unit>>()
-    val navigateToForm: LiveData<Event<Unit>> = _navigateToForm
 
     val error = SingleLiveEvent<String>()
 
     init {
         showProgressBar()
+        _loadRewardedAd.postValue(Event(Unit))
     }
 
     fun fabClick(view: View?) {
-        _navigateToForm.postValue(Event(Unit))
+        if (properties.value!!.checkMaxFreeItems()) {
+            navigateToForm()
+        } else {
+            showRewardedAdDialog()
+        }
     }
 
     fun deleteProperty(propertyId: String) = viewModelScope.launch(ioDispatcher) {
@@ -78,23 +79,11 @@ class PropertiesViewModel @ViewModelInject constructor(
         }
     }
 
-    override fun showRewardedAdDialog() {
-        TODO("Not yet implemented")
+    override fun navigateToForm() {
+        _navigateToForm.postValue(Event(Unit))
     }
 
     override fun showRewardedAd() {
-        TODO("Not yet implemented")
-    }
-
-    override fun loadRewardedAd() {
-        TODO("Not yet implemented")
-    }
-
-    override fun rewardObtain() {
-        TODO("Not yet implemented")
-    }
-
-    override fun rewardCancel() {
-        TODO("Not yet implemented")
+        _showRewardedAd.postValue(Event(Unit))
     }
 }

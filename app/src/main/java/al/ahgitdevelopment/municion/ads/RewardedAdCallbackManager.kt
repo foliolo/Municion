@@ -18,7 +18,7 @@ class RewardedAdCallbackManager : RewardedAdCallback() {
 
     override fun onUserEarnedReward(reward: RewardItem) {
         Timber.i("onUserEarnedReward: ${reward.amount}")
-        viewModel.rewardObtain()
+        viewModel.navigateToForm()
     }
 
     override fun onRewardedAdOpened() {
@@ -29,6 +29,7 @@ class RewardedAdCallbackManager : RewardedAdCallback() {
     override fun onRewardedAdClosed() {
         super.onRewardedAdClosed()
         Timber.i("onRewardedAdClosed")
+        viewModel.loadRewardedAd()
     }
 
     override fun onRewardedAdFailedToShow(p0: AdError) {
