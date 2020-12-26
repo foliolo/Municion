@@ -1,5 +1,6 @@
 package al.ahgitdevelopment.municion.ui.purchases
 
+import al.ahgitdevelopment.municion.FakeRepository.Companion.FAKE_3_PURCHASES
 import al.ahgitdevelopment.municion.FakeRepository.Companion.FAKE_PURCHASE
 import al.ahgitdevelopment.municion.FakeRepository.Companion.FAKE_PURCHASES
 import al.ahgitdevelopment.municion.ext.getOrAwaitValue
@@ -68,23 +69,28 @@ class PurchasesViewModelTest {
         }
     }
 
-    // @Test
-    // fun getError() {
-    //     // GIVEN
-    //
-    //     // ACT
-    //
-    //     // VERIFY
-    // }
-
     @Test
-    fun fabClick_navigateToForm_success() {
+    fun fabClick_clickButton_navigateToForm() {
         // GIVEN
+        every { repository.getPurchases() }.returns(FAKE_PURCHASES.toFlow())
         SUT = PurchasesViewModel(repository, storageRepository, ioDispatcher, savedStateHandle)
+        SUT.purchases.getOrAwaitValue()
         // ACT
         SUT.fabClick(null)
         // VERIFY
-        assertEquals(null, SUT.navigateToForm.getOrAwaitValue())
+        assertEquals(Unit, SUT.navigateToForm.getOrAwaitValue().getContentIfNotHandled())
+    }
+
+    @Test
+    fun fabClick_clickButton_navigateToAdDialog() {
+        // GIVEN
+        every { repository.getPurchases() }.returns(FAKE_3_PURCHASES.toFlow())
+        SUT = PurchasesViewModel(repository, storageRepository, ioDispatcher, savedStateHandle)
+        SUT.purchases.getOrAwaitValue()
+        // ACT
+        SUT.fabClick(null)
+        // VERIFY
+        assertEquals(Unit, SUT.showRewardedAdDialog.getOrAwaitValue().getContentIfNotHandled())
     }
 
     @Test

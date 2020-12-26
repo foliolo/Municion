@@ -4,7 +4,8 @@ import al.ahgitdevelopment.municion.datamodel.License
 import al.ahgitdevelopment.municion.di.IoDispatcher
 import al.ahgitdevelopment.municion.repository.RepositoryContract
 import al.ahgitdevelopment.municion.ui.BaseViewModel
-import al.ahgitdevelopment.municion.utils.SingleLiveEvent
+import al.ahgitdevelopment.municion.utils.Event
+import al.ahgitdevelopment.municion.utils.checkMaxFreeItems
 import al.ahgitdevelopment.municion.utils.wrapEspressoIdlingResource
 import android.view.View
 import androidx.hilt.Assisted
@@ -24,18 +25,20 @@ class LicensesViewModel @ViewModelInject constructor(
 ) : BaseViewModel() {
 
     var licenses = repository.getLicenses()
-        .catch { error.postValue(it.message) }
+        .catch { _exception.postValue(Event(it)) }
         .asLiveData()
-
-    val navigateToForm = SingleLiveEvent<Unit>()
-    val error = SingleLiveEvent<String>()
 
     init {
         showProgressBar()
+        loadRewardedAd()
     }
 
     fun fabClick(view: View?) {
-        navigateToForm.call()
+        if (licenses.value!!.checkMaxFreeItems()) {
+            navigateToForm()
+        } else {
+            showRewardedAdDialog()
+        }
     }
 
     fun deleteLicense(licenseId: String) = viewModelScope.launch(ioDispatcher) {
@@ -48,5 +51,13 @@ class LicensesViewModel @ViewModelInject constructor(
         wrapEspressoIdlingResource {
             repository.saveLicense(license)
         }
+    }
+
+    override fun navigateToForm() {
+        _navigateToForm.postValue(Event(Unit))
+    }
+
+    override fun showRewardedAd() {
+        _showRewardedAd.postValue(Event(Unit))
     }
 }

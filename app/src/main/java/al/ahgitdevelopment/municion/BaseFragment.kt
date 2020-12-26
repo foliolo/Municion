@@ -1,5 +1,7 @@
 package al.ahgitdevelopment.municion
 
+import al.ahgitdevelopment.municion.ads.RewardedAdCallbackManager
+import al.ahgitdevelopment.municion.ads.RewardedAdLoadCallbackManager
 import android.content.Context.INPUT_METHOD_SERVICE
 import android.os.Bundle
 import android.view.Menu
@@ -9,6 +11,8 @@ import android.view.View
 import android.view.inputmethod.InputMethodManager
 import androidx.activity.addCallback
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
+import com.google.android.gms.ads.rewarded.RewardedAd
 import com.google.firebase.analytics.FirebaseAnalytics
 import kotlinx.android.synthetic.main.activity_navigation.*
 import javax.inject.Inject
@@ -17,6 +21,14 @@ abstract class BaseFragment : Fragment() {
 
     @Inject
     lateinit var analytics: FirebaseAnalytics
+
+    @Inject
+    lateinit var rewardedAdLoadCallbackManager: RewardedAdLoadCallbackManager
+
+    @Inject
+    lateinit var rewardedAdCallbackManager: RewardedAdCallbackManager
+
+    lateinit var rewardedAd: RewardedAd
 
     abstract fun signOut()
     abstract fun settings()
@@ -59,7 +71,14 @@ abstract class BaseFragment : Fragment() {
             R.id.menu_tutorial -> {
                 tutorial()
             }
+            R.id.menu_support_developer -> {
+                findNavController().navigate(R.id.supportDeveloperDialogFragment)
+            }
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    companion object {
+        const val MAX_FREE_ITEMS = 3
     }
 }

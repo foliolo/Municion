@@ -29,6 +29,9 @@
         <action
             android:id="@+id/action_propertiesFragment_to_propertyFormFragment"
             app:destination="@id/propertyFormFragment" />
+        <action
+            android:id="@+id/action_propertiesFragment_to_adsRewardDialogFragment"
+            app:destination="@id/adsRewardDialogFragment" />
     </fragment>
 
     <fragment
@@ -39,6 +42,9 @@
         <action
             android:id="@+id/action_purchasesFragment_to_purchaseFormFragment"
             app:destination="@id/purchaseFormFragment" />
+        <action
+            android:id="@+id/action_purchasesFragment_to_adsRewardDialogFragment"
+            app:destination="@id/adsRewardDialogFragment" />
     </fragment>
 
     <fragment
@@ -49,6 +55,9 @@
         <action
             android:id="@+id/action_licensesFragment_to_licenseFormFragment"
             app:destination="@id/licenseFormFragment" />
+        <action
+            android:id="@+id/action_licensesFragment_to_adsRewardDialogFragment"
+            app:destination="@id/adsRewardDialogFragment" />
     </fragment>
 
     <fragment
@@ -59,6 +68,9 @@
         <action
             android:id="@+id/action_competitionsFragment_to_competitionFormFragment"
             app:destination="@id/competitionFormFragment" />
+        <action
+            android:id="@+id/action_competitionsFragment_to_adsRewardDialogFragment"
+            app:destination="@id/adsRewardDialogFragment" />
     </fragment>
 
     <fragment
@@ -101,5 +113,31 @@
             app:destination="@id/competitionsFragment"
             app:launchSingleTop="true" />
     </fragment>
+
+    <dialog
+        android:id="@+id/adsRewardDialogFragment"
+        android:name="al.ahgitdevelopment.municion.dialogs.AdsRewardDialogFragment"
+        android:label="AdsRewardDialogFragment">
+        <action
+            android:id="@+id/action_adsRewardDialogFragment_to_licenseFormFragment"
+            app:destination="@id/licenseFormFragment" />
+        <argument
+            android:name="viewModel"
+            app:argType="al.ahgitdevelopment.municion.ui.BaseViewModel" />
+        <action
+            android:id="@+id/action_adsRewardDialogFragment_to_competitionFormFragment"
+            app:destination="@id/competitionFormFragment" />
+        <action
+            android:id="@+id/action_adsRewardDialogFragment_to_purchaseFormFragment"
+            app:destination="@id/purchaseFormFragment" />
+        <action
+            android:id="@+id/action_adsRewardDialogFragment_to_propertyFormFragment"
+            app:destination="@id/propertyFormFragment" />
+    </dialog>
+
+    <dialog
+        android:id="@+id/supportDeveloperDialogFragment"
+        android:name="al.ahgitdevelopment.municion.dialogs.SupportDeveloperDialogFragment"
+        android:label="SupportDeveloperDialogFragment" />
 
 </navigation>

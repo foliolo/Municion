@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import kotlinx.android.synthetic.main.adapter_item_property.view.*
 
 class PropertyAdapter(private val listener: PropertyAdapterListener) :
@@ -38,6 +39,7 @@ class PropertyAdapter(private val listener: PropertyAdapterListener) :
             Glide.with(parent.context)
                 .load(item.image)
                 .error(getRandomImage())
+                .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
                 .into(itemView.item_property_image)
 
             itemView.item_property_image.setOnClickListener {

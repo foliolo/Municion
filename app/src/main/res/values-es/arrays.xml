@@ -9,153 +9,13 @@
         <!--<item>Consumir publicidad</item>-->
     </string-array>
 
-    <string-array name="tipo_armas">
-        <item>Pistola</item>
-        <item>Escopeta</item>
-        <item>Rifle</item>
-        <item>Revolver</item>
-        <item>Avancarga</item>
-    </string-array>
-
-    <string-array name="rango_tirada">
-        <item>Nacional</item>
-        <item>Autonómica</item>
-        <item>Local/Social</item>
-    </string-array>
-
-    <string-array name="tipo_licencias">
-        <item>A - Profesionales, agentes de la autoridad</item>
-        <item>B - Defensa</item>
-        <item>C - Vigilante de seguridad / Escoltas</item>
-        <item>D - Caza mayor</item>
-        <item>E - Escopeta</item>
-        <item>F - Tiro olimpico</item>
-        <item>AE - Autorización especial</item>
-        <item>AER - Autorización especial replicas</item>
-        <item>Libro de coleccionista</item>
-        <item>Autonómica de Caza</item>
-        <item>Autonómica de Pesca</item>
-        <item>Federativa de tiro</item>
-        <item>Permiso Conducir</item>
-    </string-array>
-
-    <string-array name="ccaa">
-        <item>Andalucía</item>
-        <item>Aragón</item>
-        <item>Asturias</item>
-        <item>Baleares</item>
-        <item>Canarias</item>
-        <item>Cantabria</item>
-        <item>Castilla y León</item>
-        <item>Castilla-La Mancha</item>
-        <item>Cataluña</item>
-        <item>Ceuta</item>
-        <item>Extremadura</item>
-        <item>Galicia</item>
-        <item>La Rioja</item>
-        <item>Madrid</item>
-        <item>Melilla</item>
-        <item>Murcia</item>
-        <item>Navarra</item>
-        <item>País Vasco</item>
-        <item>Valencia</item>
-    </string-array>
-
-    <string-array name="tipo_escala">
-        <item>Tropa</item>
-        <item>Suboficiales</item>
-        <item>Oficiales</item>
-    </string-array>
-
-    <string-array name="tipo_permiso_conducir">
-        <item>AM</item>
-        <item>A1</item>
-        <item>A2</item>
-        <item>A</item>
-        <item>B</item>
-        <item>C1</item>
-        <item>C</item>
-        <item>D1</item>
-        <item>D</item>
-        <item>BE</item>
-        <item>C1E</item>
-        <item>CE</item>
-        <item>D1E</item>
-        <item>DE</item>
-        <item>BTP</item>
-    </string-array>
-
-    <string-array name="A">
-        <item>Pistola</item>
-        <item>Escopeta</item>
-        <item>Rifle</item>
-        <item>Revolver</item>
-        <item>Avancarga</item>
-    </string-array>
-
-    <string-array name="B">
-        <item>Pistola</item>
-        <item>Revolver</item>
-    </string-array>
-
-    <string-array name="C">
-        <item>Revolver</item>
-    </string-array>
-
-    <string-array name="D">
-        <item>Rifle</item>
-    </string-array>
-
-    <string-array name="E">
-        <item>Escopeta</item>
-        <item>Rifle</item>
-    </string-array>
-
-    <string-array name="F">
-        <item>Pistola</item>
-        <item>Escopeta</item>
-        <item>Rifle</item>
-        <item>Revolver</item>
-    </string-array>
-
-    <string-array name="AE">
-        <item>Avancarga</item>
-    </string-array>
-
-    <string-array name="AER">
-        <item>Pistola</item>
-        <item>Rifle</item>
-        <item>Revolver</item>
-    </string-array>
-
-    <string-array name="Libro">
-        <item>Pistola</item>
-        <item>Escopeta</item>
-        <item>Rifle</item>
-        <item>Revolver</item>
-        <item>Avancarga</item>
-    </string-array>
-
-    <string-array name="Federativa">
-        <item>Pistola</item>
-        <item>Escopeta</item>
-        <item>Rifle</item>
-        <item>Revolver</item>
-    </string-array>
-
-    <string-array name="categorias">
-        <item>1ª Categoría</item>
-        <item>2ª Categoría</item>
-        <item>3ª Categoría</item>
-    </string-array>
-
-
     <string-array name="preguntas_seguridad">
         <item>¿Cómo se llama tu mascota?</item>
         <item>¿En qué colegio estudiaste?</item>
         <item>¿Cuál es tu película preferida?</item>
         <item>¿Cuál es tu libro favorito?</item>
     </string-array>
+
 
     <string-array name="calibres">
         <item>1.1x13.1R Microballistic</item>
@@ -184,7 +44,7 @@
         <item>.16 US XPL FA / 4.2x45</item>
         <item>4.25x10 Erika</item>
         <item>4.3x45</item>
-        <item>.17-.25 AUTO</item>
+        <item>.17–.25 AUTO</item>
         <item>.17 Tuba Mag.</item>
         <item>.17 R Libra</item>
         <item>.17 Libra</item>
@@ -196,12 +56,12 @@
         <item>.17 Javelina Rimless</item>
         <item>.17 US Xpl / 4.23x45</item>
         <item>.17 Rem</item>
-        <item>.17-223 Improved</item>
+        <item>.17–223 Improved</item>
         <item>.17 OTTR</item>
-        <item>.17-.222 Rem Mag</item>
+        <item>.17–.222 Rem Mag</item>
         <item>.17 Flinstone Eyebunger</item>
-        <item>.50-.17 Crazy / 4.3x90</item>
-        <item>.50-.17 Incinerator</item>
+        <item>.50–.17 Crazy / 4.3x90</item>
+        <item>.50–.17 Incinerator</item>
         <item>4.5x9 R HP adaptor</item>
         <item>4.5x12 desconocido</item>
         <item>4.5x40R SPP</item>
@@ -213,7 +73,7 @@
         <item>4.6x36 CETME</item>
         <item>4.6x53.7 French XPL</item>
         <item>4.7x21 DAG Sin Vaina</item>
-        <item>4.7x21 DAG DE-1.1</item>
+        <item>4.7x21 DAG DE–1.1</item>
         <item>4.7x21 DAG hexagonal</item>
         <item>4.7x25 DAG Sin Vaina</item>
         <item>4.7x45 DAG Xpl</item>
@@ -231,7 +91,7 @@
         <item>5x15 Bergmann 1894</item>
         <item>5x15 Bergmann 1896</item>
         <item>.20 Eichelberger Dart</item>
-        <item>5x18 Charola -Clement</item>
+        <item>5x18 Charola –Clement</item>
         <item>5x25.7 R Craig</item>
         <item>5x26 Rem Mag CF</item>
         <item>.20 Tactical/5x44</item>
@@ -244,7 +104,7 @@
         <item>5.2x68 Mondragón</item>
         <item>5.3x22 Scheibenpistole</item>
         <item>5.45x18 PSM</item>
-        <item>5.45x39/AK-74</item>
+        <item>5.45x39/AK–74</item>
         <item>5.5x33 R Soemmerda</item>
         <item>5.5x33 Soemmerda</item>
         <item>5.56x14.5 caseless 5.56x17.6 caseless</item>
@@ -269,14 +129,14 @@
         <item>.22 LR CF M.29</item>
         <item>.22 CF XPL</item>
         <item>.22 J.G.R.</item>
-        <item>.22-44 Tuba Mk II</item>
-        <item>.22-45 Tuba Mk II</item>
+        <item>.22–44 Tuba Mk II</item>
+        <item>.22–45 Tuba Mk II</item>
         <item>.22 Luger / 5.5x21</item>
-        <item>.22-6-40 Contender</item>
+        <item>.22–6–40 Contender</item>
         <item>.22 Löwenstein</item>
         <item>.22 Colt SCAMP</item>
         <item>.22 Maynard XL CF</item>
-        <item>.22-10 Maynard 1873 Fake / 5.56x31 R</item>
+        <item>.22–10 Maynard 1873 Fake / 5.56x31 R</item>
         <item>.22 CCM/ 5.5x30 R</item>
         <item>.22 Dardick Tround</item>
         <item>5.7x34.2 MMJ Spitfire</item>
@@ -286,20 +146,20 @@
         <item>5.6x35 R Francotte</item>
         <item>5.6x35 R Vierling</item>
         <item>.22 Hornet/ 5.56x35 R</item>
-        <item>.22 Kilbourn-Hornet</item>
+        <item>.22 Kilbourn–Hornet</item>
         <item>.22 Win CF / 5.56x35 R</item>
         <item>.22 PPC USA / 5.56x38</item>
         <item>.22 Ackley Lovell</item>
-        <item>.22-3000 W&amp;G/ 5.56x41 R</item>
-        <item>.22 R-C Maxi/ 5.56x41 R</item>
+        <item>.22–3000 W&amp;G/ 5.56x41 R</item>
+        <item>.22 R–C Maxi/ 5.56x41 R</item>
         <item>.22 Beast / 5.56x45</item>
-        <item>.22-15-60 Stevens</item>
-        <item>.22/30-30 Ashurst</item>
-        <item>.22/30-30 Ackley Imp.</item>
+        <item>.22–15–60 Stevens</item>
+        <item>.22/30–30 Ashurst</item>
+        <item>.22/30–30 Ackley Imp.</item>
         <item>.22 TCM / 5.5x26</item>
-        <item>.22-4000 Sedgley / 5.5x58</item>
+        <item>.22–4000 Sedgley / 5.5x58</item>
         <item>.220 Howell / 5.5x62</item>
-        <item>.22-06 US XPL</item>
+        <item>.22–06 US XPL</item>
         <item>.221 Rem Fireball</item>
         <item>.221/.17 IMP Eglin</item>
         <item>.222 Rem</item>
@@ -327,7 +187,7 @@
         <item>5.56x38.2 FABRL</item>
         <item>.223 WSSM</item>
         <item>.22 Rem Jet CF</item>
-        <item>.22-250 Rem</item>
+        <item>.22–250 Rem</item>
         <item>5.6x52R/.22 Savage</item>
         <item>.303/.22 Falcon</item>
         <item>5.56x43 THOR Xpl</item>
@@ -344,7 +204,7 @@
         <item>5.56x54 XPL Hi.Vel.</item>
         <item>5.56x58.4 German Xpl</item>
         <item>.223 Ackley Improved</item>
-        <item>.22-06 Dúplex</item>
+        <item>.22–06 Dúplex</item>
         <item>.220 Rocket</item>
         <item>.220 Swift</item>
         <item>.220 Swift electric</item>
@@ -363,8 +223,8 @@
         <item>5.6x50R Magnum</item>
         <item>5.56x52 SAW</item>
         <item>5.6x52R/.22 Savage</item>
-        <item>5.6x53.2 XM-110</item>
-        <item>5.6x57 XM-645</item>
+        <item>5.6x53.2 XM–110</item>
+        <item>5.6x57 XM–645</item>
         <item>5.6x57 RWS</item>
         <item>5.6x57 R RWS</item>
         <item>5.6x61 Vom Hofe</item>
@@ -374,7 +234,7 @@
         <item>5.7x17 SR Primula</item>
         <item>5.7x24.8 Xpl P90</item>
         <item>5.7x27.8 Forerunner</item>
-        <item>5.7x28 (FN P-90)</item>
+        <item>5.7x28 (FN P–90)</item>
         <item>5.7x28.8 XPL FN</item>
         <item>5,7x33 Spitfire</item>
         <item>5,7x34.2 MMJ Spitfire</item>
@@ -382,13 +242,13 @@
         <item>5,7mm Voere</item>
         <item>5.7x36.9 R Tesching</item>
         <item>5.7x43 Finnish / Sako</item>
-        <item>.224 Vob - 5.56x23</item>
+        <item>.224 Vob – 5.56x23</item>
         <item>5.7x54 Finnish XPL</item>
-        <item>.224 Boz - 5.56x23</item>
+        <item>.224 Boz – 5.56x23</item>
         <item>.224 Winchester E1 XPL</item>
         <item>.224 Winchester E2 XPL</item>
         <item>.224 Springfield XPL</item>
-        <item>.224 K Krag - 5.6x56</item>
+        <item>.224 K Krag – 5.6x56</item>
         <item>.224 Weatherby Magnum</item>
         <item>.225 Jaws Micro Mag</item>
         <item>.225 Winchester Magnum</item>
@@ -417,17 +277,17 @@
         <item>.243WSSM/6x42</item>
         <item>6 mm TCU / 6x44</item>
         <item>6 mm WOA / 6x43</item>
-        <item>6 mm -.222 Rem Mag</item>
+        <item>6 mm –.222 Rem Mag</item>
         <item>6x44 South Africa XPL</item>
         <item>6x45 CW</item>
         <item>6x45 S.A.W.</item>
-        <item>6x45- 6mm/.223 Rem</item>
+        <item>6x45– 6mm/.223 Rem</item>
         <item>6x45 Hagar</item>
         <item>6x47 Federal</item>
         <item>6x47 SM Swiss Match</item>
         <item>6mm X / 6x48</item>
         <item>6mm XC / 6x48</item>
-        <item>6mm/.22-250</item>
+        <item>6mm/.22–250</item>
         <item>6x50 R Scheiring</item>
         <item>6x50 SAW</item>
         <item>6x52 R Bretschneider</item>
@@ -452,7 +312,7 @@
         <item>.243Win/6x52</item>
         <item>.243 RCBS/6x52</item>
         <item>.243 Rem EtronX</item>
-        <item>6mm Rem - 6x57</item>
+        <item>6mm Rem – 6x57</item>
         <item>.243 Super Rockchucker</item>
         <item>6x70 R Norma</item>
         <item>6mm Voere</item>
@@ -475,12 +335,12 @@
         <item>.243 Rem EtronX</item>
         <item>.243 Super Rockchucker</item>
         <item>6.17x52 Spitfire</item>
-        <item>6.18x60R PP-L</item>
-        <item>.244 Rem - 6x57</item>
+        <item>6.18x60R PP–L</item>
+        <item>.244 Rem – 6x57</item>
         <item>.244 Mashburn</item>
-        <item>.244 Halger - 6x57</item>
-        <item>.244 R Halger - 6x57 R</item>
-        <item>.244 H&amp;H Magnum- 6x70</item>
+        <item>.244 Halger – 6x57</item>
+        <item>.244 R Halger – 6x57 R</item>
+        <item>.244 H&amp;H Magnum– 6x70</item>
         <item>6.2x58 Förster</item>
         <item>6.2x58R Förster</item>
         <item>6.25x43 XPL</item>
@@ -496,24 +356,24 @@
         <item>.297/.250 Rook / 6.35x20.5R</item>
         <item>.250 JAWS /6.35x25</item>
         <item>6.35x27.4 Delacre</item>
-        <item>.25-20 WCF / 6.35x34R</item>
-        <item>.25-20 WCF SS /6.35x42</item>
+        <item>.25–20 WCF / 6.35x34R</item>
+        <item>.25–20 WCF SS /6.35x42</item>
         <item>.25 WSSM /6.35x42.5</item>
         <item>.25 IHMSA / 6.35x47</item>
-        <item>.25 US XPL FAT110 - 6.35x48</item>
-        <item>.250 Savage - 6.5x48.5</item>
-        <item>.25 Rem - 6.35x52</item>
-        <item>.25-21 Stevens - 6.35x52R</item>
-        <item>.25-35 Win CF / 6.5x52R</item>
-        <item>.25-36 Marlin / 6.35x54R</item>
+        <item>.25 US XPL FAT110 – 6.35x48</item>
+        <item>.250 Savage – 6.5x48.5</item>
+        <item>.25 Rem – 6.35x52</item>
+        <item>.25–21 Stevens – 6.35x52R</item>
+        <item>.25–35 Win CF / 6.5x52R</item>
+        <item>.25–36 Marlin / 6.35x54R</item>
         <item>.303/.25 Australian</item>
         <item>.25 Griffin &amp; Howe</item>
-        <item>.25-25 Stevens - 6.35x60R</item>
-        <item>.25-06 Rem- 6.4x63</item>
-        <item>.25 Gibbs - 6.5x63.5</item>
+        <item>.25–25 Stevens – 6.35x60R</item>
+        <item>.25–06 Rem– 6.4x63</item>
+        <item>.25 Gibbs – 6.5x63.5</item>
         <item>6.35x47.5 US XPL</item>
-        <item>.25 Homologous - 6.35x52</item>
-        <item>6.35x52.5 FAT127 SALVO - .25 Homologous US XPL</item>
+        <item>.25 Homologous – 6.35x52</item>
+        <item>6.35x52.5 FAT127 SALVO – .25 Homologous US XPL</item>
         <item>6.45x48 Xpl Suizo</item>
         <item>6.5x8.6 R subcal.belga</item>
         <item>6.5x18 SR Sunngard XPL</item>
@@ -527,7 +387,7 @@
         <item>6.5x38 Grendel</item>
         <item>6.5x40 R Tesching</item>
         <item>6.5x41 R Tesching</item>
-        <item>6.5-25 WSSM</item>
+        <item>6.5–25 WSSM</item>
         <item>6.5 Leopard/ 6.5x43</item>
         <item>6.5 TCU / 6.5x44</item>
         <item>6.5x47 IHMSA</item>
@@ -537,11 +397,11 @@
         <item>6.5x50 Arisaka</item>
         <item>6.5x51 Rem SAUM</item>
         <item>6.5x52 Cárcano italiano</item>
-        <item>6.5x52 R / .25-35 WCF</item>
+        <item>6.5x52 R / .25–35 WCF</item>
         <item>6.5x53 Mondragón</item>
         <item>6.5x53.5 SR Daudeteau</item>
-        <item>6.5x53.6 R Denis-Armes</item>
-        <item>6.5-.300 WSM</item>
+        <item>6.5x53.6 R Denis–Armes</item>
+        <item>6.5–.300 WSM</item>
         <item>6.5x54 Mannlicher</item>
         <item>6.5x54 Mauser "K"</item>
         <item>6.5x54 R Mannlicher NL</item>
@@ -550,13 +410,13 @@
         <item>6.5 mm /.284 Win</item>
         <item>6.5 Rem Mag/6.5x55</item>
         <item>.255 Giani Special</item>
-        <item>6.5x55 Krag-Jörgensen</item>
+        <item>6.5x55 Krag–Jörgensen</item>
         <item>6.5x56.8 Mauser Persa</item>
         <item>6.5x57 Mauser</item>
         <item>6.5x57 R Mauser</item>
         <item>6.5x58 Mauser Portugues Vergueiro</item>
         <item>6.5x58 Sueco XPL</item>
-        <item>6.5x58 R Krag-Jorgensen</item>
+        <item>6.5x58 R Krag–Jorgensen</item>
         <item>6.5x58 R Sauer</item>
         <item>6.5x61 Sueco Xpl</item>
         <item>6.5x61 R Sueco Xpl</item>
@@ -567,23 +427,23 @@
         <item>6.5x64 Brenneke</item>
         <item>6.5x65 R</item>
         <item>6.5x65 RWS</item>
-        <item>.256 Win Mag - 6.3x32R</item>
+        <item>.256 Win Mag – 6.3x32R</item>
         <item>.256 Fraser Rimless</item>
         <item>.256 Fraser Rimmed</item>
         <item>.256 Gibbs Magnum</item>
-        <item>.256 Newton - 6.5x62</item>
-        <item>.257 Whisper - 6.5x36</item>
+        <item>.256 Newton – 6.5x62</item>
+        <item>.257 Whisper – 6.5x36</item>
         <item>.257 Ackley Improved</item>
-        <item>.257 Roberts - 6.5x57</item>
-        <item>.257 Condor- 6.5x61</item>
-        <item>.257 Hawk - 6.5x63</item>
+        <item>.257 Roberts – 6.5x57</item>
+        <item>.257 Condor– 6.5x61</item>
+        <item>.257 Hawk – 6.5x63</item>
         <item>.257 Weatherby 6.5x64</item>
         <item>6.5x68 SDG</item>
         <item>6.5x68</item>
         <item>6.5x68 R</item>
         <item>6.5x70 Ohlhoff Portland</item>
         <item>6.5x70 R Sauer</item>
-        <item>6.5-300 Wright-Hoyer 6.5x72 Black Mesa</item>
+        <item>6.5–300 Wright–Hoyer 6.5x72 Black Mesa</item>
         <item>6.5mm Ultracat / 6.5x72</item>
         <item>.257 STW</item>
         <item>6.5x72 STW</item>
@@ -617,7 +477,7 @@
         <item>.270 CCC</item>
         <item>.270 Hawk</item>
         <item>.270 Gibbs</item>
-        <item>.270-.338 Win Mag</item>
+        <item>.270–.338 Win Mag</item>
         <item>.270 Ackley Improved</item>
         <item>.270 Weatherby</item>
         <item>.270 Howell</item>
@@ -626,8 +486,8 @@
         <item>6.8x33 R Schulhof</item>
         <item>6.8x37 R Tesching</item>
         <item>6.8x43 SPC REM</item>
-        <item>6.8x57 Chino M-07</item>
-        <item>6.8x60 Chino M-08</item>
+        <item>6.8x57 Chino M–07</item>
+        <item>6.8x60 Chino M–08</item>
         <item>7x10 R Karcher</item>
         <item>7x11 R Dumonthier</item>
         <item>7x11 R Gévelot Canne</item>
@@ -654,13 +514,13 @@
         <item>.275 Jeffery Rook Rifle</item>
         <item>7x35 Whisper</item>
         <item>7x36 Cane Shot</item>
-        <item>7x36 Otterup-Madsen</item>
+        <item>7x36 Otterup–Madsen</item>
         <item>7x36 R RP Tesching</item>
         <item>7x38 R RP Tesching</item>
         <item>7x38 R Larsen Nº1</item>
         <item>7mm REM Bench Rest</item>
         <item>7mm Super Magnum</item>
-        <item>7x43.4 Xpl Pre-OTAN - .280/.30 Enfield</item>
+        <item>7x43.4 Xpl Pre–OTAN – .280/.30 Enfield</item>
         <item>7x44 TC Ugalde</item>
         <item>7x45 Ingram</item>
         <item>7x46 RWS</item>
@@ -670,23 +530,23 @@
         <item>7x50 SR finés</item>
         <item>7x50R Lebel</item>
         <item>7 mm STE / 7x51 SR</item>
-        <item>7-30 Waters/ 7x51</item>
-        <item>7mm-08 Rem / 7x51</item>
+        <item>7–30 Waters/ 7x51</item>
+        <item>7mm–08 Rem / 7x51</item>
         <item>7x51 Compromise</item>
         <item>276 Pedersen / 7x51.3</item>
         <item>7x51.5 Serradilla</item>
         <item>7mm Rem SA UltraM/ 7x52</item>
         <item>7mm WSM / 7x53</item>
-        <item>7x53 Bóer - Kortneck</item>
-        <item>7mm-.300 WSM / 7x54</item>
-        <item>7x54 MAS-Fournier</item>
+        <item>7x53 Bóer – Kortneck</item>
+        <item>7mm–.300 WSM / 7x54</item>
+        <item>7x54 MAS–Fournier</item>
         <item>7x54 Finés</item>
         <item>7x54 RWS</item>
-        <item>7mm-.303 British</item>
+        <item>7mm–.303 British</item>
         <item>.284 Win / 7x55</item>
         <item>7x56 Cárcano</item>
-        <item>7x57 A-K</item>
-        <item>7x57 L-Z</item>
+        <item>7x57 A–K</item>
+        <item>7x57 L–Z</item>
         <item>7x57 Tipos</item>
         <item>7x57 Meunier</item>
         <item>7x57 Berthier XPL</item>
@@ -703,9 +563,9 @@
         <item>.275 H&amp;H Flanged Magnum</item>
         <item>7x59 Blaser Magnum</item>
         <item>.276 Enfield / 7x60</item>
-        <item>.276 Pedersen PD-42</item>
-        <item>.276 Pedersen FB-9892</item>
-        <item>.276 J-B Express Belted</item>
+        <item>.276 Pedersen PD–42</item>
+        <item>.276 Pedersen FB–9892</item>
+        <item>.276 J–B Express Belted</item>
         <item>7x63 Jürgens Mauser</item>
         <item>7x63 Eley HV</item>
         <item>7mm Dakota / 7x63</item>
@@ -715,8 +575,8 @@
         <item>7x65 UPR PEN</item>
         <item>7x65 R</item>
         <item>.280 Westley Richards</item>
-        <item>.280 Ross -7.2x66.1</item>
-        <item>.28 Ross -7.2x67</item>
+        <item>.280 Ross –7.2x66.1</item>
+        <item>.28 Ross –7.2x67</item>
         <item>7x66 VomHofe SE</item>
         <item>7x67 SR Luyven</item>
         <item>7x67 Mashburn Super</item>
@@ -728,29 +588,29 @@
         <item>7x73 Vom Hofe</item>
         <item>7x75 R Vom Hofe</item>
         <item>.276 Pedersen SR</item>
-        <item>.276 Pedersen PD-42</item>
-        <item>.276 Pedersen FB-9892</item>
-        <item>.276 Pedersen T-2</item>
+        <item>.276 Pedersen PD–42</item>
+        <item>.276 Pedersen FB–9892</item>
+        <item>.276 Pedersen T–2</item>
         <item>.276 Enfield / 7x60</item>
         <item>.277 GS / 7x67</item>
-        <item>.28-30-120 Stevens</item>
+        <item>.28–30–120 Stevens</item>
         <item>.280 Hawk</item>
         <item>.28 Winchester CF</item>
-        <item>.28-1000 Yards Danger Space</item>
-        <item>.28-1000 Yards Danger Space REM-UMC</item>
-        <item>.280/.30 Enfield - 7x43.4 Xpl Pre-OTAN</item>
-        <item>.280 Jeffery- 7.2x63.5</item>
-        <item>.280 Newton- 7.2x64</item>
-        <item>.280 Rem - 7.2x64.5</item>
+        <item>.28–1000 Yards Danger Space</item>
+        <item>.28–1000 Yards Danger Space REM–UMC</item>
+        <item>.280/.30 Enfield – 7x43.4 Xpl Pre–OTAN</item>
+        <item>.280 Jeffery– 7.2x63.5</item>
+        <item>.280 Newton– 7.2x64</item>
+        <item>.280 Rem – 7.2x64.5</item>
         <item>.280 Ackley Improved</item>
         <item>.280 Flanged NE</item>
         <item>.280 Westley Richards</item>
         <item>.280 H.V. Magnum</item>
-        <item>.280 Ross -7.2x66.1</item>
-        <item>.28 Ross -7.2x67</item>
+        <item>.280 Ross –7.2x66.1</item>
+        <item>.28 Ross –7.2x67</item>
         <item>.280 Ultra HV Halger</item>
         <item>.284 HESAM</item>
-        <item>.284 Win -7x55</item>
+        <item>.284 Win –7x55</item>
         <item>7.2x38 Xpl</item>
         <item>7.2x56 Cárcano</item>
         <item>7.2x57 SPL STA</item>
@@ -768,7 +628,7 @@
         <item>7.5x23R Suizo 1882</item>
         <item>7.5x27 Subcalibre</item>
         <item>7.5x29.8 Subcalibre</item>
-        <item>.295 Rook - 7.5x30R</item>
+        <item>.295 Rook – 7.5x30R</item>
         <item>7.5x31R Lanza Arpones</item>
         <item>7.5x34 R Walking Stick</item>
         <item>7.5x36 R RP Tesching</item>
@@ -781,13 +641,13 @@
         <item>7,5x45 Checo Xpl</item>
         <item>7.5x50 R Berthau</item>
         <item>7,5x53.5 R Rubin 1886</item>
-        <item>7,5x53.5 Scmidt-Rubin Mod. 1890 Suizo</item>
+        <item>7,5x53.5 Scmidt–Rubin Mod. 1890 Suizo</item>
         <item>7,5x53.5 Xpl Mod.1907 Suizo</item>
         <item>7,5x54 Mle. 1929</item>
         <item>Reductor 7.5x54 a .22</item>
-        <item>7,5x54.5 Scmidt-Rubin Mod. 1903 GP03</item>
-        <item>7,5x55.3 Scmidt-Rubin Mod. 1911 GP11</item>
-        <item>7,5x55.3 R Suizo Spotter-tracer</item>
+        <item>7,5x54.5 Scmidt–Rubin Mod. 1903 GP03</item>
+        <item>7,5x55.3 Scmidt–Rubin Mod. 1911 GP11</item>
+        <item>7,5x55.3 R Suizo Spotter–tracer</item>
         <item>7,5x57 XPL Berthier</item>
         <item>7,5x58 MAS 24</item>
         <item>7,5x59 Swedish XPL</item>
@@ -795,8 +655,8 @@
         <item>7,5x99 XPL</item>
         <item>7,6x20 Mauser / DWM 5</item>
         <item>7,6x24 Mannlicher 1894</item>
-        <item>.360-.300 Fraser</item>
-        <item>.300 Rook - 7.5x30R</item>
+        <item>.360–.300 Fraser</item>
+        <item>.300 Rook – 7.5x30R</item>
         <item>7.62x17 Tipo 64</item>
         <item>.30 Pedersen</item>
         <item>7.62x21.5 Finlandés</item>
@@ -808,16 +668,16 @@
         <item>.300 Jaws / 7.62x25</item>
         <item>7.62x26.2 Russian</item>
         <item>.30 Viper Trainer</item>
-        <item>.30 REECE- 7.62x29.5 R</item>
+        <item>.30 REECE– 7.62x29.5 R</item>
         <item>.30 Front Loading</item>
-        <item>.30 M-1 Court - 7.62x31</item>
+        <item>.30 M–1 Court – 7.62x31</item>
         <item>.30 Puma Special</item>
-        <item>.30-357 AET</item>
+        <item>.30–357 AET</item>
         <item>7.62x29.4 US Xpl</item>
         <item>7.62x33</item>
         <item>.30 Stoll</item>
-        <item>.30-222 Gévelot</item>
-        <item>.30 M-1 Carbine</item>
+        <item>.30–222 Gévelot</item>
+        <item>.30 M–1 Carbine</item>
         <item>.30 Picra / 8x33 R</item>
         <item>7.62x34 US XPL</item>
         <item>7.62x34.5 H&amp;K XPL</item>
@@ -825,7 +685,7 @@
         <item>.300 Whisper Rimmed</item>
         <item>.300 AAC Blackout</item>
         <item>7.62x35 XPL Lahti</item>
-        <item>7.62x35 SP-3</item>
+        <item>7.62x35 SP–3</item>
         <item>7.62x37 H &amp; K</item>
         <item>.302 Whisper / 7.62x38</item>
         <item>7.62x38 XPL Dutch</item>
@@ -835,19 +695,19 @@
         <item>.30 Rem AR</item>
         <item>.300 Kynoch Long</item>
         <item>.300 Sherwood</item>
-        <item>7.62x39 Fogueo-inertes</item>
+        <item>7.62x39 Fogueo–inertes</item>
         <item>7.62x39 Sobrepresión, deportivos, tiro red.</item>
         <item>7.62x39 Trazadores</item>
         <item>7.62x39 Otros tipos</item>
-        <item>7.62x39 Cifras-símbolos</item>
+        <item>7.62x39 Cifras–símbolos</item>
         <item>7.62x39 Letras</item>
         <item>7.62x39 Electric Primer</item>
         <item>.300 British Flame Thrower Igniter nº 1</item>
-        <item>7.62x40 DAG-IWK</item>
+        <item>7.62x40 DAG–IWK</item>
         <item>7.62x40 Wilson Tactical</item>
         <item>7.62x40 Lockless</item>
         <item>7.62x40 CETME XPL</item>
-        <item>7.62x41 SP-4</item>
+        <item>7.62x41 SP–4</item>
         <item>.30 Herret</item>
         <item>.30 HRT / 7.62x41</item>
         <item>7.62x41.2 Xpl</item>
@@ -858,7 +718,7 @@
         <item>7.62x45 XPL M. 1946</item>
         <item>7.62x45 Checo M. 1951</item>
         <item>.300 Savage / 7.62x47</item>
-        <item>.30 US 7-65 / 7.62x47</item>
+        <item>.30 US 7–65 / 7.62x47</item>
         <item>.30 T/C / 7.62x48</item>
         <item>7.62x49 Xpl Pre OTAN</item>
         <item>.308 Marlin / 7.62x49 SR</item>
@@ -874,53 +734,53 @@
         <item>7.62x51 Fogueo plástico e inertes</item>
         <item>7.62x51 ESPAÑOLES fogueo e inertes</item>
         <item>7.62x51 ESPAÑOLES resto</item>
-        <item>7.62x51/.308 Win- otros tipos</item>
-        <item>7.62x51 Marcajes 0-K</item>
-        <item>7.62x51 Marcajes L-Z</item>
+        <item>7.62x51/.308 Win– otros tipos</item>
+        <item>7.62x51 Marcajes 0–K</item>
+        <item>7.62x51 Marcajes L–Z</item>
         <item>7.62x51 RR ametralladora</item>
         <item>7.62x51 US XPL</item>
         <item>7.62x51 switching</item>
         <item>.30 US Light Rifle</item>
-        <item>.30-30 Ackley/ 7.62x51R</item>
-        <item>.30-30 Win / 7.62x52R</item>
+        <item>.30–30 Ackley/ 7.62x51R</item>
+        <item>.30–30 Win / 7.62x52R</item>
         <item>.30 REM / 7.62x52</item>
         <item>7.62x52 US XPL</item>
         <item>.308 MW F.E.Höller</item>
         <item>.300 Remington SA UM</item>
         <item>.300 WSM</item>
         <item>7.62x54R Tipos</item>
-        <item>7.62x54R - 0 a K</item>
-        <item>7.62x54R - L a Z</item>
+        <item>7.62x54R – 0 a K</item>
+        <item>7.62x54R – L a Z</item>
         <item>7.62x55 R Kiangnan</item>
         <item>.300 Adrian / 7.62x55 R</item>
-        <item>.30-.284 Nolasco</item>
+        <item>.30–.284 Nolasco</item>
         <item>7.62 UKM</item>
-        <item>.30-06 Colt SSB</item>
-        <item>.30-06 CCC</item>
+        <item>.30–06 Colt SSB</item>
+        <item>.30–06 CCC</item>
         <item>.30 Krag rimless</item>
-        <item>.30-40 US Krag</item>
-        <item>.30-40 2 pieces case</item>
+        <item>.30–40 US Krag</item>
+        <item>.30–40 2 pieces case</item>
         <item>7.62x60 Spalek</item>
-        <item>.30-06 Court Cartry</item>
-        <item>.30-06 J.D.Jones</item>
+        <item>.30–06 Court Cartry</item>
+        <item>.30–06 J.D.Jones</item>
         <item>7.62x62.8 PZAM</item>
         <item>.300 Hawk / 7.62x63</item>
-        <item>.30-06 TIPOS/ 7.62x63</item>
-        <item>.30-06 Marcajes/ 7.62x63</item>
+        <item>.30–06 TIPOS/ 7.62x63</item>
+        <item>.30–06 Marcajes/ 7.62x63</item>
         <item>.30 Gibbs / 7.62x63</item>
         <item>.300 Gonzo II</item>
         <item>.300 Norma Magnum</item>
         <item>.30 Smith Belted</item>
-        <item>.30-1000 Yards</item>
+        <item>.30–1000 Yards</item>
         <item>.30 Adolph / 7.62x64 SR</item>
         <item>.30 Newton / 7.62x64</item>
-        <item>.30-338 Win Mag</item>
+        <item>.30–338 Win Mag</item>
         <item>.300 Styria Magnum</item>
         <item>.300 Blaser Magnum</item>
         <item>.308 Norma Magnum</item>
         <item>.300 Dakota/7.62x65</item>
-        <item>.30-03 Gvt. / 7.62x65</item>
-        <item>.30-01 Gvt. / 7.62x65</item>
+        <item>.30–03 Gvt. / 7.62x65</item>
+        <item>.30–01 Gvt. / 7.62x65</item>
         <item>.300 Win Mag</item>
         <item>.300 Howell / 7.62x66</item>
         <item>.30 Blaser / 7.62x68R</item>
@@ -937,22 +797,22 @@
         <item>.300 Canadian Mag.</item>
         <item>.300 Rem Ultra Mag / 7.6x72</item>
         <item>.300 Caribou / 7.6x72</item>
-        <item>.30-378 WbyMag / 7.62x74</item>
+        <item>.30–378 WbyMag / 7.62x74</item>
         <item>.308 Barmes Supreme</item>
-        <item>.30-06 Duplex / 7.62x75</item>
+        <item>.30–06 Duplex / 7.62x75</item>
         <item>.30 Holland Super / 7.62x75R</item>
         <item>.300 Pegasus / 7.62x75</item>
         <item>7,62x99 XPL</item>
-        <item>7.63x21-7.65 Mannlicher</item>
-        <item>7.63 Micro-Whisper</item>
+        <item>7.63x21–7.65 Mannlicher</item>
+        <item>7.63 Micro–Whisper</item>
         <item>7.63x23 Mannlicher XPL</item>
         <item>7.63x25 Mauser</item>
         <item>7.63x25 Mannlicher 1896</item>
-        <item>7.63 Mini-Whisper</item>
+        <item>7.63 Mini–Whisper</item>
         <item>.31 Thuer</item>
         <item>.310 Cattle Killer</item>
         <item>.310 Cadet / 7.63x28R</item>
-        <item>7.65x13 Roth-Sauer</item>
+        <item>7.65x13 Roth–Sauer</item>
         <item>7.65x13 SR Frommer</item>
         <item>7.65x15 Pressin</item>
         <item>7.65x17/.32 ACP</item>
@@ -961,9 +821,9 @@
         <item>.32 ASP / 7.65x17</item>
         <item>7.65x17R CF Picket</item>
         <item>.32 NAA / 7.65x17</item>
-        <item>.32 ZVI- 7.65x18</item>
+        <item>.32 ZVI– 7.65x18</item>
         <item>7.65x19 SR Español</item>
-        <item>.320 Rook - 7.65x20R</item>
+        <item>.320 Rook – 7.65x20R</item>
         <item>.30 Pedersen Short</item>
         <item>.30 Pedersen Long</item>
         <item>7.65x20</item>
@@ -972,18 +832,18 @@
         <item>7.65x25 Borchardt</item>
         <item>7.65x30 Húngaro</item>
         <item>7.65x32 Mannlicher XPL</item>
-        <item>7.65x35 MAS - Vorgrimmler XPL</item>
+        <item>7.65x35 MAS – Vorgrimmler XPL</item>
         <item>7.65x35 FURRER</item>
         <item>7.65x38 Suizo</item>
         <item>7.65x53.7 Berthier XPL</item>
         <item>7.65x54 Argentino</item>
         <item>7.65x54 SR Marga Nº4</item>
         <item>7.65x61 Marina Argentina</item>
-        <item>.310-8mm GNR/7.8x65</item>
+        <item>.310–8mm GNR/7.8x65</item>
         <item>.308 Warbird</item>
         <item>7.7x17 R Bittner</item>
-        <item>.303 Adaptor - 7.7x16R</item>
-        <item>.303 Wilkinson Adaptor - 7.7x21R</item>
+        <item>.303 Adaptor – 7.7x16R</item>
+        <item>.303 Wilkinson Adaptor – 7.7x21R</item>
         <item>.303 Adder / 7.7x37 R</item>
         <item>.303 Savage</item>
         <item>.303 Baikrich/ 7.7x52 R</item>
@@ -1001,9 +861,9 @@
         <item>.55/.303 Boys XPL</item>
         <item>7,7x58 SR Arisaka Japonés</item>
         <item>7,7x58 Japonés</item>
-        <item>.375-303 Axite</item>
+        <item>.375–303 Axite</item>
         <item>.309 J.D. Jones</item>
-        <item>7.75x40 Winter M-35</item>
+        <item>7.75x40 Winter M–35</item>
         <item>7.8x23 R Cattle Killer</item>
         <item>.311 Imperial Mag.</item>
         <item>7.8x25 Bergmann nº5</item>
@@ -1014,13 +874,13 @@
         <item>.315 Wadie / 8x17</item>
         <item>.318 Westley NE</item>
         <item>.318 Selby Magnum</item>
-        <item>.32 S&amp;W CF - 7.8x15R</item>
-        <item>.320 Short CF Short Case - 7.8x16R</item>
-        <item>.32 Short Colt - 7.8x16R</item>
+        <item>.32 S&amp;W CF – 7.8x15R</item>
+        <item>.320 Short CF Short Case – 7.8x16R</item>
+        <item>.32 Short Colt – 7.8x16R</item>
         <item>.32 S&amp;W Auto XPL</item>
         <item>.32 Humane Killer</item>
-        <item>.32 ZVI- 7.65x18</item>
-        <item>.320 Short CF - 7.8x18R</item>
+        <item>.32 ZVI– 7.65x18</item>
+        <item>.320 Short CF – 7.8x18R</item>
         <item>.32 Williamson TEATFIRE</item>
         <item>.32 S&amp;W</item>
         <item>.320 CF Long Revolver</item>
@@ -1031,27 +891,27 @@
         <item>.32 H&amp;R Magnum</item>
         <item>.32 S&amp;W Extra Long</item>
         <item>.32 Ballard Extra Long</item>
-        <item>.32-.357 Wiersma VM</item>
+        <item>.32–.357 Wiersma VM</item>
         <item>.32 S&amp;W revólver XPL</item>
-        <item>.32 WIN SL -.32 WSLR</item>
-        <item>.32-20 WIN</item>
-        <item>.38-.32 Wildcat</item>
+        <item>.32 WIN SL –.32 WSLR</item>
+        <item>.32–20 WIN</item>
+        <item>.38–.32 Wildcat</item>
         <item>.320 Extra Long</item>
         <item>.32 S&amp;amp;W Revolving</item>
-        <item>.32-30 Rem / 8x41R</item>
+        <item>.32–30 Rem / 8x41R</item>
         <item>.32 Ideal / 8x44R</item>
-        <item>.32-40 Bullard / 8x47 R</item>
-        <item>.32-35 Maynard/8x47 R</item>
-        <item>.32-35 Stevens/8x48 R</item>
+        <item>.32–40 Bullard / 8x47 R</item>
+        <item>.32–35 Maynard/8x47 R</item>
+        <item>.32–35 Stevens/8x48 R</item>
         <item>.32 Winchester Special</item>
-        <item>.32-40 WCF</item>
-        <item>.32-44 Samp;W Target - 8.1x24.6 R</item>
+        <item>.32–40 WCF</item>
+        <item>.32–44 Samp;W Target – 8.1x24.6 R</item>
         <item>.320 Swift</item>
-        <item>.32 Rem - 8x52</item>
+        <item>.32 Rem – 8x52</item>
         <item>7.7x60 R Hebler</item>
-        <item>.3200 Hawk - 8x63</item>
-        <item>.32-70 Win Navy A</item>
-        <item>.32-70 Win Navy B</item>
+        <item>.3200 Hawk – 8x63</item>
+        <item>.32–70 Win Navy A</item>
+        <item>.32–70 Win Navy B</item>
         <item>7,9x45 R Target</item>
         <item>7,9x52,9 R Rubin XPL</item>
         <item>7,9x53.6 Rubin XPL 1886</item>
@@ -1064,21 +924,21 @@
         <item>7.92x40 CETME</item>
         <item>7.92x44 CETME Caseless</item>
         <item>7.92x45 XPL</item>
-        <item>7.92x51 CB-52</item>
+        <item>7.92x51 CB–52</item>
         <item>7.92x56 Sniper Húngaro</item>
-        <item>7.92x57 0-E</item>
-        <item>7.92x57 F-K</item>
-        <item>7.92x57 L-P</item>
-        <item>7.92x57 Q-Z</item>
+        <item>7.92x57 0–E</item>
+        <item>7.92x57 F–K</item>
+        <item>7.92x57 L–P</item>
+        <item>7.92x57 Q–Z</item>
         <item>7.92x57 Españoles</item>
         <item>7.92x57 Alemanes</item>
-        <item>7.92x57 Fogueo-inerte</item>
+        <item>7.92x57 Fogueo–inerte</item>
         <item>7.92x57 resto de tipos</item>
         <item>7.92x57 R Holandés</item>
         <item>7.92x57 JRS</item>
         <item>7.92x61 Noruego ametralladora</item>
         <item>7.92x64</item>
-        <item>7.92x81.5 MG-131/8 XPL</item>
+        <item>7.92x81.5 MG–131/8 XPL</item>
         <item>7.92x86</item>
         <item>7.92x95</item>
         <item>7.92x107</item>
@@ -1100,16 +960,16 @@
         <item>8x22 Bergmann Nº4</item>
         <item>8x22 R Steyr Revólver</item>
         <item>8x23 R Kromar</item>
-        <item>8x24 R Tue-Tue</item>
+        <item>8x24 R Tue–Tue</item>
         <item>8x24 R Non reglamentaire</item>
         <item>8x25 Schüler Gas Pistol</item>
         <item>8x26 R Estopín</item>
         <item>8x26.5 Devillers</item>
-        <item>11-8 Schirnecker</item>
+        <item>11–8 Schirnecker</item>
         <item>8x27 R Lebel</item>
         <item>8x27 R Gasser 1898</item>
         <item>8x28 R Schulhof</item>
-        <item>.320 XL Rook - 8x30R</item>
+        <item>.320 XL Rook – 8x30R</item>
         <item>8mm S&amp;amp;W XPL</item>
         <item>8x34 Karlsborg</item>
         <item>8x35 SR Ribeyrolle</item>
@@ -1129,27 +989,27 @@
         <item>8x48 R Sauer</item>
         <item>8x49 Mauser M88</item>
         <item>8x50 R Pieper</item>
-        <item>8x50R Lebel- Introducción y tipos</item>
-        <item>8x50R Lebel - Marcajes 0-K</item>
-        <item>8x50R Lebel - Marcajes L-Z</item>
+        <item>8x50R Lebel– Introducción y tipos</item>
+        <item>8x50R Lebel – Marcajes 0–K</item>
+        <item>8x50R Lebel – Marcajes L–Z</item>
         <item>8x50R Mannlicher</item>
         <item>8x50R Siamés tipo 45</item>
-        <item>8mm-.300 RSAUM</item>
+        <item>8mm–.300 RSAUM</item>
         <item>8x51 Mauser</item>
         <item>8x51 R Mauser</item>
         <item>8x52 R Mannlicher</item>
         <item>8x52 R Tipo 66 Siamés</item>
         <item>8x52 R Mauser M88</item>
-        <item>8x53 Hebler-Lorenz</item>
+        <item>8x53 Hebler–Lorenz</item>
         <item>8x53 R Murata Japonés</item>
-        <item>8x54 Krag-Jorgensen</item>
+        <item>8x54 Krag–Jorgensen</item>
         <item>8x55 R Keserü</item>
         <item>8x56 Mannlicher Schoenauer</item>
         <item>8x56 R Kropatschek</item>
         <item>8x56 R Steyr Mannlicher</item>
         <item>8x56 Sniper Húngaro</item>
         <item>8x57 Stummer</item>
-        <item>8x57 R -.360</item>
+        <item>8x57 R –.360</item>
         <item>8x57 R M 88 A</item>
         <item>8x57 JRS</item>
         <item>8x58 R Krag</item>
@@ -1166,28 +1026,28 @@
         <item>8x60 R Grillmayer</item>
         <item>8x60 R S Mauser</item>
         <item>8x60 S Mauser</item>
-        <item>.318 Westley-Richards Nitro - 8x61</item>
-        <item>8mm-06 / 8x63</item>
+        <item>.318 Westley–Richards Nitro – 8x61</item>
+        <item>8mm–06 / 8x63</item>
         <item>8x63 R.W.S.</item>
         <item>8mm Gibbs/ 8x63</item>
         <item>8x63 Bofors sueco</item>
         <item>8x64 Mazón</item>
         <item>8x64 S Brenneke</item>
-        <item>.310-8mm GNR /8x65</item>
+        <item>.310–8mm GNR /8x65</item>
         <item>8x65 R Brenneke</item>
         <item>8x65 RS Brenneke</item>
         <item>8x68 S</item>
         <item>8x71 Peterlongo</item>
         <item>8x72R Exprss</item>
-        <item>8x72 R Teschner-Collath</item>
-        <item>8 mm Rem Mag - 8x72</item>
+        <item>8x72 R Teschner–Collath</item>
+        <item>8 mm Rem Mag – 8x72</item>
         <item>8 mm Ultracat / 8x72</item>
         <item>8x73 Miller Greiss</item>
         <item>8x75 R</item>
         <item>8x75 Behr</item>
         <item>8x75 R Behr</item>
         <item>8x75 R S Behr</item>
-        <item>12.7-8 mm Gerlich XPL</item>
+        <item>12.7–8 mm Gerlich XPL</item>
         <item>8x81.6 Rheinmetall</item>
         <item>8x87 Español</item>
         <item>.321 Greener Multi</item>
@@ -1220,7 +1080,7 @@
         <item>.330 McFarlane / 8.3x64</item>
         <item>.330 Dakota / 8.3x64</item>
         <item>.333 OKH / 8x62</item>
-        <item>.333 B-J Express Belted</item>
+        <item>.333 B–J Express Belted</item>
         <item>.333 R N.E. / 8x63 R</item>
         <item>.333 Nitro Express / 8x63</item>
         <item>.333 Barnes Supreme</item>
@@ -1236,27 +1096,27 @@
         <item>8.5x65 R Louen /WLN</item>
         <item>8.5x75 R Scheiring</item>
         <item>.335 HV Halger</item>
-        <item>.338 Spectre - 8.5x33</item>
-        <item>.338-.223 Atchisson/ 8.5x35</item>
+        <item>.338 Spectre – 8.5x33</item>
+        <item>.338–.223 Atchisson/ 8.5x35</item>
         <item>.338 Whisper</item>
-        <item>.338 IHMSA- 8.5x47</item>
+        <item>.338 IHMSA– 8.5x47</item>
         <item>.338 Marlin Express</item>
         <item>.338 Ruger Compact Mag</item>
         <item>.338/300 Rem SA UM</item>
-        <item>.338-08 Steyr - 8.6x51</item>
+        <item>.338–08 Steyr – 8.6x51</item>
         <item>.338 Federal / 8.6x51</item>
         <item>8.59x51.5 Galaxy</item>
         <item>.338 M &amp; K /8.6x53 R</item>
         <item>.338 Scovill</item>
         <item>.338 Blaser Magnum</item>
         <item>.338 Hawk</item>
-        <item>.338-06 JDJ</item>
-        <item>.338-06 A-Square</item>
-        <item>.338-06 Ackley</item>
+        <item>.338–06 JDJ</item>
+        <item>.338–06 A–Square</item>
+        <item>.338–06 Ackley</item>
         <item>.338 Win Mag /8.6x63</item>
         <item>.338 Norma Magnum</item>
         <item>.338 GNR /8.6x65 R</item>
-        <item>.338 Baker - 8.5x65</item>
+        <item>.338 Baker – 8.5x65</item>
         <item>.338/.416 USN Sniper</item>
         <item>.338 Lapua Mag</item>
         <item>.338 Rem Ultra Mag</item>
@@ -1267,13 +1127,13 @@
         <item>.338 Black Mesa Express / 8.6x72</item>
         <item>.338 Edge</item>
         <item>.338 Imperial Magnum</item>
-        <item>.338 A-Square</item>
+        <item>.338 A–Square</item>
         <item>.338 Jarrett</item>
-        <item>.338-404 Express</item>
+        <item>.338–404 Express</item>
         <item>.338 Xtreme</item>
-        <item>.338-378 Weatherby Mg</item>
+        <item>.338–378 Weatherby Mg</item>
         <item>.338 Excalibur</item>
-        <item>.338 Snipe-Tac</item>
+        <item>.338 Snipe–Tac</item>
         <item>.340 Short CF</item>
         <item>.34 Needle/ 110 Bore</item>
         <item>.340 Howell</item>
@@ -1286,21 +1146,21 @@
         <item>.35 Grenaille Rimless</item>
         <item>.350 Jaws /8.8x25</item>
         <item>.35 Win SL R</item>
-        <item>.35-30 Maynard 1865</item>
+        <item>.35–30 Maynard 1865</item>
         <item>.35x42 R Grillmayer</item>
-        <item>.35 IHMSA- 9x47 IHMSA</item>
+        <item>.35 IHMSA– 9x47 IHMSA</item>
         <item>.35 Rem</item>
-        <item>.35-40 Maynard M.1882</item>
+        <item>.35–40 Maynard M.1882</item>
         <item>.350 Rem Mag</item>
-        <item>.35 Win CF - 9x61R</item>
-        <item>.35-06 JDJ - 9x65</item>
-        <item>.35 Whelen - 9x63</item>
-        <item>.350 Explott - 9x63</item>
-        <item>.35 Newton - 9x64</item>
-        <item>.350 Howell - 9x66</item>
-        <item>.35/.338 RUM - 9x69</item>
-        <item>.400-.350 Rigby - 9x70R</item>
-        <item>.350 Rigby Mag - 9x70</item>
+        <item>.35 Win CF – 9x61R</item>
+        <item>.35–06 JDJ – 9x65</item>
+        <item>.35 Whelen – 9x63</item>
+        <item>.350 Explott – 9x63</item>
+        <item>.35 Newton – 9x64</item>
+        <item>.350 Howell – 9x66</item>
+        <item>.35/.338 RUM – 9x69</item>
+        <item>.400–.350 Rigby – 9x70R</item>
+        <item>.350 Rigby Mag – 9x70</item>
         <item>.350 Griffin &amp; Howe</item>
         <item>.351 WSL</item>
         <item>8.8x10 R SAPL</item>
@@ -1334,20 +1194,20 @@
         <item>9x20/ 9Browning</item>
         <item>9x21</item>
         <item>9x21 ASAEY</item>
-        <item>9x21 M-65 Danés</item>
+        <item>9x21 M–65 Danés</item>
         <item>9x21 Encendedor de lanzallamas Alemán</item>
         <item>9x21 Encendedor de lanzallamas Suizo</item>
         <item>9x21 Gyurza</item>
         <item>9x22 Knall</item>
         <item>9x22 P.A. Rubber</item>
-        <item>9x22 Major - MJR</item>
+        <item>9x22 Major – MJR</item>
         <item>9x22 AE</item>
         <item>9x22 R Japonés tipo 26</item>
         <item>9x22 R Nagant Belga</item>
         <item>9x23 R Toy Cartridge</item>
         <item>.38 Todd Jarret / 9x23</item>
         <item>9x23 Steyr</item>
-        <item>9x23 Bergmann-Bayard nº 3</item>
+        <item>9x23 Bergmann–Bayard nº 3</item>
         <item>9x23/ 9 Largo</item>
         <item>9x23 Win</item>
         <item>9x23.5 Benelli Aupo</item>
@@ -1397,7 +1257,7 @@
         <item>9x63 Hesmer</item>
         <item>9x63 R Mauser</item>
         <item>9x66 MAS Xpl</item>
-        <item>.369 Purdey - 9x68R</item>
+        <item>.369 Purdey – 9x68R</item>
         <item>9x71 Peterlongo</item>
         <item>9x71 R Peterlongo</item>
         <item>9x74 R Förster</item>
@@ -1411,15 +1271,15 @@
         <item>.357 Mag.Silhouette</item>
         <item>10mm/.357 Grillmayer</item>
         <item>.357 Auto Magnum</item>
-        <item>.44-.357 Saturn Magnum</item>
+        <item>.44–.357 Saturn Magnum</item>
         <item>.357 Magnum</item>
-        <item>.44-.357 Bain &amp;Davis Sharp</item>
-        <item>.44-.357 Bain &amp;Davis</item>
+        <item>.44–.357 Bain &amp;Davis Sharp</item>
+        <item>.44–.357 Bain &amp;Davis</item>
         <item>.357 Cabur Short Neck</item>
         <item>.357 Cabur</item>
         <item>.357 Maximum</item>
         <item>.357 Herrett</item>
-        <item>.44-.358 Invicta</item>
+        <item>.44–.358 Invicta</item>
         <item>.358 Winchester</item>
         <item>.358 J.D.Jones</item>
         <item>.358 Scovill / 9x62</item>
@@ -1427,7 +1287,7 @@
         <item>.358 Norma Magnum</item>
         <item>.358 Barnes Supreme</item>
         <item>.358 S.T.A.</item>
-        <item>.358-.300 RUM/8.6x72</item>
+        <item>.358–.300 RUM/8.6x72</item>
         <item>.36 Marston Pistol 1852</item>
         <item>.36 Thuer Police</item>
         <item>.36 Thuer</item>
@@ -1441,12 +1301,12 @@
         <item>.360 Westley Richards Nº3</item>
         <item>.360 coiled 2 ¼" BPE</item>
         <item>.360 Drawn 2 ¼"</item>
-        <item>.360 Eley BPE - 9.3x62R</item>
+        <item>.360 Eley BPE – 9.3x62R</item>
         <item>.400/.360 NE Westley</item>
         <item>.400/.360 NE B Purdey</item>
         <item>.360 Imperial Magnum</item>
-        <item>.360 Nº2 Express 3" - 9x76R</item>
-        <item>.369 Purdey - 9x68R</item>
+        <item>.360 Nº2 Express 3" – 9x76R</item>
+        <item>.369 Purdey – 9x68R</item>
         <item>9.1x17R Abadie</item>
         <item>9.1x40R Tesching</item>
         <item>9.15x60 R Larsen Nº 3</item>
@@ -1463,7 +1323,7 @@
         <item>9.3x53 R Suizo M26</item>
         <item>9.3x53R soviético</item>
         <item>9.3x53R finlandés</item>
-        <item>9.3-03 BG / 9.3x54 R</item>
+        <item>9.3–03 BG / 9.3x54 R</item>
         <item>9.3x57 Mauser</item>
         <item>9.3x57 R D</item>
         <item>9.3x57 R E</item>
@@ -1480,12 +1340,12 @@
         <item>9.3x65 Clemens</item>
         <item>9.3x66 SAKO</item>
         <item>9.3x66 R Grillmayer</item>
-        <item>9.3/.338 RUM - 9.3x69</item>
+        <item>9.3/.338 RUM – 9.3x69</item>
         <item>9.3x70 R D</item>
         <item>9.3x70 Brenneke</item>
         <item>9.3x70 Rimless RWS</item>
         <item>9.3x72 B Sisk</item>
-        <item>9.3x72R - .360 NITRO</item>
+        <item>9.3x72R – .360 NITRO</item>
         <item>9.3x72R D Express</item>
         <item>9.3x72 R Nimrod</item>
         <item>9.3x72 R Sauer &amp; Sohn</item>
@@ -1513,18 +1373,18 @@
         <item>9,5x60 R Mauser turco</item>
         <item>9,5x62</item>
         <item>9.5x66 Vom Hofe</item>
-        <item>9.5x73 Miller-Greiss</item>
+        <item>9.5x73 Miller–Greiss</item>
         <item>.375 Whisper /9.5x37</item>
-        <item>.375-284 Win</item>
+        <item>.375–284 Win</item>
         <item>.375 J.D.Jones/ 9.5x56R</item>
         <item>.375 Strieby</item>
         <item>.375 Heavy Express</item>
         <item>.375 Jensen/ 9.5x61</item>
-        <item>.375-06 J.D.J/ 9.5x62</item>
-        <item>.375 Hawk-Scovill/ 9.5x62</item>
+        <item>.375–06 J.D.J/ 9.5x62</item>
+        <item>.375 Hawk–Scovill/ 9.5x62</item>
         <item>.375 Flanged NE 2 ½"</item>
-        <item>.375-338 Win Mag</item>
-        <item>.400-375 Holland &amp; H.</item>
+        <item>.375–338 Win Mag</item>
+        <item>.400–375 Holland &amp; H.</item>
         <item>.375 Ruger / 9.5x63.5</item>
         <item>.375 Dakota / 9.5x65</item>
         <item>.375 Epstein / 9.5x66</item>
@@ -1537,11 +1397,11 @@
         <item>.375 H&amp;H / 9.5x72</item>
         <item>.375 Weatherby Magnum</item>
         <item>.375 Rem UM / 9.5x72</item>
-        <item>.375 R Verney-Carron</item>
-        <item>.375 Verney-Carron</item>
+        <item>.375 R Verney–Carron</item>
+        <item>.375 Verney–Carron</item>
         <item>.375 Hoffman</item>
-        <item>.375H&amp;H Flanged-9.5x74 R</item>
-        <item>.375-50 BMG</item>
+        <item>.375H&amp;H Flanged–9.5x74 R</item>
+        <item>.375–50 BMG</item>
         <item>.375 Chey Tac</item>
         <item>.375 Snipe Tac / 9.5x77</item>
         <item>.375 Viersco LN</item>
@@ -1562,18 +1422,18 @@
         <item>.38 Short Colt CF Short</item>
         <item>.380 Short CF Long Case</item>
         <item>.38 Special Corto</item>
-        <item>.38-200 British Mk I</item>
+        <item>.38–200 British Mk I</item>
         <item>.380 British Mk II</item>
         <item>.38 Fissa Chiodi</item>
         <item>.38 Short Colt Long C</item>
-        <item>.38 Merwin-Hulbert</item>
+        <item>.38 Merwin–Hulbert</item>
         <item>.38 S&amp;W</item>
         <item>.380 Knall</item>
         <item>.38 Colt New Police</item>
         <item>.38 Webley / 9.5x19.9 R</item>
         <item>.38 Long Colt Outs.Lub.</item>
-        <item>.38-.45 ACP / 9x22</item>
-        <item>.38-.45 Hard Head</item>
+        <item>.38–.45 ACP / 9x22</item>
+        <item>.38–.45 Hard Head</item>
         <item>.38 Super/Auto</item>
         <item>.38 Todd Jarret / 9x23</item>
         <item>.38 Colt ACP</item>
@@ -1588,26 +1448,26 @@
         <item>.38 Oramil</item>
         <item>.38 Sharps percussion</item>
         <item>.38 Special españoles</item>
-        <item>.38 Special - Tipos</item>
-        <item>.38 Special - 0/K</item>
-        <item>.38 Special - L/Z</item>
+        <item>.38 Special – Tipos</item>
+        <item>.38 Special – 0/K</item>
+        <item>.38 Special – L/Z</item>
         <item>.38 AMU SR</item>
-        <item>.38-40 WIN</item>
-        <item>.38-44 S&amp;W Gallery</item>
-        <item>.38-30 Ballard Xtra Long</item>
-        <item>.38-40 Rem-Hepburn</item>
-        <item>.38-45 Stevens</item>
-        <item>.38-45 Bullard - 9x46R</item>
-        <item>.38-45 Ballard Everlasting - 9x46R</item>
-        <item>.38-50 Ballard 2"</item>
-        <item>.38-50 Maynard</item>
-        <item>.38-55 WIN</item>
-        <item>.38-56 WCF</item>
-        <item>.38-50 Rem-Hepburn</item>
-        <item>.38-70 WIN CF</item>
-        <item>.38-72 WIN CF</item>
-        <item>.380 Howell - 9x66</item>
-        <item>.38-90 Win Express</item>
+        <item>.38–40 WIN</item>
+        <item>.38–44 S&amp;W Gallery</item>
+        <item>.38–30 Ballard Xtra Long</item>
+        <item>.38–40 Rem–Hepburn</item>
+        <item>.38–45 Stevens</item>
+        <item>.38–45 Bullard – 9x46R</item>
+        <item>.38–45 Ballard Everlasting – 9x46R</item>
+        <item>.38–50 Ballard 2"</item>
+        <item>.38–50 Maynard</item>
+        <item>.38–55 WIN</item>
+        <item>.38–56 WCF</item>
+        <item>.38–50 Rem–Hepburn</item>
+        <item>.38–70 WIN CF</item>
+        <item>.38–72 WIN CF</item>
+        <item>.380 Howell – 9x66</item>
+        <item>.38–90 Win Express</item>
         <item>9.65x23 Browning</item>
         <item>9.75x36.5 R</item>
         <item>9.8x23 A.C.P.</item>
@@ -1641,72 +1501,72 @@
         <item>10.15x62.5 R Koka</item>
         <item>10.15x65 R Express</item>
         <item>.40 S&amp;W</item>
-        <item>.400 Cor-Bon / 10x23</item>
+        <item>.400 Cor–Bon / 10x23</item>
         <item>.40 Super / 10x25</item>
         <item>.400 JAWS / 10x25</item>
         <item>.40 Taurus / 10x29R</item>
         <item>.400 Colt Magnum</item>
         <item>.40 Booby Trap</item>
-        <item>.40-70 Peabody-Martini</item>
-        <item>.40-50 Sharps necked</item>
-        <item>.40-40 Maynard 1865</item>
+        <item>.40–70 Peabody–Martini</item>
+        <item>.40–50 Sharps necked</item>
+        <item>.40–40 Maynard 1865</item>
         <item>10.2x46 R Swiss M17</item>
         <item>10.25x38 R K Target</item>
-        <item>.40-40 Maynard 1873</item>
-        <item>.40-50 Sharps Straight</item>
-        <item>.40-60-210 Winchester CF / 10x48R</item>
-        <item>.40-90-500 Peabody</item>
-        <item>.40-90-300 Bullard</item>
-        <item>.40-60 Maynard 1865</item>
-        <item>.40-60 Colt Lighting / 10x53R</item>
-        <item>.40-75 Bullard CF</item>
-        <item>.40-65 WCF/ 10x53.5R</item>
-        <item>.40-60 Win CF Straight</item>
-        <item>.40-70 Sharps/ 10x57R</item>
+        <item>.40–40 Maynard 1873</item>
+        <item>.40–50 Sharps Straight</item>
+        <item>.40–60–210 Winchester CF / 10x48R</item>
+        <item>.40–90–500 Peabody</item>
+        <item>.40–90–300 Bullard</item>
+        <item>.40–60 Maynard 1865</item>
+        <item>.40–60 Colt Lighting / 10x53R</item>
+        <item>.40–75 Bullard CF</item>
+        <item>.40–65 WCF/ 10x53.5R</item>
+        <item>.40–60 Win CF Straight</item>
+        <item>.40–70 Sharps/ 10x57R</item>
         <item>.450/.400 Nitro 2 3/8"</item>
-        <item>.40-70 Ballard</item>
-        <item>.40-70 Winchester CF</item>
-        <item>.40-82 Winchester CF</item>
-        <item>.40-70 Maynard 1873</item>
+        <item>.40–70 Ballard</item>
+        <item>.40–70 Winchester CF</item>
+        <item>.40–82 Winchester CF</item>
+        <item>.40–70 Maynard 1873</item>
         <item>.400 Whelen / 10x63</item>
-        <item>.40-70 Sharps Straight</item>
-        <item>.40-72 Winchester CF</item>
-        <item>.40-90 Sharps Straight</item>
-        <item>.400 Enfield-Martini 85</item>
+        <item>.40–70 Sharps Straight</item>
+        <item>.40–72 Winchester CF</item>
+        <item>.40–90 Sharps Straight</item>
+        <item>.400 Enfield–Martini 85</item>
         <item>.400 Westley Richards</item>
         <item>.400 Tembo</item>
         <item>.40 BSA / 10x71</item>
-        <item>.400 A-Square ASDPM</item>
+        <item>.400 A–Square ASDPM</item>
         <item>.400 Holland&amp;Holland</item>
-        <item>.40-85 Ballard</item>
-        <item>.400 Purdey - 10x76R</item>
-        <item>.40-90 Ballard Nº 5</item>
+        <item>.40–85 Ballard</item>
+        <item>.400 Purdey – 10x76R</item>
+        <item>.40–90 Ballard Nº 5</item>
         <item>.400 King\'s Norton</item>
         <item>.400 Express 3¼ coiled</item>
-        <item>.40-110 Win Express</item>
-        <item>.40-90 Sharps Necked</item>
+        <item>.40–110 Win Express</item>
+        <item>.40–90 Sharps Necked</item>
         <item>.450/.400 Nitro 3"</item>
         <item><![CDATA[.450/.400 Nitro 3 &#188;"]]></item>
         <item>10.2x60 R m Schützen</item>
         <item>10.3x60 R Suizo</item>
         <item>10.3x64 Häberli</item>
         <item>10.3x65 R Bänziger</item>
-        <item>10.3x72 B Gian-Marchet</item>
+        <item>10.3x72 B Gian–Marchet</item>
         <item>.401 Herter Mag</item>
         <item>.401 WSL R</item>
-        <item>.402 Enfield-Martini</item>
+        <item>.402 Enfield–Martini</item>
         <item>.404 Dakota</item>
         <item>.404 Barnes Johnson Ex.</item>
-        <item>.404 Schüler - 10.75x70</item>
+        <item>.404 Schüler – 10.75x70</item>
         <item>.404 Poors Man\'s Magnum</item>
         <item>.404 Jeffery NE</item>
         <item>10.35x20R Glisenti</item>
         <item>10.35x21R Bodeo</item>
         <item>.405 XPL Spotter belted</item>
-        <item>.405 Win Spotter XM-75</item>
+        <item>.405 Win Spotter XM–75</item>
         <item>.405 Win Spotter</item>
-        <item>.405 Winchester CF - 10.5x65 R</item>
-        <item>.405 Clemens -10.5x66</item>
+        <item>.405 Winchester CF – 10.5x65 R</item>
+        <item>.405 Clemens –10.5x66</item>
         <item>.408 Cheyenne</item>
         <item>10.4x20R Suizo</item>
         <item>10.4x20R Glisenti</item>
@@ -1745,39 +1605,39 @@
         <item>.414 Elgin Gates</item>
         <item>10.5mm Lockless</item>
         <item>10.5x42 R</item>
-        <item>.416 Jurras- 10.5x44R</item>
+        <item>.416 Jurras– 10.5x44R</item>
         <item>10.5x47 R MB</item>
         <item>10.5x73 Miller &amp; Greiss</item>
         <item>10.57x51.5 Maverick</item>
-        <item>.416 SAR - 10.5x51</item>
+        <item>.416 SAR – 10.5x51</item>
         <item>10.5x52 R Target</item>
         <item>.416 Strauss</item>
-        <item>.416 H.E.- 10.5x57</item>
-        <item>.416 B&amp;M.- 10.5x58</item>
-        <item>.416 SAR Short Action Raptor - 10.5x62</item>
-        <item>.416 Taylor - 10.5x63</item>
+        <item>.416 H.E.– 10.5x57</item>
+        <item>.416 B&amp;M.– 10.5x58</item>
+        <item>.416 SAR Short Action Raptor – 10.5x62</item>
+        <item>.416 Taylor – 10.5x63</item>
         <item>.416 Murphy /10.57x65</item>
         <item>10.57x71 Meteor</item>
-        <item>.416 Hoffman - 10.5x71.5</item>
-        <item>.416 Rem Mag - 10.5x72</item>
+        <item>.416 Hoffman – 10.5x71.5</item>
+        <item>.416 Rem Mag – 10.5x72</item>
         <item>.416 Ultracat / 10.5x72</item>
-        <item>.416 Ruger - 10.5x73</item>
-        <item>.416 Rigby - 10.5x73</item>
+        <item>.416 Ruger – 10.5x73</item>
+        <item>.416 Rigby – 10.5x73</item>
         <item>.416 Tatanka</item>
-        <item>.404-.416 US Jeffery</item>
-        <item>.416 Weatherby Magnum- 10.5x74</item>
+        <item>.404–.416 US Jeffery</item>
+        <item>.416 Weatherby Magnum– 10.5x74</item>
         <item>.416/585 AE</item>
         <item>.416 Viersco Magnum</item>
-        <item>.416 TYR- 10.6x80</item>
-        <item>.500/.416 NE- 10x82R</item>
-        <item>.416 Barrett- 10.5x83</item>
-        <item>.416 Chapuis- 10.5x83.7</item>
+        <item>.416 TYR– 10.6x80</item>
+        <item>.500/.416 NE– 10x82R</item>
+        <item>.416 Barrett– 10.5x83</item>
+        <item>.416 Chapuis– 10.5x83.7</item>
         <item>10.6x24.5 R 1879</item>
         <item>10.6x24.6 R Español</item>
         <item>10.6x25 R Alemán</item>
         <item>10.65x47 R MS Target</item>
         <item>10.7x35.8 Montenegrin</item>
-        <item>10.75x58R -.42 Berdan Ruso/Búlgaro</item>
+        <item>10.75x58R –.42 Berdan Ruso/Búlgaro</item>
         <item>.42 Gatling Ruso</item>
         <item>.423 OKH</item>
         <item>.423 Buhmiller / 10.7x73</item>
@@ -1796,7 +1656,7 @@
         <item>.425 Westley Richards / 10.75x67</item>
         <item>10.75x68 Gerlich</item>
         <item>10.75x68 Mauser</item>
-        <item>10.75x70 - .404 Schüler</item>
+        <item>10.75x70 – .404 Schüler</item>
         <item>10.75x70 R Mauser A</item>
         <item>10.75x73</item>
         <item>10.8x23.5 R Montenegrino Nº 4</item>
@@ -1806,7 +1666,7 @@
         <item>11x10R Spit industrial</item>
         <item>11x14 R Devisme 1866</item>
         <item>11x15R Javelle</item>
-        <item>11x17R Mod.1873 Chamelot-Delvigne</item>
+        <item>11x17R Mod.1873 Chamelot–Delvigne</item>
         <item>11x18R Greek M.1874</item>
         <item>11x18R Swedish</item>
         <item>11x23 Bergmann Nº6</item>
@@ -1816,7 +1676,7 @@
         <item>11x28 R Lorenz L.Neck</item>
         <item>11 mm Riera sin vaina</item>
         <item>11x30 Wildey</item>
-        <item>11x34 DEFA re-arming</item>
+        <item>11x34 DEFA re–arming</item>
         <item>11x40 R M Target</item>
         <item>11x43R Carabina</item>
         <item>11x48 R Whitney</item>
@@ -1836,7 +1696,7 @@
         <item>11x56R Nordenfelt</item>
         <item>11x57R Búlgaro</item>
         <item>11x58R Werndel</item>
-        <item>11x58 R Montigny-Fafchamps</item>
+        <item>11x58 R Montigny–Fafchamps</item>
         <item>11x59R Turco</item>
         <item>11x59R Gras</item>
         <item>11x59R Gras Tubo Tiro Reducido</item>
@@ -1871,7 +1731,7 @@
         <item>11.2x72 R Schüler</item>
         <item>11.25x35 R MB target</item>
         <item>11.25x40 R MB Schützen</item>
-        <item>11.3x33 R Gasser-Montenegrino</item>
+        <item>11.3x33 R Gasser–Montenegrino</item>
         <item>11.3x36 R Montenegrino</item>
         <item>11.3x45R Dutch Rem</item>
         <item>11.3x50R Beaumont</item>
@@ -1894,40 +1754,40 @@
         <item>.44 Colt Thuer</item>
         <item>.440 Nagant Argentino</item>
         <item>.44 Gabbett Duel Long</item>
-        <item>.440 Long CF - 11x24.4R</item>
-        <item>.44 Russian - 11x25 R</item>
-        <item>.44 Evans Short - 11x25.4R</item>
+        <item>.440 Long CF – 11x24.4R</item>
+        <item>.44 Russian – 11x25 R</item>
+        <item>.44 Evans Short – 11x25.4R</item>
         <item>.44 Devillers</item>
         <item>.44 Rem US Army1875</item>
-        <item>.44 Colt- 11x28 R</item>
+        <item>.44 Colt– 11x28 R</item>
         <item>.44 Merwin &amp; Hulbert</item>
         <item>.44 S&amp;W Special</item>
         <item>.44 Magnum</item>
         <item>.44 ACVOKE</item>
         <item>.44 Thor / 11x32,6</item>
-        <item>.440 Cor-Bon</item>
+        <item>.440 Cor–Bon</item>
         <item>.44 Auto Magnum</item>
         <item>.44 Game Getter</item>
-        <item>.44-40 WCF</item>
+        <item>.44–40 WCF</item>
         <item>.44 Evans Long N.M.</item>
-        <item>.44-40 Extra Long CF</item>
+        <item>.44–40 Extra Long CF</item>
         <item>.44 Wesson XL</item>
         <item>.44 Extra Long</item>
-        <item>.44-60 Sharps/ 11x48R</item>
-        <item>.44-60 Peabody Win Creed.</item>
-        <item>.44-77 Sharps/ 11x57R</item>
-        <item>.44-95 What Cheer</item>
-        <item>.44-90 Rem Special</item>
-        <item>.44-100 Rem/ 11x66R</item>
-        <item>.44-90-520 Sharps</item>
-        <item>.44-105 2 5/8" Sharps</item>
+        <item>.44–60 Sharps/ 11x48R</item>
+        <item>.44–60 Peabody Win Creed.</item>
+        <item>.44–77 Sharps/ 11x57R</item>
+        <item>.44–95 What Cheer</item>
+        <item>.44–90 Rem Special</item>
+        <item>.44–100 Rem/ 11x66R</item>
+        <item>.44–90–520 Sharps</item>
+        <item>.44–105 2 5/8" Sharps</item>
         <item>.440 Mac Farlane</item>
-        <item>.442 Webley - .442 Tranter</item>
+        <item>.442 Webley – .442 Tranter</item>
         <item>.442 Long Revolver</item>
         <item>.444 Marlin</item>
         <item>.445 Gates</item>
         <item>11.35x62 Madsen</item>
-        <item>11.4x49R-.45/.577 Rumano</item>
+        <item>11.4x49R–.45/.577 Rumano</item>
         <item>11.4x57R Reformado</item>
         <item>11.4x60 R Rumano</item>
         <item>12mm Canne (11.3x15R)</item>
@@ -1940,110 +1800,110 @@
         <item>12mm Spirlet (11.6x18R)</item>
         <item>12mm Francés Modelo 1873 Marina 11.7x18R)</item>
         <item>12mm Francés Modelo 1873 Marina (FAKE) (11.7x20R)</item>
-        <item>11.7x59 R Montigny-Fafchamps</item>
+        <item>11.7x59 R Montigny–Fafchamps</item>
         <item>.450 Michelin 2º modelo</item>
         <item>.450 Michelin</item>
-        <item>.45 GAP - Glock</item>
+        <item>.45 GAP – Glock</item>
         <item>.45 SR Short Blank</item>
         <item>.450 Adams Mk I</item>
         <item>.450 Adams Mk II</item>
         <item>.450 Adams Mk III</item>
-        <item>.450 CF - 11x17 R</item>
-        <item>.450 Mars Short - 11.35x20</item>
-        <item>.45 Schouboe - 11.35x18 SR</item>
+        <item>.450 CF – 11x17 R</item>
+        <item>.450 Mars Short – 11.35x20</item>
+        <item>.45 Schouboe – 11.35x18 SR</item>
         <item>.45 H P</item>
-        <item>.45 Webley - Win</item>
-        <item>.45 Enfield- 11.3x22 R</item>
+        <item>.45 Webley – Win</item>
+        <item>.45 Enfield– 11.3x22 R</item>
         <item>.450 Bland nº 1</item>
         <item>.450 Long CF</item>
         <item>.45 Super</item>
         <item>.45 ACP US Govt.Mod.06</item>
-        <item>.45 ACP - TIPOS</item>
-        <item>.45 ACP - 0 a K</item>
-        <item>.45 ACP - L a Z</item>
+        <item>.45 ACP – TIPOS</item>
+        <item>.45 ACP – 0 a K</item>
+        <item>.45 ACP – L a Z</item>
         <item>.45/.38 SSB</item>
         <item>.45 Cowboy Special</item>
         <item>.45 Auto Rim</item>
         <item>.450 SMC</item>
         <item>.45 Colt Gvt. 1906</item>
-        <item>.45 MP - 11.3x24.5R</item>
+        <item>.45 MP – 11.3x24.5R</item>
         <item>.45 Francotte</item>
         <item>.450 Long CF 60/64"</item>
-        <item>.45 Rem-Thompson</item>
+        <item>.45 Rem–Thompson</item>
         <item>.45 Colt M.1910 Blank</item>
         <item>.450 Mars Long Case</item>
         <item>.450 Revolver Boxer</item>
-        <item>.45 Colt Gvt.- 11.3x28 R</item>
-        <item>.45 Schofield-11.3x28 R</item>
+        <item>.45 Colt Gvt.– 11.3x28 R</item>
+        <item>.45 Schofield–11.3x28 R</item>
         <item>.45 Win Mag</item>
         <item>.45 Colt</item>
         <item>.45 Colt Mod. 1909</item>
         <item>.450 Magnum Express</item>
         <item>.450 Nº 1 Rifle</item>
-        <item>.45-50 Peabody</item>
+        <item>.45–50 Peabody</item>
         <item>.450 Westley Richards Nº1 Carbine/11.5x40 R</item>
         <item>.45 Raptor / 11.5x45</item>
-        <item>.45-85 Ward-Burton</item>
+        <item>.45–85 Ward–Burton</item>
         <item>.450 Needham/11.5x41</item>
         <item>.450 Bushmaster</item>
-        <item>.45-75 WCF</item>
-        <item>.45-60 Win</item>
-        <item>.45-60 Wesson</item>
+        <item>.45–75 WCF</item>
+        <item>.45–60 Win</item>
+        <item>.45–60 Wesson</item>
         <item>.45 Blaser/11.7x55</item>
         <item>.577/.450 Martini</item>
         <item>.500/.450 Musket</item>
-        <item>.45-70 Maynard 1882</item>
-        <item>.45-70 Gvt. Mk1 - M32</item>
-        <item>.45-70 Government</item>
-        <item>.45-75 Sharps</item>
-        <item>.45-85-295 Bullard</item>
+        <item>.45–70 Maynard 1882</item>
+        <item>.45–70 Gvt. Mk1 – M32</item>
+        <item>.45–70 Government</item>
+        <item>.45–75 Sharps</item>
+        <item>.45–85–295 Bullard</item>
         <item>.450 Marlin</item>
-        <item>.45-78-475 Wolcott</item>
-        <item>.45-70-420 Van Choate</item>
+        <item>.45–78–475 Wolcott</item>
+        <item>.45–70–420 Van Choate</item>
         <item>.500/.450 Musket Nº 1</item>
         <item>11.15x57 R Reformado</item>
         <item>.450 Australian Police</item>
         <item>.450 Dubula</item>
         <item>.45 Cordite MkI / 12x60 R</item>
-        <item>.45-80 US Sprg. 1881</item>
-        <item>.45-90 Winchester CF</item>
-        <item>.45-90 WM / 11.4x61 R</item>
-        <item>.45-85 Winchester CF</item>
-        <item>.45-95 Sharps</item>
-        <item>.450 Majoor - 11.5x61</item>
-        <item>.450 Beltless A-Square</item>
-        <item>.450 Gatling - 11.5x60R</item>
-        <item>.45 Gardner - 11.4x62R</item>
-        <item>.450 B-J Express Belted</item>
+        <item>.45–80 US Sprg. 1881</item>
+        <item>.45–90 Winchester CF</item>
+        <item>.45–90 WM / 11.4x61 R</item>
+        <item>.45–85 Winchester CF</item>
+        <item>.45–95 Sharps</item>
+        <item>.450 Majoor – 11.5x61</item>
+        <item>.450 Beltless A–Square</item>
+        <item>.450 Gatling – 11.5x60R</item>
+        <item>.45 Gardner – 11.4x62R</item>
+        <item>.450 B–J Express Belted</item>
         <item>.450 Soper</item>
         <item>.450 Boxer 2½ coiled</item>
         <item>.45 Gatling Coiled</item>
         <item>.450 Vincent Short</item>
         <item>.450 Rigby Match</item>
-        <item>.45-90 Sharps 2\'6"</item>
+        <item>.45–90 Sharps 2\'6"</item>
         <item>.450 Majoor Long</item>
         <item>.577/.450 XPL Greener Triplex / 11.4x69 R</item>
         <item>.500/.450 Nº 1 Express</item>
-        <item>.450 Watts - 11.4x71</item>
-        <item>.45-100 Ballard - 11.4x72R</item>
-        <item>.450 Ackley - 11.4x72</item>
-        <item>.45-100 Sharps - 11.4x73</item>
-        <item>.450 Dakota - 11.4x73</item>
+        <item>.450 Watts – 11.4x71</item>
+        <item>.45–100 Ballard – 11.4x72R</item>
+        <item>.450 Ackley – 11.4x72</item>
+        <item>.45–100 Sharps – 11.4x73</item>
+        <item>.450 Dakota – 11.4x73</item>
         <item>.450 Rigby Magnum</item>
-        <item>.450 AHR - 11.4x73</item>
+        <item>.450 AHR – 11.4x73</item>
         <item>.500/.450 Nitro Express</item>
-        <item>.500/.450 Rigby 3¼" .45-120 Sharps</item>
-        <item>.45-125 Win Expresss</item>
+        <item>.500/.450 Rigby 3¼" .45–120 Sharps</item>
+        <item>.45–125 Win Expresss</item>
         <item>.450 Nitro Express 3 ¼</item>
         <item>.450 Boxer 3 ¼ coiled</item>
-        <item>.450 Assegai - 11.4x83.6R</item>
+        <item>.450 Assegai – 11.4x83.6R</item>
         <item>.577/.450 coiled 3.3/8"</item>
         <item><![CDATA[.450 Nº2 NE 3 &#189;"]]></item>
         <item><![CDATA[.500/.450 3 &#189;" B.P.E.]]></item>
         <item>11.43x49 R turco 1874</item>
         <item>.451 Detonics Magnum</item>
         <item>.454 CASULL</item>
-        <item>.455 Webley MkII-VI</item>
+        <item>.455 Webley MkII–VI</item>
         <item>.455 Colt</item>
         <item>.455 Webley M.1904</item>
         <item>.455 Webley MkI</item>
@@ -2074,18 +1934,18 @@
         <item>.458 Rimmed 3"</item>
         <item>.458 Express 3"</item>
         <item>.460 Rowland</item>
-        <item>.460 Alliance - 11.6x40</item>
+        <item>.460 Alliance – 11.6x40</item>
         <item>.460Jurras</item>
         <item>11.6x40 R Greenland</item>
         <item>11.7x45.5 R Danés</item>
-        <item>.460 Smith &amp; Wesson Magnum - 11.7x46R</item>
+        <item>.460 Smith &amp; Wesson Magnum – 11.7x46R</item>
         <item>11.7x51.6 R Danés</item>
-        <item>.460 A-Square Short</item>
+        <item>.460 A–Square Short</item>
         <item>.460 G &amp; A</item>
         <item>.460 Weatherby</item>
         <item>.460 Bauer</item>
         <item>11.6x65 R D</item>
-        <item>.460 Steyr - 11.6x91</item>
+        <item>.460 Steyr – 11.6x91</item>
         <item>.461 Gibbs Nº 1</item>
         <item>.461 Gibbs Nº 2</item>
         <item>.465 H &amp; H Magnum</item>
@@ -2126,19 +1986,19 @@
         <item>12x18 R Power Ctge.</item>
         <item>12x21 R US M7</item>
         <item>12x24 R tool</item>
-        <item>12x37R Jarman Lanza Cabos M-52</item>
+        <item>12x37R Jarman Lanza Cabos M–52</item>
         <item>12x37 R estopín</item>
         <item>12x38 R Rem Sueco</item>
         <item>12x41R Mine Swepping</item>
         <item>12x44 R Canne Shot</item>
         <item>12x44 R LA Nº 6</item>
-        <item>12x44 R Rem Sueco-Nor.</item>
-        <item>12x44 R Hagen-Lund</item>
+        <item>12x44 R Rem Sueco–Nor.</item>
+        <item>12x44 R Hagen–Lund</item>
         <item>12x46 R Spanish XPL</item>
         <item>12.04x51.5 Lilmufu</item>
         <item>12x165 Czech XPL ZVV</item>
         <item>12.04x71 Bibamufu</item>
-        <item>.476 Enfield Mk III-12x22 R</item>
+        <item>.476 Enfield Mk III–12x22 R</item>
         <item>.476 Indian Mk I</item>
         <item>.476 Indian Mk II</item>
         <item>.476 Nitro Express</item>
@@ -2150,20 +2010,20 @@
         <item>12.5x42.5 R MB Target</item>
         <item>12.5x44 R CF Spencer</item>
         <item>12.5x60 R MB Target</item>
-        <item>.495 A-Square</item>
-        <item>.499 Leitner-Wise Rifle</item>
+        <item>.495 A–Square</item>
+        <item>.499 Leitner–Wise Rifle</item>
         <item>12.6x35R Mine swepping</item>
-        <item>.500 Tranter - 12.7x20R</item>
+        <item>.500 Tranter – 12.7x20R</item>
         <item>.500 Helmet Test</item>
         <item>.50 Remington Navy Mod. 1867 / 12.7x22 R</item>
         <item>.50 Remington Army Mod. 1871 / 12.7x22 R</item>
         <item>.50 GI / 12.7x22</item>
-        <item>.50-50 Maynard 1865</item>
-        <item>.50-50 Maynard-Poultney</item>
+        <item>.50–50 Maynard 1865</item>
+        <item>.50–50 Maynard–Poultney</item>
         <item>.50 Action Express</item>
         <item>.500 Special</item>
         <item>.500 HWP Magnum</item>
-        <item>.56-.50 Spencer CF</item>
+        <item>.56–.50 Spencer CF</item>
         <item>.50 US Carbine/ 12.7x34 R</item>
         <item>.500 Wyoming / 12.7x35</item>
         <item>.500 Linebaugh / 12.7x35R</item>
@@ -2175,66 +2035,66 @@
         <item>.500 S&amp;W Magnum</item>
         <item>.500 Boxer 1 5/8"</item>
         <item>.50 Beowulf / 12.7x42</item>
-        <item>12.7x44 R Rem Sueco-Nor.</item>
-        <item>12.7x44 R Hagen-Lund</item>
+        <item>12.7x44 R Rem Sueco–Nor.</item>
+        <item>12.7x44 R Hagen–Lund</item>
         <item>.500 Howdah Jurras</item>
         <item>.500 Whisper Short</item>
         <item>.50 Gallager</item>
-        <item>.50-70 Govt. Musket</item>
-        <item>.50-70 Benet</item>
+        <item>.50–70 Govt. Musket</item>
+        <item>.50–70 Benet</item>
         <item>12.7x45R Papal</item>
-        <item>.50-70 Rodman-Crispin</item>
-        <item>.50-70 Whisper</item>
-        <item>.50-95 WCF / 12.7x49R</item>
-        <item>.50 B&amp;M Short-12.7x50</item>
+        <item>.50–70 Rodman–Crispin</item>
+        <item>.50–70 Whisper</item>
+        <item>.50–95 WCF / 12.7x49R</item>
+        <item>.50 B&amp;M Short–12.7x50</item>
         <item>.50 Alaskan/ 12.7x53R</item>
         <item>.50 B&amp;M Alaskan/ 12.7x53R</item>
         <item>.50 Heindrickx</item>
-        <item>.50-115 Bullard</item>
+        <item>.50–115 Bullard</item>
         <item>.50 Tactical</item>
         <item>.50 B&amp;M / 12.7x57</item>
         <item>.500 Cyrus/ 12.7x57</item>
         <item>12.7x57 Anthis</item>
         <item>12.7x60R D Express</item>
-        <item>.50-100 WCF</item>
-        <item>.50-110 WCF</item>
+        <item>.50–100 WCF</item>
+        <item>.50–110 WCF</item>
         <item>.500 BP Express coiled</item>
         <item>.500 Boxer coiled 2½"</item>
-        <item>.50-90 Sharps Straight</item>
+        <item>.50–90 Sharps Straight</item>
         <item>.50 Fat Mac/12.70x67</item>
-        <item>12.7x68 Tornado / .49"-10 Tornado Mag. .500 Jeffery/12.70x70</item>
+        <item>12.7x68 Tornado / .49"–10 Tornado Mag. .500 Jeffery/12.70x70</item>
         <item>.500 MDM /12.70x71</item>
         <item>.577/.500 Nº2/12.7x71R</item>
         <item>.500 AHR / 12.7x73</item>
-        <item>.500 A-Square / 12.7x73</item>
+        <item>.500 A–Square / 12.7x73</item>
         <item>.500 Weatherby Magnum /12.7x73</item>
         <item>.50 Peacekeeper</item>
         <item>12.7x74 argentino</item>
-        <item>.500 Boxer-Henry 3"</item>
+        <item>.500 Boxer–Henry 3"</item>
         <item>.500 Boxer coiled paper</item>
         <item>.500 Nitro 3"</item>
-        <item>.577-500 Hartmann</item>
+        <item>.577–500 Hartmann</item>
         <item>.500 Mbogo</item>
         <item>12.70x76 M48A1</item>
-        <item>.577-500 3 1/8"</item>
-        <item>12.7-8 mm Gerlich XPL</item>
+        <item>.577–500 3 1/8"</item>
+        <item>12.7–8 mm Gerlich XPL</item>
         <item>.50 Vickers corto</item>
         <item>.50 Vickers</item>
-        <item>.50-140-700 Sharps</item>
+        <item>.50–140–700 Sharps</item>
         <item>12.70x81 SR</item>
-        <item>.50-140 Win Express</item>
+        <item>.50–140 Win Express</item>
         <item>.500 Express 3 ¼"</item>
         <item>.50 Ares XPL PCTA</item>
         <item>.500 Rafiki / 12.70x95R</item>
-        <item>12.70x99 /.50BMG -Ordinarios y marcajes</item>
-        <item>12.70x99 /.50BMG -Fogueo e inertes</item>
-        <item>12.70x99 /.50BMG -Otros tipos</item>
+        <item>12.70x99 /.50BMG –Ordinarios y marcajes</item>
+        <item>12.70x99 /.50BMG –Fogueo e inertes</item>
+        <item>12.70x99 /.50BMG –Otros tipos</item>
         <item>12.70x99 Electrico</item>
         <item>12.7x99 Esc. 1:6</item>
         <item>.50 Ares PCTA Long</item>
         <item>12.70x108</item>
         <item>12.70x108 R</item>
-        <item>.50 Colt-Kynoch 1901</item>
+        <item>.50 Colt–Kynoch 1901</item>
         <item>12.70x110 Xpl French</item>
         <item>.50 Vulcan/12.7x114</item>
         <item>.50 Vickers HV/12.7x120</item>
@@ -2255,17 +2115,17 @@
         <item>13x87 R De Reffye</item>
         <item>13x92 SR</item>
         <item>13x94 Panzerbüchse</item>
-        <item>.56-.52 Spencer CF</item>
-        <item>.52-70 Sharps CF</item>
+        <item>.56–.52 Spencer CF</item>
+        <item>.52–70 Sharps CF</item>
         <item>13.2x93 Alemán</item>
         <item>13.2x96 Hotchkiss corto</item>
         <item>13.2x97 Hotchkiss experimental</item>
         <item>13.2x99 Hotchkiss largo</item>
         <item>13.5x97 B XPL STA</item>
-        <item>.600-.538 Mega Magnum</item>
+        <item>.600–.538 Mega Magnum</item>
         <item>.54 Morse Type I</item>
         <item>.54 Burnside</item>
-        <item>.54 Burnside Rodman-Crispin</item>
+        <item>.54 Burnside Rodman–Crispin</item>
         <item>.550 Magnum</item>
         <item>.550 Wells</item>
         <item>.55 Boys / 13.9x99</item>
@@ -2296,16 +2156,16 @@
         <item>.577 Snider/14.6x50R</item>
         <item>.577 Snider Solid/14.6x50R</item>
         <item>.577 Express 2 ¾"</item>
-        <item>20/.577 Alexander-Henry</item>
+        <item>20/.577 Alexander–Henry</item>
         <item>.577 Tyrannosaur</item>
         <item>.577 Rewa /14.9x76 R</item>
         <item>.577 Nitro E. /14.9x76 R</item>
         <item><![CDATA[.577 3 &#188;" /14.9x83 R]]></item>
         <item>.700/.577 NE /</item>
         <item>14.7x58 R Schneider</item>
-        <item>.58 Berdan Carb.-14.5x28 R</item>
+        <item>.58 Berdan Carb.–14.5x28 R</item>
         <item>.58 US Musket</item>
-        <item>.58 Meigs-Madrid XPL</item>
+        <item>.58 Meigs–Madrid XPL</item>
         <item>.58 Roberts CF</item>
         <item>.58 US Berdan Rifle</item>
         <item>.585 Hubel Indiana</item>
@@ -2322,7 +2182,7 @@
         <item>Cal. 30 / 15x65 mm</item>
         <item>15x69 R Ampact</item>
         <item>15x83 Mauser XPL</item>
-        <item>15x96 MG-151/15</item>
+        <item>15x96 MG–151/15</item>
         <item>15x96 XPL Electric Pri.</item>
         <item>15x99 / .60 US Spotter XM 108</item>
         <item>15x101 Beute Flak M39</item>
@@ -2346,7 +2206,7 @@
         <item>.606 Mammoth Bottlenecked /15.2x76</item>
         <item>.606 Mammoth Straight /15.7x76</item>
         <item>15.5x106 FN XPL</item>
-        <item>16 mm Charrin-Peeters</item>
+        <item>16 mm Charrin–Peeters</item>
         <item>16x98 Vega XPL</item>
         <item>16x111 R De Reffye</item>
         <item>Collath #7 h.pinfire</item>
@@ -2358,11 +2218,11 @@
         <item>17x30 R Dutch Snider</item>
         <item>17x56 Short Express</item>
         <item>Collath #6 h.pinfire</item>
-        <item>Cal. 20 /17.35 0-G</item>
-        <item>Cal. 20 /17.35 H-Z</item>
+        <item>Cal. 20 /17.35 0–G</item>
+        <item>Cal. 20 /17.35 H–Z</item>
         <item>17.5x28R Snider Danés</item>
         <item>17.5 Carcano needlefire</item>
-        <item>.70-150 WCF</item>
+        <item>.70–150 WCF</item>
         <item>.700 NE 3" / 18x76 R</item>
         <item>.700 AHR</item>
         <item>.70 Dreyse CF shot</item>
@@ -2385,8 +2245,8 @@
         <item>19x35 Flash Ball impulse</item>
         <item>Cal. 14 Lancaster</item>
         <item>Collath #4 h.pinfire</item>
-        <item>Cal. 16 marcajes 0-K</item>
-        <item>Cal. 16 marcajes L-Z</item>
+        <item>Cal. 16 marcajes 0–K</item>
+        <item>Cal. 16 marcajes L–Z</item>
         <item>Cal. 16 Béringer RF</item>
         <item>19x28 R Seat Ejection</item>
         <item>19x53 Spanish EOD</item>
@@ -2395,7 +2255,7 @@
         <item>19x137 AMRON XPL</item>
         <item>Cal.1 / 49mm</item>
         <item>1½" / 38x247 R</item>
-        <item>37-38x122 R Anti dist.</item>
+        <item>37–38x122 R Anti dist.</item>
         <item>32x120 mm</item>
         <item>Calibre 3 / 3 Gauge</item>
         <item>Cal. 4 / 26 mm</item>
@@ -2455,7 +2315,7 @@
         <item>.14 Kopp Short</item>
         <item>.14 Alton Jones RF</item>
         <item>.14 OTTR</item>
-        <item>.14 Myra Tini-Mite</item>
+        <item>.14 Myra Tini–Mite</item>
         <item>.14 Kopp Long</item>
         <item>.14/.22 Magnum</item>
         <item>3.75mm San Millán</item>
@@ -2470,7 +2330,7 @@
         <item>.17 WSM</item>
         <item>5x9 RF Tranter</item>
         <item>5x26 Rem Mag</item>
-        <item>5.6mm Longue portée - 6mm Extra longue</item>
+        <item>5.6mm Longue portée – 6mm Extra longue</item>
         <item>.22 BB &amp; CB Cap</item>
         <item>.22 /6mm Flobert</item>
         <item>.22 SFM Extra Short</item>
@@ -2488,7 +2348,7 @@
         <item>5.59x15.5</item>
         <item>.22 Extra Largo Suizo</item>
         <item>.22 Extra Largo US</item>
-        <item>.22 Swiss MM-Gt</item>
+        <item>.22 Swiss MM–Gt</item>
         <item>.22 WRF</item>
         <item>.22 Magnum</item>
         <item>.22 Eichelberger Mag</item>
@@ -2523,11 +2383,11 @@
         <item>.340 Revolver RF</item>
         <item>.35 Allen Rifle Nº 62</item>
         <item>.36 Waterbury Farrel</item>
-        <item>.22 Swiss Tool - 9x17 RF</item>
+        <item>.22 Swiss Tool – 9x17 RF</item>
         <item>.380 Revolver Short RF</item>
         <item>.38 Short Anular</item>
         <item>.380 Revolver long</item>
-        <item>9x20 RF -.350 Sharps</item>
+        <item>9x20 RF –.350 Sharps</item>
         <item>.38 Bacon &amp; Spencer</item>
         <item>.38 Long Anular</item>
         <item>.38 Extra Long RF</item>
@@ -2539,7 +2399,7 @@
         <item>10.4x38R Suizo</item>
         <item>.41 Long Rimfire</item>
         <item>.41 Short Derringer</item>
-        <item>.42 Forehand-Wadsworth</item>
+        <item>.42 Forehand–Wadsworth</item>
         <item>.42 Cupfire</item>
         <item>11x10 R SPIT</item>
         <item>11x36 RF Rem.Austrian</item>
@@ -2556,26 +2416,26 @@
         <item>.46 Short RF long</item>
         <item>.46 Carbine RF</item>
         <item>.46 Long RF</item>
-        <item>.46-57 RF Extra Long</item>
+        <item>.46–57 RF Extra Long</item>
         <item>11.7x41RF Rem Danés</item>
         <item>12x42RF Rem Sueco</item>
         <item>12x44RF Rem Noruego</item>
         <item>12.5x21 RF Helmet Test</item>
         <item>12.5x37 RF Helmet Test</item>
         <item>.50 Rem Navy Mod. 1865</item>
-        <item>.50-45 Peabody RF</item>
+        <item>.50–45 Peabody RF</item>
         <item>14x32 RF Austrian Wänzl</item>
-        <item>.56-46 Spencer Short</item>
-        <item>.56-46 Spencer long</item>
+        <item>.56–46 Spencer Short</item>
+        <item>.56–46 Spencer long</item>
         <item>.50 US Carbine RF</item>
-        <item>.50-50-500 RF</item>
-        <item>.56-50 Spencer</item>
-        <item>.56-52 RF Spencer Tapered</item>
-        <item>.56-52 Spencer Short</item>
-        <item>.56-52 Spencer Long</item>
+        <item>.50–50–500 RF</item>
+        <item>.56–50 Spencer</item>
+        <item>.56–52 RF Spencer Tapered</item>
+        <item>.56–52 Spencer Short</item>
+        <item>.56–52 Spencer Long</item>
         <item>.54 Joslyn RF</item>
         <item>.54 Ballard RF military</item>
-        <item>.56-56 Spencer</item>
+        <item>.56–56 Spencer</item>
         <item>.58 Joslyn RF / 14.5x19</item>
         <item>.58 Gatling Short Case</item>
         <item>.58 US Musket RF Short</item>

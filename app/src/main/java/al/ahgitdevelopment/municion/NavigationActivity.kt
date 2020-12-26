@@ -1,24 +1,32 @@
 package al.ahgitdevelopment.municion
 
+import al.ahgitdevelopment.municion.ads.BannerAdCallbacks
+import al.ahgitdevelopment.municion.databinding.ActivityNavigationBinding
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
+import com.google.android.gms.ads.AdRequest
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.activity_navigation.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 @ExperimentalCoroutinesApi
 @AndroidEntryPoint
 class NavigationActivity : AppCompatActivity() {
 
+    private lateinit var binding: ActivityNavigationBinding
+    private val viewModel: NavigationActivityViewModel by viewModels()
+
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_navigation)
+        binding = ActivityNavigationBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         setSupportActionBar(findViewById(R.id.toolbar))
 
@@ -33,7 +41,7 @@ class NavigationActivity : AppCompatActivity() {
         )
 
         setupActionBarWithNavController(navController, appBarConfiguration)
-        nav_view?.setupWithNavController(navController)
+        binding.navView.setupWithNavController(navController)
 
         navController.addOnDestinationChangedListener { _, destination, _ ->
             supportActionBar?.title = getString(R.string.app_name)
@@ -43,29 +51,56 @@ class NavigationActivity : AppCompatActivity() {
             when (destination.id) {
                 R.id.loginPasswordFragment -> {
                     setToolbarSubtitle(getString(R.string.login))
-                    nav_view.visibility = View.GONE
+                    binding.navView.visibility = View.GONE
                 }
                 R.id.propertiesFragment -> {
                     setToolbarSubtitle(getString(R.string.section_properties_title))
-                    nav_view.visibility = View.VISIBLE
+                    binding.navView.visibility = View.VISIBLE
                 }
                 R.id.purchasesFragment -> {
                     setToolbarSubtitle(getString(R.string.section_purchases_title))
-                    nav_view.visibility = View.VISIBLE
+                    binding.navView.visibility = View.VISIBLE
                 }
                 R.id.licensesFragment -> {
                     setToolbarSubtitle(getString(R.string.section_licenses_title))
-                    nav_view.visibility = View.VISIBLE
+                    binding.navView.visibility = View.VISIBLE
                 }
                 R.id.competitionsFragment -> {
                     setToolbarSubtitle(getString(R.string.section_competitions_title))
-                    nav_view.visibility = View.VISIBLE
+                    binding.navView.visibility = View.VISIBLE
                 }
             }
         }
+
+        setupAds()
+    }
+
+    override fun onStart() {
+        super.onStart()
+
+        viewModel.showAdDialog.observe(
+            this,
+            {
+                findNavController(R.id.nav_host_fragment).navigate(R.id.adsRewardDialogFragment)
+            }
+        )
+
+        viewModel.paymentSupportDeveloper.observe(
+            this,
+            {
+                Toast.makeText(this, "Implement payment method", Toast.LENGTH_SHORT).show()
+            }
+        )
     }
 
     private fun setToolbarSubtitle(subtitle: String) {
         supportActionBar?.subtitle = subtitle
+    }
+
+    private fun setupAds() {
+        AdRequest.Builder().build().let {
+            binding.adView.adListener = BannerAdCallbacks(binding)
+            binding.adView.loadAd(it)
+        }
     }
 }

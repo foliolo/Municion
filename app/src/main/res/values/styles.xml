@@ -7,6 +7,7 @@
         <item name="colorPrimaryDark">@color/primaryDarkColor</item>
         <item name="colorAccent">@color/secondaryColor</item>
         <item name="android:textColorSecondary">@color/secondaryTextColor</item>
+        <item name="android:textColor">@color/secondaryTextColor</item>
     </style>
 
     <style name="CardViewItem" parent="CardView">

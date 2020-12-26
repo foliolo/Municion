@@ -151,9 +151,13 @@ class FakeRepository : RepositoryContract {
         )
 
         val FAKE_LICENSES = arrayListOf(FAKE_LICENSE)
+        val FAKE_3_LICENSES = arrayListOf(FAKE_LICENSE, FAKE_LICENSE, FAKE_LICENSE)
         val FAKE_COMPETITIONS = arrayListOf(FAKE_COMPETITION)
+        val FAKE_3_COMPETITIONS = arrayListOf(FAKE_COMPETITION, FAKE_COMPETITION, FAKE_COMPETITION)
         val FAKE_PROPERTIES = arrayListOf(FAKE_PROPERTY)
+        val FAKE_3_PROPERTIES = arrayListOf(FAKE_PROPERTY, FAKE_PROPERTY, FAKE_PROPERTY)
         val FAKE_PURCHASES = arrayListOf(FAKE_PURCHASE)
+        val FAKE_3_PURCHASES = arrayListOf(FAKE_PURCHASE, FAKE_PURCHASE, FAKE_PURCHASE)
         val ERROR_MESSAGE = "Exception test"
     }
 }

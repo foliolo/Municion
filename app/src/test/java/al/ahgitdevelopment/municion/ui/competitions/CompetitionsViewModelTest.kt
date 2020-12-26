@@ -1,5 +1,6 @@
 package al.ahgitdevelopment.municion.ui.competitions
 
+import al.ahgitdevelopment.municion.FakeRepository
 import al.ahgitdevelopment.municion.FakeRepository.Companion.FAKE_COMPETITION
 import al.ahgitdevelopment.municion.FakeRepository.Companion.FAKE_COMPETITIONS
 import al.ahgitdevelopment.municion.ext.getOrAwaitValue
@@ -105,11 +106,25 @@ class CompetitionsViewModelTest {
     @Test
     fun fabClick_clickButton_navigateToForm() {
         // GIVEN
+        every { repository.getCompetitions() }.returns(FAKE_COMPETITIONS.toFlow())
         SUT = CompetitionsViewModel(repository, ioDispatcher, savedStateHandle)
+        SUT.competitions.getOrAwaitValue()
         // ACT
         SUT.fabClick(null)
         // VERIFY
-        assertEquals(null, SUT.navigateToForm.getOrAwaitValue())
+        assertEquals(Unit, SUT.navigateToForm.getOrAwaitValue().getContentIfNotHandled())
+    }
+
+    @Test
+    fun fabClick_clickButton_navigateToDialog() {
+        // GIVEN
+        every { repository.getCompetitions() }.returns(FakeRepository.FAKE_3_COMPETITIONS.toFlow())
+        SUT = CompetitionsViewModel(repository, ioDispatcher, savedStateHandle)
+        SUT.competitions.getOrAwaitValue()
+        // ACT
+        SUT.fabClick(null)
+        // VERIFY
+        assertEquals(Unit, SUT.showRewardedAdDialog.getOrAwaitValue().getContentIfNotHandled())
     }
 
     companion object {

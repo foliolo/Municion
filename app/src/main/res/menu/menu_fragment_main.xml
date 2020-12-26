@@ -24,4 +24,11 @@
         android:orderInCategory="3"
         android:title="@string/menu_tutorial"
         app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/menu_support_developer"
+        android:icon="@drawable/ic_money"
+        android:orderInCategory="4"
+        android:title="@string/menu_support_developer"
+        app:showAsAction="always" />
 </menu>

@@ -5,7 +5,8 @@ import al.ahgitdevelopment.municion.di.IoDispatcher
 import al.ahgitdevelopment.municion.repository.RepositoryContract
 import al.ahgitdevelopment.municion.repository.firebase.RemoteStorageDataSourceContract
 import al.ahgitdevelopment.municion.ui.BaseViewModel
-import al.ahgitdevelopment.municion.utils.SingleLiveEvent
+import al.ahgitdevelopment.municion.utils.Event
+import al.ahgitdevelopment.municion.utils.checkMaxFreeItems
 import al.ahgitdevelopment.municion.utils.wrapEspressoIdlingResource
 import android.graphics.Bitmap
 import android.view.View
@@ -28,19 +29,20 @@ class PurchasesViewModel @ViewModelInject constructor(
 ) : BaseViewModel() {
 
     val purchases = repository.getPurchases()
-        .catch { error.postValue(it.message) }
+        .catch { _exception.postValue(Event(it)) }
         .asLiveData()
-
-    val navigateToForm = SingleLiveEvent<Unit>()
-
-    val error = SingleLiveEvent<String>()
 
     init {
         showProgressBar()
+        _loadRewardedAd.postValue(Event(Unit))
     }
 
     fun fabClick(view: View?) {
-        navigateToForm.call()
+        if (purchases.value!!.checkMaxFreeItems()) {
+            _navigateToForm.postValue(Event(Unit))
+        } else {
+            showRewardedAdDialog()
+        }
     }
 
     fun deletePurchase(purchaseId: String) = viewModelScope.launch(ioDispatcher) {
@@ -74,5 +76,13 @@ class PurchasesViewModel @ViewModelInject constructor(
                     hideProgressBar()
                 }
         }
+    }
+
+    override fun navigateToForm() {
+        _navigateToForm.postValue(Event(Unit))
+    }
+
+    override fun showRewardedAd() {
+        _showRewardedAd.postValue(Event(Unit))
     }
 }
