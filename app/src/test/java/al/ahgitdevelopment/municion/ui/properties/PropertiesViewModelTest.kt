@@ -1,5 +1,6 @@
 package al.ahgitdevelopment.municion.ui.properties
 
+import al.ahgitdevelopment.municion.FakeRepository.Companion.FAKE_3_PROPERTIES
 import al.ahgitdevelopment.municion.FakeRepository.Companion.FAKE_PROPERTIES
 import al.ahgitdevelopment.municion.FakeRepository.Companion.FAKE_PROPERTY
 import al.ahgitdevelopment.municion.ext.getOrAwaitValue
@@ -52,13 +53,27 @@ class PropertiesViewModelTest {
     }
 
     @Test
-    fun fabClick_navigateToForm_success() {
+    fun fabClick_clickButton_navigateToForm() {
         // GIVEN
+        every { repository.getProperties() }.returns(FAKE_PROPERTIES.toFlow())
         SUT = PropertiesViewModel(repository, storageRepository, ioDispatcher, savedStateHandle)
+        SUT.properties.getOrAwaitValue()
         // ACT
         SUT.fabClick(null)
         // VERIFY
         assertEquals(Unit, SUT.navigateToForm.getOrAwaitValue().getContentIfNotHandled())
+    }
+
+    @Test
+    fun fabClick_clickButton_navigateToAdDialog() {
+        // GIVEN
+        every { repository.getProperties() }.returns(FAKE_3_PROPERTIES.toFlow())
+        SUT = PropertiesViewModel(repository, storageRepository, ioDispatcher, savedStateHandle)
+        SUT.properties.getOrAwaitValue()
+        // ACT
+        SUT.fabClick(null)
+        // VERIFY
+        assertEquals(Unit, SUT.showRewardedAdDialog.getOrAwaitValue().getContentIfNotHandled())
     }
 
     @Test

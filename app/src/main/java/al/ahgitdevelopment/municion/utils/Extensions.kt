@@ -1,5 +1,6 @@
 package al.ahgitdevelopment.municion.utils
 
+import al.ahgitdevelopment.municion.BaseFragment
 import al.ahgitdevelopment.municion.datamodel.Competition
 import al.ahgitdevelopment.municion.datamodel.License
 import al.ahgitdevelopment.municion.datamodel.Property
@@ -15,6 +16,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
+
+fun <E> List<E>.checkMaxFreeItems(): Boolean = this.size < BaseFragment.MAX_FREE_ITEMS
 
 fun <E> List<E>.toFlow() = flow {
     emit(this@toFlow)

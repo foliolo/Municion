@@ -96,22 +96,6 @@
 
     <string name="delete_license_fail">First document property associated with this license must be deleted</string>
     <string name="dialog_guia_fail">You must enter a gun license first</string>
-    <string name="dialog_guia_licencia_tipoE">For the type E license the document of property limit is 12</string>
-    <string name="dialog_guia_licencia_tipoE_escopeta">For type E license with shotgun the limit of document os property is 6</string>
-    <string name="dialog_guia_licencia_tipoE_rifle">For type E license with rifle the limit of document os property is 6</string>
-    <string name="dialog_guia_licencia_federativa_categoria1">For federative licenses of 1st Category the maximum of allowed documents of property is of 10</string>
-    <string name="dialog_guia_licencia_federativa_categoria2">For federative licenses of 2nd Category the maximum of allowed documents of property is 6</string>
-    <string name="dialog_guia_licencia_federativa_categoria3">For federative licenses of 3rd Category the maximum of allowed documents of property is 1</string>
-    <string name="dialog_guia_licencia_federativa">You must first select a Federative license with its respective Category</string>
-    <string name="dialog_licencia_no_permiso">To save the License, a read / write permission is required in the Calendar of the device</string>
-    <string name="lbl_tipo_escala">Official Rank</string>
-    <string name="tipo_escala">Select the agent\'s Officer Rank</string>
-    <string name="pref_list_notification">Notifications list</string>
-
-    <string name="guia_empty_list">Create a weapons LICENSE before adding a document of property</string>
-    <string name="compra_empty_list">Create a DOCUMENT OF PROPERTY to associate the PURCHASE</string>
-    <string name="licencia_empty_list">What are you waiting for? Create your first license</string>
-    <string name="tiradas_empty_list">Come On!!! Insert a new competition</string>
 
     <string name="auth_usuario_existente">Existing User</string>
     <string name="auth_usuario_logado">User is already logged in</string>
@@ -168,7 +152,19 @@
     <string name="competition_lbl_place">Place</string>
     <string name="error" translatable="false">Error</string>
     <string name="menu_sign_out" translatable="false">Sign out</string>
-    <string name="admob_id" translatable="false">ca-app-pub-8582752139018186~4798397758</string>
     <string name="tutorialScreenshotButtonText">Close</string>
     <string name="tutorialScreenshotTitleText">Tutorial</string>
+    <string name="admob_id" translatable="false">ca-app-pub-8582752139018186~3605663398</string>
+    <string name="admob_activity_bottom_banner" translatable="false">ca-app-pub-8582752139018186/8341878505</string>
+    <string name="rewarded_ads_id" translatable="false">ca-app-pub-8582752139018186/5003971559</string>
+    <string name="dialog_ads_reward_title">Add new element</string>
+    <string name="dialog_ads_reward_message">Help the developer to improve the app seeing a small video to add a new element.\n\nYou can also make a small donation to add all the elements you want.\n\nThank you for your support.</string>
+    <string name="dialog_ads_reward_btn_show">Show Ads</string>
+    <string name="dialog_ads_reward_btn_remove_max_limitation">Remove limitation</string>
+    <string name="dialog_ads_reward_btn_cancel">Cancel</string>
+    <string name="menu_support_developer">Make a donation</string>
+    <string name="dialog_support_developer_title">Support the developer</string>
+    <string name="dialog_support_developer_message">Invite him for a beer.\nIt will help to keep on improving the app.</string>
+    <string name="toast_under_construction">Under Construction</string>
+    <string name="ad_error_message">Watch the full video to add a new item</string>
 </resources>
