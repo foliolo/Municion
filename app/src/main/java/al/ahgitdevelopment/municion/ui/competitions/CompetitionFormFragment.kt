@@ -10,13 +10,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.activity_navigation.*
-import kotlinx.android.synthetic.main.fragment_form_competition.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 /**
@@ -26,6 +23,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 @ExperimentalCoroutinesApi
 class CompetitionFormFragment : Fragment() {
 
+    private lateinit var binding: FragmentFormCompetitionBinding
     private val viewModel: CompetitionFormViewModel by viewModels()
 
     override fun onCreateView(
@@ -34,12 +32,11 @@ class CompetitionFormFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
 
-        val binding: FragmentFormCompetitionBinding =
-            DataBindingUtil.inflate(inflater, R.layout.fragment_form_competition, container, false)
+        binding = FragmentFormCompetitionBinding.inflate(layoutInflater, container, false)
         binding.viewModel = this.viewModel
         binding.lifecycleOwner = viewLifecycleOwner
 
-        activity?.toolbar?.subtitle = getString(R.string.competition_toolbar_subtitle_new)
+        requireActivity().title = getString(R.string.competition_toolbar_subtitle_new)
 
         return binding.root
     }
@@ -52,11 +49,11 @@ class CompetitionFormFragment : Fragment() {
 
         viewModel.fabSaveCompetitionClicked.observe(viewLifecycleOwner) {
             Competition(
-                description = form_competition_description.editText?.text.toString(),
-                date = form_competition_date.editText?.text.toString(),
-                ranking = form_competition_ranking.editText?.text.toString(),
-                points = form_competition_points.editText?.text.toString().toIntOrNull() ?: 0,
-                place = form_competition_place.editText?.text.toString(),
+                description = binding.formCompetitionDescription.editText?.text.toString(),
+                date = binding.formCompetitionDate.editText?.text.toString(),
+                ranking = binding.formCompetitionRanking.editText?.text.toString(),
+                points = binding.formCompetitionPoints.editText?.text.toString().toIntOrNull() ?: 0,
+                place = binding.formCompetitionPlace.editText?.text.toString(),
             ).run {
                 viewModel.savePurchase(this)
             }
@@ -64,7 +61,7 @@ class CompetitionFormFragment : Fragment() {
 
         viewModel.date.observe(viewLifecycleOwner) {
             DatePickerFragment { _, year, month, dayOfMonth ->
-                "$dayOfMonth/$month/$year".let { form_competition_date.editText?.setText(it) }
+                "$dayOfMonth/$month/$year".let { binding.formCompetitionDate.editText?.setText(it) }
             }.show(parentFragmentManager, COMPETITION_DATE)
         }
 

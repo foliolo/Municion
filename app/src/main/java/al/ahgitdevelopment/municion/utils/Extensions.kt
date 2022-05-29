@@ -34,7 +34,7 @@ inline fun <reified T : Any> DatabaseReference.queryLicensesAsFlow(nodeSelector:
                         licenses.add(license)
                     }
                 }
-                offer(licenses)
+                trySend(licenses as T)
             }
 
             override fun onCancelled(error: DatabaseError) {
@@ -57,7 +57,7 @@ inline fun <reified T : Any> DatabaseReference.queryPropertiesAsFlow(nodeSelecto
                         properties.add(property)
                     }
                 }
-                offer(properties)
+                trySend(properties as T)
             }
 
             override fun onCancelled(error: DatabaseError) {
@@ -80,7 +80,7 @@ inline fun <reified T : Any> DatabaseReference.queryPurchasesAsFlow(nodeSelector
                         purchases.add(purchase)
                     }
                 }
-                offer(purchases)
+                trySend(purchases as T)
             }
 
             override fun onCancelled(error: DatabaseError) {
@@ -103,7 +103,7 @@ inline fun <reified T : Any> DatabaseReference.queryCompetitionsAsFlow(nodeSelec
                         competitions.add(competition)
                     }
                 }
-                offer(competitions)
+                trySend(competitions as T)
             }
 
             override fun onCancelled(error: DatabaseError) {

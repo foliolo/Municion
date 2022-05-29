@@ -27,10 +27,10 @@ import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.rewarded.RewardedAd
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.properties_fragment.*
 
 @AndroidEntryPoint
 class PropertiesFragment : BaseFragment(), RecyclerInterface, PropertyAdapterListener {
+    private lateinit var binding: PropertiesFragmentBinding
 
     private lateinit var propertiesAdapter: PropertyAdapter
 
@@ -49,8 +49,7 @@ class PropertiesFragment : BaseFragment(), RecyclerInterface, PropertyAdapterLis
         savedInstanceState: Bundle?
     ): View {
 
-        val binding: PropertiesFragmentBinding =
-            DataBindingUtil.inflate(inflater, R.layout.properties_fragment, container, false)
+        binding = PropertiesFragmentBinding.inflate(inflater, container, false)
         binding.viewModel = this.viewModel
         binding.lifecycleOwner = viewLifecycleOwner
 
@@ -101,7 +100,7 @@ class PropertiesFragment : BaseFragment(), RecyclerInterface, PropertyAdapterLis
                 setHasStableIds(true)
             }
 
-            properties_recycler_view.apply {
+            binding.propertiesRecyclerView.apply {
                 adapter = propertiesAdapter
                 layoutManager = LinearLayoutManager(requireContext())
 
@@ -134,9 +133,12 @@ class PropertiesFragment : BaseFragment(), RecyclerInterface, PropertyAdapterLis
         }
 
         viewModel.loadRewardedAd.observe(viewLifecycleOwner) {
-            rewardedAd = RewardedAd(requireContext(), getString(R.string.rewarded_ads_id)).apply {
-                loadAd(AdRequest.Builder().build(), rewardedAdLoadCallbackManager)
-            }
+            RewardedAd.load(
+                requireContext(),
+                getString(R.string.rewarded_ads_id),
+                AdRequest.Builder().build(),
+                rewardedAdLoadCallbackManager
+            )
         }
 
         viewModel.removeAds.observe(viewLifecycleOwner) {
@@ -183,7 +185,7 @@ class PropertiesFragment : BaseFragment(), RecyclerInterface, PropertyAdapterLis
     override fun RecyclerView?.undoDelete(viewHolder: RecyclerView.ViewHolder) {
         propertiesAdapter.currentList[(viewHolder as PropertyAdapter.PropertyViewHolder).adapterPosition]?.let { property ->
             Snackbar.make(
-                properties_layout,
+                binding.propertiesLayout,
                 R.string.snackbar_undo_delete_message,
                 Snackbar.LENGTH_LONG
             ).setAction(R.string.snackbar_undo_delete) {

@@ -33,6 +33,7 @@
             android:name=".NavigationActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden"
+            android:exported="true"
             >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

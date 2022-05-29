@@ -1,13 +1,15 @@
 package al.ahgitdevelopment.municion.ui.licenses
 
 import al.ahgitdevelopment.municion.R
+import al.ahgitdevelopment.municion.databinding.AdapterItemLicenseBinding
 import al.ahgitdevelopment.municion.datamodel.License
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.android.synthetic.main.adapter_item_license.view.*
 
 /**
  * Created by Alberto on 28/05/2016.
@@ -15,24 +17,27 @@ import kotlinx.android.synthetic.main.adapter_item_license.view.*
 class LicenseAdapter : ListAdapter<License, LicenseAdapter.LicenseViewHolder>(DIFF_CALLBACK) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): LicenseViewHolder {
-        val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.adapter_item_license, parent, false) as ViewGroup
-
-        return LicenseViewHolder(view)
+        val view = AdapterItemLicenseBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return LicenseViewHolder(view.root)
     }
 
     override fun onBindViewHolder(holder: LicenseViewHolder, position: Int) {
         holder.bindTo(getItem(position))
     }
 
-    class LicenseViewHolder(parent: ViewGroup) : RecyclerView.ViewHolder(parent) {
+    class LicenseViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+        private val name: TextView = view.findViewById(R.id.item_license_name)
+        private val number: TextView = view.findViewById(R.id.item_license_number)
+        private val issueDate: TextView = view.findViewById(R.id.item_license_issue_date)
+        private val expiryDate: TextView = view.findViewById(R.id.item_license_expiry_date)
+        private val insuranceNumber: TextView = view.findViewById(R.id.item_license_insurance_number)
 
         fun bindTo(item: License) {
-            itemView.item_license_name.text = item.licenseName
-            itemView.item_license_number.text = item.licenseNumber
-            itemView.item_license_issue_date.text = item.issueDate
-            itemView.item_license_expiry_date.text = item.expiryDate
-            itemView.item_license_insurance_number.text = item.insuranceNumber
+            name.text = item.licenseName
+            number.text = item.licenseNumber
+            issueDate.text = item.issueDate
+            expiryDate.text = item.expiryDate
+            insuranceNumber.text = item.insuranceNumber
         }
     }
 

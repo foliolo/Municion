@@ -8,19 +8,18 @@ import al.ahgitdevelopment.municion.utils.Event
 import al.ahgitdevelopment.municion.utils.checkMaxFreeItems
 import al.ahgitdevelopment.municion.utils.wrapEspressoIdlingResource
 import android.view.View
-import androidx.hilt.Assisted
-import androidx.hilt.lifecycle.ViewModelInject
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class CompetitionsViewModel @ViewModelInject constructor(
+@HiltViewModel
+class CompetitionsViewModel @Inject constructor(
     private val repository: RepositoryContract,
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
-    @Assisted private val savedStateHandle: SavedStateHandle
 ) : BaseViewModel() {
 
     val competitions = repository.getCompetitions()

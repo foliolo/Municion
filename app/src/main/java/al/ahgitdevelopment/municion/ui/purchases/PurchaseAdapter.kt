@@ -1,6 +1,7 @@
 package al.ahgitdevelopment.municion.ui.purchases
 
 import al.ahgitdevelopment.municion.R
+import al.ahgitdevelopment.municion.databinding.AdapterItemPurchaseBinding
 import al.ahgitdevelopment.municion.datamodel.Purchase
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -10,15 +11,12 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
-import kotlinx.android.synthetic.main.adapter_item_purchase.view.*
 
 class PurchaseAdapter(private val listener: PurchaseAdapterListener) :
     ListAdapter<Purchase, PurchaseAdapter.PurchaseViewHolder>(DIFF_CALLBACK) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PurchaseViewHolder {
-        val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.adapter_item_purchase, parent, false) as ViewGroup
-
+        val view = AdapterItemPurchaseBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return PurchaseViewHolder(view, listener)
     }
 
@@ -26,30 +24,33 @@ class PurchaseAdapter(private val listener: PurchaseAdapterListener) :
         holder.bindTo(getItem(position))
     }
 
-    class PurchaseViewHolder(private val parent: ViewGroup, private val listener: PurchaseAdapterListener) :
-        RecyclerView.ViewHolder(parent) {
+    class PurchaseViewHolder(
+        private val binding: AdapterItemPurchaseBinding,
+        private val listener: PurchaseAdapterListener
+    ) :
+        RecyclerView.ViewHolder(binding.root) {
 
         fun bindTo(item: Purchase) {
-            itemView.item_purchase_brand.text = item.brand
-            itemView.item_purchase_bore.text = item.bore
-            itemView.item_purchase_price.text = item.price.toString()
-            itemView.item_purchase_date.text = item.date
+            binding.itemPurchaseBrand.text = item.brand
+            binding.itemPurchaseBore.text = item.bore
+            binding.itemPurchasePrice.text = item.price.toString()
+            binding.itemPurchaseDate.text = item.date
 
-            Glide.with(parent.context)
+            Glide.with(binding.root.context)
                 .load(item.image)
                 .error(getRandomImage())
                 .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
-                .into(itemView.item_purchase_image)
+                .into(binding.itemPurchaseImage)
 
-            itemView.item_purchase_image.setOnClickListener {
+            binding.itemPurchaseImage.setOnClickListener {
                 listener.updateImage(item)
             }
         }
 
         private fun getRandomImage() = arrayListOf(
-            ContextCompat.getDrawable(parent.context, R.drawable.ic_balas),
-            ContextCompat.getDrawable(parent.context, R.drawable.ic_balas_rifle),
-            ContextCompat.getDrawable(parent.context, R.drawable.ic_cartuchos)
+            ContextCompat.getDrawable(binding.root.context, R.drawable.ic_balas),
+            ContextCompat.getDrawable(binding.root.context, R.drawable.ic_balas_rifle),
+            ContextCompat.getDrawable(binding.root.context, R.drawable.ic_cartuchos)
         ).random()?.current
     }
 
@@ -61,7 +62,7 @@ class PurchaseAdapter(private val listener: PurchaseAdapterListener) :
             }
 
             override fun areContentsTheSame(oldItem: Purchase, newItem: Purchase): Boolean {
-                return oldItem.equals(newItem)
+                return oldItem == newItem
             }
         }
     }

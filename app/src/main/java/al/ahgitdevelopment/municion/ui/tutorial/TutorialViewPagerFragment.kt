@@ -1,25 +1,31 @@
 package al.ahgitdevelopment.municion.ui.tutorial
 
+import al.ahgitdevelopment.municion.NavigationActivity
 import al.ahgitdevelopment.municion.R
+import al.ahgitdevelopment.municion.databinding.FragmentTutorialScreenshotsBinding
+import al.ahgitdevelopment.municion.databinding.FragmentTutorialViewpagerBinding
 import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
+import android.widget.Toolbar
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.adapter.FragmentStateAdapter
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.activity_navigation.*
-import kotlinx.android.synthetic.main.fragment_tutorial_viewpager.*
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import java.io.File
 
 @AndroidEntryPoint
 class TutorialViewPagerFragment : Fragment() {
 
+    private lateinit var binding : FragmentTutorialViewpagerBinding
     private val viewModel: TutorialViewModel by viewModels()
 
     override fun onCreateView(
@@ -33,24 +39,25 @@ class TutorialViewPagerFragment : Fragment() {
             View.SYSTEM_UI_FLAG_FULLSCREEN
         activity?.window?.decorView?.systemUiVisibility = uiOptions
 
-        requireActivity().toolbar.visibility = View.GONE
+        (requireActivity() as NavigationActivity).findViewById<Toolbar>(R.id.toolbar)?.isVisible = false
 
-        return inflater.inflate(R.layout.fragment_tutorial_viewpager, container, false)
+        binding = FragmentTutorialViewpagerBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        tutorialViewPager.requestDisallowInterceptTouchEvent(true)
-        tutorialViewPager.setPageTransformer(TutorialPageTransformer())
+        binding.tutorialViewPager.requestDisallowInterceptTouchEvent(true)
+        binding.tutorialViewPager.setPageTransformer(TutorialPageTransformer())
 
         viewModel.images.observe(viewLifecycleOwner) { files ->
-            tutorialViewPager.adapter = SectionsPagerAdapter(files, requireActivity())
+            binding.tutorialViewPager.adapter = SectionsPagerAdapter(files, requireActivity())
         }
 
         viewModel.progressBar.observe(viewLifecycleOwner) {
             when (it) {
-                true -> screenshotProgressBar.show()
-                false -> screenshotProgressBar.hide()
+                true ->  binding.screenshotProgressBar.show()
+                false ->  binding.screenshotProgressBar.hide()
             }
         }
     }
@@ -61,7 +68,7 @@ class TutorialViewPagerFragment : Fragment() {
         val imm = requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(view?.windowToken, 0)
 
-        tutorialScreenshotButton.setOnClickListener {
+        binding.tutorialScreenshotButton.setOnClickListener {
             findNavController().navigate(
                 TutorialViewPagerFragmentDirections.actionTutorialViewPagerFragmentToLicensesFragment()
             )
@@ -71,7 +78,7 @@ class TutorialViewPagerFragment : Fragment() {
     }
 
     private fun hiddenDrawerNavigationMenu() {
-        requireActivity().nav_view.visibility = View.GONE
+        (requireActivity() as NavigationActivity).findViewById<BottomNavigationView>(R.id.nav_view)?.isVisible = false
     }
 
     class SectionsPagerAdapter(

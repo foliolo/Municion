@@ -8,13 +8,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.activity_navigation.*
-import kotlinx.android.synthetic.main.fragment_form_property.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 /**
@@ -24,6 +21,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 @ExperimentalCoroutinesApi
 class PropertyFormFragment : Fragment() {
 
+    private lateinit var binding: FragmentFormPropertyBinding
     private val viewModel: PropertyFormViewModel by viewModels()
 
     override fun onCreateView(
@@ -32,12 +30,11 @@ class PropertyFormFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
 
-        val binding: FragmentFormPropertyBinding =
-            DataBindingUtil.inflate(inflater, R.layout.fragment_form_property, container, false)
+        binding = FragmentFormPropertyBinding.inflate(inflater, container, false)
         binding.viewModel = this.viewModel
         binding.lifecycleOwner = viewLifecycleOwner
 
-        activity?.toolbar?.subtitle = getString(R.string.property_toolbar_subtitle_new)
+        requireActivity().title = getString(R.string.property_toolbar_subtitle_new)
 
         return binding.root
     }
@@ -49,12 +46,12 @@ class PropertyFormFragment : Fragment() {
 
         viewModel.fabSavePropertyClicked.observe(viewLifecycleOwner) {
             Property(
-                nickname = form_property_nickname.editText?.text.toString(),
-                brand = form_property_brand.editText?.text.toString(),
-                model = form_property_model.editText?.text.toString(),
-                bore1 = form_property_bore_1.editText?.text.toString(),
-                bore2 = form_property_bore_2.editText?.text.toString(),
-                numId = form_property_num_id.editText?.text.toString(),
+                nickname = binding.formPropertyNickname.editText?.text.toString(),
+                brand = binding.formPropertyBrand.editText?.text.toString(),
+                model = binding.formPropertyModel.editText?.text.toString(),
+                bore1 = binding.formPropertyBore1.editText?.text.toString(),
+                bore2 = binding.formPropertyBore2.editText?.text.toString(),
+                numId = binding.formPropertyNumId.editText?.text.toString(),
                 image = ""
             ).run {
                 viewModel.saveProperty(this)

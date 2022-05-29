@@ -10,13 +10,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.activity_navigation.*
-import kotlinx.android.synthetic.main.fragment_form_purchase.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 /**
@@ -26,6 +23,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 @ExperimentalCoroutinesApi
 class PurchaseFormFragment : Fragment() {
 
+    private lateinit var binding: FragmentFormPurchaseBinding
     private val viewModel: PurchaseFormViewModel by viewModels()
 
     override fun onCreateView(
@@ -34,12 +32,11 @@ class PurchaseFormFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
 
-        val binding: FragmentFormPurchaseBinding =
-            DataBindingUtil.inflate(inflater, R.layout.fragment_form_purchase, container, false)
+        binding = FragmentFormPurchaseBinding.inflate(inflater, container, false)
         binding.viewModel = this.viewModel
         binding.lifecycleOwner = viewLifecycleOwner
 
-        activity?.toolbar?.subtitle = getString(R.string.purchase_toolbar_subtitle_new)
+        requireActivity().title = getString(R.string.purchase_toolbar_subtitle_new)
 
         return binding.root
     }
@@ -52,14 +49,14 @@ class PurchaseFormFragment : Fragment() {
 
         viewModel.fabSavePurchaseClicked.observe(viewLifecycleOwner) {
             Purchase(
-                brand = form_purchase_brand.editText?.text.toString(),
-                store = form_purchase_store.editText?.text.toString(),
-                bore = form_purchase_bore.editText?.text.toString(),
-                units = form_purchase_units.editText?.text.toString().toIntOrNull() ?: 0,
-                price = form_purchase_price.editText?.text.toString().toDoubleOrNull() ?: 0.toDouble(),
-                date = form_purchase_date.editText?.text.toString(),
-                rating = form_purchase_rating.rating,
-                weight = form_purchase_weight.editText?.text.toString().toIntOrNull() ?: 0,
+                brand = binding.formPurchaseBrand.editText?.text.toString(),
+                store = binding.formPurchaseStore.editText?.text.toString(),
+                bore = binding.formPurchaseBore.editText?.text.toString(),
+                units = binding.formPurchaseUnits.editText?.text.toString().toIntOrNull() ?: 0,
+                price = binding.formPurchasePrice.editText?.text.toString().toDoubleOrNull() ?: 0.toDouble(),
+                date = binding.formPurchaseDate.editText?.text.toString(),
+                rating = binding.formPurchaseRating.rating,
+                weight = binding.formPurchaseWeight.editText?.text.toString().toIntOrNull() ?: 0,
                 image = ""
             ).run {
                 viewModel.savePurchase(this)
@@ -68,7 +65,7 @@ class PurchaseFormFragment : Fragment() {
 
         viewModel.date.observe(viewLifecycleOwner) {
             DatePickerFragment { _, year, month, dayOfMonth ->
-                "$dayOfMonth/$month/$year".let { form_purchase_date.editText?.setText(it) }
+                "$dayOfMonth/$month/$year".let { binding.formPurchaseDate.editText?.setText(it) }
             }.show(parentFragmentManager, PURCHASE_DATE)
         }
 

@@ -78,19 +78,13 @@ class NavigationActivity : AppCompatActivity() {
     override fun onStart() {
         super.onStart()
 
-        viewModel.showAdDialog.observe(
-            this,
-            {
-                findNavController(R.id.nav_host_fragment).navigate(R.id.adsRewardDialogFragment)
-            }
-        )
+        viewModel.showAdDialog.observe(this) {
+            findNavController(R.id.nav_host_fragment).navigate(R.id.adsRewardDialogFragment)
+        }
 
-        viewModel.paymentSupportDeveloper.observe(
-            this,
-            {
-                Toast.makeText(this, "Implement payment method", Toast.LENGTH_SHORT).show()
-            }
-        )
+        viewModel.paymentSupportDeveloper.observe(this) {
+            Toast.makeText(this, "Implement payment method", Toast.LENGTH_SHORT).show()
+        }
     }
 
     private fun setToolbarSubtitle(subtitle: String) {
