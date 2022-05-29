@@ -28,11 +28,6 @@ class BannerAdCallbacks(private val binding: ActivityNavigationBinding) : AdList
         // Code to be executed when the user clicks on an ad.
     }
 
-    override fun onAdLeftApplication() {
-        Timber.v("onAdLeftApplication")
-        // Code to be executed when the user has left the app.
-    }
-
     override fun onAdClosed() {
         Timber.v("onAdClosed")
         // Code to be executed when the user is about to return

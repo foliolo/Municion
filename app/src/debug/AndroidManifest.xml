@@ -3,11 +3,11 @@
     package="al.ahgitdevelopment.municion"
     >
 
-    <application>
-        <activity
-            android:name="al.ahgitdevelopment.municion.HiltTestActivity"
-            android:exported="false"
-            />
-    </application>
+<!--    <application>-->
+<!--        <activity-->
+<!--            android:name="al.ahgitdevelopment.municion.HiltTestActivity"-->
+<!--            android:exported="false"-->
+<!--            />-->
+<!--    </application>-->
 
 </manifest>

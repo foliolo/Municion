@@ -24,7 +24,7 @@ open class App : Application() {
         // Setup admob
         if (BuildConfig.DEBUG) {
             resources.getStringArray(R.array.admob_test_devices).toList().let { testDevices ->
-                RequestConfiguration.Builder().setTestDeviceIds(testDevices).build()?.let {
+                RequestConfiguration.Builder().setTestDeviceIds(testDevices).build().let {
                     MobileAds.setRequestConfiguration(it)
                 }
             }

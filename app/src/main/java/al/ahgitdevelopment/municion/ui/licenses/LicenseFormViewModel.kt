@@ -7,21 +7,20 @@ import al.ahgitdevelopment.municion.utils.Event
 import al.ahgitdevelopment.municion.utils.SingleLiveEvent
 import android.view.View
 import androidx.annotation.VisibleForTesting
-import androidx.hilt.Assisted
-import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @Suppress("UNUSED_PARAMETER")
-class LicenseFormViewModel @ViewModelInject constructor(
+@HiltViewModel
+class LicenseFormViewModel @Inject constructor(
     private val repository: RepositoryContract,
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
-    @Assisted private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
     val issueDate = SingleLiveEvent<Unit>()

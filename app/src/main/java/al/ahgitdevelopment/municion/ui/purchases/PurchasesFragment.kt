@@ -14,7 +14,6 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.widget.ContentLoadingProgressBar
-import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -25,11 +24,11 @@ import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.rewarded.RewardedAd
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.purchases_fragment.*
 
 @AndroidEntryPoint
 class PurchasesFragment : BaseFragment(), RecyclerInterface, PurchaseAdapterListener {
 
+    private lateinit var binding: PurchasesFragmentBinding
     private lateinit var purchaseAdapter: PurchaseAdapter
 
     private val viewModel: PurchasesViewModel by viewModels()
@@ -48,8 +47,7 @@ class PurchasesFragment : BaseFragment(), RecyclerInterface, PurchaseAdapterList
         savedInstanceState: Bundle?
     ): View {
 
-        val binding: PurchasesFragmentBinding =
-            DataBindingUtil.inflate(inflater, R.layout.purchases_fragment, container, false)
+        binding = PurchasesFragmentBinding.inflate(inflater, container, false)
         binding.viewModel = this.viewModel
         binding.lifecycleOwner = viewLifecycleOwner
 
@@ -100,7 +98,7 @@ class PurchasesFragment : BaseFragment(), RecyclerInterface, PurchaseAdapterList
                 setHasStableIds(true)
             }
 
-            purchases_recycler_view.apply {
+            binding.purchasesRecyclerView.apply {
                 adapter = purchaseAdapter
                 layoutManager = LinearLayoutManager(requireContext())
 
@@ -133,9 +131,12 @@ class PurchasesFragment : BaseFragment(), RecyclerInterface, PurchaseAdapterList
         }
 
         viewModel.loadRewardedAd.observe(viewLifecycleOwner) {
-            rewardedAd = RewardedAd(requireContext(), getString(R.string.rewarded_ads_id)).apply {
-                loadAd(AdRequest.Builder().build(), rewardedAdLoadCallbackManager)
-            }
+            RewardedAd.load(
+                requireContext(),
+                getString(R.string.rewarded_ads_id),
+                AdRequest.Builder().build(),
+                rewardedAdLoadCallbackManager
+            )
         }
 
         viewModel.removeAds.observe(viewLifecycleOwner) {
@@ -175,7 +176,7 @@ class PurchasesFragment : BaseFragment(), RecyclerInterface, PurchaseAdapterList
     override fun RecyclerView?.undoDelete(viewHolder: RecyclerView.ViewHolder) {
         purchaseAdapter.currentList[(viewHolder as PurchaseAdapter.PurchaseViewHolder).adapterPosition]?.let { purchase ->
             Snackbar.make(
-                purchases_layout,
+                binding.purchasesLayout,
                 R.string.snackbar_undo_delete_message,
                 Snackbar.LENGTH_LONG
             ).setAction(R.string.snackbar_undo_delete) {

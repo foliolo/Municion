@@ -10,7 +10,6 @@ import android.Manifest
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.Menu
@@ -20,7 +19,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.VisibleForTesting
 import androidx.annotation.VisibleForTesting.PRIVATE
-import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -33,7 +31,6 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.fragment_login.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import timber.log.Timber
 import javax.inject.Inject
@@ -41,6 +38,8 @@ import javax.inject.Inject
 @ExperimentalCoroutinesApi
 @AndroidEntryPoint
 class LoginPasswordFragment : Fragment() {
+
+    private lateinit var binding: FragmentLoginBinding
 
     @Inject
     lateinit var firebaseAuth: FirebaseAuth
@@ -63,8 +62,7 @@ class LoginPasswordFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
 
-        val binding: FragmentLoginBinding =
-            DataBindingUtil.inflate(inflater, R.layout.fragment_login, container, false)
+        binding = FragmentLoginBinding.inflate(inflater, container, false)
         binding.viewModel = this.viewModel
         binding.lifecycleOwner = viewLifecycleOwner
 
@@ -77,18 +75,18 @@ class LoginPasswordFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         viewModel.userState.observe(viewLifecycleOwner) { userState ->
-            login_password_2.visibility = when (userState) {
+            binding.loginPassword2.visibility = when (userState) {
                 LoginViewModel.UserState.NEW_USER -> View.VISIBLE
                 LoginViewModel.UserState.ACTIVE_USER -> View.GONE
             }
         }
 
         viewModel.password1Error.observe(viewLifecycleOwner) {
-            login_password_1.error = getErrorMessage(it)
+            binding.loginPassword1.error = getErrorMessage(it)
         }
 
         viewModel.password2Error.observe(viewLifecycleOwner) {
-            login_password_2.error = getErrorMessage(it)
+            binding.loginPassword2.error = getErrorMessage(it)
         }
 
         viewModel.navigateIntoApp.observe(viewLifecycleOwner) {
@@ -130,8 +128,8 @@ class LoginPasswordFragment : Fragment() {
         setUpUser()
 
         if (BuildConfig.DEBUG) {
-            login_button.visibility = View.VISIBLE
-            login_password_1.editText?.setText(BuildConfig.PASSWORD)
+            binding.loginButton.visibility = View.VISIBLE
+            binding.loginPassword1.editText?.setText(BuildConfig.PASSWORD)
             // login_button.performClick()
         }
     }
@@ -148,24 +146,15 @@ class LoginPasswordFragment : Fragment() {
         requireContext().packageManager.let { packageManager ->
             packageManager.getPackageInfo(requireContext().packageName, 0).let {
                 val version = "v${it.versionName}"
-                login_version_label.text = version
+                binding.loginVersionLabel.text = version
             }
         }
     }
 
     private fun checkAccountPermission() {
-        val accountPermission: Int
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            accountPermission =
-                requireContext().checkSelfPermission(Manifest.permission.GET_ACCOUNTS)
-            if (accountPermission != PackageManager.PERMISSION_GRANTED) {
-                requestPermissions(
-                    arrayOf(
-                        Manifest.permission.GET_ACCOUNTS
-                    ),
-                    100
-                )
-            }
+        val accountPermission: Int = requireContext().checkSelfPermission(Manifest.permission.GET_ACCOUNTS)
+        if (accountPermission != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(arrayOf(Manifest.permission.GET_ACCOUNTS), 100)
         }
     }
 

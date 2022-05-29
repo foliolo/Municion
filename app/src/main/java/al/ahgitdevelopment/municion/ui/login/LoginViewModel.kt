@@ -5,17 +5,15 @@ import al.ahgitdevelopment.municion.utils.Event
 import android.view.View
 import androidx.annotation.VisibleForTesting
 import androidx.annotation.VisibleForTesting.PRIVATE
-import androidx.hilt.Assisted
-import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
-class LoginViewModel @ViewModelInject constructor(
-    @VisibleForTesting(otherwise = PRIVATE)
+@HiltViewModel
+class LoginViewModel @Inject constructor(
     var prefs: SharedPreferencesManager,
-    @Assisted private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
     @VisibleForTesting(otherwise = PRIVATE)

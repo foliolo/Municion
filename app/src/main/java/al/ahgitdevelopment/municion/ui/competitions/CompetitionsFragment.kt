@@ -13,7 +13,6 @@ import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.core.widget.ContentLoadingProgressBar
-import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -24,11 +23,11 @@ import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.rewarded.RewardedAd
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.competitions_fragment.*
 
 @AndroidEntryPoint
 class CompetitionsFragment : BaseFragment(), RecyclerInterface {
 
+    private lateinit var binding: CompetitionsFragmentBinding
     private lateinit var competitionAdapter: CompetitionAdapter
 
     private val viewModel: CompetitionsViewModel by viewModels()
@@ -39,9 +38,7 @@ class CompetitionsFragment : BaseFragment(), RecyclerInterface {
         savedInstanceState: Bundle?
     ): View {
 
-        val binding: CompetitionsFragmentBinding =
-            DataBindingUtil.inflate(inflater, R.layout.competitions_fragment, container, false)
-
+        binding = CompetitionsFragmentBinding.inflate(layoutInflater, container, false)
         binding.viewModel = this.viewModel
         binding.lifecycleOwner = viewLifecycleOwner
 
@@ -88,7 +85,7 @@ class CompetitionsFragment : BaseFragment(), RecyclerInterface {
                 setHasStableIds(true)
             }
 
-            competitions_recycler_view.apply {
+            binding.competitionsRecyclerView.apply {
                 adapter = competitionAdapter
                 layoutManager = LinearLayoutManager(requireContext())
 
@@ -121,9 +118,16 @@ class CompetitionsFragment : BaseFragment(), RecyclerInterface {
         }
 
         viewModel.loadRewardedAd.observe(viewLifecycleOwner) {
-            rewardedAd = RewardedAd(requireContext(), getString(R.string.rewarded_ads_id)).apply {
-                loadAd(AdRequest.Builder().build(), rewardedAdLoadCallbackManager)
-            }
+            RewardedAd.load(
+                requireContext(),
+                getString(R.string.rewarded_ads_id),
+                AdRequest.Builder().build(),
+                rewardedAdLoadCallbackManager
+            )
+
+            // rewardedAd = RewardedAd(requireContext(), getString(R.string.rewarded_ads_id)).apply {
+            //     loadAd(AdRequest.Builder().build(), rewardedAdLoadCallbackManager)
+            // }
         }
 
         viewModel.removeAds.observe(viewLifecycleOwner) {
@@ -172,7 +176,7 @@ class CompetitionsFragment : BaseFragment(), RecyclerInterface {
     override fun RecyclerView?.undoDelete(viewHolder: RecyclerView.ViewHolder) {
         competitionAdapter.currentList[(viewHolder as CompetitionAdapter.CompetitionViewHolder).adapterPosition]?.let { competition ->
             Snackbar.make(
-                competitions_layout,
+                binding.competitionsLayout,
                 R.string.snackbar_undo_delete_message,
                 Snackbar.LENGTH_LONG
             ).setAction(R.string.snackbar_undo_delete) {

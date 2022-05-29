@@ -22,12 +22,12 @@ import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.rewarded.RewardedAd
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.licenses_fragment.*
 import javax.inject.Inject
 
 @AndroidEntryPoint
 class LicensesFragment @Inject constructor() : BaseFragment(), RecyclerInterface {
 
+    private lateinit var binding: LicensesFragmentBinding
     private lateinit var licensesAdapter: LicenseAdapter
 
     private val viewModel: LicensesViewModel by viewModels()
@@ -39,8 +39,7 @@ class LicensesFragment @Inject constructor() : BaseFragment(), RecyclerInterface
     ): View {
         super.onCreateView(inflater, container, savedInstanceState)
 
-        val binding: LicensesFragmentBinding =
-            DataBindingUtil.inflate(inflater, R.layout.licenses_fragment, container, false)
+        binding= LicensesFragmentBinding.inflate(inflater, container, false)
         binding.viewModel = this.viewModel
         binding.lifecycleOwner = viewLifecycleOwner
 
@@ -89,7 +88,7 @@ class LicensesFragment @Inject constructor() : BaseFragment(), RecyclerInterface
                 setHasStableIds(true)
             }
 
-            licenses_recycler_view.apply {
+            binding.licensesRecyclerView.apply {
                 adapter = licensesAdapter
                 layoutManager = LinearLayoutManager(requireContext())
 
@@ -122,9 +121,12 @@ class LicensesFragment @Inject constructor() : BaseFragment(), RecyclerInterface
         }
 
         viewModel.loadRewardedAd.observe(viewLifecycleOwner) {
-            rewardedAd = RewardedAd(requireContext(), getString(R.string.rewarded_ads_id)).apply {
-                loadAd(AdRequest.Builder().build(), rewardedAdLoadCallbackManager)
-            }
+            RewardedAd.load(
+                requireContext(),
+                getString(R.string.rewarded_ads_id),
+                AdRequest.Builder().build(),
+                rewardedAdLoadCallbackManager
+            )
         }
 
         viewModel.removeAds.observe(viewLifecycleOwner) {
@@ -164,7 +166,7 @@ class LicensesFragment @Inject constructor() : BaseFragment(), RecyclerInterface
     override fun RecyclerView?.undoDelete(viewHolder: RecyclerView.ViewHolder) {
         licensesAdapter.currentList[(viewHolder as LicenseAdapter.LicenseViewHolder).adapterPosition]?.let { license ->
             Snackbar.make(
-                licenses_layout,
+                binding.licensesLayout,
                 R.string.snackbar_undo_delete_message,
                 Snackbar.LENGTH_LONG
             ).setAction(R.string.snackbar_undo_delete) {

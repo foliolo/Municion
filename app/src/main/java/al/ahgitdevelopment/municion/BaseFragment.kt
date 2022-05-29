@@ -14,7 +14,6 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.google.android.gms.ads.rewarded.RewardedAd
 import com.google.firebase.analytics.FirebaseAnalytics
-import kotlinx.android.synthetic.main.activity_navigation.*
 import javax.inject.Inject
 
 abstract class BaseFragment : Fragment() {
@@ -39,7 +38,7 @@ abstract class BaseFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         activity?.window?.decorView?.systemUiVisibility = View.SYSTEM_UI_FLAG_VISIBLE
-        requireActivity().toolbar?.visibility = View.VISIBLE
+        // requireActivity().toolbar?.visibility = View.VISIBLE
 
         setHasOptionsMenu(true)
 
