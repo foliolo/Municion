@@ -5,7 +5,6 @@ import al.ahgitdevelopment.municion.R
 import al.ahgitdevelopment.municion.databinding.FragmentLoginBinding
 import al.ahgitdevelopment.municion.repository.firebase.RemoteStorageDataSource.Companion.EVENT_LOGOUT
 import al.ahgitdevelopment.municion.repository.firebase.RemoteStorageDataSource.Companion.PARAM_USER_UID
-import al.ahgitdevelopment.municion.utils.SimpleCountingIdlingResource
 import android.Manifest
 import android.app.Activity
 import android.content.Intent
@@ -18,7 +17,6 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.VisibleForTesting
-import androidx.annotation.VisibleForTesting.PRIVATE
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -50,10 +48,7 @@ class LoginPasswordFragment : Fragment() {
     @Inject
     lateinit var firebaseCrashlytics: FirebaseCrashlytics
 
-    @Inject
-    lateinit var idlingResource: SimpleCountingIdlingResource
-
-    @VisibleForTesting(otherwise = PRIVATE)
+    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     val viewModel: LoginViewModel by viewModels()
 
     override fun onCreateView(
@@ -222,7 +217,6 @@ class LoginPasswordFragment : Fragment() {
     }
 
     private fun signIn() {
-        idlingResource.increment()
         val providers = arrayListOf(
             AuthUI.IdpConfig.GoogleBuilder().setSignInOptions(GoogleSignInOptions.Builder().build()).build(),
             // AuthUI.IdpConfig.AnonymousBuilder().build(),
@@ -270,8 +264,6 @@ class LoginPasswordFragment : Fragment() {
                 response?.error?.cause?.let(firebaseCrashlytics::recordException)
             }
         }
-
-        idlingResource.decrement()
     }
 
     private fun recordUserData(user: FirebaseUser) {

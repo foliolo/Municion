@@ -117,7 +117,7 @@ class FakeRepository : RepositoryContract {
             "12345",
             "Ranking",
             100,
-            "Place"
+            "Place",
         )
         val FAKE_LICENSE = License(
             "id",
@@ -125,7 +125,7 @@ class FakeRepository : RepositoryContract {
             "12345",
             "10/10/2014",
             "15/15/2020",
-            "98765"
+            "98765",
         )
         val FAKE_PROPERTY = Property(
             "id",
@@ -135,7 +135,7 @@ class FakeRepository : RepositoryContract {
             "Bore 1",
             "Bore 2",
             "Num id",
-            "Image"
+            "Image",
         )
         val FAKE_PURCHASE = Purchase(
             "id",
@@ -147,7 +147,7 @@ class FakeRepository : RepositoryContract {
             "15/15/2020",
             3.4F,
             10,
-            "Image"
+            "Image",
         )
 
         val FAKE_LICENSES = arrayListOf(FAKE_LICENSE)

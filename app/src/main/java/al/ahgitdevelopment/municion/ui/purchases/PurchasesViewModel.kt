@@ -7,7 +7,6 @@ import al.ahgitdevelopment.municion.repository.firebase.RemoteStorageDataSourceC
 import al.ahgitdevelopment.municion.ui.BaseViewModel
 import al.ahgitdevelopment.municion.utils.Event
 import al.ahgitdevelopment.municion.utils.checkMaxFreeItems
-import al.ahgitdevelopment.municion.utils.wrapEspressoIdlingResource
 import android.graphics.Bitmap
 import android.view.View
 import androidx.lifecycle.asLiveData
@@ -45,36 +44,30 @@ class PurchasesViewModel @Inject constructor(
     }
 
     fun deletePurchase(purchaseId: String) = viewModelScope.launch(ioDispatcher) {
-        wrapEspressoIdlingResource {
-            repository.removePurchase(purchaseId)
-        }
+        repository.removePurchase(purchaseId)
     }
 
     fun addPurchase(purchase: Purchase) = viewModelScope.launch(ioDispatcher) {
-        wrapEspressoIdlingResource {
-            repository.savePurchase(purchase)
-        }
+        repository.savePurchase(purchase)
     }
 
     fun savePicture(bitmap: Bitmap?, purchase: Purchase) {
-        wrapEspressoIdlingResource {
-            showProgressBar()
-            // Upload de image to firebase store and get the link
-            storageRepository.saveItemImage(bitmap, purchase.id)
-                .continueWithTask { task ->
-                    if (!task.isSuccessful) {
-                        task.exception?.let {
-                            Timber.e(it, "Error uploading purchase image to firebase storage")
-                        }
+        showProgressBar()
+        // Upload de image to firebase store and get the link
+        storageRepository.saveItemImage(bitmap, purchase.id)
+            .continueWithTask { task ->
+                if (!task.isSuccessful) {
+                    task.exception?.let {
+                        Timber.e(it, "Error uploading purchase image to firebase storage")
                     }
-                    storageRepository.getReference(task.result?.metadata?.path).downloadUrl
                 }
-                .addOnSuccessListener { imageUrl ->
-                    // Update item with the link
-                    repository.savePurchaseImageItem(purchase.id, imageUrl.toString())
-                    hideProgressBar()
-                }
-        }
+                storageRepository.getReference(task.result?.metadata?.path).downloadUrl
+            }
+            .addOnSuccessListener { imageUrl ->
+                // Update item with the link
+                repository.savePurchaseImageItem(purchase.id, imageUrl.toString())
+                hideProgressBar()
+            }
     }
 
     override fun navigateToForm() {

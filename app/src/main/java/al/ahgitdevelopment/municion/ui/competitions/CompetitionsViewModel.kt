@@ -6,7 +6,6 @@ import al.ahgitdevelopment.municion.repository.RepositoryContract
 import al.ahgitdevelopment.municion.ui.BaseViewModel
 import al.ahgitdevelopment.municion.utils.Event
 import al.ahgitdevelopment.municion.utils.checkMaxFreeItems
-import al.ahgitdevelopment.municion.utils.wrapEspressoIdlingResource
 import android.view.View
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
@@ -40,15 +39,11 @@ class CompetitionsViewModel @Inject constructor(
     }
 
     fun deleteCompetition(competitionId: String) = viewModelScope.launch(ioDispatcher) {
-        wrapEspressoIdlingResource {
-            repository.removeCompetition(competitionId)
-        }
+        repository.removeCompetition(competitionId)
     }
 
     fun addCompetition(competition: Competition) = viewModelScope.launch(ioDispatcher) {
-        wrapEspressoIdlingResource {
-            repository.saveCompetition(competition)
-        }
+        repository.saveCompetition(competition)
     }
 
     override fun navigateToForm() {

@@ -40,6 +40,7 @@ class RewardedAdCallbackManager : OnUserEarnedRewardListener {
     //     Timber.i("onRewardedAdFailedToShow: ${p0.message}")
     //     viewModel.rewardCancel()
     // }
+
     override fun onUserEarnedReward(p0: RewardItem) {
         viewModel.navigateToForm()
     }
