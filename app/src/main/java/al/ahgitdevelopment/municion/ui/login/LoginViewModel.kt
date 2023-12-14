@@ -4,7 +4,6 @@ import al.ahgitdevelopment.municion.repository.preferences.SharedPreferencesMana
 import al.ahgitdevelopment.municion.utils.Event
 import android.view.View
 import androidx.annotation.VisibleForTesting
-import androidx.annotation.VisibleForTesting.PRIVATE
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -16,19 +15,19 @@ class LoginViewModel @Inject constructor(
     var prefs: SharedPreferencesManager,
 ) : ViewModel() {
 
-    @VisibleForTesting(otherwise = PRIVATE)
+    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     private val _navigateIntoApp = MutableLiveData<Event<Unit>>()
     val navigateIntoApp: LiveData<Event<Unit>>
         get() = _navigateIntoApp
 
-    @VisibleForTesting(otherwise = PRIVATE)
+    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     private val _navigateIntoTutorial = MutableLiveData<Event<Unit>>()
     val navigateIntoTutorial: LiveData<Event<Unit>>
         get() = _navigateIntoTutorial
 
     // val showAds = SingleLiveEvent<Boolean>()
 
-    @VisibleForTesting(otherwise = PRIVATE)
+    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     val _userState = MutableLiveData<UserState>()
     val userState: LiveData<UserState> = _userState
 
@@ -108,7 +107,7 @@ class LoginViewModel @Inject constructor(
         prefs.setPassword(password1)
     }
 
-    @VisibleForTesting(otherwise = PRIVATE)
+    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     fun showTutorialOrApp() =
         prefs.getShowTutorial().let { showTutorial ->
             if (showTutorial) {

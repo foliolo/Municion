@@ -27,7 +27,7 @@ abstract class BaseFragment : Fragment() {
     @Inject
     lateinit var rewardedAdCallbackManager: RewardedAdCallbackManager
 
-    lateinit var rewardedAd: RewardedAd
+    var rewardedAd: RewardedAd? = null
 
     abstract fun signOut()
     abstract fun settings()
@@ -64,12 +64,15 @@ abstract class BaseFragment : Fragment() {
                 // Toast.makeText(requireContext(), "Settings click", Toast.LENGTH_SHORT).show()
                 settings()
             }
+
             R.id.menu_log_out -> {
                 signOut()
             }
+
             R.id.menu_tutorial -> {
                 tutorial()
             }
+
             R.id.menu_support_developer -> {
                 findNavController().navigate(R.id.supportDeveloperDialogFragment)
             }

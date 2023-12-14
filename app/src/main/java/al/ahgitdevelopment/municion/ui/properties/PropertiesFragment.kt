@@ -90,7 +90,7 @@ class PropertiesFragment : BaseFragment(), RecyclerInterface, PropertyAdapterLis
         viewModel.progressBar.observe(viewLifecycleOwner) {
             when (it.getContentIfNotHandled()) {
                 true -> activity?.findViewById<ContentLoadingProgressBar>(R.id.progressBar)?.show()
-                false -> activity?.findViewById<ContentLoadingProgressBar>(R.id.progressBar)?.hide()
+                else -> activity?.findViewById<ContentLoadingProgressBar>(R.id.progressBar)?.hide()
             }
         }
 
@@ -129,7 +129,7 @@ class PropertiesFragment : BaseFragment(), RecyclerInterface, PropertyAdapterLis
         }
 
         viewModel.showRewardedAd.observe(viewLifecycleOwner) {
-            rewardedAd.show(requireActivity(), rewardedAdCallbackManager)
+            rewardedAd?.show(requireActivity(), rewardedAdCallbackManager)
         }
 
         viewModel.loadRewardedAd.observe(viewLifecycleOwner) {

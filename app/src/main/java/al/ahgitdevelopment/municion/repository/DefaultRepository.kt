@@ -4,7 +4,6 @@ import al.ahgitdevelopment.municion.datamodel.Competition
 import al.ahgitdevelopment.municion.datamodel.License
 import al.ahgitdevelopment.municion.datamodel.Property
 import al.ahgitdevelopment.municion.datamodel.Purchase
-import al.ahgitdevelopment.municion.utils.wrapEspressoIdlingResource
 import android.content.Context
 import android.net.ConnectivityManager
 import kotlinx.coroutines.flow.Flow
@@ -17,60 +16,50 @@ open class DefaultRepository(
 ) : RepositoryContract {
 
     override fun getProperties(): Flow<List<Property>> {
-        return wrapEspressoIdlingResource {
-
-            if (isConnected()) {
-                remoteDataSource.properties.map { properties ->
-                    localDataSource.removeAllProperties()
-                    properties.forEach { localDataSource.saveProperty(it) }
-                    properties
-                }
-            } else {
-                localDataSource.properties
+        return if (isConnected()) {
+            remoteDataSource.properties.map { properties ->
+                localDataSource.removeAllProperties()
+                properties.forEach { localDataSource.saveProperty(it) }
+                properties
             }
+        } else {
+            localDataSource.properties
         }
     }
 
     override fun getPurchases(): Flow<List<Purchase>> {
-        return wrapEspressoIdlingResource {
-            if (isConnected()) {
-                remoteDataSource.purchases.map { purchases ->
-                    localDataSource.removeAllPurchases()
-                    purchases.forEach { localDataSource.savePurchase(it) }
-                    purchases
-                }
-            } else {
-                localDataSource.purchases
+        return if (isConnected()) {
+            remoteDataSource.purchases.map { purchases ->
+                localDataSource.removeAllPurchases()
+                purchases.forEach { localDataSource.savePurchase(it) }
+                purchases
             }
+        } else {
+            localDataSource.purchases
         }
     }
 
     override fun getLicenses(): Flow<List<License>> {
-        return wrapEspressoIdlingResource {
-            if (isConnected()) {
-                remoteDataSource.licenses.map { licenses ->
-                    localDataSource.removeAllLicenses()
-                    licenses.forEach { localDataSource.saveLicense(it) }
-                    licenses
-                }
-            } else {
-                localDataSource.licenses
+        return if (isConnected()) {
+            remoteDataSource.licenses.map { licenses ->
+                localDataSource.removeAllLicenses()
+                licenses.forEach { localDataSource.saveLicense(it) }
+                licenses
             }
+        } else {
+            localDataSource.licenses
         }
     }
 
     override fun getCompetitions(): Flow<List<Competition>> {
-        return wrapEspressoIdlingResource {
-
-            if (isConnected()) {
-                remoteDataSource.competitions.map { competitions ->
-                    localDataSource.removeAllCompetitions()
-                    competitions.forEach { localDataSource.saveCompetition(it) }
-                    competitions
-                }
-            } else {
-                localDataSource.competitions
+        return if (isConnected()) {
+            remoteDataSource.competitions.map { competitions ->
+                localDataSource.removeAllCompetitions()
+                competitions.forEach { localDataSource.saveCompetition(it) }
+                competitions
             }
+        } else {
+            localDataSource.competitions
         }
     }
 

@@ -6,7 +6,6 @@ import al.ahgitdevelopment.municion.repository.RepositoryContract
 import al.ahgitdevelopment.municion.ui.BaseViewModel
 import al.ahgitdevelopment.municion.utils.Event
 import al.ahgitdevelopment.municion.utils.checkMaxFreeItems
-import al.ahgitdevelopment.municion.utils.wrapEspressoIdlingResource
 import android.view.View
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
@@ -41,15 +40,11 @@ class LicensesViewModel @Inject constructor(
     }
 
     fun deleteLicense(licenseId: String) = viewModelScope.launch(ioDispatcher) {
-        wrapEspressoIdlingResource {
-            repository.removeLicense(licenseId)
-        }
+        repository.removeLicense(licenseId)
     }
 
     fun addLicense(license: License) = viewModelScope.launch(ioDispatcher) {
-        wrapEspressoIdlingResource {
-            repository.saveLicense(license)
-        }
+        repository.saveLicense(license)
     }
 
     override fun navigateToForm() {

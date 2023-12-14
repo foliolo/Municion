@@ -1,2 +1,14 @@
-[*.{kt, kts}]
-disabled_rules = import-ordering
+root = true
+
+[*]
+charset = utf-8
+insert_final_newline = true
+
+[*.{kt,kts}]
+ij_kotlin_code_style_defaults = KOTLIN_OFFICIAL
+# ktlint_code_style = android_studio
+max_line_length = 120
+indent_size = 4
+
+[*.{yml,yaml}]
+indent_size = 2
