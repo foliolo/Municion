@@ -31,4 +31,7 @@ Add Competition| Delete elements
 - Developer: **Alberto Hidalgo García**
 - Designer: **Jorge Gómez Cobacho**
 
+## Other info
+To request the deletion of data from the application you can contact us via this email (hgarcia.alberto.gp@gmail.com) specifying the account you want to be deleted.
+
 
