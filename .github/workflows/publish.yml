@@ -15,6 +15,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'adopt'
+          java-version: '17'
+
       - name: Restore Cache
         uses: actions/cache@v2
         with:
@@ -70,7 +76,7 @@ jobs:
         uses: wzieba/Firebase-Distribution-Github-Action@v1.7.0
         with:
           appId: ${{ secrets.FIREBASE_APP_ID }}
-          serviceCredentialsFileContent: ${{ secrets.CREDENTIAL_FILE_CONTENT }}
+          serviceCredentialsFileContent: ${{ secrets.CREDENTIAL_F_CONTENT }}
           groups: Developers
           file: app/build/outputs/apk/global/debug/app-global-debug.apk
         continue-on-error: true
