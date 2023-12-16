@@ -7,7 +7,6 @@ import al.ahgitdevelopment.municion.repository.firebase.RemoteStorageDataSourceC
 import al.ahgitdevelopment.municion.ui.BaseViewModel
 import al.ahgitdevelopment.municion.utils.Event
 import al.ahgitdevelopment.municion.utils.SingleLiveEvent
-import al.ahgitdevelopment.municion.utils.checkMaxFreeItems
 import android.graphics.Bitmap
 import android.view.View
 import androidx.lifecycle.asLiveData
@@ -35,15 +34,10 @@ class PropertiesViewModel @Inject constructor(
 
     init {
         showProgressBar()
-        _loadRewardedAd.postValue(Event(Unit))
     }
 
     fun fabClick(view: View?) {
-        if (properties.value!!.checkMaxFreeItems()) {
-            navigateToForm()
-        } else {
-            showRewardedAdDialog()
-        }
+        navigateToForm()
     }
 
     fun deleteProperty(propertyId: String) = viewModelScope.launch(ioDispatcher) {
@@ -73,9 +67,5 @@ class PropertiesViewModel @Inject constructor(
 
     override fun navigateToForm() {
         _navigateToForm.postValue(Event(Unit))
-    }
-
-    override fun showRewardedAd() {
-        _showRewardedAd.postValue(Event(Unit))
     }
 }

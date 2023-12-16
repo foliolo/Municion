@@ -15,18 +15,6 @@ abstract class BaseViewModel : ViewModel(), Serializable {
     private val _progressBar = MutableLiveData<Event<Boolean>>()
     val progressBar: LiveData<Event<Boolean>> = _progressBar
 
-    private val _showRewardedAdDialog = MutableLiveData<Event<Unit>>()
-    val showRewardedAdDialog: LiveData<Event<Unit>> = _showRewardedAdDialog
-
-    val _loadRewardedAd = MutableLiveData<Event<Unit>>()
-    val loadRewardedAd: LiveData<Event<Unit>> = _loadRewardedAd
-
-    val _showRewardedAd = MutableLiveData<Event<Unit>>()
-    val showRewardedAd: LiveData<Event<Unit>> = _showRewardedAd
-
-    private val _removeAds = MutableLiveData<Event<Unit>>()
-    val removeAds: LiveData<Event<Unit>> = _removeAds
-
     val _navigateToForm = MutableLiveData<Event<Unit>>()
     val navigateToForm: LiveData<Event<Unit>> = _navigateToForm
 
@@ -37,7 +25,6 @@ abstract class BaseViewModel : ViewModel(), Serializable {
     val exception: LiveData<Event<Throwable>> = _exception
 
     abstract fun navigateToForm()
-    abstract fun showRewardedAd()
 
     fun recordLogoutEvent(analytics: FirebaseAnalytics) {
         analytics.logEvent(EVENT_LOGOUT, null)
@@ -59,19 +46,7 @@ abstract class BaseViewModel : ViewModel(), Serializable {
         _progressBar.postValue(Event(false))
     }
 
-    fun rewardCancel() {
-        _message.postValue(Event(R.string.ad_error_message))
-    }
-
-    fun showRewardedAdDialog() {
-        _showRewardedAdDialog.postValue(Event(Unit))
-    }
-
     fun removeMaxLimitation() {
         _message.postValue(Event(R.string.toast_under_construction))
-    }
-
-    fun loadRewardedAd() {
-        _loadRewardedAd.postValue(Event(Unit))
     }
 }

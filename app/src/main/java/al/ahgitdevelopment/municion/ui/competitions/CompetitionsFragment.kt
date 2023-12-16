@@ -19,8 +19,6 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.firebase.ui.auth.AuthUI
-import com.google.android.gms.ads.AdRequest
-import com.google.android.gms.ads.rewarded.RewardedAd
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -106,39 +104,6 @@ class CompetitionsFragment : BaseFragment(), RecyclerInterface {
 
             viewModel.hideProgressBar()
         }
-
-        viewModel.showRewardedAdDialog.observe(viewLifecycleOwner) {
-            findNavController().navigate(
-                CompetitionsFragmentDirections.actionCompetitionsFragmentToAdsRewardDialogFragment(viewModel)
-            )
-        }
-
-        viewModel.showRewardedAd.observe(viewLifecycleOwner) {
-            rewardedAd?.show(requireActivity(), rewardedAdCallbackManager)
-        }
-
-        viewModel.loadRewardedAd.observe(viewLifecycleOwner) {
-            RewardedAd.load(
-                requireContext(),
-                getString(R.string.rewarded_ads_id),
-                AdRequest.Builder().build(),
-                rewardedAdLoadCallbackManager
-            )
-
-            // rewardedAd = RewardedAd(requireContext(), getString(R.string.rewarded_ads_id)).apply {
-            //     loadAd(AdRequest.Builder().build(), rewardedAdLoadCallbackManager)
-            // }
-        }
-
-        viewModel.removeAds.observe(viewLifecycleOwner) {
-            Toast.makeText(requireContext(), getString(R.string.toast_under_construction), Toast.LENGTH_SHORT)
-                .show()
-        }
-    }
-
-    override fun onStart() {
-        super.onStart()
-        rewardedAdCallbackManager.setViewModel(viewModel)
     }
 
     override fun onResume() {
