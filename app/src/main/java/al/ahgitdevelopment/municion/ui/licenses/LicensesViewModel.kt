@@ -28,15 +28,10 @@ class LicensesViewModel @Inject constructor(
 
     init {
         showProgressBar()
-        loadRewardedAd()
     }
 
-    fun fabClick(view: View?) {
-        if (licenses.value!!.checkMaxFreeItems()) {
-            navigateToForm()
-        } else {
-            showRewardedAdDialog()
-        }
+    fun fabClick() {
+        navigateToForm()
     }
 
     fun deleteLicense(licenseId: String) = viewModelScope.launch(ioDispatcher) {
@@ -49,9 +44,5 @@ class LicensesViewModel @Inject constructor(
 
     override fun navigateToForm() {
         _navigateToForm.postValue(Event(Unit))
-    }
-
-    override fun showRewardedAd() {
-        _showRewardedAd.postValue(Event(Unit))
     }
 }

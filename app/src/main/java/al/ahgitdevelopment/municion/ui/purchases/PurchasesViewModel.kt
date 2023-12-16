@@ -6,7 +6,6 @@ import al.ahgitdevelopment.municion.repository.RepositoryContract
 import al.ahgitdevelopment.municion.repository.firebase.RemoteStorageDataSourceContract
 import al.ahgitdevelopment.municion.ui.BaseViewModel
 import al.ahgitdevelopment.municion.utils.Event
-import al.ahgitdevelopment.municion.utils.checkMaxFreeItems
 import android.graphics.Bitmap
 import android.view.View
 import androidx.lifecycle.asLiveData
@@ -32,15 +31,10 @@ class PurchasesViewModel @Inject constructor(
 
     init {
         showProgressBar()
-        _loadRewardedAd.postValue(Event(Unit))
     }
 
     fun fabClick(view: View?) {
-        if (purchases.value!!.checkMaxFreeItems()) {
-            _navigateToForm.postValue(Event(Unit))
-        } else {
-            showRewardedAdDialog()
-        }
+        _navigateToForm.postValue(Event(Unit))
     }
 
     fun deletePurchase(purchaseId: String) = viewModelScope.launch(ioDispatcher) {
@@ -72,9 +66,5 @@ class PurchasesViewModel @Inject constructor(
 
     override fun navigateToForm() {
         _navigateToForm.postValue(Event(Unit))
-    }
-
-    override fun showRewardedAd() {
-        _showRewardedAd.postValue(Event(Unit))
     }
 }

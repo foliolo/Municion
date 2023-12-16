@@ -28,18 +28,20 @@ class TutorialViewPagerFragment : Fragment() {
     private lateinit var binding : FragmentTutorialViewpagerBinding
     private val viewModel: TutorialViewModel by viewModels()
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
 
         val uiOptions = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or
             View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY or
             View.SYSTEM_UI_FLAG_FULLSCREEN
         activity?.window?.decorView?.systemUiVisibility = uiOptions
 
-        (requireActivity() as NavigationActivity).findViewById<Toolbar>(R.id.toolbar)?.isVisible = false
+        // (requireActivity() as NavigationActivity).findViewById<Toolbar>(R.id.toolbar)?.isVisible = false
+        (requireActivity() as NavigationActivity).supportActionBar?.hide()
 
         binding = FragmentTutorialViewpagerBinding.inflate(inflater, container, false)
         return binding.root
