@@ -1,6 +1,5 @@
 package al.ahgitdevelopment.municion
 
-import al.ahgitdevelopment.municion.ads.BannerAdCallbacks
 import al.ahgitdevelopment.municion.databinding.ActivityNavigationBinding
 import android.os.Bundle
 import android.view.View
@@ -11,7 +10,6 @@ import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
-import com.google.android.gms.ads.AdRequest
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
@@ -71,16 +69,10 @@ class NavigationActivity : AppCompatActivity() {
                 }
             }
         }
-
-        setupAds()
     }
 
     override fun onStart() {
         super.onStart()
-
-        viewModel.showAdDialog.observe(this) {
-            findNavController(R.id.nav_host_fragment).navigate(R.id.adsRewardDialogFragment)
-        }
 
         viewModel.paymentSupportDeveloper.observe(this) {
             Toast.makeText(this, "Implement payment method", Toast.LENGTH_SHORT).show()
@@ -89,12 +81,5 @@ class NavigationActivity : AppCompatActivity() {
 
     private fun setToolbarSubtitle(subtitle: String) {
         supportActionBar?.subtitle = subtitle
-    }
-
-    private fun setupAds() {
-        AdRequest.Builder().build().let {
-            binding.adView.adListener = BannerAdCallbacks(binding)
-            binding.adView.loadAd(it)
-        }
     }
 }
