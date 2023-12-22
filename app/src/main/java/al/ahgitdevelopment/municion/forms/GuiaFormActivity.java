@@ -1,7 +1,6 @@
 package al.ahgitdevelopment.municion.forms;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
@@ -24,7 +23,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatSpinner;
 import androidx.appcompat.widget.Toolbar;
 
-import com.google.android.gms.ads.AdView;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputLayout;
 
@@ -76,7 +74,6 @@ public class GuiaFormActivity extends AppCompatActivity {
     private Toolbar toolbar;
 
     private SharedPreferences prefs;
-    private AdView mAdView;
 
     /**
      * Inicializa la actividad
@@ -110,7 +107,6 @@ public class GuiaFormActivity extends AppCompatActivity {
         layoutNumArma = findViewById(R.id.text_input_layout_num_arma);
         layoutCupo = findViewById(R.id.layout_cupo);
         layoutGastado = findViewById(R.id.text_input_layout_cartuchos_gastados);
-        mAdView = findViewById(R.id.adView);
 
         //Municion gastada por defecto = 0
         if (layoutGastado.getEditText().getText().toString().equals("")) {
@@ -322,17 +318,6 @@ public class GuiaFormActivity extends AppCompatActivity {
                 }
             }
         });
-
-        // Gestion de anuncios
-        prefs = getSharedPreferences("Preferences", Context.MODE_PRIVATE);
-        if (prefs.getBoolean(Utils.PREFS_SHOW_ADS, true)) {
-            mAdView.setVisibility(View.VISIBLE);
-            mAdView.setEnabled(true);
-            mAdView.loadAd(Utils.getAdRequest(mAdView));
-        } else {
-            mAdView.setVisibility(View.GONE);
-            mAdView.setEnabled(false);
-        }
     }
 
     public void fabSaveOnClick(View view) {
