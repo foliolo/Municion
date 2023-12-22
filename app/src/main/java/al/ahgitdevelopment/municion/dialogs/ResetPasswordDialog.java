@@ -51,7 +51,7 @@ public class ResetPasswordDialog extends DialogFragment {
         question.setText(preferences.getString("question", ""));
         textEmptyList = view.findViewById(R.id.textEmptyList);
 
-        if(question == null || question.getText().toString().isEmpty()) {
+        if (question == null || question.getText().toString().isEmpty()) {
             textEmptyList.setVisibility(View.VISIBLE);
             textEmptyList.setText(R.string.settings_empty_question_security);
             layoutQuestion.setVisibility(View.GONE);
@@ -75,7 +75,7 @@ public class ResetPasswordDialog extends DialogFragment {
                             Intent intent = new Intent(getActivity(), LoginPasswordActivity.class);
                             intent.putExtra("tutorial", false);
                             startActivity(intent);
-                        } else if (!isQuestion){
+                        } else if (!isQuestion) {
                             dismiss();
                         }
                     }
@@ -105,7 +105,7 @@ public class ResetPasswordDialog extends DialogFragment {
                         Intent intent = new Intent(getActivity(), LoginPasswordActivity.class);
                         intent.putExtra("tutorial", false);
                         startActivity(intent);
-                    } else if (!isQuestion){
+                    } else if (!isQuestion) {
                         dismiss();
                     }
                     //else dialog stays open. Make sure you have an obvious way to close the dialog especially if you set cancellable to false.

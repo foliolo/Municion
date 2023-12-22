@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="match_parent"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
-              android:orientation="horizontal"
-              android:paddingBottom="8dp"
-              android:paddingTop="7dp">
+    android:orientation="horizontal"
+    android:paddingTop="7dp"
+    android:paddingBottom="8dp">
 
     <ImageView
         android:id="@+id/imageArma"
@@ -14,7 +14,7 @@
         android:layout_marginEnd="@dimen/appbar_padding_top"
         android:layout_marginRight="@dimen/appbar_padding_top"
         android:clickable="true"
-        android:scaleType="centerCrop"/>
+        android:scaleType="centerCrop" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -32,12 +32,12 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="end"
-                android:paddingEnd="@dimen/activity_vertical_margin"
-                android:paddingLeft="@dimen/item_margin_left"
-                android:paddingRight="@dimen/activity_vertical_margin"
                 android:paddingStart="@dimen/item_margin_left"
+                android:paddingLeft="@dimen/item_margin_left"
+                android:paddingEnd="@dimen/activity_vertical_margin"
+                android:paddingRight="@dimen/activity_vertical_margin"
                 android:text="@string/label_apodo"
-                android:textAppearance="?android:attr/textAppearanceSmall"/>
+                android:textAppearance="?android:attr/textAppearanceSmall" />
 
             <TextView
                 android:id="@+id/item_apodo_guia"
@@ -48,7 +48,7 @@
                 android:gravity="start"
                 android:text="@string/item_apodo_guia"
                 android:textAppearance="?android:attr/textAppearanceSmall"
-                android:textStyle="bold"/>
+                android:textStyle="bold" />
 
         </LinearLayout>
 
@@ -63,12 +63,12 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="end"
-                android:paddingEnd="@dimen/activity_vertical_margin"
-                android:paddingLeft="@dimen/item_margin_left"
-                android:paddingRight="@dimen/activity_vertical_margin"
                 android:paddingStart="@dimen/item_margin_left"
+                android:paddingLeft="@dimen/item_margin_left"
+                android:paddingEnd="@dimen/activity_vertical_margin"
+                android:paddingRight="@dimen/activity_vertical_margin"
                 android:text="@string/label_num_guia"
-                android:textAppearance="?android:attr/textAppearanceSmall"/>
+                android:textAppearance="?android:attr/textAppearanceSmall" />
 
             <TextView
                 android:id="@+id/item_form_num_guia"
@@ -79,7 +79,7 @@
                 android:gravity="start"
                 android:text="@string/item_num_guia"
                 android:textAppearance="?android:attr/textAppearanceSmall"
-                android:textStyle="bold"/>
+                android:textStyle="bold" />
         </LinearLayout>
 
         <LinearLayout
@@ -94,12 +94,12 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="end"
-                android:paddingEnd="@dimen/activity_vertical_margin"
-                android:paddingLeft="@dimen/item_margin_left"
-                android:paddingRight="@dimen/activity_vertical_margin"
                 android:paddingStart="@dimen/item_margin_left"
+                android:paddingLeft="@dimen/item_margin_left"
+                android:paddingEnd="@dimen/activity_vertical_margin"
+                android:paddingRight="@dimen/activity_vertical_margin"
                 android:text="@string/cupo_anual"
-                android:textAppearance="?android:attr/textAppearanceSmall"/>
+                android:textAppearance="?android:attr/textAppearanceSmall" />
 
             <TextView
                 android:id="@+id/item_cupo_guia"
@@ -110,7 +110,7 @@
                 android:gravity="start"
                 android:text="1000"
                 android:textAppearance="?android:attr/textAppearanceSmall"
-                android:textStyle="bold"/>
+                android:textStyle="bold" />
         </LinearLayout>
 
         <LinearLayout
@@ -126,12 +126,12 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="end"
-                android:paddingEnd="@dimen/activity_vertical_margin"
-                android:paddingLeft="@dimen/item_margin_left"
-                android:paddingRight="@dimen/activity_vertical_margin"
                 android:paddingStart="@dimen/item_margin_left"
+                android:paddingLeft="@dimen/item_margin_left"
+                android:paddingEnd="@dimen/activity_vertical_margin"
+                android:paddingRight="@dimen/activity_vertical_margin"
                 android:text="@string/label_gastado"
-                android:textAppearance="?android:attr/textAppearanceSmall"/>
+                android:textAppearance="?android:attr/textAppearanceSmall" />
 
             <TextView
                 android:id="@+id/item_gastados_guia"
@@ -142,7 +142,7 @@
                 android:gravity="start"
                 android:text="15%"
                 android:textAppearance="?android:attr/textAppearanceSmall"
-                android:textStyle="bold"/>
+                android:textStyle="bold" />
         </LinearLayout>
 
     </LinearLayout>

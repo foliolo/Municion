@@ -3,7 +3,6 @@ package al.ahgitdevelopment.municion.forms;
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -19,13 +18,12 @@ import androidx.appcompat.widget.AppCompatSpinner;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.DialogFragment;
 
-import com.google.android.gms.ads.AdView;
 import com.google.android.material.textfield.TextInputLayout;
-import com.google.firebase.crash.FirebaseCrash;
 
 import java.util.Calendar;
 import java.util.Date;
 
+import al.ahgitdevelopment.municion.BaseApplication;
 import al.ahgitdevelopment.municion.FragmentMainActivity;
 import al.ahgitdevelopment.municion.R;
 import al.ahgitdevelopment.municion.Utils;
@@ -43,7 +41,6 @@ public class TiradaFormActivity extends AppCompatActivity {
     private AppCompatSpinner rango;
     private TextInputLayout puntuacion;
 
-    private AdView mAdView;
 
     /**
      * Inicializa la actividad
@@ -67,7 +64,6 @@ public class TiradaFormActivity extends AppCompatActivity {
         rango = findViewById(R.id.form_tirada_rango);
         fecha = findViewById(R.id.form_tirada_fecha);
         puntuacion = findViewById(R.id.form_tirada_puntuacion);
-        mAdView = findViewById(R.id.adView);
 
         //Carga de datos (en caso de modificacion)
         if (getIntent().getExtras() != null) {
@@ -78,8 +74,7 @@ public class TiradaFormActivity extends AppCompatActivity {
                 fecha.getEditText().setText(tirada.getFecha());
                 puntuacion.getEditText().setText(String.valueOf(tirada.getPuntuacion()));
             } catch (NullPointerException ex) {
-                FirebaseCrash.logcat(Log.ERROR, TAG, "Fallo al modificar una tirada en el formulario");
-                FirebaseCrash.report(ex);
+                ((BaseApplication) this.getApplicationContext()).crashlytics.recordException(ex);
             }
         }
 
@@ -106,17 +101,6 @@ public class TiradaFormActivity extends AppCompatActivity {
                 }
             }
         });
-
-        // Gestion de anuncios
-        prefs = getSharedPreferences("Preferences", Context.MODE_PRIVATE);
-        if (prefs.getBoolean(Utils.PREFS_SHOW_ADS, true)) {
-            mAdView.setVisibility(View.VISIBLE);
-            mAdView.setEnabled(true);
-            mAdView.loadAd(Utils.getAdRequest(mAdView));
-        } else {
-            mAdView.setVisibility(View.GONE);
-            mAdView.setEnabled(false);
-        }
     }
 
     private void callDatePickerFragment() {

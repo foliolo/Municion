@@ -1,9 +1,10 @@
 package al.ahgitdevelopment.municion;
 
+import static al.ahgitdevelopment.municion.Utils.getStringLicenseFromId;
+
 import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -24,36 +25,23 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
-import com.google.android.gms.ads.AdView;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.analytics.FirebaseAnalytics;
-import com.google.firebase.crash.FirebaseCrash;
 
 import java.util.Calendar;
 import java.util.List;
 
-import al.ahgitdevelopment.municion.billingutil.IabBroadcastReceiver;
-import al.ahgitdevelopment.municion.billingutil.IabHelper;
-import al.ahgitdevelopment.municion.billingutil.IabResult;
-import al.ahgitdevelopment.municion.billingutil.Inventory;
 import al.ahgitdevelopment.municion.databases.DataBaseSQLiteHelper;
 import al.ahgitdevelopment.municion.datamodel.Guia;
 
-import static al.ahgitdevelopment.municion.Utils.PREFS_SHOW_ADS;
-import static al.ahgitdevelopment.municion.Utils.PURCHASE_ID_REMOVE_ADS;
-import static al.ahgitdevelopment.municion.Utils.getStringLicenseFromId;
 
-//import com.google.firebase.crash.FirebaseCrash;
-
-public class LoginPasswordActivity extends AppCompatActivity implements
-        IabBroadcastReceiver.IabBroadcastListener, IabHelper.QueryInventoryFinishedListener {
+public class LoginPasswordActivity extends AppCompatActivity {
 
     public static final int MIN_PASS_LENGTH = 6;
     private final String TAG = "LoginPasswordActivity";
     public Toolbar toolbar;
     // Provides purchase notification while this app is running
-    IabBroadcastReceiver mBroadcastReceiver;
     private FirebaseAnalytics mFirebaseAnalytics;
     private SharedPreferences prefs;
     private TextInputLayout textInputLayout1;
@@ -62,8 +50,6 @@ public class LoginPasswordActivity extends AppCompatActivity implements
     private TextInputEditText password2;
     private ImageView button;
     private TextView versionLabel;
-    private AdView mAdView;
-    private IabHelper mHelper;
     private boolean isPurchaseAvailable;
 
     /**
@@ -109,7 +95,6 @@ public class LoginPasswordActivity extends AppCompatActivity implements
         password2 = findViewById(R.id.password2);
         button = findViewById(R.id.continuar);
         versionLabel = findViewById(R.id.login_version_label);
-        mAdView = findViewById(R.id.adView);
 
         versionLabel.setText(Utils.getAppVersion(this));
 
@@ -186,67 +171,6 @@ public class LoginPasswordActivity extends AppCompatActivity implements
             public void afterTextChanged(Editable s) {
             }
         });
-
-        if (!prefs.contains(PREFS_SHOW_ADS)) {
-            // Agregar la configuración de anuncios en SharedPrefs
-            SharedPreferences.Editor editor = prefs.edit();
-            editor.putBoolean(PREFS_SHOW_ADS, true);
-            editor.apply();
-        }
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-
-        try {
-            // Comprobación de compra de eliminacion de publicidad
-            String base64EncodedPublicKey = getString(R.string.app_public_key);
-            mHelper = new IabHelper(this, base64EncodedPublicKey);
-
-            // enable debug logging (for a production application, you should set this to false).
-            mHelper.enableDebugLogging(BuildConfig.DEBUG);
-
-            mHelper.startSetup(new IabHelper.OnIabSetupFinishedListener() {
-                public void onIabSetupFinished(IabResult result) {
-                    if (!result.isSuccess()) {
-                        // Oh no, there was a problem.
-                        Log.w(TAG, "Problem setting up In-app Billing: " + result.getMessage());
-                        isPurchaseAvailable = false;
-                    } else {
-                        isPurchaseAvailable = true;
-                        try {
-                            mHelper.queryInventoryAsync(LoginPasswordActivity.this /*QueryInventoryFinishedListener*/);
-                        } catch (IabHelper.IabAsyncInProgressException ex) {
-                            Log.e(TAG, "Error querying inventory. Another async operation in progress.", ex);
-//                        FirebaseCrash.logcat(Log.ERROR, TAG, "Error querying inventory. Another async operation in progress.");
-//                        FirebaseCrash.report(ex);
-                        }
-                    }
-                }
-            });
-
-            // Important: Dynamically register for broadcast messages about updated purchases.
-            // We register the receiver here instead of as a <receiver> in the Manifest
-            // because we always call getPurchases() at startup, so therefore we can ignore
-            // any broadcasts sent while the app isn't running.
-            // Note: registering this listener in an Activity is a bad idea, but is done here
-            // because this is a SAMPLE. Regardless, the receiver must be registered after
-            // IabHelper is setup, but before first call to getPurchases().
-            mBroadcastReceiver = new IabBroadcastReceiver(this /*IabBroadcastListener*/);
-            IntentFilter broadcastFilter = new IntentFilter(IabBroadcastReceiver.ACTION);
-            registerReceiver(mBroadcastReceiver, broadcastFilter);
-
-            if (prefs.getBoolean(PREFS_SHOW_ADS, true)) {
-                mAdView.setVisibility(View.VISIBLE);
-                mAdView.loadAd(Utils.getAdRequest(mAdView));
-            } else {
-                mAdView.setVisibility(View.GONE);
-                mAdView.setEnabled(false);
-            }
-        } catch (Exception ex) {
-            Log.e(TAG, "Error en OnStart del login por fallo en la libreria de pago");
-        }
     }
 
     @Override
@@ -257,28 +181,11 @@ public class LoginPasswordActivity extends AppCompatActivity implements
 
         prefs.edit().putInt("year", yearPref).apply();
 
-        // very important:
-        if (mBroadcastReceiver != null) {
-            unregisterReceiver(mBroadcastReceiver);
-        }
-
-        // very important:
-        try {
-            Log.d(TAG, "Destroying helper.");
-            if (mHelper != null) {
-                mHelper.disposeWhenFinished();
-                mHelper = null;
-            }
-        } catch (IllegalArgumentException ex) {
-            Log.e(TAG, "Fallo en el dispose de IabHelper");
-            FirebaseCrash.report(ex);
-        }
-
         super.onDestroy();
     }
 
     private void checkAccountPermission() {
-        int accountPermission = PackageManager.PERMISSION_GRANTED;
+        int accountPermission;
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
             accountPermission = checkSelfPermission(Manifest.permission.GET_ACCOUNTS);
             if (accountPermission != PackageManager.PERMISSION_GRANTED) {
@@ -296,7 +203,7 @@ public class LoginPasswordActivity extends AppCompatActivity implements
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
-        if (grantResults != null && grantResults.length > 0) {
+        if (grantResults.length > 0) {
             if (requestCode == 100) {
                 if (grantResults[0] == PackageManager.PERMISSION_DENIED) {
                     checkAccountPermission();
@@ -317,10 +224,9 @@ public class LoginPasswordActivity extends AppCompatActivity implements
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_settings:
-                Intent intent = new Intent(LoginPasswordActivity.this, SettingsFragment.class);
-                startActivity(intent);
+        if (item.getItemId() == R.id.action_settings) {
+            Intent intent = new Intent(LoginPasswordActivity.this, SettingsFragment.class);
+            startActivity(intent);
         }
         return super.onOptionsItemSelected(item);
     }
@@ -532,68 +438,4 @@ public class LoginPasswordActivity extends AppCompatActivity implements
             startActivity(intent);
         }
     }
-
-    @Override
-    public void onQueryInventoryFinished(IabResult result, Inventory inventory) {
-        try {
-            // if we were disposed of in the meantime, quit.
-            if (mHelper == null) return;
-
-            if (result.isFailure()) {
-                Log.e(TAG, "Error obteniendo los detalles de los productos" + result.getMessage());
-                return;
-            }
-
-            //Si el usuario ha comprado la eliminación de anuncios
-            if (inventory.hasPurchase(PURCHASE_ID_REMOVE_ADS)) {
-                //pero no tiene actualizado su shared prefs
-                if (prefs.getBoolean(PREFS_SHOW_ADS, true)) {
-                    // Eliminamos la publicidad
-                    mAdView.setVisibility(View.GONE);
-                    mAdView.setEnabled(false);
-
-                    // Actualizamos las preferencias
-                    prefs.edit().putBoolean(PREFS_SHOW_ADS, false).apply();
-                }
-            } else {
-                prefs.edit().putBoolean(PREFS_SHOW_ADS, true).apply();
-                mAdView.setVisibility(View.VISIBLE);
-                mAdView.setEnabled(true);
-                mAdView.loadAd(Utils.getAdRequest(mAdView));
-            }
-
-            checkAccountPermission();
-
-        } catch (Exception ex) {
-//            FirebaseCrash.logcat(Log.ERROR, TAG, "Error en el proceso de onQueryInventoryFinished");
-//            FirebaseCrash.report(ex);
-        }
-    }
-
-    @Override
-    public void receivedBroadcast() {
-        // Received a broadcast notification that the inventory of items has changed
-        Log.d(TAG, "Received broadcast notification. Querying inventory.");
-        try {
-            mHelper.queryInventoryAsync(LoginPasswordActivity.this /*QueryInventoryFinishedListener*/);
-        } catch (IabHelper.IabAsyncInProgressException ex) {
-            Log.e(TAG, "Error querying inventory. Another async operation in progress.", ex);
-        }
-    }
 }
-
-
-//https://github.com/firebase/quickstart-android/blob/master/crash/app/src/main/java/com/google/samples/quickstart/crash/MainActivity.java
-//        FirebaseCrash.logcat(Log.INFO, "LoginPasswordActivity", "Crash DONE");
-//        if(catchCrashCheckBox.isChecked()){
-//            try{
-//                throw new NullPointerException();
-//            }catch(NullPointerException ex){
-//                // [START log_and_report]
-//                FirebaseCrash.logcat(Log.ERROR,TAG,"NPE caught");
-//                FirebaseCrash.report(ex);
-//                // [END log_and_report]
-//            }
-//        }else{
-//            throw new NullPointerException();
-//        }

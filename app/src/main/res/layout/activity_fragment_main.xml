@@ -10,9 +10,8 @@
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:id="@+id/main_content"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_alignWithParentIfMissing="true"
-        android:layout_above="@+id/adView"
         android:layout_alignParentTop="true"
         android:fitsSystemWindows="true">
 
@@ -61,17 +60,6 @@
             app:srcCompat="@drawable/ic_cross" />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
-
-
-    <com.google.android.gms.ads.AdView
-        android:id="@+id/adView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_gravity="end|bottom"
-        android:visibility="gone"
-        app:adSize="SMART_BANNER"
-        app:adUnitId="@string/banner_main_id" />
 
     <TextView
         android:id="@+id/textEmptyList"
