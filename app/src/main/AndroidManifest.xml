@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    package="al.ahgitdevelopment.municion">
+    xmlns:tools="http://schemas.android.com/tools">
 
     <uses-feature
         android:name="android.hardware.camera"
         android:required="true" />
 
-    <uses-permission android:name="com.android.vending.BILLING" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.VIBRATE" />
@@ -15,6 +13,7 @@
     <uses-permission android:name="android.permission.READ_CALENDAR" />
     <uses-permission android:name="android.permission.WRITE_CALENDAR" />
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <application
         android:name=".BaseApplication"
@@ -25,12 +24,10 @@
         android:largeHeap="true"
         android:theme="@style/AppTheme"
         tools:replace="android:appComponentFactory">
-        <meta-data
-            android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="@string/admob_id" />
 
         <activity
             android:name=".LoginPasswordActivity"
+            android:exported="true"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateVisible">
             <intent-filter>
@@ -44,7 +41,7 @@
             android:name=".FragmentMainActivity"
             android:label="@string/title_activity_fragment_main" />
         <activity
-            android:name="forms.GuiaFormActivity"
+            android:name=".forms.GuiaFormActivity"
             android:label="@string/title_nueva_guia"
             android:windowSoftInputMode="stateHidden" />
         <activity
@@ -67,6 +64,7 @@
 
         <receiver
             android:name=".NotificationPublisher"
+            android:exported="false"
             android:label="BroadcastReceiverAux">
             <intent-filter>
                 <action android:name="ALARM" />
@@ -90,17 +88,17 @@
                 android:resource="@xml/file_paths" />
         </provider>
 
-        <service android:name=".MyFirebaseMessagingService">
+        <service
+            android:name=".MyFirebaseMessagingService"
+            android:exported="true">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
 
-        <!-- FirebaseInstanceIdService performs security checks at runtime,
-       no need for explicit permissions despite exported="true"             -->
         <service
             android:name=".MyFirebaseInstanceIDService"
-            android:exported="true">
+            android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
             </intent-filter>

@@ -2,7 +2,6 @@ package al.ahgitdevelopment.municion;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.app.DialogFragment;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -11,6 +10,9 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.fragment.app.DialogFragment;
+
 /**
  * Created by Alberto on 28/08/2016.
  */
@@ -18,16 +20,22 @@ public class ListNotificationDialog extends DialogFragment {
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        final AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
 
         // Get the layout inflater
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View view = inflater.inflate(android.R.layout.list_content, null);
 
         try {
-            ArrayAdapter adapter = new ArrayAdapter(getActivity(), R.layout.notification_data_item, R.id.item_nombre_licencia, Utils.listNotificationData) {
+            ArrayAdapter adapter = new ArrayAdapter(
+                    getContext(),
+                    R.layout.notification_data_item,
+                    R.id.item_nombre_licencia,
+                    Utils.listNotificationData
+            ) {
+                @NonNull
                 @Override
-                public View getView(int position, View convertView, ViewGroup parent) {
+                public View getView(int position, View convertView, @NonNull ViewGroup parent) {
                     View view = super.getView(position, convertView, parent);
                     TextView nombre = view.findViewById(R.id.item_nombre_licencia);
                     TextView numero = view.findViewById(R.id.item_num_licencia);
@@ -47,11 +55,11 @@ public class ListNotificationDialog extends DialogFragment {
             // Set custom view and custom adapter
             builder.setView(view)
                     .setAdapter(adapter, null)
-                    .setTitle(getString(R.string.pref_list_notification))
+                    .setTitle(getContext().getString(R.string.pref_list_notification))
                     .setPositiveButton(android.R.string.ok, null);
 
         } catch (Exception ex) {
-            Log.wtf(getActivity().getPackageName(), "Fallo al listar las notificaciones", ex);
+            Log.wtf(getContext().getPackageName(), "Fallo al listar las notificaciones", ex);
         }
         return builder.create();
     }

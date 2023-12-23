@@ -3,7 +3,6 @@ package al.ahgitdevelopment.municion.forms;
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -14,7 +13,6 @@ import android.text.format.DateFormat;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.RatingBar;
 import android.widget.TextView;
@@ -24,7 +22,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.DialogFragment;
 
-import com.google.android.gms.ads.AdView;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputLayout;
 
@@ -35,7 +32,6 @@ import java.util.Date;
 
 import al.ahgitdevelopment.municion.FragmentMainActivity;
 import al.ahgitdevelopment.municion.R;
-import al.ahgitdevelopment.municion.Utils;
 import al.ahgitdevelopment.municion.datamodel.Compra;
 import al.ahgitdevelopment.municion.datamodel.Guia;
 
@@ -62,7 +58,6 @@ public class CompraFormActivity extends AppCompatActivity {
     private TextInputLayout layoutTienda;
 
     private SharedPreferences prefs;
-    private AdView mAdView;
 
     /**
      * Inicializa la actividad
@@ -96,7 +91,6 @@ public class CompraFormActivity extends AppCompatActivity {
         layoutPesoMunicion = findViewById(R.id.text_input_layout_peso_municion);
         layoutMarcaMunicion = findViewById(R.id.text_input_layout_marca_municion);
         layoutTienda = findViewById(R.id.text_input_layout_tienda);
-        mAdView = findViewById(R.id.adView);
 
         if (getIntent().getExtras() != null) {
             //Carga de datos (en caso de modificacion)
@@ -149,31 +143,20 @@ public class CompraFormActivity extends AppCompatActivity {
             }
         }
 
-        checkSegundoCalibre.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                    layoutCalibre2.setVisibility(View.VISIBLE);
-                } else {
-                    layoutCalibre2.setVisibility(View.GONE);
-                    layoutCalibre2.getEditText().setText("");
-                }
+        checkSegundoCalibre.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) {
+                layoutCalibre2.setVisibility(View.VISIBLE);
+            } else {
+                layoutCalibre2.setVisibility(View.GONE);
+                layoutCalibre2.getEditText().setText("");
             }
         });
 
-        layoutFecha.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                callDatePickerFragment();
-            }
-        });
+        layoutFecha.setOnClickListener(v -> callDatePickerFragment());
 
-        layoutFecha.getEditText().setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (hasFocus) {
-                    getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
-                }
+        layoutFecha.getEditText().setOnFocusChangeListener((v, hasFocus) -> {
+            if (hasFocus) {
+                getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
             }
         });
 
@@ -186,12 +169,9 @@ public class CompraFormActivity extends AppCompatActivity {
             }
         });
 
-        layoutPesoMunicion.getEditText().setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (hasFocus && layoutPesoMunicion.getEditText().getText().toString().equals("0"))
-                    layoutPesoMunicion.getEditText().setText("");
-            }
+        layoutPesoMunicion.getEditText().setOnFocusChangeListener((v, hasFocus) -> {
+            if (hasFocus && layoutPesoMunicion.getEditText().getText().toString().equals("0"))
+                layoutPesoMunicion.getEditText().setText("");
         });
 
         // Validaciones de campos obligatorios antes de guardar
@@ -249,17 +229,6 @@ public class CompraFormActivity extends AppCompatActivity {
                 }
             }
         });
-
-        // Gestion de anuncios
-        prefs = getSharedPreferences("Preferences", Context.MODE_PRIVATE);
-        if (prefs.getBoolean(Utils.PREFS_SHOW_ADS, true)) {
-            mAdView.setVisibility(View.VISIBLE);
-            mAdView.setEnabled(true);
-            mAdView.loadAd(Utils.getAdRequest(mAdView));
-        } else {
-            mAdView.setVisibility(View.GONE);
-            mAdView.setEnabled(false);
-        }
     }
 
     private void callDatePickerFragment() {

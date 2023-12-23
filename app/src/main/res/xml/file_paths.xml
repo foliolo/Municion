@@ -2,5 +2,5 @@
 <paths>
     <external-path
         name="my_images"
-        path="Android/data/al.ahgitdevelopment.municion/files/Pictures"/>
+        path="Android/data/al.ahgitdevelopment.municion/files/Pictures" />
 </paths>
