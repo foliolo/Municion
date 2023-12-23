@@ -31,7 +31,7 @@ data class Competition(
 
     @ColumnInfo(name = KEY_COMPETITION_POINTS) var points: Int,
 
-    @ColumnInfo(name = KEY_COMPETITION_PLACE) var place: String
+    @ColumnInfo(name = KEY_COMPETITION_PLACE) var place: String,
 ) {
     constructor() : this(
         id = "",

@@ -16,7 +16,7 @@ open class App : Application() {
                 Timber.DebugTree()
             } else {
                 CrashReportingTree()
-            }
+            },
         )
 
         // Setup UncaughtException

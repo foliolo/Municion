@@ -38,8 +38,7 @@ data class Property(
 
     @ColumnInfo(name = KEY_PROPERTY_NUM_ID) var numId: String,
 
-    @ColumnInfo(name = KEY_PROPERTY_IMAGE) var image: String
-
+    @ColumnInfo(name = KEY_PROPERTY_IMAGE) var image: String,
 ) {
     constructor() : this(
         id = "",
@@ -49,6 +48,6 @@ data class Property(
         bore1 = "",
         bore2 = "",
         numId = "",
-        image = ""
+        image = "",
     )
 }

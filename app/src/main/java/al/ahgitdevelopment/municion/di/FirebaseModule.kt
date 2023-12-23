@@ -54,6 +54,6 @@ class FirebaseModule {
             provideAuth(),
             provideStorage(),
             provideCrashlytics(),
-            provideConnectivityManager(appContext)
+            provideConnectivityManager(appContext),
         )
 }

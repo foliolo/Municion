@@ -26,7 +26,7 @@ class PurchaseAdapter(private val listener: PurchaseAdapterListener) :
 
     class PurchaseViewHolder(
         private val binding: AdapterItemPurchaseBinding,
-        private val listener: PurchaseAdapterListener
+        private val listener: PurchaseAdapterListener,
     ) :
         RecyclerView.ViewHolder(binding.root) {
 
@@ -50,7 +50,7 @@ class PurchaseAdapter(private val listener: PurchaseAdapterListener) :
         private fun getRandomImage() = arrayListOf(
             ContextCompat.getDrawable(binding.root.context, R.drawable.ic_balas),
             ContextCompat.getDrawable(binding.root.context, R.drawable.ic_balas_rifle),
-            ContextCompat.getDrawable(binding.root.context, R.drawable.ic_cartuchos)
+            ContextCompat.getDrawable(binding.root.context, R.drawable.ic_cartuchos),
         ).random()?.current
     }
 

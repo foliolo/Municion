@@ -18,7 +18,7 @@ class DeleteItemOnSwipe(private val deleteCallback: DeleteCallback) : SimpleCall
         dX: Float,
         dY: Float,
         actionState: Int,
-        isCurrentlyActive: Boolean
+        isCurrentlyActive: Boolean,
     ) {
         if (actionState == ACTION_STATE_SWIPE) {
             if (dX > 0) {
@@ -33,13 +33,12 @@ class DeleteItemOnSwipe(private val deleteCallback: DeleteCallback) : SimpleCall
     override fun onMove(
         recyclerView: RecyclerView,
         viewHolder: RecyclerView.ViewHolder,
-        target: RecyclerView.ViewHolder
+        target: RecyclerView.ViewHolder,
     ): Boolean {
         return false
     }
 
     override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-
         when (direction) {
             RIGHT -> {
                 deleteCallback.deleteOnSwipe(viewHolder)

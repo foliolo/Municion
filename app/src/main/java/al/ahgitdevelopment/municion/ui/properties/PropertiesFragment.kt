@@ -43,9 +43,8 @@ class PropertiesFragment : BaseFragment(), RecyclerInterface, PropertyAdapterLis
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
-
         binding = PropertiesFragmentBinding.inflate(inflater, container, false)
         binding.viewModel = this.viewModel
         binding.lifecycleOwner = viewLifecycleOwner
@@ -60,7 +59,7 @@ class PropertiesFragment : BaseFragment(), RecyclerInterface, PropertyAdapterLis
 
         viewModel.navigateToForm.observe(viewLifecycleOwner) {
             findNavController().navigate(
-                PropertiesFragmentDirections.actionPropertiesFragmentToPropertyFormFragment()
+                PropertiesFragmentDirections.actionPropertiesFragmentToPropertyFormFragment(),
             )
         }
 
@@ -69,7 +68,7 @@ class PropertiesFragment : BaseFragment(), RecyclerInterface, PropertyAdapterLis
                 Toast.makeText(
                     requireContext(),
                     requireContext().getString(message),
-                    Toast.LENGTH_LONG
+                    Toast.LENGTH_LONG,
                 ).show()
             }
         }
@@ -79,7 +78,7 @@ class PropertiesFragment : BaseFragment(), RecyclerInterface, PropertyAdapterLis
                 Toast.makeText(
                     requireContext(),
                     exception.message,
-                    Toast.LENGTH_LONG
+                    Toast.LENGTH_LONG,
                 ).show()
             }
         }
@@ -102,17 +101,19 @@ class PropertiesFragment : BaseFragment(), RecyclerInterface, PropertyAdapterLis
                 layoutManager = LinearLayoutManager(requireContext())
 
                 ItemTouchHelper(
-                    DeleteItemOnSwipe(object : DeleteItemOnSwipe.DeleteCallback {
-                        override fun deleteOnSwipe(viewHolder: RecyclerView.ViewHolder) {
-                            propertiesAdapter.currentList[viewHolder.adapterPosition]?.let {
-                                viewModel.deleteProperty(it.id)
+                    DeleteItemOnSwipe(
+                        object : DeleteItemOnSwipe.DeleteCallback {
+                            override fun deleteOnSwipe(viewHolder: RecyclerView.ViewHolder) {
+                                propertiesAdapter.currentList[viewHolder.adapterPosition]?.let {
+                                    viewModel.deleteProperty(it.id)
+                                }
+
+                                undoDelete(viewHolder)
+
+                                adapter?.notifyDataSetChanged()
                             }
-
-                            undoDelete(viewHolder)
-
-                            adapter?.notifyDataSetChanged()
-                        }
-                    })
+                        },
+                    ),
                 ).attachToRecyclerView(this)
             }
 
@@ -151,11 +152,13 @@ class PropertiesFragment : BaseFragment(), RecyclerInterface, PropertyAdapterLis
     }
 
     override fun RecyclerView?.undoDelete(viewHolder: RecyclerView.ViewHolder) {
-        propertiesAdapter.currentList[(viewHolder as PropertyAdapter.PropertyViewHolder).adapterPosition]?.let { property ->
+        propertiesAdapter.currentList[
+            (viewHolder as PropertyAdapter.PropertyViewHolder).adapterPosition,
+        ]?.let { property ->
             Snackbar.make(
                 binding.propertiesLayout,
                 R.string.snackbar_undo_delete_message,
-                Snackbar.LENGTH_LONG
+                Snackbar.LENGTH_LONG,
             ).setAction(R.string.snackbar_undo_delete) {
                 viewModel.addProperty(property)
                 this?.adapter?.notifyDataSetChanged()

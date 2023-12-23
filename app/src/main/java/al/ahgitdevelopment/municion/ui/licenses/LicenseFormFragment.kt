@@ -28,9 +28,8 @@ class LicenseFormFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
-
         binding = FragmentFormLicenseBinding.inflate(layoutInflater, container, false)
         binding.viewModel = this.viewModel
         binding.lifecycleOwner = viewLifecycleOwner
@@ -63,7 +62,7 @@ class LicenseFormFragment : Fragment() {
                 licenseNumber = binding.formLicenseNumber.editText?.text.toString(),
                 issueDate = binding.formLicenseDateIssue.editText?.text.toString(),
                 expiryDate = binding.formLicenseDateExpiry.editText?.text.toString(),
-                insuranceNumber = binding.formLicenseInsuranceNumber.editText?.text.toString()
+                insuranceNumber = binding.formLicenseInsuranceNumber.editText?.text.toString(),
             ).run {
                 viewModel.saveLicense(this)
             }
@@ -71,7 +70,7 @@ class LicenseFormFragment : Fragment() {
 
         viewModel.closeForm.observe(viewLifecycleOwner) {
             findNavController().navigate(
-                LicenseFormFragmentDirections.actionLicenseFormFragmentToLicensesFragment()
+                LicenseFormFragmentDirections.actionLicenseFormFragmentToLicensesFragment(),
             )
         }
     }

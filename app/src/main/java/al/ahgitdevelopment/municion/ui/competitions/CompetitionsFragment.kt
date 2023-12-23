@@ -33,9 +33,8 @@ class CompetitionsFragment : BaseFragment(), RecyclerInterface {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
-
         binding = CompetitionsFragmentBinding.inflate(layoutInflater, container, false)
         binding.viewModel = this.viewModel
         binding.lifecycleOwner = viewLifecycleOwner
@@ -55,7 +54,7 @@ class CompetitionsFragment : BaseFragment(), RecyclerInterface {
                 Toast.makeText(
                     requireContext(),
                     requireContext().getString(message),
-                    Toast.LENGTH_LONG
+                    Toast.LENGTH_LONG,
                 ).show()
             }
         }
@@ -65,7 +64,7 @@ class CompetitionsFragment : BaseFragment(), RecyclerInterface {
                 Toast.makeText(
                     requireContext(),
                     exception.message,
-                    Toast.LENGTH_LONG
+                    Toast.LENGTH_LONG,
                 ).show()
             }
         }
@@ -88,17 +87,19 @@ class CompetitionsFragment : BaseFragment(), RecyclerInterface {
                 layoutManager = LinearLayoutManager(requireContext())
 
                 ItemTouchHelper(
-                    DeleteItemOnSwipe(object : DeleteItemOnSwipe.DeleteCallback {
-                        override fun deleteOnSwipe(viewHolder: RecyclerView.ViewHolder) {
-                            competitionAdapter.currentList[viewHolder.adapterPosition]?.let {
-                                viewModel.deleteCompetition(it.id)
+                    DeleteItemOnSwipe(
+                        object : DeleteItemOnSwipe.DeleteCallback {
+                            override fun deleteOnSwipe(viewHolder: RecyclerView.ViewHolder) {
+                                competitionAdapter.currentList[viewHolder.adapterPosition]?.let {
+                                    viewModel.deleteCompetition(it.id)
+                                }
+
+                                undoDelete(viewHolder)
+
+                                adapter?.notifyDataSetChanged()
                             }
-
-                            undoDelete(viewHolder)
-
-                            adapter?.notifyDataSetChanged()
-                        }
-                    })
+                        },
+                    ),
                 ).attachToRecyclerView(this)
             }
 
@@ -111,7 +112,7 @@ class CompetitionsFragment : BaseFragment(), RecyclerInterface {
 
         (requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager).hideSoftInputFromWindow(
             view?.rootView?.windowToken,
-            0
+            0,
         )
     }
 
@@ -139,11 +140,13 @@ class CompetitionsFragment : BaseFragment(), RecyclerInterface {
     }
 
     override fun RecyclerView?.undoDelete(viewHolder: RecyclerView.ViewHolder) {
-        competitionAdapter.currentList[(viewHolder as CompetitionAdapter.CompetitionViewHolder).adapterPosition]?.let { competition ->
+        competitionAdapter.currentList[
+            (viewHolder as CompetitionAdapter.CompetitionViewHolder).adapterPosition,
+        ]?.let { competition ->
             Snackbar.make(
                 binding.competitionsLayout,
                 R.string.snackbar_undo_delete_message,
-                Snackbar.LENGTH_LONG
+                Snackbar.LENGTH_LONG,
             ).setAction(R.string.snackbar_undo_delete) {
                 viewModel.addCompetition(competition)
             }.show()

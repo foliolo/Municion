@@ -5,8 +5,6 @@ import al.ahgitdevelopment.municion.di.IoDispatcher
 import al.ahgitdevelopment.municion.repository.RepositoryContract
 import al.ahgitdevelopment.municion.ui.BaseViewModel
 import al.ahgitdevelopment.municion.utils.Event
-import al.ahgitdevelopment.municion.utils.checkMaxFreeItems
-import android.view.View
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel

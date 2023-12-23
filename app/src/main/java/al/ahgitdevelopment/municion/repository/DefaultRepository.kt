@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.map
 open class DefaultRepository(
     private val context: Context,
     private val localDataSource: DataSourceContract,
-    private val remoteDataSource: DataSourceContract
+    private val remoteDataSource: DataSourceContract,
 ) : RepositoryContract {
 
     override fun getProperties(): Flow<List<Property>> {
@@ -112,7 +112,6 @@ open class DefaultRepository(
     }
 
     private fun isConnected(): Boolean {
-
         val cm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         if (cm.activeNetworkInfo != null && cm.activeNetworkInfo!!.isConnected) {
             return true

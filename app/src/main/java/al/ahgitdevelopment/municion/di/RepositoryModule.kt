@@ -44,7 +44,7 @@ object GenericRepositoryModule {
     fun providesRepository(
         @ApplicationContext appContext: Context,
         @TypeLocalDataSource localDataSource: DataSourceContract,
-        @TypeRemoteDataSource remoteDataSource: DataSourceContract
+        @TypeRemoteDataSource remoteDataSource: DataSourceContract,
     ): RepositoryContract {
         return DefaultRepository(appContext, localDataSource, remoteDataSource)
     }

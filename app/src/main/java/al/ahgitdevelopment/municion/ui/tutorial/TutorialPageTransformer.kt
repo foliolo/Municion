@@ -17,25 +17,30 @@ class TutorialPageTransformer : ViewPager2.PageTransformer {
                 position < -1 -> {
                     alpha = 0f
                 }
+
                 position <= 1 -> {
                     val transformFactor = interpolator
                         .getInterpolation(
                             abs((position / SWIPE_FACTOR))
-                                .coerceIn(0f, 1f)
+                                .coerceIn(0f, 1f),
                         )
                     val scale = 1 - transformFactor * SCALE_FACTOR
                     val verticalMargin = pageHeight * (1 - scale) / 2
                     val horizontalMargin = pageWidth * (1 - scale) / 2
 
                     translationX =
-                        if (position < 0) horizontalMargin - verticalMargin / 2
-                        else horizontalMargin + verticalMargin / 2
+                        if (position < 0) {
+                            horizontalMargin - verticalMargin / 2
+                        } else {
+                            horizontalMargin + verticalMargin / 2
+                        }
 
                     scaleX = scale
                     scaleY = scale
 
                     alpha = MIN_ALPHA + (1 - transformFactor) * (1 - MIN_ALPHA)
                 }
+
                 else -> {
                     alpha = 0f
                 }

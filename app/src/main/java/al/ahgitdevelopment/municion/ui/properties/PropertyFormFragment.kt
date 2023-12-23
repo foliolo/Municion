@@ -27,9 +27,8 @@ class PropertyFormFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
-
         binding = FragmentFormPropertyBinding.inflate(inflater, container, false)
         binding.viewModel = this.viewModel
         binding.lifecycleOwner = viewLifecycleOwner
@@ -52,7 +51,7 @@ class PropertyFormFragment : Fragment() {
                 bore1 = binding.formPropertyBore1.editText?.text.toString(),
                 bore2 = binding.formPropertyBore2.editText?.text.toString(),
                 numId = binding.formPropertyNumId.editText?.text.toString(),
-                image = ""
+                image = "",
             ).run {
                 viewModel.saveProperty(this)
             }
@@ -60,7 +59,7 @@ class PropertyFormFragment : Fragment() {
 
         viewModel.closeForm.observe(viewLifecycleOwner) {
             findNavController().navigate(
-                PropertyFormFragmentDirections.actionPropertyFormFragmentToPropertiesFragment()
+                PropertyFormFragmentDirections.actionPropertyFormFragmentToPropertiesFragment(),
             )
         }
     }

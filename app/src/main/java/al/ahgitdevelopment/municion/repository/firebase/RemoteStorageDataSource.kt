@@ -52,7 +52,8 @@ class RemoteStorageDataSource constructor(
                 storageMetadata { contentType = "image/jpg" }.let { metadata ->
 
                     uploadTask = imageReference.child(currentUser.uid).child("$itemId.jpg").putBytes(
-                        getBytesOf(bitmap), metadata
+                        getBytesOf(bitmap),
+                        metadata,
                     )
                 }
             } else {
@@ -67,12 +68,10 @@ class RemoteStorageDataSource constructor(
     override fun getReference(path: String?): StorageReference = storage.reference.child(path ?: "")
 
     private suspend fun verifyMetadataOrDownload(imageReference: StorageReference): List<File> {
-
         val imageUrls = mutableListOf<File>()
         imageReference.listAll().await().let { images ->
 
             for (image in images.items) {
-
                 val imagePath = image.name
                 val imageFile = File(imagesRootDir, "images/$imagePath")
                 val md5File = File(imagesRootDir, "images/$imagePath.md5")
@@ -90,7 +89,6 @@ class RemoteStorageDataSource constructor(
     }
 
     private suspend fun downloadImage(image: StorageReference, imageFile: File, md5File: File): File {
-
         imageFile.delete()
         md5File.delete()
 

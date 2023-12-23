@@ -24,7 +24,9 @@ fun <E> List<E>.toFlow() = flow {
 }.flowOn(Dispatchers.IO)
 
 @ExperimentalCoroutinesApi
-inline fun <reified T : Any> DatabaseReference.queryLicensesAsFlow(nodeSelector: DatabaseReference.() -> DatabaseReference = { this }): Flow<T> =
+inline fun <reified T : Any> DatabaseReference.queryLicensesAsFlow(
+    nodeSelector: DatabaseReference.() -> DatabaseReference = { this },
+): Flow<T> =
     callbackFlow {
         val valueEventListener = object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
@@ -47,7 +49,9 @@ inline fun <reified T : Any> DatabaseReference.queryLicensesAsFlow(nodeSelector:
     }
 
 @ExperimentalCoroutinesApi
-inline fun <reified T : Any> DatabaseReference.queryPropertiesAsFlow(nodeSelector: DatabaseReference.() -> DatabaseReference = { this }): Flow<T> =
+inline fun <reified T : Any> DatabaseReference.queryPropertiesAsFlow(
+    nodeSelector: DatabaseReference.() -> DatabaseReference = { this },
+): Flow<T> =
     callbackFlow {
         val valueEventListener = object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
@@ -70,7 +74,9 @@ inline fun <reified T : Any> DatabaseReference.queryPropertiesAsFlow(nodeSelecto
     }
 
 @ExperimentalCoroutinesApi
-inline fun <reified T : Any> DatabaseReference.queryPurchasesAsFlow(nodeSelector: DatabaseReference.() -> DatabaseReference = { this }): Flow<T> =
+inline fun <reified T : Any> DatabaseReference.queryPurchasesAsFlow(
+    nodeSelector: DatabaseReference.() -> DatabaseReference = { this },
+): Flow<T> =
     callbackFlow {
         val valueEventListener = object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
@@ -93,7 +99,9 @@ inline fun <reified T : Any> DatabaseReference.queryPurchasesAsFlow(nodeSelector
     }
 
 @ExperimentalCoroutinesApi
-inline fun <reified T : Any> DatabaseReference.queryCompetitionsAsFlow(nodeSelector: DatabaseReference.() -> DatabaseReference = { this }): Flow<T> =
+inline fun <reified T : Any> DatabaseReference.queryCompetitionsAsFlow(
+    nodeSelector: DatabaseReference.() -> DatabaseReference = { this },
+): Flow<T> =
     callbackFlow {
         val valueEventListener = object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {

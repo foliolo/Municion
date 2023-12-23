@@ -43,8 +43,7 @@ data class Purchase(
 
     @ColumnInfo(name = KEY_PURCHASE_WEIGHT) var weight: Int,
 
-    @ColumnInfo(name = KEY_PURCHASE_IMAGE) var image: String
-
+    @ColumnInfo(name = KEY_PURCHASE_IMAGE) var image: String,
 ) {
     constructor() : this(
         id = "",
@@ -56,6 +55,6 @@ data class Purchase(
         date = "",
         rating = 0F,
         weight = 0,
-        image = ""
+        image = "",
     )
 }

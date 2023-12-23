@@ -61,7 +61,7 @@ class DatabaseModule {
                     .databaseBuilder(
                         appContext,
                         AppDatabase::class.java,
-                        DATABASE_NAME
+                        DATABASE_NAME,
                     )
                     .addMigrations(MIGRATION_1_2)
                     .fallbackToDestructiveMigration()
@@ -117,7 +117,7 @@ class DatabaseModule {
                             $KEY_LICENSE_DATE_EXPIRY TEXT NOT NULL,
                             $KEY_LICENSE_INSURANCE_NUMBER TEXT NOT NULL
                         );
-                    """.trimIndent()
+                    """.trimIndent(),
                 )
 
                 database.execSQL("DROP TABLE $TABLE_PURCHASES")
@@ -135,7 +135,7 @@ class DatabaseModule {
                             $KEY_PURCHASE_WEIGHT INTEGER NOT NULL,
                             $KEY_PURCHASE_IMAGE TEXT NOT NULL
                         );
-                    """.trimIndent()
+                    """.trimIndent(),
                 )
 
                 database.execSQL("DROP TABLE $TABLE_PROPERTIES")
@@ -151,7 +151,7 @@ class DatabaseModule {
                             $KEY_PROPERTY_NUM_ID TEXT NOT NULL,
                             $KEY_PROPERTY_IMAGE TEXT NOT NULL
                         );
-                    """.trimIndent()
+                    """.trimIndent(),
                 )
 
                 database.execSQL("DROP TABLE $TABLE_COMPETITION")
@@ -165,7 +165,7 @@ class DatabaseModule {
                             $KEY_COMPETITION_POINTS INTEGER NOT NULL,
                             $KEY_COMPETITION_PLACE TEXT NOT NULL
                         );
-                    """.trimIndent()
+                    """.trimIndent(),
                 )
 
                 database.setTransactionSuccessful()

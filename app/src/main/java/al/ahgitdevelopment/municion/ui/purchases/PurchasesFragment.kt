@@ -42,9 +42,8 @@ class PurchasesFragment : BaseFragment(), RecyclerInterface, PurchaseAdapterList
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
-
         binding = PurchasesFragmentBinding.inflate(inflater, container, false)
         binding.viewModel = this.viewModel
         binding.lifecycleOwner = viewLifecycleOwner
@@ -59,7 +58,7 @@ class PurchasesFragment : BaseFragment(), RecyclerInterface, PurchaseAdapterList
 
         viewModel.navigateToForm.observe(viewLifecycleOwner) {
             findNavController().navigate(
-                PurchasesFragmentDirections.actionPurchasesFragmentToPurchaseFormFragment()
+                PurchasesFragmentDirections.actionPurchasesFragmentToPurchaseFormFragment(),
             )
         }
 
@@ -68,7 +67,7 @@ class PurchasesFragment : BaseFragment(), RecyclerInterface, PurchaseAdapterList
                 Toast.makeText(
                     requireContext(),
                     requireContext().getString(message),
-                    Toast.LENGTH_LONG
+                    Toast.LENGTH_LONG,
                 ).show()
             }
         }
@@ -78,7 +77,7 @@ class PurchasesFragment : BaseFragment(), RecyclerInterface, PurchaseAdapterList
                 Toast.makeText(
                     requireContext(),
                     exception.message,
-                    Toast.LENGTH_LONG
+                    Toast.LENGTH_LONG,
                 ).show()
             }
         }
@@ -101,17 +100,19 @@ class PurchasesFragment : BaseFragment(), RecyclerInterface, PurchaseAdapterList
                 layoutManager = LinearLayoutManager(requireContext())
 
                 ItemTouchHelper(
-                    DeleteItemOnSwipe(object : DeleteItemOnSwipe.DeleteCallback {
-                        override fun deleteOnSwipe(viewHolder: RecyclerView.ViewHolder) {
-                            purchaseAdapter.currentList[viewHolder.adapterPosition]?.let {
-                                viewModel.deletePurchase(it.id)
+                    DeleteItemOnSwipe(
+                        object : DeleteItemOnSwipe.DeleteCallback {
+                            override fun deleteOnSwipe(viewHolder: RecyclerView.ViewHolder) {
+                                purchaseAdapter.currentList[viewHolder.adapterPosition]?.let {
+                                    viewModel.deletePurchase(it.id)
+                                }
+
+                                undoDelete(viewHolder)
+
+                                adapter?.notifyDataSetChanged()
                             }
-
-                            undoDelete(viewHolder)
-
-                            adapter?.notifyDataSetChanged()
-                        }
-                    })
+                        },
+                    ),
                 ).attachToRecyclerView(this)
             }
 
@@ -143,11 +144,13 @@ class PurchasesFragment : BaseFragment(), RecyclerInterface, PurchaseAdapterList
     }
 
     override fun RecyclerView?.undoDelete(viewHolder: RecyclerView.ViewHolder) {
-        purchaseAdapter.currentList[(viewHolder as PurchaseAdapter.PurchaseViewHolder).adapterPosition]?.let { purchase ->
+        purchaseAdapter.currentList[
+            (viewHolder as PurchaseAdapter.PurchaseViewHolder).adapterPosition,
+        ]?.let { purchase ->
             Snackbar.make(
                 binding.purchasesLayout,
                 R.string.snackbar_undo_delete_message,
-                Snackbar.LENGTH_LONG
+                Snackbar.LENGTH_LONG,
             ).setAction(R.string.snackbar_undo_delete) {
                 viewModel.addPurchase(purchase)
                 this?.adapter?.notifyDataSetChanged()

@@ -16,10 +16,10 @@ import androidx.room.RoomDatabase
         Property::class,
         Purchase::class,
         License::class,
-        Competition::class
+        Competition::class,
     ],
     version = DATABASE_VERSION,
-    exportSchema = false
+    exportSchema = false,
 )
 abstract class AppDatabase : RoomDatabase() {
     abstract fun purchaseDao(): PurchaseDao

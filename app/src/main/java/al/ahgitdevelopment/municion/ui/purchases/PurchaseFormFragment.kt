@@ -29,9 +29,8 @@ class PurchaseFormFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
-
         binding = FragmentFormPurchaseBinding.inflate(inflater, container, false)
         binding.viewModel = this.viewModel
         binding.lifecycleOwner = viewLifecycleOwner
@@ -57,7 +56,7 @@ class PurchaseFormFragment : Fragment() {
                 date = binding.formPurchaseDate.editText?.text.toString(),
                 rating = binding.formPurchaseRating.rating,
                 weight = binding.formPurchaseWeight.editText?.text.toString().toIntOrNull() ?: 0,
-                image = ""
+                image = "",
             ).run {
                 viewModel.savePurchase(this)
             }
@@ -71,7 +70,7 @@ class PurchaseFormFragment : Fragment() {
 
         viewModel.closeForm.observe(viewLifecycleOwner) {
             findNavController().navigate(
-                PurchaseFormFragmentDirections.actionPurchaseFormFragmentToPurchasesFragment()
+                PurchaseFormFragmentDirections.actionPurchaseFormFragmentToPurchasesFragment(),
             )
         }
     }
