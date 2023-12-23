@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-      xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/action_settings"
-        android:icon="@drawable/ic_settings_3"
-        android:orderInCategory="100"
-        android:title="@string/action_settings"
-        android:visible="true"
-        app:showAsAction="ifRoom"/>
-    <!--android:icon="@drawable/ic_settings"-->
+        android:id="@+id/menu_log_out"
+        android:icon="@drawable/ic_log_out"
+        android:orderInCategory="10"
+        android:title="@string/menu_sign_out"
+        app:showAsAction="ifRoom" />
 </menu>

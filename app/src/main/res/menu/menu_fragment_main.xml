@@ -1,20 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-      xmlns:app="http://schemas.android.com/apk/res-auto"
-      xmlns:tools="http://schemas.android.com/tools"
-      tools:context="al.ahgitdevelopment.municion.FragmentMainActivity">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".ui.tutorial.FragmentMainContent">
+
     <item
-        android:id="@+id/action_settings"
-        android:icon="@drawable/ic_settings_3"
-        android:orderInCategory="100"
+        android:id="@+id/menu_log_out"
+        android:icon="@drawable/ic_log_out"
+        android:orderInCategory="1"
+        android:title="@string/menu_sign_out"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/menu_settings"
+        android:icon="@drawable/ic_settings"
+        android:orderInCategory="2"
         android:title="@string/action_settings"
-        app:showAsAction="ifRoom"/>
-    <!--android:icon="@drawable/ic_settings"-->
+        app:showAsAction="ifRoom" />
+
     <item
-        android:id="@+id/tabla_tiradas"
-        android:icon="@drawable/tabla_tiradas2"
-        android:orderInCategory="10"
-        android:title="@string/tabla_tiradas"
-        android:visible="false"
-        app:showAsAction="ifRoom"/>
+        android:id="@+id/menu_tutorial"
+        android:icon="@drawable/ic_help"
+        android:orderInCategory="3"
+        android:title="@string/menu_tutorial"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/menu_support_developer"
+        android:icon="@drawable/ic_money"
+        android:orderInCategory="4"
+        android:title="@string/menu_support_developer"
+        app:showAsAction="always" />
 </menu>

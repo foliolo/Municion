@@ -19,14 +19,21 @@
 # Add this global rule
 -keepattributes Signature
 
+# ServiceLoader support
+-keepnames class kotlinx.coroutines.internal.MainDispatcherFactory {}
+-keepnames class kotlinx.coroutines.CoroutineExceptionHandler {}
+-keepnames class kotlinx.coroutines.android.AndroidExceptionPreHandler {}
+-keepnames class kotlinx.coroutines.android.AndroidDispatcherFactory {}
+
+# Most of volatile fields are updated with AFU and should not be mangled
+-keepclassmembernames class kotlinx.* {
+    volatile <fields>;
+}
+
+# Firebase
 # This rule will properly ProGuard all the model classes in
 # the package com.yourcompany.models. Modify to fit the structure
-# of your app.-keep class com.android.vending.billing.**
--keepclassmembers class al.ahgitdevelopment.municion.DataModel.** { public *; }
--keepclassmembers class al.ahgitdevelopment.municion.BillingUtil.** { public *; }
--keep public class al.ahgitdevelopment.municion.BillingUtil.**
--keep public class com.google.firebase.**
--keep public class com.google.android.gms.**{ public *; }
--dontwarn com.google.android.gms.**
-
--keep class com.android.vending.billing.**
+# of your app.
+-keepclassmembers class al.ahgitdevelopment.municion.datamodel.* {
+  *;
+}

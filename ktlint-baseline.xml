@@ -1,0 +1,1108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<baseline version="1.0">
+    <file
+        name="app/build/generated/source/navigation-args/global/debug/al/ahgitdevelopment/municion/dialogs/AdsRewardDialogFragmentArgs.kt">
+        <error column="1" line="19" source="standard:indent" />
+        <error column="1" line="20" source="standard:indent" />
+        <error column="1" line="21" source="standard:indent" />
+        <error column="1" line="22" source="standard:indent" />
+        <error column="1" line="23" source="standard:indent" />
+        <error column="1" line="24" source="standard:indent" />
+        <error column="1" line="25" source="standard:indent" />
+        <error column="43" line="25" source="standard:multiline-expression-wrapping" />
+        <error column="43" line="25" source="standard:wrapping" />
+        <error column="43" line="25" source="standard:argument-list-wrapping" />
+        <error column="1" line="26" source="standard:indent" />
+        <error column="74" line="26" source="standard:wrapping" />
+        <error column="75" line="26" source="standard:argument-list-wrapping" />
+        <error column="1" line="27" source="standard:indent" />
+        <error column="1" line="28" source="standard:indent" />
+        <error column="1" line="29" source="standard:indent" />
+        <error column="1" line="31" source="standard:indent" />
+        <error column="1" line="32" source="standard:indent" />
+        <error column="1" line="33" source="standard:indent" />
+        <error column="1" line="34" source="standard:indent" />
+        <error column="1" line="35" source="standard:indent" />
+        <error column="1" line="36" source="standard:indent" />
+        <error column="1" line="37" source="standard:indent" />
+        <error column="1" line="38" source="standard:indent" />
+        <error column="1" line="39" source="standard:indent" />
+        <error column="43" line="39" source="standard:multiline-expression-wrapping" />
+        <error column="43" line="39" source="standard:wrapping" />
+        <error column="43" line="39" source="standard:argument-list-wrapping" />
+        <error column="1" line="40" source="standard:indent" />
+        <error column="74" line="40" source="standard:wrapping" />
+        <error column="75" line="40" source="standard:argument-list-wrapping" />
+        <error column="1" line="41" source="standard:indent" />
+        <error column="1" line="42" source="standard:indent" />
+        <error column="1" line="43" source="standard:indent" />
+        <error column="1" line="45" source="standard:indent" />
+        <error column="1" line="46" source="standard:indent" />
+        <error column="1" line="47" source="standard:indent" />
+        <error column="1" line="48" source="standard:indent" />
+        <error column="1" line="49" source="standard:indent" />
+        <error column="1" line="50" source="standard:indent" />
+        <error column="11" line="50" source="standard:property-naming" />
+        <error column="23" line="50" source="standard:colon-spacing" />
+        <error column="1" line="51" source="standard:indent" />
+        <error column="1" line="52" source="standard:indent" />
+        <error column="1" line="53" source="standard:indent" />
+        <error column="80" line="53" source="standard:wrapping" />
+        <error column="1" line="54" source="standard:indent" />
+        <error column="1" line="55" source="standard:indent" />
+        <error column="1" line="56" source="standard:indent" />
+        <error column="47" line="56" source="standard:multiline-expression-wrapping" />
+        <error column="47" line="56" source="standard:wrapping" />
+        <error column="47" line="56" source="standard:argument-list-wrapping" />
+        <error column="1" line="57" source="standard:indent" />
+        <error column="78" line="57" source="standard:wrapping" />
+        <error column="79" line="57" source="standard:argument-list-wrapping" />
+        <error column="1" line="58" source="standard:indent" />
+        <error column="1" line="59" source="standard:indent" />
+        <error column="1" line="60" source="standard:indent" />
+        <error column="1" line="61" source="standard:indent" />
+        <error column="1" line="62" source="standard:indent" />
+        <error column="1" line="63" source="standard:indent" />
+        <error column="1" line="63" source="standard:max-line-length" />
+        <error column="40" line="63" source="standard:argument-list-wrapping" />
+        <error column="126" line="63" source="standard:argument-list-wrapping" />
+        <error column="1" line="64" source="standard:indent" />
+        <error column="1" line="65" source="standard:indent" />
+        <error column="1" line="66" source="standard:indent" />
+        <error column="1" line="68" source="standard:indent" />
+        <error column="1" line="69" source="standard:indent" />
+        <error column="72" line="69" source="standard:function-return-type-spacing" />
+        <error column="1" line="70" source="standard:indent" />
+        <error column="1" line="71" source="standard:indent" />
+        <error column="11" line="71" source="standard:property-naming" />
+        <error column="23" line="71" source="standard:colon-spacing" />
+        <error column="1" line="72" source="standard:indent" />
+        <error column="1" line="73" source="standard:indent" />
+        <error column="1" line="74" source="standard:indent" />
+        <error column="80" line="74" source="standard:wrapping" />
+        <error column="1" line="75" source="standard:indent" />
+        <error column="1" line="76" source="standard:indent" />
+        <error column="1" line="77" source="standard:indent" />
+        <error column="47" line="77" source="standard:multiline-expression-wrapping" />
+        <error column="47" line="77" source="standard:wrapping" />
+        <error column="47" line="77" source="standard:argument-list-wrapping" />
+        <error column="1" line="78" source="standard:indent" />
+        <error column="78" line="78" source="standard:wrapping" />
+        <error column="79" line="78" source="standard:argument-list-wrapping" />
+        <error column="1" line="79" source="standard:indent" />
+        <error column="1" line="80" source="standard:indent" />
+        <error column="1" line="81" source="standard:indent" />
+        <error column="1" line="82" source="standard:indent" />
+        <error column="1" line="83" source="standard:indent" />
+        <error column="1" line="84" source="standard:indent" />
+        <error column="1" line="84" source="standard:max-line-length" />
+        <error column="40" line="84" source="standard:argument-list-wrapping" />
+        <error column="126" line="84" source="standard:argument-list-wrapping" />
+        <error column="1" line="85" source="standard:indent" />
+        <error column="1" line="86" source="standard:indent" />
+        <error column="1" line="87" source="standard:indent" />
+        <error column="1" line="88" source="standard:indent" />
+    </file>
+    <file
+        name="app/build/generated/source/navigation-args/global/debug/al/ahgitdevelopment/municion/dialogs/AdsRewardDialogFragmentDirections.kt">
+        <error column="1" line="8" source="standard:indent" />
+        <error column="1" line="9" source="standard:indent" />
+        <error column="1" line="10" source="standard:indent" />
+        <error column="1" line="12" source="standard:indent" />
+        <error column="1" line="13" source="standard:indent" />
+        <error column="1" line="15" source="standard:indent" />
+        <error column="1" line="16" source="standard:indent" />
+        <error column="1" line="18" source="standard:indent" />
+        <error column="1" line="19" source="standard:indent" />
+        <error column="1" line="20" source="standard:indent" />
+    </file>
+    <file
+        name="app/build/generated/source/navigation-args/global/debug/al/ahgitdevelopment/municion/ui/competitions/CompetitionFormFragmentDirections.kt">
+        <error column="1" line="8" source="standard:indent" />
+        <error column="1" line="9" source="standard:indent" />
+        <error column="1" line="10" source="standard:indent" />
+        <error column="1" line="11" source="standard:indent" />
+    </file>
+    <file
+        name="app/build/generated/source/navigation-args/global/debug/al/ahgitdevelopment/municion/ui/competitions/CompetitionsFragmentDirections.kt">
+        <error column="1" line="15" source="standard:indent" />
+        <error column="1" line="16" source="standard:indent" />
+        <error column="1" line="17" source="standard:indent" />
+        <error column="1" line="18" source="standard:indent" />
+        <error column="1" line="20" source="standard:indent" />
+        <error column="1" line="21" source="standard:indent" />
+        <error column="1" line="22" source="standard:indent" />
+        <error column="1" line="23" source="standard:indent" />
+        <error column="1" line="24" source="standard:indent" />
+        <error column="1" line="25" source="standard:indent" />
+        <error column="1" line="26" source="standard:indent" />
+        <error column="1" line="27" source="standard:indent" />
+        <error column="1" line="28" source="standard:indent" />
+        <error column="1" line="29" source="standard:indent" />
+        <error column="47" line="29" source="standard:multiline-expression-wrapping" />
+        <error column="47" line="29" source="standard:wrapping" />
+        <error column="47" line="29" source="standard:argument-list-wrapping" />
+        <error column="1" line="30" source="standard:indent" />
+        <error column="78" line="30" source="standard:wrapping" />
+        <error column="79" line="30" source="standard:argument-list-wrapping" />
+        <error column="1" line="31" source="standard:indent" />
+        <error column="1" line="32" source="standard:indent" />
+        <error column="1" line="33" source="standard:indent" />
+        <error column="1" line="34" source="standard:indent" />
+        <error column="1" line="36" source="standard:indent" />
+        <error column="1" line="37" source="standard:indent" />
+        <error column="1" line="38" source="standard:indent" />
+        <error column="1" line="40" source="standard:indent" />
+        <error column="1" line="41" source="standard:indent" />
+        <error column="25" line="41" source="standard:function-signature" />
+        <error column="1" line="42" source="standard:indent" />
+    </file>
+    <file
+        name="app/build/generated/source/navigation-args/global/debug/al/ahgitdevelopment/municion/ui/licenses/LicenseFormFragmentDirections.kt">
+        <error column="1" line="8" source="standard:indent" />
+        <error column="1" line="9" source="standard:indent" />
+        <error column="1" line="10" source="standard:indent" />
+        <error column="1" line="11" source="standard:indent" />
+    </file>
+    <file
+        name="app/build/generated/source/navigation-args/global/debug/al/ahgitdevelopment/municion/ui/licenses/LicensesFragmentDirections.kt">
+        <error column="1" line="15" source="standard:indent" />
+        <error column="1" line="16" source="standard:indent" />
+        <error column="1" line="17" source="standard:indent" />
+        <error column="1" line="18" source="standard:indent" />
+        <error column="1" line="20" source="standard:indent" />
+        <error column="1" line="21" source="standard:indent" />
+        <error column="1" line="22" source="standard:indent" />
+        <error column="1" line="23" source="standard:indent" />
+        <error column="1" line="24" source="standard:indent" />
+        <error column="1" line="25" source="standard:indent" />
+        <error column="1" line="26" source="standard:indent" />
+        <error column="1" line="27" source="standard:indent" />
+        <error column="1" line="28" source="standard:indent" />
+        <error column="1" line="29" source="standard:indent" />
+        <error column="47" line="29" source="standard:multiline-expression-wrapping" />
+        <error column="47" line="29" source="standard:wrapping" />
+        <error column="47" line="29" source="standard:argument-list-wrapping" />
+        <error column="1" line="30" source="standard:indent" />
+        <error column="78" line="30" source="standard:wrapping" />
+        <error column="79" line="30" source="standard:argument-list-wrapping" />
+        <error column="1" line="31" source="standard:indent" />
+        <error column="1" line="32" source="standard:indent" />
+        <error column="1" line="33" source="standard:indent" />
+        <error column="1" line="34" source="standard:indent" />
+        <error column="1" line="36" source="standard:indent" />
+        <error column="1" line="37" source="standard:indent" />
+        <error column="1" line="38" source="standard:indent" />
+        <error column="1" line="40" source="standard:indent" />
+        <error column="1" line="41" source="standard:indent" />
+        <error column="25" line="41" source="standard:function-signature" />
+        <error column="1" line="42" source="standard:indent" />
+    </file>
+    <file
+        name="app/build/generated/source/navigation-args/global/debug/al/ahgitdevelopment/municion/ui/properties/PropertiesFragmentDirections.kt">
+        <error column="1" line="15" source="standard:indent" />
+        <error column="1" line="16" source="standard:indent" />
+        <error column="1" line="17" source="standard:indent" />
+        <error column="1" line="18" source="standard:indent" />
+        <error column="1" line="20" source="standard:indent" />
+        <error column="1" line="21" source="standard:indent" />
+        <error column="1" line="22" source="standard:indent" />
+        <error column="1" line="23" source="standard:indent" />
+        <error column="1" line="24" source="standard:indent" />
+        <error column="1" line="25" source="standard:indent" />
+        <error column="1" line="26" source="standard:indent" />
+        <error column="1" line="27" source="standard:indent" />
+        <error column="1" line="28" source="standard:indent" />
+        <error column="1" line="29" source="standard:indent" />
+        <error column="47" line="29" source="standard:multiline-expression-wrapping" />
+        <error column="47" line="29" source="standard:wrapping" />
+        <error column="47" line="29" source="standard:argument-list-wrapping" />
+        <error column="1" line="30" source="standard:indent" />
+        <error column="78" line="30" source="standard:wrapping" />
+        <error column="79" line="30" source="standard:argument-list-wrapping" />
+        <error column="1" line="31" source="standard:indent" />
+        <error column="1" line="32" source="standard:indent" />
+        <error column="1" line="33" source="standard:indent" />
+        <error column="1" line="34" source="standard:indent" />
+        <error column="1" line="36" source="standard:indent" />
+        <error column="1" line="37" source="standard:indent" />
+        <error column="1" line="38" source="standard:indent" />
+        <error column="1" line="40" source="standard:indent" />
+        <error column="1" line="41" source="standard:indent" />
+        <error column="25" line="41" source="standard:function-signature" />
+        <error column="1" line="42" source="standard:indent" />
+    </file>
+    <file
+        name="app/build/generated/source/navigation-args/global/debug/al/ahgitdevelopment/municion/ui/properties/PropertyFormFragmentDirections.kt">
+        <error column="1" line="8" source="standard:indent" />
+        <error column="1" line="9" source="standard:indent" />
+        <error column="1" line="10" source="standard:indent" />
+        <error column="1" line="11" source="standard:indent" />
+    </file>
+    <file
+        name="app/build/generated/source/navigation-args/global/debug/al/ahgitdevelopment/municion/ui/purchases/PurchaseFormFragmentDirections.kt">
+        <error column="1" line="8" source="standard:indent" />
+        <error column="1" line="9" source="standard:indent" />
+        <error column="1" line="10" source="standard:indent" />
+        <error column="1" line="11" source="standard:indent" />
+    </file>
+    <file
+        name="app/build/generated/source/navigation-args/global/debug/al/ahgitdevelopment/municion/ui/purchases/PurchasesFragmentDirections.kt">
+        <error column="1" line="15" source="standard:indent" />
+        <error column="1" line="16" source="standard:indent" />
+        <error column="1" line="17" source="standard:indent" />
+        <error column="1" line="18" source="standard:indent" />
+        <error column="1" line="20" source="standard:indent" />
+        <error column="1" line="21" source="standard:indent" />
+        <error column="1" line="22" source="standard:indent" />
+        <error column="1" line="23" source="standard:indent" />
+        <error column="1" line="24" source="standard:indent" />
+        <error column="1" line="25" source="standard:indent" />
+        <error column="1" line="26" source="standard:indent" />
+        <error column="1" line="27" source="standard:indent" />
+        <error column="1" line="28" source="standard:indent" />
+        <error column="1" line="29" source="standard:indent" />
+        <error column="47" line="29" source="standard:multiline-expression-wrapping" />
+        <error column="47" line="29" source="standard:wrapping" />
+        <error column="47" line="29" source="standard:argument-list-wrapping" />
+        <error column="1" line="30" source="standard:indent" />
+        <error column="78" line="30" source="standard:wrapping" />
+        <error column="79" line="30" source="standard:argument-list-wrapping" />
+        <error column="1" line="31" source="standard:indent" />
+        <error column="1" line="32" source="standard:indent" />
+        <error column="1" line="33" source="standard:indent" />
+        <error column="1" line="34" source="standard:indent" />
+        <error column="1" line="36" source="standard:indent" />
+        <error column="1" line="37" source="standard:indent" />
+        <error column="1" line="38" source="standard:indent" />
+        <error column="1" line="40" source="standard:indent" />
+        <error column="1" line="41" source="standard:indent" />
+        <error column="25" line="41" source="standard:function-signature" />
+        <error column="1" line="42" source="standard:indent" />
+    </file>
+    <file
+        name="app/build/generated/source/navigation-args/global/debug/al/ahgitdevelopment/municion/ui/tutorial/TutorialViewPagerFragmentDirections.kt">
+        <error column="1" line="8" source="standard:indent" />
+        <error column="1" line="9" source="standard:indent" />
+        <error column="1" line="10" source="standard:indent" />
+        <error column="1" line="11" source="standard:indent" />
+    </file>
+    <file name="app/src/androidTest/java/al/ahgitdevelopment/municion/ExampleTest.kt">
+        <error column="1" line="29" source="standard:no-empty-first-line-in-class-body" />
+        <error column="1" line="68" source="standard:no-empty-first-line-in-method-block" />
+        <error column="1" line="75" source="standard:no-empty-first-line-in-class-body" />
+    </file>
+    <file name="app/src/androidTest/java/al/ahgitdevelopment/municion/HiltExt.kt">
+        <error column="31" line="41" source="standard:multiline-expression-wrapping" />
+        <error column="34" line="49" source="standard:multiline-expression-wrapping" />
+    </file>
+    <file name="app/src/androidTest/java/al/ahgitdevelopment/municion/MyTestRunner.kt">
+        <error column="33" line="9" source="standard:function-signature" />
+        <error column="51" line="9" source="standard:function-signature" />
+        <error column="71" line="9" source="standard:function-signature" />
+        <error column="88" line="9" source="standard:function-signature" />
+    </file>
+    <file name="app/src/androidTest/java/al/ahgitdevelopment/municion/ext/TestExtensions.kt">
+        <error column="1" line="11" source="standard:no-empty-first-line-in-class-body" />
+        <error column="1" line="23" source="standard:no-empty-first-line-in-class-body" />
+    </file>
+    <file name="app/src/androidTest/java/al/ahgitdevelopment/municion/ui/licenses/LicensesFragmentTest.kt">
+        <error column="1" line="30" source="standard:no-empty-first-line-in-class-body" />
+        <error column="62" line="49" source="standard:multiline-expression-wrapping" />
+        <error column="62" line="49" source="standard:function-signature" />
+    </file>
+    <file name="app/src/androidTest/java/al/ahgitdevelopment/municion/ui/login/LoginPasswordFragmentTest.kt">
+        <error column="1" line="39" source="standard:no-empty-first-line-in-class-body" />
+    </file>
+    <file name="app/src/main/java/al/ahgitdevelopment/municion/App.kt">
+        <error column="14" line="21" source="standard:trailing-comma-on-call-site" />
+    </file>
+    <file name="app/src/main/java/al/ahgitdevelopment/municion/BaseFragment.kt">
+        <error column="1" line="20" source="standard:no-empty-first-line-in-class-body" />
+        <error column="5" line="33" source="standard:blank-line-before-declaration" />
+        <error column="5" line="34" source="standard:blank-line-before-declaration" />
+        <error column="5" line="35" source="standard:blank-line-before-declaration" />
+        <error column="32" line="37" source="standard:function-signature" />
+        <error column="44" line="37" source="standard:function-signature" />
+        <error column="71" line="37" source="standard:function-signature" />
+        <error column="38" line="53" source="standard:function-signature" />
+        <error column="50" line="53" source="standard:function-signature" />
+        <error column="72" line="53" source="standard:function-signature" />
+    </file>
+    <file name="app/src/main/java/al/ahgitdevelopment/municion/NavigationActivity.kt">
+        <error column="1" line="21" source="standard:no-empty-first-line-in-class-body" />
+        <error column="1" line="26" source="standard:no-empty-first-line-in-method-block" />
+        <error column="35" line="34" source="standard:multiline-expression-wrapping" />
+        <error column="42" line="39" source="standard:trailing-comma-on-call-site" />
+        <error column="14" line="40" source="standard:trailing-comma-on-call-site" />
+    </file>
+    <file name="app/src/main/java/al/ahgitdevelopment/municion/NavigationActivityViewModel.kt">
+        <error column="1" line="9" source="standard:no-empty-first-line-in-class-body" />
+    </file>
+    <file name="app/src/main/java/al/ahgitdevelopment/municion/ads/RewardedAdCallbackManager.kt">
+        <error column="1" line="4" source="standard:no-unused-imports" />
+        <error column="1" line="5" source="standard:no-unused-imports" />
+        <error column="1" line="8" source="standard:no-unused-imports" />
+        <error column="1" line="9" source="standard:no-unused-imports" />
+        <error column="1" line="10" source="standard:no-unused-imports" />
+        <error column="1" line="15" source="standard:no-empty-first-line-in-class-body" />
+    </file>
+    <file name="app/src/main/java/al/ahgitdevelopment/municion/datamodel/Competition.kt">
+        <error column="1" line="21" source="standard:no-blank-line-in-list" />
+        <error column="1" line="25" source="standard:no-blank-line-in-list" />
+        <error column="1" line="27" source="standard:no-blank-line-in-list" />
+        <error column="1" line="29" source="standard:no-blank-line-in-list" />
+        <error column="1" line="31" source="standard:no-blank-line-in-list" />
+        <error column="1" line="33" source="standard:no-blank-line-in-list" />
+        <error column="64" line="34" source="standard:trailing-comma-on-declaration-site" />
+    </file>
+    <file name="app/src/main/java/al/ahgitdevelopment/municion/datamodel/License.kt">
+        <error column="1" line="21" source="standard:no-blank-line-in-list" />
+        <error column="1" line="25" source="standard:no-blank-line-in-list" />
+        <error column="1" line="27" source="standard:no-blank-line-in-list" />
+        <error column="1" line="29" source="standard:no-blank-line-in-list" />
+        <error column="1" line="31" source="standard:no-blank-line-in-list" />
+        <error column="1" line="33" source="standard:no-blank-line-in-list" />
+        <error column="81" line="34" source="standard:trailing-comma-on-declaration-site" />
+        <error column="29" line="42" source="standard:trailing-comma-on-call-site" />
+    </file>
+    <file name="app/src/main/java/al/ahgitdevelopment/municion/datamodel/Property.kt">
+        <error column="1" line="24" source="standard:no-blank-line-in-list" />
+        <error column="1" line="28" source="standard:no-blank-line-in-list" />
+        <error column="1" line="30" source="standard:no-blank-line-in-list" />
+        <error column="1" line="32" source="standard:no-blank-line-in-list" />
+        <error column="1" line="34" source="standard:no-blank-line-in-list" />
+        <error column="1" line="36" source="standard:no-blank-line-in-list" />
+        <error column="1" line="38" source="standard:no-blank-line-in-list" />
+        <error column="1" line="40" source="standard:no-blank-line-in-list" />
+        <error column="61" line="41" source="standard:trailing-comma-on-declaration-site" />
+        <error column="1" line="42" source="standard:no-blank-line-in-list" />
+        <error column="19" line="52" source="standard:trailing-comma-on-call-site" />
+    </file>
+    <file name="app/src/main/java/al/ahgitdevelopment/municion/datamodel/Purchase.kt">
+        <error column="1" line="25" source="standard:no-blank-line-in-list" />
+        <error column="1" line="29" source="standard:no-blank-line-in-list" />
+        <error column="1" line="31" source="standard:no-blank-line-in-list" />
+        <error column="1" line="33" source="standard:no-blank-line-in-list" />
+        <error column="1" line="35" source="standard:no-blank-line-in-list" />
+        <error column="1" line="37" source="standard:no-blank-line-in-list" />
+        <error column="1" line="39" source="standard:no-blank-line-in-list" />
+        <error column="1" line="41" source="standard:no-blank-line-in-list" />
+        <error column="1" line="43" source="standard:no-blank-line-in-list" />
+        <error column="1" line="45" source="standard:no-blank-line-in-list" />
+        <error column="61" line="46" source="standard:trailing-comma-on-declaration-site" />
+        <error column="1" line="47" source="standard:no-blank-line-in-list" />
+        <error column="19" line="59" source="standard:trailing-comma-on-call-site" />
+    </file>
+    <file name="app/src/main/java/al/ahgitdevelopment/municion/di/AppComponent.kt">
+        <error column="1" line="1" source="standard:no-empty-file" />
+    </file>
+    <file name="app/src/main/java/al/ahgitdevelopment/municion/di/AppModule.kt">
+        <error column="1" line="14" source="standard:no-empty-first-line-in-class-body" />
+        <error column="25" line="19" source="standard:parameter-list-wrapping" />
+        <error column="25" line="19" source="standard:function-signature" />
+        <error column="64" line="19" source="standard:parameter-list-wrapping" />
+        <error column="64" line="19" source="standard:function-signature" />
+    </file>
+    <file name="app/src/main/java/al/ahgitdevelopment/municion/di/DatabaseModule.kt">
+        <error column="22" line="50" source="standard:property-naming" />
+        <error column="1" line="55" source="standard:no-empty-first-line-in-class-body" />
+        <error column="25" line="57" source="standard:parameter-list-wrapping" />
+        <error column="25" line="57" source="standard:function-signature" />
+        <error column="64" line="57" source="standard:parameter-list-wrapping" />
+        <error column="64" line="57" source="standard:function-signature" />
+        <error column="28" line="60" source="standard:multiline-expression-wrapping" />
+        <error column="38" line="64" source="standard:trailing-comma-on-call-site" />
+        <error column="1" line="87" source="standard:no-empty-first-line-in-class-body" />
+        <error column="29" line="89" source="standard:multiline-expression-wrapping" />
+        <error column="25" line="112" source="standard:string-template-indent" />
+        <error column="25" line="113" source="standard:string-template-indent" />
+        <error column="25" line="114" source="standard:string-template-indent" />
+        <error column="25" line="115" source="standard:string-template-indent" />
+        <error column="25" line="116" source="standard:string-template-indent" />
+        <error column="25" line="117" source="standard:string-template-indent" />
+        <error column="25" line="118" source="standard:string-template-indent" />
+        <error column="25" line="119" source="standard:string-template-indent" />
+        <error column="37" line="120" source="standard:trailing-comma-on-call-site" />
+        <error column="25" line="126" source="standard:string-template-indent" />
+        <error column="25" line="127" source="standard:string-template-indent" />
+        <error column="25" line="128" source="standard:string-template-indent" />
+        <error column="25" line="129" source="standard:string-template-indent" />
+        <error column="25" line="130" source="standard:string-template-indent" />
+        <error column="25" line="131" source="standard:string-template-indent" />
+        <error column="25" line="132" source="standard:string-template-indent" />
+        <error column="25" line="133" source="standard:string-template-indent" />
+        <error column="25" line="134" source="standard:string-template-indent" />
+        <error column="25" line="135" source="standard:string-template-indent" />
+        <error column="25" line="136" source="standard:string-template-indent" />
+        <error column="25" line="137" source="standard:string-template-indent" />
+        <error column="37" line="138" source="standard:trailing-comma-on-call-site" />
+        <error column="25" line="144" source="standard:string-template-indent" />
+        <error column="25" line="145" source="standard:string-template-indent" />
+        <error column="25" line="146" source="standard:string-template-indent" />
+        <error column="25" line="147" source="standard:string-template-indent" />
+        <error column="25" line="148" source="standard:string-template-indent" />
+        <error column="25" line="149" source="standard:string-template-indent" />
+        <error column="25" line="150" source="standard:string-template-indent" />
+        <error column="25" line="151" source="standard:string-template-indent" />
+        <error column="25" line="152" source="standard:string-template-indent" />
+        <error column="25" line="153" source="standard:string-template-indent" />
+        <error column="37" line="154" source="standard:trailing-comma-on-call-site" />
+        <error column="25" line="160" source="standard:string-template-indent" />
+        <error column="25" line="161" source="standard:string-template-indent" />
+        <error column="25" line="162" source="standard:string-template-indent" />
+        <error column="25" line="163" source="standard:string-template-indent" />
+        <error column="25" line="164" source="standard:string-template-indent" />
+        <error column="25" line="165" source="standard:string-template-indent" />
+        <error column="25" line="166" source="standard:string-template-indent" />
+        <error column="25" line="167" source="standard:string-template-indent" />
+        <error column="37" line="168" source="standard:trailing-comma-on-call-site" />
+    </file>
+    <file name="app/src/main/java/al/ahgitdevelopment/municion/di/DispatcherModule.kt">
+        <error column="1" line="14" source="standard:no-empty-first-line-in-class-body" />
+    </file>
+    <file name="app/src/main/java/al/ahgitdevelopment/municion/di/FirebaseModule.kt">
+        <error column="1" line="27" source="standard:no-empty-first-line-in-class-body" />
+        <error column="36" line="47" source="standard:parameter-list-wrapping" />
+        <error column="36" line="47" source="standard:function-signature" />
+        <error column="75" line="47" source="standard:parameter-list-wrapping" />
+        <error column="75" line="47" source="standard:function-signature" />
+        <error column="99" line="47" source="standard:function-signature" />
+        <error column="41" line="51" source="standard:parameter-list-wrapping" />
+        <error column="41" line="51" source="standard:function-signature" />
+        <error column="80" line="51" source="standard:parameter-list-wrapping" />
+        <error column="80" line="51" source="standard:function-signature" />
+        <error column="51" line="57" source="standard:trailing-comma-on-call-site" />
+    </file>
+    <file name="app/src/main/java/al/ahgitdevelopment/municion/di/RepositoryModule.kt">
+        <error column="1" line="22" source="standard:no-empty-first-line-in-class-body" />
+        <error column="34" line="31" source="standard:function-signature" />
+        <error column="62" line="31" source="standard:function-signature" />
+        <error column="80" line="31" source="standard:function-signature" />
+        <error column="1" line="42" source="standard:no-empty-first-line-in-class-body" />
+        <error column="67" line="47" source="standard:trailing-comma-on-declaration-site" />
+    </file>
+    <file name="app/src/main/java/al/ahgitdevelopment/municion/di/SharedPrefsModule.kt">
+        <error column="1" line="14" source="standard:no-empty-first-line-in-class-body" />
+        <error column="28" line="16" source="standard:parameter-list-wrapping" />
+        <error column="28" line="16" source="standard:function-signature" />
+        <error column="67" line="16" source="standard:parameter-list-wrapping" />
+        <error column="67" line="16" source="standard:function-signature" />
+    </file>
+    <file name="app/src/main/java/al/ahgitdevelopment/municion/dialogs/AdsRewardDialogFragment.kt">
+        <error column="1" line="15" source="standard:no-empty-first-line-in-class-body" />
+    </file>
+    <file name="app/src/main/java/al/ahgitdevelopment/municion/dialogs/SupportDeveloperDialogFragment.kt">
+        <error column="1" line="12" source="standard:no-empty-first-line-in-class-body" />
+    </file>
+    <file name="app/src/main/java/al/ahgitdevelopment/municion/logger/CrashReportingTree.kt">
+        <error column="1" line="9" source="standard:no-empty-first-line-in-class-body" />
+        <error column="22" line="12" source="standard:function-signature" />
+        <error column="37" line="12" source="standard:function-signature" />
+        <error column="51" line="12" source="standard:function-signature" />
+        <error column="68" line="12" source="standard:function-signature" />
+        <error column="89" line="12" source="standard:function-signature" />
+    </file>
+    <file name="app/src/main/java/al/ahgitdevelopment/municion/repository/DataSourceContract.kt">
+        <error column="1" line="10" source="standard:no-empty-first-line-in-class-body" />
+        <error column="5" line="17" source="standard:blank-line-before-declaration" />
+        <error column="5" line="18" source="standard:blank-line-before-declaration" />
+        <error column="5" line="19" source="standard:blank-line-before-declaration" />
+        <error column="5" line="22" source="standard:blank-line-before-declaration" />
+        <error column="5" line="23" source="standard:blank-line-before-declaration" />
+        <error column="5" line="24" source="standard:blank-line-before-declaration" />
+        <error column="5" line="27" source="standard:blank-line-before-declaration" />
+        <error column="5" line="28" source="standard:blank-line-before-declaration" />
+        <error column="5" line="29" source="standard:blank-line-before-declaration" />
+        <error column="31" line="31" source="standard:function-signature" />
+        <error column="47" line="31" source="standard:function-signature" />
+        <error column="63" line="31" source="standard:function-signature" />
+        <error column="5" line="32" source="standard:blank-line-before-declaration" />
+        <error column="31" line="32" source="standard:function-signature" />
+        <error column="47" line="32" source="standard:function-signature" />
+        <error column="63" line="32" source="standard:function-signature" />
+    </file>
+    <file name="app/src/main/java/al/ahgitdevelopment/municion/repository/DefaultRepository.kt">
+        <error column="53" line="16" source="standard:trailing-comma-on-declaration-site" />
+        <error column="1" line="18" source="standard:no-empty-first-line-in-class-body" />
+        <error column="1" line="21" source="standard:no-empty-first-line-in-method-block" />
+        <error column="1" line="64" source="standard:no-empty-first-line-in-method-block" />
+        <error column="40" line="117" source="standard:function-signature" />
+        <error column="56" line="117" source="standard:function-signature" />
+        <error column="72" line="117" source="standard:function-signature" />
+        <error column="40" line="121" source="standard:function-signature" />
+        <error column="56" line="121" source="standard:function-signature" />
+        <error column="72" line="121" source="standard:function-signature" />
+        <error column="1" line="126" source="standard:no-empty-first-line-in-method-block" />
+    </file>
+    <file name="app/src/main/java/al/ahgitdevelopment/municion/repository/RepositoryContract.kt">
+        <error column="5" line="16" source="standard:blank-line-before-declaration" />
+        <error column="5" line="17" source="standard:blank-line-before-declaration" />
+        <error column="5" line="18" source="standard:blank-line-before-declaration" />
+        <error column="5" line="21" source="standard:blank-line-before-declaration" />
+        <error column="5" line="22" source="standard:blank-line-before-declaration" />
+        <error column="5" line="23" source="standard:blank-line-before-declaration" />
+        <error column="5" line="26" source="standard:blank-line-before-declaration" />
+        <error column="5" line="27" source="standard:blank-line-before-declaration" />
+        <error column="5" line="28" source="standard:blank-line-before-declaration" />
+        <error column="31" line="30" source="standard:function-signature" />
+        <error column="47" line="30" source="standard:function-signature" />
+        <error column="63" line="30" source="standard:function-signature" />
+        <error column="5" line="31" source="standard:blank-line-before-declaration" />
+        <error column="31" line="31" source="standard:function-signature" />
+        <error column="47" line="31" source="standard:function-signature" />
+        <error column="63" line="31" source="standard:function-signature" />
+    </file>
+    <file name="app/src/main/java/al/ahgitdevelopment/municion/repository/database/AppDatabase.kt">
+        <error column="27" line="19" source="standard:trailing-comma-on-call-site" />
+        <error column="25" line="22" source="standard:trailing-comma-on-call-site" />
+        <error column="5" line="26" source="standard:blank-line-before-declaration" />
+        <error column="5" line="27" source="standard:blank-line-before-declaration" />
+        <error column="5" line="28" source="standard:blank-line-before-declaration" />
+    </file>
+    <file name="app/src/main/java/al/ahgitdevelopment/municion/repository/database/LocalDataSource.kt">
+        <error column="22" line="12" source="standard:annotation" />
+        <error column="30" line="12" source="standard:annotation" />
+        <error column="5" line="19" source="standard:blank-line-before-declaration" />
+        <error column="5" line="23" source="standard:blank-line-before-declaration" />
+        <error column="5" line="26" source="standard:blank-line-before-declaration" />
+        <error column="5" line="30" source="standard:blank-line-before-declaration" />
+        <error column="5" line="33" source="standard:blank-line-before-declaration" />
+        <error column="5" line="34" source="standard:blank-line-before-declaration" />
+        <error column="5" line="35" source="standard:blank-line-before-declaration" />
+        <error column="40" line="37" source="standard:function-signature" />
+        <error column="56" line="37" source="standard:function-signature" />
+        <error column="72" line="37" source="standard:function-signature" />
+        <error column="75" line="37" source="standard:function-signature" />
+        <error column="40" line="40" source="standard:function-signature" />
+        <error column="56" line="40" source="standard:function-signature" />
+        <error column="72" line="40" source="standard:function-signature" />
+        <error column="75" line="40" source="standard:function-signature" />
+    </file>
+    <file name="app/src/main/java/al/ahgitdevelopment/municion/repository/database/dao/PropertyDao.kt">
+        <error column="1" line="16" source="standard:no-empty-first-line-in-class-body" />
+        <error column="31" line="36" source="standard:function-signature" />
+        <error column="47" line="36" source="standard:function-signature" />
+        <error column="63" line="36" source="standard:function-signature" />
+    </file>
+    <file name="app/src/main/java/al/ahgitdevelopment/municion/repository/database/dao/PurchaseDao.kt">
+        <error column="1" line="16" source="standard:no-empty-first-line-in-class-body" />
+        <error column="31" line="36" source="standard:function-signature" />
+        <error column="47" line="36" source="standard:function-signature" />
+        <error column="63" line="36" source="standard:function-signature" />
+    </file>
+    <file name="app/src/main/java/al/ahgitdevelopment/municion/repository/firebase/RemoteDataSource.kt">
+        <error column="23" line="26" source="standard:annotation" />
+        <error column="31" line="26" source="standard:annotation" />
+        <error column="35" line="28" source="standard:trailing-comma-on-declaration-site" />
+        <error column="1" line="30" source="standard:no-empty-first-line-in-class-body" />
+        <error column="40" line="144" source="standard:function-signature" />
+        <error column="56" line="144" source="standard:function-signature" />
+        <error column="72" line="144" source="standard:function-signature" />
+        <error column="40" line="154" source="standard:function-signature" />
+        <error column="56" line="154" source="standard:function-signature" />
+        <error column="72" line="154" source="standard:function-signature" />
+        <error column="34" line="173" source="standard:multiline-expression-wrapping" />
+        <error column="34" line="173" source="standard:function-signature" />
+        <error column="37" line="174" source="standard:multiline-expression-wrapping" />
+        <error column="51" line="185" source="standard:multiline-expression-wrapping" />
+        <error column="51" line="185" source="standard:function-signature" />
+        <error column="37" line="186" source="standard:multiline-expression-wrapping" />
+    </file>
+    <file name="app/src/main/java/al/ahgitdevelopment/municion/repository/firebase/RemoteStorageDataSource.kt">
+        <error column="1" line="24" source="standard:no-empty-first-line-in-class-body" />
+        <error column="32" line="43" source="standard:function-signature" />
+        <error column="49" line="43" source="standard:function-signature" />
+        <error column="63" line="43" source="standard:function-signature" />
+        <error column="34" line="54" source="standard:multiline-expression-wrapping" />
+        <error column="53" line="55" source="standard:trailing-comma-on-call-site" />
+        <error column="1" line="70" source="standard:no-empty-first-line-in-method-block" />
+        <error column="1" line="75" source="standard:no-empty-first-line-in-method-block" />
+        <error column="39" line="92" source="standard:function-signature" />
+        <error column="64" line="92" source="standard:function-signature" />
+        <error column="81" line="92" source="standard:function-signature" />
+        <error column="94" line="92" source="standard:function-signature" />
+        <error column="1" line="93" source="standard:no-empty-first-line-in-method-block" />
+        <error column="47" line="111" source="standard:multiline-expression-wrapping" />
+        <error column="47" line="111" source="standard:function-signature" />
+    </file>
+    <file name="app/src/main/java/al/ahgitdevelopment/municion/repository/firebase/RemoteStorageDataSourceContract.kt">
+        <error column="5" line="10" source="standard:blank-line-before-declaration" />
+        <error column="23" line="10" source="standard:function-signature" />
+        <error column="40" line="10" source="standard:function-signature" />
+        <error column="54" line="10" source="standard:function-signature" />
+        <error column="5" line="11" source="standard:blank-line-before-declaration" />
+    </file>
+    <file name="app/src/main/java/al/ahgitdevelopment/municion/repository/preferences/SharedPreferencesContract.kt">
+        <error column="5" line="5" source="standard:blank-line-before-declaration" />
+        <error column="5" line="6" source="standard:blank-line-before-declaration" />
+        <error column="5" line="7" source="standard:blank-line-before-declaration" />
+        <error column="5" line="8" source="standard:blank-line-before-declaration" />
+    </file>
+    <file name="app/src/main/java/al/ahgitdevelopment/municion/repository/preferences/SharedPreferencesManager.kt">
+        <error column="36" line="7" source="standard:annotation" />
+        <error column="44" line="7" source="standard:annotation" />
+        <error column="1" line="8" source="standard:no-empty-first-line-in-class-body" />
+        <error column="41" line="14" source="standard:function-signature" />
+        <error column="49" line="17" source="standard:function-signature" />
+        <error column="50" line="22" source="standard:function-signature" />
+    </file>
+    <file name="app/src/main/java/al/ahgitdevelopment/municion/ui/BaseViewModel.kt">
+        <error column="1" line="14" source="standard:no-empty-first-line-in-class-body" />
+        <error column="9" line="21" source="standard:property-naming" />
+        <error column="9" line="24" source="standard:property-naming" />
+        <error column="9" line="30" source="standard:property-naming" />
+        <error column="9" line="36" source="standard:property-naming" />
+        <error column="5" line="40" source="standard:blank-line-before-declaration" />
+    </file>
+    <file name="app/src/main/java/al/ahgitdevelopment/municion/ui/DeleteItemOnSwipe.kt">
+        <error column="1" line="13" source="standard:no-empty-first-line-in-class-body" />
+        <error column="35" line="21" source="standard:trailing-comma-on-declaration-site" />
+        <error column="40" line="36" source="standard:trailing-comma-on-declaration-site" />
+        <error column="27" line="41" source="standard:function-signature" />
+        <error column="64" line="41" source="standard:function-signature" />
+        <error column="78" line="41" source="standard:function-signature" />
+        <error column="1" line="42" source="standard:no-empty-first-line-in-method-block" />
+    </file>
+    <file name="app/src/main/java/al/ahgitdevelopment/municion/ui/competitions/CompetitionAdapter.kt">
+        <error column="1" line="14" source="standard:no-empty-first-line-in-class-body" />
+        <error column="37" line="15" source="standard:function-signature" />
+        <error column="56" line="15" source="standard:function-signature" />
+        <error column="69" line="15" source="standard:function-signature" />
+        <error column="35" line="25" source="standard:function-signature" />
+        <error column="66" line="25" source="standard:function-signature" />
+        <error column="79" line="25" source="standard:function-signature" />
+        <error column="29" line="47" source="standard:multiline-expression-wrapping" />
+        <error column="42" line="48" source="standard:function-signature" />
+        <error column="64" line="48" source="standard:function-signature" />
+        <error column="84" line="48" source="standard:function-signature" />
+        <error column="45" line="52" source="standard:function-signature" />
+        <error column="67" line="52" source="standard:function-signature" />
+        <error column="87" line="52" source="standard:function-signature" />
+    </file>
+    <file name="app/src/main/java/al/ahgitdevelopment/municion/ui/competitions/CompetitionFormFragment.kt">
+        <error column="1" line="25" source="standard:no-empty-first-line-in-class-body" />
+        <error column="36" line="32" source="standard:trailing-comma-on-declaration-site" />
+        <error column="1" line="34" source="standard:no-empty-first-line-in-method-block" />
+        <error column="32" line="45" source="standard:function-signature" />
+        <error column="44" line="45" source="standard:function-signature" />
+        <error column="71" line="45" source="standard:function-signature" />
+        <error column="104" line="70" source="standard:trailing-comma-on-call-site" />
+    </file>
+    <file name="app/src/main/java/al/ahgitdevelopment/municion/ui/competitions/CompetitionFormViewModel.kt">
+        <error column="31" line="14" source="standard:annotation" />
+        <error column="39" line="14" source="standard:annotation" />
+        <error column="1" line="17" source="standard:no-empty-first-line-in-class-body" />
+    </file>
+    <file name="app/src/main/java/al/ahgitdevelopment/municion/ui/competitions/CompetitionsFragment.kt">
+        <error column="1" line="29" source="standard:no-empty-first-line-in-class-body" />
+        <error column="36" line="38" source="standard:trailing-comma-on-declaration-site" />
+        <error column="1" line="40" source="standard:no-empty-first-line-in-method-block" />
+        <error column="32" line="48" source="standard:function-signature" />
+        <error column="44" line="48" source="standard:function-signature" />
+        <error column="71" line="48" source="standard:function-signature" />
+        <error column="38" line="60" source="standard:trailing-comma-on-call-site" />
+        <error column="38" line="70" source="standard:trailing-comma-on-call-site" />
+        <error column="34" line="83" source="standard:multiline-expression-wrapping" />
+        <error column="39" line="93" source="standard:multiline-expression-wrapping" />
+        <error column="23" line="103" source="standard:trailing-comma-on-call-site" />
+        <error column="110" line="112" source="standard:trailing-comma-on-call-site" />
+        <error column="46" line="125" source="standard:trailing-comma-on-call-site" />
+        <error column="14" line="149" source="standard:trailing-comma-on-call-site" />
+        <error column="1" line="177" source="standard:max-line-length" />
+        <error column="121" line="177" source="standard:parameter-list-wrapping" />
+        <error column="37" line="181" source="standard:trailing-comma-on-call-site" />
+    </file>
+    <file name="app/src/main/java/al/ahgitdevelopment/municion/ui/competitions/CompetitionsViewModel.kt">
+        <error column="28" line="20" source="standard:annotation" />
+        <error column="36" line="20" source="standard:annotation" />
+        <error column="1" line="24" source="standard:no-empty-first-line-in-class-body" />
+        <error column="24" line="25" source="standard:multiline-expression-wrapping" />
+        <error column="52" line="42" source="standard:multiline-expression-wrapping" />
+        <error column="52" line="42" source="standard:function-signature" />
+        <error column="52" line="48" source="standard:multiline-expression-wrapping" />
+        <error column="52" line="48" source="standard:function-signature" />
+    </file>
+    <file name="app/src/main/java/al/ahgitdevelopment/municion/ui/dialogs/DatePickerFragment.kt">
+        <error column="1" line="13" source="standard:no-empty-first-line-in-class-body" />
+    </file>
+    <file name="app/src/main/java/al/ahgitdevelopment/municion/ui/licenses/LicenseAdapter.kt">
+        <error column="1" line="18" source="standard:no-empty-first-line-in-class-body" />
+        <error column="37" line="19" source="standard:function-signature" />
+        <error column="56" line="19" source="standard:function-signature" />
+        <error column="69" line="19" source="standard:function-signature" />
+        <error column="35" line="24" source="standard:function-signature" />
+        <error column="62" line="24" source="standard:function-signature" />
+        <error column="75" line="24" source="standard:function-signature" />
+        <error column="29" line="46" source="standard:multiline-expression-wrapping" />
+        <error column="42" line="47" source="standard:function-signature" />
+        <error column="60" line="47" source="standard:function-signature" />
+        <error column="76" line="47" source="standard:function-signature" />
+        <error column="45" line="51" source="standard:function-signature" />
+        <error column="63" line="51" source="standard:function-signature" />
+        <error column="79" line="51" source="standard:function-signature" />
+    </file>
+    <file name="app/src/main/java/al/ahgitdevelopment/municion/ui/licenses/LicenseFormFragment.kt">
+        <error column="1" line="24" source="standard:no-empty-first-line-in-class-body" />
+        <error column="36" line="31" source="standard:trailing-comma-on-declaration-site" />
+        <error column="1" line="33" source="standard:no-empty-first-line-in-method-block" />
+        <error column="32" line="43" source="standard:function-signature" />
+        <error column="44" line="43" source="standard:function-signature" />
+        <error column="71" line="43" source="standard:function-signature" />
+        <error column="95" line="66" source="standard:trailing-comma-on-call-site" />
+        <error column="92" line="74" source="standard:trailing-comma-on-call-site" />
+    </file>
+    <file name="app/src/main/java/al/ahgitdevelopment/municion/ui/licenses/LicenseFormViewModel.kt">
+        <error column="27" line="21" source="standard:annotation" />
+        <error column="35" line="21" source="standard:annotation" />
+        <error column="1" line="25" source="standard:no-empty-first-line-in-class-body" />
+        <error column="41" line="46" source="standard:multiline-expression-wrapping" />
+        <error column="41" line="46" source="standard:function-signature" />
+    </file>
+    <file name="app/src/main/java/al/ahgitdevelopment/municion/ui/licenses/LicensesFragment.kt">
+        <error column="1" line="14" source="standard:no-unused-imports" />
+        <error column="23" line="28" source="standard:annotation" />
+        <error column="31" line="28" source="standard:annotation" />
+        <error column="1" line="29" source="standard:no-empty-first-line-in-class-body" />
+        <error column="36" line="38" source="standard:trailing-comma-on-declaration-site" />
+        <error column="32" line="49" source="standard:function-signature" />
+        <error column="44" line="49" source="standard:function-signature" />
+        <error column="71" line="49" source="standard:function-signature" />
+        <error column="89" line="54" source="standard:trailing-comma-on-call-site" />
+        <error column="38" line="63" source="standard:trailing-comma-on-call-site" />
+        <error column="38" line="73" source="standard:trailing-comma-on-call-site" />
+        <error column="31" line="86" source="standard:multiline-expression-wrapping" />
+        <error column="39" line="96" source="standard:multiline-expression-wrapping" />
+        <error column="23" line="106" source="standard:trailing-comma-on-call-site" />
+        <error column="102" line="115" source="standard:trailing-comma-on-call-site" />
+        <error column="1" line="120" source="standard:indent" />
+        <error column="46" line="128" source="standard:trailing-comma-on-call-site" />
+        <error column="37" line="171" source="standard:trailing-comma-on-call-site" />
+    </file>
+    <file name="app/src/main/java/al/ahgitdevelopment/municion/ui/licenses/LicensesViewModel.kt">
+        <error column="24" line="21" source="standard:annotation" />
+        <error column="32" line="21" source="standard:annotation" />
+        <error column="1" line="25" source="standard:no-empty-first-line-in-class-body" />
+        <error column="20" line="26" source="standard:multiline-expression-wrapping" />
+        <error column="44" line="43" source="standard:multiline-expression-wrapping" />
+        <error column="44" line="43" source="standard:function-signature" />
+        <error column="40" line="49" source="standard:multiline-expression-wrapping" />
+        <error column="40" line="49" source="standard:function-signature" />
+    </file>
+    <file name="app/src/main/java/al/ahgitdevelopment/municion/ui/login/LoginPasswordFragment.kt">
+        <error column="1" line="40" source="standard:no-empty-first-line-in-class-body" />
+        <error column="36" line="61" source="standard:trailing-comma-on-declaration-site" />
+        <error column="1" line="63" source="standard:no-empty-first-line-in-method-block" />
+        <error column="32" line="73" source="standard:function-signature" />
+        <error column="44" line="73" source="standard:function-signature" />
+        <error column="71" line="73" source="standard:function-signature" />
+        <error column="49" line="77" source="standard:multiline-expression-wrapping" />
+        <error column="10" line="122" source="standard:block-comment-initial-star-alignment" />
+        <error column="31" line="163" source="standard:trailing-comma-on-declaration-site" />
+        <error column="38" line="177" source="standard:function-signature" />
+        <error column="50" line="177" source="standard:function-signature" />
+        <error column="72" line="177" source="standard:function-signature" />
+        <error column="25" line="225" source="standard:multiline-expression-wrapping" />
+        <error column="52" line="228" source="standard:trailing-comma-on-call-site" />
+        <error column="23" line="238" source="standard:trailing-comma-on-call-site" />
+        <error column="35" line="255" source="standard:function-signature" />
+        <error column="53" line="255" source="standard:function-signature" />
+        <error column="70" line="255" source="standard:function-signature" />
+        <error column="83" line="255" source="standard:function-signature" />
+    </file>
+    <file name="app/src/main/java/al/ahgitdevelopment/municion/ui/login/LoginViewModel.kt">
+        <error column="21" line="14" source="standard:annotation" />
+        <error column="29" line="14" source="standard:annotation" />
+        <error column="1" line="17" source="standard:no-empty-first-line-in-class-body" />
+        <error column="9" line="31" source="standard:property-naming" />
+        <error column="32" line="62" source="standard:function-signature" />
+        <error column="49" line="62" source="standard:function-signature" />
+        <error column="61" line="62" source="standard:function-signature" />
+        <error column="74" line="62" source="standard:function-signature" />
+        <error column="84" line="62" source="standard:function-signature" />
+        <error column="32" line="81" source="standard:function-signature" />
+        <error column="49" line="81" source="standard:function-signature" />
+        <error column="61" line="81" source="standard:function-signature" />
+        <error column="74" line="81" source="standard:function-signature" />
+        <error column="84" line="81" source="standard:function-signature" />
+        <error column="5" line="122" source="standard:blank-line-before-declaration" />
+        <error column="5" line="123" source="standard:blank-line-before-declaration" />
+    </file>
+    <file name="app/src/main/java/al/ahgitdevelopment/municion/ui/properties/PropertiesFragment.kt">
+        <error column="1" line="19" source="standard:no-unused-imports" />
+        <error column="36" line="49" source="standard:trailing-comma-on-declaration-site" />
+        <error column="1" line="51" source="standard:no-empty-first-line-in-method-block" />
+        <error column="32" line="61" source="standard:function-signature" />
+        <error column="44" line="61" source="standard:function-signature" />
+        <error column="71" line="61" source="standard:function-signature" />
+        <error column="94" line="66" source="standard:trailing-comma-on-call-site" />
+        <error column="38" line="75" source="standard:trailing-comma-on-call-site" />
+        <error column="38" line="85" source="standard:trailing-comma-on-call-site" />
+        <error column="33" line="98" source="standard:multiline-expression-wrapping" />
+        <error column="39" line="108" source="standard:multiline-expression-wrapping" />
+        <error column="23" line="118" source="standard:trailing-comma-on-call-site" />
+        <error column="106" line="127" source="standard:trailing-comma-on-call-site" />
+        <error column="46" line="140" source="standard:trailing-comma-on-call-site" />
+        <error column="1" line="186" source="standard:max-line-length" />
+        <error column="114" line="186" source="standard:parameter-list-wrapping" />
+        <error column="37" line="190" source="standard:trailing-comma-on-call-site" />
+    </file>
+    <file name="app/src/main/java/al/ahgitdevelopment/municion/ui/properties/PropertiesViewModel.kt">
+        <error column="26" line="25" source="standard:annotation" />
+        <error column="34" line="25" source="standard:annotation" />
+        <error column="1" line="30" source="standard:no-empty-first-line-in-class-body" />
+        <error column="22" line="31" source="standard:multiline-expression-wrapping" />
+        <error column="46" line="50" source="standard:multiline-expression-wrapping" />
+        <error column="46" line="50" source="standard:function-signature" />
+        <error column="43" line="56" source="standard:multiline-expression-wrapping" />
+        <error column="43" line="56" source="standard:function-signature" />
+        <error column="21" line="62" source="standard:function-signature" />
+        <error column="38" line="62" source="standard:function-signature" />
+        <error column="56" line="62" source="standard:function-signature" />
+    </file>
+    <file name="app/src/main/java/al/ahgitdevelopment/municion/ui/properties/PropertyAdapter.kt">
+        <error column="1" line="20" source="standard:no-empty-first-line-in-class-body" />
+        <error column="37" line="21" source="standard:function-signature" />
+        <error column="56" line="21" source="standard:function-signature" />
+        <error column="69" line="21" source="standard:function-signature" />
+        <error column="35" line="26" source="standard:function-signature" />
+        <error column="63" line="26" source="standard:function-signature" />
+        <error column="76" line="26" source="standard:function-signature" />
+        <error column="1" line="32" source="standard:no-empty-first-line-in-class-body" />
+        <error column="40" line="58" source="standard:multiline-expression-wrapping" />
+        <error column="40" line="58" source="standard:function-signature" />
+        <error column="75" line="63" source="standard:trailing-comma-on-call-site" />
+        <error column="29" line="69" source="standard:multiline-expression-wrapping" />
+        <error column="42" line="70" source="standard:function-signature" />
+        <error column="61" line="70" source="standard:function-signature" />
+        <error column="78" line="70" source="standard:function-signature" />
+        <error column="45" line="74" source="standard:function-signature" />
+        <error column="64" line="74" source="standard:function-signature" />
+        <error column="81" line="74" source="standard:function-signature" />
+    </file>
+    <file name="app/src/main/java/al/ahgitdevelopment/municion/ui/properties/PropertyFormFragment.kt">
+        <error column="1" line="23" source="standard:no-empty-first-line-in-class-body" />
+        <error column="36" line="30" source="standard:trailing-comma-on-declaration-site" />
+        <error column="1" line="32" source="standard:no-empty-first-line-in-method-block" />
+        <error column="32" line="42" source="standard:function-signature" />
+        <error column="44" line="42" source="standard:function-signature" />
+        <error column="71" line="42" source="standard:function-signature" />
+        <error column="27" line="55" source="standard:trailing-comma-on-call-site" />
+        <error column="96" line="63" source="standard:trailing-comma-on-call-site" />
+    </file>
+    <file name="app/src/main/java/al/ahgitdevelopment/municion/ui/properties/PropertyFormViewModel.kt">
+        <error column="28" line="15" source="standard:annotation" />
+        <error column="36" line="15" source="standard:annotation" />
+        <error column="1" line="18" source="standard:no-empty-first-line-in-class-body" />
+    </file>
+    <file name="app/src/main/java/al/ahgitdevelopment/municion/ui/purchases/PurchaseAdapter.kt">
+        <error column="1" line="17" source="standard:no-empty-first-line-in-class-body" />
+        <error column="37" line="18" source="standard:function-signature" />
+        <error column="56" line="18" source="standard:function-signature" />
+        <error column="69" line="18" source="standard:function-signature" />
+        <error column="35" line="23" source="standard:function-signature" />
+        <error column="63" line="23" source="standard:function-signature" />
+        <error column="76" line="23" source="standard:function-signature" />
+        <error column="54" line="29" source="standard:trailing-comma-on-declaration-site" />
+        <error column="1" line="32" source="standard:no-empty-first-line-in-class-body" />
+        <error column="40" line="50" source="standard:multiline-expression-wrapping" />
+        <error column="40" line="50" source="standard:function-signature" />
+        <error column="85" line="53" source="standard:trailing-comma-on-call-site" />
+        <error column="29" line="59" source="standard:multiline-expression-wrapping" />
+        <error column="42" line="60" source="standard:function-signature" />
+        <error column="61" line="60" source="standard:function-signature" />
+        <error column="78" line="60" source="standard:function-signature" />
+        <error column="45" line="64" source="standard:function-signature" />
+        <error column="64" line="64" source="standard:function-signature" />
+        <error column="81" line="64" source="standard:function-signature" />
+    </file>
+    <file name="app/src/main/java/al/ahgitdevelopment/municion/ui/purchases/PurchaseFormFragment.kt">
+        <error column="1" line="25" source="standard:no-empty-first-line-in-class-body" />
+        <error column="36" line="32" source="standard:trailing-comma-on-declaration-site" />
+        <error column="1" line="34" source="standard:no-empty-first-line-in-method-block" />
+        <error column="32" line="45" source="standard:function-signature" />
+        <error column="44" line="45" source="standard:function-signature" />
+        <error column="71" line="45" source="standard:function-signature" />
+        <error column="27" line="60" source="standard:trailing-comma-on-call-site" />
+        <error column="95" line="74" source="standard:trailing-comma-on-call-site" />
+    </file>
+    <file name="app/src/main/java/al/ahgitdevelopment/municion/ui/purchases/PurchaseFormViewModel.kt">
+        <error column="28" line="14" source="standard:annotation" />
+        <error column="36" line="14" source="standard:annotation" />
+        <error column="1" line="17" source="standard:no-empty-first-line-in-class-body" />
+    </file>
+    <file name="app/src/main/java/al/ahgitdevelopment/municion/ui/purchases/PurchasesFragment.kt">
+        <error column="1" line="30" source="standard:no-empty-first-line-in-class-body" />
+        <error column="36" line="47" source="standard:trailing-comma-on-declaration-site" />
+        <error column="1" line="49" source="standard:no-empty-first-line-in-method-block" />
+        <error column="32" line="59" source="standard:function-signature" />
+        <error column="44" line="59" source="standard:function-signature" />
+        <error column="71" line="59" source="standard:function-signature" />
+        <error column="92" line="64" source="standard:trailing-comma-on-call-site" />
+        <error column="38" line="73" source="standard:trailing-comma-on-call-site" />
+        <error column="38" line="83" source="standard:trailing-comma-on-call-site" />
+        <error column="31" line="96" source="standard:multiline-expression-wrapping" />
+        <error column="39" line="106" source="standard:multiline-expression-wrapping" />
+        <error column="23" line="116" source="standard:trailing-comma-on-call-site" />
+        <error column="104" line="125" source="standard:trailing-comma-on-call-site" />
+        <error column="46" line="138" source="standard:trailing-comma-on-call-site" />
+        <error column="1" line="177" source="standard:max-line-length" />
+        <error column="112" line="177" source="standard:parameter-list-wrapping" />
+        <error column="37" line="181" source="standard:trailing-comma-on-call-site" />
+    </file>
+    <file name="app/src/main/java/al/ahgitdevelopment/municion/ui/purchases/PurchasesViewModel.kt">
+        <error column="25" line="24" source="standard:annotation" />
+        <error column="33" line="24" source="standard:annotation" />
+        <error column="1" line="29" source="standard:no-empty-first-line-in-class-body" />
+        <error column="21" line="30" source="standard:multiline-expression-wrapping" />
+        <error column="46" line="47" source="standard:multiline-expression-wrapping" />
+        <error column="46" line="47" source="standard:function-signature" />
+        <error column="43" line="53" source="standard:multiline-expression-wrapping" />
+        <error column="43" line="53" source="standard:function-signature" />
+        <error column="21" line="59" source="standard:function-signature" />
+        <error column="38" line="59" source="standard:function-signature" />
+        <error column="56" line="59" source="standard:function-signature" />
+    </file>
+    <file name="app/src/main/java/al/ahgitdevelopment/municion/ui/tutorial/TutorialPageTransformer.kt">
+        <error column="1" line="9" source="standard:no-empty-first-line-in-class-body" />
+        <error column="32" line="12" source="standard:function-signature" />
+        <error column="44" line="12" source="standard:function-signature" />
+        <error column="59" line="12" source="standard:function-signature" />
+        <error column="43" line="21" source="standard:multiline-expression-wrapping" />
+        <error column="50" line="24" source="standard:trailing-comma-on-call-site" />
+        <error column="43" line="31" source="standard:multiline-if-else" />
+        <error column="43" line="31" source="standard:if-else-wrapping" />
+        <error column="30" line="32" source="standard:multiline-if-else" />
+        <error column="30" line="32" source="standard:if-else-wrapping" />
+    </file>
+    <file name="app/src/main/java/al/ahgitdevelopment/municion/ui/tutorial/TutorialScreenshotFragment.kt">
+        <error column="1" line="17" source="standard:no-empty-first-line-in-class-body" />
+        <error column="31" line="24" source="standard:function-signature" />
+        <error column="57" line="24" source="standard:function-signature" />
+        <error column="80" line="24" source="standard:function-signature" />
+        <error column="107" line="24" source="standard:function-signature" />
+        <error column="32" line="30" source="standard:function-signature" />
+        <error column="44" line="30" source="standard:function-signature" />
+        <error column="71" line="30" source="standard:function-signature" />
+        <error column="29" line="52" source="standard:multiline-expression-wrapping" />
+    </file>
+    <file name="app/src/main/java/al/ahgitdevelopment/municion/ui/tutorial/TutorialViewModel.kt">
+        <error column="24" line="15" source="standard:annotation" />
+        <error column="32" line="15" source="standard:annotation" />
+        <error column="1" line="18" source="standard:no-empty-first-line-in-class-body" />
+    </file>
+    <file name="app/src/main/java/al/ahgitdevelopment/municion/ui/tutorial/TutorialViewPagerFragment.kt">
+        <error column="1" line="5" source="standard:no-unused-imports" />
+        <error column="1" line="22" source="standard:no-unused-imports" />
+        <error column="1" line="27" source="standard:no-empty-first-line-in-class-body" />
+        <error column="34" line="28" source="standard:colon-spacing" />
+        <error column="36" line="34" source="standard:trailing-comma-on-declaration-site" />
+        <error column="1" line="36" source="standard:no-empty-first-line-in-method-block" />
+        <error column="25" line="37" source="standard:multiline-expression-wrapping" />
+        <error column="32" line="48" source="standard:function-signature" />
+        <error column="44" line="48" source="standard:function-signature" />
+        <error column="71" line="48" source="standard:function-signature" />
+        <error column="25" line="59" source="standard:no-multi-spaces" />
+        <error column="26" line="60" source="standard:no-multi-spaces" />
+        <error column="104" line="73" source="standard:trailing-comma-on-call-site" />
+        <error column="43" line="86" source="standard:trailing-comma-on-declaration-site" />
+        <error column="1" line="88" source="standard:no-empty-first-line-in-class-body" />
+        <error column="63" line="89" source="standard:function-signature" />
+    </file>
+    <file name="app/src/main/java/al/ahgitdevelopment/municion/utils/EspressoIdlingResource.kt">
+        <error column="1" line="24" source="standard:no-empty-first-line-in-class-body" />
+    </file>
+    <file name="app/src/main/java/al/ahgitdevelopment/municion/utils/Event.kt">
+        <error column="1" line="7" source="standard:no-empty-first-line-in-class-body" />
+    </file>
+    <file name="app/src/main/java/al/ahgitdevelopment/municion/utils/Extensions.kt">
+        <error column="28" line="22" source="standard:multiline-expression-wrapping" />
+        <error column="28" line="22" source="standard:function-signature" />
+        <error column="1" line="27" source="standard:max-line-length" />
+        <error column="68" line="27" source="standard:parameter-list-wrapping" />
+        <error column="68" line="27" source="standard:function-signature" />
+        <error column="127" line="27" source="standard:wrapping" />
+        <error column="134" line="27" source="standard:parameter-list-wrapping" />
+        <error column="134" line="27" source="standard:function-signature" />
+        <error column="34" line="29" source="standard:multiline-expression-wrapping" />
+        <error column="1" line="50" source="standard:max-line-length" />
+        <error column="70" line="50" source="standard:parameter-list-wrapping" />
+        <error column="70" line="50" source="standard:function-signature" />
+        <error column="129" line="50" source="standard:wrapping" />
+        <error column="136" line="50" source="standard:parameter-list-wrapping" />
+        <error column="136" line="50" source="standard:function-signature" />
+        <error column="34" line="52" source="standard:multiline-expression-wrapping" />
+        <error column="1" line="73" source="standard:max-line-length" />
+        <error column="69" line="73" source="standard:parameter-list-wrapping" />
+        <error column="69" line="73" source="standard:function-signature" />
+        <error column="128" line="73" source="standard:wrapping" />
+        <error column="135" line="73" source="standard:parameter-list-wrapping" />
+        <error column="135" line="73" source="standard:function-signature" />
+        <error column="34" line="75" source="standard:multiline-expression-wrapping" />
+        <error column="1" line="96" source="standard:max-line-length" />
+        <error column="72" line="96" source="standard:parameter-list-wrapping" />
+        <error column="72" line="96" source="standard:function-signature" />
+        <error column="131" line="96" source="standard:wrapping" />
+        <error column="138" line="96" source="standard:parameter-list-wrapping" />
+        <error column="138" line="96" source="standard:function-signature" />
+        <error column="34" line="98" source="standard:multiline-expression-wrapping" />
+    </file>
+    <file name="app/src/main/java/al/ahgitdevelopment/municion/utils/SimpleCountingIdlingResource.kt">
+        <error column="1" line="18" source="standard:import-ordering" />
+        <error column="1" line="33" source="standard:no-empty-first-line-in-class-body" />
+    </file>
+    <file name="app/src/main/java/al/ahgitdevelopment/municion/utils/SingleLiveEvent.kt">
+        <error column="1" line="24" source="standard:no-empty-first-line-in-class-body" />
+        <error column="26" line="28" source="standard:function-signature" />
+        <error column="49" line="28" source="standard:function-signature" />
+        <error column="73" line="28" source="standard:function-signature" />
+        <error column="27" line="38" source="standard:parameter-list-wrapping" />
+        <error column="27" line="38" source="standard:function-signature" />
+        <error column="42" line="38" source="standard:parameter-list-wrapping" />
+        <error column="42" line="38" source="standard:function-signature" />
+    </file>
+    <file name="app/src/sharedTest/java/al/ahgitdevelopment/municion/FakeRepository.kt">
+        <error column="1" line="30" source="standard:no-empty-first-line-in-class-body" />
+        <error column="40" line="105" source="standard:function-signature" />
+        <error column="56" line="105" source="standard:function-signature" />
+        <error column="72" line="105" source="standard:function-signature" />
+        <error column="40" line="109" source="standard:function-signature" />
+        <error column="56" line="109" source="standard:function-signature" />
+        <error column="72" line="109" source="standard:function-signature" />
+        <error column="32" line="114" source="standard:multiline-expression-wrapping" />
+        <error column="28" line="122" source="standard:multiline-expression-wrapping" />
+        <error column="29" line="130" source="standard:multiline-expression-wrapping" />
+        <error column="29" line="140" source="standard:multiline-expression-wrapping" />
+    </file>
+    <file name="app/src/test/java/al/ahgitdevelopment/municion/MainCoroutineRule.kt">
+        <error column="1" line="38" source="standard:no-empty-first-line-in-class-body" />
+    </file>
+    <file name="app/src/test/java/al/ahgitdevelopment/municion/ext/Extensions.kt">
+        <error column="20" line="15" source="standard:multiline-expression-wrapping" />
+    </file>
+    <file name="app/src/test/java/al/ahgitdevelopment/municion/ui/competitions/CompetitionsViewModelTest.kt">
+        <error column="1" line="25" source="standard:no-empty-first-line-in-class-body" />
+        <error column="30" line="131" source="standard:property-naming" />
+    </file>
+    <file name="app/src/test/java/al/ahgitdevelopment/municion/ui/licenses/LicensesViewModelTest.kt">
+        <error column="1" line="28" source="standard:no-empty-first-line-in-class-body" />
+        <error column="43" line="60" source="standard:multiline-expression-wrapping" />
+        <error column="43" line="60" source="standard:function-signature" />
+        <error column="30" line="127" source="standard:property-naming" />
+    </file>
+    <file name="app/src/test/java/al/ahgitdevelopment/municion/ui/login/LoginViewModelTest.kt">
+        <error column="1" line="3" source="standard:import-ordering" />
+        <error column="1" line="24" source="standard:no-empty-first-line-in-class-body" />
+        <error column="60" line="110" source="standard:trailing-comma-on-call-site" />
+        <error column="60" line="151" source="standard:trailing-comma-on-call-site" />
+        <error column="60" line="166" source="standard:trailing-comma-on-call-site" />
+        <error column="60" line="170" source="standard:trailing-comma-on-call-site" />
+    </file>
+    <file name="app/src/test/java/al/ahgitdevelopment/municion/ui/properties/PropertiesViewModelTest.kt">
+        <error column="30" line="112" source="standard:property-naming" />
+    </file>
+    <file name="app/src/test/java/al/ahgitdevelopment/municion/ui/purchases/PurchasesViewModelTest.kt">
+        <error column="1" line="24" source="standard:no-empty-first-line-in-class-body" />
+        <error column="30" line="129" source="standard:property-naming" />
+    </file>
+</baseline>

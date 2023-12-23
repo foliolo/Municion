@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    >
+
+    <data>
+
+        <variable
+            name="view"
+            type="android.view.View"
+            />
+
+        <variable
+            name="viewModel"
+            type="al.ahgitdevelopment.municion.ui.login.LoginViewModel"
+            />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".ui.login.LoginPasswordFragment"
+        >
+
+        <LinearLayout
+            android:id="@+id/login_password_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingLeft="@dimen/activity_horizontal_margin"
+            android:paddingTop="@dimen/activity_vertical_margin"
+            android:paddingRight="@dimen/activity_horizontal_margin"
+            android:paddingBottom="@dimen/activity_vertical_margin"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            >
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/login_password_1"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                >
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/login_text_info"
+                    android:inputType="numberPassword"
+                    android:maxLength="@integer/password_max_length"
+                    android:onTextChanged="@{viewModel::onPassword1TextChanged}"
+                    />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/login_password_2"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:visibility="@{viewModel.userState == viewModel.userState.NEW_USER ? view.VISIBLE : view.GONE}"
+                >
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ems="15"
+                    android:hint="@string/lbl2_insert_password"
+                    android:inputType="numberPassword"
+                    android:maxLength="@integer/password_max_length"
+                    android:onTextChanged="@{viewModel::onPassword2TextChanged}"
+                    />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <ImageView
+                android:id="@+id/login_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:clickable="true"
+                android:contentDescription="@string/description_login_button"
+                android:elevation="8dp"
+                android:focusable="true"
+                android:onClick="@{viewModel::onButtonClick}"
+                android:visibility="@{viewModel.passwordState == viewModel.passwordState.VALID ? view.VISIBLE : view.GONE}"
+                app:srcCompat="@drawable/ic_next"
+                />
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/login_version_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignWithParentIfMissing="true"
+            android:layout_alignParentEnd="true"
+            android:layout_gravity="end"
+            android:layout_margin="12dp"
+            android:alpha="0.5"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.03"
+            app:layout_constraintStart_toStartOf="parent"
+            />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>
+
+    <!--
+        Tamaño (an x al)				Descripción							Disponibilidad					Constante de AdSize
+        320 x 50						Banner estándar						Teléfonos y tablets				BANNER
+        320 x 100						Banner grande						Teléfonos y tablets				LARGE_BANNER
+        300 x 250						Rectángulo mediano del IAB			Teléfonos y tablets				MEDIUM_RECTANGLE
+        468 x 60						Banner de tamaño completo del IAB	Tablets							FULL_BANNER
+        728 x 90						Tablas de posiciones del IAB		Tablets							LEADERBOARD
+        Ancho de pantalla x 32|50|90	Banner inteligente					Teléfonos y tablets				SMART_BANNER
+    -->

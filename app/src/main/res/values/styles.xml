@@ -1,32 +1,39 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
         <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorPrimaryDark</item>
-        <item name="colorPrimaryDark">@color/colorPrimary</item>
-        <item name="colorAccent">@color/colorAccent</item>
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
-        <item name="windowActionModeOverlay">true</item>
+        <item name="colorPrimary">@color/primaryColor</item>
+        <item name="colorPrimaryDark">@color/primaryDarkColor</item>
+        <item name="colorAccent">@color/secondaryColor</item>
+        <item name="android:textColorSecondary">@color/secondaryTextColor</item>
+        <item name="android:textColor">@color/secondaryTextColor</item>
     </style>
 
-    <!--AppBarLayout-->
-    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
-        <item name="colorPrimary">@color/colorPrimaryDark</item>
-        <item name="colorPrimaryDark">@color/colorPrimary</item>
-        <item name="colorAccent">@color/colorAccent</item>
+    <style name="CardViewItem" parent="CardView">
+        <item name="android:layout_margin">@dimen/cardview_margin</item>
+        <item name="android:backgroundTint">?attr/colorAccent</item>
+        <item name="cardCornerRadius">4dp</item>
     </style>
 
-    <!--Toolbar-->
-    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light">
-        <item name="colorPrimary">@color/colorPrimaryDark</item>
-        <item name="colorPrimaryDark">@color/colorPrimary</item>
-        <item name="colorAccent">@color/colorAccent</item>
+    <style name="FloatingActionButton" parent="Widget.MaterialComponents.FloatingActionButton">
+        <item name="android:layout_alignWithParentIfMissing">true</item>
+        <item name="android:layout_gravity">bottom|end</item>
+        <item name="fabSize">normal</item>
+        <item name="android:layout_margin">@dimen/fab_margin</item>
+        <item name="backgroundTint">@color/secondaryColor</item>
     </style>
 
-    <style name="letter_black">
-        <item name="android:textColor">@android:color/black</item>
+    <style name="CardviewItemLabelText">
+        <item name="android:textColor">@color/secondaryTextColor</item>
+    </style>
+
+    <style name="CardviewItemText" parent="CardviewItemLabelText">
+        <item name="android:textStyle">normal|bold</item>
+    </style>
+
+    <style name="TutorialContainer">
+        <item name="android:background">@color/white</item>
     </style>
 
 </resources>

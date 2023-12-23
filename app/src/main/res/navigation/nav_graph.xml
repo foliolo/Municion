@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@id/loginPasswordFragment">
+
+    <fragment
+        android:id="@+id/loginPasswordFragment"
+        android:name="al.ahgitdevelopment.municion.ui.login.LoginPasswordFragment"
+        android:label="fragment_login"
+        tools:layout="@layout/fragment_login" />
+
+    <fragment
+        android:id="@+id/tutorialViewPagerFragment"
+        android:name="al.ahgitdevelopment.municion.ui.tutorial.TutorialViewPagerFragment"
+        android:label="TutorialViewPagerFragment"
+        tools:layout="@layout/fragment_tutorial_viewpager">
+        <action
+            android:id="@+id/action_tutorialViewPagerFragment_to_licensesFragment"
+            app:destination="@id/licensesFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/propertiesFragment"
+        android:name="al.ahgitdevelopment.municion.ui.properties.PropertiesFragment"
+        android:label="properties_fragment"
+        tools:layout="@layout/properties_fragment">
+        <action
+            android:id="@+id/action_propertiesFragment_to_propertyFormFragment"
+            app:destination="@id/propertyFormFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/purchasesFragment"
+        android:name="al.ahgitdevelopment.municion.ui.purchases.PurchasesFragment"
+        android:label="purchases_fragment"
+        tools:layout="@layout/purchases_fragment">
+        <action
+            android:id="@+id/action_purchasesFragment_to_purchaseFormFragment"
+            app:destination="@id/purchaseFormFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/licensesFragment"
+        android:name="al.ahgitdevelopment.municion.ui.licenses.LicensesFragment"
+        android:label="licenses_fragment"
+        tools:layout="@layout/licenses_fragment">
+        <action
+            android:id="@+id/action_licensesFragment_to_licenseFormFragment"
+            app:destination="@id/licenseFormFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/competitionsFragment"
+        android:name="al.ahgitdevelopment.municion.ui.competitions.CompetitionsFragment"
+        android:label="competitions_fragment"
+        tools:layout="@layout/competitions_fragment">
+        <action
+            android:id="@+id/action_competitionsFragment_to_competitionFormFragment"
+            app:destination="@id/competitionFormFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/licenseFormFragment"
+        android:name="al.ahgitdevelopment.municion.ui.licenses.LicenseFormFragment"
+        android:label="LicenseFormFragment"
+        tools:layout="@layout/fragment_form_license">
+        <action
+            android:id="@+id/action_licenseFormFragment_to_licensesFragment"
+            app:destination="@id/licensesFragment"
+            app:launchSingleTop="true" />
+    </fragment>
+    <fragment
+        android:id="@+id/propertyFormFragment"
+        android:name="al.ahgitdevelopment.municion.ui.properties.PropertyFormFragment"
+        android:label="PropertyFormFragment"
+        tools:layout="@layout/fragment_form_property">
+        <action
+            android:id="@+id/action_propertyFormFragment_to_propertiesFragment"
+            app:destination="@id/propertiesFragment"
+            app:launchSingleTop="true" />
+    </fragment>
+    <fragment
+        android:id="@+id/purchaseFormFragment"
+        android:name="al.ahgitdevelopment.municion.ui.purchases.PurchaseFormFragment"
+        android:label="PurchaseFormFragment"
+        tools:layout="@layout/fragment_form_purchase">
+        <action
+            android:id="@+id/action_purchaseFormFragment_to_purchasesFragment"
+            app:destination="@id/purchasesFragment"
+            app:launchSingleTop="true" />
+    </fragment>
+    <fragment
+        android:id="@+id/competitionFormFragment"
+        android:name="al.ahgitdevelopment.municion.ui.competitions.CompetitionFormFragment"
+        android:label="CompetitionFormFragment"
+        tools:layout="@layout/fragment_form_competition">
+        <action
+            android:id="@+id/action_competitionFormFragment_to_competitionsFragment"
+            app:destination="@id/competitionsFragment"
+            app:launchSingleTop="true" />
+    </fragment>
+
+    <dialog
+        android:id="@+id/supportDeveloperDialogFragment"
+        android:name="al.ahgitdevelopment.municion.dialogs.SupportDeveloperDialogFragment"
+        android:label="SupportDeveloperDialogFragment" />
+
+</navigation>

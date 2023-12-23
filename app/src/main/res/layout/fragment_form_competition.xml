@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".ui.properties.PropertyFormFragment"
+    >
+
+    <data>
+
+        <variable
+            name="viewModel"
+            type="al.ahgitdevelopment.municion.ui.competitions.CompetitionFormViewModel"
+            />
+    </data>
+
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        >
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@+id/login_adView"
+            >
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="@dimen/form_layout_margin"
+                >
+
+                <!--DESCRIPTION-->
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/form_competition_description"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    >
+
+                    <EditText
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/form_competition_lbl_description"
+                        android:inputType="text|textCapSentences"
+                        />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <!--DATE-->
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/form_competition_date"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:focusableInTouchMode="true"
+                    >
+
+                    <EditText
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:focusableInTouchMode="false"
+                        android:hint="@string/form_purchase_date"
+                        android:inputType="none"
+                        android:onClick="@{viewModel::selectDate}"
+                        />
+                </com.google.android.material.textfield.TextInputLayout>
+
+
+                <!--RANKING-->
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/form_competition_ranking"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    >
+
+                    <EditText
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/form_competition_lbl_ranking"
+                        android:inputType="number"
+                        android:maxLength="@integer/max_num_abonado_guia"
+                        />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <!--POINTS-->
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/form_competition_points"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    >
+
+                    <EditText
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/form_competition_lbl_points"
+                        android:inputType="number"
+                        />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <!--PLACE-->
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/form_competition_place"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    >
+
+                    <EditText
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/form_competition_lbl_place"
+                        android:inputType="text"
+                        />
+                </com.google.android.material.textfield.TextInputLayout>
+
+            </LinearLayout>
+
+        </ScrollView>
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/form_purchase_fab_save"
+            style="@style/FloatingActionButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="@{viewModel::fabSaveCompetitionClicked}"
+            app:srcCompat="@drawable/ic_save"
+            />
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+</layout>

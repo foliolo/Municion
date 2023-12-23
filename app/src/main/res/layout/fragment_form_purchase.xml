@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".ui.properties.PropertyFormFragment"
+    >
+
+    <data>
+
+        <variable
+            name="viewModel"
+            type="al.ahgitdevelopment.municion.ui.purchases.PurchaseFormViewModel"
+            />
+    </data>
+
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        >
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@+id/login_adView"
+            >
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="@dimen/form_layout_margin"
+                >
+
+                <!--BRAND-->
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/form_purchase_brand"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    >
+
+                    <EditText
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/form_purchase_brand"
+                        android:imeOptions="actionNext"
+                        android:inputType="text|textCapSentences"
+                        />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <!--STORE-->
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/form_purchase_store"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    >
+
+                    <EditText
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/form_purchase_store"
+                        android:imeOptions="actionNext"
+                        android:inputType="text|textCapSentences"
+                        />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <!--BORE 1-->
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/form_purchase_bore"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    >
+
+                    <EditText
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/form_purchase_bore"
+                        android:imeOptions="actionNext"
+                        android:inputType="textCapSentences"
+                        />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <!--UNITS-->
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/form_purchase_units"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    >
+
+                    <EditText
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/form_purchase_units"
+                        android:imeOptions="actionNext"
+                        android:inputType="number"
+                        android:maxLength="@integer/max_unidades_compra_length"
+                        />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <!--PRICE-->
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/form_purchase_price"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    >
+
+                    <EditText
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/form_purchase_price"
+                        android:imeOptions="actionNext"
+                        android:inputType="numberDecimal"
+                        android:maxLength="@integer/max_unidades_precio_length"
+                        />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <!--DATE-->
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/form_purchase_date"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/form_fields_separation"
+                    >
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:focusableInTouchMode="false"
+                        android:hint="@string/form_purchase_date"
+                        android:inputType="none"
+                        android:onClick="@{viewModel::selectDate}"
+                        />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <!--WEIGHT-->
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/form_purchase_weight"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    >
+
+                    <EditText
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/form_purchase_weight"
+                        android:imeOptions="actionNext"
+                        android:inputType="numberDecimal"
+                        android:maxLength="@integer/max_peso_municion_compra"
+                        />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <!--RATING-->
+                <RatingBar
+                    android:id="@+id/form_purchase_rating"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_margin="16dp"
+                    />
+
+            </LinearLayout>
+
+        </ScrollView>
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/form_purchase_fab_save"
+            style="@style/FloatingActionButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="@{viewModel::fabSavePurchaseClicked}"
+            app:srcCompat="@drawable/ic_save"
+            />
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+</layout>
