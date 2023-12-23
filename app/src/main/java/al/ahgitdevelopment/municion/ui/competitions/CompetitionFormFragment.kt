@@ -29,9 +29,8 @@ class CompetitionFormFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
-
         binding = FragmentFormCompetitionBinding.inflate(layoutInflater, container, false)
         binding.viewModel = this.viewModel
         binding.lifecycleOwner = viewLifecycleOwner
@@ -67,7 +66,7 @@ class CompetitionFormFragment : Fragment() {
 
         viewModel.closeForm.observe(viewLifecycleOwner) {
             findNavController().navigate(
-                CompetitionFormFragmentDirections.actionCompetitionFormFragmentToCompetitionsFragment()
+                CompetitionFormFragmentDirections.actionCompetitionFormFragmentToCompetitionsFragment(),
             )
         }
     }

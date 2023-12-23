@@ -13,7 +13,6 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
-import kotlinx.coroutines.NonDisposableHandle.parent
 
 class PropertyAdapter(private val listener: PropertyAdapterListener) :
     ListAdapter<Property, PropertyAdapter.PropertyViewHolder>(DIFF_CALLBACK) {
@@ -60,7 +59,7 @@ class PropertyAdapter(private val listener: PropertyAdapterListener) :
             ContextCompat.getDrawable(view.context, R.drawable.ic_pistola),
             ContextCompat.getDrawable(view.context, R.drawable.ic_revolver),
             ContextCompat.getDrawable(view.context, R.drawable.ic_rifle),
-            ContextCompat.getDrawable(view.context, R.drawable.ic_shotgun)
+            ContextCompat.getDrawable(view.context, R.drawable.ic_shotgun),
         ).random()?.current
     }
 

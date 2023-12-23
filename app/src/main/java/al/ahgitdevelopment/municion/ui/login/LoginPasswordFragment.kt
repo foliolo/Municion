@@ -54,9 +54,8 @@ class LoginPasswordFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
-
         binding = FragmentLoginBinding.inflate(inflater, container, false)
         binding.viewModel = this.viewModel
         binding.lifecycleOwner = viewLifecycleOwner
@@ -95,27 +94,6 @@ class LoginPasswordFragment : Fragment() {
         viewModel.onCreateView()
 
         loadAppVersion()
-
-        /* Password 1 edittext listeners
-        login_password_1.editText?.setOnEditorActionListener { v, actionId, event ->
-            when (actionId) {
-                IME_ACTION_DONE -> {
-                    viewModel.onButtonClick(null)
-                    true
-                }
-                else -> false
-            }
-        }
-
-        login_password_1.editText?.setOnKeyListener { v, keyCode, event ->
-            if (keyCode == KeyEvent.KEYCODE_ENTER && event.action == KeyEvent.ACTION_DOWN) {
-                viewModel.onButtonClick(null)
-                true
-            } else {
-                false
-            }
-        }
-        */
     }
 
     override fun onResume() {
@@ -125,7 +103,6 @@ class LoginPasswordFragment : Fragment() {
         if (BuildConfig.DEBUG) {
             binding.loginButton.visibility = View.VISIBLE
             binding.loginPassword1.editText?.setText(BuildConfig.PASSWORD)
-            // login_button.performClick()
         }
     }
 
@@ -156,7 +133,7 @@ class LoginPasswordFragment : Fragment() {
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<String>,
-        grantResults: IntArray
+        grantResults: IntArray,
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (grantResults.isNotEmpty()) {
@@ -220,7 +197,7 @@ class LoginPasswordFragment : Fragment() {
         val providers = arrayListOf(
             AuthUI.IdpConfig.GoogleBuilder().setSignInOptions(GoogleSignInOptions.Builder().build()).build(),
             // AuthUI.IdpConfig.AnonymousBuilder().build(),
-            AuthUI.IdpConfig.EmailBuilder().build()
+            AuthUI.IdpConfig.EmailBuilder().build(),
         )
 
         startActivityForResult(
@@ -230,7 +207,7 @@ class LoginPasswordFragment : Fragment() {
                 .setTheme(R.style.AppTheme)
                 .setAvailableProviders(providers)
                 .build(),
-            RC_SIGN_IN
+            RC_SIGN_IN,
         )
 
         // FIXME: This fix the obsolete startActivityForResult but has to be called before the fragment is created.

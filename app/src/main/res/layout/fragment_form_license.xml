@@ -128,8 +128,8 @@
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/form_license_fab_save"
-            android:layout_width="wrap_content"
             style="@style/FloatingActionButton"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:onClick="@{viewModel::fabSaveLicenseClicked}"
             app:srcCompat="@drawable/ic_save"

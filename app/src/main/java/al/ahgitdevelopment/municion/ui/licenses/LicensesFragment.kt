@@ -32,7 +32,7 @@ class LicensesFragment @Inject constructor() : BaseFragment(), RecyclerInterface
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
         super.onCreateView(inflater, container, savedInstanceState)
 
@@ -48,7 +48,7 @@ class LicensesFragment @Inject constructor() : BaseFragment(), RecyclerInterface
 
         viewModel.navigateToForm.observe(viewLifecycleOwner) {
             findNavController().navigate(
-                LicensesFragmentDirections.actionLicensesFragmentToLicenseFormFragment()
+                LicensesFragmentDirections.actionLicensesFragmentToLicenseFormFragment(),
             )
         }
 
@@ -57,7 +57,7 @@ class LicensesFragment @Inject constructor() : BaseFragment(), RecyclerInterface
                 Toast.makeText(
                     requireContext(),
                     requireContext().getString(message),
-                    Toast.LENGTH_LONG
+                    Toast.LENGTH_LONG,
                 ).show()
             }
         }
@@ -67,7 +67,7 @@ class LicensesFragment @Inject constructor() : BaseFragment(), RecyclerInterface
                 Toast.makeText(
                     requireContext(),
                     exception.message,
-                    Toast.LENGTH_LONG
+                    Toast.LENGTH_LONG,
                 ).show()
             }
         }
@@ -90,17 +90,19 @@ class LicensesFragment @Inject constructor() : BaseFragment(), RecyclerInterface
                 layoutManager = LinearLayoutManager(requireContext())
 
                 ItemTouchHelper(
-                    DeleteItemOnSwipe(object : DeleteItemOnSwipe.DeleteCallback {
-                        override fun deleteOnSwipe(viewHolder: RecyclerView.ViewHolder) {
-                            licensesAdapter.currentList[viewHolder.adapterPosition]?.let {
-                                viewModel.deleteLicense(it.id)
+                    DeleteItemOnSwipe(
+                        object : DeleteItemOnSwipe.DeleteCallback {
+                            override fun deleteOnSwipe(viewHolder: RecyclerView.ViewHolder) {
+                                licensesAdapter.currentList[viewHolder.adapterPosition]?.let {
+                                    viewModel.deleteLicense(it.id)
+                                }
+
+                                undoDelete(viewHolder)
+
+                                adapter?.notifyDataSetChanged()
                             }
-
-                            undoDelete(viewHolder)
-
-                            adapter?.notifyDataSetChanged()
-                        }
-                    })
+                        },
+                    ),
                 ).attachToRecyclerView(this)
             }
 
@@ -140,7 +142,7 @@ class LicensesFragment @Inject constructor() : BaseFragment(), RecyclerInterface
             Snackbar.make(
                 binding.licensesLayout,
                 R.string.snackbar_undo_delete_message,
-                Snackbar.LENGTH_LONG
+                Snackbar.LENGTH_LONG,
             ).setAction(R.string.snackbar_undo_delete) {
                 viewModel.addLicense(license)
                 this?.adapter?.notifyDataSetChanged()

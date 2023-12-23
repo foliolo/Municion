@@ -2,7 +2,7 @@ name: Android Build
 
 on:
   release:
-    types: [published]
+    types: [ published ]
   workflow_dispatch:
 
 jobs:
@@ -45,9 +45,9 @@ jobs:
         with:
           releaseDirectory: app/build/outputs/bundle/globalRelease
           signingKeyBase64: ${{ secrets.SIGNING_KEY_B64 }}
-          alias:  ${{ secrets.SIGNING_ALIAS }}
+          alias: ${{ secrets.SIGNING_ALIAS }}
           keyStorePassword: ${{ secrets.SIGNING_KEY_STORE_PASSWORD }}
-          keyPassword:  ${{ secrets.SIGNING_KEY_PASSWORD }}
+          keyPassword: ${{ secrets.SIGNING_KEY_PASSWORD }}
 
       # https://github.com/actions/upload-artifact
       - name: Upload APK

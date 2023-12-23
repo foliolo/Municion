@@ -2,7 +2,6 @@ package al.ahgitdevelopment.municion.ui.tutorial
 
 import al.ahgitdevelopment.municion.NavigationActivity
 import al.ahgitdevelopment.municion.R
-import al.ahgitdevelopment.municion.databinding.FragmentTutorialScreenshotsBinding
 import al.ahgitdevelopment.municion.databinding.FragmentTutorialViewpagerBinding
 import android.content.Context
 import android.os.Bundle
@@ -10,7 +9,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
-import android.widget.Toolbar
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
@@ -25,16 +23,15 @@ import java.io.File
 @AndroidEntryPoint
 class TutorialViewPagerFragment : Fragment() {
 
-    private lateinit var binding : FragmentTutorialViewpagerBinding
+    private lateinit var binding: FragmentTutorialViewpagerBinding
     private val viewModel: TutorialViewModel by viewModels()
 
     @OptIn(ExperimentalCoroutinesApi::class)
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
-
         val uiOptions = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or
             View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY or
             View.SYSTEM_UI_FLAG_FULLSCREEN
@@ -58,8 +55,8 @@ class TutorialViewPagerFragment : Fragment() {
 
         viewModel.progressBar.observe(viewLifecycleOwner) {
             when (it) {
-                true ->  binding.screenshotProgressBar.show()
-                false ->  binding.screenshotProgressBar.hide()
+                true -> binding.screenshotProgressBar.show()
+                false -> binding.screenshotProgressBar.hide()
             }
         }
     }
@@ -72,7 +69,7 @@ class TutorialViewPagerFragment : Fragment() {
 
         binding.tutorialScreenshotButton.setOnClickListener {
             findNavController().navigate(
-                TutorialViewPagerFragmentDirections.actionTutorialViewPagerFragmentToLicensesFragment()
+                TutorialViewPagerFragmentDirections.actionTutorialViewPagerFragmentToLicensesFragment(),
             )
         }
 
@@ -85,7 +82,7 @@ class TutorialViewPagerFragment : Fragment() {
 
     class SectionsPagerAdapter(
         private val images: List<File>,
-        fragmentActivity: FragmentActivity
+        fragmentActivity: FragmentActivity,
     ) : FragmentStateAdapter(fragmentActivity) {
 
         override fun createFragment(position: Int): Fragment =

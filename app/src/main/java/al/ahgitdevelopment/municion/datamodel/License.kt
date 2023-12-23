@@ -31,7 +31,7 @@ data class License(
 
     @ColumnInfo(name = KEY_LICENSE_DATE_EXPIRY) var expiryDate: String,
 
-    @ColumnInfo(name = KEY_LICENSE_INSURANCE_NUMBER) var insuranceNumber: String
+    @ColumnInfo(name = KEY_LICENSE_INSURANCE_NUMBER) var insuranceNumber: String,
 ) {
     constructor() : this(
         id = "",
@@ -39,6 +39,6 @@ data class License(
         licenseNumber = "",
         issueDate = "",
         expiryDate = "",
-        insuranceNumber = ""
+        insuranceNumber = "",
     )
 }

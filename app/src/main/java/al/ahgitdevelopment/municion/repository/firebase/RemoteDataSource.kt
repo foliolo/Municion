@@ -25,7 +25,7 @@ import javax.inject.Inject
 @ExperimentalCoroutinesApi
 class RemoteDataSource @Inject internal constructor(
     private val database: FirebaseDatabase,
-    private val auth: FirebaseAuth
+    private val auth: FirebaseAuth,
 ) : DataSourceContract {
 
     override var licenses: Flow<List<License>> =
@@ -171,25 +171,29 @@ class RemoteDataSource @Inject internal constructor(
 }
 
 private fun Query.removeItem() = this.limitToFirst(1)
-    .addListenerForSingleValueEvent(object : ValueEventListener {
-        override fun onDataChange(snapshot: DataSnapshot) {
-            Timber.d("Item deleted")
-            snapshot.children.forEach { it.ref.removeValue() }
-        }
+    .addListenerForSingleValueEvent(
+        object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                Timber.d("Item deleted")
+                snapshot.children.forEach { it.ref.removeValue() }
+            }
 
-        override fun onCancelled(databaseError: DatabaseError) {
-            Timber.e(databaseError.toException(), "Failed deleting item")
-        }
-    })
+            override fun onCancelled(databaseError: DatabaseError) {
+                Timber.e(databaseError.toException(), "Failed deleting item")
+            }
+        },
+    )
 
 private fun Query.updateImage(imageUrl: String) = this.limitToFirst(1)
-    .addListenerForSingleValueEvent(object : ValueEventListener {
-        override fun onDataChange(snapshot: DataSnapshot) {
-            Timber.d("Update image")
-            snapshot.children.forEach { it.ref.child(KEY_IMAGE).setValue(imageUrl) }
-        }
+    .addListenerForSingleValueEvent(
+        object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                Timber.d("Update image")
+                snapshot.children.forEach { it.ref.child(KEY_IMAGE).setValue(imageUrl) }
+            }
 
-        override fun onCancelled(databaseError: DatabaseError) {
-            Timber.e(databaseError.toException(), "Failed updating item image")
-        }
-    })
+            override fun onCancelled(databaseError: DatabaseError) {
+                Timber.e(databaseError.toException(), "Failed updating item image")
+            }
+        },
+    )
