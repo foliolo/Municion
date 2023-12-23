@@ -43,8 +43,6 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
-import com.google.android.gms.ads.AdView;
-import com.google.android.gms.ads.InterstitialAd;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -53,7 +51,6 @@ import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.crash.FirebaseCrash;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -82,9 +79,6 @@ import al.ahgitdevelopment.municion.forms.CompraFormActivity;
 import al.ahgitdevelopment.municion.forms.GuiaFormActivity;
 import al.ahgitdevelopment.municion.forms.LicenciaFormActivity;
 import al.ahgitdevelopment.municion.forms.TiradaFormActivity;
-
-import static al.ahgitdevelopment.municion.R.id.container;
-import static al.ahgitdevelopment.municion.Utils.PREFS_SHOW_ADS;
 
 public class FragmentMainActivity extends AppCompatActivity implements FirebaseAuth.AuthStateListener {
 
@@ -126,8 +120,6 @@ public class FragmentMainActivity extends AppCompatActivity implements FirebaseA
     private TabLayout tabs;
     private ViewPager mViewPager;
     private SharedPreferences prefs;
-    private AdView mAdView;
-    private InterstitialAd mInterstitialAd;
     private FloatingActionButton fab;
 
     private DatabaseReference userRef;
@@ -160,23 +152,20 @@ public class FragmentMainActivity extends AppCompatActivity implements FirebaseA
             @Override
             public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
                 // Respond to clicks on the actions in the CAB
-                switch (item.getItemId()) {
-                    case R.id.item_menu_modify:
-                        openForm((int) mActionMode.getTag());
-                        mode.finish(); // Action picked, so close the CAB
-                        break;
-                    case R.id.item_menu_delete:
-                        try {
-                            deleteSelectedItems((int) mActionMode.getTag());
-                            showTextEmptyList();
-                        } catch (Exception ex) {
-                            FirebaseCrash.logcat(Log.ERROR, TAG, "Error al borrar elementos de la lista en el método onActionItemClicked()");
-                            FirebaseCrash.report(ex);
-                        }
-                        mode.finish(); // Action picked, so close the CAB
-                        break;
-                    default:
-                        return false;
+                int itemId = item.getItemId();
+                if (itemId == R.id.item_menu_modify) {
+                    openForm((int) mActionMode.getTag());
+                    mode.finish(); // Action picked, so close the CAB
+                } else if (itemId == R.id.item_menu_delete) {
+                    try {
+                        deleteSelectedItems((int) mActionMode.getTag());
+                        showTextEmptyList();
+                    } catch (Exception ex) {
+                        ((BaseApplication) getApplicationContext()).crashlytics.recordException(ex);
+                    }
+                    mode.finish(); // Action picked, so close the CAB
+                } else {
+                    return false;
                 }
                 return true;
             }
@@ -212,7 +201,7 @@ public class FragmentMainActivity extends AppCompatActivity implements FirebaseA
         tabs = findViewById(R.id.tabs);
 
         // Set up the ViewPager with the sections adapter.
-        mViewPager = findViewById(container);
+        mViewPager = findViewById(R.id.container);
         if (mViewPager != null && mSectionsPagerAdapter != null)
             mViewPager.setAdapter(mSectionsPagerAdapter);
         mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
@@ -235,9 +224,6 @@ public class FragmentMainActivity extends AppCompatActivity implements FirebaseA
             }
         });
         mViewPager.setCurrentItem(2);
-
-        mInterstitialAd = new InterstitialAd(this);
-        mInterstitialAd.setAdUnitId(getString(R.string.banner_login_intersticial_id));
 
         TabLayout tabLayout = findViewById(R.id.tabs);
         if (mViewPager != null)
@@ -311,23 +297,6 @@ public class FragmentMainActivity extends AppCompatActivity implements FirebaseA
         updateGastoMunicion();
         saveUserInFirebase();
         mAuth.addAuthStateListener(this);
-
-        // Gestion de anuncios
-        mAdView = findViewById(R.id.adView);
-        prefs = getSharedPreferences("Preferences", Context.MODE_PRIVATE);
-        if (prefs.getBoolean(PREFS_SHOW_ADS, true)) {
-            mAdView.setVisibility(View.VISIBLE);
-            mAdView.setEnabled(true);
-            mAdView.loadAd(Utils.getAdRequest(mAdView));
-            mInterstitialAd.loadAd(Utils.getAdRequest(mAdView));
-
-            if (mInterstitialAd.isLoaded()) {
-                mInterstitialAd.show();
-            }
-        } else {
-            mAdView.setVisibility(View.GONE);
-            mAdView.setEnabled(false);
-        }
     }
 
     @Override
@@ -503,8 +472,7 @@ public class FragmentMainActivity extends AppCompatActivity implements FirebaseA
             dbSqlHelper.saveListLicencias(null, licencias);
             dbSqlHelper.saveListTiradas(null, tiradas);
         } catch (Exception ex) {
-            FirebaseCrash.report(ex);
-            FirebaseCrash.logcat(Log.ERROR, TAG, "NPE caught");
+            ((BaseApplication) getApplicationContext()).crashlytics.recordException(ex);
         }
     }
 
@@ -638,25 +606,19 @@ public class FragmentMainActivity extends AppCompatActivity implements FirebaseA
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        switch (id) {
-            case R.id.action_settings:
-                Intent intent = new Intent(FragmentMainActivity.this, SettingsFragment.class);
-                startActivity(intent);
-                break;
-            case R.id.tabla_tiradas:
-                try {
-                    Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.image_table);
-                    Utils.showImage(this, bitmap, "table");
-                } catch (Exception ex) {
-                    Log.e(TAG, "Error mostrando la tabla de tiradas");
-                    FirebaseCrash.logcat(Log.ERROR, TAG, "Error mostrando la tabla de tiradas");
-                    FirebaseCrash.report(ex);
-                }
-
-                break;
-
-            default:
-                return false;
+        if (id == R.id.action_settings) {
+            Intent intent = new Intent(FragmentMainActivity.this, SettingsFragment.class);
+            startActivity(intent);
+        } else if (id == R.id.tabla_tiradas) {
+            try {
+                Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.image_table);
+                Utils.showImage(this, bitmap, "table");
+            } catch (Exception ex) {
+                Log.e(TAG, "Error mostrando la tabla de tiradas");
+                ((BaseApplication) this.getApplicationContext()).crashlytics.recordException(ex);
+            }
+        } else {
+            return false;
         }
 
         return super.onOptionsItemSelected(item);
@@ -674,6 +636,7 @@ public class FragmentMainActivity extends AppCompatActivity implements FirebaseA
 //        Trace myTrace = FirebasePerformance.getInstance().newTrace("onActivityResult_FragmentMainActivity");
 //        myTrace.start();
 
+        super.onActivityResult(requestCode, resultCode, data);
         Bitmap localImageBitmap = null;
         Bitmap firebaseImageBitmap = null;
         // Check which request we're responding to
@@ -744,8 +707,7 @@ public class FragmentMainActivity extends AppCompatActivity implements FirebaseA
             dbSqlHelper.saveListLicencias(null, licencias);
             dbSqlHelper.saveListTiradas(null, tiradas);
         } catch (Exception ex) {
-            FirebaseCrash.report(ex);
-            FirebaseCrash.logcat(Log.ERROR, TAG, "NPE caught");
+            ((BaseApplication) getApplicationContext()).crashlytics.recordException(ex);
         }
 
         showTextEmptyList();
@@ -769,11 +731,10 @@ public class FragmentMainActivity extends AppCompatActivity implements FirebaseA
                     }
                 });
             } else {
-                FirebaseCrash.logcat(Log.WARN, TAG, "Fallo al  guardar las listas, usuario a null");
+                ((BaseApplication) getApplicationContext()).crashlytics.log("Fallo al  guardar las listas, usuario a null");
             }
         } catch (Exception ex) {
-            FirebaseCrash.logcat(Log.ERROR, TAG, "Fallo guardando las listas");
-            FirebaseCrash.report(ex);
+            ((BaseApplication) getApplicationContext()).crashlytics.recordException(ex);
         }
     }
 
@@ -960,8 +921,7 @@ public class FragmentMainActivity extends AppCompatActivity implements FirebaseA
             }
 
         } catch (Exception ex) {
-            FirebaseCrash.logcat(Log.ERROR, TAG, "Fallo al iniciar la base de datos de firebase.");
-            FirebaseCrash.report(ex);
+            ((BaseApplication) getApplicationContext()).crashlytics.recordException(ex);
         }
     }
 
@@ -977,7 +937,6 @@ public class FragmentMainActivity extends AppCompatActivity implements FirebaseA
                 userRef = FirebaseDatabase.getInstance().getReference().child("users").child(user.getUid());
                 userRef.child("email").setValue(user.getEmail());
                 userRef.child("pass").setValue(prefs.getString("password", ""));
-                userRef.child("settings").child("ads").setValue(prefs.getBoolean(PREFS_SHOW_ADS, true));
 //                userRef.child("settings").child("ads_admin").setValue(prefs.getBoolean(PREFS_SHOW_ADS, true));
 
 
@@ -1010,8 +969,7 @@ public class FragmentMainActivity extends AppCompatActivity implements FirebaseA
                 Log.w(TAG, "onAuthStateChanged:signed_out");
             }
         } catch (Exception ex) {
-            FirebaseCrash.logcat(Log.ERROR, TAG, "Fallo al obtener el usuario para la inserccion en la BBDD de Firebase.");
-            FirebaseCrash.report(ex);
+            ((BaseApplication) getApplicationContext()).crashlytics.recordException(ex);
         }
     }
 
@@ -1113,8 +1071,7 @@ public class FragmentMainActivity extends AppCompatActivity implements FirebaseA
                 }
             } catch (Exception ex) {
                 Log.e(TAG, "Error \"controlado\" en getColor en el label de tiradas", ex);
-                FirebaseCrash.logcat(Log.ERROR, TAG, "Error \"controlado\" en getColor en el label de tiradas");
-                FirebaseCrash.report(ex);
+                ((BaseApplication) context.getApplicationContext()).crashlytics.recordException(ex);
             }
         }
 
@@ -1148,8 +1105,7 @@ public class FragmentMainActivity extends AppCompatActivity implements FirebaseA
                             licenciaArrayAdapter = new LicenciaArrayAdapter(getActivity(), R.layout.licencia_item, licencias);
                             listView.setAdapter(licenciaArrayAdapter);
                         } catch (Exception ex) {
-                            FirebaseCrash.logcat(Log.ERROR, TAG, ex.getMessage());
-                            FirebaseCrash.report(ex);
+                            ((BaseApplication) context.getApplicationContext()).crashlytics.recordException(ex);
                         }
                         break;
                     case 3: // Lista de Tiradas
@@ -1163,8 +1119,7 @@ public class FragmentMainActivity extends AppCompatActivity implements FirebaseA
                             listView.setAdapter(tiradaArrayAdapter);
                             updateInfoTirada();
                         } catch (Exception ex) {
-                            FirebaseCrash.logcat(Log.ERROR, TAG, "Fallo al actualizar la lista de tiradas");
-                            FirebaseCrash.report(ex);
+                            ((BaseApplication) context.getApplicationContext()).crashlytics.recordException(ex);
                         }
                         break;
                 }

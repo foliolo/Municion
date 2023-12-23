@@ -38,17 +38,16 @@ import androidx.core.app.NotificationCompat;
 import androidx.core.app.TaskStackBuilder;
 import androidx.fragment.app.DialogFragment;
 
-import com.google.android.gms.ads.AdView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputLayout;
-import com.google.firebase.crash.FirebaseCrash;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
+import al.ahgitdevelopment.municion.BaseApplication;
 import al.ahgitdevelopment.municion.FragmentMainActivity;
 import al.ahgitdevelopment.municion.NotificationPublisher;
 import al.ahgitdevelopment.municion.R;
@@ -80,7 +79,6 @@ public class LicenciaFormActivity extends AppCompatActivity {
     private boolean isModify;
     private Toolbar toolbar;
     private SharedPreferences prefs;
-    private AdView mAdView;
 
     /**
      * Inicializa la actividad
@@ -116,7 +114,6 @@ public class LicenciaFormActivity extends AppCompatActivity {
         layoutCategoria = findViewById(R.id.layout_categoria);
         categoria = findViewById(R.id.form_categoria);
         fab = findViewById(R.id.fab_form_save);
-        mAdView = findViewById(R.id.adView);
         isModify = false;
 
         //Gestion del boton de guardado en funcion de si se abre tras pulsar la notificacion
@@ -178,17 +175,6 @@ public class LicenciaFormActivity extends AppCompatActivity {
 
         setVisibilityFields(tipoLicencia.getSelectedItemPosition());
         fieldsUpdateFechaCaducidad();
-
-        // Gestion de anuncios
-        prefs = getSharedPreferences("Preferences", Context.MODE_PRIVATE);
-        if (prefs.getBoolean(Utils.PREFS_SHOW_ADS, true)) {
-            mAdView.setVisibility(View.VISIBLE);
-            mAdView.setEnabled(true);
-            mAdView.loadAd(Utils.getAdRequest(mAdView));
-        } else {
-            mAdView.setVisibility(View.GONE);
-            mAdView.setEnabled(false);
-        }
     }
 
     private void callDatePickerFragment() {
@@ -240,7 +226,7 @@ public class LicenciaFormActivity extends AppCompatActivity {
                         },
                         100 //Codigo de respuesta
                 );
-            }else {
+            } else {
                 addSameDayEventToCalendar(isModify);
                 addMonthBeforeEventToCalendar(isModify);
             }
@@ -297,8 +283,7 @@ public class LicenciaFormActivity extends AppCompatActivity {
                     endTime.set(Calendar.SECOND, 59);
                     endMillis = endTime.getTimeInMillis();
                 } catch (ParseException e) {
-                    FirebaseCrash.report(e);
-                    FirebaseCrash.logcat(Log.ERROR, getLocalClassName(), "Fallo al modificar el evento del calendario");
+                    ((BaseApplication) this.getApplicationContext()).crashlytics.recordException(e);
                 }
                 // Preparacion de la query
                 String title = "Tu licencia caduca hoy";
@@ -346,17 +331,9 @@ public class LicenciaFormActivity extends AppCompatActivity {
 
             Uri uri = contentResolver.insert(CalendarContract.Events.CONTENT_URI, values);
 
-        } catch (SecurityException ex) {
-            FirebaseCrash.report(ex);
-            FirebaseCrash.logcat(Log.ERROR, getLocalClassName(), "Fallo en los permisos del calendario");
-        } catch (ParseException ex) {
-            FirebaseCrash.report(ex);
-            FirebaseCrash.logcat(Log.ERROR, getLocalClassName(), "Fallo al crear el evento del calendario");
         } catch (Exception ex) {
-            FirebaseCrash.report(ex);
-            FirebaseCrash.logcat(Log.ERROR, getLocalClassName(), "Excepcion generica");
+            ((BaseApplication) this.getApplicationContext()).crashlytics.recordException(ex);
         }
-
     }
 
     // Lo mismo que el anterior metodo pero se crea el evento con un mes de antelacion
@@ -390,8 +367,7 @@ public class LicenciaFormActivity extends AppCompatActivity {
                     endTime.set(Calendar.SECOND, 59);
                     endMillis = endTime.getTimeInMillis();
                 } catch (ParseException e) {
-                    FirebaseCrash.report(e);
-                    FirebaseCrash.logcat(Log.ERROR, getLocalClassName(), "Fallo al modificar el evento del calendario");
+                    ((BaseApplication) this.getApplicationContext()).crashlytics.recordException(e);
                 }
                 // Preparacion de la query
                 String title = "Tu licencia caduca dentro de un mes";
@@ -897,9 +873,9 @@ public class LicenciaFormActivity extends AppCompatActivity {
                 break;
         }
     }
-      // Lo subo comentado por si en algun momento es necesario utilizarlo. Sirve para que despues
-      // de agregarse un evento al Calendario este se sincronice. Esta comentado porque seria pedir
-     // otro permiso mas al usuario y la sincronizacion de un dispositivo, en general, es automatica
+    // Lo subo comentado por si en algun momento es necesario utilizarlo. Sirve para que despues
+    // de agregarse un evento al Calendario este se sincronice. Esta comentado porque seria pedir
+    // otro permiso mas al usuario y la sincronizacion de un dispositivo, en general, es automatica
     // por lo que no seria necesario utilizar es metodo.
 //    public void syncCalendars() {
 //        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.GET_ACCOUNTS) != PackageManager.PERMISSION_GRANTED) {

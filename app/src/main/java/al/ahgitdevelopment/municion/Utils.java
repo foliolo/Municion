@@ -1,5 +1,7 @@
 package al.ahgitdevelopment.municion;
 
+import static al.ahgitdevelopment.municion.FragmentMainActivity.fileImagePath;
+
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.app.DialogFragment;
@@ -15,17 +17,14 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Environment;
 import android.util.Log;
-import android.view.View;
 import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.FileProvider;
 
-import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -48,20 +47,16 @@ import al.ahgitdevelopment.municion.datamodel.Guia;
 import al.ahgitdevelopment.municion.datamodel.Licencia;
 import al.ahgitdevelopment.municion.datamodel.NotificationData;
 
-import static al.ahgitdevelopment.municion.FragmentMainActivity.fileImagePath;
-
 /**
  * Created by ahidalgog on 07/07/2016.
  */
 public final class Utils {
     //    public static final String PURCHASE_ID_REMOVE_ADS = "android.test.purchased";
 //    public static final String PURCHASE_ID_REMOVE_ADS = "android.test.canceled";
-    public static final String PREFS_SHOW_ADS = "show_ads";
-    static final String PURCHASE_ID_REMOVE_ADS = "remove_ads";
     static final String PREFS_PAYLOAD = "payload";
     private static final String NOTIFICATION_PREFERENCES_FILE = "Notifications";
     public static NotificationData notificationData = new NotificationData();
-    static ArrayList<NotificationData> listNotificationData = new ArrayList<NotificationData>();
+    static ArrayList<NotificationData> listNotificationData = new ArrayList<>();
     private static SharedPreferences prefs;
 
     @NonNull
@@ -293,45 +288,6 @@ public final class Utils {
     }
 
     /**
-     * Método para obtener un anuncion en función de la variable de firebase database.
-     *
-     * @param view Vista donde se localiza el anuncio
-     * @return Retorna el AdRequest done se encuentra que se visualizará en la view en caso de estar activa
-     */
-    public static AdRequest getAdRequest(final View view) {
-//        // Read from the database
-//        if (mFirebaseDatabase == null)
-//            mFirebaseDatabase = FirebaseDatabase.getInstance();
-//
-//        DatabaseReference myRef = mFirebaseDatabase.getReference("global_settings/ads");
-//        myRef.addValueEventListener(new ValueEventListener() {
-//
-//            @Override
-//            public void onDataChange(DataSnapshot dataSnapshot) {
-//                // This method is called once with the initial value and again
-//                // whenever data at this location is updated.
-//                AdView mAdView = (AdView) view.findViewById(R.id.adView);
-//                if (dataSnapshot.getValue() == null ? false : Boolean.valueOf(dataSnapshot.getValue().toString())) {
-//                    mAdView.setVisibility(View.VISIBLE);
-//                } else {
-//                    mAdView.setVisibility(View.GONE);
-//                }
-//            }
-//
-//            @Override
-//            public void onCancelled(DatabaseError error) {
-//                // Failed to read value
-//                Log.w("Ads", "Failed to read value.", error.toException());
-//            }
-//        });
-        return new AdRequest.Builder()
-                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)        // All emulators
-                .addTestDevice("19DFD6D99DFA16A1568E51C0698B3E2F")  // Alberto device ID
-                .addTestDevice("01D5A4AECD505D328B19CE0B8D462CB4")  // David device ID
-                .build();
-    }
-
-    /**
      * Metodo para obtener los recursos de las armas en funcion del tipo de licencia y su tipo de arma.
      *
      * @param tipoLicencia Tipo de licencia
@@ -470,10 +426,9 @@ public final class Utils {
                     Log.i("Email_accounts", "Type => Account Name: " + account.name + " - Account Type: " + account.type);
                 }
             }
-        } catch (SecurityException e) {
-            e.printStackTrace();
         } catch (Exception e) {
             e.printStackTrace();
+            ((BaseApplication) context.getApplicationContext()).crashlytics.recordException(e);
         }
 
         return email;
@@ -539,13 +494,10 @@ public final class Utils {
                 // Handle unsuccessful uploads
                 Log.e("UploadImage", "Fallo en la subida de las imagenes a Firebase", exception);
             }
-        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-            @Override
-            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
-                Uri downloadUrl = taskSnapshot.getUploadSessionUri();
-                Log.i("UploadImage", "Imagen subida: " + downloadUrl);
-            }
+        }).addOnSuccessListener(taskSnapshot -> {
+            // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
+            Uri downloadUrl = taskSnapshot.getUploadSessionUri();
+            Log.i("UploadImage", "Imagen subida: " + downloadUrl);
         });
     }
 
@@ -610,8 +562,9 @@ public final class Utils {
 
     /**
      * Método que lanza el intent de una imagen pasando el bitmap de la imagen
+     *
      * @param context  Contexto
-     * @param bitmap Id del recurso que queremos mostrar
+     * @param bitmap   Id del recurso que queremos mostrar
      * @param fileName Nombre de la imagen que vamos a guardar en el dispositivo
      */
     public static void showImage(Context context, Bitmap bitmap, String fileName) {

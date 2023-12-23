@@ -5,8 +5,8 @@
         <item>Mostrar tutorial</item>
         <item>Pregunta de seguridad</item>
         <item>Reiniciar contraseña</item>
-        <item>Eliminar publicidad</item>
-        <!--<item>Consumir publicidad</item>-->
+<!--        <item>Eliminar publicidad</item>-->
+<!--        <item>Consumir publicidad</item>-->
     </string-array>
 
     <string-array name="tipo_armas">
