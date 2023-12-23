@@ -26,8 +26,6 @@ public class SettingsFragment extends FragmentActivity {
     SharedPreferences prefs;
     // Provides purchase notification while this app is running
     private ListView settingOptionList;
-    private boolean flagConsume;
-    private boolean isPurchaseAvailable;
 
     public SettingsFragment() {
         // Required empty public constructor
