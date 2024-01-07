@@ -27,7 +27,7 @@ class PropertiesViewModel @Inject constructor(
 ) : BaseViewModel() {
 
     val properties = repository.getProperties()
-        .catch { _exception.postValue(Event(it)) }
+        .catch { _exception.postValue(it) }
         .asLiveData()
 
     val error = SingleLiveEvent<String>()
@@ -66,6 +66,6 @@ class PropertiesViewModel @Inject constructor(
     }
 
     override fun navigateToForm() {
-        _navigateToForm.postValue(Event(Unit))
+        _navigateToForm.call()
     }
 }

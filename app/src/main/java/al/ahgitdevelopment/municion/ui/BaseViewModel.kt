@@ -1,28 +1,26 @@
 package al.ahgitdevelopment.municion.ui
 
-import al.ahgitdevelopment.municion.R
 import al.ahgitdevelopment.municion.repository.firebase.RemoteStorageDataSource.Companion.EVENT_CLOSE_APP
 import al.ahgitdevelopment.municion.repository.firebase.RemoteStorageDataSource.Companion.EVENT_LOGOUT
-import al.ahgitdevelopment.municion.utils.Event
+import al.ahgitdevelopment.municion.utils.SingleLiveEvent
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.firebase.analytics.FirebaseAnalytics
 import java.io.Serializable
 
 abstract class BaseViewModel : ViewModel(), Serializable {
 
-    private val _progressBar = MutableLiveData<Event<Boolean>>()
-    val progressBar: LiveData<Event<Boolean>> = _progressBar
+    private val _progressBar = SingleLiveEvent<Boolean>()
+    val progressBar: LiveData<Boolean> = _progressBar
 
-    val _navigateToForm = MutableLiveData<Event<Unit>>()
-    val navigateToForm: LiveData<Event<Unit>> = _navigateToForm
+    val _navigateToForm = SingleLiveEvent<Unit>()
+    val navigateToForm: LiveData<Unit> = _navigateToForm
 
-    private val _message = MutableLiveData<Event<Int>>()
-    val message: LiveData<Event<Int>> = _message
+    private val _message = SingleLiveEvent<Int>()
+    val message: LiveData<Int> = _message
 
-    val _exception = MutableLiveData<Event<Throwable>>()
-    val exception: LiveData<Event<Throwable>> = _exception
+    val _exception = SingleLiveEvent<Throwable>()
+    val exception: LiveData<Throwable> = _exception
 
     abstract fun navigateToForm()
 
@@ -39,14 +37,10 @@ abstract class BaseViewModel : ViewModel(), Serializable {
     }
 
     fun showProgressBar() {
-        _progressBar.postValue(Event(true))
+        _progressBar.postValue(true)
     }
 
     fun hideProgressBar() {
-        _progressBar.postValue(Event(false))
-    }
-
-    fun removeMaxLimitation() {
-        _message.postValue(Event(R.string.toast_under_construction))
+        _progressBar.postValue(false)
     }
 }

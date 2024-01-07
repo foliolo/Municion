@@ -26,7 +26,7 @@ class PurchasesViewModel @Inject constructor(
 ) : BaseViewModel() {
 
     val purchases = repository.getPurchases()
-        .catch { _exception.postValue(Event(it)) }
+        .catch { _exception.postValue(it) }
         .asLiveData()
 
     init {
@@ -34,7 +34,7 @@ class PurchasesViewModel @Inject constructor(
     }
 
     fun fabClick(view: View?) {
-        _navigateToForm.postValue(Event(Unit))
+        _navigateToForm.call()
     }
 
     fun deletePurchase(purchaseId: String) = viewModelScope.launch(ioDispatcher) {
@@ -65,6 +65,6 @@ class PurchasesViewModel @Inject constructor(
     }
 
     override fun navigateToForm() {
-        _navigateToForm.postValue(Event(Unit))
+        _navigateToForm.call()
     }
 }

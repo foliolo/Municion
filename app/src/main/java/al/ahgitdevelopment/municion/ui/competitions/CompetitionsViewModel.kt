@@ -21,7 +21,7 @@ class CompetitionsViewModel @Inject constructor(
 ) : BaseViewModel() {
 
     val competitions = repository.getCompetitions()
-        .catch { _exception.postValue(Event(it)) }
+        .catch { _exception.postValue(it) }
         .asLiveData()
 
     init {
@@ -29,7 +29,7 @@ class CompetitionsViewModel @Inject constructor(
     }
 
     fun fabClick(view: View?) {
-        _navigateToForm.postValue(Event(Unit))
+        _navigateToForm.call()
     }
 
     fun deleteCompetition(competitionId: String) = viewModelScope.launch(ioDispatcher) {
@@ -41,6 +41,6 @@ class CompetitionsViewModel @Inject constructor(
     }
 
     override fun navigateToForm() {
-        _navigateToForm.postValue(Event(Unit))
+        _navigateToForm.call()
     }
 }

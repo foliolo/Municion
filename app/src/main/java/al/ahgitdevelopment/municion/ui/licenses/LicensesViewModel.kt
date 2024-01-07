@@ -21,7 +21,7 @@ class LicensesViewModel @Inject constructor(
 ) : BaseViewModel() {
 
     var licenses = repository.getLicenses()
-        .catch { _exception.postValue(Event(it)) }
+        .catch { _exception.postValue(it) }
         .asLiveData()
 
     init {
@@ -41,6 +41,6 @@ class LicensesViewModel @Inject constructor(
     }
 
     override fun navigateToForm() {
-        _navigateToForm.postValue(Event(Unit))
+        _navigateToForm.postValue(Unit)
     }
 }
