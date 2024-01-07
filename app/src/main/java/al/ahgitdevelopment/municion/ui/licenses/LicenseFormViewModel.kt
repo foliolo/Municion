@@ -23,24 +23,29 @@ class LicenseFormViewModel @Inject constructor(
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
 ) : ViewModel() {
 
-    val issueDate = SingleLiveEvent<Unit>()
-    val expiryDate = SingleLiveEvent<Unit>()
-    val fabSaveLicenseClicked = SingleLiveEvent<Unit>()
+    private val _issueDate = SingleLiveEvent<Unit>()
+    val issueDate: LiveData<Unit> = _issueDate
+
+    private val _expiryDate = SingleLiveEvent<Unit>()
+    val expiryDate: LiveData<Unit> = _expiryDate
+
+    private val _fabSaveLicenseClicked = SingleLiveEvent<Unit>()
+    val fabSaveLicenseClicked: LiveData<Unit> = _fabSaveLicenseClicked
 
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     private val _closeForm = MutableLiveData<Event<Unit>>()
     val closeForm: LiveData<Event<Unit>> = _closeForm
 
     fun selectIssueDate(view: View) {
-        issueDate.call()
+        _issueDate.call()
     }
 
     fun selectExpiryDate(view: View) {
-        expiryDate.call()
+        _expiryDate.call()
     }
 
     fun fabSaveLicenseClicked(view: View?) {
-        fabSaveLicenseClicked.call()
+        _fabSaveLicenseClicked.call()
     }
 
     fun saveLicense(license: License) = viewModelScope.launch(ioDispatcher) {

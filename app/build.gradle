@@ -3,6 +3,7 @@ plugins {
     id 'kotlin-android'
     id 'kotlin-kapt'
     id 'kotlin-parcelize'
+    id "org.jetbrains.kotlin.android"
     id 'androidx.navigation.safeargs.kotlin'
     id 'dagger.hilt.android.plugin'
     id 'com.google.firebase.crashlytics'
@@ -37,8 +38,8 @@ android {
         applicationId "al.ahgitdevelopment.municion"
         minSdkVersion 26
         targetSdkVersion 34
-        versionCode 11
-        versionName '0.4.1'
+        versionCode 12
+        versionName '0.4.2'
         testInstrumentationRunner "al.ahgitdevelopment.municion.MyTestRunner"
 
         vectorDrawables.useSupportLibrary = true
@@ -81,7 +82,7 @@ android {
         }
     }
 
-    flavorDimensions "version"
+    flavorDimensions = ["version"]
     productFlavors {
         global {
             dimension "version"
@@ -166,7 +167,7 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.2"
 
     // Activity KTX for viewModels()
-    implementation "androidx.activity:activity-ktx:1.8.1"
+    implementation "androidx.activity:activity-ktx:1.8.2"
 
     // Navigation
     implementation "androidx.navigation:navigation-fragment-ktx:2.7.6"
@@ -178,15 +179,14 @@ dependencies {
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3"
 
     // Hilt
-    implementation "com.google.dagger:hilt-android:2.49"
-    kapt "com.google.dagger:hilt-android-compiler:2.49"
+    implementation "com.google.dagger:hilt-android:2.50"
+    kapt "com.google.dagger:hilt-android-compiler:2.50"
 
     // Firebase
-    implementation platform('com.google.firebase:firebase-bom:26.1.0')
+    implementation platform('com.google.firebase:firebase-bom:32.7.0')
     implementation 'com.firebaseui:firebase-ui-auth:8.0.2'
     implementation 'com.google.firebase:firebase-analytics-ktx'
     implementation 'com.google.firebase:firebase-auth-ktx'
-    implementation 'com.google.firebase:firebase-core'
     implementation 'com.google.firebase:firebase-crashlytics'
     implementation 'com.google.firebase:firebase-database-ktx'
     implementation 'com.google.firebase:firebase-firestore-ktx'
