@@ -3,7 +3,6 @@ package al.ahgitdevelopment.municion.ui.tutorial
 import al.ahgitdevelopment.municion.repository.firebase.RemoteStorageDataSourceContract
 import al.ahgitdevelopment.municion.utils.SingleLiveEvent
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -16,16 +15,17 @@ class TutorialViewModel @Inject constructor(
     remoteStorageDataSourceContract: RemoteStorageDataSourceContract,
 ) : ViewModel() {
 
-    private val _images = MutableLiveData<List<File>>()
+    private val _images = SingleLiveEvent<List<File>>()
     val images: LiveData<List<File>> = _images
 
-    val progressBar = SingleLiveEvent<Boolean>()
+    private val _progressBar = SingleLiveEvent<Boolean>()
+    val progressBar: LiveData<Boolean> = _progressBar
 
     init {
         viewModelScope.launch {
-            progressBar.postValue(true)
+            _progressBar.postValue(true)
             _images.postValue(remoteStorageDataSourceContract.getTutorialImages())
-            progressBar.postValue(false)
+            _progressBar.postValue(false)
         }
     }
 }

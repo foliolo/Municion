@@ -4,7 +4,6 @@ import al.ahgitdevelopment.municion.datamodel.License
 import al.ahgitdevelopment.municion.di.IoDispatcher
 import al.ahgitdevelopment.municion.repository.RepositoryContract
 import al.ahgitdevelopment.municion.ui.BaseViewModel
-import al.ahgitdevelopment.municion.utils.Event
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -21,7 +20,7 @@ class LicensesViewModel @Inject constructor(
 ) : BaseViewModel() {
 
     var licenses = repository.getLicenses()
-        .catch { _exception.postValue(Event(it)) }
+        .catch { _exception.postValue(it) }
         .asLiveData()
 
     init {
@@ -41,6 +40,6 @@ class LicensesViewModel @Inject constructor(
     }
 
     override fun navigateToForm() {
-        _navigateToForm.postValue(Event(Unit))
+        _navigateToForm.postValue(Unit)
     }
 }

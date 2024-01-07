@@ -16,6 +16,7 @@
         android:icon="@drawable/ic_settings"
         android:orderInCategory="2"
         android:title="@string/action_settings"
+        android:visible="false"
         app:showAsAction="ifRoom" />
 
     <item
@@ -30,5 +31,6 @@
         android:icon="@drawable/ic_money"
         android:orderInCategory="4"
         android:title="@string/menu_support_developer"
+        android:visible="false"
         app:showAsAction="always" />
 </menu>

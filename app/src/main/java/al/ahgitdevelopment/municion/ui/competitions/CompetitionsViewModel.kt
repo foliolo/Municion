@@ -4,7 +4,6 @@ import al.ahgitdevelopment.municion.datamodel.Competition
 import al.ahgitdevelopment.municion.di.IoDispatcher
 import al.ahgitdevelopment.municion.repository.RepositoryContract
 import al.ahgitdevelopment.municion.ui.BaseViewModel
-import al.ahgitdevelopment.municion.utils.Event
 import android.view.View
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
@@ -21,7 +20,7 @@ class CompetitionsViewModel @Inject constructor(
 ) : BaseViewModel() {
 
     val competitions = repository.getCompetitions()
-        .catch { _exception.postValue(Event(it)) }
+        .catch { _exception.postValue(it) }
         .asLiveData()
 
     init {
@@ -29,7 +28,7 @@ class CompetitionsViewModel @Inject constructor(
     }
 
     fun fabClick(view: View?) {
-        _navigateToForm.postValue(Event(Unit))
+        _navigateToForm.call()
     }
 
     fun deleteCompetition(competitionId: String) = viewModelScope.launch(ioDispatcher) {
@@ -41,6 +40,6 @@ class CompetitionsViewModel @Inject constructor(
     }
 
     override fun navigateToForm() {
-        _navigateToForm.postValue(Event(Unit))
+        _navigateToForm.call()
     }
 }

@@ -49,28 +49,24 @@ class CompetitionsFragment : BaseFragment(), RecyclerInterface {
             findNavController().navigate(R.id.competitionFormFragment)
         }
 
-        viewModel.message.observe(viewLifecycleOwner) {
-            it.getContentIfNotHandled()?.let { message ->
-                Toast.makeText(
-                    requireContext(),
-                    requireContext().getString(message),
-                    Toast.LENGTH_LONG,
-                ).show()
-            }
+        viewModel.message.observe(viewLifecycleOwner) { message ->
+            Toast.makeText(
+                requireContext(),
+                requireContext().getString(message),
+                Toast.LENGTH_LONG,
+            ).show()
         }
 
-        viewModel.exception.observe(viewLifecycleOwner) {
-            it.getContentIfNotHandled()?.let { exception ->
-                Toast.makeText(
-                    requireContext(),
-                    exception.message,
-                    Toast.LENGTH_LONG,
-                ).show()
-            }
+        viewModel.exception.observe(viewLifecycleOwner) { exception ->
+            Toast.makeText(
+                requireContext(),
+                exception.message,
+                Toast.LENGTH_LONG,
+            ).show()
         }
 
         viewModel.progressBar.observe(viewLifecycleOwner) {
-            when (it.getContentIfNotHandled()) {
+            when (it) {
                 true -> activity?.findViewById<ContentLoadingProgressBar>(R.id.progressBar)?.show()
                 else -> activity?.findViewById<ContentLoadingProgressBar>(R.id.progressBar)?.hide()
             }
