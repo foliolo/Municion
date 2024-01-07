@@ -68,7 +68,6 @@ class PurchasesFragment : BaseFragment(), RecyclerInterface, PurchaseAdapterList
                 requireContext().getString(message),
                 Toast.LENGTH_LONG,
             ).show()
-
         }
 
         viewModel.exception.observe(viewLifecycleOwner) { exception ->

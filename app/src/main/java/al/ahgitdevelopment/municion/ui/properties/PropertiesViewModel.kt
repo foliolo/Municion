@@ -5,7 +5,6 @@ import al.ahgitdevelopment.municion.di.IoDispatcher
 import al.ahgitdevelopment.municion.repository.RepositoryContract
 import al.ahgitdevelopment.municion.repository.firebase.RemoteStorageDataSourceContract
 import al.ahgitdevelopment.municion.ui.BaseViewModel
-import al.ahgitdevelopment.municion.utils.Event
 import al.ahgitdevelopment.municion.utils.SingleLiveEvent
 import android.graphics.Bitmap
 import android.view.View

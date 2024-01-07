@@ -52,20 +52,20 @@ class LicensesFragment @Inject constructor() : BaseFragment(), RecyclerInterface
             )
         }
 
-        viewModel.message.observe(viewLifecycleOwner) {message ->
-                Toast.makeText(
-                    requireContext(),
-                    requireContext().getString(message),
-                    Toast.LENGTH_LONG,
-                ).show()
+        viewModel.message.observe(viewLifecycleOwner) { message ->
+            Toast.makeText(
+                requireContext(),
+                requireContext().getString(message),
+                Toast.LENGTH_LONG,
+            ).show()
         }
 
-        viewModel.exception.observe(viewLifecycleOwner) {exception ->
-                Toast.makeText(
-                    requireContext(),
-                    exception.message,
-                    Toast.LENGTH_LONG,
-                ).show()
+        viewModel.exception.observe(viewLifecycleOwner) { exception ->
+            Toast.makeText(
+                requireContext(),
+                exception.message,
+                Toast.LENGTH_LONG,
+            ).show()
         }
 
         viewModel.progressBar.observe(viewLifecycleOwner) {
