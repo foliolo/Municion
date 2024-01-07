@@ -17,13 +17,13 @@ class PurchaseFormViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val _fabSavePurchaseClicked = SingleLiveEvent<Unit>()
-    val fabSavePurchaseClicked:LiveData<Unit> = _fabSavePurchaseClicked
+    val fabSavePurchaseClicked: LiveData<Unit> = _fabSavePurchaseClicked
 
     private val _date = SingleLiveEvent<Unit>()
     val date: LiveData<Unit> = _date
 
     private val _closeForm = SingleLiveEvent<Unit>()
-    val closeForm :LiveData<Unit> = _closeForm
+    val closeForm: LiveData<Unit> = _closeForm
 
     fun fabSavePurchaseClicked(view: View) {
         _fabSavePurchaseClicked.call()

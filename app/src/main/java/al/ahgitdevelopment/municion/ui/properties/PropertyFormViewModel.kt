@@ -18,10 +18,10 @@ class PropertyFormViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val _fabSavePropertyClicked = SingleLiveEvent<Unit>()
-    val fabSavePropertyClicked : LiveData<Unit> = _fabSavePropertyClicked
+    val fabSavePropertyClicked: LiveData<Unit> = _fabSavePropertyClicked
 
     private val _closeForm = SingleLiveEvent<Unit>()
-    val closeForm : LiveData<Unit> = _closeForm
+    val closeForm: LiveData<Unit> = _closeForm
 
     fun fabSavePropertyClicked(view: View) {
         _fabSavePropertyClicked.call()
