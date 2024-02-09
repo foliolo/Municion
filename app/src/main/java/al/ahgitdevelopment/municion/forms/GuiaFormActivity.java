@@ -27,6 +27,7 @@ import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 import al.ahgitdevelopment.municion.FragmentMainActivity;
 import al.ahgitdevelopment.municion.R;
@@ -100,9 +101,9 @@ public class GuiaFormActivity extends AppCompatActivity {
         calibre2 = findViewById(R.id.form_calibre2);
         aumentoCupo = findViewById(R.id.form_check_aumento_cupo);
         mensajeError = findViewById(R.id.form_mensaje_guia);
-        layoutMarca = findViewById(R.id.text_input_layout_marca);
-        layoutModelo = findViewById(R.id.text_input_layout_modelo);
-        layoutApodo = findViewById(R.id.text_input_layout_apodo);
+        layoutMarca = findViewById(R.id.form_marca);
+        layoutModelo = findViewById(R.id.form_modelo);
+        layoutApodo = findViewById(R.id.form_apodo_arma);
         layoutNumGuia = findViewById(R.id.text_input_layout_num_guia);
         layoutNumArma = findViewById(R.id.text_input_layout_num_arma);
         layoutCupo = findViewById(R.id.layout_cupo);
@@ -117,7 +118,7 @@ public class GuiaFormActivity extends AppCompatActivity {
 
         //Carga de calibres
         ArrayAdapter<String> adapter =
-                new ArrayAdapter<String>(GuiaFormActivity.this,
+                new ArrayAdapter<>(GuiaFormActivity.this,
                         android.R.layout.simple_dropdown_item_1line,
                         getResources().getStringArray(R.array.calibres));
         calibre1.setAdapter(adapter);
@@ -128,7 +129,10 @@ public class GuiaFormActivity extends AppCompatActivity {
 
         //Inicializacion del cupo por defecto
         tipoArma.setSelection(0);
-        layoutCupo.getEditText().setText(String.valueOf(getDefaultCupo(finalWeapons.get(tipoArma.getSelectedItemPosition()))));
+        layoutCupo.getEditText().setText(
+                String.valueOf(getDefaultCupo(finalWeapons.get(tipoArma.getSelectedItemPosition()))
+                )
+        );
 
         //Carga de datos (en caso de modificacion)
         if (getIntent().getExtras() != null) {
@@ -137,9 +141,6 @@ public class GuiaFormActivity extends AppCompatActivity {
                     Guia guia = getIntent().getExtras().getParcelable("modify_guia");
                     assert guia != null;
                     tipoLicencia = guia.getTipoLicencia();
-                    layoutMarca.getEditText().setText(guia.getMarca());
-                    layoutModelo.getEditText().setText(guia.getModelo());
-                    layoutApodo.getEditText().setText(guia.getApodo());
                     layoutCalibre1.getEditText().setText(guia.getCalibre1());
                     tipoArma.setSelection(guia.getTipoArma());
                     if (guia.getCalibre2() == null || "".equals(guia.getCalibre2())) {
@@ -251,7 +252,7 @@ public class GuiaFormActivity extends AppCompatActivity {
             }
         });
         // Calibre1
-        layoutCalibre1.getEditText().addTextChangedListener(new TextWatcher() {
+        Objects.requireNonNull(layoutCalibre1.getEditText()).addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
             }
@@ -268,7 +269,7 @@ public class GuiaFormActivity extends AppCompatActivity {
             }
         });
         // Num Guia
-        layoutNumGuia.getEditText().addTextChangedListener(new TextWatcher() {
+        Objects.requireNonNull(layoutNumGuia.getEditText()).addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
             }
@@ -285,7 +286,7 @@ public class GuiaFormActivity extends AppCompatActivity {
             }
         });
         // Num arma
-        layoutNumArma.getEditText().addTextChangedListener(new TextWatcher() {
+        Objects.requireNonNull(layoutNumArma.getEditText()).addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
             }

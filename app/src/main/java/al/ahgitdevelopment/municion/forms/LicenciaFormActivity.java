@@ -6,13 +6,13 @@ import android.app.AlarmManager;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.Notification;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Color;
@@ -46,6 +46,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Objects;
 
 import al.ahgitdevelopment.municion.BaseApplication;
 import al.ahgitdevelopment.municion.FragmentMainActivity;
@@ -78,7 +79,6 @@ public class LicenciaFormActivity extends AppCompatActivity {
     // Creo este flag para comprabar en el Calendario si es un guardado o modificacion de licencia
     private boolean isModify;
     private Toolbar toolbar;
-    private SharedPreferences prefs;
 
     /**
      * Inicializa la actividad
@@ -144,12 +144,9 @@ public class LicenciaFormActivity extends AppCompatActivity {
         }
 
         // Eventos que sacan el calendario al recibir el foco en el campo fecha
-        layoutFechaExpedicion.getEditText().setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                callDatePickerFragment();
-            }
-        });
+        Objects.requireNonNull(layoutFechaExpedicion.getEditText()).setOnClickListener(v ->
+                callDatePickerFragment()
+        );
         layoutFechaExpedicion.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
@@ -627,7 +624,11 @@ public class LicenciaFormActivity extends AppCompatActivity {
             notificationIntent.putExtra(NotificationPublisher.NOTIFICATION_ID, textInputLayoutLicencia.getEditText().getText().toString().trim());
             notificationIntent.putExtra(NotificationPublisher.NOTIFICATION, getNotification());
 
-            PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(
+                    this,
+                    0,
+                    notificationIntent,
+                    PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
 
 //            long futureInMillis = caducidad.getTimeInMillis() - Calendar.getInstance().getTimeInMillis();
 
@@ -673,41 +674,29 @@ public class LicenciaFormActivity extends AppCompatActivity {
         stackBuilder.addNextIntent(resultIntent);
 
 
-        PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
 */
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
         stackBuilder.addNextIntent(resultIntent);
-        PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_ONE_SHOT);
+        PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(
+                0,
+                PendingIntent.FLAG_ONE_SHOT | PendingIntent.FLAG_IMMUTABLE
+        );
 
         NotificationCompat.Builder mBuilder;
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN) {
-            mBuilder = new NotificationCompat.Builder(this)
-                    .setSmallIcon(R.mipmap.ic_launcher_4_transparent)
-                    .setContentTitle("Caducidad de Licencia")
-                    .setContentText("Tu licencia caduca hoy")
-                    .setSubText(Utils.getStringLicenseFromId(
-                            LicenciaFormActivity.this,
-                            tipoLicencia.getSelectedItemPosition()) + ": " + textInputLayoutLicencia.getEditText().getText().toString())
-                    .setContentIntent(resultPendingIntent)
-                    .setAutoCancel(true)
-                    .setPriority(Notification.PRIORITY_LOW)
-                    .setLights(Color.GREEN, 500, 500)
-                    .setVibrate(new long[]{150, 300, 150, 400})
-                    .setSound(Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.glitchy_language));
-        } else {
-            mBuilder = new NotificationCompat.Builder(this)
-                    .setSmallIcon(R.mipmap.ic_launcher_4_transparent)
-                    .setContentTitle("Caducidad de Licencia")
-                    .setContentText("Tu licencia caduca hoy")
-                    .setSubText(Utils.getStringLicenseFromId(
-                            LicenciaFormActivity.this,
-                            tipoLicencia.getSelectedItemPosition()) + ": " + textInputLayoutLicencia.getEditText().getText().toString())
-                    .setContentIntent(resultPendingIntent)
-                    .setAutoCancel(true)
-                    .setLights(Color.GREEN, 500, 500)
-                    .setVibrate(new long[]{150, 300, 150, 400})
-                    .setSound(Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.glitchy_language));
-        }
+        mBuilder = new NotificationCompat.Builder(this, "channel")
+                .setSmallIcon(R.mipmap.ic_launcher_4_transparent)
+                .setContentTitle("Caducidad de Licencia")
+                .setContentText("Tu licencia caduca hoy")
+                .setSubText(Utils.getStringLicenseFromId(
+                        LicenciaFormActivity.this,
+                        tipoLicencia.getSelectedItemPosition()) + ": " + textInputLayoutLicencia.getEditText().getText().toString())
+                .setContentIntent(resultPendingIntent)
+                .setAutoCancel(true)
+                .setPriority(NotificationManager.IMPORTANCE_DEFAULT)
+                .setLights(Color.GREEN, 500, 500)
+                .setVibrate(new long[]{150, 300, 150, 400})
+                .setSound(Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.glitchy_language));
 
         return mBuilder.build();
     }
