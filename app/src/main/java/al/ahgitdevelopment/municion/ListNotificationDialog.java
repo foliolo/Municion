@@ -13,22 +13,27 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
 
+import java.util.Objects;
+
+import al.ahgitdevelopment.municion.datamodel.NotificationData;
+
 /**
  * Created by Alberto on 28/08/2016.
  */
 public class ListNotificationDialog extends DialogFragment {
 
+    @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         final AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
 
         // Get the layout inflater
-        LayoutInflater inflater = getActivity().getLayoutInflater();
+        LayoutInflater inflater = requireActivity().getLayoutInflater();
         View view = inflater.inflate(android.R.layout.list_content, null);
 
         try {
-            ArrayAdapter adapter = new ArrayAdapter(
-                    getContext(),
+            ArrayAdapter<NotificationData> adapter = new ArrayAdapter<NotificationData>(
+                    requireContext(),
                     R.layout.notification_data_item,
                     R.id.item_nombre_licencia,
                     Utils.listNotificationData
@@ -37,16 +42,16 @@ public class ListNotificationDialog extends DialogFragment {
                 @Override
                 public View getView(int position, View convertView, @NonNull ViewGroup parent) {
                     View view = super.getView(position, convertView, parent);
-                    TextView nombre = view.findViewById(R.id.item_nombre_licencia);
-                    TextView numero = view.findViewById(R.id.item_num_licencia);
-                    TextView fecha = view.findViewById(R.id.item_caducidad_licencia);
+                    TextView name = view.findViewById(R.id.item_nombre_licencia);
+                    TextView number = view.findViewById(R.id.item_num_licencia);
+                    TextView date = view.findViewById(R.id.item_caducidad_licencia);
 
                     if (position % 2 == 0)
                         view.setBackgroundColor(0xE7DFEBFF);
 
-                    nombre.setText(Utils.listNotificationData.get(position).getLicencia());
-                    numero.setText(Utils.listNotificationData.get(position).getId());
-                    fecha.setText(Utils.listNotificationData.get(position).getFecha());
+                    name.setText(Utils.listNotificationData.get(position).getLicencia());
+                    number.setText(Utils.listNotificationData.get(position).getId());
+                    date.setText(Utils.listNotificationData.get(position).getFecha());
 
                     return view;
                 }
@@ -55,11 +60,11 @@ public class ListNotificationDialog extends DialogFragment {
             // Set custom view and custom adapter
             builder.setView(view)
                     .setAdapter(adapter, null)
-                    .setTitle(getContext().getString(R.string.pref_list_notification))
+                    .setTitle(requireContext().getString(R.string.pref_list_notification))
                     .setPositiveButton(android.R.string.ok, null);
 
         } catch (Exception ex) {
-            Log.wtf(getContext().getPackageName(), "Fallo al listar las notificaciones", ex);
+            Log.wtf(requireContext().getPackageName(), "Fallo al listar las notificaciones", ex);
         }
         return builder.create();
     }
