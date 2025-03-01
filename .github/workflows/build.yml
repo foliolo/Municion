@@ -15,7 +15,7 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Restore Cache
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         with:
           path: |
             ~/.gradle/caches
@@ -40,7 +40,7 @@ jobs:
 
       - name: Upload Test Reports
         if: ${{ always() }}
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: test-reports
           path: '**/build/reports/tests/'
@@ -54,7 +54,7 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Restore Cache
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         with:
           path: |
             ~/.gradle/caches
@@ -79,7 +79,7 @@ jobs:
 
       - name: Upload Lint Reports
         if: ${{ always() }}
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: lint-report
           path: '**/build/reports/*.*'
