@@ -297,6 +297,55 @@ public class FragmentMainActivity extends AppCompatActivity implements FirebaseA
         updateGastoMunicion();
         saveUserInFirebase();
         mAuth.addAuthStateListener(this);
+
+        // CRITICAL FIX v2.0.4: Detect potentially corrupted data from v22→v23 migration
+        detectCorruptedData();
+    }
+
+    /**
+     * CRITICAL FIX v2.0.4: Detect and log potentially corrupted data
+     * Users who upgraded from v22→v23 before the migration fix may have peso=0
+     */
+    private void detectCorruptedData() {
+        try {
+            int corruptedCompras = 0;
+            int corruptedLicencias = 0;
+
+            // Check for compras with peso=0 (likely corrupted from v22→v23 migration)
+            if (compras != null) {
+                for (Compra compra : compras) {
+                    if (compra != null && compra.getPeso() == 0) {
+                        corruptedCompras++;
+                        Log.w(TAG, "Detected potentially corrupted compra (peso=0): marca=" +
+                            compra.getMarca() + ", fecha=" + compra.getFecha());
+                    }
+                }
+            }
+
+            // Check for licencias with invalid data
+            if (licencias != null) {
+                for (Licencia licencia : licencias) {
+                    if (licencia != null &&
+                        (licencia.getNumLicencia() == null || licencia.getNumLicencia().isEmpty() ||
+                         licencia.getEdad() <= 0)) {
+                        corruptedLicencias++;
+                        Log.w(TAG, "Detected potentially corrupted licencia: numLicencia=" +
+                            licencia.getNumLicencia() + ", edad=" + licencia.getEdad());
+                    }
+                }
+            }
+
+            if (corruptedCompras > 0 || corruptedLicencias > 0) {
+                String message = "Detected potentially corrupted data: " +
+                    corruptedCompras + " compras with peso=0, " +
+                    corruptedLicencias + " invalid licencias";
+                Log.w(TAG, message);
+                ((BaseApplication) getApplicationContext()).crashlytics.log(message);
+            }
+        } catch (Exception ex) {
+            Log.e(TAG, "Error detecting corrupted data", ex);
+            ((BaseApplication) getApplicationContext()).crashlytics.recordException(ex);
+        }
     }
 
     @Override
@@ -715,17 +764,195 @@ public class FragmentMainActivity extends AppCompatActivity implements FirebaseA
 //        myTrace.stop();
     }
 
+    /**
+     * CRITICAL FIX v2.0.4: Validate Compra before Firebase sync
+     * Prevents corrupted data from being synced to Firebase
+     */
+    private boolean isValidCompra(Compra compra) {
+        if (compra == null) {
+            return false;
+        }
+
+        // Validate required string fields
+        if (compra.getCalibre1() == null || compra.getCalibre1().trim().isEmpty()) {
+            Log.w(TAG, "Invalid Compra: calibre1 is null or empty");
+            return false;
+        }
+        if (compra.getTipo() == null || compra.getTipo().trim().isEmpty()) {
+            Log.w(TAG, "Invalid Compra: tipo is null or empty");
+            return false;
+        }
+        if (compra.getMarca() == null || compra.getMarca().trim().isEmpty()) {
+            Log.w(TAG, "Invalid Compra: marca is null or empty");
+            return false;
+        }
+        if (compra.getFecha() == null || compra.getFecha().trim().isEmpty()) {
+            Log.w(TAG, "Invalid Compra: fecha is null or empty");
+            return false;
+        }
+
+        // Validate numeric fields
+        if (compra.getUnidades() <= 0) {
+            Log.w(TAG, "Invalid Compra: unidades must be > 0, got " + compra.getUnidades());
+            return false;
+        }
+        if (compra.getPrecio() < 0) {
+            Log.w(TAG, "Invalid Compra: precio must be >= 0, got " + compra.getPrecio());
+            return false;
+        }
+        if (compra.getPeso() <= 0) {
+            Log.w(TAG, "Invalid Compra: peso must be > 0, got " + compra.getPeso());
+            return false;
+        }
+
+        // Validate valoracion range (0.0 to 5.0)
+        if (compra.getValoracion() < 0.0f || compra.getValoracion() > 5.0f) {
+            Log.w(TAG, "Invalid Compra: valoracion must be 0.0-5.0, got " + compra.getValoracion());
+            return false;
+        }
+
+        // Validate idPosGuia reference
+        if (compra.getIdPosGuia() < 0 || compra.getIdPosGuia() >= guias.size()) {
+            Log.w(TAG, "Invalid Compra: idPosGuia out of bounds: " + compra.getIdPosGuia() + " (guias.size=" + guias.size() + ")");
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * CRITICAL FIX v2.0.4: Validate Licencia before Firebase sync
+     * Prevents corrupted data from being synced to Firebase
+     */
+    private boolean isValidLicencia(Licencia licencia) {
+        if (licencia == null) {
+            return false;
+        }
+
+        // Validate required fields
+        if (licencia.getNumLicencia() == null || licencia.getNumLicencia().trim().isEmpty()) {
+            Log.w(TAG, "Invalid Licencia: numLicencia is null or empty");
+            return false;
+        }
+        if (licencia.getFechaCaducidad() == null || licencia.getFechaCaducidad().trim().isEmpty()) {
+            Log.w(TAG, "Invalid Licencia: fechaCaducidad is null or empty");
+            return false;
+        }
+
+        // Validate edad
+        if (licencia.getEdad() <= 0) {
+            Log.w(TAG, "Invalid Licencia: edad must be > 0, got " + licencia.getEdad());
+            return false;
+        }
+
+        // Validate tipo (must be a valid license type index)
+        if (licencia.getTipo() < 0) {
+            Log.w(TAG, "Invalid Licencia: tipo must be >= 0, got " + licencia.getTipo());
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * CRITICAL FIX v2.0.4: Sanitize Compras list
+     * Removes invalid entries before Firebase sync
+     */
+    private ArrayList<Compra> sanitizeCompras(ArrayList<Compra> compras) {
+        if (compras == null) {
+            return new ArrayList<>();
+        }
+
+        ArrayList<Compra> sanitized = new ArrayList<>();
+        int removed = 0;
+
+        for (Compra compra : compras) {
+            if (isValidCompra(compra)) {
+                sanitized.add(compra);
+            } else {
+                removed++;
+                // Log to Crashlytics for monitoring
+                ((BaseApplication) getApplicationContext()).crashlytics.log(
+                    "Removed invalid Compra from Firebase sync: marca=" +
+                    (compra != null ? compra.getMarca() : "null")
+                );
+            }
+        }
+
+        if (removed > 0) {
+            Log.w(TAG, "Sanitized " + removed + " invalid Compras before Firebase sync");
+        }
+
+        return sanitized;
+    }
+
+    /**
+     * CRITICAL FIX v2.0.4: Sanitize Licencias list
+     * Removes invalid entries before Firebase sync
+     */
+    private ArrayList<Licencia> sanitizeLicencias(ArrayList<Licencia> licencias) {
+        if (licencias == null) {
+            return new ArrayList<>();
+        }
+
+        ArrayList<Licencia> sanitized = new ArrayList<>();
+        int removed = 0;
+
+        for (Licencia licencia : licencias) {
+            if (isValidLicencia(licencia)) {
+                sanitized.add(licencia);
+            } else {
+                removed++;
+                // Log to Crashlytics for monitoring
+                ((BaseApplication) getApplicationContext()).crashlytics.log(
+                    "Removed invalid Licencia from Firebase sync: numLicencia=" +
+                    (licencia != null ? licencia.getNumLicencia() : "null")
+                );
+            }
+        }
+
+        if (removed > 0) {
+            Log.w(TAG, "Sanitized " + removed + " invalid Licencias before Firebase sync");
+        }
+
+        return sanitized;
+    }
+
     private void saveLists() {
         try {
             //Borrado de la base de datos actual;
             if (userRef != null) {
+                // CRITICAL FIX v2.0.4: Sanitize data before Firebase sync
+                final ArrayList<Compra> sanitizedCompras = sanitizeCompras(compras);
+                final ArrayList<Licencia> sanitizedLicencias = sanitizeLicencias(licencias);
+
                 userRef.child("db").removeValue(new DatabaseReference.CompletionListener() {
                     @Override
                     public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-                        userRef.child("db").child("guias").setValue(guias);
-                        userRef.child("db").child("compras").setValue(compras);
-                        userRef.child("db").child("licencias").setValue(licencias);
-                        userRef.child("db").child("tiradas").setValue(tiradas);
+                        // CRITICAL FIX v2.0.4: Use sanitized data and add failure listeners
+                        userRef.child("db").child("guias").setValue(guias)
+                                .addOnFailureListener(e -> {
+                                    Log.e(TAG, "Failed to save guias to Firebase", e);
+                                    ((BaseApplication) getApplicationContext()).crashlytics.recordException(e);
+                                });
+
+                        userRef.child("db").child("compras").setValue(sanitizedCompras)
+                                .addOnFailureListener(e -> {
+                                    Log.e(TAG, "Failed to save compras to Firebase", e);
+                                    ((BaseApplication) getApplicationContext()).crashlytics.recordException(e);
+                                });
+
+                        userRef.child("db").child("licencias").setValue(sanitizedLicencias)
+                                .addOnFailureListener(e -> {
+                                    Log.e(TAG, "Failed to save licencias to Firebase", e);
+                                    ((BaseApplication) getApplicationContext()).crashlytics.recordException(e);
+                                });
+
+                        userRef.child("db").child("tiradas").setValue(tiradas)
+                                .addOnFailureListener(e -> {
+                                    Log.e(TAG, "Failed to save tiradas to Firebase", e);
+                                    ((BaseApplication) getApplicationContext()).crashlytics.recordException(e);
+                                });
 
                         Log.i(TAG, "Guardado de listas en Firebase");
                     }

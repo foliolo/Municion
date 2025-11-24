@@ -1,5 +1,5 @@
-# Created by https://www.toptal.com/developers/gitignore/api/android,androidstudio,gradle,kotlin,windows,macos,git,maven,firebase
-# Edit at https://www.toptal.com/developers/gitignore?templates=android,androidstudio,gradle,kotlin,windows,macos,git,maven,firebase
+# Created by https://www.toptal.com/developers/gitignore/api/android,androidstudio,maven,gradle,firebase,git,kotlin,macos,windows,java
+# Edit at https://www.toptal.com/developers/gitignore?templates=android,androidstudio,maven,gradle,firebase,git,kotlin,macos,windows,java
 
 ### Android ###
 # Gradle files
@@ -66,7 +66,7 @@ gen-external-apklibs
 *_LOCAL_*.txt
 *_REMOTE_*.txt
 
-### Kotlin ###
+### Java ###
 # Compiled class file
 *.class
 
@@ -90,6 +90,19 @@ gen-external-apklibs
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 replay_pid*
+
+### Kotlin ###
+# Compiled class file
+
+# Log file
+
+# BlueJ files
+
+# Mobile Tools for Java (J2ME)
+
+# Package Files #
+
+# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 
 ### macOS ###
 # General
@@ -307,6 +320,8 @@ fabric.properties
 
 !/gradle/wrapper/gradle-wrapper.jar
 
-# End of https://www.toptal.com/developers/gitignore/api/android,androidstudio,gradle,kotlin,windows,macos,git,maven,firebase
-
+# End of https://www.toptal.com/developers/gitignore/api/android,androidstudio,maven,gradle,firebase,git,kotlin,macos,windows,java
+/app/release/baselineProfiles/0/app-release.dm
+/app/release/baselineProfiles/1/app-release.dm
 /keystore.properties
+/app/release/output-metadata.json
