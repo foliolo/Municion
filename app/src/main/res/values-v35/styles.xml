@@ -2,7 +2,7 @@
 
     <!-- Base application theme for API 35+ -->
     <!-- Android 15 enforces edge-to-edge by default, we opt-out to maintain existing layout -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppTheme" parent="Theme.MaterialComponents.Light.DarkActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimaryDark</item>
         <item name="colorPrimaryDark">@color/colorPrimary</item>
@@ -17,14 +17,14 @@
     </style>
 
     <!--AppBarLayout-->
-    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.MaterialComponents.Dark.ActionBar">
         <item name="colorPrimary">@color/colorPrimaryDark</item>
         <item name="colorPrimaryDark">@color/colorPrimary</item>
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
     <!--Toolbar-->
-    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light">
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.MaterialComponents.Light">
         <item name="colorPrimary">@color/colorPrimaryDark</item>
         <item name="colorPrimaryDark">@color/colorPrimary</item>
         <item name="colorAccent">@color/colorAccent</item>

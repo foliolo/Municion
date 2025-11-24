@@ -1,5 +1,6 @@
 package al.ahgitdevelopment.municion.domain.usecase
 
+import al.ahgitdevelopment.municion.auth.FirebaseAuthRepository
 import al.ahgitdevelopment.municion.data.repository.CompraRepository
 import al.ahgitdevelopment.municion.data.repository.GuiaRepository
 import al.ahgitdevelopment.municion.data.repository.LicenciaRepository
@@ -12,8 +13,11 @@ import javax.inject.Inject
 /**
  * Use Case para sincronizar TODOS los datos con Firebase
  *
- * FASE 3: Domain Layer - Use Cases
- * - Sync paralelo de todas las entidades
+ * FASE 5: Sync Bidireccional Inteligente
+ * - Verifica estado de autenticación antes de sincronizar
+ * - Solo sincroniza si el usuario está autenticado
+ * - Usuarios anónimos: sync bidireccional (local-first)
+ * - Usuarios vinculados: sync completo con prioridad cloud
  * - Manejo de errores individual por entidad
  *
  * @since v3.0.0 (TRACK B Modernization)
@@ -23,8 +27,30 @@ class SyncDataUseCase @Inject constructor(
     private val compraRepository: CompraRepository,
     private val licenciaRepository: LicenciaRepository,
     private val tiradaRepository: TiradaRepository,
+    private val firebaseAuthRepository: FirebaseAuthRepository,
     private val crashlytics: FirebaseCrashlytics
 ) {
+
+    companion object {
+        private const val TAG = "SyncDataUseCase"
+    }
+
+    /**
+     * Verifica si el usuario puede sincronizar
+     * @return true si está autenticado (anónimo o vinculado)
+     */
+    fun canSync(): Boolean = firebaseAuthRepository.isAuthenticated()
+
+    /**
+     * Verifica si el usuario tiene cuenta vinculada (no anónima)
+     * @return true si está vinculado con Google/Email
+     */
+    fun isLinked(): Boolean = firebaseAuthRepository.isLinked()
+
+    /**
+     * Obtiene el ID del usuario actual
+     */
+    fun getCurrentUserId(): String? = firebaseAuthRepository.getCurrentUser()?.uid
 
     /**
      * Sincroniza desde Firebase → Room (download)
@@ -96,6 +122,86 @@ class SyncDataUseCase @Inject constructor(
         }
     }
 
+    /**
+     * Sincronización bidireccional inteligente
+     *
+     * Estrategia:
+     * - Si el usuario NO está autenticado: no sincroniza (solo local)
+     * - Si el usuario está autenticado (anónimo o vinculado):
+     *   1. Primero descarga de Firebase (por si hay cambios en otro dispositivo)
+     *   2. Luego sube cambios locales a Firebase
+     *
+     * @return BidirectionalSyncResult con detalles de ambas operaciones
+     */
+    suspend fun syncBidirectional(): Result<BidirectionalSyncResult> {
+        // Verificar autenticación
+        if (!canSync()) {
+            android.util.Log.w(TAG, "Cannot sync: user not authenticated")
+            return Result.success(
+                BidirectionalSyncResult(
+                    downloadResult = null,
+                    uploadResult = null,
+                    skipped = true,
+                    reason = "Usuario no autenticado"
+                )
+            )
+        }
+
+        val userId = getCurrentUserId()
+        if (userId == null) {
+            android.util.Log.w(TAG, "Cannot sync: no user ID")
+            return Result.failure(Exception("No user ID available"))
+        }
+
+        return try {
+            android.util.Log.i(TAG, "Starting bidirectional sync for user: $userId")
+
+            // Paso 1: Descargar de Firebase → Room
+            val downloadResult = syncFromFirebase(userId).getOrNull()
+            android.util.Log.i(TAG, "Download completed: ${downloadResult?.successCount ?: 0}/4")
+
+            // Paso 2: Subir de Room → Firebase
+            val uploadResult = syncToFirebase(userId).getOrNull()
+            android.util.Log.i(TAG, "Upload completed: ${uploadResult?.successCount ?: 0}/4")
+
+            Result.success(
+                BidirectionalSyncResult(
+                    downloadResult = downloadResult,
+                    uploadResult = uploadResult,
+                    skipped = false,
+                    reason = null
+                )
+            )
+        } catch (e: Exception) {
+            android.util.Log.e(TAG, "Bidirectional sync failed", e)
+            crashlytics.recordException(e)
+            Result.failure(e)
+        }
+    }
+
+    /**
+     * Sincronización automática al iniciar/pausar la app
+     * Solo sincroniza si hay conexión y el usuario está autenticado
+     */
+    suspend fun autoSync(): Result<BidirectionalSyncResult> {
+        // Solo usuarios vinculados sincronizan automáticamente
+        // Usuarios anónimos deben sincronizar manualmente para evitar
+        // sobrescribir datos accidentalmente
+        if (!isLinked()) {
+            android.util.Log.d(TAG, "Auto-sync skipped: user is anonymous")
+            return Result.success(
+                BidirectionalSyncResult(
+                    downloadResult = null,
+                    uploadResult = null,
+                    skipped = true,
+                    reason = "Auto-sync solo para cuentas vinculadas"
+                )
+            )
+        }
+
+        return syncBidirectional()
+    }
+
     data class SyncResult(
         val guiasSuccess: Boolean,
         val comprasSuccess: Boolean,
@@ -108,5 +214,20 @@ class SyncDataUseCase @Inject constructor(
         val successCount: Int
             get() = listOf(guiasSuccess, comprasSuccess, licenciasSuccess, tiradasSuccess)
                 .count { it }
+    }
+
+    data class BidirectionalSyncResult(
+        val downloadResult: SyncResult?,
+        val uploadResult: SyncResult?,
+        val skipped: Boolean,
+        val reason: String?
+    ) {
+        val allSuccess: Boolean
+            get() = !skipped &&
+                    (downloadResult?.allSuccess ?: false) &&
+                    (uploadResult?.allSuccess ?: false)
+
+        val totalSuccessCount: Int
+            get() = (downloadResult?.successCount ?: 0) + (uploadResult?.successCount ?: 0)
     }
 }

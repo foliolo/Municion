@@ -55,6 +55,12 @@ interface CompraDao {
     suspend fun countComprasByGuia(guiaId: Int): Int
 
     /**
+     * Cuenta TODAS las compras (para migración)
+     */
+    @Query("SELECT COUNT(*) FROM compras")
+    suspend fun getCount(): Int
+
+    /**
      * Suma total de unidades compradas para una guía
      */
     @Query("SELECT SUM(unidades) FROM compras WHERE id_pos_guia = :guiaId")

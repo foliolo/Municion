@@ -57,6 +57,12 @@ interface LicenciaDao {
     suspend fun countLicencias(): Int
 
     /**
+     * Cuenta TODAS las licencias (alias para migración)
+     */
+    @Query("SELECT COUNT(*) FROM licencias")
+    suspend fun getCount(): Int
+
+    /**
      * Inserta una licencia
      */
     @Insert(onConflict = OnConflictStrategy.REPLACE)

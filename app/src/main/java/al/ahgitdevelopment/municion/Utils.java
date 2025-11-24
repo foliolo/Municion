@@ -411,11 +411,17 @@ public final class Utils {
     }
 
     /**
-     * Obtención de la cuenta principal del dispositivo para usarlo como usuario
+     * @deprecated since v3.0.0 - This method is a privacy violation.
+     * It accesses the device's Google accounts without user consent.
      *
-     * @param context
-     * @return Email de la primera cuenta de google registrada en el dispositivo
+     * This method was used by saveUserInFirebase() which has been deprecated.
+     * The new auth system uses anonymous auth by default with optional
+     * user-initiated account linking via Google Sign-In or Email/Password.
+     *
+     * @param context Application context
+     * @return Email of the first Google account on the device (DO NOT USE)
      */
+    @Deprecated
     static String getUserEmail(Context context) {
         String email = "";
         try {

@@ -63,6 +63,12 @@ interface GuiaDao {
     suspend fun countGuiasByTipoLicencia(tipoLicencia: Int): Int
 
     /**
+     * Cuenta TODAS las guías (para migración)
+     */
+    @Query("SELECT COUNT(*) FROM guias")
+    suspend fun getCount(): Int
+
+    /**
      * Inserta una guía
      */
     @Insert(onConflict = OnConflictStrategy.REPLACE)

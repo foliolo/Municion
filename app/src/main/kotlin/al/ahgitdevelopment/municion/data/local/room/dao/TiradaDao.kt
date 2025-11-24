@@ -51,6 +51,12 @@ interface TiradaDao {
     suspend fun countTiradas(): Int
 
     /**
+     * Cuenta TODAS las tiradas (alias para migración)
+     */
+    @Query("SELECT COUNT(*) FROM tiradas")
+    suspend fun getCount(): Int
+
+    /**
      * Calcula puntuación promedio
      */
     @Query("SELECT AVG(puntuacion) FROM tiradas WHERE puntuacion IS NOT NULL")

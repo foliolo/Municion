@@ -1,7 +1,9 @@
 package al.ahgitdevelopment.municion.ui
 
+import al.ahgitdevelopment.municion.R
+import al.ahgitdevelopment.municion.databinding.ActivityMainBinding
+import al.ahgitdevelopment.municion.ui.viewmodel.MainViewModel
 import android.Manifest
-import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.Menu
@@ -19,9 +21,6 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
-import al.ahgitdevelopment.municion.R
-import al.ahgitdevelopment.municion.databinding.ActivityMainBinding
-import al.ahgitdevelopment.municion.ui.viewmodel.MainViewModel
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.crashlytics.FirebaseCrashlytics
@@ -67,11 +66,17 @@ class MainActivity : AppCompatActivity() {
         ActivityResultContracts.RequestPermission()
     ) { isGranted ->
         if (isGranted) {
-            Snackbar.make(binding.root, "Permiso de calendario concedido", Snackbar.LENGTH_SHORT).show()
+            showSnackbar("Permiso de calendario concedido")
         } else {
-            Snackbar.make(binding.root, "Permiso de calendario denegado", Snackbar.LENGTH_LONG).show()
+            showSnackbar("Permiso de calendario denegado")
         }
     }
+
+    // Track active dialogs to prevent WindowLeaked
+    private var activeDialog: AlertDialog? = null
+
+    // Track if calendar permission was already requested this session
+    private var calendarPermissionRequested = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -90,14 +95,8 @@ class MainActivity : AppCompatActivity() {
         // Setup Navigation
         setupNavigation()
 
-        // Observe UI state
+        // Observe UI state - this handles auth and triggers other actions
         observeUiState()
-
-        // Check calendar permissions
-        checkCalendarPermission()
-
-        // Trigger initial sync
-        mainViewModel.syncFromFirebase()
     }
 
     private fun setupNavigation() {
@@ -130,11 +129,16 @@ class MainActivity : AppCompatActivity() {
                             is MainViewModel.MainUiState.Loading -> {
                                 // Show loading indicator if needed
                             }
+
                             is MainViewModel.MainUiState.Authenticated -> {
-                                // User authenticated
+                                // User authenticated - NOW it's safe to:
+                                // 1. Request permissions (user will stay in this activity)
+                                // 2. Sync data
+                                onUserAuthenticated()
                             }
+
                             is MainViewModel.MainUiState.Unauthenticated -> {
-                                // Redirect to login
+                                // Redirect to login - dismiss any dialogs first
                                 navigateToLogin()
                             }
                         }
@@ -148,18 +152,21 @@ class MainActivity : AppCompatActivity() {
                             is MainViewModel.SyncState.Idle -> {
                                 // Do nothing
                             }
+
                             is MainViewModel.SyncState.Syncing -> {
-                                Snackbar.make(binding.root, "Sincronizando con Firebase...", Snackbar.LENGTH_SHORT).show()
+                                showSnackbar("Sincronizando con Firebase...")
                             }
+
                             is MainViewModel.SyncState.Success -> {
-                                Snackbar.make(binding.root, "Sincronización exitosa (${state.count} items)", Snackbar.LENGTH_SHORT).show()
+                                showSnackbar("Sincronización exitosa (${state.count} items)")
                             }
+
                             is MainViewModel.SyncState.Error -> {
-                                Snackbar.make(binding.root, "Error de sincronización: ${state.message}", Snackbar.LENGTH_LONG).show()
+                                showSnackbar("Error de sincronización: ${state.message}")
                             }
 
                             is MainViewModel.SyncState.PartialSuccess -> {
-                                // TODO
+                                showSnackbar("Sincronización parcial (${state.count} items)")
                             }
                         }
                     }
@@ -168,28 +175,62 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Called when user is confirmed to be authenticated.
+     * This is the safe place to request permissions and sync data.
+     */
+    private fun onUserAuthenticated() {
+        // Check calendar permissions only once per session and only when authenticated
+        if (!calendarPermissionRequested) {
+            calendarPermissionRequested = true
+            checkCalendarPermission()
+        }
+
+        // Trigger sync
+        mainViewModel.syncFromFirebase()
+    }
+
+    /**
+     * Request calendar permission if needed.
+     * Only called when user is authenticated to avoid WindowLeaked issues.
+     */
     private fun checkCalendarPermission() {
+        // Safety check - don't show dialogs if activity is finishing
+        if (isFinishing || isDestroyed) return
+
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_CALENDAR)
             != PackageManager.PERMISSION_GRANTED
         ) {
             // Mostrar explicación si es necesario
             if (shouldShowRequestPermissionRationale(Manifest.permission.WRITE_CALENDAR)) {
-                AlertDialog.Builder(this)
-                    .setTitle("Permiso de calendario")
-                    .setMessage("La app necesita acceso al calendario para crear recordatorios de caducidad de licencias")
-                    .setPositiveButton("Permitir") { _, _ ->
-                        calendarPermissionLauncher.launch(Manifest.permission.WRITE_CALENDAR)
-                    }
-                    .setNegativeButton("Cancelar", null)
-                    .show()
+                showCalendarPermissionDialog()
             } else {
                 calendarPermissionLauncher.launch(Manifest.permission.WRITE_CALENDAR)
             }
         }
     }
 
+    private fun showCalendarPermissionDialog() {
+        // Safety check
+        if (isFinishing || isDestroyed) return
+
+        dismissActiveDialog()
+        activeDialog = AlertDialog.Builder(this)
+            .setTitle("Permiso de calendario")
+            .setMessage("La app necesita acceso al calendario para crear recordatorios de caducidad de licencias")
+            .setPositiveButton("Permitir") { _, _ ->
+                calendarPermissionLauncher.launch(Manifest.permission.WRITE_CALENDAR)
+            }
+            .setNegativeButton("Cancelar", null)
+            .setOnDismissListener { activeDialog = null }
+            .create()
+        activeDialog?.show()
+    }
+
     private fun navigateToLogin() {
-        // TODO: Implement navigation to LoginActivity
+        // CRITICAL: Dismiss any dialogs BEFORE finishing the activity
+        dismissActiveDialog()
+
         firebaseAuth.signOut()
         finish()
     }
@@ -205,32 +246,65 @@ class MainActivity : AppCompatActivity() {
                 mainViewModel.syncFromFirebase()
                 true
             }
+
             R.id.action_settings -> {
-                // TODO: Navigate to settings
-                Snackbar.make(binding.root, "Settings (TODO)", Snackbar.LENGTH_SHORT).show()
+                showSnackbar("Settings (TODO)")
                 true
             }
+
             R.id.action_logout -> {
                 showLogoutDialog()
                 true
             }
+
             else -> super.onOptionsItemSelected(item)
         }
     }
 
     private fun showLogoutDialog() {
-        AlertDialog.Builder(this)
+        if (isFinishing || isDestroyed) return
+
+        dismissActiveDialog()
+        activeDialog = AlertDialog.Builder(this)
             .setTitle("Cerrar sesión")
             .setMessage("¿Estás seguro de que deseas cerrar sesión?")
             .setPositiveButton("Sí") { _, _ ->
-                firebaseAuth.signOut()
                 navigateToLogin()
             }
             .setNegativeButton("No", null)
-            .show()
+            .setOnDismissListener { activeDialog = null }
+            .create()
+        activeDialog?.show()
+    }
+
+    /**
+     * Helper to show snackbar safely
+     */
+    private fun showSnackbar(message: String, duration: Int = Snackbar.LENGTH_SHORT) {
+        if (!isFinishing && !isDestroyed) {
+            Snackbar.make(binding.root, message, duration).show()
+        }
+    }
+
+    /**
+     * Dismiss any active dialog to prevent WindowLeaked
+     */
+    private fun dismissActiveDialog() {
+        activeDialog?.let { dialog ->
+            if (dialog.isShowing) {
+                dialog.dismiss()
+            }
+        }
+        activeDialog = null
     }
 
     override fun onSupportNavigateUp(): Boolean {
         return navController.navigateUp() || super.onSupportNavigateUp()
+    }
+
+    override fun onDestroy() {
+        // Dismiss any active dialog to prevent WindowLeaked
+        dismissActiveDialog()
+        super.onDestroy()
     }
 }

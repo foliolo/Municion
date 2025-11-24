@@ -1,5 +1,7 @@
 package al.ahgitdevelopment.municion.di
 
+import android.content.Context
+import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.crashlytics.FirebaseCrashlytics
@@ -12,6 +14,7 @@ import com.google.firebase.storage.ktx.storage
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
@@ -20,7 +23,7 @@ import javax.inject.Singleton
  *
  * FASE 3: Dependency Injection
  * - Provee instancias singleton de Firebase services
- * - FirebaseAuth, Database, Storage, Crashlytics
+ * - FirebaseAuth, Database, Storage, Crashlytics, Analytics
  *
  * @since v3.0.0 (TRACK B Modernization)
  */
@@ -32,6 +35,14 @@ object FirebaseModule {
     @Singleton
     fun provideFirebaseAuth(): FirebaseAuth {
         return Firebase.auth
+    }
+
+    @Provides
+    @Singleton
+    fun provideFirebaseAnalytics(
+        @ApplicationContext context: Context
+    ): FirebaseAnalytics {
+        return FirebaseAnalytics.getInstance(context)
     }
 
     @Provides
