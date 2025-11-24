@@ -166,9 +166,17 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
             ((BaseApplication) context.getApplicationContext()).crashlytics.log("Fallo obteniendo guias. No existe la tabla");
         }
         try {
-            compras = getListCompras(db);
+            // CRITICAL FIX v2.0.4: Special handling for v22→v23 migration (peso TEXT→INTEGER)
+            if (oldVersion <= 22) {
+                Log.i(TAG, "Migrating from v22: Special handling for peso field (TEXT→INTEGER)");
+                compras = getListComprasV22Migration(db);
+            } else {
+                compras = getListCompras(db);
+            }
         } catch (Exception ex) {
+            Log.e(TAG, "Error during compras migration", ex);
             ((BaseApplication) context.getApplicationContext()).crashlytics.log("Fallo obteniendo compras. No existe la tabla");
+            ((BaseApplication) context.getApplicationContext()).crashlytics.recordException(ex);
         }
         try {
             licencias = getListLicencias(db);
@@ -196,7 +204,70 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
         saveListLicencias(db, licencias);
         saveListTiradas(db, tiradas);
 
-        Log.i(TAG, "BBDD Upgrade Done");
+        Log.i(TAG, "BBDD Upgrade Done from v" + oldVersion + " to v" + newVersion);
+    }
+
+    /**
+     * CRITICAL FIX v2.0.4: Special method for migrating compras from v22
+     * In v22, peso was TEXT. This method safely converts TEXT peso to INTEGER.
+     */
+    private ArrayList<Compra> getListComprasV22Migration(SQLiteDatabase db) {
+        ArrayList<Compra> compras = new ArrayList<>();
+        Cursor cursor = null;
+
+        try {
+            cursor = getCursorCompras(db);
+            if (cursor != null && cursor.getCount() >= 0 && cursor.moveToFirst()) {
+                do {
+                    Compra compra = new Compra();
+                    compra.setId(cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_ID)));
+                    compra.setIdPosGuia(cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_COMPRA_ID_POS_GUIA)));
+                    compra.setCalibre1(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_COMPRA_CALIBRE1)));
+                    compra.setCalibre2(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_COMPRA_CALIBRE2)));
+                    compra.setUnidades(cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_COMPRA_UNIDADES)));
+                    compra.setPrecio(cursor.getDouble(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_COMPRA_PRECIO)));
+                    compra.setFecha(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_COMPRA_FECHA)));
+                    compra.setTipo(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_COMPRA_TIPO)));
+
+                    // CRITICAL FIX: Read peso as STRING (it's TEXT in v22), then convert to INTEGER
+                    String pesoStr = cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_COMPRA_PESO));
+                    int peso = 0;
+                    try {
+                        if (pesoStr != null && !pesoStr.trim().isEmpty()) {
+                            peso = Integer.parseInt(pesoStr.trim());
+                        } else {
+                            Log.w(TAG, "v22 Migration: Empty peso value, defaulting to 0");
+                        }
+                    } catch (NumberFormatException e) {
+                        Log.e(TAG, "v22 Migration: Invalid peso value '" + pesoStr + "', defaulting to 0", e);
+                        ((BaseApplication) context.getApplicationContext()).crashlytics.log(
+                            "v22 Migration: Invalid peso value '" + pesoStr + "' for compra marca=" + compra.getMarca()
+                        );
+                    }
+                    compra.setPeso(peso);
+
+                    compra.setMarca(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_COMPRA_MARCA)));
+                    compra.setTienda(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_COMPRA_TIENDA)));
+                    compra.setImagePath(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_COMPRA_IMAGEN)));
+                    compra.setValoracion(cursor.getFloat(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_COMPRA_VALORACION)));
+
+                    compras.add(compra);
+                } while (cursor.moveToNext());
+            }
+
+            Log.i(TAG, "v22 Migration: Successfully migrated " + compras.size() + " compras");
+        } catch (Exception e) {
+            Log.e(TAG, "Error during v22 compras migration", e);
+            if (context != null && context.getApplicationContext() instanceof BaseApplication) {
+                ((BaseApplication) context.getApplicationContext()).crashlytics.recordException(e);
+            }
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+
+        return compras;
     }
 
     /**
