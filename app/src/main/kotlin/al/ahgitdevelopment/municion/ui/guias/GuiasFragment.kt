@@ -1,5 +1,6 @@
 package al.ahgitdevelopment.municion.ui.guias
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -9,12 +10,12 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import al.ahgitdevelopment.municion.R
 import al.ahgitdevelopment.municion.data.local.room.entities.Guia
+import al.ahgitdevelopment.municion.forms.GuiaFormActivity
 import al.ahgitdevelopment.municion.databinding.FragmentGuiasBinding
 import al.ahgitdevelopment.municion.ui.viewmodel.GuiaViewModel
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -99,12 +100,8 @@ class GuiasFragment : Fragment() {
 
     private fun setupFab() {
         binding.fab.setOnClickListener {
-            // Check if user has licenses first
-            viewLifecycleOwner.lifecycleScope.launch {
-                // TODO: Check licenses from LicenciaViewModel
-                // For now, just navigate
-                findNavController().navigate(R.id.action_guiasFragment_to_guiaFormFragment)
-            }
+            // Launch legacy GuiaFormActivity
+            startActivity(Intent(requireContext(), GuiaFormActivity::class.java))
         }
     }
 

@@ -8,73 +8,32 @@
     <fragment
         android:id="@+id/guiasFragment"
         android:name="al.ahgitdevelopment.municion.ui.guias.GuiasFragment"
-        android:label="Guías"
-        tools:layout="@layout/fragment_guias">
-        <action
-            android:id="@+id/action_guiasFragment_to_guiaFormFragment"
-            app:destination="@id/guiaFormFragment" />
-    </fragment>
+        android:label="@string/section_guias_title"
+        tools:layout="@layout/fragment_guias" />
 
     <fragment
         android:id="@+id/comprasFragment"
         android:name="al.ahgitdevelopment.municion.ui.compras.ComprasFragment"
-        android:label="Compras"
-        tools:layout="@layout/fragment_compras">
-        <action
-            android:id="@+id/action_comprasFragment_to_compraFormFragment"
-            app:destination="@id/compraFormFragment" />
-    </fragment>
+        android:label="@string/section_compras_title"
+        tools:layout="@layout/fragment_compras" />
 
     <fragment
         android:id="@+id/licenciasFragment"
         android:name="al.ahgitdevelopment.municion.ui.licencias.LicenciasFragment"
-        android:label="Licencias"
-        tools:layout="@layout/fragment_licencias">
-        <action
-            android:id="@+id/action_licenciasFragment_to_licenciaFormFragment"
-            app:destination="@id/licenciaFormFragment" />
-    </fragment>
+        android:label="@string/section_licencias_title"
+        tools:layout="@layout/fragment_licencias" />
 
     <fragment
         android:id="@+id/tiradasFragment"
         android:name="al.ahgitdevelopment.municion.ui.tiradas.TiradasFragment"
-        android:label="Tiradas"
-        tools:layout="@layout/fragment_tiradas">
-        <action
-            android:id="@+id/action_tiradasFragment_to_tiradaFormFragment"
-            app:destination="@id/tiradaFormFragment" />
-    </fragment>
-
-    <!-- Form Fragments (dialogs) -->
-    <dialog
-        android:id="@+id/guiaFormFragment"
-        android:name="al.ahgitdevelopment.municion.ui.guias.GuiaFormFragment"
-        android:label="Nueva Guía"
-        tools:layout="@layout/fragment_guia_form" />
-
-    <dialog
-        android:id="@+id/compraFormFragment"
-        android:name="al.ahgitdevelopment.municion.ui.compras.CompraFormFragment"
-        android:label="Nueva Compra"
-        tools:layout="@layout/fragment_compra_form" />
-
-    <dialog
-        android:id="@+id/licenciaFormFragment"
-        android:name="al.ahgitdevelopment.municion.ui.licencias.LicenciaFormFragment"
-        android:label="Nueva Licencia"
-        tools:layout="@layout/fragment_licencia_form" />
-
-    <dialog
-        android:id="@+id/tiradaFormFragment"
-        android:name="al.ahgitdevelopment.municion.ui.tiradas.TiradaFormFragment"
-        android:label="Nueva Tirada"
-        tools:layout="@layout/fragment_tirada_form" />
+        android:label="@string/section_competiciones_title"
+        tools:layout="@layout/fragment_tiradas" />
 
     <!-- Account Settings Fragment -->
     <fragment
         android:id="@+id/accountSettingsFragment"
         android:name="al.ahgitdevelopment.municion.ui.settings.AccountSettingsFragment"
-        android:label="Configuración de Cuenta"
+        android:label="@string/account_settings_title"
         tools:layout="@layout/fragment_account_settings" />
 
 </navigation>

@@ -1,5 +1,6 @@
 package al.ahgitdevelopment.municion.ui.licencias
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -9,12 +10,11 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import al.ahgitdevelopment.municion.R
 import al.ahgitdevelopment.municion.data.local.room.entities.Licencia
+import al.ahgitdevelopment.municion.forms.LicenciaFormActivity
 import al.ahgitdevelopment.municion.databinding.FragmentLicenciasBinding
 import al.ahgitdevelopment.municion.managers.CalendarManager
 import al.ahgitdevelopment.municion.ui.viewmodel.LicenciaViewModel
@@ -132,7 +132,7 @@ class LicenciasFragment : Fragment() {
 
     private fun setupFab() {
         binding.fab.setOnClickListener {
-            findNavController().navigate(R.id.action_licenciasFragment_to_licenciaFormFragment)
+            startActivity(Intent(requireContext(), LicenciaFormActivity::class.java))
         }
     }
 

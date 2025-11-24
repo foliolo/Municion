@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-<!--        android:icon="@drawable/ic_menu_gallery"-->
     <item
         android:id="@+id/guiasFragment"
-        android:title="Guías" />
+        android:icon="@drawable/ic_pistola"
+        android:title="@string/section_guias_title" />
 
-<!--        android:icon="@drawable/ic_menu_slideshow"-->
     <item
         android:id="@+id/comprasFragment"
-        android:title="Compras" />
+        android:icon="@drawable/ic_cartuchos"
+        android:title="@string/section_compras_title" />
 
-<!--        android:icon="@drawable/ic_menu_camera"-->
     <item
         android:id="@+id/licenciasFragment"
-        android:title="Licencias" />
+        android:icon="@drawable/ic_card_membership"
+        android:title="@string/section_licencias_title" />
 
-<!--        android:icon="@drawable/ic_menu_send"-->
     <item
         android:id="@+id/tiradasFragment"
-        android:title="Tiradas" />
+        android:icon="@drawable/ic_bullseye"
+        android:title="@string/section_competiciones_title" />
 </menu>

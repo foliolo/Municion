@@ -1,5 +1,6 @@
 package al.ahgitdevelopment.municion.ui.compras
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -9,12 +10,12 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import al.ahgitdevelopment.municion.R
 import al.ahgitdevelopment.municion.data.local.room.entities.Compra
+import al.ahgitdevelopment.municion.forms.CompraFormActivity
 import al.ahgitdevelopment.municion.databinding.FragmentComprasBinding
 import al.ahgitdevelopment.municion.ui.viewmodel.CompraViewModel
 import al.ahgitdevelopment.municion.ui.viewmodel.GuiaViewModel
@@ -107,11 +108,12 @@ class ComprasFragment : Fragment() {
                     if (guias.isEmpty()) {
                         Snackbar.make(
                             binding.root,
-                            "Debe introducir una guía primero",
+                            R.string.compra_empty_list,
                             Snackbar.LENGTH_LONG
                         ).show()
                     } else {
-                        findNavController().navigate(R.id.action_comprasFragment_to_compraFormFragment)
+                        // Launch legacy CompraFormActivity
+                        startActivity(Intent(requireContext(), CompraFormActivity::class.java))
                     }
                 }
             }

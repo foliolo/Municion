@@ -1,5 +1,6 @@
 package al.ahgitdevelopment.municion.ui.tiradas
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -9,12 +10,11 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import al.ahgitdevelopment.municion.R
 import al.ahgitdevelopment.municion.data.local.room.entities.Tirada
+import al.ahgitdevelopment.municion.forms.TiradaFormActivity
 import al.ahgitdevelopment.municion.databinding.FragmentTiradasBinding
 import al.ahgitdevelopment.municion.ui.viewmodel.TiradaViewModel
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -99,7 +99,8 @@ class TiradasFragment : Fragment() {
 
     private fun setupFab() {
         binding.fab.setOnClickListener {
-            findNavController().navigate(R.id.action_tiradasFragment_to_tiradaFormFragment)
+            // Launch legacy TiradaFormActivity
+            startActivity(Intent(requireContext(), TiradaFormActivity::class.java))
         }
     }
 
