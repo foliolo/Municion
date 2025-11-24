@@ -16,6 +16,7 @@ import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.RatingBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -256,9 +257,31 @@ public class CompraFormActivity extends AppCompatActivity {
         if (layoutUnidades.getEditText().getText().toString().isEmpty()) {
             layoutUnidades.getEditText().setText("0");
         }
-        bundle.putInt("unidades", Integer.parseInt(layoutUnidades.getEditText().getText().toString()));
 
-        bundle.putDouble("precio", Double.parseDouble(layoutPrecio.getEditText().getText().toString().replace("€", "")));
+        // Parse unidades with error handling
+        try {
+            int unidades = Integer.parseInt(layoutUnidades.getEditText().getText().toString().trim());
+            bundle.putInt("unidades", unidades);
+        } catch (NumberFormatException e) {
+            Toast.makeText(this, "Error: Unidades debe ser un número válido", Toast.LENGTH_LONG).show();
+            layoutUnidades.setError("Número inválido");
+            return;
+        }
+
+        // Parse precio with error handling and locale support
+        try {
+            String precioText = layoutPrecio.getEditText().getText().toString()
+                    .replace("€", "")
+                    .replace(",", ".")  // Handle Spanish decimal separator
+                    .trim();
+            double precio = Double.parseDouble(precioText);
+            bundle.putDouble("precio", precio);
+        } catch (NumberFormatException e) {
+            Toast.makeText(this, "Error: Precio debe ser un número válido (use . o , para decimales)", Toast.LENGTH_LONG).show();
+            layoutPrecio.setError("Número inválido");
+            return;
+        }
+
         if (layoutFecha.getEditText().getText().toString().isEmpty()) {
             layoutFecha.getEditText().setText("");
         }
@@ -272,7 +295,16 @@ public class CompraFormActivity extends AppCompatActivity {
         if (layoutPesoMunicion.getEditText().getText().toString().isEmpty()) {
             layoutPesoMunicion.getEditText().setText("0");
         }
-        bundle.putInt("peso", Integer.parseInt(layoutPesoMunicion.getEditText().getText().toString()));
+
+        // Parse peso with error handling
+        try {
+            int peso = Integer.parseInt(layoutPesoMunicion.getEditText().getText().toString().trim());
+            bundle.putInt("peso", peso);
+        } catch (NumberFormatException e) {
+            Toast.makeText(this, "Error: Peso debe ser un número válido", Toast.LENGTH_LONG).show();
+            layoutPesoMunicion.setError("Número inválido");
+            return;
+        }
 
         if (layoutMarcaMunicion.getEditText().getText().toString().isEmpty()) {
             layoutMarcaMunicion.getEditText().setText(null);

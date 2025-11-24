@@ -71,7 +71,7 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
     public static final String KEY_TIRADAS_FECHA = "fecha";
     public static final String KEY_TIRADAS_PUNTUACION = "puntuacion";
     // Database Version
-    private static final int DATABASE_VERSION = 22;
+    private static final int DATABASE_VERSION = 23;
     // Database Name
     private static final String DATABASE_NAME = "DBMunicion.db";
     // Table Create Statements
@@ -104,7 +104,7 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
             + KEY_COMPRA_PRECIO + " REAL NOT NULL,"
             + KEY_COMPRA_FECHA + " TEXT NOT NULL,"
             + KEY_COMPRA_TIPO + " TEXT,"
-            + KEY_COMPRA_PESO + " TEXT,"
+            + KEY_COMPRA_PESO + " INTEGER,"
             + KEY_COMPRA_MARCA + " TEXT,"
             + KEY_COMPRA_TIENDA + " TEXT,"
             + KEY_COMPRA_IMAGEN + " TEXT,"
@@ -166,9 +166,17 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
             ((BaseApplication) context.getApplicationContext()).crashlytics.log("Fallo obteniendo guias. No existe la tabla");
         }
         try {
-            compras = getListCompras(db);
+            // CRITICAL FIX v2.0.4: Special handling for v22→v23 migration (peso TEXT→INTEGER)
+            if (oldVersion <= 22) {
+                Log.i(TAG, "Migrating from v22: Special handling for peso field (TEXT→INTEGER)");
+                compras = getListComprasV22Migration(db);
+            } else {
+                compras = getListCompras(db);
+            }
         } catch (Exception ex) {
+            Log.e(TAG, "Error during compras migration", ex);
             ((BaseApplication) context.getApplicationContext()).crashlytics.log("Fallo obteniendo compras. No existe la tabla");
+            ((BaseApplication) context.getApplicationContext()).crashlytics.recordException(ex);
         }
         try {
             licencias = getListLicencias(db);
@@ -196,7 +204,70 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
         saveListLicencias(db, licencias);
         saveListTiradas(db, tiradas);
 
-        Log.i(TAG, "BBDD Upgrade Done");
+        Log.i(TAG, "BBDD Upgrade Done from v" + oldVersion + " to v" + newVersion);
+    }
+
+    /**
+     * CRITICAL FIX v2.0.4: Special method for migrating compras from v22
+     * In v22, peso was TEXT. This method safely converts TEXT peso to INTEGER.
+     */
+    private ArrayList<Compra> getListComprasV22Migration(SQLiteDatabase db) {
+        ArrayList<Compra> compras = new ArrayList<>();
+        Cursor cursor = null;
+
+        try {
+            cursor = getCursorCompras(db);
+            if (cursor != null && cursor.getCount() >= 0 && cursor.moveToFirst()) {
+                do {
+                    Compra compra = new Compra();
+                    compra.setId(cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_ID)));
+                    compra.setIdPosGuia(cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_COMPRA_ID_POS_GUIA)));
+                    compra.setCalibre1(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_COMPRA_CALIBRE1)));
+                    compra.setCalibre2(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_COMPRA_CALIBRE2)));
+                    compra.setUnidades(cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_COMPRA_UNIDADES)));
+                    compra.setPrecio(cursor.getDouble(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_COMPRA_PRECIO)));
+                    compra.setFecha(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_COMPRA_FECHA)));
+                    compra.setTipo(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_COMPRA_TIPO)));
+
+                    // CRITICAL FIX: Read peso as STRING (it's TEXT in v22), then convert to INTEGER
+                    String pesoStr = cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_COMPRA_PESO));
+                    int peso = 0;
+                    try {
+                        if (pesoStr != null && !pesoStr.trim().isEmpty()) {
+                            peso = Integer.parseInt(pesoStr.trim());
+                        } else {
+                            Log.w(TAG, "v22 Migration: Empty peso value, defaulting to 0");
+                        }
+                    } catch (NumberFormatException e) {
+                        Log.e(TAG, "v22 Migration: Invalid peso value '" + pesoStr + "', defaulting to 0", e);
+                        ((BaseApplication) context.getApplicationContext()).crashlytics.log(
+                            "v22 Migration: Invalid peso value '" + pesoStr + "' for compra marca=" + compra.getMarca()
+                        );
+                    }
+                    compra.setPeso(peso);
+
+                    compra.setMarca(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_COMPRA_MARCA)));
+                    compra.setTienda(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_COMPRA_TIENDA)));
+                    compra.setImagePath(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_COMPRA_IMAGEN)));
+                    compra.setValoracion(cursor.getFloat(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_COMPRA_VALORACION)));
+
+                    compras.add(compra);
+                } while (cursor.moveToNext());
+            }
+
+            Log.i(TAG, "v22 Migration: Successfully migrated " + compras.size() + " compras");
+        } catch (Exception e) {
+            Log.e(TAG, "Error during v22 compras migration", e);
+            if (context != null && context.getApplicationContext() instanceof BaseApplication) {
+                ((BaseApplication) context.getApplicationContext()).crashlytics.recordException(e);
+            }
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+
+        return compras;
     }
 
     /**
@@ -416,30 +487,39 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
         if (db == null)
             db = this.getWritableDatabase();
         ArrayList<Guia> guias = new ArrayList<>();
-        Cursor cursor = getCursorGuias(db);
+        Cursor cursor = null;
 
-        // Looping through all rows and adding to list
-        if (cursor != null && cursor.getCount() >= 0 && cursor.moveToFirst()) {
-            do {
-                Guia guia = new Guia();
-                guia.setId(cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_ID)));
-                guia.setIdCompra(cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_GUIA_ID_COMPRA)));
-                guia.setTipoLicencia(cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_GUIA_ID_LICENCIA)));
-                guia.setApodo(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_GUIA_APODO)));
-                guia.setMarca(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_GUIA_MARCA)));
-                guia.setModelo(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_GUIA_MODELO)));
-                guia.setTipoArma(cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_GUIA_TIPO_ARMA)));
-                guia.setCalibre1(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_GUIA_CALIBRE1)));
-                guia.setCalibre2(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_GUIA_CALIBRE2)));
-                guia.setNumGuia(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_GUIA_NUM_GUIA)));
-                guia.setNumArma(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_GUIA_NUM_ARMA)));
-                guia.setImagePath(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_GUIA_IMAGEN)));
-                guia.setCupo(cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_GUIA_CUPO)));
-                guia.setGastado(cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_GUIA_GASTADO)));
+        try {
+            cursor = getCursorGuias(db);
 
-                // Adding contact to list
-                guias.add(guia);
-            } while (cursor.moveToNext());
+            // Looping through all rows and adding to list
+            if (cursor != null && cursor.getCount() >= 0 && cursor.moveToFirst()) {
+                do {
+                    Guia guia = new Guia();
+                    guia.setId(cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_ID)));
+                    guia.setIdCompra(cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_GUIA_ID_COMPRA)));
+                    guia.setTipoLicencia(cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_GUIA_ID_LICENCIA)));
+                    guia.setApodo(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_GUIA_APODO)));
+                    guia.setMarca(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_GUIA_MARCA)));
+                    guia.setModelo(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_GUIA_MODELO)));
+                    guia.setTipoArma(cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_GUIA_TIPO_ARMA)));
+                    guia.setCalibre1(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_GUIA_CALIBRE1)));
+                    guia.setCalibre2(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_GUIA_CALIBRE2)));
+                    guia.setNumGuia(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_GUIA_NUM_GUIA)));
+                    guia.setNumArma(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_GUIA_NUM_ARMA)));
+                    guia.setImagePath(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_GUIA_IMAGEN)));
+                    guia.setCupo(cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_GUIA_CUPO)));
+                    guia.setGastado(cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_GUIA_GASTADO)));
+
+                    // Adding contact to list
+                    guias.add(guia);
+                } while (cursor.moveToNext());
+            }
+        } finally {
+            // Always close cursor to prevent memory leaks
+            if (cursor != null) {
+                cursor.close();
+            }
         }
 
         // return contact list
@@ -450,10 +530,11 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
         if (db == null)
             db = this.getWritableDatabase();
         ArrayList<Compra> compras = new ArrayList<>();
-        Cursor cursor = getCursorCompras(db);
+        Cursor cursor = null;
 
         // Looping through all rows and adding to list
         try {
+            cursor = getCursorCompras(db);
             if (cursor != null && cursor.getCount() >= 0 && cursor.moveToFirst()) {
                 do {
                     Compra compra = new Compra();
@@ -469,14 +550,22 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
                     compra.setMarca(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_COMPRA_MARCA)));
                     compra.setTienda(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_COMPRA_TIENDA)));
                     compra.setImagePath(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_COMPRA_IMAGEN)));
-                    compra.setValoracion(cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_COMPRA_VALORACION)));
+                    compra.setValoracion(cursor.getFloat(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_COMPRA_VALORACION)));
 
                     // Adding contact to list
                     compras.add(compra);
                 } while (cursor.moveToNext());
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.e(TAG, "Error reading compras from database", e);
+            if (context != null && context.getApplicationContext() instanceof BaseApplication) {
+                ((BaseApplication) context.getApplicationContext()).crashlytics.recordException(e);
+            }
+        } finally {
+            // Always close cursor to prevent memory leaks
+            if (cursor != null) {
+                cursor.close();
+            }
         }
 
         // return contact list
@@ -487,10 +576,11 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
         if (db == null)
             db = this.getWritableDatabase();
         ArrayList<Licencia> licencias = new ArrayList<>();
-        Cursor cursor = getCursorLicencias(db);
+        Cursor cursor = null;
 
         // Looping through all rows and adding to list
         try {
+            cursor = getCursorLicencias(db);
             if (cursor != null && cursor.getCount() >= 0 && cursor.moveToFirst()) {
                 do {
                     Licencia licencia = new Licencia();
@@ -519,7 +609,15 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
                 } while (cursor.moveToNext());
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.e(TAG, "Error reading licencias from database", e);
+            if (context != null && context.getApplicationContext() instanceof BaseApplication) {
+                ((BaseApplication) context.getApplicationContext()).crashlytics.recordException(e);
+            }
+        } finally {
+            // Always close cursor to prevent memory leaks
+            if (cursor != null) {
+                cursor.close();
+            }
         }
 
         // return contact list
@@ -530,10 +628,11 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
         if (db == null)
             db = this.getWritableDatabase();
         ArrayList<Tirada> tiradas = new ArrayList<>();
-        Cursor cursor = getCursorTiradas(db);
+        Cursor cursor = null;
 
         // Looping through all rows and adding to list
         try {
+            cursor = getCursorTiradas(db);
             if (cursor != null && cursor.getCount() >= 0 && cursor.moveToFirst()) {
                 do {
                     Tirada tirada = new Tirada();
@@ -546,7 +645,15 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
                 } while (cursor.moveToNext());
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.e(TAG, "Error reading tiradas from database", e);
+            if (context != null && context.getApplicationContext() instanceof BaseApplication) {
+                ((BaseApplication) context.getApplicationContext()).crashlytics.recordException(e);
+            }
+        } finally {
+            // Always close cursor to prevent memory leaks
+            if (cursor != null) {
+                cursor.close();
+            }
         }
 
         return tiradas;
@@ -555,154 +662,230 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
     public void saveListGuias(SQLiteDatabase db, ArrayList<Guia> guias) {
         if (db == null)
             db = this.getWritableDatabase();
-        db.delete(TABLE_GUIAS, null, null); // No elimina la tabla, solo elimina las filas
-        if (guias.size() > 0) {
-            for (Guia guia : guias) {
-                db.execSQL("INSERT INTO " + TABLE_GUIAS + " (" +
-                        KEY_GUIA_ID_COMPRA + ", " +
-                        KEY_GUIA_ID_LICENCIA + ", " +
-                        KEY_GUIA_APODO + ", " +
-                        KEY_GUIA_MARCA + ", " +
-                        KEY_GUIA_MODELO + ", " +
-                        KEY_GUIA_TIPO_ARMA + ", " +
-                        KEY_GUIA_CALIBRE1 + ", " +
-                        KEY_GUIA_CALIBRE2 + ", " +
-                        KEY_GUIA_NUM_GUIA + ", " +
-                        KEY_GUIA_NUM_ARMA + ", " +
-                        KEY_GUIA_IMAGEN + ", " +
-                        KEY_GUIA_CUPO + ", " +
-                        KEY_GUIA_GASTADO +
-                        ") VALUES (" +
-                        "'" + guia.getIdCompra() + "' , " +
-                        "'" + guia.getTipoLicencia() + "' , " +
-                        "'" + guia.getApodo() + "' , " +
-                        "'" + guia.getMarca() + "' , " +
-                        "'" + guia.getModelo() + "' , " +
-                        "'" + guia.getTipoArma() + "' , " +
-                        "'" + guia.getCalibre1() + "' , " +
-                        "'" + guia.getCalibre2() + "' , " +
-                        "'" + guia.getNumGuia() + "' , " +
-                        "'" + guia.getNumArma() + "' , " +
-                        "'" + guia.getImagePath() + "' , " +
-                        "'" + guia.getCupo() + "' , " +
-                        "'" + guia.getGastado() + "'" +
-                        ");");
+
+        // Use transaction to prevent data loss if insert fails
+        db.beginTransaction();
+        try {
+            db.delete(TABLE_GUIAS, null, null); // No elimina la tabla, solo elimina las filas
+            if (guias.size() > 0) {
+                for (Guia guia : guias) {
+                    db.execSQL("INSERT INTO " + TABLE_GUIAS + " (" +
+                            KEY_GUIA_ID_COMPRA + ", " +
+                            KEY_GUIA_ID_LICENCIA + ", " +
+                            KEY_GUIA_APODO + ", " +
+                            KEY_GUIA_MARCA + ", " +
+                            KEY_GUIA_MODELO + ", " +
+                            KEY_GUIA_TIPO_ARMA + ", " +
+                            KEY_GUIA_CALIBRE1 + ", " +
+                            KEY_GUIA_CALIBRE2 + ", " +
+                            KEY_GUIA_NUM_GUIA + ", " +
+                            KEY_GUIA_NUM_ARMA + ", " +
+                            KEY_GUIA_IMAGEN + ", " +
+                            KEY_GUIA_CUPO + ", " +
+                            KEY_GUIA_GASTADO +
+                            ") VALUES (" +
+                            "'" + guia.getIdCompra() + "' , " +
+                            "'" + guia.getTipoLicencia() + "' , " +
+                            "'" + guia.getApodo() + "' , " +
+                            "'" + guia.getMarca() + "' , " +
+                            "'" + guia.getModelo() + "' , " +
+                            "'" + guia.getTipoArma() + "' , " +
+                            "'" + guia.getCalibre1() + "' , " +
+                            "'" + guia.getCalibre2() + "' , " +
+                            "'" + guia.getNumGuia() + "' , " +
+                            "'" + guia.getNumArma() + "' , " +
+                            "'" + guia.getImagePath() + "' , " +
+                            "'" + guia.getCupo() + "' , " +
+                            "'" + guia.getGastado() + "'" +
+                            ");");
+                }
             }
+            db.setTransactionSuccessful();
+            Log.d(context.getPackageName(), "Guia actualizada en BBDD");
+        } catch (Exception e) {
+            Log.e(TAG, "Error saving guias to database", e);
+            if (context != null && context.getApplicationContext() instanceof BaseApplication) {
+                ((BaseApplication) context.getApplicationContext()).crashlytics.recordException(e);
+            }
+        } finally {
+            db.endTransaction();
         }
-        Log.d(context.getPackageName(), "Guia actualizada en BBDD");
     }
 
     public void saveListCompras(SQLiteDatabase db, ArrayList<Compra> compras) {
         if (db == null)
             db = this.getWritableDatabase();
-        db.delete(TABLE_COMPRAS, null, null); // No elimina la tabla, solo elimina las filas
-        if (compras.size() > 0) {
-            for (Compra compra : compras) {
-                db.execSQL("INSERT INTO " + TABLE_COMPRAS + " (" +
-                        KEY_COMPRA_ID_POS_GUIA + ", " +
-                        KEY_COMPRA_CALIBRE1 + ", " +
-                        KEY_COMPRA_CALIBRE2 + ", " +
-                        KEY_COMPRA_UNIDADES + ", " +
-                        KEY_COMPRA_PRECIO + ", " +
-                        KEY_COMPRA_FECHA + ", " +
-                        KEY_COMPRA_TIPO + ", " +
-                        KEY_COMPRA_PESO + ", " +
-                        KEY_COMPRA_MARCA + ", " +
-                        KEY_COMPRA_TIENDA + ", " +
-                        KEY_COMPRA_IMAGEN + ", " +
-                        KEY_COMPRA_VALORACION +
-                        ") VALUES (" +
-                        "'" + compra.getIdPosGuia() + "' , " +
-                        "'" + compra.getCalibre1() + "' , " +
-                        "'" + compra.getCalibre2() + "' , " +
-                        "'" + compra.getUnidades() + "' , " +
-                        "'" + compra.getPrecio() + "' , " +
-                        "'" + compra.getFecha() + "' , " +
-                        "'" + compra.getTipo() + "' , " +
-                        "'" + compra.getPeso() + "' , " +
-                        "'" + compra.getMarca() + "' , " +
-                        "'" + compra.getTienda() + "' , " +
-                        "'" + compra.getImagePath() + "' , " +
-                        "'" + compra.getValoracion() + "'" +
-                        ");");
+
+        // Use transaction to prevent data loss if insert fails
+        db.beginTransaction();
+        try {
+            db.delete(TABLE_COMPRAS, null, null); // No elimina la tabla, solo elimina las filas
+            if (compras.size() > 0) {
+                for (Compra compra : compras) {
+                    db.execSQL("INSERT INTO " + TABLE_COMPRAS + " (" +
+                            KEY_COMPRA_ID_POS_GUIA + ", " +
+                            KEY_COMPRA_CALIBRE1 + ", " +
+                            KEY_COMPRA_CALIBRE2 + ", " +
+                            KEY_COMPRA_UNIDADES + ", " +
+                            KEY_COMPRA_PRECIO + ", " +
+                            KEY_COMPRA_FECHA + ", " +
+                            KEY_COMPRA_TIPO + ", " +
+                            KEY_COMPRA_PESO + ", " +
+                            KEY_COMPRA_MARCA + ", " +
+                            KEY_COMPRA_TIENDA + ", " +
+                            KEY_COMPRA_IMAGEN + ", " +
+                            KEY_COMPRA_VALORACION +
+                            ") VALUES (" +
+                            "'" + compra.getIdPosGuia() + "' , " +
+                            "'" + compra.getCalibre1() + "' , " +
+                            "'" + compra.getCalibre2() + "' , " +
+                            "'" + compra.getUnidades() + "' , " +
+                            "'" + compra.getPrecio() + "' , " +
+                            "'" + compra.getFecha() + "' , " +
+                            "'" + compra.getTipo() + "' , " +
+                            "'" + compra.getPeso() + "' , " +
+                            "'" + compra.getMarca() + "' , " +
+                            "'" + compra.getTienda() + "' , " +
+                            "'" + compra.getImagePath() + "' , " +
+                            "'" + compra.getValoracion() + "'" +
+                            ");");
+                }
             }
+            db.setTransactionSuccessful();
+            Log.d(context.getPackageName(), "Compra actualizada en BBDD");
+        } catch (Exception e) {
+            Log.e(TAG, "Error saving compras to database", e);
+            if (context != null && context.getApplicationContext() instanceof BaseApplication) {
+                ((BaseApplication) context.getApplicationContext()).crashlytics.recordException(e);
+            }
+        } finally {
+            db.endTransaction();
         }
-        Log.d(context.getPackageName(), "Compra actualizada en BBDD");
     }
 
     public void saveListLicencias(SQLiteDatabase db, ArrayList<Licencia> licencias) {
         if (db == null)
             db = this.getWritableDatabase();
-        db.delete(TABLE_LICENCIAS, null, null); // No elimina la tabla, solo elimina las filas
-        if (licencias.size() > 0) {
-            for (Licencia licencia : licencias) {
-                db.execSQL("INSERT INTO " + TABLE_LICENCIAS + " (" +
-                        KEY_LICENCIAS_TIPO + ", " +
-                        KEY_LICENCIAS_NOMBRE + ", " +
-                        KEY_LICENCIAS_TIPO_PERMISO_CONDUCCION + ", " +
-                        KEY_LICENCIAS_EDAD + ", " +
-                        KEY_LICENCIAS_NUM_LICENCIA + ", " +
-                        KEY_LICENCIAS_FECHA_EXPEDICION + ", " +
-                        KEY_LICENCIAS_FECHA_CADUCIDAD + ", " +
-                        KEY_LICENCIAS_NUM_ABONADO + ", " +
-                        KEY_LICENCIAS_NUM_SEGURO + ", " +
-                        KEY_LICENCIAS_AUTONOMIA + ", " +
-                        KEY_LICENCIAS_ESCALA + ", " +
-                        KEY_LICENCIAS_CATEGORIA +
-                        ") VALUES (" +
-                        "'" + licencia.getTipo() + "' , " +
-                        "'" + licencia.getNombre() + "' , " +
-                        "'" + licencia.getTipoPermisoConduccion() + "' , " +
-                        "'" + licencia.getEdad() + "' , " +
-                        "'" + licencia.getNumLicencia() + "' , " +
-                        "'" + licencia.getFechaExpedicion() + "' , " +
-                        "'" + licencia.getFechaCaducidad() + "' , " +
-                        "'" + licencia.getNumAbonado() + "' , " +
-                        "'" + licencia.getNumSeguro() + "' , " +
-                        "'" + licencia.getAutonomia() + "' , " +
-                        "'" + licencia.getEscala() + "' , " +
-                        "'" + licencia.getCategoria() + "'" +
-                        ");");
+
+        // Use transaction to prevent data loss if insert fails
+        db.beginTransaction();
+        try {
+            db.delete(TABLE_LICENCIAS, null, null); // No elimina la tabla, solo elimina las filas
+            if (licencias.size() > 0) {
+                for (Licencia licencia : licencias) {
+                    db.execSQL("INSERT INTO " + TABLE_LICENCIAS + " (" +
+                            KEY_LICENCIAS_TIPO + ", " +
+                            KEY_LICENCIAS_NOMBRE + ", " +
+                            KEY_LICENCIAS_TIPO_PERMISO_CONDUCCION + ", " +
+                            KEY_LICENCIAS_EDAD + ", " +
+                            KEY_LICENCIAS_NUM_LICENCIA + ", " +
+                            KEY_LICENCIAS_FECHA_EXPEDICION + ", " +
+                            KEY_LICENCIAS_FECHA_CADUCIDAD + ", " +
+                            KEY_LICENCIAS_NUM_ABONADO + ", " +
+                            KEY_LICENCIAS_NUM_SEGURO + ", " +
+                            KEY_LICENCIAS_AUTONOMIA + ", " +
+                            KEY_LICENCIAS_ESCALA + ", " +
+                            KEY_LICENCIAS_CATEGORIA +
+                            ") VALUES (" +
+                            "'" + licencia.getTipo() + "' , " +
+                            "'" + licencia.getNombre() + "' , " +
+                            "'" + licencia.getTipoPermisoConduccion() + "' , " +
+                            "'" + licencia.getEdad() + "' , " +
+                            "'" + licencia.getNumLicencia() + "' , " +
+                            "'" + licencia.getFechaExpedicion() + "' , " +
+                            "'" + licencia.getFechaCaducidad() + "' , " +
+                            "'" + licencia.getNumAbonado() + "' , " +
+                            "'" + licencia.getNumSeguro() + "' , " +
+                            "'" + licencia.getAutonomia() + "' , " +
+                            "'" + licencia.getEscala() + "' , " +
+                            "'" + licencia.getCategoria() + "'" +
+                            ");");
+                }
             }
+            db.setTransactionSuccessful();
+            Log.d(context.getPackageName(), "Licencia actualizada en BBDD");
+        } catch (Exception e) {
+            Log.e(TAG, "Error saving licencias to database", e);
+            if (context != null && context.getApplicationContext() instanceof BaseApplication) {
+                ((BaseApplication) context.getApplicationContext()).crashlytics.recordException(e);
+            }
+        } finally {
+            db.endTransaction();
         }
-        Log.d(context.getPackageName(), "Licencia actualizada en BBDD");
     }
 
     public void saveListTiradas(SQLiteDatabase db, ArrayList<Tirada> tiradas) {
         if (db == null)
             db = this.getWritableDatabase();
-        db.delete(TABLE_TIRADAS, null, null); // No elimina la tabla, solo elimina las filas
-        if (tiradas.size() > 0) {
-            for (Tirada tirada : tiradas) {
-                db.execSQL("INSERT INTO " + TABLE_TIRADAS + " (" +
-                        KEY_TIRADAS_DESCRIPCION + ", " +
-                        KEY_TIRADAS_RANGO + ", " +
-                        KEY_TIRADAS_FECHA + ", " +
-                        KEY_TIRADAS_PUNTUACION +
-                        ") VALUES (" +
-                        "'" + tirada.getDescripcion() + "' , " +
-                        "'" + tirada.getRango() + "' , " +
-                        "'" + tirada.getFecha() + "' , " +
-                        "'" + tirada.getPuntuacion() + "'" +
-                        ");");
+
+        // Use transaction to prevent data loss if insert fails
+        db.beginTransaction();
+        try {
+            db.delete(TABLE_TIRADAS, null, null); // No elimina la tabla, solo elimina las filas
+            if (tiradas.size() > 0) {
+                for (Tirada tirada : tiradas) {
+                    db.execSQL("INSERT INTO " + TABLE_TIRADAS + " (" +
+                            KEY_TIRADAS_DESCRIPCION + ", " +
+                            KEY_TIRADAS_RANGO + ", " +
+                            KEY_TIRADAS_FECHA + ", " +
+                            KEY_TIRADAS_PUNTUACION +
+                            ") VALUES (" +
+                            "'" + tirada.getDescripcion() + "' , " +
+                            "'" + tirada.getRango() + "' , " +
+                            "'" + tirada.getFecha() + "' , " +
+                            "'" + tirada.getPuntuacion() + "'" +
+                            ");");
+                }
             }
+            db.setTransactionSuccessful();
+            Log.d(context.getPackageName(), "Tirada actualizada en BBDD");
+        } catch (Exception e) {
+            Log.e(TAG, "Error saving tiradas to database", e);
+            if (context != null && context.getApplicationContext() instanceof BaseApplication) {
+                ((BaseApplication) context.getApplicationContext()).crashlytics.recordException(e);
+            }
+        } finally {
+            db.endTransaction();
         }
-        Log.d(context.getPackageName(), "Tirada actualizada en BBDD");
     }
 
     public int getNumLicenciasTipoE() {
         SQLiteDatabase db = this.getReadableDatabase();
-        return getCursorMaxGuiasLicenciaE(db).getCount();
+        Cursor cursor = null;
+        try {
+            cursor = getCursorMaxGuiasLicenciaE(db);
+            return cursor.getCount();
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
     }
 
     public int getNumGuiasLicenciaTipoEscopeta() {
         SQLiteDatabase db = this.getReadableDatabase();
-        return getCursorMaxGuiasEscopeta(db).getCount();
+        Cursor cursor = null;
+        try {
+            cursor = getCursorMaxGuiasEscopeta(db);
+            return cursor.getCount();
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
     }
 
     public int getNumGuiasLicenciaTipoRifle() {
         SQLiteDatabase db = this.getReadableDatabase();
-        return getCursorMaxGuiasRifle(db).getCount();
+        Cursor cursor = null;
+        try {
+            cursor = getCursorMaxGuiasRifle(db);
+            return cursor.getCount();
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
     }
 
 }
