@@ -1,7 +1,11 @@
 plugins {
     id 'com.android.application'
+    id 'org.jetbrains.kotlin.android'
+    id 'org.jetbrains.kotlin.kapt'
+    id 'org.jetbrains.kotlin.plugin.parcelize'
     id 'com.google.gms.google-services'
     id 'com.google.firebase.crashlytics'
+    id 'dagger.hilt.android.plugin'
 }
 
 // Create a variable called keystorePropertiesFile, and initialize it to your
@@ -32,8 +36,8 @@ android {
         applicationId "al.ahgitdevelopment.municion"
         minSdkVersion 26
         targetSdkVersion 35
-        versionCode 36
-        versionName '2.0.4'
+        versionCode 37
+        versionName '3.0.0'
 
         vectorDrawables.useSupportLibrary = true
     }
@@ -47,24 +51,115 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility = 1.8
-        targetCompatibility = 1.8
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
+
+    kotlinOptions {
+        jvmTarget = '17'
+        // Enable K2 compiler (Kotlin 2.0+)
+        freeCompilerArgs += [
+            '-Xjvm-default=all',
+            '-opt-in=kotlin.RequiresOptIn'
+        ]
+    }
+
+    buildFeatures {
+        viewBinding = true
+        buildConfig = true
     }
 }
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
+
+    // ========== KOTLIN STDLIB ==========
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+
+    // ========== ANDROIDX CORE ==========
+    implementation 'androidx.core:core-ktx:1.12.0'
+    implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    implementation 'androidx.activity:activity-ktx:1.8.2'
+    implementation 'androidx.fragment:fragment-ktx:1.6.2'
 
-    // Firebase
-    implementation platform('com.google.firebase:firebase-bom:32.7.1')
-    implementation 'com.google.firebase:firebase-analytics'
-    implementation 'com.google.firebase:firebase-auth'
-    implementation 'com.google.firebase:firebase-crashlytics'
-    implementation 'com.google.firebase:firebase-database'
-    implementation 'com.google.firebase:firebase-messaging'
-    implementation 'com.google.firebase:firebase-storage'
+    // ========== MATERIAL DESIGN ==========
+    implementation 'com.google.android.material:material:1.11.0'  // Actualizar a 1.12+ cuando testees
 
+    // ========== ROOM DATABASE ==========
+    implementation "androidx.room:room-runtime:$room_version"
+    implementation "androidx.room:room-ktx:$room_version"
+    kapt "androidx.room:room-compiler:$room_version"
+
+    // ========== HILT DEPENDENCY INJECTION ==========
+    implementation "com.google.dagger:hilt-android:$hilt_version"
+    kapt "com.google.dagger:hilt-compiler:$hilt_version"
+
+    // ========== LIFECYCLE (ViewModels, LiveData, etc.) ==========
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version"
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version"
+    implementation "androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle_version"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-savedstate:$lifecycle_version"
+
+    // ========== COROUTINES ==========
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines_version"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-play-services:$coroutines_version"
+
+    // ========== NAVIGATION COMPONENT ==========
+    implementation "androidx.navigation:navigation-fragment-ktx:$nav_version"
+    implementation "androidx.navigation:navigation-ui-ktx:$nav_version"
+
+    // ========== DATASTORE (reemplazo de SharedPreferences) ==========
+    implementation "androidx.datastore:datastore-preferences:1.0.0"
+
+    // ========== WORK MANAGER ==========
+    implementation "androidx.work:work-runtime-ktx:2.9.0"
+    implementation "androidx.hilt:hilt-work:1.1.0"
+    kapt "androidx.hilt:hilt-compiler:1.1.0"
+
+    // ========== FIREBASE ==========
+    implementation platform('com.google.firebase:firebase-bom:32.7.1')  // Actualizar a 33.7+ gradualmente
+    implementation 'com.google.firebase:firebase-analytics-ktx'
+    implementation 'com.google.firebase:firebase-auth-ktx'
+    implementation 'com.google.firebase:firebase-crashlytics-ktx'
+    implementation 'com.google.firebase:firebase-database-ktx'
+    implementation 'com.google.firebase:firebase-messaging-ktx'
+    implementation 'com.google.firebase:firebase-storage-ktx'
+
+    // ========== UTILITIES ==========
     implementation 'com.google.code.gson:gson:2.10.1'
-    implementation 'com.google.android.material:material:1.11.0'
+
+    // ========== IMAGE LOADING ==========
+    implementation "io.coil-kt:coil:2.5.0"
+
+    // ========== TESTING ==========
+    // JUnit 5
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.10.1'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.10.1'
+    testImplementation 'org.junit.jupiter:junit-jupiter-params:5.10.1'
+
+    // MockK
+    testImplementation 'io.mockk:mockk:1.13.8'
+    testImplementation 'io.mockk:mockk-android:1.13.8'
+
+    // Coroutines testing
+    testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutines_version"
+
+    // Room testing
+    testImplementation "androidx.room:room-testing:$room_version"
+
+    // Hilt testing
+    androidTestImplementation "com.google.dagger:hilt-android-testing:$hilt_version"
+    kaptAndroidTest "com.google.dagger:hilt-compiler:$hilt_version"
+
+    // Espresso UI testing
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+    androidTestImplementation 'androidx.test:runner:1.5.2'
+    androidTestImplementation 'androidx.test:rules:1.5.0'
+    androidTestImplementation "androidx.navigation:navigation-testing:$nav_version"
+    androidTestImplementation "androidx.fragment:fragment-testing:1.6.2"
+
+    // LeakCanary (debug only)
+    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.13'
 }

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/licenciasFragment">
+
+    <fragment
+        android:id="@+id/guiasFragment"
+        android:name="al.ahgitdevelopment.municion.ui.guias.GuiasFragment"
+        android:label="Guías"
+        tools:layout="@layout/fragment_guias">
+        <action
+            android:id="@+id/action_guiasFragment_to_guiaFormFragment"
+            app:destination="@id/guiaFormFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/comprasFragment"
+        android:name="al.ahgitdevelopment.municion.ui.compras.ComprasFragment"
+        android:label="Compras"
+        tools:layout="@layout/fragment_compras">
+        <action
+            android:id="@+id/action_comprasFragment_to_compraFormFragment"
+            app:destination="@id/compraFormFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/licenciasFragment"
+        android:name="al.ahgitdevelopment.municion.ui.licencias.LicenciasFragment"
+        android:label="Licencias"
+        tools:layout="@layout/fragment_licencias">
+        <action
+            android:id="@+id/action_licenciasFragment_to_licenciaFormFragment"
+            app:destination="@id/licenciaFormFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/tiradasFragment"
+        android:name="al.ahgitdevelopment.municion.ui.tiradas.TiradasFragment"
+        android:label="Tiradas"
+        tools:layout="@layout/fragment_tiradas">
+        <action
+            android:id="@+id/action_tiradasFragment_to_tiradaFormFragment"
+            app:destination="@id/tiradaFormFragment" />
+    </fragment>
+
+    <!-- Form Fragments (dialogs) -->
+    <dialog
+        android:id="@+id/guiaFormFragment"
+        android:name="al.ahgitdevelopment.municion.ui.guias.GuiaFormFragment"
+        android:label="Nueva Guía"
+        tools:layout="@layout/fragment_guia_form" />
+
+    <dialog
+        android:id="@+id/compraFormFragment"
+        android:name="al.ahgitdevelopment.municion.ui.compras.CompraFormFragment"
+        android:label="Nueva Compra"
+        tools:layout="@layout/fragment_compra_form" />
+
+    <dialog
+        android:id="@+id/licenciaFormFragment"
+        android:name="al.ahgitdevelopment.municion.ui.licencias.LicenciaFormFragment"
+        android:label="Nueva Licencia"
+        tools:layout="@layout/fragment_licencia_form" />
+
+    <dialog
+        android:id="@+id/tiradaFormFragment"
+        android:name="al.ahgitdevelopment.municion.ui.tiradas.TiradaFormFragment"
+        android:label="Nueva Tirada"
+        tools:layout="@layout/fragment_tirada_form" />
+
+</navigation>

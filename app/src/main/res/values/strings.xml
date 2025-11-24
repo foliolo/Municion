@@ -199,4 +199,15 @@
     <string name="change_image">Cambiar</string>
     <string name="delete_image">Borrar</string>
     <string name="sin_conexion">Sin conexión a internet</string>
+
+    <!-- Modern UI - RecyclerView adapters format strings (v3.0.0) -->
+    <string name="guia_cupo_format">Disponible: %1$d / %2$d</string>
+    <string name="guia_fecha_validez">Válida hasta: %1$s</string>
+    <string name="compra_unidades_format">%1$d unidades</string>
+    <string name="compra_peso_format">%1$d gr</string>
+    <string name="compra_precio_unitario_format">(%1$s / unidad)</string>
+    <string name="licencia_caduca">Caduca: %1$s</string>
+    <string name="tirada_puntuacion_format">Puntuación: %1$d</string>
+    <string name="tirada_disparos_format">%1$d disparos</string>
+    <string name="tirada_porcentaje_format">%.1f%% de aciertos</string>
 </resources>
