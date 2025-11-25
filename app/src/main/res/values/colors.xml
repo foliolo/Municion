@@ -10,4 +10,15 @@
     <color name="control_background">#cc4285f4</color>
     <color name="light_yellow">#fafad2</color>
 
+    <!-- Material Design colors for proper theming -->
+    <color name="colorOnPrimary">#FFFFFF</color>
+    <color name="colorSurface">#FFFFFF</color>
+    <color name="colorOnSurface">#1C1C1C</color>
+    <color name="colorOnSecondary">#FFFFFF</color>
+
+    <!-- BottomNavigation colors -->
+    <color name="bottomNavBackground">@color/colorPrimaryDark</color>
+    <color name="bottomNavItemActive">#FFFFFF</color>
+    <color name="bottomNavItemInactive">#99FFFFFF</color>
+
 </resources>
