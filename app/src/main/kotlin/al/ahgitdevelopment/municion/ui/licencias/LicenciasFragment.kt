@@ -1,10 +1,12 @@
 package al.ahgitdevelopment.municion.ui.licencias
 
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -22,7 +24,11 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 import javax.inject.Inject
+import al.ahgitdevelopment.municion.datamodel.Licencia as LegacyLicencia
 
 /**
  * Fragment para listar Licencias con RecyclerView
@@ -40,6 +46,10 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class LicenciasFragment : Fragment() {
 
+    companion object {
+        private const val LICENCIA_COMPLETED = 300
+    }
+
     private var _binding: FragmentLicenciasBinding? = null
     private val binding get() = _binding!!
 
@@ -49,6 +59,13 @@ class LicenciasFragment : Fragment() {
     lateinit var calendarManager: CalendarManager
 
     private lateinit var adapter: LicenciasAdapter
+
+    // ActivityResultLauncher para capturar resultado del formulario legacy
+    private val licenciaFormLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        handleLicenciaFormResult(result.resultCode, result.data)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -132,8 +149,54 @@ class LicenciasFragment : Fragment() {
 
     private fun setupFab() {
         binding.fab.setOnClickListener {
-            startActivity(Intent(requireContext(), LicenciaFormActivity::class.java))
+            // Launch legacy LicenciaFormActivity usando launcher para capturar resultado
+            licenciaFormLauncher.launch(Intent(requireContext(), LicenciaFormActivity::class.java))
         }
+    }
+
+    /**
+     * Maneja el resultado del formulario legacy de Licencia
+     */
+    private fun handleLicenciaFormResult(resultCode: Int, data: Intent?) {
+        if (resultCode == android.app.Activity.RESULT_OK && data != null) {
+            // Obtener Licencia legacy del Intent
+            val legacyLicencia = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                data.getParcelableExtra("modify_licencia", LegacyLicencia::class.java)
+            } else {
+                @Suppress("DEPRECATION")
+                data.getParcelableExtra("modify_licencia") as? LegacyLicencia
+            }
+
+            legacyLicencia?.let { legacy ->
+                // Convertir legacy Licencia a Room Licencia y guardar
+                val roomLicencia = convertLegacyToRoom(legacy)
+                viewModel.saveLicencia(roomLicencia)
+            }
+        }
+    }
+
+    /**
+     * Convierte una Licencia legacy (Java) a Licencia Room (Kotlin)
+     */
+    private fun convertLegacyToRoom(legacy: LegacyLicencia): Licencia {
+        val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+        val today = dateFormat.format(Date())
+
+        return Licencia(
+            id = 0,  // Room auto-generará el ID
+            tipo = legacy.tipo.coerceAtLeast(0),
+            nombre = legacy.nombre,
+            tipoPermisoConduccion = legacy.tipoPermisoConduccion,
+            edad = legacy.edad.coerceAtLeast(1),
+            fechaExpedicion = legacy.fechaExpedicion.ifBlank { today },
+            fechaCaducidad = legacy.fechaCaducidad.ifBlank { today },
+            numLicencia = legacy.numLicencia.ifBlank { "SIN-NUMERO" },
+            numAbonado = legacy.numAbonado,
+            numSeguro = legacy.numSeguro,
+            autonomia = legacy.autonomia,
+            escala = legacy.escala,
+            categoria = legacy.categoria
+        )
     }
 
     private fun observeLicencias() {

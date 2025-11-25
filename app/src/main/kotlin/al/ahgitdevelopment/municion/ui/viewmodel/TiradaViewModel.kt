@@ -33,7 +33,7 @@ class TiradaViewModel @Inject constructor(
 ) : ViewModel() {
 
     val tiradas: StateFlow<List<Tirada>> = tiradaRepository.tiradas
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+        .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
 
     private val _uiState = MutableStateFlow<TiradaUiState>(TiradaUiState.Idle)
     val uiState: StateFlow<TiradaUiState> = _uiState.asStateFlow()

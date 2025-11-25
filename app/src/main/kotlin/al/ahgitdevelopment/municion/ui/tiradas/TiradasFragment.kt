@@ -1,10 +1,12 @@
 package al.ahgitdevelopment.municion.ui.tiradas
 
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -21,6 +23,10 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
+import al.ahgitdevelopment.municion.datamodel.Tirada as LegacyTirada
 
 /**
  * Fragment para listar Tiradas con RecyclerView
@@ -38,12 +44,23 @@ import kotlinx.coroutines.launch
 @AndroidEntryPoint
 class TiradasFragment : Fragment() {
 
+    companion object {
+        private const val TIRADA_COMPLETED = 400
+    }
+
     private var _binding: FragmentTiradasBinding? = null
     private val binding get() = _binding!!
 
     private val viewModel: TiradaViewModel by viewModels()
 
     private lateinit var adapter: TiradasAdapter
+
+    // ActivityResultLauncher para capturar resultado del formulario legacy
+    private val tiradaFormLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        handleTiradaFormResult(result.resultCode, result.data)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -99,9 +116,45 @@ class TiradasFragment : Fragment() {
 
     private fun setupFab() {
         binding.fab.setOnClickListener {
-            // Launch legacy TiradaFormActivity
-            startActivity(Intent(requireContext(), TiradaFormActivity::class.java))
+            // Launch legacy TiradaFormActivity usando launcher para capturar resultado
+            tiradaFormLauncher.launch(Intent(requireContext(), TiradaFormActivity::class.java))
         }
+    }
+
+    /**
+     * Maneja el resultado del formulario legacy de Tirada
+     */
+    private fun handleTiradaFormResult(resultCode: Int, data: Intent?) {
+        if (resultCode == android.app.Activity.RESULT_OK && data != null) {
+            // Obtener Tirada legacy del Intent
+            val legacyTirada = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                data.getParcelableExtra("modify_tirada", LegacyTirada::class.java)
+            } else {
+                @Suppress("DEPRECATION")
+                data.getParcelableExtra("modify_tirada") as? LegacyTirada
+            }
+
+            legacyTirada?.let { legacy ->
+                // Convertir legacy Tirada a Room Tirada y guardar
+                val roomTirada = convertLegacyToRoom(legacy)
+                viewModel.saveTirada(roomTirada)
+            }
+        }
+    }
+
+    /**
+     * Convierte una Tirada legacy (Java) a Tirada Room (Kotlin)
+     */
+    private fun convertLegacyToRoom(legacy: LegacyTirada): Tirada {
+        return Tirada(
+            id = 0,  // Room auto-generará el ID
+            descripcion = legacy.descripcion.ifBlank { "Sin descripción" },
+            rango = legacy.rango,
+            fecha = legacy.fecha.ifBlank {
+                SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(Date())
+            },
+            puntuacion = legacy.puntuacion.coerceIn(0, 600)
+        )
     }
 
     private fun observeTiradas() {

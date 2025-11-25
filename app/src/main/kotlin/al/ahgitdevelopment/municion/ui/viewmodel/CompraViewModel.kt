@@ -38,7 +38,7 @@ class CompraViewModel @Inject constructor(
 
     // Observa TODAS las compras automáticamente
     val compras: StateFlow<List<Compra>> = compraRepository.compras
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+        .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
 
     private val _uiState = MutableStateFlow<CompraUiState>(CompraUiState.Idle)
     val uiState: StateFlow<CompraUiState> = _uiState.asStateFlow()

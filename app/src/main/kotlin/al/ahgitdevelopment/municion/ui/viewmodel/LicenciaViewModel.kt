@@ -33,7 +33,7 @@ class LicenciaViewModel @Inject constructor(
 ) : ViewModel() {
 
     val licencias: StateFlow<List<Licencia>> = licenciaRepository.licencias
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+        .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
 
     private val _uiState = MutableStateFlow<LicenciaUiState>(LicenciaUiState.Idle)
     val uiState: StateFlow<LicenciaUiState> = _uiState.asStateFlow()

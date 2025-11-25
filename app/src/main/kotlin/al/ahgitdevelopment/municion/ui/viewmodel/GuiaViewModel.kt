@@ -30,7 +30,7 @@ class GuiaViewModel @Inject constructor(
 ) : ViewModel() {
 
     val guias: StateFlow<List<Guia>> = guiaRepository.guias
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+        .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
 
     private val _uiState = MutableStateFlow<GuiaUiState>(GuiaUiState.Idle)
     val uiState: StateFlow<GuiaUiState> = _uiState.asStateFlow()

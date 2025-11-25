@@ -1,10 +1,12 @@
 package al.ahgitdevelopment.municion.ui.guias
 
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -22,6 +24,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import al.ahgitdevelopment.municion.datamodel.Guia as LegacyGuia
 
 /**
  * Fragment para listar Guías con RecyclerView
@@ -39,12 +42,23 @@ import kotlinx.coroutines.launch
 @AndroidEntryPoint
 class GuiasFragment : Fragment() {
 
+    companion object {
+        private const val GUIA_COMPLETED = 200
+    }
+
     private var _binding: FragmentGuiasBinding? = null
     private val binding get() = _binding!!
 
     private val viewModel: GuiaViewModel by viewModels()
 
     private lateinit var adapter: GuiasAdapter
+
+    // ActivityResultLauncher para capturar resultado del formulario legacy
+    private val guiaFormLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        handleGuiaFormResult(result.resultCode, result.data)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -100,9 +114,52 @@ class GuiasFragment : Fragment() {
 
     private fun setupFab() {
         binding.fab.setOnClickListener {
-            // Launch legacy GuiaFormActivity
-            startActivity(Intent(requireContext(), GuiaFormActivity::class.java))
+            // Launch legacy GuiaFormActivity usando launcher para capturar resultado
+            guiaFormLauncher.launch(Intent(requireContext(), GuiaFormActivity::class.java))
         }
+    }
+
+    /**
+     * Maneja el resultado del formulario legacy de Guia
+     */
+    private fun handleGuiaFormResult(resultCode: Int, data: Intent?) {
+        if (resultCode == android.app.Activity.RESULT_OK && data != null) {
+            // Obtener Guia legacy del Intent
+            val legacyGuia = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                data.getParcelableExtra("modify_guia", LegacyGuia::class.java)
+            } else {
+                @Suppress("DEPRECATION")
+                data.getParcelableExtra("modify_guia") as? LegacyGuia
+            }
+
+            legacyGuia?.let { legacy ->
+                // Convertir legacy Guia a Room Guia y guardar
+                val roomGuia = convertLegacyToRoom(legacy)
+                viewModel.saveGuia(roomGuia)
+            }
+        }
+    }
+
+    /**
+     * Convierte una Guia legacy (Java) a Guia Room (Kotlin)
+     */
+    private fun convertLegacyToRoom(legacy: LegacyGuia): Guia {
+        return Guia(
+            id = 0,  // Room auto-generará el ID
+            idCompra = legacy.idCompra,
+            tipoLicencia = legacy.tipoLicencia,
+            marca = legacy.marca.ifBlank { "Sin marca" },
+            modelo = legacy.modelo.ifBlank { "Sin modelo" },
+            apodo = legacy.apodo.ifBlank { "Sin apodo" },
+            tipoArma = legacy.tipoArma,
+            calibre1 = legacy.calibre1.ifBlank { "Sin calibre" },
+            calibre2 = legacy.calibre2,
+            numGuia = legacy.numGuia.ifBlank { "SIN-GUIA" },
+            numArma = legacy.numArma.ifBlank { "SIN-ARMA" },
+            cupo = legacy.cupo.coerceAtLeast(1),
+            gastado = legacy.gastado.coerceAtLeast(0),
+            imagePath = legacy.imagePath
+        )
     }
 
     private fun observeGuias() {

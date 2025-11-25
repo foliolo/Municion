@@ -248,7 +248,7 @@ class MainActivity : AppCompatActivity() {
             }
 
             R.id.action_settings -> {
-                showSnackbar("Settings (TODO)")
+                navController.navigate(R.id.accountSettingsFragment)
                 true
             }
 
