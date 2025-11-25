@@ -114,9 +114,46 @@ class GuiasFragment : Fragment() {
 
     private fun setupFab() {
         binding.fab.setOnClickListener {
-            // Launch legacy GuiaFormActivity usando launcher para capturar resultado
-            guiaFormLauncher.launch(Intent(requireContext(), GuiaFormActivity::class.java))
+            showLicenciaSelectionDialog()
         }
+    }
+
+    /**
+     * Muestra un diálogo para seleccionar la licencia antes de crear una guía.
+     * GuiaFormActivity requiere saber el tipo de licencia para mostrar
+     * los tipos de armas correspondientes.
+     */
+    private fun showLicenciaSelectionDialog() {
+        val licencias = viewModel.licencias.value
+
+        if (licencias.isEmpty()) {
+            Snackbar.make(
+                binding.root,
+                "No hay licencias disponibles. Primero debes crear una licencia.",
+                Snackbar.LENGTH_LONG
+            ).show()
+            return
+        }
+
+        // Crear array de nombres de licencias para el diálogo
+        val licenciaNames = licencias.map { licencia ->
+            licencia.getNombre(requireContext())
+        }.toTypedArray()
+
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle("Selecciona una licencia")
+            .setItems(licenciaNames) { _, which ->
+                // Lanzar GuiaFormActivity con el tipo de licencia seleccionado
+                val selectedLicencia = licencias[which]
+                val tipoLicenciaString = selectedLicencia.getNombre(requireContext())
+
+                val intent = Intent(requireContext(), GuiaFormActivity::class.java).apply {
+                    putExtra("tipo_licencia", tipoLicenciaString)
+                }
+                guiaFormLauncher.launch(intent)
+            }
+            .setNegativeButton(android.R.string.cancel, null)
+            .show()
     }
 
     /**

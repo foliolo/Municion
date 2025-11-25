@@ -168,6 +168,9 @@ class MainActivity : AppCompatActivity() {
                             is MainViewModel.SyncState.PartialSuccess -> {
                                 showSnackbar("Sincronización parcial (${state.count} items)")
                             }
+
+                            is MainViewModel.SyncState.SuccessWithParseErrors ->
+                                showSnackbar("Sincronización con errores en ${state.count} campos)")
                         }
                     }
                 }

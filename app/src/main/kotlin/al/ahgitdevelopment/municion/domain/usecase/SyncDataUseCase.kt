@@ -54,6 +54,7 @@ class SyncDataUseCase @Inject constructor(
 
     /**
      * Sincroniza desde Firebase → Room (download)
+     * Ahora retorna información detallada de errores de parseo por entidad
      */
     suspend fun syncFromFirebase(userId: String): Result<SyncResult> = coroutineScope {
         try {
@@ -70,18 +71,115 @@ class SyncDataUseCase @Inject constructor(
             val successCount = listOf(guiasResult, comprasResult, licenciasResult, tiradasResult)
                 .count { it.isSuccess }
 
-            android.util.Log.i("SyncDataUseCase", "Sync from Firebase: $successCount/4 successful")
+            // Log detallado de qué entidad falló
+            android.util.Log.i(TAG, "Sync from Firebase: $successCount/4 successful")
+            if (!guiasResult.isSuccess) {
+                android.util.Log.e(TAG, "FAILED: Guias - ${guiasResult.exceptionOrNull()?.message}")
+            }
+            if (!comprasResult.isSuccess) {
+                android.util.Log.e(TAG, "FAILED: Compras - ${comprasResult.exceptionOrNull()?.message}")
+            }
+            if (!licenciasResult.isSuccess) {
+                android.util.Log.e(TAG, "FAILED: Licencias - ${licenciasResult.exceptionOrNull()?.message}")
+            }
+            if (!tiradasResult.isSuccess) {
+                android.util.Log.e(TAG, "FAILED: Tiradas - ${tiradasResult.exceptionOrNull()?.message}")
+            }
+
+            // Recopilar todos los errores de parseo
+            val allParseErrors = mutableListOf<ParseError>()
+            guiasResult.getOrNull()?.parseErrors?.let { allParseErrors.addAll(it) }
+            comprasResult.getOrNull()?.parseErrors?.let { allParseErrors.addAll(it) }
+            licenciasResult.getOrNull()?.parseErrors?.let { allParseErrors.addAll(it) }
+            tiradasResult.getOrNull()?.parseErrors?.let { allParseErrors.addAll(it) }
+
+            if (allParseErrors.isNotEmpty()) {
+                android.util.Log.w(TAG, "Total parse errors: ${allParseErrors.size}")
+                allParseErrors.forEach { error ->
+                    android.util.Log.w(TAG, "  - ${error.entity}[${error.itemKey}].${error.failedField}: ${error.errorType}")
+                }
+            }
 
             Result.success(
                 SyncResult(
                     guiasSuccess = guiasResult.isSuccess,
                     comprasSuccess = comprasResult.isSuccess,
                     licenciasSuccess = licenciasResult.isSuccess,
-                    tiradasSuccess = tiradasResult.isSuccess
+                    tiradasSuccess = tiradasResult.isSuccess,
+                    guiasSyncResult = guiasResult.getOrNull(),
+                    comprasSyncResult = comprasResult.getOrNull(),
+                    licenciasSyncResult = licenciasResult.getOrNull(),
+                    tiradasSyncResult = tiradasResult.getOrNull()
                 )
             )
         } catch (e: Exception) {
             android.util.Log.e("SyncDataUseCase", "Error syncing from Firebase", e)
+            crashlytics.recordException(e)
+            Result.failure(e)
+        }
+    }
+
+    /**
+     * Sincroniza desde Firebase → Room con auto-corrección
+     *
+     * Si Firebase tiene errores de parseo pero Room tiene datos válidos,
+     * automáticamente sube los datos de Room a Firebase para corregir
+     * los datos corruptos.
+     *
+     * @return SyncResultWithAutoFix con detalles de la sincronización y auto-fix
+     */
+    suspend fun syncFromFirebaseWithAutoFix(userId: String): Result<SyncResultWithAutoFix> = coroutineScope {
+        try {
+            // Paso 1: Intentar sincronizar desde Firebase
+            val downloadResult = syncFromFirebase(userId).getOrThrow()
+
+            // Paso 2: Verificar si necesita auto-fix por entidad
+            val entitiesNeedingFix = mutableListOf<String>()
+
+            if (downloadResult.guiasSyncResult?.needsAutoFix == true) {
+                entitiesNeedingFix.add("Guias")
+            }
+            if (downloadResult.comprasSyncResult?.needsAutoFix == true) {
+                entitiesNeedingFix.add("Compras")
+            }
+            if (downloadResult.licenciasSyncResult?.needsAutoFix == true) {
+                entitiesNeedingFix.add("Licencias")
+            }
+            if (downloadResult.tiradasSyncResult?.needsAutoFix == true) {
+                entitiesNeedingFix.add("Tiradas")
+            }
+
+            // Paso 3: Aplicar auto-fix si es necesario
+            var autoFixApplied = false
+            var uploadResult: SyncResult? = null
+
+            if (entitiesNeedingFix.isNotEmpty()) {
+                android.util.Log.w(TAG, "Auto-fix needed for: ${entitiesNeedingFix.joinToString()}")
+                crashlytics.log("Auto-fix triggered for entities: ${entitiesNeedingFix.joinToString()}")
+
+                // Subir datos de Room a Firebase para corregir
+                uploadResult = syncToFirebase(userId).getOrNull()
+                autoFixApplied = uploadResult?.allSuccess == true
+
+                if (autoFixApplied) {
+                    android.util.Log.i(TAG, "Auto-fix applied successfully")
+                    crashlytics.log("Auto-fix completed successfully")
+                } else {
+                    android.util.Log.e(TAG, "Auto-fix upload failed")
+                    crashlytics.log("Auto-fix upload failed")
+                }
+            }
+
+            Result.success(
+                SyncResultWithAutoFix(
+                    downloadResult = downloadResult,
+                    autoFixApplied = autoFixApplied,
+                    entitiesFixed = if (autoFixApplied) entitiesNeedingFix else emptyList(),
+                    uploadResult = uploadResult
+                )
+            )
+        } catch (e: Exception) {
+            android.util.Log.e(TAG, "Sync with auto-fix failed", e)
             crashlytics.recordException(e)
             Result.failure(e)
         }
@@ -105,7 +203,20 @@ class SyncDataUseCase @Inject constructor(
             val successCount = listOf(guiasResult, comprasResult, licenciasResult, tiradasResult)
                 .count { it.isSuccess }
 
-            android.util.Log.i("SyncDataUseCase", "Sync to Firebase: $successCount/4 successful")
+            // Log detallado de qué entidad falló
+            android.util.Log.i(TAG, "Sync to Firebase: $successCount/4 successful")
+            if (!guiasResult.isSuccess) {
+                android.util.Log.e(TAG, "FAILED upload: Guias - ${guiasResult.exceptionOrNull()?.message}")
+            }
+            if (!comprasResult.isSuccess) {
+                android.util.Log.e(TAG, "FAILED upload: Compras - ${comprasResult.exceptionOrNull()?.message}")
+            }
+            if (!licenciasResult.isSuccess) {
+                android.util.Log.e(TAG, "FAILED upload: Licencias - ${licenciasResult.exceptionOrNull()?.message}")
+            }
+            if (!tiradasResult.isSuccess) {
+                android.util.Log.e(TAG, "FAILED upload: Tiradas - ${tiradasResult.exceptionOrNull()?.message}")
+            }
 
             Result.success(
                 SyncResult(
@@ -206,7 +317,11 @@ class SyncDataUseCase @Inject constructor(
         val guiasSuccess: Boolean,
         val comprasSuccess: Boolean,
         val licenciasSuccess: Boolean,
-        val tiradasSuccess: Boolean
+        val tiradasSuccess: Boolean,
+        val guiasSyncResult: SyncResultWithErrors? = null,
+        val comprasSyncResult: SyncResultWithErrors? = null,
+        val licenciasSyncResult: SyncResultWithErrors? = null,
+        val tiradasSyncResult: SyncResultWithErrors? = null
     ) {
         val allSuccess: Boolean
             get() = guiasSuccess && comprasSuccess && licenciasSuccess && tiradasSuccess
@@ -214,6 +329,51 @@ class SyncDataUseCase @Inject constructor(
         val successCount: Int
             get() = listOf(guiasSuccess, comprasSuccess, licenciasSuccess, tiradasSuccess)
                 .count { it }
+
+        /**
+         * Todos los errores de parseo de todas las entidades
+         */
+        val allParseErrors: List<ParseError>
+            get() = listOfNotNull(
+                guiasSyncResult?.parseErrors,
+                comprasSyncResult?.parseErrors,
+                licenciasSyncResult?.parseErrors,
+                tiradasSyncResult?.parseErrors
+            ).flatten()
+
+        /**
+         * Indica si hubo errores de parseo
+         */
+        val hasParseErrors: Boolean
+            get() = allParseErrors.isNotEmpty()
+
+        /**
+         * Indica si alguna entidad necesita auto-fix
+         */
+        val needsAutoFix: Boolean
+            get() = guiasSyncResult?.needsAutoFix == true ||
+                    comprasSyncResult?.needsAutoFix == true ||
+                    licenciasSyncResult?.needsAutoFix == true ||
+                    tiradasSyncResult?.needsAutoFix == true
+    }
+
+    /**
+     * Resultado de sincronización con auto-corrección
+     */
+    data class SyncResultWithAutoFix(
+        val downloadResult: SyncResult,
+        val autoFixApplied: Boolean,
+        val entitiesFixed: List<String>,
+        val uploadResult: SyncResult?
+    ) {
+        val allSuccess: Boolean
+            get() = downloadResult.allSuccess && (!autoFixApplied || uploadResult?.allSuccess == true)
+
+        val hasParseErrors: Boolean
+            get() = downloadResult.hasParseErrors
+
+        val parseErrorCount: Int
+            get() = downloadResult.allParseErrors.size
     }
 
     data class BidirectionalSyncResult(

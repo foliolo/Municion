@@ -2,7 +2,12 @@ package al.ahgitdevelopment.municion.data.repository
 
 import al.ahgitdevelopment.municion.data.local.room.dao.TiradaDao
 import al.ahgitdevelopment.municion.data.local.room.entities.Tirada
+import al.ahgitdevelopment.municion.domain.usecase.FirebaseParseException
+import al.ahgitdevelopment.municion.domain.usecase.ParseError
+import al.ahgitdevelopment.municion.domain.usecase.SensitiveFields
+import al.ahgitdevelopment.municion.domain.usecase.SyncResultWithErrors
 import com.google.firebase.crashlytics.FirebaseCrashlytics
+import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseReference
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -24,6 +29,10 @@ class TiradaRepository @Inject constructor(
     private val firebaseDb: DatabaseReference,
     private val crashlytics: FirebaseCrashlytics
 ) {
+
+    companion object {
+        private const val TAG = "TiradaRepository"
+    }
 
     /**
      * Observa TODAS las tiradas
@@ -110,10 +119,12 @@ class TiradaRepository @Inject constructor(
     }
 
     /**
-     * Sincroniza DESDE Firebase → Room
+     * Sincroniza DESDE Firebase → Room con parseo manual y reporte a Crashlytics
      */
-    suspend fun syncFromFirebase(userId: String): Result<Unit> = withContext(Dispatchers.IO) {
+    suspend fun syncFromFirebase(userId: String): Result<SyncResultWithErrors> = withContext(Dispatchers.IO) {
         try {
+            crashlytics.setUserId(userId)
+
             val snapshot = firebaseDb
                 .child("users")
                 .child(userId)
@@ -122,24 +133,119 @@ class TiradaRepository @Inject constructor(
                 .get()
                 .await()
 
+            val totalInFirebase = snapshot.childrenCount.toInt()
+            android.util.Log.d(TAG, "Firebase snapshot: $totalInFirebase tiradas")
+
             val firebaseTiradas = mutableListOf<Tirada>()
+            val parseErrors = mutableListOf<ParseError>()
+
             snapshot.children.forEach { child ->
-                child.getValue(Tirada::class.java)?.let {
-                    firebaseTiradas.add(it)
-                }
+                val itemKey = child.key ?: "unknown"
+                val result = parseAndValidateTirada(child, itemKey, parseErrors)
+                result?.let { firebaseTiradas.add(it) }
             }
 
             if (firebaseTiradas.isNotEmpty()) {
                 tiradaDao.replaceAll(firebaseTiradas)
-                android.util.Log.i("TiradaRepository", "Synced ${firebaseTiradas.size} tiradas from Firebase")
+                android.util.Log.i(TAG, "Synced ${firebaseTiradas.size} tiradas from Firebase (${parseErrors.size} errors)")
+            } else if (totalInFirebase > 0) {
+                android.util.Log.w(TAG, "Firebase has $totalInFirebase tiradas but 0 parsed successfully")
+            } else {
+                android.util.Log.d(TAG, "No tiradas in Firebase")
             }
 
-            Result.success(Unit)
+            val hasLocalData = tiradaDao.countTiradas() > 0
+
+            Result.success(SyncResultWithErrors(
+                success = true,
+                syncedCount = firebaseTiradas.size,
+                totalInFirebase = totalInFirebase,
+                parseErrors = parseErrors,
+                hasLocalData = hasLocalData
+            ))
         } catch (e: Exception) {
+            android.util.Log.e(TAG, "Sync failed: ${e.message}", e)
             crashlytics.log("Failed to sync tiradas from Firebase: ${e.message}")
             crashlytics.recordException(e)
             Result.failure(e)
         }
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    private fun parseAndValidateTirada(
+        snapshot: DataSnapshot,
+        itemKey: String,
+        parseErrors: MutableList<ParseError>
+    ): Tirada? {
+        val map = snapshot.value as? Map<String, Any?> ?: run {
+            reportFieldError(itemKey, "root", "Not a Map", snapshot.value?.toString(), parseErrors)
+            return null
+        }
+
+        // Campos obligatorios
+        val descripcion = (map["descripcion"] as? String)?.takeIf { it.isNotBlank() } ?: run {
+            reportFieldError(itemKey, "descripcion", "Blank or missing", map["descripcion"]?.toString(), parseErrors)
+            return null
+        }
+
+        val fecha = (map["fecha"] as? String)?.takeIf { it.isNotBlank() } ?: run {
+            reportFieldError(itemKey, "fecha", "Blank or missing", map["fecha"]?.toString(), parseErrors)
+            return null
+        }
+
+        // Campos opcionales
+        val id = (map["id"] as? Number)?.toInt() ?: 0
+        val rango = map["rango"] as? String
+        val puntuacion = (map["puntuacion"] as? Number)?.toInt() ?: 0
+
+        // Validar rango de puntuacion
+        if (puntuacion < 0 || puntuacion > 600) {
+            reportFieldError(itemKey, "puntuacion", "Must be 0-600", puntuacion.toString(), parseErrors)
+            return null
+        }
+
+        return try {
+            Tirada(
+                id = id,
+                descripcion = descripcion,
+                rango = rango,
+                fecha = fecha,
+                puntuacion = puntuacion
+            )
+        } catch (e: Exception) {
+            reportFieldError(itemKey, "constructor", e.message ?: "Unknown", null, parseErrors)
+            null
+        }
+    }
+
+    private fun reportFieldError(
+        itemKey: String,
+        fieldName: String,
+        errorType: String,
+        fieldValue: String?,
+        parseErrors: MutableList<ParseError>
+    ) {
+        val redactedValue = SensitiveFields.redactIfNeeded(fieldName, fieldValue)
+
+        val error = ParseError(
+            entity = "Tirada",
+            itemKey = itemKey,
+            failedField = fieldName,
+            errorType = errorType,
+            fieldValue = redactedValue
+        )
+        parseErrors.add(error)
+
+        crashlytics.apply {
+            setCustomKey("entity", "Tirada")
+            setCustomKey("item_key", itemKey)
+            setCustomKey("failed_field", fieldName)
+            setCustomKey("error_type", errorType)
+            setCustomKey("field_value", redactedValue)
+            recordException(FirebaseParseException("[Tirada] Field '$fieldName' failed: $errorType"))
+        }
+
+        android.util.Log.e(TAG, "Parse error Tirada[$itemKey].$fieldName: $errorType (value: $redactedValue)")
     }
 
     /**

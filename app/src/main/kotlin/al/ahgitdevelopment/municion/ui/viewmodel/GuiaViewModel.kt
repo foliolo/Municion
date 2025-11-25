@@ -3,7 +3,9 @@ package al.ahgitdevelopment.municion.ui.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import al.ahgitdevelopment.municion.data.local.room.entities.Guia
+import al.ahgitdevelopment.municion.data.local.room.entities.Licencia
 import al.ahgitdevelopment.municion.data.repository.GuiaRepository
+import al.ahgitdevelopment.municion.data.repository.LicenciaRepository
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -25,11 +27,18 @@ import javax.inject.Inject
 @HiltViewModel
 class GuiaViewModel @Inject constructor(
     private val guiaRepository: GuiaRepository,
+    private val licenciaRepository: LicenciaRepository,
     private val firebaseAuth: FirebaseAuth,
     private val crashlytics: FirebaseCrashlytics
 ) : ViewModel() {
 
     val guias: StateFlow<List<Guia>> = guiaRepository.guias
+        .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
+
+    /**
+     * Licencias disponibles para seleccionar al crear una Guía
+     */
+    val licencias: StateFlow<List<Licencia>> = licenciaRepository.licencias
         .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
 
     private val _uiState = MutableStateFlow<GuiaUiState>(GuiaUiState.Idle)

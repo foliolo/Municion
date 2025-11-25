@@ -2,7 +2,12 @@ package al.ahgitdevelopment.municion.data.repository
 
 import al.ahgitdevelopment.municion.data.local.room.dao.CompraDao
 import al.ahgitdevelopment.municion.data.local.room.entities.Compra
+import al.ahgitdevelopment.municion.domain.usecase.FirebaseParseException
+import al.ahgitdevelopment.municion.domain.usecase.ParseError
+import al.ahgitdevelopment.municion.domain.usecase.SensitiveFields
+import al.ahgitdevelopment.municion.domain.usecase.SyncResultWithErrors
 import com.google.firebase.crashlytics.FirebaseCrashlytics
+import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseReference
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -28,6 +33,10 @@ class CompraRepository @Inject constructor(
     private val firebaseDb: DatabaseReference,
     private val crashlytics: FirebaseCrashlytics
 ) {
+
+    companion object {
+        private const val TAG = "CompraRepository"
+    }
 
     /**
      * Observa TODAS las compras (Room es source of truth)
@@ -105,10 +114,12 @@ class CompraRepository @Inject constructor(
     }
 
     /**
-     * Sincroniza DESDE Firebase → Room (download)
+     * Sincroniza DESDE Firebase → Room con parseo manual y reporte a Crashlytics
      */
-    suspend fun syncFromFirebase(userId: String): Result<Unit> = withContext(Dispatchers.IO) {
+    suspend fun syncFromFirebase(userId: String): Result<SyncResultWithErrors> = withContext(Dispatchers.IO) {
         try {
+            crashlytics.setUserId(userId)
+
             val snapshot = firebaseDb
                 .child("users")
                 .child(userId)
@@ -117,24 +128,165 @@ class CompraRepository @Inject constructor(
                 .get()
                 .await()
 
+            val totalInFirebase = snapshot.childrenCount.toInt()
+            android.util.Log.d(TAG, "Firebase snapshot: $totalInFirebase compras")
+
             val firebaseCompras = mutableListOf<Compra>()
+            val parseErrors = mutableListOf<ParseError>()
+
             snapshot.children.forEach { child ->
-                child.getValue(Compra::class.java)?.let {
-                    firebaseCompras.add(it)
-                }
+                val itemKey = child.key ?: "unknown"
+                val result = parseAndValidateCompra(child, itemKey, parseErrors)
+                result?.let { firebaseCompras.add(it) }
             }
 
             if (firebaseCompras.isNotEmpty()) {
                 compraDao.replaceAll(firebaseCompras)
-                android.util.Log.i("CompraRepository", "Synced ${firebaseCompras.size} compras from Firebase")
+                android.util.Log.i(TAG, "Synced ${firebaseCompras.size} compras from Firebase (${parseErrors.size} errors)")
+            } else if (totalInFirebase > 0) {
+                android.util.Log.w(TAG, "Firebase has $totalInFirebase compras but 0 parsed successfully")
+            } else {
+                android.util.Log.d(TAG, "No compras in Firebase")
             }
 
-            Result.success(Unit)
+            val hasLocalData = compraDao.getCount() > 0
+
+            Result.success(SyncResultWithErrors(
+                success = true,
+                syncedCount = firebaseCompras.size,
+                totalInFirebase = totalInFirebase,
+                parseErrors = parseErrors,
+                hasLocalData = hasLocalData
+            ))
         } catch (e: Exception) {
+            android.util.Log.e(TAG, "Sync failed: ${e.message}", e)
             crashlytics.log("Failed to sync compras from Firebase: ${e.message}")
             crashlytics.recordException(e)
             Result.failure(e)
         }
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    private fun parseAndValidateCompra(
+        snapshot: DataSnapshot,
+        itemKey: String,
+        parseErrors: MutableList<ParseError>
+    ): Compra? {
+        val map = snapshot.value as? Map<String, Any?> ?: run {
+            reportFieldError(itemKey, "root", "Not a Map", snapshot.value?.toString(), parseErrors)
+            return null
+        }
+
+        // Campos obligatorios
+        val idPosGuia = (map["idPosGuia"] as? Number)?.toInt() ?: run {
+            reportFieldError(itemKey, "idPosGuia", "Missing or invalid", map["idPosGuia"]?.toString(), parseErrors)
+            return null
+        }
+
+        val calibre1 = (map["calibre1"] as? String)?.takeIf { it.isNotBlank() } ?: run {
+            reportFieldError(itemKey, "calibre1", "Blank or missing", map["calibre1"]?.toString(), parseErrors)
+            return null
+        }
+
+        val unidades = (map["unidades"] as? Number)?.toInt() ?: run {
+            reportFieldError(itemKey, "unidades", "Missing or invalid", map["unidades"]?.toString(), parseErrors)
+            return null
+        }
+        if (unidades <= 0) {
+            reportFieldError(itemKey, "unidades", "Must be > 0", unidades.toString(), parseErrors)
+            return null
+        }
+
+        val precio = (map["precio"] as? Number)?.toDouble() ?: run {
+            reportFieldError(itemKey, "precio", "Missing or invalid", map["precio"]?.toString(), parseErrors)
+            return null
+        }
+        if (precio < 0) {
+            reportFieldError(itemKey, "precio", "Must be >= 0", precio.toString(), parseErrors)
+            return null
+        }
+
+        val fecha = (map["fecha"] as? String)?.takeIf { it.isNotBlank() } ?: run {
+            reportFieldError(itemKey, "fecha", "Blank or missing", map["fecha"]?.toString(), parseErrors)
+            return null
+        }
+
+        val tipo = (map["tipo"] as? String)?.takeIf { it.isNotBlank() } ?: run {
+            reportFieldError(itemKey, "tipo", "Blank or missing", map["tipo"]?.toString(), parseErrors)
+            return null
+        }
+
+        val peso = (map["peso"] as? Number)?.toInt() ?: run {
+            reportFieldError(itemKey, "peso", "Missing or invalid", map["peso"]?.toString(), parseErrors)
+            return null
+        }
+        if (peso <= 0) {
+            reportFieldError(itemKey, "peso", "Must be > 0", peso.toString(), parseErrors)
+            return null
+        }
+
+        val marca = (map["marca"] as? String)?.takeIf { it.isNotBlank() } ?: run {
+            reportFieldError(itemKey, "marca", "Blank or missing", map["marca"]?.toString(), parseErrors)
+            return null
+        }
+
+        // Campos opcionales
+        val id = (map["id"] as? Number)?.toInt() ?: 0
+        val calibre2 = map["calibre2"] as? String
+        val tienda = map["tienda"] as? String
+        val valoracion = (map["valoracion"] as? Number)?.toFloat() ?: 0f
+        val imagePath = map["imagePath"] as? String
+
+        return try {
+            Compra(
+                id = id,
+                idPosGuia = idPosGuia,
+                calibre1 = calibre1,
+                calibre2 = calibre2,
+                unidades = unidades,
+                precio = precio,
+                fecha = fecha,
+                tipo = tipo,
+                peso = peso,
+                marca = marca,
+                tienda = tienda,
+                valoracion = valoracion.coerceIn(0f, 5f),
+                imagePath = imagePath
+            )
+        } catch (e: Exception) {
+            reportFieldError(itemKey, "constructor", e.message ?: "Unknown", null, parseErrors)
+            null
+        }
+    }
+
+    private fun reportFieldError(
+        itemKey: String,
+        fieldName: String,
+        errorType: String,
+        fieldValue: String?,
+        parseErrors: MutableList<ParseError>
+    ) {
+        val redactedValue = SensitiveFields.redactIfNeeded(fieldName, fieldValue)
+
+        val error = ParseError(
+            entity = "Compra",
+            itemKey = itemKey,
+            failedField = fieldName,
+            errorType = errorType,
+            fieldValue = redactedValue
+        )
+        parseErrors.add(error)
+
+        crashlytics.apply {
+            setCustomKey("entity", "Compra")
+            setCustomKey("item_key", itemKey)
+            setCustomKey("failed_field", fieldName)
+            setCustomKey("error_type", errorType)
+            setCustomKey("field_value", redactedValue)
+            recordException(FirebaseParseException("[Compra] Field '$fieldName' failed: $errorType"))
+        }
+
+        android.util.Log.e(TAG, "Parse error Compra[$itemKey].$fieldName: $errorType (value: $redactedValue)")
     }
 
     /**
