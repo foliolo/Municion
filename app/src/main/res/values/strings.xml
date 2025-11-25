@@ -199,4 +199,49 @@
     <string name="change_image">Cambiar</string>
     <string name="delete_image">Borrar</string>
     <string name="sin_conexion">Sin conexión a internet</string>
+
+    <!-- Modern UI - RecyclerView adapters format strings (v3.0.0) -->
+    <string name="guia_cupo_format">Disponible: %1$d / %2$d</string>
+    <string name="guia_fecha_validez">Válida hasta: %1$s</string>
+    <string name="compra_unidades_format">%1$d unidades</string>
+    <string name="compra_peso_format">%1$d gr</string>
+    <string name="compra_precio_unitario_format">(%1$s / unidad)</string>
+    <string name="licencia_caduca">Caduca: %1$s</string>
+    <string name="tirada_puntuacion_format">Puntuación: %1$d</string>
+    <string name="tirada_disparos_format">%1$d disparos</string>
+    <string name="tirada_porcentaje_format">%.1f%% de aciertos</string>
+
+    <!-- Auth - BiometricPrompt (v3.0.0) -->
+    <string name="biometric_login">Usar huella digital</string>
+    <string name="btn_continue">Continuar</string>
+    <string name="biometric_title">Autenticación</string>
+    <string name="biometric_subtitle">Usa tu huella o Face ID para acceder</string>
+    <string name="biometric_negative_button">Usar PIN</string>
+    <string name="biometric_lockout">Demasiados intentos. Usa tu PIN.</string>
+    <string name="biometric_not_recognized">Huella no reconocida</string>
+    <string name="biometric_enabled">Autenticación biométrica habilitada</string>
+    <string name="biometric_dialog_title">Autenticación biométrica</string>
+    <string name="biometric_dialog_message">¿Deseas habilitar la autenticación con huella digital o Face ID?</string>
+
+    <!-- Account Settings (v3.0.0) -->
+    <string name="account_settings_title">Configuración de Cuenta</string>
+    <string name="account_status">Estado de cuenta</string>
+    <string name="account_anonymous">Cuenta anónima (solo este dispositivo)</string>
+    <string name="account_linked">Cuenta vinculada</string>
+    <string name="link_account">Vincular cuenta</string>
+    <string name="link_with_google">Vincular con Google</string>
+    <string name="link_with_email">Vincular con Email</string>
+    <string name="benefits_title">Beneficios de vincular cuenta</string>
+    <string name="benefit_sync">Sincronización entre dispositivos</string>
+    <string name="benefit_recovery">Recuperación de datos si pierdes el móvil</string>
+    <string name="benefit_backup">Backup automático en la nube</string>
+    <string name="security_title">Seguridad</string>
+    <string name="pin_access">PIN de acceso</string>
+    <string name="pin_configured">PIN configurado</string>
+    <string name="pin_not_configured">PIN no configurado</string>
+    <string name="change_pin">Cambiar PIN</string>
+    <string name="biometric_access">Huella digital / Face ID</string>
+    <string name="biometric_not_available">No disponible en este dispositivo</string>
+    <string name="sign_out">Cerrar sesión</string>
+    <string name="sign_out_anonymous_warning">Si cierras sesión con una cuenta anónima, perderás acceso a tus datos en la nube. Los datos locales se mantendrán.</string>
 </resources>

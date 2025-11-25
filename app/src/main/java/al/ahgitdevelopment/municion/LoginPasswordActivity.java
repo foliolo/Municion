@@ -107,21 +107,18 @@ public class LoginPasswordActivity extends AppCompatActivity {
 
         //Añadimos la contraseña a las preferencias
         button.setOnClickListener(v -> evaluatePassword(prefs));
-        password1.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                switch (actionId) {
-                    case EditorInfo.IME_ACTION_NEXT:
-                        evaluatePassword(prefs);
-                        break;
-                    case EditorInfo.IME_ACTION_DONE:
-                        evaluatePassword(prefs);
-                        break;
-                    default:
-                        Toast.makeText(LoginPasswordActivity.this, "IME erroneo", Toast.LENGTH_SHORT).show();
-                }
-                return true;
+        password1.setOnEditorActionListener((v, actionId, event) -> {
+            switch (actionId) {
+                case EditorInfo.IME_ACTION_NEXT:
+                    evaluatePassword(prefs);
+                    break;
+                case EditorInfo.IME_ACTION_DONE:
+                    evaluatePassword(prefs);
+                    break;
+                default:
+                    Toast.makeText(LoginPasswordActivity.this, "IME erroneo", Toast.LENGTH_SHORT).show();
             }
+            return true;
         });
 
         password1.addTextChangedListener(new TextWatcher() {

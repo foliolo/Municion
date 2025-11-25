@@ -58,6 +58,11 @@ public class CompraFormActivity extends AppCompatActivity {
     private TextInputLayout layoutMarcaMunicion;
     private TextInputLayout layoutTienda;
 
+    // Campos para validación de cupo
+    private int cupoDisponible = Integer.MAX_VALUE;
+    private int cupoTotal = 0;
+    private TextView cupoInfoText;
+
     private SharedPreferences prefs;
 
     /**
@@ -142,6 +147,17 @@ public class CompraFormActivity extends AppCompatActivity {
                     }
                 }
             }
+
+            // Leer información de cupo para validación client-side
+            cupoDisponible = getIntent().getExtras().getInt("cupo_disponible", Integer.MAX_VALUE);
+            cupoTotal = getIntent().getExtras().getInt("cupo_total", 0);
+        }
+
+        // Inicializar y mostrar información de cupo disponible
+        cupoInfoText = findViewById(R.id.form_cupo_info);
+        if (cupoDisponible < Integer.MAX_VALUE && cupoInfoText != null) {
+            cupoInfoText.setVisibility(View.VISIBLE);
+            cupoInfoText.setText("Cupo disponible: " + cupoDisponible + " / " + cupoTotal + " unidades");
         }
 
         checkSegundoCalibre.setOnCheckedChangeListener((buttonView, isChecked) -> {
@@ -194,11 +210,10 @@ public class CompraFormActivity extends AppCompatActivity {
                 }
             }
         });
-        // Unidades
+        // Unidades - con validación de cupo en tiempo real
         layoutUnidades.getEditText().addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
             }
 
             @Override
@@ -207,8 +222,20 @@ public class CompraFormActivity extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
-                if (layoutUnidades.getEditText().getText().toString().length() < 1) {
+                String text = s.toString().trim();
+                if (text.isEmpty()) {
                     layoutUnidades.setError(getString(R.string.error_before_save));
+                    return;
+                }
+                try {
+                    int unidades = Integer.parseInt(text);
+                    if (unidades > cupoDisponible) {
+                        layoutUnidades.setError("Excede cupo disponible (" + cupoDisponible + ")");
+                    } else {
+                        layoutUnidades.setError(null); // Limpiar error
+                    }
+                } catch (NumberFormatException e) {
+                    layoutUnidades.setError("Número inválido");
                 }
             }
         });
@@ -248,87 +275,24 @@ public class CompraFormActivity extends AppCompatActivity {
         }
 
         Bundle bundle = new Bundle();
-        bundle.putString("calibre1", layoutCalibre1.getEditText().getText().toString());
-        if (layoutCalibre2.getEditText().getText().toString().isEmpty()) {
-            layoutCalibre2.getEditText().setText(null);
-        }
-        bundle.putString("calibre2", layoutCalibre2.getEditText().getText().toString());
 
-        if (layoutUnidades.getEditText().getText().toString().isEmpty()) {
-            layoutUnidades.getEditText().setText("0");
-        }
-
-        // Parse unidades with error handling
-        try {
-            int unidades = Integer.parseInt(layoutUnidades.getEditText().getText().toString().trim());
-            bundle.putInt("unidades", unidades);
-        } catch (NumberFormatException e) {
-            Toast.makeText(this, "Error: Unidades debe ser un número válido", Toast.LENGTH_LONG).show();
-            layoutUnidades.setError("Número inválido");
-            return;
-        }
-
-        // Parse precio with error handling and locale support
-        try {
-            String precioText = layoutPrecio.getEditText().getText().toString()
-                    .replace("€", "")
-                    .replace(",", ".")  // Handle Spanish decimal separator
-                    .trim();
-            double precio = Double.parseDouble(precioText);
-            bundle.putDouble("precio", precio);
-        } catch (NumberFormatException e) {
-            Toast.makeText(this, "Error: Precio debe ser un número válido (use . o , para decimales)", Toast.LENGTH_LONG).show();
-            layoutPrecio.setError("Número inválido");
-            return;
-        }
-
-        if (layoutFecha.getEditText().getText().toString().isEmpty()) {
-            layoutFecha.getEditText().setText("");
-        }
-        bundle.putString("fecha", layoutFecha.getEditText().getText().toString());
-
-        if (layoutTipoMunicion.getEditText().getText().toString().isEmpty()) {
-            layoutTipoMunicion.getEditText().setText("");
-        }
-        bundle.putString("tipo", layoutTipoMunicion.getEditText().getText().toString());
-
-        if (layoutPesoMunicion.getEditText().getText().toString().isEmpty()) {
-            layoutPesoMunicion.getEditText().setText("0");
-        }
-
-        // Parse peso with error handling
-        try {
-            int peso = Integer.parseInt(layoutPesoMunicion.getEditText().getText().toString().trim());
-            bundle.putInt("peso", peso);
-        } catch (NumberFormatException e) {
-            Toast.makeText(this, "Error: Peso debe ser un número válido", Toast.LENGTH_LONG).show();
-            layoutPesoMunicion.setError("Número inválido");
-            return;
-        }
-
-        if (layoutMarcaMunicion.getEditText().getText().toString().isEmpty()) {
-            layoutMarcaMunicion.getEditText().setText(null);
-        }
-        bundle.putString("marca", layoutMarcaMunicion.getEditText().getText().toString());
-
-        if (layoutTienda.getEditText().getText().toString().isEmpty()) {
-            layoutTienda.getEditText().setText(null);
-        }
-        bundle.putString("tienda", layoutTienda.getEditText().getText().toString());
-
-        bundle.putFloat("valoracion", valoracion.getRating());
-
-        bundle.putString("imagePath", imagePath);
-
-        //Paso de vuelta la posicion de la guía en el array
+        // Obtener idPosGuia antes de crear el objeto Compra
+        int idPosGuia;
         // Modificacion de elemento
         if (getIntent().getExtras().get("position_guia") == null) {
             int pos = getIntent().getExtras().getInt("position", -1);
             bundle.putInt("position", pos);
-            bundle.putInt("idPosGuia", FragmentMainActivity.compras.get(pos).getIdPosGuia());
+            idPosGuia = FragmentMainActivity.compras.get(pos).getIdPosGuia();
         } else { // Nuevo elemento
-            bundle.putInt("idPosGuia", getIntent().getExtras().getInt("position_guia"));
+            idPosGuia = getIntent().getExtras().getInt("position_guia");
         }
+
+        // Crear objeto Compra con todos los campos del formulario
+        Compra compra = getCurrentCompra(idPosGuia);
+        if (compra == null) {
+            return; // Error de validación de números
+        }
+        bundle.putParcelable("modify_compra", compra);
 
         result.putExtras(bundle);
 
@@ -359,6 +323,18 @@ public class CompraFormActivity extends AppCompatActivity {
             layoutFecha.setError(getString(R.string.error_before_save));
             retorno = false;
         }
+        // Validación de cupo - evita que el formulario cierre si excede el cupo
+        try {
+            String unidadesText = layoutUnidades.getEditText().getText().toString().trim();
+            int unidades = unidadesText.isEmpty() ? 0 : Integer.parseInt(unidadesText);
+            if (unidades > cupoDisponible) {
+                layoutUnidades.setError("Cupo insuficiente. Disponible: " + cupoDisponible);
+                retorno = false;
+            }
+        } catch (NumberFormatException e) {
+            layoutUnidades.setError("Número inválido");
+            retorno = false;
+        }
         if (!retorno) {
             mensajeError.setVisibility(View.VISIBLE);
             mensajeError.setText(getString(R.string.error_mensaje_cabecera));
@@ -367,6 +343,80 @@ public class CompraFormActivity extends AppCompatActivity {
             Snackbar.make(findViewById(R.id.form_scrollview_compra), getString(R.string.error_mensaje_cabecera), Snackbar.LENGTH_LONG).show();
         }
         return retorno;
+    }
+
+    /**
+     * Recoge todos los campos del formulario y crea un objeto Compra.
+     * Similar al patrón usado en LicenciaFormActivity.getCurrenteLicense()
+     *
+     * @param idPosGuia ID de posición de la guía asociada
+     * @return Compra con los datos del formulario, o null si hay error de parsing
+     */
+    private Compra getCurrentCompra(int idPosGuia) {
+        Compra compra = new Compra();
+        compra.setIdPosGuia(idPosGuia);
+        compra.setCalibre1(layoutCalibre1.getEditText().getText().toString());
+
+        // Segundo calibre
+        String cal2 = layoutCalibre2.getEditText().getText().toString();
+        compra.setCalibre2(cal2.isEmpty() ? "" : cal2);
+
+        // Parse unidades con manejo de errores
+        try {
+            String unidadesText = layoutUnidades.getEditText().getText().toString().trim();
+            int unidades = unidadesText.isEmpty() ? 0 : Integer.parseInt(unidadesText);
+            compra.setUnidades(unidades);
+        } catch (NumberFormatException e) {
+            Toast.makeText(this, "Error: Unidades debe ser un número válido", Toast.LENGTH_LONG).show();
+            layoutUnidades.setError("Número inválido");
+            return null;
+        }
+
+        // Parse precio con manejo de errores y soporte de locale español
+        try {
+            String precioText = layoutPrecio.getEditText().getText().toString()
+                    .replace("€", "")
+                    .replace(",", ".")  // Handle Spanish decimal separator
+                    .trim();
+            double precio = precioText.isEmpty() ? 0.0 : Double.parseDouble(precioText);
+            compra.setPrecio(precio);
+        } catch (NumberFormatException e) {
+            Toast.makeText(this, "Error: Precio debe ser un número válido (use . o , para decimales)", Toast.LENGTH_LONG).show();
+            layoutPrecio.setError("Número inválido");
+            return null;
+        }
+
+        // Fecha
+        String fecha = layoutFecha.getEditText().getText().toString();
+        compra.setFecha(fecha.isEmpty() ? "" : fecha);
+
+        // Tipo munición
+        String tipo = layoutTipoMunicion.getEditText().getText().toString();
+        compra.setTipo(tipo.isEmpty() ? "" : tipo);
+
+        // Parse peso con manejo de errores
+        try {
+            String pesoText = layoutPesoMunicion.getEditText().getText().toString().trim();
+            int peso = pesoText.isEmpty() ? 0 : Integer.parseInt(pesoText);
+            compra.setPeso(peso);
+        } catch (NumberFormatException e) {
+            Toast.makeText(this, "Error: Peso debe ser un número válido", Toast.LENGTH_LONG).show();
+            layoutPesoMunicion.setError("Número inválido");
+            return null;
+        }
+
+        // Marca munición
+        String marca = layoutMarcaMunicion.getEditText().getText().toString();
+        compra.setMarca(marca.isEmpty() ? "" : marca);
+
+        // Tienda
+        String tienda = layoutTienda.getEditText().getText().toString();
+        compra.setTienda(tienda.isEmpty() ? "" : tienda);
+
+        compra.setValoracion(valoracion.getRating());
+        compra.setImagePath(imagePath);
+
+        return compra;
     }
 
     /**

@@ -139,6 +139,180 @@ All forms use result codes (COMPLETED/UPDATED) to communicate changes back to `F
 - Network connectivity checks
 - SharedPreferences management for notifications
 
+## Authentication Flow (TRACK B Modernization)
+
+The app uses Firebase Authentication with automatic recovery for seamless user experience.
+
+```
+┌─────────────────────────────────────────────────────┐
+│                    APP STARTUP                       │
+│                  MainActivity.onCreate()             │
+└─────────────────────────┬───────────────────────────┘
+                          │
+                          ▼
+┌─────────────────────────────────────────────────────┐
+│          MainViewModel.checkAuthState()             │
+└─────────────────────────┬───────────────────────────┘
+                          │
+                          ▼
+              ┌───────────────────────┐
+              │ firebaseAuth.currentUser │
+              │        != null?        │
+              └───────────┬───────────┘
+                    ╱           ╲
+                  YES            NO
+                  │               │
+                  ▼               ▼
+       ┌──────────────────┐  ┌──────────────────────┐
+       │ State=Authenticated│  │ attemptFirebaseRecovery│
+       │ syncFromFirebase()│  │ signInAnonymously()   │
+       └──────────────────┘  └──────────┬───────────┘
+                                        │
+                                        ▼
+                              ┌─────────────────┐
+                              │ Recovery OK?    │
+                              └────────┬────────┘
+                                 ╱          ╲
+                               YES           NO
+                               │              │
+                               ▼              ▼
+                    ┌──────────────┐  ┌──────────────┐
+                    │ Authenticated│  │Unauthenticated│
+                    │ sync...      │  │→ Login Screen │
+                    └──────────────┘  └──────────────┘
+```
+
+**Key Files:**
+- `MainViewModel.kt` - Authentication state management
+- `FirebaseAuthRepository.kt` - Firebase Auth wrapper
+- `LoginActivity.kt` - Login UI
+
+## Data Synchronization Flow (TRACK B Modernization)
+
+Room is the **source of truth**. Firebase provides cloud backup and cross-device sync.
+
+```
+┌─────────────────────────────────────────────────────┐
+│       syncFromFirebaseWithAutoFix(userId)           │
+│              SyncDataUseCase.kt                     │
+└─────────────────────────┬───────────────────────────┘
+                          │
+                          ▼
+┌─────────────────────────────────────────────────────┐
+│  Download from Firebase (4 entities in parallel)    │
+│  ┌─────────┐ ┌─────────┐ ┌─────────┐ ┌─────────┐   │
+│  │Licencias│ │ Guías   │ │ Compras │ │ Tiradas │   │
+│  └─────────┘ └─────────┘ └─────────┘ └─────────┘   │
+└─────────────────────────┬───────────────────────────┘
+                          │
+                          ▼
+┌─────────────────────────────────────────────────────┐
+│  Manual field-by-field parsing                      │
+│  If error → Crashlytics.recordException()           │
+│             (userId, entity, field, value)          │
+└─────────────────────────┬───────────────────────────┘
+                          │
+                          ▼
+              ┌───────────────────────┐
+              │ Parse errors exist    │
+              │ AND Room has data?    │
+              └───────────┬───────────┘
+                    ╱           ╲
+                  YES            NO
+                  │               │
+                  ▼               ▼
+       ┌──────────────────┐  ┌──────────────────┐
+       │ AUTO-FIX:        │  │ Sync completed   │
+       │ syncToFirebase() │  │ normally         │
+       │ Room → Firebase  │  │                  │
+       └──────────────────┘  └──────────────────┘
+                          │
+                          ▼
+┌─────────────────────────────────────────────────────┐
+│  Room updated → Flow emits → UI updates             │
+└─────────────────────────────────────────────────────┘
+```
+
+### Sync Strategy: Cloud Wins with Auto-Fix
+
+1. **Download**: Firebase data replaces Room data
+2. **Parse Errors**: If Firebase has corrupt data, report to Crashlytics with:
+   - `userId` - Firebase Auth UID
+   - `entity` - Which entity failed (Licencia, Guia, etc.)
+   - `failed_field` - Which field failed validation
+   - `error_type` - Type of error (Missing, Blank, Invalid)
+   - `field_value` - Raw value (REDACTED for PII fields)
+3. **Auto-Fix**: If Firebase has errors but Room has valid data, upload Room → Firebase
+
+### Sensitive Fields (Never sent to Crashlytics)
+- `numLicencia`, `numGuia`, `numArma`
+- `nombre`, `dni`
+- `numAbonado`, `numSeguro`
+
+**Key Files:**
+- `SyncDataUseCase.kt` - Orchestrates sync with auto-fix
+- `*Repository.kt` - Individual entity sync with manual parsing
+- `SyncModels.kt` - ParseError, SyncResultWithErrors classes
+
+## Entity Creation Flow (TRACK B Modernization)
+
+All 4 entities follow the same pattern: Fragment → FormActivity → ViewModel → Repository → Room + Firebase
+
+```
+┌──────────────────────────────────────────────────────────────────┐
+│ User taps FAB                                                     │
+└─────────────────────────┬────────────────────────────────────────┘
+                          │
+                          ▼
+┌──────────────────────────────────────────────────────────────────┐
+│ [Guías/Compras only] Show selection dialog                        │
+│  - Guías: Select Licencia to associate                           │
+│  - Compras: Select Guía to associate                             │
+└─────────────────────────┬────────────────────────────────────────┘
+                          │
+                          ▼
+┌──────────────────────────────────────────────────────────────────┐
+│ Launch FormActivity with Intent extras                           │
+│  - tipo_licencia (Guías)                                         │
+│  - guia + position_guia (Compras)                                │
+└─────────────────────────┬────────────────────────────────────────┘
+                          │
+                          ▼
+┌──────────────────────────────────────────────────────────────────┐
+│ User fills form → fabSaveOnClick()                               │
+│ bundle.putParcelable("modify_xxx", getCurrentXxx())              │
+│ setResult(RESULT_OK, intent) → finish()                          │
+└─────────────────────────┬────────────────────────────────────────┘
+                          │
+                          ▼
+┌──────────────────────────────────────────────────────────────────┐
+│ Fragment.handleXxxFormResult()                                   │
+│ getParcelableExtra("modify_xxx") → Legacy entity                 │
+│ convertLegacyToRoom(legacy) → Room entity                        │
+│ viewModel.saveXxx(roomEntity)                                    │
+└─────────────────────────┬────────────────────────────────────────┘
+                          │
+                          ▼
+┌──────────────────────────────────────────────────────────────────┐
+│ Repository.saveXxx() → Room DAO insert + syncToFirebase()        │
+│ Flow emits change → UI updates automatically                     │
+└──────────────────────────────────────────────────────────────────┘
+```
+
+### Entity Dependencies
+| Entity | Requires Selection | Parent |
+|--------|-------------------|--------|
+| Licencia | None | - |
+| Tirada | None | - |
+| Guía | Licencia dialog | Licencia (by tipo) |
+| Compra | Guía dialog | Guía (by idPosGuia) |
+
+**Key Files:**
+- `ui/*/Fragment.kt` - Modern Kotlin fragments with RecyclerView
+- `forms/*FormActivity.java` - Legacy Java form activities
+- `ui/viewmodel/*ViewModel.kt` - State management with Hilt
+- `data/repository/*Repository.kt` - Data access with Room + Firebase
+
 ## Spanish Terms Reference
 
 - **Guia** = Firearms permit/guide (for a specific weapon)

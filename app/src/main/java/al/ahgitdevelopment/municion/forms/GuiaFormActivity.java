@@ -366,33 +366,12 @@ public class GuiaFormActivity extends AppCompatActivity {
                 }
             }
         }
-        bundle.putInt("tipoLicencia", tipoLicencia);
-        bundle.putString("marca", layoutMarca.getEditText().getText().toString());
-        bundle.putString("modelo", layoutModelo.getEditText().getText().toString());
-        // Control error. He metido vacio porque el campo en BBDD no puede ser  nulo
-        if (layoutApodo.getEditText().getText().toString().isEmpty()) {
-            layoutApodo.getEditText().setText("");
-        }
-        bundle.putString("apodo", layoutApodo.getEditText().getText().toString());
-        bundle.putInt("tipoArma", tipoArma.getSelectedItemPosition());
-        bundle.putString("calibre1", layoutCalibre1.getEditText().getText().toString());
-        if (segundoCalibre.isChecked()) {
-            // Control error. He metido vacio porque el campo en BBDD no puede ser  nulo
-            if (calibre2.getText().toString().isEmpty()) {
-                calibre2.setText("");
-            }
-            bundle.putString("calibre2", calibre2.getText().toString());
-        }
-        bundle.putString("numGuia", layoutNumGuia.getEditText().getText().toString().trim());
-        bundle.putString("numArma", layoutNumArma.getEditText().getText().toString().trim());
-        bundle.putInt("cupo", Integer.parseInt(layoutCupo.getEditText().getText().toString()));
-        bundle.putInt("gastado", Integer.parseInt(layoutGastado.getEditText().getText().toString()));
+        // Crear objeto Guia con todos los campos del formulario
+        bundle.putParcelable("modify_guia", getCurrentGuia());
 
         //Paso de vuelta de la posicion del item en el arrayet
         if (getIntent().getExtras() != null)
             bundle.putInt("position", getIntent().getExtras().getInt("position", -1));
-
-        bundle.putString("imagePath", imagePath);
 
         result.putExtras(bundle);
 
@@ -589,5 +568,41 @@ public class GuiaFormActivity extends AppCompatActivity {
             layoutCupo.getEditText().setInputType(InputType.TYPE_CLASS_NUMBER);
         }
         return defaultCupo;
+    }
+
+    /**
+     * Recoge todos los campos del formulario y crea un objeto Guia.
+     * Similar al patrón usado en LicenciaFormActivity.getCurrenteLicense()
+     *
+     * @return Guia con los datos del formulario
+     */
+    private Guia getCurrentGuia() {
+        Guia guia = new Guia();
+        guia.setTipoLicencia(tipoLicencia);
+        guia.setMarca(layoutMarca.getEditText().getText().toString());
+        guia.setModelo(layoutModelo.getEditText().getText().toString());
+
+        // Control error: campo en BBDD no puede ser nulo
+        String apodo = layoutApodo.getEditText().getText().toString();
+        guia.setApodo(apodo.isEmpty() ? "" : apodo);
+
+        guia.setTipoArma(tipoArma.getSelectedItemPosition());
+        guia.setCalibre1(layoutCalibre1.getEditText().getText().toString());
+
+        // Segundo calibre solo si está marcado
+        if (segundoCalibre.isChecked()) {
+            String cal2 = calibre2.getText().toString();
+            guia.setCalibre2(cal2.isEmpty() ? "" : cal2);
+        } else {
+            guia.setCalibre2("");
+        }
+
+        guia.setNumGuia(layoutNumGuia.getEditText().getText().toString().trim());
+        guia.setNumArma(layoutNumArma.getEditText().getText().toString().trim());
+        guia.setCupo(Integer.parseInt(layoutCupo.getEditText().getText().toString()));
+        guia.setGastado(Integer.parseInt(layoutGastado.getEditText().getText().toString()));
+        guia.setImagePath(imagePath);
+
+        return guia;
     }
 }

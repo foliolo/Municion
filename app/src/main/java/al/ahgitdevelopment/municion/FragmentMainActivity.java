@@ -295,7 +295,9 @@ public class FragmentMainActivity extends AppCompatActivity implements FirebaseA
         super.onStart();
 
         updateGastoMunicion();
-        saveUserInFirebase();
+        // DEPRECATED v3.0.0: saveUserInFirebase() removed - auth now handled by FirebaseAuthRepository
+        // The new auth system uses anonymous auth by default with optional account linking
+        // Legacy users are migrated automatically via LegacyMigrationHelper
         mAuth.addAuthStateListener(this);
 
         // CRITICAL FIX v2.0.4: Detect potentially corrupted data from v22→v23 migration
@@ -1088,8 +1090,18 @@ public class FragmentMainActivity extends AppCompatActivity implements FirebaseA
     }
 
     /**
-     * Dialog para la seleccion de la licencia qu
+     * @deprecated since v3.0.0 - This method has critical security issues:
+     * 1. Uses device email without user consent (privacy violation)
+     * 2. Stores password in SharedPreferences (insecure)
+     * 3. Has race conditions (createUser and signIn running simultaneously)
+     * 4. Stores password in Firebase Database (very insecure)
+     *
+     * Replaced by: {@link al.ahgitdevelopment.municion.auth.FirebaseAuthRepository}
+     * which uses anonymous auth by default with optional account linking.
+     *
+     * This method is kept for reference but should NOT be called.
      */
+    @Deprecated
     public void saveUserInFirebase() {
         try {
             //Guardado del usuario en las shared preferences del dispositivo
@@ -1163,7 +1175,8 @@ public class FragmentMainActivity extends AppCompatActivity implements FirebaseA
                 //Cargamos la información del usuario
                 userRef = FirebaseDatabase.getInstance().getReference().child("users").child(user.getUid());
                 userRef.child("email").setValue(user.getEmail());
-                userRef.child("pass").setValue(prefs.getString("password", ""));
+                // REMOVED v3.0.0: password storage in Firebase is insecure
+                // userRef.child("pass").setValue(prefs.getString("password", ""));
 //                userRef.child("settings").child("ads_admin").setValue(prefs.getBoolean(PREFS_SHOW_ADS, true));
 
 
