@@ -1,5 +1,6 @@
 package al.ahgitdevelopment.municion.auth
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseAuth
@@ -63,10 +64,12 @@ class AuthViewModel @Inject constructor(
     /**
      * Verifica y configura autenticación Firebase
      * Si no hay usuario, crea uno anónimo
+     * Público para permitir llamadas desde LoginActivity (ej: después de biometría)
      */
-    private fun checkFirebaseAuth() {
+    fun checkFirebaseAuth() {
         viewModelScope.launch {
             val currentUser = firebaseAuth.currentUser
+            Log.i("FirebaseId", "Firebase id: ${currentUser?.uid}")
 
             if (currentUser != null) {
                 _firebaseAuthState.value = if (currentUser.isAnonymous) {
@@ -94,7 +97,8 @@ class AuthViewModel @Inject constructor(
                     _firebaseAuthState.value = FirebaseAuthState.Anonymous(user)
                     android.util.Log.i(TAG, "Anonymous sign-in successful: ${user.uid}")
                 } ?: run {
-                    _firebaseAuthState.value = FirebaseAuthState.Error("Failed to create anonymous user")
+                    _firebaseAuthState.value =
+                        FirebaseAuthState.Error("Failed to create anonymous user")
                 }
             } catch (e: Exception) {
                 android.util.Log.e(TAG, "Anonymous sign-in failed", e)

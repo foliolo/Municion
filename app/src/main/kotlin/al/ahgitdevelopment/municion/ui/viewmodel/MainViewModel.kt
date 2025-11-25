@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 /**
@@ -43,12 +44,39 @@ class MainViewModel @Inject constructor(
     }
 
     private fun checkAuthState() {
-        val user = firebaseAuth.currentUser
-        if (user != null) {
-            _uiState.value = MainUiState.Authenticated(user.uid)
-            // Auto-sync on startup
-            syncFromFirebase()
-        } else {
+        viewModelScope.launch {
+            val user = firebaseAuth.currentUser
+            if (user != null) {
+                _uiState.value = MainUiState.Authenticated(user.uid)
+                // Auto-sync on startup
+                syncFromFirebase()
+            } else {
+                // DEFENSA: Intentar crear usuario anónimo en lugar de cerrar la app
+                android.util.Log.w("MainViewModel", "No Firebase user found - attempting recovery")
+                attemptFirebaseRecovery()
+            }
+        }
+    }
+
+    /**
+     * Intenta recuperar la autenticación de Firebase creando un usuario anónimo.
+     * Si falla, navega a Login en lugar de cerrar la app abruptamente.
+     */
+    private suspend fun attemptFirebaseRecovery() {
+        try {
+            _uiState.value = MainUiState.Loading
+            val result = firebaseAuth.signInAnonymously().await()
+            result.user?.let { user ->
+                android.util.Log.i("MainViewModel", "Recovery successful: ${user.uid}")
+                _uiState.value = MainUiState.Authenticated(user.uid)
+                syncFromFirebase()
+            } ?: run {
+                android.util.Log.e("MainViewModel", "Recovery failed: user is null")
+                _uiState.value = MainUiState.Unauthenticated
+            }
+        } catch (e: Exception) {
+            android.util.Log.e("MainViewModel", "Recovery failed", e)
+            crashlytics.recordException(e)
             _uiState.value = MainUiState.Unauthenticated
         }
     }

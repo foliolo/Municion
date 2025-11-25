@@ -233,9 +233,10 @@ class LoginActivity : AppCompatActivity() {
             ).collect { result ->
                 when (result) {
                     is BiometricResult.Success -> {
-                        // Autenticación exitosa
+                        // Autenticación biométrica exitosa - iniciar Firebase Auth
                         logLoginSuccess("biometric")
-                        navigateToMain()
+                        viewModel.checkFirebaseAuth()
+                        // Navegación controlada por observeAuthState() cuando AuthState.Authenticated
                     }
                     is BiometricResult.Failed -> {
                         // Intento fallido pero puede reintentar
@@ -329,9 +330,10 @@ class LoginActivity : AppCompatActivity() {
             return
         }
 
-        if (authManager.verifyPin(pin)) {
+        // Usar ViewModel para coordinar PIN + Firebase Auth
+        if (viewModel.verifyPinAndActivateSession(pin)) {
             logLoginSuccess("pin")
-            navigateToMain()
+            // Navegación controlada por observeAuthState() cuando AuthState.Authenticated
         } else {
             binding.textInputLayoutPin.error = getString(R.string.password_fail)
             binding.pinInput.text?.clear()
@@ -350,8 +352,8 @@ class LoginActivity : AppCompatActivity() {
             return
         }
 
-        // Guardar PIN
-        val result = authManager.setupPin(pin)
+        // Usar ViewModel para coordinar PIN + Firebase Auth (signInAnonymously)
+        val result = viewModel.setupPin(pin)
         if (result.isSuccess) {
             Snackbar.make(
                 binding.root,
@@ -360,7 +362,7 @@ class LoginActivity : AppCompatActivity() {
             ).show()
 
             logLoginSuccess("registration")
-            navigateToMain()
+            // Navegación controlada por observeAuthState() cuando AuthState.Authenticated
         } else {
             binding.textInputLayoutPin.error = getString(R.string.password_save_fail)
         }
