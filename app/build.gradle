@@ -1,11 +1,13 @@
 plugins {
-    id 'com.android.application'
-    id 'org.jetbrains.kotlin.android'
-    id 'org.jetbrains.kotlin.kapt'
-    id 'org.jetbrains.kotlin.plugin.parcelize'
-    id 'com.google.gms.google-services'
-    id 'com.google.firebase.crashlytics'
-    id 'dagger.hilt.android.plugin'
+    alias(libs.plugins.android.application)
+    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.kotlin.kapt)
+    alias(libs.plugins.kotlin.parcelize)
+    alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.google.services)
+    alias(libs.plugins.firebase.crashlytics)
+    alias(libs.plugins.hilt.android)
 }
 
 // Create a variable called keystorePropertiesFile, and initialize it to your
@@ -28,14 +30,13 @@ android {
         }
     }
     namespace = "al.ahgitdevelopment.municion"
-    compileSdk 35
-    buildToolsVersion = '35.0.0'
+    buildToolsVersion = '36.0.0'
 
     defaultConfig {
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         applicationId "al.ahgitdevelopment.municion"
         minSdkVersion 26
-        targetSdkVersion 35
+        targetSdkVersion 36
         versionCode 37
         versionName '3.0.0'
 
@@ -67,6 +68,7 @@ android {
     buildFeatures {
         viewBinding = true
         buildConfig = true
+        compose = true
     }
 }
 
@@ -74,96 +76,96 @@ dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
 
     // ========== KOTLIN STDLIB ==========
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    implementation libs.kotlin.stdlib
 
     // ========== ANDROIDX CORE ==========
-    implementation 'androidx.core:core-ktx:1.12.0'
-    implementation 'androidx.appcompat:appcompat:1.6.1'
-    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
-    implementation 'androidx.activity:activity-ktx:1.8.2'
-    implementation 'androidx.fragment:fragment-ktx:1.6.2'
-
-    // ========== MATERIAL DESIGN ==========
-    implementation 'com.google.android.material:material:1.11.0'  // Actualizar a 1.12+ cuando testees
+    implementation libs.bundles.androidx.core
+    implementation libs.material
 
     // ========== ROOM DATABASE ==========
-    implementation "androidx.room:room-runtime:$room_version"
-    implementation "androidx.room:room-ktx:$room_version"
-    kapt "androidx.room:room-compiler:$room_version"
+    implementation libs.bundles.room
+    kapt libs.androidx.room.compiler
 
     // ========== HILT DEPENDENCY INJECTION ==========
-    implementation "com.google.dagger:hilt-android:$hilt_version"
-    kapt "com.google.dagger:hilt-compiler:$hilt_version"
+    implementation libs.hilt.android
+    kapt libs.hilt.compiler
 
-    // ========== LIFECYCLE (ViewModels, LiveData, etc.) ==========
-    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version"
-    implementation "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version"
-    implementation "androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle_version"
-    implementation "androidx.lifecycle:lifecycle-viewmodel-savedstate:$lifecycle_version"
+    // ========== LIFECYCLE ==========
+    implementation libs.bundles.lifecycle
 
     // ========== COROUTINES ==========
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version"
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines_version"
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-play-services:$coroutines_version"
+    implementation libs.bundles.coroutines
 
     // ========== NAVIGATION COMPONENT ==========
-    implementation "androidx.navigation:navigation-fragment-ktx:$nav_version"
-    implementation "androidx.navigation:navigation-ui-ktx:$nav_version"
+    implementation libs.bundles.navigation
 
-    // ========== DATASTORE (reemplazo de SharedPreferences) ==========
-    implementation "androidx.datastore:datastore-preferences:1.0.0"
+    // ========== DATASTORE ==========
+    implementation libs.androidx.datastore.preferences
 
     // ========== BIOMETRIC + SECURITY ==========
-    implementation "androidx.biometric:biometric:1.1.0"
-    implementation "androidx.security:security-crypto:1.1.0-alpha06"
+    implementation libs.bundles.security
 
     // ========== WORK MANAGER ==========
-    implementation "androidx.work:work-runtime-ktx:2.9.0"
-    implementation "androidx.hilt:hilt-work:1.1.0"
-    kapt "androidx.hilt:hilt-compiler:1.1.0"
+    implementation libs.androidx.work.runtime.ktx
+    implementation libs.androidx.hilt.work
+    kapt libs.androidx.hilt.compiler
 
     // ========== FIREBASE ==========
-    implementation platform('com.google.firebase:firebase-bom:32.7.1')  // Actualizar a 33.7+ gradualmente
-    implementation 'com.google.firebase:firebase-analytics-ktx'
-    implementation 'com.google.firebase:firebase-auth-ktx'
-    implementation 'com.google.firebase:firebase-crashlytics-ktx'
-    implementation 'com.google.firebase:firebase-database-ktx'
-    implementation 'com.google.firebase:firebase-messaging-ktx'
-    implementation 'com.google.firebase:firebase-storage-ktx'
+    implementation platform(libs.firebase.bom)
+    implementation libs.bundles.firebase
 
     // ========== UTILITIES ==========
-    implementation 'com.google.code.gson:gson:2.10.1'
+    implementation libs.gson
 
     // ========== IMAGE LOADING ==========
-    implementation "io.coil-kt:coil:2.5.0"
+    implementation libs.bundles.coil
+
+    // ========== JETPACK COMPOSE ==========
+    implementation platform(libs.androidx.compose.bom)
+    androidTestImplementation platform(libs.androidx.compose.bom)
+
+    // Core Compose
+    implementation libs.bundles.compose.core
+
+    // Activity + Navigation Compose
+    implementation libs.androidx.activity.compose
+    implementation libs.androidx.navigation.compose
+
+    // Lifecycle + ViewModel Compose
+    implementation libs.bundles.lifecycle.compose
+
+    // Hilt + Compose
+    implementation libs.androidx.hilt.navigation.compose
+
+    // Serialization para Navigation type-safe
+    implementation libs.kotlinx.serialization.json
+
+    // Compose Debug tools
+    debugImplementation libs.bundles.compose.debug
 
     // ========== TESTING ==========
     // JUnit 5
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.10.1'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.10.1'
-    testImplementation 'org.junit.jupiter:junit-jupiter-params:5.10.1'
+    testImplementation libs.bundles.junit
+    testRuntimeOnly libs.junit.jupiter.engine
 
     // MockK
-    testImplementation 'io.mockk:mockk:1.13.8'
-    testImplementation 'io.mockk:mockk-android:1.13.8'
+    testImplementation libs.bundles.mockk
 
     // Coroutines testing
-    testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutines_version"
+    testImplementation libs.kotlinx.coroutines.test
 
     // Room testing
-    testImplementation "androidx.room:room-testing:$room_version"
+    testImplementation libs.androidx.room.testing
 
     // Hilt testing
-    androidTestImplementation "com.google.dagger:hilt-android-testing:$hilt_version"
-    kaptAndroidTest "com.google.dagger:hilt-compiler:$hilt_version"
+    androidTestImplementation libs.hilt.android.testing
+    kaptAndroidTest libs.hilt.compiler
 
     // Espresso UI testing
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
-    androidTestImplementation 'androidx.test:runner:1.5.2'
-    androidTestImplementation 'androidx.test:rules:1.5.0'
-    androidTestImplementation "androidx.navigation:navigation-testing:$nav_version"
-    androidTestImplementation "androidx.fragment:fragment-testing:1.6.2"
+    androidTestImplementation libs.bundles.android.test
+    androidTestImplementation libs.androidx.navigation.testing
+    androidTestImplementation libs.androidx.fragment.testing
 
     // LeakCanary (debug only)
-    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.13'
+    debugImplementation libs.leakcanary
 }

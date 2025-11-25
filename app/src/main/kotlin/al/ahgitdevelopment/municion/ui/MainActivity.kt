@@ -1,57 +1,62 @@
 package al.ahgitdevelopment.municion.ui
 
-import al.ahgitdevelopment.municion.R
-import al.ahgitdevelopment.municion.databinding.ActivityMainBinding
-import al.ahgitdevelopment.municion.ui.viewmodel.MainViewModel
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
-import android.view.Menu
-import android.view.MenuItem
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
-import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.navigation.NavController
-import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.setupActionBarWithNavController
-import androidx.navigation.ui.setupWithNavController
-import com.google.android.material.snackbar.Snackbar
+import al.ahgitdevelopment.municion.R
+import al.ahgitdevelopment.municion.auth.LoginActivity
+import al.ahgitdevelopment.municion.ui.main.MainScreen
+import al.ahgitdevelopment.municion.ui.theme.MunicionTheme
+import al.ahgitdevelopment.municion.ui.viewmodel.MainViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 /**
- * MainActivity moderna con Navigation Component
+ * MainActivity con Jetpack Compose.
  *
- * FASE 4: Migración UI a Kotlin
- * - Single Activity Architecture
- * - Navigation Component
- * - ViewBinding
+ * FASE 5: Migración completa a Compose
+ * - ComponentActivity base
+ * - setContent con Compose
+ * - MunicionTheme
+ * - MainScreen como UI principal
  * - Hilt DI
- * - Zero static fields
  *
- * Reemplaza a FragmentMainActivity.java (1516 líneas de código legacy)
+ * Reemplaza la versión anterior con ViewBinding y Navigation Component Fragments.
  *
- * @since v3.0.0 (TRACK B Modernization)
+ * @since v3.0.0 (Compose Migration)
  */
 @AndroidEntryPoint
-class MainActivity : AppCompatActivity() {
+class MainActivity : ComponentActivity() {
 
-    // ViewBinding (reemplaza findViewById)
-    private lateinit var binding: ActivityMainBinding
-
-    // Navigation
-    private lateinit var navController: NavController
-
-    // ViewModels inyectados (reemplaza static fields)
+    // ViewModels inyectados
     private val mainViewModel: MainViewModel by viewModels()
 
     // Firebase inyectado con Hilt
@@ -65,15 +70,12 @@ class MainActivity : AppCompatActivity() {
     private val calendarPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { isGranted ->
-        if (isGranted) {
-            showSnackbar("Permiso de calendario concedido")
-        } else {
-            showSnackbar("Permiso de calendario denegado")
-        }
+        _permissionResult.tryEmit(isGranted)
     }
 
-    // Track active dialogs to prevent WindowLeaked
-    private var activeDialog: AlertDialog? = null
+    // Permission result flow for Compose
+    private val _permissionResult = MutableSharedFlow<Boolean>(replay = 0, extraBufferCapacity = 1)
+    private val permissionResult: SharedFlow<Boolean> = _permissionResult.asSharedFlow()
 
     // Track if calendar permission was already requested this session
     private var calendarPermissionRequested = false
@@ -81,233 +83,182 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // ViewBinding
-        binding = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+        // Observe auth state for navigation to login
+        observeAuthState()
 
-        // Setup Toolbar
-        setSupportActionBar(binding.toolbar)
-        supportActionBar?.apply {
-            setDisplayShowHomeEnabled(true)
-            setIcon(R.drawable.ic_bullseye)
+        setContent {
+            MunicionTheme {
+                MunicionApp(
+                    mainViewModel = mainViewModel,
+                    permissionResult = permissionResult,
+                    onRequestCalendarPermission = ::requestCalendarPermission,
+                    onShowCalendarRationale = ::shouldShowCalendarRationale,
+                    calendarPermissionGranted = isCalendarPermissionGranted()
+                )
+            }
         }
-
-        // Setup Navigation
-        setupNavigation()
-
-        // Observe UI state - this handles auth and triggers other actions
-        observeUiState()
     }
 
-    private fun setupNavigation() {
-        val navHostFragment = supportFragmentManager
-            .findFragmentById(R.id.nav_host_fragment) as NavHostFragment
-        navController = navHostFragment.navController
-
-        // Setup bottom navigation with NavController
-        binding.bottomNavigation.setupWithNavController(navController)
-
-        // Setup ActionBar with NavController
-        val appBarConfiguration = AppBarConfiguration(
-            setOf(
-                R.id.guiasFragment,
-                R.id.comprasFragment,
-                R.id.licenciasFragment,
-                R.id.tiradasFragment
-            )
-        )
-        setupActionBarWithNavController(navController, appBarConfiguration)
-    }
-
-    private fun observeUiState() {
+    /**
+     * Observe auth state to navigate to LoginActivity when unauthenticated.
+     * This runs in lifecycleScope and handles navigation outside of Compose.
+     */
+    private fun observeAuthState() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                // Observe main UI state
-                launch {
-                    mainViewModel.uiState.collect { state ->
-                        when (state) {
-                            is MainViewModel.MainUiState.Loading -> {
-                                // Show loading indicator if needed
-                            }
-
-                            is MainViewModel.MainUiState.Authenticated -> {
-                                // User authenticated - NOW it's safe to:
-                                // 1. Request permissions (user will stay in this activity)
-                                // 2. Sync data
-                                onUserAuthenticated()
-                            }
-
-                            is MainViewModel.MainUiState.Unauthenticated -> {
-                                // Redirect to login - dismiss any dialogs first
-                                navigateToLogin()
+                mainViewModel.uiState.collect { state ->
+                    when (state) {
+                        is MainViewModel.MainUiState.Authenticated -> {
+                            // Request calendar permission once per session
+                            if (!calendarPermissionRequested) {
+                                calendarPermissionRequested = true
+                                // Sync is triggered in MainScreen via LaunchedEffect
                             }
                         }
-                    }
-                }
-
-                // Observe sync state
-                launch {
-                    mainViewModel.syncState.collect { state ->
-                        when (state) {
-                            is MainViewModel.SyncState.Idle -> {
-                                // Do nothing
-                            }
-
-                            is MainViewModel.SyncState.Syncing -> {
-                                showSnackbar("Sincronizando con Firebase...")
-                            }
-
-                            is MainViewModel.SyncState.Success -> {
-                                showSnackbar("Sincronización exitosa (${state.count} items)")
-                            }
-
-                            is MainViewModel.SyncState.Error -> {
-                                showSnackbar("Error de sincronización: ${state.message}")
-                            }
-
-                            is MainViewModel.SyncState.PartialSuccess -> {
-                                showSnackbar("Sincronización parcial (${state.count} items)")
-                            }
-
-                            is MainViewModel.SyncState.SuccessWithParseErrors ->
-                                showSnackbar("Sincronización con errores en ${state.count} campos)")
+                        is MainViewModel.MainUiState.Unauthenticated -> {
+                            navigateToLogin()
+                        }
+                        is MainViewModel.MainUiState.Loading -> {
+                            // Do nothing, waiting for auth state
                         }
                     }
                 }
             }
         }
-    }
-
-    /**
-     * Called when user is confirmed to be authenticated.
-     * This is the safe place to request permissions and sync data.
-     */
-    private fun onUserAuthenticated() {
-        // Check calendar permissions only once per session and only when authenticated
-        if (!calendarPermissionRequested) {
-            calendarPermissionRequested = true
-            checkCalendarPermission()
-        }
-
-        // Trigger sync
-        mainViewModel.syncFromFirebase()
-    }
-
-    /**
-     * Request calendar permission if needed.
-     * Only called when user is authenticated to avoid WindowLeaked issues.
-     */
-    private fun checkCalendarPermission() {
-        // Safety check - don't show dialogs if activity is finishing
-        if (isFinishing || isDestroyed) return
-
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_CALENDAR)
-            != PackageManager.PERMISSION_GRANTED
-        ) {
-            // Mostrar explicación si es necesario
-            if (shouldShowRequestPermissionRationale(Manifest.permission.WRITE_CALENDAR)) {
-                showCalendarPermissionDialog()
-            } else {
-                calendarPermissionLauncher.launch(Manifest.permission.WRITE_CALENDAR)
-            }
-        }
-    }
-
-    private fun showCalendarPermissionDialog() {
-        // Safety check
-        if (isFinishing || isDestroyed) return
-
-        dismissActiveDialog()
-        activeDialog = AlertDialog.Builder(this)
-            .setTitle("Permiso de calendario")
-            .setMessage("La app necesita acceso al calendario para crear recordatorios de caducidad de licencias")
-            .setPositiveButton("Permitir") { _, _ ->
-                calendarPermissionLauncher.launch(Manifest.permission.WRITE_CALENDAR)
-            }
-            .setNegativeButton("Cancelar", null)
-            .setOnDismissListener { activeDialog = null }
-            .create()
-        activeDialog?.show()
     }
 
     private fun navigateToLogin() {
-        // CRITICAL: Dismiss any dialogs BEFORE finishing the activity
-        dismissActiveDialog()
-
         firebaseAuth.signOut()
+        startActivity(Intent(this, LoginActivity::class.java))
         finish()
     }
 
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(R.menu.menu_main, menu)
-        return true
+    private fun isCalendarPermissionGranted(): Boolean {
+        return ContextCompat.checkSelfPermission(
+            this,
+            Manifest.permission.WRITE_CALENDAR
+        ) == PackageManager.PERMISSION_GRANTED
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            R.id.action_sync -> {
-                mainViewModel.syncFromFirebase()
-                true
-            }
+    private fun shouldShowCalendarRationale(): Boolean {
+        return shouldShowRequestPermissionRationale(Manifest.permission.WRITE_CALENDAR)
+    }
 
-            R.id.action_settings -> {
-                navController.navigate(R.id.accountSettingsFragment)
-                true
-            }
+    private fun requestCalendarPermission() {
+        calendarPermissionLauncher.launch(Manifest.permission.WRITE_CALENDAR)
+    }
+}
 
-            R.id.action_logout -> {
-                showLogoutDialog()
-                true
-            }
+/**
+ * Composable principal de la aplicación.
+ *
+ * Maneja:
+ * - Estado de autenticación
+ * - Solicitud de permisos de calendario
+ * - Visualización de MainScreen cuando está autenticado
+ *
+ * @since v3.0.0 (Compose Migration)
+ */
+@Composable
+fun MunicionApp(
+    mainViewModel: MainViewModel,
+    permissionResult: SharedFlow<Boolean>,
+    onRequestCalendarPermission: () -> Unit,
+    onShowCalendarRationale: () -> Boolean,
+    calendarPermissionGranted: Boolean
+) {
+    val uiState by mainViewModel.uiState.collectAsStateWithLifecycle()
+    val snackbarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
 
-            else -> super.onOptionsItemSelected(item)
+    // Dialog states
+    var showCalendarRationaleDialog by remember { mutableStateOf(false) }
+    var permissionRequestedThisSession by remember { mutableStateOf(false) }
+
+    // Collect permission results
+    LaunchedEffect(Unit) {
+        permissionResult.collect { granted ->
+            val message = if (granted) {
+                "Permiso de calendario concedido"
+            } else {
+                "Permiso de calendario denegado"
+            }
+            snackbarHostState.showSnackbar(message, duration = SnackbarDuration.Short)
         }
     }
 
-    private fun showLogoutDialog() {
-        if (isFinishing || isDestroyed) return
-
-        dismissActiveDialog()
-        activeDialog = AlertDialog.Builder(this)
-            .setTitle("Cerrar sesión")
-            .setMessage("¿Estás seguro de que deseas cerrar sesión?")
-            .setPositiveButton("Sí") { _, _ ->
-                navigateToLogin()
+    // Request calendar permission when authenticated
+    LaunchedEffect(uiState) {
+        if (uiState is MainViewModel.MainUiState.Authenticated && !permissionRequestedThisSession) {
+            permissionRequestedThisSession = true
+            if (!calendarPermissionGranted) {
+                if (onShowCalendarRationale()) {
+                    showCalendarRationaleDialog = true
+                } else {
+                    onRequestCalendarPermission()
+                }
             }
-            .setNegativeButton("No", null)
-            .setOnDismissListener { activeDialog = null }
-            .create()
-        activeDialog?.show()
-    }
-
-    /**
-     * Helper to show snackbar safely
-     */
-    private fun showSnackbar(message: String, duration: Int = Snackbar.LENGTH_SHORT) {
-        if (!isFinishing && !isDestroyed) {
-            Snackbar.make(binding.root, message, duration).show()
+            // Trigger sync
+            mainViewModel.syncFromFirebase()
         }
     }
 
-    /**
-     * Dismiss any active dialog to prevent WindowLeaked
-     */
-    private fun dismissActiveDialog() {
-        activeDialog?.let { dialog ->
-            if (dialog.isShowing) {
-                dialog.dismiss()
+    // Calendar permission rationale dialog
+    if (showCalendarRationaleDialog) {
+        CalendarPermissionDialog(
+            onConfirm = {
+                showCalendarRationaleDialog = false
+                onRequestCalendarPermission()
+            },
+            onDismiss = {
+                showCalendarRationaleDialog = false
+                scope.launch {
+                    snackbarHostState.showSnackbar(
+                        "Permiso de calendario denegado",
+                        duration = SnackbarDuration.Short
+                    )
+                }
+            }
+        )
+    }
+
+    // Main content
+    when (uiState) {
+        is MainViewModel.MainUiState.Loading -> {
+            // Could show loading indicator, but MainScreen handles this too
+        }
+        is MainViewModel.MainUiState.Authenticated,
+        is MainViewModel.MainUiState.Unauthenticated -> {
+            MainScreen(viewModel = mainViewModel)
+        }
+    }
+}
+
+/**
+ * Dialog para explicar por qué se necesita el permiso de calendario.
+ *
+ * @since v3.0.0 (Compose Migration)
+ */
+@Composable
+fun CalendarPermissionDialog(
+    onConfirm: () -> Unit,
+    onDismiss: () -> Unit
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text("Permiso de calendario") },
+        text = {
+            Text("La app necesita acceso al calendario para crear recordatorios de caducidad de licencias")
+        },
+        confirmButton = {
+            TextButton(onClick = onConfirm) {
+                Text("Permitir")
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text("Cancelar")
             }
         }
-        activeDialog = null
-    }
-
-    override fun onSupportNavigateUp(): Boolean {
-        return navController.navigateUp() || super.onSupportNavigateUp()
-    }
-
-    override fun onDestroy() {
-        // Dismiss any active dialog to prevent WindowLeaked
-        dismissActiveDialog()
-        super.onDestroy()
-    }
+    )
 }
