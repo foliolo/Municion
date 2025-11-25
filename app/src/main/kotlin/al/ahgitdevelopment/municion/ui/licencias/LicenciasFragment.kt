@@ -60,6 +60,9 @@ class LicenciasFragment : Fragment() {
 
     private lateinit var adapter: LicenciasAdapter
 
+    // Variable para trackear si estamos editando o creando
+    private var editingLicencia: Licencia? = null
+
     // ActivityResultLauncher para capturar resultado del formulario legacy
     private val licenciaFormLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
@@ -88,8 +91,12 @@ class LicenciasFragment : Fragment() {
     private fun setupRecyclerView() {
         adapter = LicenciasAdapter(
             onItemClick = { licencia ->
-                // TODO: Navigate to edit form
-                Snackbar.make(binding.root, "Editar licencia: ${licencia.numLicencia}", Snackbar.LENGTH_SHORT).show()
+                // Click simple: mostrar info breve
+                Snackbar.make(binding.root, "${licencia.getNombre(requireContext())} - ${licencia.numLicencia}", Snackbar.LENGTH_SHORT).show()
+            },
+            onItemLongClick = { licencia ->
+                // Long-press: abrir formulario de edición
+                launchEditLicenciaForm(licencia)
             },
             onCalendarClick = { licencia ->
                 // Create calendar events for license expiration
@@ -150,12 +157,50 @@ class LicenciasFragment : Fragment() {
     private fun setupFab() {
         binding.fab.setOnClickListener {
             // Launch legacy LicenciaFormActivity usando launcher para capturar resultado
+            editingLicencia = null  // Asegurar que es creación
             licenciaFormLauncher.launch(Intent(requireContext(), LicenciaFormActivity::class.java))
         }
     }
 
     /**
-     * Maneja el resultado del formulario legacy de Licencia
+     * Lanza el formulario de edición para una licencia existente.
+     * El formulario legacy detecta modo edición cuando recibe "modify_licencia".
+     */
+    private fun launchEditLicenciaForm(licencia: Licencia) {
+        editingLicencia = licencia
+        val legacyLicencia = convertRoomToLegacyLicencia(licencia)
+
+        val intent = Intent(requireContext(), LicenciaFormActivity::class.java).apply {
+            putExtra("modify_licencia", legacyLicencia)
+            putExtra("position", licencia.id)  // Usar ID de Room
+        }
+        licenciaFormLauncher.launch(intent)
+    }
+
+    /**
+     * Convierte una Licencia Room (Kotlin) a Licencia legacy (Java) para pasarla a LicenciaFormActivity
+     */
+    private fun convertRoomToLegacyLicencia(room: Licencia): LegacyLicencia {
+        val legacy = LegacyLicencia()
+        legacy.id = room.id
+        legacy.tipo = room.tipo
+        legacy.nombre = room.nombre
+        legacy.tipoPermisoConduccion = room.tipoPermisoConduccion
+        legacy.edad = room.edad
+        legacy.fechaExpedicion = room.fechaExpedicion
+        legacy.fechaCaducidad = room.fechaCaducidad
+        legacy.numLicencia = room.numLicencia
+        legacy.numAbonado = room.numAbonado
+        legacy.numSeguro = room.numSeguro ?: ""
+        legacy.autonomia = room.autonomia
+        legacy.escala = room.escala
+        legacy.categoria = room.categoria
+        return legacy
+    }
+
+    /**
+     * Maneja el resultado del formulario legacy de Licencia.
+     * Distingue entre crear (editingLicencia == null) y actualizar (editingLicencia != null).
      */
     private fun handleLicenciaFormResult(resultCode: Int, data: Intent?) {
         if (resultCode == android.app.Activity.RESULT_OK && data != null) {
@@ -168,11 +213,20 @@ class LicenciasFragment : Fragment() {
             }
 
             legacyLicencia?.let { legacy ->
-                // Convertir legacy Licencia a Room Licencia y guardar
                 val roomLicencia = convertLegacyToRoom(legacy)
-                viewModel.saveLicencia(roomLicencia)
+
+                if (editingLicencia != null) {
+                    // EDICIÓN: mantener ID original y llamar update
+                    val updatedLicencia = roomLicencia.copy(id = editingLicencia!!.id)
+                    viewModel.updateLicencia(updatedLicencia)
+                } else {
+                    // CREACIÓN: nuevo item
+                    viewModel.saveLicencia(roomLicencia)
+                }
             }
         }
+        // Limpiar siempre el estado de edición
+        editingLicencia = null
     }
 
     /**

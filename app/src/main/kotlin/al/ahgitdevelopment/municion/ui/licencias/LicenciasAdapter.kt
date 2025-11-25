@@ -25,6 +25,7 @@ import al.ahgitdevelopment.municion.databinding.ItemLicenciaBinding
  */
 class LicenciasAdapter(
     private val onItemClick: (Licencia) -> Unit,
+    private val onItemLongClick: (Licencia) -> Unit,
     private val onCalendarClick: (Licencia) -> Unit
 ) : ListAdapter<Licencia, LicenciasAdapter.LicenciaViewHolder>(LicenciaDiffCallback()) {
 
@@ -34,7 +35,7 @@ class LicenciasAdapter(
             parent,
             false
         )
-        return LicenciaViewHolder(binding, onItemClick, onCalendarClick)
+        return LicenciaViewHolder(binding, onItemClick, onItemLongClick, onCalendarClick)
     }
 
     override fun onBindViewHolder(holder: LicenciaViewHolder, position: Int) {
@@ -44,6 +45,7 @@ class LicenciasAdapter(
     class LicenciaViewHolder(
         private val binding: ItemLicenciaBinding,
         private val onItemClick: (Licencia) -> Unit,
+        private val onItemLongClick: (Licencia) -> Unit,
         private val onCalendarClick: (Licencia) -> Unit
     ) : RecyclerView.ViewHolder(binding.root) {
 
@@ -102,6 +104,12 @@ class LicenciasAdapter(
                 // Click listeners
                 root.setOnClickListener {
                     onItemClick(licencia)
+                }
+
+                // Long-press listener para edición
+                root.setOnLongClickListener {
+                    onItemLongClick(licencia)
+                    true  // Consumir el evento
                 }
 
                 buttonCalendar.setOnClickListener {

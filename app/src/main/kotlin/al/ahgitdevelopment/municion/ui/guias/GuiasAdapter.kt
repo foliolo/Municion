@@ -22,7 +22,8 @@ import al.ahgitdevelopment.municion.databinding.ItemGuiaBinding
  * @since v3.0.0 (TRACK B Modernization)
  */
 class GuiasAdapter(
-    private val onItemClick: (Guia) -> Unit
+    private val onItemClick: (Guia) -> Unit,
+    private val onItemLongClick: (Guia) -> Unit
 ) : ListAdapter<Guia, GuiasAdapter.GuiaViewHolder>(GuiaDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GuiaViewHolder {
@@ -31,7 +32,7 @@ class GuiasAdapter(
             parent,
             false
         )
-        return GuiaViewHolder(binding, onItemClick)
+        return GuiaViewHolder(binding, onItemClick, onItemLongClick)
     }
 
     override fun onBindViewHolder(holder: GuiaViewHolder, position: Int) {
@@ -40,7 +41,8 @@ class GuiasAdapter(
 
     class GuiaViewHolder(
         private val binding: ItemGuiaBinding,
-        private val onItemClick: (Guia) -> Unit
+        private val onItemClick: (Guia) -> Unit,
+        private val onItemLongClick: (Guia) -> Unit
     ) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(guia: Guia) {
@@ -88,6 +90,12 @@ class GuiasAdapter(
                 // Click listener
                 root.setOnClickListener {
                     onItemClick(guia)
+                }
+
+                // Long-press listener para edición
+                root.setOnLongClickListener {
+                    onItemLongClick(guia)
+                    true  // Consumir el evento
                 }
             }
         }

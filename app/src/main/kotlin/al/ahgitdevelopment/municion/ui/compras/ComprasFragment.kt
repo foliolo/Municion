@@ -24,11 +24,15 @@ import al.ahgitdevelopment.municion.ui.viewmodel.GuiaViewModel
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withTimeoutOrNull
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import al.ahgitdevelopment.municion.datamodel.Compra as LegacyCompra
+import al.ahgitdevelopment.municion.datamodel.Guia as LegacyGuia
+import al.ahgitdevelopment.municion.data.local.room.entities.Guia as RoomGuia
 
 /**
  * Fragment para listar Compras con RecyclerView
@@ -58,6 +62,9 @@ class ComprasFragment : Fragment() {
 
     private lateinit var adapter: ComprasAdapter
 
+    // Variable para trackear si estamos editando o creando
+    private var editingCompra: Compra? = null
+
     // ActivityResultLauncher para capturar resultado del formulario legacy
     private val compraFormLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
@@ -86,8 +93,12 @@ class ComprasFragment : Fragment() {
     private fun setupRecyclerView() {
         adapter = ComprasAdapter(
             onItemClick = { compra ->
-                // TODO: Navigate to edit form
-                Snackbar.make(binding.root, "Editar compra de ${compra.marca}", Snackbar.LENGTH_SHORT).show()
+                // Click simple: mostrar info breve
+                Snackbar.make(binding.root, "${compra.marca} - ${compra.unidades} uds.", Snackbar.LENGTH_SHORT).show()
+            },
+            onItemLongClick = { compra ->
+                // Long-press: abrir formulario de edición
+                launchEditCompraForm(compra)
             }
         )
 
@@ -119,26 +130,132 @@ class ComprasFragment : Fragment() {
 
     private fun setupFab() {
         binding.fab.setOnClickListener {
-            viewLifecycleOwner.lifecycleScope.launch {
-                // Check if user has guías first
-                guiaViewModel.guias.value.let { guias ->
-                    if (guias.isEmpty()) {
-                        Snackbar.make(
-                            binding.root,
-                            R.string.compra_empty_list,
-                            Snackbar.LENGTH_LONG
-                        ).show()
-                    } else {
-                        // Launch legacy CompraFormActivity usando launcher para capturar resultado
-                        compraFormLauncher.launch(Intent(requireContext(), CompraFormActivity::class.java))
-                    }
-                }
-            }
+            showGuiaSelectionDialog()
         }
     }
 
     /**
-     * Maneja el resultado del formulario legacy de Compra
+     * Muestra un diálogo para seleccionar la guía antes de crear una compra.
+     * CompraFormActivity requiere saber la guía asociada para pre-cargar calibres.
+     *
+     * Usa coroutine con timeout para esperar a que las guías se carguen,
+     * resolviendo el race condition donde guias.value está vacío antes del sync.
+     */
+    private fun showGuiaSelectionDialog() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            // Esperar hasta 2 segundos para que se carguen las guías
+            // Si hay timeout, usar el valor actual (fallback)
+            val guias = withTimeoutOrNull(2000L) {
+                guiaViewModel.guias.first { it.isNotEmpty() }
+            } ?: guiaViewModel.guias.value
+
+            if (guias.isEmpty()) {
+                Snackbar.make(
+                    binding.root,
+                    "No hay guías disponibles. Primero debes crear una guía.",
+                    Snackbar.LENGTH_LONG
+                ).show()
+                return@launch
+            }
+
+            // Crear array de nombres de guías para el diálogo
+            val guiaNames = guias.mapIndexed { index, guia ->
+                "${guia.marca} ${guia.modelo} (${guia.calibre1})"
+            }.toTypedArray()
+
+            MaterialAlertDialogBuilder(requireContext())
+                .setTitle("Selecciona una guía")
+                .setItems(guiaNames) { _, which ->
+                    // Lanzar CompraFormActivity con la guía seleccionada
+                    val selectedGuia = guias[which]
+                    val legacyGuia = convertRoomToLegacyGuia(selectedGuia)
+
+                    val intent = Intent(requireContext(), CompraFormActivity::class.java).apply {
+                        // IMPORTANTE: Pasar el ID de Room, NO el índice de la lista
+                        // CreateCompraUseCase busca por getGuiaById(idPosGuia)
+                        putExtra("position_guia", selectedGuia.id)
+                        putExtra("guia", legacyGuia)
+                        // Pasar información de cupo para validación client-side
+                        putExtra("cupo_disponible", selectedGuia.disponible())
+                        putExtra("cupo_total", selectedGuia.cupo)
+                    }
+                    compraFormLauncher.launch(intent)
+                }
+                .setNegativeButton(android.R.string.cancel, null)
+                .show()
+        }
+    }
+
+    /**
+     * Lanza el formulario de edición para una compra existente.
+     * El formulario legacy detecta modo edición cuando NO recibe "position_guia".
+     */
+    private fun launchEditCompraForm(compra: Compra) {
+        editingCompra = compra
+        val legacyCompra = convertRoomToLegacyCompra(compra)
+
+        // Obtener la guía asociada para pasar info de cupo
+        val guia = guiaViewModel.guias.value.find { it.id == compra.idPosGuia }
+
+        val intent = Intent(requireContext(), CompraFormActivity::class.java).apply {
+            // NO pasar "position_guia" para que detecte modo edición
+            putExtra("modify_compra", legacyCompra)
+            putExtra("position", compra.id)  // Usar ID de Room
+
+            // Pasar cupo para validación (añadir unidades actuales porque se "devuelven")
+            guia?.let {
+                putExtra("cupo_disponible", it.disponible() + compra.unidades)
+                putExtra("cupo_total", it.cupo)
+            }
+        }
+        compraFormLauncher.launch(intent)
+    }
+
+    /**
+     * Convierte una Compra Room (Kotlin) a Compra legacy (Java) para pasarla a CompraFormActivity
+     */
+    private fun convertRoomToLegacyCompra(room: Compra): LegacyCompra {
+        val legacy = LegacyCompra()
+        legacy.idPosGuia = room.idPosGuia
+        legacy.calibre1 = room.calibre1
+        legacy.calibre2 = room.calibre2 ?: ""
+        legacy.unidades = room.unidades
+        legacy.precio = room.precio
+        legacy.fecha = room.fecha
+        legacy.tipo = room.tipo
+        legacy.peso = room.peso
+        legacy.marca = room.marca
+        legacy.tienda = room.tienda ?: ""
+        legacy.valoracion = room.valoracion
+        legacy.imagePath = room.imagePath
+        return legacy
+    }
+
+    /**
+     * Convierte una Guia Room (Kotlin) a Guia legacy (Java) para pasarla a CompraFormActivity
+     */
+    private fun convertRoomToLegacyGuia(roomGuia: RoomGuia): LegacyGuia {
+        val legacyGuia = LegacyGuia()
+        legacyGuia.id = roomGuia.id
+        legacyGuia.idCompra = roomGuia.idCompra
+        legacyGuia.tipoLicencia = roomGuia.tipoLicencia
+        legacyGuia.marca = roomGuia.marca
+        legacyGuia.modelo = roomGuia.modelo
+        legacyGuia.apodo = roomGuia.apodo
+        legacyGuia.tipoArma = roomGuia.tipoArma
+        legacyGuia.calibre1 = roomGuia.calibre1
+        legacyGuia.calibre2 = roomGuia.calibre2 ?: ""
+        legacyGuia.numGuia = roomGuia.numGuia
+        legacyGuia.numArma = roomGuia.numArma
+        legacyGuia.cupo = roomGuia.cupo
+        legacyGuia.gastado = roomGuia.gastado
+        legacyGuia.imagePath = roomGuia.imagePath
+        return legacyGuia
+    }
+
+    /**
+     * Maneja el resultado del formulario legacy de Compra.
+     * Distingue entre crear (editingCompra == null) y actualizar (editingCompra != null).
      */
     private fun handleCompraFormResult(resultCode: Int, data: Intent?) {
         if (resultCode == android.app.Activity.RESULT_OK && data != null) {
@@ -151,11 +268,20 @@ class ComprasFragment : Fragment() {
             }
 
             legacyCompra?.let { legacy: LegacyCompra ->
-                // Convertir legacy Compra a Room Compra y guardar
                 val roomCompra = convertLegacyToRoom(legacy)
-                compraViewModel.createCompra(roomCompra)
+
+                if (editingCompra != null) {
+                    // EDICIÓN: mantener ID original y llamar update
+                    val updatedCompra = roomCompra.copy(id = editingCompra!!.id)
+                    compraViewModel.updateCompra(updatedCompra)
+                } else {
+                    // CREACIÓN: nuevo item
+                    compraViewModel.createCompra(roomCompra)
+                }
             }
         }
+        // Limpiar siempre el estado de edición
+        editingCompra = null
     }
 
     /**
@@ -206,6 +332,9 @@ class ComprasFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 compraViewModel.uiState.collect { state ->
+                    // Protección: verificar que binding no sea null
+                    val rootView = _binding?.root ?: return@collect
+
                     when (state) {
                         is CompraViewModel.CompraUiState.Idle -> {
                             // Do nothing
@@ -214,16 +343,42 @@ class ComprasFragment : Fragment() {
                             // Show loading indicator if needed
                         }
                         is CompraViewModel.CompraUiState.Success -> {
-                            Snackbar.make(binding.root, state.message, Snackbar.LENGTH_SHORT).show()
+                            Snackbar.make(rootView, state.message, Snackbar.LENGTH_SHORT).show()
                             compraViewModel.resetUiState()
                         }
                         is CompraViewModel.CompraUiState.Error -> {
-                            Snackbar.make(binding.root, "Error: ${state.message}", Snackbar.LENGTH_LONG).show()
+                            // Mostrar mensaje de error más amigable
+                            val userFriendlyMessage = formatErrorMessage(state.message)
+                            Snackbar.make(rootView, userFriendlyMessage, Snackbar.LENGTH_LONG).show()
                             compraViewModel.resetUiState()
                         }
                     }
                 }
             }
+        }
+    }
+
+    /**
+     * Convierte mensajes de error técnicos a mensajes amigables para el usuario
+     */
+    private fun formatErrorMessage(message: String): String {
+        return when {
+            message.contains("Cupo insuficiente") -> {
+                // Extraer números del mensaje técnico
+                val regex = Regex("Disponible: (\\d+), Requerido: (\\d+)")
+                val match = regex.find(message)
+                if (match != null) {
+                    val disponible = match.groupValues[1]
+                    val requerido = match.groupValues[2]
+                    "No puedes comprar $requerido unidades. Solo tienes $disponible de cupo disponible."
+                } else {
+                    "Cupo insuficiente para esta compra."
+                }
+            }
+            message.contains("Guía no encontrada") -> {
+                "Error: La guía seleccionada ya no existe."
+            }
+            else -> "Error: $message"
         }
     }
 

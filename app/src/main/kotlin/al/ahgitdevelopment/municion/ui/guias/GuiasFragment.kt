@@ -53,6 +53,9 @@ class GuiasFragment : Fragment() {
 
     private lateinit var adapter: GuiasAdapter
 
+    // Variable para trackear si estamos editando o creando
+    private var editingGuia: Guia? = null
+
     // ActivityResultLauncher para capturar resultado del formulario legacy
     private val guiaFormLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
@@ -81,8 +84,12 @@ class GuiasFragment : Fragment() {
     private fun setupRecyclerView() {
         adapter = GuiasAdapter(
             onItemClick = { guia ->
-                // TODO: Navigate to edit form
-                Snackbar.make(binding.root, "Editar guía: ${guia.numGuia}", Snackbar.LENGTH_SHORT).show()
+                // Click simple: mostrar info breve
+                Snackbar.make(binding.root, "${guia.marca} ${guia.modelo} - ${guia.calibre1}", Snackbar.LENGTH_SHORT).show()
+            },
+            onItemLongClick = { guia ->
+                // Long-press: abrir formulario de edición
+                launchEditGuiaForm(guia)
             }
         )
 
@@ -157,7 +164,46 @@ class GuiasFragment : Fragment() {
     }
 
     /**
-     * Maneja el resultado del formulario legacy de Guia
+     * Lanza el formulario de edición para una guía existente.
+     * El formulario legacy detecta modo edición cuando NO recibe "tipo_licencia".
+     */
+    private fun launchEditGuiaForm(guia: Guia) {
+        editingGuia = guia
+        val legacyGuia = convertRoomToLegacyGuia(guia)
+
+        val intent = Intent(requireContext(), GuiaFormActivity::class.java).apply {
+            // NO pasar "tipo_licencia" para que detecte modo edición
+            putExtra("modify_guia", legacyGuia)
+            putExtra("position", guia.id)  // Usar ID de Room
+        }
+        guiaFormLauncher.launch(intent)
+    }
+
+    /**
+     * Convierte una Guia Room (Kotlin) a Guia legacy (Java) para pasarla a GuiaFormActivity
+     */
+    private fun convertRoomToLegacyGuia(room: Guia): LegacyGuia {
+        val legacy = LegacyGuia()
+        legacy.id = room.id
+        legacy.idCompra = room.idCompra
+        legacy.tipoLicencia = room.tipoLicencia
+        legacy.marca = room.marca
+        legacy.modelo = room.modelo
+        legacy.apodo = room.apodo
+        legacy.tipoArma = room.tipoArma
+        legacy.calibre1 = room.calibre1
+        legacy.calibre2 = room.calibre2 ?: ""
+        legacy.numGuia = room.numGuia
+        legacy.numArma = room.numArma
+        legacy.cupo = room.cupo
+        legacy.gastado = room.gastado
+        legacy.imagePath = room.imagePath
+        return legacy
+    }
+
+    /**
+     * Maneja el resultado del formulario legacy de Guia.
+     * Distingue entre crear (editingGuia == null) y actualizar (editingGuia != null).
      */
     private fun handleGuiaFormResult(resultCode: Int, data: Intent?) {
         if (resultCode == android.app.Activity.RESULT_OK && data != null) {
@@ -170,11 +216,20 @@ class GuiasFragment : Fragment() {
             }
 
             legacyGuia?.let { legacy ->
-                // Convertir legacy Guia a Room Guia y guardar
                 val roomGuia = convertLegacyToRoom(legacy)
-                viewModel.saveGuia(roomGuia)
+
+                if (editingGuia != null) {
+                    // EDICIÓN: mantener ID original y llamar update
+                    val updatedGuia = roomGuia.copy(id = editingGuia!!.id)
+                    viewModel.updateGuia(updatedGuia)
+                } else {
+                    // CREACIÓN: nuevo item
+                    viewModel.saveGuia(roomGuia)
+                }
             }
         }
+        // Limpiar siempre el estado de edición
+        editingGuia = null
     }
 
     /**

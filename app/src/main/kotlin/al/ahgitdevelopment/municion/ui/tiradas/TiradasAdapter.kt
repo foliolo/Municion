@@ -22,7 +22,8 @@ import al.ahgitdevelopment.municion.databinding.ItemTiradaBinding
  * @since v3.0.0 (TRACK B Modernization)
  */
 class TiradasAdapter(
-    private val onItemClick: (Tirada) -> Unit
+    private val onItemClick: (Tirada) -> Unit,
+    private val onItemLongClick: (Tirada) -> Unit
 ) : ListAdapter<Tirada, TiradasAdapter.TiradaViewHolder>(TiradaDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TiradaViewHolder {
@@ -31,7 +32,7 @@ class TiradasAdapter(
             parent,
             false
         )
-        return TiradaViewHolder(binding, onItemClick)
+        return TiradaViewHolder(binding, onItemClick, onItemLongClick)
     }
 
     override fun onBindViewHolder(holder: TiradaViewHolder, position: Int) {
@@ -40,7 +41,8 @@ class TiradasAdapter(
 
     class TiradaViewHolder(
         private val binding: ItemTiradaBinding,
-        private val onItemClick: (Tirada) -> Unit
+        private val onItemClick: (Tirada) -> Unit,
+        private val onItemLongClick: (Tirada) -> Unit
     ) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(tirada: Tirada) {
@@ -95,6 +97,12 @@ class TiradasAdapter(
                 // Click listener
                 root.setOnClickListener {
                     onItemClick(tirada)
+                }
+
+                // Long-press listener para edición
+                root.setOnLongClickListener {
+                    onItemLongClick(tirada)
+                    true  // Consumir el evento
                 }
             }
         }

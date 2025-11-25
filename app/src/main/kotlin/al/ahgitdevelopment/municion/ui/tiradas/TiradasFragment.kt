@@ -55,6 +55,9 @@ class TiradasFragment : Fragment() {
 
     private lateinit var adapter: TiradasAdapter
 
+    // Variable para trackear si estamos editando o creando
+    private var editingTirada: Tirada? = null
+
     // ActivityResultLauncher para capturar resultado del formulario legacy
     private val tiradaFormLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
@@ -83,8 +86,12 @@ class TiradasFragment : Fragment() {
     private fun setupRecyclerView() {
         adapter = TiradasAdapter(
             onItemClick = { tirada ->
-                // TODO: Navigate to edit form
-                Snackbar.make(binding.root, "Editar tirada: ${tirada.descripcion}", Snackbar.LENGTH_SHORT).show()
+                // Click simple: mostrar info breve
+                Snackbar.make(binding.root, "${tirada.descripcion} - ${tirada.puntuacion} pts", Snackbar.LENGTH_SHORT).show()
+            },
+            onItemLongClick = { tirada ->
+                // Long-press: abrir formulario de edición
+                launchEditTiradaForm(tirada)
             }
         )
 
@@ -117,12 +124,42 @@ class TiradasFragment : Fragment() {
     private fun setupFab() {
         binding.fab.setOnClickListener {
             // Launch legacy TiradaFormActivity usando launcher para capturar resultado
+            editingTirada = null  // Asegurar que es creación
             tiradaFormLauncher.launch(Intent(requireContext(), TiradaFormActivity::class.java))
         }
     }
 
     /**
-     * Maneja el resultado del formulario legacy de Tirada
+     * Lanza el formulario de edición para una tirada existente.
+     * El formulario legacy detecta modo edición cuando recibe "modify_tirada".
+     */
+    private fun launchEditTiradaForm(tirada: Tirada) {
+        editingTirada = tirada
+        val legacyTirada = convertRoomToLegacyTirada(tirada)
+
+        val intent = Intent(requireContext(), TiradaFormActivity::class.java).apply {
+            putExtra("modify_tirada", legacyTirada)
+            putExtra("position", tirada.id)  // Usar ID de Room
+        }
+        tiradaFormLauncher.launch(intent)
+    }
+
+    /**
+     * Convierte una Tirada Room (Kotlin) a Tirada legacy (Java) para pasarla a TiradaFormActivity
+     */
+    private fun convertRoomToLegacyTirada(room: Tirada): LegacyTirada {
+        val legacy = LegacyTirada()
+        // Nota: LegacyTirada no tiene campo id, solo Room lo usa
+        legacy.descripcion = room.descripcion
+        legacy.rango = room.rango ?: ""
+        legacy.fecha = room.fecha
+        legacy.puntuacion = room.puntuacion
+        return legacy
+    }
+
+    /**
+     * Maneja el resultado del formulario legacy de Tirada.
+     * Distingue entre crear (editingTirada == null) y actualizar (editingTirada != null).
      */
     private fun handleTiradaFormResult(resultCode: Int, data: Intent?) {
         if (resultCode == android.app.Activity.RESULT_OK && data != null) {
@@ -135,11 +172,20 @@ class TiradasFragment : Fragment() {
             }
 
             legacyTirada?.let { legacy ->
-                // Convertir legacy Tirada a Room Tirada y guardar
                 val roomTirada = convertLegacyToRoom(legacy)
-                viewModel.saveTirada(roomTirada)
+
+                if (editingTirada != null) {
+                    // EDICIÓN: mantener ID original y llamar update
+                    val updatedTirada = roomTirada.copy(id = editingTirada!!.id)
+                    viewModel.updateTirada(updatedTirada)
+                } else {
+                    // CREACIÓN: nuevo item
+                    viewModel.saveTirada(roomTirada)
+                }
             }
         }
+        // Limpiar siempre el estado de edición
+        editingTirada = null
     }
 
     /**

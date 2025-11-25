@@ -24,7 +24,8 @@ import java.util.Locale
  * @since v3.0.0 (TRACK B Modernization)
  */
 class ComprasAdapter(
-    private val onItemClick: (Compra) -> Unit
+    private val onItemClick: (Compra) -> Unit,
+    private val onItemLongClick: (Compra) -> Unit
 ) : ListAdapter<Compra, ComprasAdapter.CompraViewHolder>(CompraDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CompraViewHolder {
@@ -33,7 +34,7 @@ class ComprasAdapter(
             parent,
             false
         )
-        return CompraViewHolder(binding, onItemClick)
+        return CompraViewHolder(binding, onItemClick, onItemLongClick)
     }
 
     override fun onBindViewHolder(holder: CompraViewHolder, position: Int) {
@@ -42,7 +43,8 @@ class ComprasAdapter(
 
     class CompraViewHolder(
         private val binding: ItemCompraBinding,
-        private val onItemClick: (Compra) -> Unit
+        private val onItemClick: (Compra) -> Unit,
+        private val onItemLongClick: (Compra) -> Unit
     ) : RecyclerView.ViewHolder(binding.root) {
 
         private val currencyFormatter = NumberFormat.getCurrencyInstance(Locale("es", "ES"))
@@ -78,6 +80,12 @@ class ComprasAdapter(
                 // Click listener
                 root.setOnClickListener {
                     onItemClick(compra)
+                }
+
+                // Long-press listener para edición
+                root.setOnLongClickListener {
+                    onItemLongClick(compra)
+                    true  // Consumir el evento
                 }
             }
         }
