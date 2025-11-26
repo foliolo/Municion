@@ -123,7 +123,7 @@ androidx-security-crypto = { module = "androidx.security:security-crypto", versi
 # WorkManager
 androidx-work-runtime-ktx = { module = "androidx.work:work-runtime-ktx", version.ref = "work" }
 
-# Firebase
+# Firebase (BOM 34.6.0 - KTX extensions included in main libraries)
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
 firebase-analytics = { module = "com.google.firebase:firebase-analytics" }
 firebase-auth = { module = "com.google.firebase:firebase-auth" }
@@ -165,14 +165,6 @@ androidx-fragment-testing = { module = "androidx.fragment:fragment-testing", ver
 
 # Debug
 leakcanary = { module = "com.squareup.leakcanary:leakcanary-android", version.ref = "leakcanary" }
-
-## Gradle Plugins (for buildscript classpath)
-#android-gradlePlugin = { module = "com.android.tools.build:gradle", version.ref = "agp" }
-#kotlin-gradlePlugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
-#kotlin-serializationPlugin = { module = "org.jetbrains.kotlin:kotlin-serialization", version.ref = "kotlin" }
-#google-services-gradlePlugin = { module = "com.google.gms:google-services", version.ref = "googleServices" }
-#firebase-crashlytics-gradlePlugin = { module = "com.google.firebase:firebase-crashlytics-gradle", version.ref = "firebaseCrashlytics" }
-#hilt-gradlePlugin = { module = "com.google.dagger:hilt-android-gradle-plugin", version.ref = "hilt" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
