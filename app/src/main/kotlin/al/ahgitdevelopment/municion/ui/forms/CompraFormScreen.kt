@@ -10,25 +10,20 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CalendarToday
-import androidx.compose.material.icons.filled.Save
 import androidx.compose.material3.Checkbox
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -45,7 +40,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import al.ahgitdevelopment.municion.data.local.room.entities.Compra
-import al.ahgitdevelopment.municion.ui.components.FormScreenTopBar
 import al.ahgitdevelopment.municion.ui.theme.LicenseExpired
 import al.ahgitdevelopment.municion.ui.theme.LicenseValid
 import al.ahgitdevelopment.municion.ui.theme.MunicionTheme
@@ -55,33 +49,36 @@ import java.util.Calendar
 import java.util.Locale
 
 /**
- * Pantalla de formulario de Compra (Stateful).
+ * Contenido del formulario de Compra para Single Scaffold Architecture.
  *
- * Incluye validación de cupo en tiempo real.
+ * NO contiene Scaffold, TopBar ni FAB - estos estan en MainScreen.
+ * Registra su funcion de guardado con MainScreen mediante onRegisterSaveCallback.
  *
- * @param navController Controlador de navegación
- * @param guiaId ID de la guía asociada
+ * @param guiaId ID de la guia asociada
  * @param compraId ID de compra a editar (null para nueva)
- * @param cupoDisponible Cupo disponible para esta guía
- * @param cupoTotal Cupo total de la guía
+ * @param cupoDisponible Cupo disponible para esta guia
+ * @param cupoTotal Cupo total de la guia
+ * @param navController Controlador de navegacion
+ * @param snackbarHostState Estado del snackbar compartido desde MainScreen
+ * @param onRegisterSaveCallback Callback para registrar funcion de guardado con MainScreen
  * @param viewModel ViewModel de Compras
  *
- * @since v3.0.0 (Compose Migration)
+ * @since v3.0.0 (Compose Migration - Single Scaffold Architecture)
  */
 @Composable
-fun CompraFormScreen(
-    navController: NavHostController,
+fun CompraFormContent(
     guiaId: Int,
-    compraId: Int? = null,
-    cupoDisponible: Int = Int.MAX_VALUE,
-    cupoTotal: Int = 0,
+    compraId: Int?,
+    cupoDisponible: Int,
+    cupoTotal: Int,
+    navController: NavHostController,
+    snackbarHostState: SnackbarHostState,
+    onRegisterSaveCallback: ((() -> Unit)?) -> Unit,
     viewModel: CompraViewModel = hiltViewModel()
 ) {
-    val context = LocalContext.current
     val compras by viewModel.compras.collectAsStateWithLifecycle()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    val snackbarHostState = remember { SnackbarHostState() }
     val isEditing = compraId != null
 
     // Cargar compra existente si estamos editando
@@ -113,7 +110,69 @@ fun CompraFormScreen(
     val unidadesInt = unidades.toIntOrNull() ?: 0
     val excedeCupo = unidadesInt > cupoDisponible
 
-    // Mostrar mensajes de UiState
+    // Funcion de guardado
+    val saveFunction: () -> Unit = {
+        // Validaciones
+        var isValid = true
+        if (calibre1.isBlank()) {
+            calibre1Error = "Campo obligatorio"
+            isValid = false
+        }
+        if (unidades.isBlank() || unidades.toIntOrNull() == null || unidades.toInt() <= 0) {
+            unidadesError = "Introduce unidades validas"
+            isValid = false
+        } else if (excedeCupo) {
+            unidadesError = "Excede cupo disponible ($cupoDisponible)"
+            isValid = false
+        }
+        if (precio.isBlank()) {
+            precioError = "Campo obligatorio"
+            isValid = false
+        }
+        if (fecha.isBlank()) {
+            fechaError = "Campo obligatorio"
+            isValid = false
+        }
+        if (tipo.isBlank()) {
+            tipoError = "Campo obligatorio"
+            isValid = false
+        }
+        if (marca.isBlank()) {
+            marcaError = "Campo obligatorio"
+            isValid = false
+        }
+
+        if (isValid) {
+            val compra = Compra(
+                id = compraId ?: 0,
+                idPosGuia = guiaId,
+                calibre1 = calibre1,
+                calibre2 = if (showCalibre2) calibre2 else null,
+                unidades = unidades.toInt(),
+                precio = precio.replace(",", ".").toDoubleOrNull() ?: 0.0,
+                fecha = fecha,
+                tipo = tipo,
+                peso = peso.toIntOrNull() ?: 0,
+                marca = marca,
+                tienda = tienda
+            )
+            if (isEditing) {
+                viewModel.updateCompra(compra)
+            } else {
+                viewModel.createCompra(compra)
+            }
+        }
+    }
+
+    // Registrar funcion de guardado con MainScreen
+    DisposableEffect(Unit) {
+        onRegisterSaveCallback(saveFunction)
+        onDispose {
+            onRegisterSaveCallback(null)
+        }
+    }
+
+    // Mostrar mensajes de UiState y navegar al exito
     LaunchedEffect(uiState) {
         when (uiState) {
             is CompraViewModel.CompraUiState.Success -> {
@@ -133,9 +192,7 @@ fun CompraFormScreen(
         }
     }
 
-    CompraFormScreenContent(
-        isEditing = isEditing,
-        snackbarHostState = snackbarHostState,
+    CompraFormFields(
         cupoDisponible = cupoDisponible,
         cupoTotal = cupoTotal,
         excedeCupo = excedeCupo,
@@ -164,73 +221,19 @@ fun CompraFormScreen(
         onTipoChange = { tipo = it; tipoError = null },
         onPesoChange = { peso = it },
         onMarcaChange = { marca = it; marcaError = null },
-        onTiendaChange = { tienda = it },
-        onBackClick = { navController.popBackStack() },
-        onSaveClick = {
-            // Validaciones
-            var isValid = true
-            if (calibre1.isBlank()) {
-                calibre1Error = "Campo obligatorio"
-                isValid = false
-            }
-            if (unidades.isBlank() || unidades.toIntOrNull() == null || unidades.toInt() <= 0) {
-                unidadesError = "Introduce unidades válidas"
-                isValid = false
-            } else if (excedeCupo) {
-                unidadesError = "Excede cupo disponible ($cupoDisponible)"
-                isValid = false
-            }
-            if (precio.isBlank()) {
-                precioError = "Campo obligatorio"
-                isValid = false
-            }
-            if (fecha.isBlank()) {
-                fechaError = "Campo obligatorio"
-                isValid = false
-            }
-            if (tipo.isBlank()) {
-                tipoError = "Campo obligatorio"
-                isValid = false
-            }
-            if (marca.isBlank()) {
-                marcaError = "Campo obligatorio"
-                isValid = false
-            }
-
-            if (isValid) {
-                val compra = Compra(
-                    id = compraId ?: 0,
-                    idPosGuia = guiaId,
-                    calibre1 = calibre1,
-                    calibre2 = if (showCalibre2) calibre2 else null,
-                    unidades = unidades.toInt(),
-                    precio = precio.replace(",", ".").toDoubleOrNull() ?: 0.0,
-                    fecha = fecha,
-                    tipo = tipo,
-                    peso = peso.toIntOrNull() ?: 0,
-                    marca = marca,
-                    tienda = tienda
-                )
-                if (isEditing) {
-                    viewModel.updateCompra(compra)
-                } else {
-                    viewModel.createCompra(compra)
-                }
-            }
-        }
+        onTiendaChange = { tienda = it }
     )
 }
 
 /**
- * Contenido del formulario de Compra (Stateless).
+ * Campos del formulario de Compra (Stateless).
  *
- * @since v3.0.0 (Compose Migration)
+ * Sin Scaffold - solo los campos del formulario.
+ *
+ * @since v3.0.0 (Compose Migration - Single Scaffold Architecture)
  */
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CompraFormScreenContent(
-    isEditing: Boolean,
-    snackbarHostState: SnackbarHostState,
+fun CompraFormFields(
     cupoDisponible: Int,
     cupoTotal: Int,
     excedeCupo: Boolean,
@@ -260,8 +263,6 @@ fun CompraFormScreenContent(
     onPesoChange: (String) -> Unit,
     onMarcaChange: (String) -> Unit,
     onTiendaChange: (String) -> Unit,
-    onBackClick: () -> Unit,
-    onSaveClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
@@ -287,169 +288,148 @@ fun CompraFormScreenContent(
         )
     }
 
-    Scaffold(
-        modifier = modifier,
-        snackbarHost = { SnackbarHost(snackbarHostState) },
-        topBar = {
-            FormScreenTopBar(
-                title = if (isEditing) "Editar compra" else "Nueva compra",
-                onBackClick = onBackClick
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .padding(horizontal = 16.dp)
+            .verticalScroll(rememberScrollState()),
+        verticalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        Spacer(modifier = Modifier.height(8.dp))
+
+        // Info de cupo disponible
+        if (cupoDisponible < Int.MAX_VALUE) {
+            Text(
+                text = "Cupo disponible: $cupoDisponible / $cupoTotal unidades",
+                style = MaterialTheme.typography.bodyMedium,
+                color = if (excedeCupo) LicenseExpired else LicenseValid
             )
-        },
-        floatingActionButton = {
-            FloatingActionButton(
-                onClick = onSaveClick,
-                containerColor = MaterialTheme.colorScheme.primary
-            ) {
-                Icon(Icons.Default.Save, contentDescription = "Guardar")
-            }
-        },
-        contentWindowInsets = WindowInsets(0, 0, 0, 0)
-    ) { innerPadding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
-                .padding(horizontal = 16.dp)
-                .verticalScroll(rememberScrollState()),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
-            Spacer(modifier = Modifier.height(8.dp))
-
-            // Info de cupo disponible
-            if (cupoDisponible < Int.MAX_VALUE) {
-                Text(
-                    text = "Cupo disponible: $cupoDisponible / $cupoTotal unidades",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = if (excedeCupo) LicenseExpired else LicenseValid
-                )
-            }
-
-            // Calibre 1
-            OutlinedTextField(
-                value = calibre1,
-                onValueChange = onCalibre1Change,
-                label = { Text("Calibre") },
-                isError = calibre1Error != null,
-                supportingText = calibre1Error?.let { { Text(it) } },
-                modifier = Modifier.fillMaxWidth(),
-                singleLine = true
-            )
-
-            // Checkbox segundo calibre
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Checkbox(
-                    checked = showCalibre2,
-                    onCheckedChange = onShowCalibre2Change
-                )
-                Text("Segundo calibre")
-            }
-
-            // Calibre 2
-            if (showCalibre2) {
-                OutlinedTextField(
-                    value = calibre2,
-                    onValueChange = onCalibre2Change,
-                    label = { Text("Segundo calibre") },
-                    modifier = Modifier.fillMaxWidth(),
-                    singleLine = true
-                )
-            }
-
-            // Marca
-            OutlinedTextField(
-                value = marca,
-                onValueChange = onMarcaChange,
-                label = { Text("Marca") },
-                isError = marcaError != null,
-                supportingText = marcaError?.let { { Text(it) } },
-                modifier = Modifier.fillMaxWidth(),
-                singleLine = true
-            )
-
-            // Tipo de munición
-            OutlinedTextField(
-                value = tipo,
-                onValueChange = onTipoChange,
-                label = { Text("Tipo de munición") },
-                isError = tipoError != null,
-                supportingText = tipoError?.let { { Text(it) } },
-                modifier = Modifier.fillMaxWidth(),
-                singleLine = true
-            )
-
-            // Peso
-            OutlinedTextField(
-                value = peso,
-                onValueChange = onPesoChange,
-                label = { Text("Peso (gr)") },
-                modifier = Modifier.fillMaxWidth(),
-                singleLine = true,
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
-            )
-
-            // Unidades con validación de cupo
-            OutlinedTextField(
-                value = unidades,
-                onValueChange = onUnidadesChange,
-                label = { Text("Unidades") },
-                isError = unidadesError != null || excedeCupo,
-                supportingText = {
-                    when {
-                        unidadesError != null -> Text(unidadesError)
-                        excedeCupo -> Text("Excede cupo disponible ($cupoDisponible)")
-                    }
-                },
-                modifier = Modifier.fillMaxWidth(),
-                singleLine = true,
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
-            )
-
-            // Precio
-            OutlinedTextField(
-                value = precio,
-                onValueChange = onPrecioChange,
-                label = { Text("Precio (€)") },
-                isError = precioError != null,
-                supportingText = precioError?.let { { Text(it) } },
-                modifier = Modifier.fillMaxWidth(),
-                singleLine = true,
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal)
-            )
-
-            // Fecha
-            OutlinedTextField(
-                value = fecha,
-                onValueChange = {},
-                label = { Text("Fecha") },
-                isError = fechaError != null,
-                supportingText = fechaError?.let { { Text(it) } },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable { datePickerDialog.show() },
-                enabled = false,
-                singleLine = true,
-                trailingIcon = {
-                    IconButton(onClick = { datePickerDialog.show() }) {
-                        Icon(Icons.Default.CalendarToday, contentDescription = "Seleccionar fecha")
-                    }
-                }
-            )
-
-            // Tienda
-            OutlinedTextField(
-                value = tienda,
-                onValueChange = onTiendaChange,
-                label = { Text("Tienda") },
-                modifier = Modifier.fillMaxWidth(),
-                singleLine = true
-            )
-
-            Spacer(modifier = Modifier.height(80.dp))
         }
+
+        // Calibre 1
+        OutlinedTextField(
+            value = calibre1,
+            onValueChange = onCalibre1Change,
+            label = { Text("Calibre") },
+            isError = calibre1Error != null,
+            supportingText = calibre1Error?.let { { Text(it) } },
+            modifier = Modifier.fillMaxWidth(),
+            singleLine = true
+        )
+
+        // Checkbox segundo calibre
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Checkbox(
+                checked = showCalibre2,
+                onCheckedChange = onShowCalibre2Change
+            )
+            Text("Segundo calibre")
+        }
+
+        // Calibre 2
+        if (showCalibre2) {
+            OutlinedTextField(
+                value = calibre2,
+                onValueChange = onCalibre2Change,
+                label = { Text("Segundo calibre") },
+                modifier = Modifier.fillMaxWidth(),
+                singleLine = true
+            )
+        }
+
+        // Marca
+        OutlinedTextField(
+            value = marca,
+            onValueChange = onMarcaChange,
+            label = { Text("Marca") },
+            isError = marcaError != null,
+            supportingText = marcaError?.let { { Text(it) } },
+            modifier = Modifier.fillMaxWidth(),
+            singleLine = true
+        )
+
+        // Tipo de municion
+        OutlinedTextField(
+            value = tipo,
+            onValueChange = onTipoChange,
+            label = { Text("Tipo de municion") },
+            isError = tipoError != null,
+            supportingText = tipoError?.let { { Text(it) } },
+            modifier = Modifier.fillMaxWidth(),
+            singleLine = true
+        )
+
+        // Peso
+        OutlinedTextField(
+            value = peso,
+            onValueChange = onPesoChange,
+            label = { Text("Peso (gr)") },
+            modifier = Modifier.fillMaxWidth(),
+            singleLine = true,
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+        )
+
+        // Unidades con validacion de cupo
+        OutlinedTextField(
+            value = unidades,
+            onValueChange = onUnidadesChange,
+            label = { Text("Unidades") },
+            isError = unidadesError != null || excedeCupo,
+            supportingText = {
+                when {
+                    unidadesError != null -> Text(unidadesError)
+                    excedeCupo -> Text("Excede cupo disponible ($cupoDisponible)")
+                }
+            },
+            modifier = Modifier.fillMaxWidth(),
+            singleLine = true,
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+        )
+
+        // Precio
+        OutlinedTextField(
+            value = precio,
+            onValueChange = onPrecioChange,
+            label = { Text("Precio (EUR)") },
+            isError = precioError != null,
+            supportingText = precioError?.let { { Text(it) } },
+            modifier = Modifier.fillMaxWidth(),
+            singleLine = true,
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal)
+        )
+
+        // Fecha
+        OutlinedTextField(
+            value = fecha,
+            onValueChange = {},
+            label = { Text("Fecha") },
+            isError = fechaError != null,
+            supportingText = fechaError?.let { { Text(it) } },
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable { datePickerDialog.show() },
+            enabled = false,
+            singleLine = true,
+            trailingIcon = {
+                IconButton(onClick = { datePickerDialog.show() }) {
+                    Icon(Icons.Default.CalendarToday, contentDescription = "Seleccionar fecha")
+                }
+            }
+        )
+
+        // Tienda
+        OutlinedTextField(
+            value = tienda,
+            onValueChange = onTiendaChange,
+            label = { Text("Tienda") },
+            modifier = Modifier.fillMaxWidth(),
+            singleLine = true
+        )
+
+        Spacer(modifier = Modifier.height(80.dp))
     }
 }
 
@@ -460,11 +440,9 @@ private fun getCurrentDate(): String {
 
 @Preview(showBackground = true)
 @Composable
-private fun CompraFormScreenContentPreview() {
+private fun CompraFormFieldsPreview() {
     MunicionTheme {
-        CompraFormScreenContent(
-            isEditing = false,
-            snackbarHostState = SnackbarHostState(),
+        CompraFormFields(
             cupoDisponible = 75,
             cupoTotal = 100,
             excedeCupo = false,
@@ -483,7 +461,7 @@ private fun CompraFormScreenContentPreview() {
             peso = "124",
             marca = "Federal",
             marcaError = null,
-            tienda = "Armería Local",
+            tienda = "Armeria Local",
             onCalibre1Change = {},
             onCalibre2Change = {},
             onShowCalibre2Change = {},
@@ -493,9 +471,7 @@ private fun CompraFormScreenContentPreview() {
             onTipoChange = {},
             onPesoChange = {},
             onMarcaChange = {},
-            onTiendaChange = {},
-            onBackClick = {},
-            onSaveClick = {}
+            onTiendaChange = {}
         )
     }
 }

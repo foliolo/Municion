@@ -4,10 +4,7 @@ import android.app.DatePickerDialog
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -17,21 +14,17 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CalendarToday
-import androidx.compose.material.icons.filled.Save
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -49,7 +42,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import al.ahgitdevelopment.municion.R
 import al.ahgitdevelopment.municion.data.local.room.entities.Licencia
-import al.ahgitdevelopment.municion.ui.components.FormScreenTopBar
 import al.ahgitdevelopment.municion.ui.theme.MunicionTheme
 import al.ahgitdevelopment.municion.ui.viewmodel.LicenciaViewModel
 import java.text.SimpleDateFormat
@@ -57,27 +49,31 @@ import java.util.Calendar
 import java.util.Locale
 
 /**
- * Pantalla de formulario de Licencia (Stateful).
+ * Contenido del formulario de Licencia para Single Scaffold Architecture.
  *
- * Maneja el ViewModel, navegación y efectos secundarios.
+ * NO contiene Scaffold, TopBar ni FAB - estos están en MainScreen.
+ * Registra su función de guardado con MainScreen mediante onRegisterSaveCallback.
  *
- * @param navController Controlador de navegación
  * @param licenciaId ID de licencia a editar (null para nueva)
+ * @param navController Controlador de navegación
+ * @param snackbarHostState Estado del snackbar compartido desde MainScreen
+ * @param onRegisterSaveCallback Callback para registrar función de guardado con MainScreen
  * @param viewModel ViewModel de Licencias
  *
- * @since v3.0.0 (Compose Migration)
+ * @since v3.0.0 (Compose Migration - Single Scaffold Architecture)
  */
 @Composable
-fun LicenciaFormScreen(
+fun LicenciaFormContent(
+    licenciaId: Int?,
     navController: NavHostController,
-    licenciaId: Int? = null,
+    snackbarHostState: SnackbarHostState,
+    onRegisterSaveCallback: ((() -> Unit)?) -> Unit,
     viewModel: LicenciaViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
     val licencias by viewModel.licencias.collectAsStateWithLifecycle()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    val snackbarHostState = remember { SnackbarHostState() }
     val isEditing = licenciaId != null
 
     // Cargar licencia existente si estamos editando
@@ -104,12 +100,82 @@ fun LicenciaFormScreen(
     var numSeguroError by remember { mutableStateOf<String?>(null) }
     var edadError by remember { mutableStateOf<String?>(null) }
 
+    // Arrays de recursos
+    val tiposLicencia = context.resources.getStringArray(R.array.tipo_licencias).toList()
+    val tiposPermisoConducir = context.resources.getStringArray(R.array.tipo_permiso_conducir).toList()
+    val autonomias = context.resources.getStringArray(R.array.ccaa).toList()
+    val escalas = context.resources.getStringArray(R.array.tipo_escala).toList()
+    val categorias = context.resources.getStringArray(R.array.categorias).toList()
+
+    // Determinar visibilidad de campos según tipo de licencia
+    val showEscala = tipoLicencia == 0
+    val showFechaCaducidad = tipoLicencia != 0
+    val showNumAbonado = tipoLicencia in 9..11
+    val showNumSeguro = tipoLicencia in 9..10
+    val showAutonomia = tipoLicencia in 9..11
+    val showPermisoConducir = tipoLicencia == 12
+    val showEdad = tipoLicencia == 12
+    val showCategoria = tipoLicencia == 11
+
+    // Función de guardado
+    val saveFunction: () -> Unit = {
+        // Validaciones
+        var isValid = true
+        if (numLicencia.isBlank()) {
+            numLicenciaError = "Introduce el número de licencia"
+            isValid = false
+        }
+        if (fechaExpedicion.isBlank()) {
+            fechaExpedicionError = "Introduce la fecha de expedición"
+            isValid = false
+        }
+        if (showNumSeguro && numSeguro.isBlank()) {
+            numSeguroError = "Introduce el número de póliza"
+            isValid = false
+        }
+        if (showEdad && edad.isBlank()) {
+            edadError = "Introduce tu edad"
+            isValid = false
+        }
+
+        if (isValid) {
+            val licencia = Licencia(
+                id = licenciaId ?: 0,
+                tipo = tipoLicencia,
+                nombre = tiposLicencia.getOrNull(tipoLicencia),
+                tipoPermisoConduccion = if (showPermisoConducir) tipoPermisoConducir else -1,
+                edad = edad.toIntOrNull() ?: 30,
+                fechaExpedicion = fechaExpedicion,
+                fechaCaducidad = fechaCaducidad.ifBlank { "31/12/3000" },
+                numLicencia = numLicencia,
+                numAbonado = if (showNumAbonado) numAbonado.toIntOrNull() ?: -1 else -1,
+                numSeguro = if (showNumSeguro) numSeguro else null,
+                autonomia = if (showAutonomia) autonomia else -1,
+                escala = if (showEscala) escala else -1,
+                categoria = if (showCategoria) categoria else -1
+            )
+            if (isEditing) {
+                viewModel.updateLicencia(licencia)
+            } else {
+                viewModel.saveLicencia(licencia)
+            }
+        }
+    }
+
+    // Registrar función de guardado con MainScreen
+    DisposableEffect(Unit) {
+        onRegisterSaveCallback(saveFunction)
+        onDispose {
+            onRegisterSaveCallback(null)
+        }
+    }
+
     // Actualizar fecha de caducidad automáticamente
     LaunchedEffect(fechaExpedicion, tipoLicencia, tipoPermisoConducir, edad) {
         fechaCaducidad = calculateFechaCaducidad(fechaExpedicion, tipoLicencia, tipoPermisoConducir, edad)
     }
 
-    // Mostrar mensajes de UiState
+    // Mostrar mensajes de UiState y navegar al éxito
     LaunchedEffect(uiState) {
         when (uiState) {
             is LicenciaViewModel.LicenciaUiState.Success -> {
@@ -129,26 +195,7 @@ fun LicenciaFormScreen(
         }
     }
 
-    // Arrays de recursos
-    val tiposLicencia = context.resources.getStringArray(R.array.tipo_licencias).toList()
-    val tiposPermisoConducir = context.resources.getStringArray(R.array.tipo_permiso_conducir).toList()
-    val autonomias = context.resources.getStringArray(R.array.ccaa).toList()
-    val escalas = context.resources.getStringArray(R.array.tipo_escala).toList()
-    val categorias = context.resources.getStringArray(R.array.categorias).toList()
-
-    // Determinar visibilidad de campos según tipo de licencia
-    val showEscala = tipoLicencia == 0
-    val showFechaCaducidad = tipoLicencia != 0
-    val showNumAbonado = tipoLicencia in 9..11
-    val showNumSeguro = tipoLicencia in 9..10
-    val showAutonomia = tipoLicencia in 9..11
-    val showPermisoConducir = tipoLicencia == 12
-    val showEdad = tipoLicencia == 12
-    val showCategoria = tipoLicencia == 11
-
-    LicenciaFormScreenContent(
-        isEditing = isEditing,
-        snackbarHostState = snackbarHostState,
+    LicenciaFormFields(
         tipoLicencia = tipoLicencia,
         tiposLicencia = tiposLicencia,
         numLicencia = numLicencia,
@@ -186,64 +233,20 @@ fun LicenciaFormScreen(
         onTipoPermisoConducirChange = { tipoPermisoConducir = it },
         onEdadChange = { edad = it; edadError = null },
         onEscalaChange = { escala = it },
-        onCategoriaChange = { categoria = it },
-        onBackClick = { navController.popBackStack() },
-        onSaveClick = {
-            // Validaciones
-            var isValid = true
-            if (numLicencia.isBlank()) {
-                numLicenciaError = "Introduce el número de licencia"
-                isValid = false
-            }
-            if (fechaExpedicion.isBlank()) {
-                fechaExpedicionError = "Introduce la fecha de expedición"
-                isValid = false
-            }
-            if (showNumSeguro && numSeguro.isBlank()) {
-                numSeguroError = "Introduce el número de póliza"
-                isValid = false
-            }
-            if (showEdad && edad.isBlank()) {
-                edadError = "Introduce tu edad"
-                isValid = false
-            }
-
-            if (isValid) {
-                val licencia = Licencia(
-                    id = licenciaId ?: 0,
-                    tipo = tipoLicencia,
-                    nombre = tiposLicencia.getOrNull(tipoLicencia),
-                    tipoPermisoConduccion = if (showPermisoConducir) tipoPermisoConducir else -1,
-                    edad = edad.toIntOrNull() ?: 30,
-                    fechaExpedicion = fechaExpedicion,
-                    fechaCaducidad = fechaCaducidad.ifBlank { "31/12/3000" },
-                    numLicencia = numLicencia,
-                    numAbonado = if (showNumAbonado) numAbonado.toIntOrNull() ?: -1 else -1,
-                    numSeguro = if (showNumSeguro) numSeguro else null,
-                    autonomia = if (showAutonomia) autonomia else -1,
-                    escala = if (showEscala) escala else -1,
-                    categoria = if (showCategoria) categoria else -1
-                )
-                if (isEditing) {
-                    viewModel.updateLicencia(licencia)
-                } else {
-                    viewModel.saveLicencia(licencia)
-                }
-            }
-        }
+        onCategoriaChange = { categoria = it }
     )
 }
 
 /**
- * Contenido del formulario de Licencia (Stateless).
+ * Campos del formulario de Licencia (Stateless).
  *
- * @since v3.0.0 (Compose Migration)
+ * Sin Scaffold - solo los campos del formulario.
+ *
+ * @since v3.0.0 (Compose Migration - Single Scaffold Architecture)
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LicenciaFormScreenContent(
-    isEditing: Boolean,
-    snackbarHostState: SnackbarHostState,
+fun LicenciaFormFields(
     tipoLicencia: Int,
     tiposLicencia: List<String>,
     numLicencia: String,
@@ -282,161 +285,136 @@ fun LicenciaFormScreenContent(
     onEdadChange: (String) -> Unit,
     onEscalaChange: (Int) -> Unit,
     onCategoriaChange: (Int) -> Unit,
-    onBackClick: () -> Unit,
-    onSaveClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val context = LocalContext.current
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .padding(horizontal = 16.dp)
+            .verticalScroll(rememberScrollState()),
+        verticalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        Spacer(modifier = Modifier.height(8.dp))
 
-    Scaffold(
-        modifier = modifier,
-        snackbarHost = { SnackbarHost(snackbarHostState) },
-        topBar = {
-            FormScreenTopBar(
-                title = if (isEditing) "Editar licencia" else "Nueva licencia",
-                onBackClick = onBackClick
-            )
-        },
-        floatingActionButton = {
-            FloatingActionButton(
-                onClick = onSaveClick,
-                containerColor = MaterialTheme.colorScheme.primary
-            ) {
-                Icon(Icons.Default.Save, contentDescription = "Guardar")
-            }
-        },
-        contentWindowInsets = WindowInsets(0, 0, 0, 0)
-    ) { innerPadding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
-                .padding(horizontal = 16.dp)
-                .verticalScroll(rememberScrollState()),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
-            Spacer(modifier = Modifier.height(8.dp))
+        // Tipo de licencia (Dropdown)
+        DropdownField(
+            label = "Tipo de licencia",
+            selectedIndex = tipoLicencia,
+            options = tiposLicencia,
+            onSelectionChange = onTipoLicenciaChange
+        )
 
-            // Tipo de licencia (Dropdown)
-            DropdownField(
-                label = "Tipo de licencia",
-                selectedIndex = tipoLicencia,
-                options = tiposLicencia,
-                onSelectionChange = onTipoLicenciaChange
-            )
+        // Número de licencia
+        OutlinedTextField(
+            value = numLicencia,
+            onValueChange = onNumLicenciaChange,
+            label = { Text(if (tipoLicencia == 12) "DNI" else "Número de licencia") },
+            isError = numLicenciaError != null,
+            supportingText = numLicenciaError?.let { { Text(it) } },
+            modifier = Modifier.fillMaxWidth(),
+            singleLine = true
+        )
 
-            // Número de licencia
+        // Fecha de expedición
+        DateField(
+            label = "Fecha de expedición",
+            value = fechaExpedicion,
+            error = fechaExpedicionError,
+            onValueChange = onFechaExpedicionChange
+        )
+
+        // Fecha de caducidad (solo lectura, calculada automáticamente)
+        if (showFechaCaducidad) {
             OutlinedTextField(
-                value = numLicencia,
-                onValueChange = onNumLicenciaChange,
-                label = { Text(if (tipoLicencia == 12) "DNI" else "Número de licencia") },
-                isError = numLicenciaError != null,
-                supportingText = numLicenciaError?.let { { Text(it) } },
+                value = fechaCaducidad,
+                onValueChange = {},
+                label = { Text("Fecha de caducidad") },
+                modifier = Modifier.fillMaxWidth(),
+                enabled = false,
+                singleLine = true
+            )
+        }
+
+        // Escala (solo para Licencia A)
+        if (showEscala) {
+            DropdownField(
+                label = "Escala",
+                selectedIndex = escala,
+                options = escalas,
+                onSelectionChange = onEscalaChange
+            )
+        }
+
+        // Permiso de conducir (solo para tipo 12)
+        if (showPermisoConducir) {
+            DropdownField(
+                label = "Tipo de permiso",
+                selectedIndex = tipoPermisoConducir,
+                options = tiposPermisoConducir,
+                onSelectionChange = onTipoPermisoConducirChange
+            )
+        }
+
+        // Edad (solo para permiso de conducir)
+        if (showEdad) {
+            OutlinedTextField(
+                value = edad,
+                onValueChange = { if (it.all { c -> c.isDigit() }) onEdadChange(it) },
+                label = { Text("Edad") },
+                isError = edadError != null,
+                supportingText = edadError?.let { { Text(it) } },
+                modifier = Modifier.fillMaxWidth(),
+                singleLine = true,
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+            )
+        }
+
+        // Número de abonado
+        if (showNumAbonado) {
+            OutlinedTextField(
+                value = numAbonado,
+                onValueChange = { if (it.all { c -> c.isDigit() }) onNumAbonadoChange(it) },
+                label = { Text("Número de abonado") },
+                modifier = Modifier.fillMaxWidth(),
+                singleLine = true,
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+            )
+        }
+
+        // Número de póliza de seguro
+        if (showNumSeguro) {
+            OutlinedTextField(
+                value = numSeguro,
+                onValueChange = onNumSeguroChange,
+                label = { Text("Número de póliza") },
+                isError = numSeguroError != null,
+                supportingText = numSeguroError?.let { { Text(it) } },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true
             )
-
-            // Fecha de expedición
-            DateField(
-                label = "Fecha de expedición",
-                value = fechaExpedicion,
-                error = fechaExpedicionError,
-                onValueChange = onFechaExpedicionChange
-            )
-
-            // Fecha de caducidad (solo lectura, calculada automáticamente)
-            if (showFechaCaducidad) {
-                OutlinedTextField(
-                    value = fechaCaducidad,
-                    onValueChange = {},
-                    label = { Text("Fecha de caducidad") },
-                    modifier = Modifier.fillMaxWidth(),
-                    enabled = false,
-                    singleLine = true
-                )
-            }
-
-            // Escala (solo para Licencia A)
-            if (showEscala) {
-                DropdownField(
-                    label = "Escala",
-                    selectedIndex = escala,
-                    options = escalas,
-                    onSelectionChange = onEscalaChange
-                )
-            }
-
-            // Permiso de conducir (solo para tipo 12)
-            if (showPermisoConducir) {
-                DropdownField(
-                    label = "Tipo de permiso",
-                    selectedIndex = tipoPermisoConducir,
-                    options = tiposPermisoConducir,
-                    onSelectionChange = onTipoPermisoConducirChange
-                )
-            }
-
-            // Edad (solo para permiso de conducir)
-            if (showEdad) {
-                OutlinedTextField(
-                    value = edad,
-                    onValueChange = { if (it.all { c -> c.isDigit() }) onEdadChange(it) },
-                    label = { Text("Edad") },
-                    isError = edadError != null,
-                    supportingText = edadError?.let { { Text(it) } },
-                    modifier = Modifier.fillMaxWidth(),
-                    singleLine = true,
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
-                )
-            }
-
-            // Número de abonado
-            if (showNumAbonado) {
-                OutlinedTextField(
-                    value = numAbonado,
-                    onValueChange = { if (it.all { c -> c.isDigit() }) onNumAbonadoChange(it) },
-                    label = { Text("Número de abonado") },
-                    modifier = Modifier.fillMaxWidth(),
-                    singleLine = true,
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
-                )
-            }
-
-            // Número de póliza de seguro
-            if (showNumSeguro) {
-                OutlinedTextField(
-                    value = numSeguro,
-                    onValueChange = onNumSeguroChange,
-                    label = { Text("Número de póliza") },
-                    isError = numSeguroError != null,
-                    supportingText = numSeguroError?.let { { Text(it) } },
-                    modifier = Modifier.fillMaxWidth(),
-                    singleLine = true
-                )
-            }
-
-            // Comunidad Autónoma
-            if (showAutonomia) {
-                DropdownField(
-                    label = "Comunidad Autónoma",
-                    selectedIndex = autonomia,
-                    options = autonomias,
-                    onSelectionChange = onAutonomiaChange
-                )
-            }
-
-            // Categoría (solo para Federativa)
-            if (showCategoria) {
-                DropdownField(
-                    label = "Categoría",
-                    selectedIndex = categoria,
-                    options = categorias,
-                    onSelectionChange = onCategoriaChange
-                )
-            }
-
-            Spacer(modifier = Modifier.height(80.dp)) // Espacio para FAB
         }
+
+        // Comunidad Autónoma
+        if (showAutonomia) {
+            DropdownField(
+                label = "Comunidad Autónoma",
+                selectedIndex = autonomia,
+                options = autonomias,
+                onSelectionChange = onAutonomiaChange
+            )
+        }
+
+        // Categoría (solo para Federativa)
+        if (showCategoria) {
+            DropdownField(
+                label = "Categoría",
+                selectedIndex = categoria,
+                options = categorias,
+                onSelectionChange = onCategoriaChange
+            )
+        }
+
+        Spacer(modifier = Modifier.height(80.dp)) // Espacio para FAB
     }
 }
 
@@ -591,11 +569,9 @@ private fun calculateFechaCaducidad(
 
 @Preview(showBackground = true)
 @Composable
-private fun LicenciaFormScreenContentPreview() {
+private fun LicenciaFormFieldsPreview() {
     MunicionTheme {
-        LicenciaFormScreenContent(
-            isEditing = false,
-            snackbarHostState = SnackbarHostState(),
+        LicenciaFormFields(
             tipoLicencia = 1,
             tiposLicencia = listOf("Licencia A", "Licencia B", "Licencia C"),
             numLicencia = "",
@@ -633,9 +609,7 @@ private fun LicenciaFormScreenContentPreview() {
             onTipoPermisoConducirChange = {},
             onEdadChange = {},
             onEscalaChange = {},
-            onCategoriaChange = {},
-            onBackClick = {},
-            onSaveClick = {}
+            onCategoriaChange = {}
         )
     }
 }

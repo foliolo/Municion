@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -25,14 +24,10 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
@@ -51,30 +46,30 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
-import al.ahgitdevelopment.municion.ui.components.FormScreenTopBar
 import al.ahgitdevelopment.municion.ui.theme.LicenseExpired
 import al.ahgitdevelopment.municion.ui.theme.LicenseValid
 import al.ahgitdevelopment.municion.ui.theme.MunicionTheme
 
 /**
- * Pantalla de configuración de cuenta (Stateful).
+ * Contenido de configuracion de cuenta para Single Scaffold Architecture.
  *
- * Permite vincular cuenta, gestionar PIN y biometría.
+ * NO contiene Scaffold ni TopBar - estos estan en MainScreen.
+ * No tiene FAB ya que las acciones estan dentro del contenido.
  *
- * @param navController Controlador de navegación
- * @param viewModel ViewModel de configuración
+ * @param navController Controlador de navegacion
+ * @param snackbarHostState Estado del snackbar compartido desde MainScreen
+ * @param viewModel ViewModel de configuracion
  *
- * @since v3.0.0 (Compose Migration)
+ * @since v3.0.0 (Compose Migration - Single Scaffold Architecture)
  */
 @Composable
-fun AccountSettingsScreen(
+fun AccountSettingsContent(
     navController: NavHostController,
+    snackbarHostState: SnackbarHostState,
     viewModel: AccountSettingsViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val linkingState by viewModel.linkingState.collectAsStateWithLifecycle()
-
-    val snackbarHostState = remember { SnackbarHostState() }
 
     // Dialogs state
     var showLinkEmailDialog by remember { mutableStateOf(false) }
@@ -111,7 +106,7 @@ fun AccountSettingsScreen(
         )
     }
 
-    // Dialog cerrar sesión
+    // Dialog cerrar sesion
     if (showSignOutDialog) {
         val isAnonymous = (uiState as? AccountSettingsViewModel.AccountUiState.Loaded)
             ?.accountInfo?.isAnonymous == true
@@ -132,18 +127,15 @@ fun AccountSettingsScreen(
         ChangePinDialog(
             onDismiss = { showChangePinDialog = false },
             onConfirm = { currentPin, newPin ->
-                val result = viewModel.changePin(currentPin, newPin)
+                viewModel.changePin(currentPin, newPin)
                 showChangePinDialog = false
-                // El snackbar se mostrará desde el ViewModel
             }
         )
     }
 
-    AccountSettingsScreenContent(
+    AccountSettingsFields(
         uiState = uiState,
         linkingState = linkingState,
-        snackbarHostState = snackbarHostState,
-        onBackClick = { navController.popBackStack() },
         onLinkEmailClick = { showLinkEmailDialog = true },
         onLinkGoogleClick = { /* TODO: Implementar Google Sign-In */ },
         onBiometricChange = { viewModel.setBiometricEnabled(it) },
@@ -153,17 +145,16 @@ fun AccountSettingsScreen(
 }
 
 /**
- * Contenido de configuración de cuenta (Stateless).
+ * Campos de configuracion de cuenta (Stateless).
  *
- * @since v3.0.0 (Compose Migration)
+ * Sin Scaffold - solo el contenido.
+ *
+ * @since v3.0.0 (Compose Migration - Single Scaffold Architecture)
  */
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AccountSettingsScreenContent(
+fun AccountSettingsFields(
     uiState: AccountSettingsViewModel.AccountUiState,
     linkingState: AccountSettingsViewModel.LinkingState,
-    snackbarHostState: SnackbarHostState,
-    onBackClick: () -> Unit,
     onLinkEmailClick: () -> Unit,
     onLinkGoogleClick: () -> Unit,
     onBiometricChange: (Boolean) -> Unit,
@@ -171,70 +162,53 @@ fun AccountSettingsScreenContent(
     onSignOutClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Scaffold(
-        modifier = modifier,
-        snackbarHost = { SnackbarHost(snackbarHostState) },
-        topBar = {
-            FormScreenTopBar(
-                title = "Configuración de cuenta",
-                onBackClick = onBackClick
-            )
-        },
-        contentWindowInsets = WindowInsets(0, 0, 0, 0)
-    ) { innerPadding ->
-        when (uiState) {
-            is AccountSettingsViewModel.AccountUiState.Loading -> {
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(innerPadding),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
-                ) {
-                    CircularProgressIndicator()
-                    Spacer(modifier = Modifier.height(16.dp))
-                    Text("Cargando...")
-                }
+    when (uiState) {
+        is AccountSettingsViewModel.AccountUiState.Loading -> {
+            Column(
+                modifier = modifier.fillMaxSize(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                CircularProgressIndicator()
+                Spacer(modifier = Modifier.height(16.dp))
+                Text("Cargando...")
             }
+        }
 
-            is AccountSettingsViewModel.AccountUiState.NotAuthenticated -> {
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(innerPadding)
-                        .padding(16.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
-                ) {
-                    Icon(
-                        Icons.Default.Close,
-                        contentDescription = null,
-                        tint = LicenseExpired,
-                        modifier = Modifier.size(64.dp)
-                    )
-                    Spacer(modifier = Modifier.height(16.dp))
-                    Text(
-                        "No autenticado",
-                        style = MaterialTheme.typography.headlineSmall
-                    )
-                }
-            }
-
-            is AccountSettingsViewModel.AccountUiState.Loaded -> {
-                LoadedContent(
-                    accountInfo = uiState.accountInfo,
-                    securityInfo = uiState.securityInfo,
-                    isLinking = linkingState is AccountSettingsViewModel.LinkingState.Linking,
-                    onLinkEmailClick = onLinkEmailClick,
-                    onLinkGoogleClick = onLinkGoogleClick,
-                    onBiometricChange = onBiometricChange,
-                    onChangePinClick = onChangePinClick,
-                    onSignOutClick = onSignOutClick,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(innerPadding)
+        is AccountSettingsViewModel.AccountUiState.NotAuthenticated -> {
+            Column(
+                modifier = modifier
+                    .fillMaxSize()
+                    .padding(16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                Icon(
+                    Icons.Default.Close,
+                    contentDescription = null,
+                    tint = LicenseExpired,
+                    modifier = Modifier.size(64.dp)
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+                Text(
+                    "No autenticado",
+                    style = MaterialTheme.typography.headlineSmall
                 )
             }
+        }
+
+        is AccountSettingsViewModel.AccountUiState.Loaded -> {
+            LoadedContent(
+                accountInfo = uiState.accountInfo,
+                securityInfo = uiState.securityInfo,
+                isLinking = linkingState is AccountSettingsViewModel.LinkingState.Linking,
+                onLinkEmailClick = onLinkEmailClick,
+                onLinkGoogleClick = onLinkGoogleClick,
+                onBiometricChange = onBiometricChange,
+                onChangePinClick = onChangePinClick,
+                onSignOutClick = onSignOutClick,
+                modifier = modifier.fillMaxSize()
+            )
         }
     }
 }
@@ -288,7 +262,7 @@ private fun LoadedContent(
             }
         }
 
-        // Vincular cuenta (solo si es anónima)
+        // Vincular cuenta (solo si es anonima)
         if (accountInfo.isAnonymous) {
             Card(
                 modifier = Modifier.fillMaxWidth(),
@@ -338,7 +312,7 @@ private fun LoadedContent(
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
-                        text = "• Sincronización en la nube\n• Acceso desde múltiples dispositivos\n• Recuperación de datos",
+                        text = "* Sincronizacion en la nube\n* Acceso desde multiples dispositivos\n* Recuperacion de datos",
                         style = MaterialTheme.typography.bodySmall
                     )
                 }
@@ -380,7 +354,7 @@ private fun LoadedContent(
                 )
                 Spacer(modifier = Modifier.height(16.dp))
 
-                // Biometría
+                // Biometria
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
@@ -391,7 +365,7 @@ private fun LoadedContent(
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
                         Icon(Icons.Default.Fingerprint, contentDescription = null)
-                        Text("Autenticación biométrica")
+                        Text("Autenticacion biometrica")
                     }
                     Switch(
                         checked = securityInfo.biometricEnabled,
@@ -437,7 +411,7 @@ private fun LoadedContent(
             }
         }
 
-        // Cerrar sesión
+        // Cerrar sesion
         Spacer(modifier = Modifier.height(16.dp))
         Button(
             onClick = onSignOutClick,
@@ -448,7 +422,7 @@ private fun LoadedContent(
         ) {
             Icon(Icons.Default.Logout, contentDescription = null)
             Spacer(modifier = Modifier.size(8.dp))
-            Text("Cerrar sesión")
+            Text("Cerrar sesion")
         }
 
         Spacer(modifier = Modifier.height(32.dp))
@@ -478,7 +452,7 @@ private fun LinkEmailDialog(
                 OutlinedTextField(
                     value = password,
                     onValueChange = { password = it },
-                    label = { Text("Contraseña") },
+                    label = { Text("Contrasena") },
                     singleLine = true,
                     visualTransformation = PasswordVisualTransformation(),
                     modifier = Modifier.fillMaxWidth()
@@ -505,19 +479,19 @@ private fun SignOutDialog(
     onConfirm: () -> Unit
 ) {
     val message = if (isAnonymous) {
-        "Si cierras sesión con una cuenta anónima, perderás acceso a tus datos en la nube. " +
-                "Los datos locales se mantendrán.\n\n¿Estás seguro?"
+        "Si cierras sesion con una cuenta anonima, perderas acceso a tus datos en la nube. " +
+                "Los datos locales se mantendran.\n\nEstas seguro?"
     } else {
-        "¿Estás seguro de que deseas cerrar sesión?"
+        "Estas seguro de que deseas cerrar sesion?"
     }
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Cerrar sesión") },
+        title = { Text("Cerrar sesion") },
         text = { Text(message) },
         confirmButton = {
             TextButton(onClick = onConfirm) {
-                Text("Cerrar sesión", color = MaterialTheme.colorScheme.error)
+                Text("Cerrar sesion", color = MaterialTheme.colorScheme.error)
             }
         },
         dismissButton = {
@@ -597,9 +571,9 @@ private fun ChangePinDialog(
 
 @Preview(showBackground = true)
 @Composable
-private fun AccountSettingsScreenContentPreview() {
+private fun AccountSettingsFieldsPreview() {
     MunicionTheme {
-        AccountSettingsScreenContent(
+        AccountSettingsFields(
             uiState = AccountSettingsViewModel.AccountUiState.Loaded(
                 accountInfo = AccountSettingsViewModel.AccountInfo(
                     isAnonymous = true,
@@ -614,8 +588,6 @@ private fun AccountSettingsScreenContentPreview() {
                 )
             ),
             linkingState = AccountSettingsViewModel.LinkingState.Idle,
-            snackbarHostState = SnackbarHostState(),
-            onBackClick = {},
             onLinkEmailClick = {},
             onLinkGoogleClick = {},
             onBiometricChange = {},

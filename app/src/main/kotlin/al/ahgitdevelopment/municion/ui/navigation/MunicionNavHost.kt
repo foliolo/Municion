@@ -1,100 +1,94 @@
 package al.ahgitdevelopment.municion.ui.navigation
 
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import al.ahgitdevelopment.municion.ui.compras.ComprasScreen
-import al.ahgitdevelopment.municion.ui.forms.CompraFormScreen
-import al.ahgitdevelopment.municion.ui.forms.GuiaFormScreen
-import al.ahgitdevelopment.municion.ui.forms.LicenciaFormScreen
-import al.ahgitdevelopment.municion.ui.forms.TiradaFormScreen
-import al.ahgitdevelopment.municion.ui.guias.GuiasScreen
-import al.ahgitdevelopment.municion.ui.licencias.LicenciasScreen
-import al.ahgitdevelopment.municion.ui.settings.AccountSettingsScreen
-import al.ahgitdevelopment.municion.ui.tiradas.TiradasScreen
-import al.ahgitdevelopment.municion.ui.viewmodel.MainViewModel.SyncState
+import al.ahgitdevelopment.municion.ui.compras.ComprasContent
+import al.ahgitdevelopment.municion.ui.forms.CompraFormContent
+import al.ahgitdevelopment.municion.ui.forms.GuiaFormContent
+import al.ahgitdevelopment.municion.ui.forms.LicenciaFormContent
+import al.ahgitdevelopment.municion.ui.forms.TiradaFormContent
+import al.ahgitdevelopment.municion.ui.guias.GuiasContent
+import al.ahgitdevelopment.municion.ui.licencias.LicenciasContent
+import al.ahgitdevelopment.municion.ui.settings.AccountSettingsContent
+import al.ahgitdevelopment.municion.ui.tiradas.TiradasContent
 
 /**
  * NavHost principal de la aplicación Munición.
  *
- * Contiene todas las rutas de navegación:
- * - 4 tabs principales (Licencias, Guías, Compras, Tiradas)
- * - 4 formularios para crear/editar entidades
- * - Settings
+ * Arquitectura de Scaffold único:
+ * - Las pantallas NO tienen Scaffold propio (solo contenido)
+ * - TopBar, BottomBar y FAB están en MainScreen
+ * - Las pantallas reciben callbacks para registrar funciones de guardado
  *
  * @param navController Controlador de navegación
- * @param bottomPadding Bottom padding for BottomBar (edge-to-edge)
- * @param syncState Estado actual de sincronización (para pantallas de lista)
- * @param onSyncClick Callback para sincronización manual
- * @param onSettingsClick Callback para el botón de settings
+ * @param innerPadding Padding del Scaffold padre
+ * @param snackbarHostState Estado del snackbar compartido
+ * @param onRegisterSaveCallback Callback para registrar función de guardado de formularios
  * @param modifier Modificador opcional
  *
- * @since v3.0.0 (Compose Migration)
+ * @since v3.0.0 (Compose Migration - Single Scaffold Architecture)
  */
 @Composable
 fun MunicionNavHost(
     navController: NavHostController,
-    bottomPadding: Dp = 0.dp,
-    syncState: SyncState,
-    onSyncClick: () -> Unit,
-    onSettingsClick: () -> Unit,
+    innerPadding: PaddingValues,
+    snackbarHostState: SnackbarHostState,
+    onRegisterSaveCallback: ((() -> Unit)?) -> Unit,
     modifier: Modifier = Modifier
 ) {
     NavHost(
         navController = navController,
         startDestination = Routes.LICENCIAS,
-        modifier = modifier
+        modifier = modifier.padding(innerPadding)
     ) {
         // ========== TABS PRINCIPALES ==========
 
         composable(route = Routes.LICENCIAS) {
-            LicenciasScreen(
+            onRegisterSaveCallback(null)
+            LicenciasContent(
                 navController = navController,
-                syncState = syncState,
-                onSyncClick = onSyncClick,
-                onSettingsClick = onSettingsClick,
-                bottomPadding = bottomPadding
+                snackbarHostState = snackbarHostState
             )
         }
 
         composable(route = Routes.GUIAS) {
-            GuiasScreen(
+            onRegisterSaveCallback(null)
+            GuiasContent(
                 navController = navController,
-                syncState = syncState,
-                onSyncClick = onSyncClick,
-                onSettingsClick = onSettingsClick,
-                bottomPadding = bottomPadding
+                snackbarHostState = snackbarHostState
             )
         }
 
         composable(route = Routes.COMPRAS) {
-            ComprasScreen(
+            onRegisterSaveCallback(null)
+            ComprasContent(
                 navController = navController,
-                syncState = syncState,
-                onSyncClick = onSyncClick,
-                onSettingsClick = onSettingsClick,
-                bottomPadding = bottomPadding
+                snackbarHostState = snackbarHostState
             )
         }
 
         composable(route = Routes.TIRADAS) {
-            TiradasScreen(
+            onRegisterSaveCallback(null)
+            TiradasContent(
                 navController = navController,
-                syncState = syncState,
-                onSyncClick = onSyncClick,
-                onSettingsClick = onSettingsClick,
-                bottomPadding = bottomPadding
+                snackbarHostState = snackbarHostState
             )
         }
 
         composable(route = Routes.SETTINGS) {
-            AccountSettingsScreen(navController = navController)
+            onRegisterSaveCallback(null)
+            AccountSettingsContent(
+                navController = navController,
+                snackbarHostState = snackbarHostState
+            )
         }
 
         // ========== FORMULARIOS ==========
@@ -110,9 +104,11 @@ fun MunicionNavHost(
             )
         ) { backStackEntry ->
             val licenciaId = backStackEntry.arguments?.getInt("licenciaId")?.takeIf { it != -1 }
-            LicenciaFormScreen(
+            LicenciaFormContent(
                 licenciaId = licenciaId,
-                navController = navController
+                navController = navController,
+                snackbarHostState = snackbarHostState,
+                onRegisterSaveCallback = onRegisterSaveCallback
             )
         }
 
@@ -129,10 +125,12 @@ fun MunicionNavHost(
         ) { backStackEntry ->
             val tipoLicencia = backStackEntry.arguments?.getString("tipoLicencia") ?: ""
             val guiaId = backStackEntry.arguments?.getInt("guiaId")?.takeIf { it != -1 }
-            GuiaFormScreen(
+            GuiaFormContent(
                 tipoLicencia = tipoLicencia,
                 guiaId = guiaId,
-                navController = navController
+                navController = navController,
+                snackbarHostState = snackbarHostState,
+                onRegisterSaveCallback = onRegisterSaveCallback
             )
         }
 
@@ -153,12 +151,14 @@ fun MunicionNavHost(
             val cupoDisponible = backStackEntry.arguments?.getInt("cupoDisponible") ?: 0
             val cupoTotal = backStackEntry.arguments?.getInt("cupoTotal") ?: 0
             val compraId = backStackEntry.arguments?.getInt("compraId")?.takeIf { it != -1 }
-            CompraFormScreen(
+            CompraFormContent(
                 guiaId = guiaId,
                 compraId = compraId,
                 cupoDisponible = cupoDisponible,
                 cupoTotal = cupoTotal,
-                navController = navController
+                navController = navController,
+                snackbarHostState = snackbarHostState,
+                onRegisterSaveCallback = onRegisterSaveCallback
             )
         }
 
@@ -173,9 +173,11 @@ fun MunicionNavHost(
             )
         ) { backStackEntry ->
             val tiradaId = backStackEntry.arguments?.getInt("tiradaId")?.takeIf { it != -1 }
-            TiradaFormScreen(
+            TiradaFormContent(
                 tiradaId = tiradaId,
-                navController = navController
+                navController = navController,
+                snackbarHostState = snackbarHostState,
+                onRegisterSaveCallback = onRegisterSaveCallback
             )
         }
     }

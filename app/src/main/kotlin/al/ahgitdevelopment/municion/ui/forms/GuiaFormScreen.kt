@@ -8,27 +8,19 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Save
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -47,35 +39,40 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import al.ahgitdevelopment.municion.R
 import al.ahgitdevelopment.municion.data.local.room.entities.Guia
-import al.ahgitdevelopment.municion.ui.components.FormScreenTopBar
 import al.ahgitdevelopment.municion.ui.theme.MunicionTheme
 import al.ahgitdevelopment.municion.ui.viewmodel.GuiaViewModel
 
 /**
- * Pantalla de formulario de Guía (Stateful).
+ * Contenido del formulario de Guia para Single Scaffold Architecture.
  *
- * @param navController Controlador de navegación
+ * NO contiene Scaffold, TopBar ni FAB - estos estan en MainScreen.
+ * Registra su funcion de guardado con MainScreen mediante onRegisterSaveCallback.
+ *
  * @param tipoLicencia Tipo de licencia seleccionado
- * @param guiaId ID de guía a editar (null para nueva)
- * @param viewModel ViewModel de Guías
+ * @param guiaId ID de guia a editar (null para nueva)
+ * @param navController Controlador de navegacion
+ * @param snackbarHostState Estado del snackbar compartido desde MainScreen
+ * @param onRegisterSaveCallback Callback para registrar funcion de guardado con MainScreen
+ * @param viewModel ViewModel de Guias
  *
- * @since v3.0.0 (Compose Migration)
+ * @since v3.0.0 (Compose Migration - Single Scaffold Architecture)
  */
 @Composable
-fun GuiaFormScreen(
+fun GuiaFormContent(
+    tipoLicencia: String,
+    guiaId: Int?,
     navController: NavHostController,
-    tipoLicencia: String = "",
-    guiaId: Int? = null,
+    snackbarHostState: SnackbarHostState,
+    onRegisterSaveCallback: ((() -> Unit)?) -> Unit,
     viewModel: GuiaViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
     val guias by viewModel.guias.collectAsStateWithLifecycle()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    val snackbarHostState = remember { SnackbarHostState() }
     val isEditing = guiaId != null
 
-    // Cargar guía existente si estamos editando
+    // Cargar guia existente si estamos editando
     val existingGuia = remember(guiaId, guias) {
         guiaId?.let { id -> guias.find { it.id == id } }
     }
@@ -103,19 +100,89 @@ fun GuiaFormScreen(
     var numArmaError by remember { mutableStateOf<String?>(null) }
     var cupoError by remember { mutableStateOf<String?>(null) }
 
-    // Obtener tipos de arma según licencia
+    // Obtener tipos de arma segun licencia
     val tiposArma = remember(tipoLicencia) {
         getWeaponTypesForLicense(context, tipoLicencia)
     }
 
-    // Actualizar cupo por defecto según tipo de arma (si no es personalizado)
+    // Calibres disponibles
+    val calibres = context.resources.getStringArray(R.array.calibres).toList()
+
+    // Funcion de guardado
+    val saveFunction: () -> Unit = {
+        // Validaciones
+        var isValid = true
+        if (marca.isBlank()) {
+            marcaError = "Campo obligatorio"
+            isValid = false
+        }
+        if (modelo.isBlank()) {
+            modeloError = "Campo obligatorio"
+            isValid = false
+        }
+        if (apodo.isBlank()) {
+            apodoError = "Campo obligatorio"
+            isValid = false
+        }
+        if (calibre1.isBlank()) {
+            calibre1Error = "Campo obligatorio"
+            isValid = false
+        }
+        if (numGuia.isBlank()) {
+            numGuiaError = "Campo obligatorio"
+            isValid = false
+        }
+        if (numArma.isBlank()) {
+            numArmaError = "Campo obligatorio"
+            isValid = false
+        }
+        if (cupo.isBlank() || cupo.toIntOrNull() == null || cupo.toInt() <= 0) {
+            cupoError = "Introduce un cupo valido"
+            isValid = false
+        }
+
+        if (isValid) {
+            // Obtener el tipo de licencia como Int
+            val tipoLicenciaInt = getLicenciaTypeFromString(context, tipoLicencia)
+
+            val guia = Guia(
+                id = guiaId ?: 0,
+                tipoLicencia = tipoLicenciaInt,
+                marca = marca,
+                modelo = modelo,
+                apodo = apodo,
+                tipoArma = tipoArma,
+                calibre1 = calibre1,
+                calibre2 = if (showCalibre2) calibre2 else null,
+                numGuia = numGuia,
+                numArma = numArma,
+                cupo = cupo.toInt(),
+                gastado = gastado.toIntOrNull() ?: 0
+            )
+            if (isEditing) {
+                viewModel.updateGuia(guia)
+            } else {
+                viewModel.saveGuia(guia)
+            }
+        }
+    }
+
+    // Registrar funcion de guardado con MainScreen
+    DisposableEffect(Unit) {
+        onRegisterSaveCallback(saveFunction)
+        onDispose {
+            onRegisterSaveCallback(null)
+        }
+    }
+
+    // Actualizar cupo por defecto segun tipo de arma (si no es personalizado)
     LaunchedEffect(tipoArma, customCupo) {
         if (!customCupo && !isEditing) {
             cupo = getDefaultCupo(tiposArma.getOrElse(tipoArma) { "" }).toString()
         }
     }
 
-    // Mostrar mensajes de UiState
+    // Mostrar mensajes de UiState y navegar al exito
     LaunchedEffect(uiState) {
         when (uiState) {
             is GuiaViewModel.GuiaUiState.Success -> {
@@ -135,12 +202,8 @@ fun GuiaFormScreen(
         }
     }
 
-    // Calibres disponibles
-    val calibres = context.resources.getStringArray(R.array.calibres).toList()
-
-    GuiaFormScreenContent(
+    GuiaFormFields(
         isEditing = isEditing,
-        snackbarHostState = snackbarHostState,
         tiposArma = tiposArma,
         calibres = calibres,
         marca = marca,
@@ -173,78 +236,21 @@ fun GuiaFormScreen(
         onNumArmaChange = { numArma = it; numArmaError = null },
         onCupoChange = { if (it.all { c -> c.isDigit() }) cupo = it; cupoError = null },
         onCustomCupoChange = { customCupo = it },
-        onGastadoChange = { if (it.all { c -> c.isDigit() }) gastado = it },
-        onBackClick = { navController.popBackStack() },
-        onSaveClick = {
-            // Validaciones
-            var isValid = true
-            if (marca.isBlank()) {
-                marcaError = "Campo obligatorio"
-                isValid = false
-            }
-            if (modelo.isBlank()) {
-                modeloError = "Campo obligatorio"
-                isValid = false
-            }
-            if (apodo.isBlank()) {
-                apodoError = "Campo obligatorio"
-                isValid = false
-            }
-            if (calibre1.isBlank()) {
-                calibre1Error = "Campo obligatorio"
-                isValid = false
-            }
-            if (numGuia.isBlank()) {
-                numGuiaError = "Campo obligatorio"
-                isValid = false
-            }
-            if (numArma.isBlank()) {
-                numArmaError = "Campo obligatorio"
-                isValid = false
-            }
-            if (cupo.isBlank() || cupo.toIntOrNull() == null || cupo.toInt() <= 0) {
-                cupoError = "Introduce un cupo válido"
-                isValid = false
-            }
-
-            if (isValid) {
-                // Obtener el tipo de licencia como Int
-                val tipoLicenciaInt = getLicenciaTypeFromString(context, tipoLicencia)
-
-                val guia = Guia(
-                    id = guiaId ?: 0,
-                    tipoLicencia = tipoLicenciaInt,
-                    marca = marca,
-                    modelo = modelo,
-                    apodo = apodo,
-                    tipoArma = tipoArma,
-                    calibre1 = calibre1,
-                    calibre2 = if (showCalibre2) calibre2 else null,
-                    numGuia = numGuia,
-                    numArma = numArma,
-                    cupo = cupo.toInt(),
-                    gastado = gastado.toIntOrNull() ?: 0
-                )
-                if (isEditing) {
-                    viewModel.updateGuia(guia)
-                } else {
-                    viewModel.saveGuia(guia)
-                }
-            }
-        }
+        onGastadoChange = { if (it.all { c -> c.isDigit() }) gastado = it }
     )
 }
 
 /**
- * Contenido del formulario de Guía (Stateless).
+ * Campos del formulario de Guia (Stateless).
  *
- * @since v3.0.0 (Compose Migration)
+ * Sin Scaffold - solo los campos del formulario.
+ *
+ * @since v3.0.0 (Compose Migration - Single Scaffold Architecture)
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun GuiaFormScreenContent(
+fun GuiaFormFields(
     isEditing: Boolean,
-    snackbarHostState: SnackbarHostState,
     tiposArma: List<String>,
     calibres: List<String>,
     marca: String,
@@ -278,175 +284,152 @@ fun GuiaFormScreenContent(
     onCupoChange: (String) -> Unit,
     onCustomCupoChange: (Boolean) -> Unit,
     onGastadoChange: (String) -> Unit,
-    onBackClick: () -> Unit,
-    onSaveClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Scaffold(
-        modifier = modifier,
-        snackbarHost = { SnackbarHost(snackbarHostState) },
-        topBar = {
-            FormScreenTopBar(
-                title = if (isEditing) "Editar guía" else "Nueva guía",
-                onBackClick = onBackClick
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .padding(horizontal = 16.dp)
+            .verticalScroll(rememberScrollState()),
+        verticalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        Spacer(modifier = Modifier.height(8.dp))
+
+        // Tipo de arma
+        if (tiposArma.isNotEmpty()) {
+            DropdownFieldGuia(
+                label = "Tipo de arma",
+                selectedIndex = tipoArma,
+                options = tiposArma,
+                onSelectionChange = onTipoArmaChange
             )
-        },
-        floatingActionButton = {
-            FloatingActionButton(
-                onClick = onSaveClick,
-                containerColor = MaterialTheme.colorScheme.primary
-            ) {
-                Icon(Icons.Default.Save, contentDescription = "Guardar")
-            }
-        },
-        contentWindowInsets = WindowInsets(0, 0, 0, 0)
-    ) { innerPadding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
-                .padding(horizontal = 16.dp)
-                .verticalScroll(rememberScrollState()),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
+        }
+
+        // Marca
+        OutlinedTextField(
+            value = marca,
+            onValueChange = onMarcaChange,
+            label = { Text("Marca") },
+            isError = marcaError != null,
+            supportingText = marcaError?.let { { Text(it) } },
+            modifier = Modifier.fillMaxWidth(),
+            singleLine = true
+        )
+
+        // Modelo
+        OutlinedTextField(
+            value = modelo,
+            onValueChange = onModeloChange,
+            label = { Text("Modelo") },
+            isError = modeloError != null,
+            supportingText = modeloError?.let { { Text(it) } },
+            modifier = Modifier.fillMaxWidth(),
+            singleLine = true
+        )
+
+        // Apodo
+        OutlinedTextField(
+            value = apodo,
+            onValueChange = onApodoChange,
+            label = { Text("Apodo") },
+            isError = apodoError != null,
+            supportingText = apodoError?.let { { Text(it) } },
+            modifier = Modifier.fillMaxWidth(),
+            singleLine = true
+        )
+
+        // Calibre 1
+        AutoCompleteTextField(
+            value = calibre1,
+            onValueChange = onCalibre1Change,
+            label = "Calibre",
+            suggestions = calibres,
+            error = calibre1Error
+        )
+
+        // Checkbox segundo calibre
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxWidth()
         ) {
-            Spacer(modifier = Modifier.height(8.dp))
-
-            // Tipo de arma
-            if (tiposArma.isNotEmpty()) {
-                DropdownFieldGuia(
-                    label = "Tipo de arma",
-                    selectedIndex = tipoArma,
-                    options = tiposArma,
-                    onSelectionChange = onTipoArmaChange
-                )
-            }
-
-            // Marca
-            OutlinedTextField(
-                value = marca,
-                onValueChange = onMarcaChange,
-                label = { Text("Marca") },
-                isError = marcaError != null,
-                supportingText = marcaError?.let { { Text(it) } },
-                modifier = Modifier.fillMaxWidth(),
-                singleLine = true
+            Checkbox(
+                checked = showCalibre2,
+                onCheckedChange = onShowCalibre2Change
             )
+            Text("Segundo calibre")
+        }
 
-            // Modelo
-            OutlinedTextField(
-                value = modelo,
-                onValueChange = onModeloChange,
-                label = { Text("Modelo") },
-                isError = modeloError != null,
-                supportingText = modeloError?.let { { Text(it) } },
-                modifier = Modifier.fillMaxWidth(),
-                singleLine = true
-            )
-
-            // Apodo
-            OutlinedTextField(
-                value = apodo,
-                onValueChange = onApodoChange,
-                label = { Text("Apodo") },
-                isError = apodoError != null,
-                supportingText = apodoError?.let { { Text(it) } },
-                modifier = Modifier.fillMaxWidth(),
-                singleLine = true
-            )
-
-            // Calibre 1
+        // Calibre 2
+        if (showCalibre2) {
             AutoCompleteTextField(
-                value = calibre1,
-                onValueChange = onCalibre1Change,
-                label = "Calibre",
+                value = calibre2,
+                onValueChange = onCalibre2Change,
+                label = "Segundo calibre",
                 suggestions = calibres,
-                error = calibre1Error
+                error = null
             )
+        }
 
-            // Checkbox segundo calibre
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Checkbox(
-                    checked = showCalibre2,
-                    onCheckedChange = onShowCalibre2Change
-                )
-                Text("Segundo calibre")
-            }
+        // Numero de guia
+        OutlinedTextField(
+            value = numGuia,
+            onValueChange = onNumGuiaChange,
+            label = { Text("Numero de guia") },
+            isError = numGuiaError != null,
+            supportingText = numGuiaError?.let { { Text(it) } },
+            modifier = Modifier.fillMaxWidth(),
+            singleLine = true
+        )
 
-            // Calibre 2
-            if (showCalibre2) {
-                AutoCompleteTextField(
-                    value = calibre2,
-                    onValueChange = onCalibre2Change,
-                    label = "Segundo calibre",
-                    suggestions = calibres,
-                    error = null
-                )
-            }
+        // Numero de arma
+        OutlinedTextField(
+            value = numArma,
+            onValueChange = onNumArmaChange,
+            label = { Text("Numero de arma") },
+            isError = numArmaError != null,
+            supportingText = numArmaError?.let { { Text(it) } },
+            modifier = Modifier.fillMaxWidth(),
+            singleLine = true
+        )
 
-            // Número de guía
-            OutlinedTextField(
-                value = numGuia,
-                onValueChange = onNumGuiaChange,
-                label = { Text("Número de guía") },
-                isError = numGuiaError != null,
-                supportingText = numGuiaError?.let { { Text(it) } },
-                modifier = Modifier.fillMaxWidth(),
-                singleLine = true
+        // Checkbox cupo personalizado
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Checkbox(
+                checked = customCupo,
+                onCheckedChange = onCustomCupoChange
             )
+            Text("Cupo personalizado")
+        }
 
-            // Número de arma
+        // Cupo
+        OutlinedTextField(
+            value = cupo,
+            onValueChange = onCupoChange,
+            label = { Text("Cupo anual") },
+            isError = cupoError != null,
+            supportingText = cupoError?.let { { Text(it) } },
+            modifier = Modifier.fillMaxWidth(),
+            singleLine = true,
+            enabled = customCupo,
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+        )
+
+        // Gastado (solo en edicion)
+        if (isEditing) {
             OutlinedTextField(
-                value = numArma,
-                onValueChange = onNumArmaChange,
-                label = { Text("Número de arma") },
-                isError = numArmaError != null,
-                supportingText = numArmaError?.let { { Text(it) } },
-                modifier = Modifier.fillMaxWidth(),
-                singleLine = true
-            )
-
-            // Checkbox cupo personalizado
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Checkbox(
-                    checked = customCupo,
-                    onCheckedChange = onCustomCupoChange
-                )
-                Text("Cupo personalizado")
-            }
-
-            // Cupo
-            OutlinedTextField(
-                value = cupo,
-                onValueChange = onCupoChange,
-                label = { Text("Cupo anual") },
-                isError = cupoError != null,
-                supportingText = cupoError?.let { { Text(it) } },
+                value = gastado,
+                onValueChange = onGastadoChange,
+                label = { Text("Municion gastada") },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
-                enabled = customCupo,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
             )
-
-            // Gastado (solo en edición)
-            if (isEditing) {
-                OutlinedTextField(
-                    value = gastado,
-                    onValueChange = onGastadoChange,
-                    label = { Text("Munición gastada") },
-                    modifier = Modifier.fillMaxWidth(),
-                    singleLine = true,
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
-                )
-            }
-
-            Spacer(modifier = Modifier.height(80.dp))
         }
+
+        Spacer(modifier = Modifier.height(80.dp))
     }
 }
 
@@ -501,7 +484,7 @@ private fun AutoCompleteTextField(
 }
 
 /**
- * Campo de selección desplegable
+ * Campo de seleccion desplegable
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -545,7 +528,7 @@ private fun DropdownFieldGuia(
 }
 
 /**
- * Obtiene los tipos de arma disponibles según el tipo de licencia
+ * Obtiene los tipos de arma disponibles segun el tipo de licencia
  */
 private fun getWeaponTypesForLicense(context: android.content.Context, tipoLicencia: String): List<String> {
     return try {
@@ -562,7 +545,7 @@ private fun getWeaponTypesForLicense(context: android.content.Context, tipoLicen
 }
 
 /**
- * Obtiene el cupo por defecto según el tipo de arma
+ * Obtiene el cupo por defecto segun el tipo de arma
  */
 private fun getDefaultCupo(tipoArma: String): Int {
     return when (tipoArma.lowercase()) {
@@ -576,7 +559,7 @@ private fun getDefaultCupo(tipoArma: String): Int {
 }
 
 /**
- * Convierte el nombre de licencia a su índice
+ * Convierte el nombre de licencia a su indice
  */
 private fun getLicenciaTypeFromString(context: android.content.Context, tipoLicencia: String): Int {
     return try {
@@ -589,11 +572,10 @@ private fun getLicenciaTypeFromString(context: android.content.Context, tipoLice
 
 @Preview(showBackground = true)
 @Composable
-private fun GuiaFormScreenContentPreview() {
+private fun GuiaFormFieldsPreview() {
     MunicionTheme {
-        GuiaFormScreenContent(
+        GuiaFormFields(
             isEditing = false,
-            snackbarHostState = SnackbarHostState(),
             tiposArma = listOf("Pistola", "Revolver", "Escopeta"),
             calibres = listOf("9mm Para", "12/70", ".22 LR"),
             marca = "",
@@ -626,9 +608,7 @@ private fun GuiaFormScreenContentPreview() {
             onNumArmaChange = {},
             onCupoChange = {},
             onCustomCupoChange = {},
-            onGastadoChange = {},
-            onBackClick = {},
-            onSaveClick = {}
+            onGastadoChange = {}
         )
     }
 }

@@ -16,71 +16,84 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import al.ahgitdevelopment.municion.R
+import al.ahgitdevelopment.municion.ui.navigation.Routes
 import al.ahgitdevelopment.municion.ui.theme.OnPrimary
 import al.ahgitdevelopment.municion.ui.theme.PrimaryDark
 import al.ahgitdevelopment.municion.ui.viewmodel.MainViewModel.SyncState
 
 /**
- * TopAppBar de la aplicación Munición.
+ * TopBar dinámico unificado para toda la aplicación.
  *
- * Muestra:
- * - Título de la app
- * - Indicador de sincronización
- * - Botón de settings
- * - Botón de back (cuando aplica)
+ * Cambia según el tipo de pantalla:
+ * - ListScreens (tabs): Título app + Sync + Settings
+ * - FormScreens: Back + Título de la entidad
+ * - Settings: Back + Título
  *
- * @param title Título a mostrar
- * @param syncState Estado actual de sincronización
- * @param showBackButton Si se debe mostrar el botón de retroceso
- * @param onBackClick Callback para el botón de retroceso
- * @param onSettingsClick Callback para el botón de settings
+ * @param currentRoute Ruta actual de navegación
+ * @param syncState Estado de sincronización (solo para ListScreens)
  * @param onSyncClick Callback para sincronización manual
+ * @param onSettingsClick Callback para ir a settings
+ * @param onBackClick Callback para volver atrás
+ * @param formTitle Título opcional para formularios (override automático)
  * @param modifier Modificador opcional
  *
- * @since v3.0.0 (Compose Migration)
- * @deprecated Este componente ha sido reemplazado por TopBars especializados.
- *             Usar [ListScreenTopBar] para pantallas de listado o
- *             [FormScreenTopBar] para pantallas de formulario.
+ * @since v3.0.0 (Compose Migration - Single Scaffold Architecture)
  */
-@Deprecated(
-    message = "Usar ListScreenTopBar para listados o FormScreenTopBar para formularios",
-    replaceWith = ReplaceWith(
-        "ListScreenTopBar(syncState, onSyncClick, onSettingsClick, modifier)",
-        "al.ahgitdevelopment.municion.ui.components.ListScreenTopBar"
-    )
-)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MunicionTopBar(
-    title: String = stringResource(R.string.app_name),
+    currentRoute: String?,
     syncState: SyncState = SyncState.Idle,
-    showBackButton: Boolean = false,
-    onBackClick: () -> Unit = {},
-    onSettingsClick: () -> Unit = {},
     onSyncClick: () -> Unit = {},
+    onSettingsClick: () -> Unit = {},
+    onBackClick: () -> Unit = {},
+    formTitle: String? = null,
+    modifier: Modifier = Modifier
+) {
+    val isListScreen = currentRoute in listScreenRoutes
+    val isFormScreen = currentRoute?.contains("Form") == true
+    val isSettings = currentRoute == Routes.SETTINGS
+
+    when {
+        isListScreen -> {
+            ListTopBar(
+                syncState = syncState,
+                onSyncClick = onSyncClick,
+                onSettingsClick = onSettingsClick,
+                modifier = modifier
+            )
+        }
+        isFormScreen || isSettings -> {
+            val title = formTitle ?: getFormTitle(currentRoute)
+            FormTopBar(
+                title = title,
+                onBackClick = onBackClick,
+                modifier = modifier
+            )
+        }
+    }
+}
+
+/**
+ * TopBar para pantallas de lista (tabs principales).
+ */
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun ListTopBar(
+    syncState: SyncState,
+    onSyncClick: () -> Unit,
+    onSettingsClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     TopAppBar(
-        title = { Text(title) },
+        title = { Text(stringResource(R.string.app_name)) },
         modifier = modifier,
-        navigationIcon = {
-            if (showBackButton) {
-                IconButton(onClick = onBackClick) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                        contentDescription = "Volver"
-                    )
-                }
-            }
-        },
         actions = {
-            // Indicador de sincronización
             when (syncState) {
                 is SyncState.Syncing -> {
                     CircularProgressIndicator(
                         color = OnPrimary,
-                        strokeWidth = 2.dp,
-                        modifier = Modifier
+                        strokeWidth = 2.dp
                     )
                 }
                 is SyncState.Idle -> {
@@ -91,26 +104,79 @@ fun MunicionTopBar(
                         )
                     }
                 }
-                else -> {
-                    // Success, Error, etc. - no mostrar indicador
-                }
+                else -> { }
             }
-
-            // Botón de settings
-            if (!showBackButton) {
-                IconButton(onClick = onSettingsClick) {
-                    Icon(
-                        imageVector = Icons.Default.Settings,
-                        contentDescription = "Configuración"
-                    )
-                }
+            IconButton(onClick = onSettingsClick) {
+                Icon(
+                    imageVector = Icons.Default.Settings,
+                    contentDescription = "Configuración"
+                )
             }
         },
-        colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = PrimaryDark,
-            titleContentColor = OnPrimary,
-            navigationIconContentColor = OnPrimary,
-            actionIconContentColor = OnPrimary
-        )
+        colors = topAppBarColors(),
+        windowInsets = TopAppBarDefaults.windowInsets
     )
 }
+
+/**
+ * TopBar para pantallas de formulario y settings.
+ */
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun FormTopBar(
+    title: String,
+    onBackClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    TopAppBar(
+        title = { Text(title) },
+        modifier = modifier,
+        navigationIcon = {
+            IconButton(onClick = onBackClick) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                    contentDescription = "Volver"
+                )
+            }
+        },
+        colors = topAppBarColors(),
+        windowInsets = TopAppBarDefaults.windowInsets
+    )
+}
+
+/**
+ * Colores compartidos para todos los TopBars.
+ */
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun topAppBarColors() = TopAppBarDefaults.topAppBarColors(
+    containerColor = PrimaryDark,
+    titleContentColor = OnPrimary,
+    navigationIconContentColor = OnPrimary,
+    actionIconContentColor = OnPrimary
+)
+
+/**
+ * Obtiene el título del TopBar según la ruta del formulario.
+ */
+private fun getFormTitle(route: String?): String {
+    return when {
+        route == null -> ""
+        route == Routes.SETTINGS -> "Configuración de cuenta"
+        route.startsWith(Routes.LICENCIA_FORM) -> "Licencia"
+        route.startsWith(Routes.GUIA_FORM) -> "Guía"
+        route.startsWith(Routes.COMPRA_FORM) -> "Compra"
+        route.startsWith(Routes.TIRADA_FORM) -> "Tirada"
+        else -> ""
+    }
+}
+
+/**
+ * Rutas que corresponden a pantallas de lista (tabs principales).
+ */
+private val listScreenRoutes = setOf(
+    Routes.LICENCIAS,
+    Routes.GUIAS,
+    Routes.COMPRAS,
+    Routes.TIRADAS
+)

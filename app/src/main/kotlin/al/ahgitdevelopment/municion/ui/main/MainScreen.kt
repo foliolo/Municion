@@ -1,46 +1,112 @@
 package al.ahgitdevelopment.municion.ui.main
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import al.ahgitdevelopment.municion.ui.components.MunicionBottomBar
+import al.ahgitdevelopment.municion.ui.components.MunicionFAB
+import al.ahgitdevelopment.municion.ui.components.MunicionTopBar
+import al.ahgitdevelopment.municion.ui.compras.GuiaSelectionDialog
+import al.ahgitdevelopment.municion.ui.guias.LicenciaSelectionDialog
 import al.ahgitdevelopment.municion.ui.navigation.MunicionNavHost
 import al.ahgitdevelopment.municion.ui.navigation.Routes
+import al.ahgitdevelopment.municion.ui.viewmodel.GuiaViewModel
 import al.ahgitdevelopment.municion.ui.viewmodel.MainViewModel
 
 /**
  * Pantalla principal de la aplicación Munición.
  *
- * Contiene:
- * - BottomNavigationBar con 4 tabs
- * - NavHost para navegación entre screens
- * - Cada pantalla gestiona su propio TopBar
+ * Arquitectura de Scaffold único siguiendo las mejores prácticas de Google:
+ * - Un solo Scaffold con TopBar, BottomBar y FAB dinámicos
+ * - Pantallas hijas sin Scaffold (solo contenido)
+ * - Visibilidad condicional basada en la ruta actual
  *
- * @param navController Controlador de navegación (opcional, se crea uno nuevo si no se proporciona)
- * @param viewModel ViewModel principal (inyectado por Hilt)
+ * @param navController Controlador de navegación
+ * @param viewModel ViewModel principal (sincronización, auth)
+ * @param guiaViewModel ViewModel de guías (para diálogos de selección)
  *
- * @since v3.0.0 (Compose Migration)
+ * @since v3.0.0 (Compose Migration - Single Scaffold Architecture)
  */
 @Composable
 fun MainScreen(
     navController: NavHostController = rememberNavController(),
-    viewModel: MainViewModel = hiltViewModel()
+    viewModel: MainViewModel = hiltViewModel(),
+    guiaViewModel: GuiaViewModel = hiltViewModel()
 ) {
-    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val context = LocalContext.current
     val syncState by viewModel.syncState.collectAsStateWithLifecycle()
-
     val snackbarHostState = remember { SnackbarHostState() }
+
+    // Observar ruta actual para UI dinámica
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentRoute = navBackStackEntry?.destination?.route
+
+    // Callback de save para formularios (registrado por cada FormContent)
+    var formSaveCallback by remember { mutableStateOf<(() -> Unit)?>(null) }
+
+    // Estados para diálogos de selección
+    var showLicenciaDialog by remember { mutableStateOf(false) }
+    var showGuiaDialog by remember { mutableStateOf(false) }
+
+    // Datos para diálogos
+    val licencias by guiaViewModel.licencias.collectAsStateWithLifecycle()
+    val guias by guiaViewModel.guias.collectAsStateWithLifecycle()
+
+    // Determinar visibilidad de componentes
+    val showBottomBar = currentRoute in listScreenRoutes
+    val showFab = currentRoute in fabScreenRoutes ||
+        (currentRoute?.contains("Form") == true && formSaveCallback != null)
+
+    // Dialog de selección de licencia (para crear guía)
+    if (showLicenciaDialog) {
+        LicenciaSelectionDialog(
+            licencias = licencias,
+            onLicenciaSelected = { licencia ->
+                showLicenciaDialog = false
+                val tipoLicencia = licencia.getNombre(context)
+                navController.navigate("${Routes.GUIA_FORM}/$tipoLicencia")
+            },
+            onDismiss = { showLicenciaDialog = false }
+        )
+    }
+
+    // Dialog de selección de guía (para crear compra)
+    if (showGuiaDialog) {
+        GuiaSelectionDialog(
+            guias = guias,
+            onGuiaSelected = { guia ->
+                showGuiaDialog = false
+                navController.navigate(
+                    Routes.compraForm(
+                        guiaId = guia.id,
+                        cupoDisponible = guia.disponible(),
+                        cupoTotal = guia.cupo
+                    )
+                )
+            },
+            onDismiss = { showGuiaDialog = false }
+        )
+    }
 
     // Mostrar snackbar para estados de sincronización
     LaunchedEffect(syncState) {
@@ -63,25 +129,82 @@ fun MainScreen(
                     "Error de sincronización: ${(syncState as MainViewModel.SyncState.Error).message}"
                 )
             }
-            else -> { /* No mostrar nada para Idle, Syncing, PartialSuccess */ }
+            else -> { }
         }
     }
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
+        topBar = {
+            MunicionTopBar(
+                currentRoute = currentRoute,
+                syncState = syncState,
+                onSyncClick = { viewModel.syncFromFirebase() },
+                onSettingsClick = { navController.navigate(Routes.SETTINGS) },
+                onBackClick = { navController.popBackStack() }
+            )
+        },
         bottomBar = {
-            MunicionBottomBar(navController = navController)
+            AnimatedVisibility(
+                visible = showBottomBar,
+                enter = slideInVertically(initialOffsetY = { it }),
+                exit = slideOutVertically(targetOffsetY = { it })
+            ) {
+                MunicionBottomBar(navController = navController)
+            }
+        },
+        floatingActionButton = {
+            if (showFab) {
+                MunicionFAB(
+                    currentRoute = currentRoute,
+                    onAddLicencia = {
+                        navController.navigate("${Routes.LICENCIA_FORM}?licenciaId=-1")
+                    },
+                    onAddGuia = {
+                        if (licencias.isEmpty()) {
+                            // TODO: Show snackbar "Primero crea una licencia"
+                        } else {
+                            showLicenciaDialog = true
+                        }
+                    },
+                    onAddCompra = {
+                        if (guias.isEmpty()) {
+                            // TODO: Show snackbar "Primero crea una guía"
+                        } else {
+                            showGuiaDialog = true
+                        }
+                    },
+                    onAddTirada = {
+                        navController.navigate("${Routes.TIRADA_FORM}?tiradaId=-1")
+                    },
+                    onSave = { formSaveCallback?.invoke() },
+                    hasSaveCallback = formSaveCallback != null
+                )
+            }
         },
         snackbarHost = { SnackbarHost(snackbarHostState) },
-        // Edge-to-edge: Don't add extra insets, let TopBar/BottomBar handle them
         contentWindowInsets = WindowInsets(0, 0, 0, 0)
     ) { innerPadding ->
         MunicionNavHost(
             navController = navController,
-            bottomPadding = innerPadding.calculateBottomPadding(),
-            syncState = syncState,
-            onSyncClick = { viewModel.syncFromFirebase() },
-            onSettingsClick = { navController.navigate(Routes.SETTINGS) }
+            innerPadding = innerPadding,
+            snackbarHostState = snackbarHostState,
+            onRegisterSaveCallback = { callback -> formSaveCallback = callback }
         )
     }
 }
+
+/**
+ * Rutas de pantallas de lista (tabs principales).
+ */
+private val listScreenRoutes = setOf(
+    Routes.LICENCIAS,
+    Routes.GUIAS,
+    Routes.COMPRAS,
+    Routes.TIRADAS
+)
+
+/**
+ * Rutas que muestran FAB de añadir.
+ */
+private val fabScreenRoutes = listScreenRoutes

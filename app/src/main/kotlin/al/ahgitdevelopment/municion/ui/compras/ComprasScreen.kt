@@ -1,18 +1,10 @@
 package al.ahgitdevelopment.municion.ui.compras
 
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -22,44 +14,36 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import al.ahgitdevelopment.municion.data.local.room.entities.Compra
-import al.ahgitdevelopment.municion.data.local.room.entities.Guia
 import al.ahgitdevelopment.municion.ui.components.DeleteConfirmationDialog
 import al.ahgitdevelopment.municion.ui.components.EmptyState
-import al.ahgitdevelopment.municion.ui.components.ListScreenTopBar
 import al.ahgitdevelopment.municion.ui.navigation.Routes
 import al.ahgitdevelopment.municion.ui.theme.MunicionTheme
 import al.ahgitdevelopment.municion.ui.viewmodel.CompraViewModel
 import al.ahgitdevelopment.municion.ui.viewmodel.GuiaViewModel
-import al.ahgitdevelopment.municion.ui.viewmodel.MainViewModel.SyncState
 
 /**
- * Pantalla de listado de Compras (Stateful).
+ * Contenido de la pantalla de Compras para Single Scaffold Architecture.
  *
+ * NO contiene Scaffold, TopBar ni FAB - estos están en MainScreen.
+ * El dialog de selección de guía también está en MainScreen.
  * Maneja el ViewModel, navegación y efectos secundarios.
- * Delega la UI a ComprasScreenContent (stateless).
  *
  * @param navController Controlador de navegación
- * @param syncState Estado actual de sincronización
- * @param onSyncClick Callback para sincronización manual
- * @param onSettingsClick Callback para el botón de settings
+ * @param snackbarHostState Estado del snackbar compartido desde MainScreen
  * @param compraViewModel ViewModel de Compras
- * @param guiaViewModel ViewModel de Guías (para selección)
+ * @param guiaViewModel ViewModel de Guías (para obtener datos de guía al editar)
  *
- * @since v3.0.0 (Compose Migration)
+ * @since v3.0.0 (Compose Migration - Single Scaffold Architecture)
  */
 @Composable
-fun ComprasScreen(
+fun ComprasContent(
     navController: NavHostController,
-    syncState: SyncState,
-    onSyncClick: () -> Unit,
-    onSettingsClick: () -> Unit,
-    bottomPadding: Dp = 0.dp,
+    snackbarHostState: SnackbarHostState,
     compraViewModel: CompraViewModel = hiltViewModel(),
     guiaViewModel: GuiaViewModel = hiltViewModel()
 ) {
@@ -67,9 +51,7 @@ fun ComprasScreen(
     val guias by guiaViewModel.guias.collectAsStateWithLifecycle()
     val uiState by compraViewModel.uiState.collectAsStateWithLifecycle()
 
-    val snackbarHostState = remember { SnackbarHostState() }
     var compraToDelete by remember { mutableStateOf<Compra?>(null) }
-    var showGuiaSelectionDialog by remember { mutableStateOf(false) }
 
     // Mostrar mensajes de UiState
     LaunchedEffect(uiState) {
@@ -103,38 +85,8 @@ fun ComprasScreen(
         )
     }
 
-    // Dialog de selección de guía
-    if (showGuiaSelectionDialog) {
-        GuiaSelectionDialog(
-            guias = guias,
-            onGuiaSelected = { guia ->
-                navController.navigate(
-                    Routes.compraForm(
-                        guiaId = guia.id,
-                        cupoDisponible = guia.disponible(),
-                        cupoTotal = guia.cupo
-                    )
-                )
-                showGuiaSelectionDialog = false
-            },
-            onDismiss = { showGuiaSelectionDialog = false }
-        )
-    }
-
-    ComprasScreenContent(
+    ComprasListContent(
         compras = compras,
-        guias = guias,
-        syncState = syncState,
-        snackbarHostState = snackbarHostState,
-        onSyncClick = onSyncClick,
-        onSettingsClick = onSettingsClick,
-        onAddClick = {
-            if (guias.isEmpty()) {
-                // No hay guías
-            } else {
-                showGuiaSelectionDialog = true
-            }
-        },
         onItemClick = { /* Info */ },
         onItemLongClick = { compra ->
             val guia = guias.find { it.id == compra.idPosGuia }
@@ -149,92 +101,56 @@ fun ComprasScreen(
                 )
             }
         },
-        onDeleteClick = { compra -> compraToDelete = compra },
-        bottomPadding = bottomPadding
+        onDeleteClick = { compra -> compraToDelete = compra }
     )
 }
 
 /**
- * Contenido de la pantalla de Compras (Stateless).
+ * Contenido de la lista de Compras (Stateless).
  *
+ * Sin Scaffold - solo el contenido de la lista.
  * Recibe estado y callbacks como parámetros.
  * Fácil de previsualizar y testear.
  *
  * @param compras Lista de compras a mostrar
- * @param guias Lista de guías disponibles
- * @param syncState Estado actual de sincronización
- * @param snackbarHostState Estado del snackbar
- * @param onSyncClick Callback para sincronización manual
- * @param onSettingsClick Callback para el botón de settings
- * @param onAddClick Callback para añadir compra
  * @param onItemClick Callback para click en item
  * @param onItemLongClick Callback para long-press (editar)
  * @param onDeleteClick Callback para swipe-to-delete
+ * @param modifier Modificador opcional
  *
- * @since v3.0.0 (Compose Migration)
+ * @since v3.0.0 (Compose Migration - Single Scaffold Architecture)
  */
 @Composable
-fun ComprasScreenContent(
+fun ComprasListContent(
     compras: List<Compra>,
-    guias: List<Guia>,
-    syncState: SyncState,
-    snackbarHostState: SnackbarHostState,
-    onSyncClick: () -> Unit,
-    onSettingsClick: () -> Unit,
-    onAddClick: () -> Unit,
     onItemClick: (Compra) -> Unit,
     onItemLongClick: (Compra) -> Unit,
     onDeleteClick: (Compra) -> Unit,
-    bottomPadding: Dp = 0.dp,
     modifier: Modifier = Modifier
 ) {
-    Scaffold(
-        modifier = modifier,
-        topBar = {
-            ListScreenTopBar(
-                syncState = syncState,
-                onSyncClick = onSyncClick,
-                onSettingsClick = onSettingsClick
-            )
-        },
-        snackbarHost = { SnackbarHost(snackbarHostState) },
-        floatingActionButton = {
-            FloatingActionButton(
-                onClick = onAddClick,
-                containerColor = MaterialTheme.colorScheme.primary
-            ) {
-                Icon(Icons.Default.Add, contentDescription = "Añadir compra")
-            }
-        },
-        contentWindowInsets = WindowInsets(0, 0, 0, 0)
-    ) { innerPadding ->
-        if (compras.isEmpty()) {
-            EmptyState(
-                message = "No hay compras registradas",
-                modifier = Modifier
-                    .padding(innerPadding)
-                    .padding(bottom = bottomPadding)
-            )
-        } else {
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(innerPadding)
-                    .padding(horizontal = 8.dp),
-                contentPadding = PaddingValues(top = 8.dp, bottom = 8.dp + bottomPadding)
-            ) {
-                items(
-                    items = compras,
-                    key = { it.id }
-                ) { compra ->
-                    CompraItem(
-                        compra = compra,
-                        onClick = { onItemClick(compra) },
-                        onLongClick = { onItemLongClick(compra) },
-                        onDelete = { onDeleteClick(compra) },
-                        modifier = Modifier.padding(vertical = 4.dp)
-                    )
-                }
+    if (compras.isEmpty()) {
+        EmptyState(
+            message = "No hay compras registradas",
+            modifier = modifier.fillMaxSize()
+        )
+    } else {
+        LazyColumn(
+            modifier = modifier
+                .fillMaxSize()
+                .padding(horizontal = 8.dp),
+            contentPadding = PaddingValues(vertical = 8.dp)
+        ) {
+            items(
+                items = compras,
+                key = { it.id }
+            ) { compra ->
+                CompraItem(
+                    compra = compra,
+                    onClick = { onItemClick(compra) },
+                    onLongClick = { onItemLongClick(compra) },
+                    onDelete = { onDeleteClick(compra) },
+                    modifier = Modifier.padding(vertical = 4.dp)
+                )
             }
         }
     }
@@ -263,9 +179,9 @@ private fun formatErrorMessage(message: String): String {
 
 @Preview(showBackground = true)
 @Composable
-private fun ComprasScreenContentPreview() {
+private fun ComprasListContentPreview() {
     MunicionTheme {
-        ComprasScreenContent(
+        ComprasListContent(
             compras = listOf(
                 Compra(
                     id = 1,
@@ -290,12 +206,6 @@ private fun ComprasScreenContentPreview() {
                     fecha = "15/01/2024"
                 )
             ),
-            guias = emptyList(),
-            syncState = SyncState.Idle,
-            snackbarHostState = SnackbarHostState(),
-            onSyncClick = {},
-            onSettingsClick = {},
-            onAddClick = {},
             onItemClick = {},
             onItemLongClick = {},
             onDeleteClick = {}
@@ -305,16 +215,10 @@ private fun ComprasScreenContentPreview() {
 
 @Preview(showBackground = true)
 @Composable
-private fun ComprasScreenContentEmptyPreview() {
+private fun ComprasListContentEmptyPreview() {
     MunicionTheme {
-        ComprasScreenContent(
+        ComprasListContent(
             compras = emptyList(),
-            guias = emptyList(),
-            syncState = SyncState.Idle,
-            snackbarHostState = SnackbarHostState(),
-            onSyncClick = {},
-            onSettingsClick = {},
-            onAddClick = {},
             onItemClick = {},
             onItemLongClick = {},
             onDeleteClick = {}
