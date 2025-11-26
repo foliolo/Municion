@@ -1,5 +1,10 @@
 package al.ahgitdevelopment.municion.ui.forms
 
+import al.ahgitdevelopment.municion.data.local.room.entities.Compra
+import al.ahgitdevelopment.municion.ui.theme.LicenseExpired
+import al.ahgitdevelopment.municion.ui.theme.LicenseValid
+import al.ahgitdevelopment.municion.ui.theme.MunicionTheme
+import al.ahgitdevelopment.municion.ui.viewmodel.CompraViewModel
 import android.app.DatePickerDialog
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -33,6 +38,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -40,11 +46,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import kotlinx.coroutines.launch
-import al.ahgitdevelopment.municion.data.local.room.entities.Compra
-import al.ahgitdevelopment.municion.ui.theme.LicenseExpired
-import al.ahgitdevelopment.municion.ui.theme.LicenseValid
-import al.ahgitdevelopment.municion.ui.theme.MunicionTheme
-import al.ahgitdevelopment.municion.ui.viewmodel.CompraViewModel
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
@@ -185,12 +186,14 @@ fun CompraFormContent(
                     snackbarHostState.showSnackbar(message)
                 }
             }
+
             is CompraViewModel.CompraUiState.Error -> {
                 snackbarHostState.showSnackbar(
                     "Error: ${(uiState as CompraViewModel.CompraUiState.Error).message}"
                 )
                 viewModel.resetUiState()
             }
+
             else -> {}
         }
     }
@@ -218,7 +221,7 @@ fun CompraFormContent(
         onCalibre1Change = { calibre1 = it; calibre1Error = null },
         onCalibre2Change = { calibre2 = it },
         onShowCalibre2Change = { showCalibre2 = it; if (!it) calibre2 = "" },
-        onUnidadesChange = { if (it.all { c -> c.isDigit() }) unidades = it; unidadesError = null },
+        onUnidadesChange = { unidades = it; unidadesError = null },
         onPrecioChange = { precio = it; precioError = null },
         onFechaChange = { fecha = it; fechaError = null },
         onTipoChange = { tipo = it; tipoError = null },
@@ -276,7 +279,8 @@ fun CompraFormFields(
         if (fecha.isNotBlank()) {
             try {
                 dateFormat.parse(fecha)?.let { calendar.time = it }
-            } catch (e: Exception) { /* ignore */ }
+            } catch (e: Exception) { /* ignore */
+            }
         }
         DatePickerDialog(
             context,
@@ -312,11 +316,12 @@ fun CompraFormFields(
         // Calibre 1
         OutlinedTextField(
             value = calibre1,
-            onValueChange = onCalibre1Change,
+            onValueChange = { },
             label = { Text("Calibre") },
             isError = calibre1Error != null,
             supportingText = calibre1Error?.let { { Text(it) } },
             modifier = Modifier.fillMaxWidth(),
+            enabled = false,
             singleLine = true
         )
 
@@ -351,7 +356,8 @@ fun CompraFormFields(
             isError = marcaError != null,
             supportingText = marcaError?.let { { Text(it) } },
             modifier = Modifier.fillMaxWidth(),
-            singleLine = true
+            singleLine = true,
+            keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences)
         )
 
         // Tipo de municion
@@ -362,7 +368,8 @@ fun CompraFormFields(
             isError = tipoError != null,
             supportingText = tipoError?.let { { Text(it) } },
             modifier = Modifier.fillMaxWidth(),
-            singleLine = true
+            singleLine = true,
+            keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences)
         )
 
         // Peso
@@ -429,7 +436,8 @@ fun CompraFormFields(
             onValueChange = onTiendaChange,
             label = { Text("Tienda") },
             modifier = Modifier.fillMaxWidth(),
-            singleLine = true
+            singleLine = true,
+            keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences)
         )
 
         Spacer(modifier = Modifier.height(80.dp))

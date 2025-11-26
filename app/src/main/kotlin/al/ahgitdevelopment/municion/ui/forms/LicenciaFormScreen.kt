@@ -34,6 +34,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -315,7 +316,8 @@ fun LicenciaFormFields(
             isError = numLicenciaError != null,
             supportingText = numLicenciaError?.let { { Text(it) } },
             modifier = Modifier.fillMaxWidth(),
-            singleLine = true
+            singleLine = true,
+            keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences)
         )
 
         // Fecha de expedición
@@ -362,7 +364,7 @@ fun LicenciaFormFields(
         if (showEdad) {
             OutlinedTextField(
                 value = edad,
-                onValueChange = { if (it.all { c -> c.isDigit() }) onEdadChange(it) },
+                onValueChange = onEdadChange,
                 label = { Text("Edad") },
                 isError = edadError != null,
                 supportingText = edadError?.let { { Text(it) } },
@@ -376,7 +378,7 @@ fun LicenciaFormFields(
         if (showNumAbonado) {
             OutlinedTextField(
                 value = numAbonado,
-                onValueChange = { if (it.all { c -> c.isDigit() }) onNumAbonadoChange(it) },
+                onValueChange = onNumAbonadoChange,
                 label = { Text("Número de abonado") },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
@@ -393,7 +395,8 @@ fun LicenciaFormFields(
                 isError = numSeguroError != null,
                 supportingText = numSeguroError?.let { { Text(it) } },
                 modifier = Modifier.fillMaxWidth(),
-                singleLine = true
+                singleLine = true,
+                keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences)
             )
         }
 

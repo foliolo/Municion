@@ -31,6 +31,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -316,7 +317,8 @@ fun GuiaFormFields(
             isError = marcaError != null,
             supportingText = marcaError?.let { { Text(it) } },
             modifier = Modifier.fillMaxWidth(),
-            singleLine = true
+            singleLine = true,
+            keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences)
         )
 
         // Modelo
@@ -327,7 +329,8 @@ fun GuiaFormFields(
             isError = modeloError != null,
             supportingText = modeloError?.let { { Text(it) } },
             modifier = Modifier.fillMaxWidth(),
-            singleLine = true
+            singleLine = true,
+            keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences)
         )
 
         // Apodo
@@ -338,7 +341,8 @@ fun GuiaFormFields(
             isError = apodoError != null,
             supportingText = apodoError?.let { { Text(it) } },
             modifier = Modifier.fillMaxWidth(),
-            singleLine = true
+            singleLine = true,
+            keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences)
         )
 
         // Calibre 1
@@ -381,7 +385,8 @@ fun GuiaFormFields(
             isError = numGuiaError != null,
             supportingText = numGuiaError?.let { { Text(it) } },
             modifier = Modifier.fillMaxWidth(),
-            singleLine = true
+            singleLine = true,
+            keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences)
         )
 
         // Numero de arma
@@ -392,7 +397,8 @@ fun GuiaFormFields(
             isError = numArmaError != null,
             supportingText = numArmaError?.let { { Text(it) } },
             modifier = Modifier.fillMaxWidth(),
-            singleLine = true
+            singleLine = true,
+            keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences)
         )
 
         // Checkbox cupo personalizado
@@ -465,9 +471,9 @@ private fun AutoCompleteTextField(
             isError = error != null,
             supportingText = error?.let { { Text(it) } },
             modifier = Modifier
-                .fillMaxWidth()
-                .menuAnchor(),
-            singleLine = true
+                .fillMaxWidth(),
+//                .menuAnchor(),
+            singleLine = true,
         )
         ExposedDropdownMenu(
             expanded = expanded && filteredSuggestions.isNotEmpty(),
