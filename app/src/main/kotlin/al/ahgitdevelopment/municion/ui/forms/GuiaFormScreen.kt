@@ -37,6 +37,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
+import kotlinx.coroutines.launch
 import al.ahgitdevelopment.municion.R
 import al.ahgitdevelopment.municion.data.local.room.entities.Guia
 import al.ahgitdevelopment.municion.ui.theme.MunicionTheme
@@ -186,11 +187,13 @@ fun GuiaFormContent(
     LaunchedEffect(uiState) {
         when (uiState) {
             is GuiaViewModel.GuiaUiState.Success -> {
-                snackbarHostState.showSnackbar(
-                    (uiState as GuiaViewModel.GuiaUiState.Success).message
-                )
+                val message = (uiState as GuiaViewModel.GuiaUiState.Success).message
                 viewModel.resetUiState()
                 navController.popBackStack()
+                // Show snackbar in background - don't block navigation
+                launch {
+                    snackbarHostState.showSnackbar(message)
+                }
             }
             is GuiaViewModel.GuiaUiState.Error -> {
                 snackbarHostState.showSnackbar(

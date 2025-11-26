@@ -39,6 +39,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
+import kotlinx.coroutines.launch
 import al.ahgitdevelopment.municion.data.local.room.entities.Compra
 import al.ahgitdevelopment.municion.ui.theme.LicenseExpired
 import al.ahgitdevelopment.municion.ui.theme.LicenseValid
@@ -176,11 +177,13 @@ fun CompraFormContent(
     LaunchedEffect(uiState) {
         when (uiState) {
             is CompraViewModel.CompraUiState.Success -> {
-                snackbarHostState.showSnackbar(
-                    (uiState as CompraViewModel.CompraUiState.Success).message
-                )
+                val message = (uiState as CompraViewModel.CompraUiState.Success).message
                 viewModel.resetUiState()
                 navController.popBackStack()
+                // Show snackbar in background - don't block navigation
+                launch {
+                    snackbarHostState.showSnackbar(message)
+                }
             }
             is CompraViewModel.CompraUiState.Error -> {
                 snackbarHostState.showSnackbar(

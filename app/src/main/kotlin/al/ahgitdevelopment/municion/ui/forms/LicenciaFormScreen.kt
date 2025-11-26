@@ -40,6 +40,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
+import kotlinx.coroutines.launch
 import al.ahgitdevelopment.municion.R
 import al.ahgitdevelopment.municion.data.local.room.entities.Licencia
 import al.ahgitdevelopment.municion.ui.theme.MunicionTheme
@@ -179,11 +180,13 @@ fun LicenciaFormContent(
     LaunchedEffect(uiState) {
         when (uiState) {
             is LicenciaViewModel.LicenciaUiState.Success -> {
-                snackbarHostState.showSnackbar(
-                    (uiState as LicenciaViewModel.LicenciaUiState.Success).message
-                )
+                val message = (uiState as LicenciaViewModel.LicenciaUiState.Success).message
                 viewModel.resetUiState()
                 navController.popBackStack()
+                // Show snackbar in background - don't block navigation
+                launch {
+                    snackbarHostState.showSnackbar(message)
+                }
             }
             is LicenciaViewModel.LicenciaUiState.Error -> {
                 snackbarHostState.showSnackbar(
