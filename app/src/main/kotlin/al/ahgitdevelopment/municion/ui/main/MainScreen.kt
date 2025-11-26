@@ -1,5 +1,6 @@
 package al.ahgitdevelopment.municion.ui.main
 
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -14,7 +15,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import al.ahgitdevelopment.municion.ui.components.MunicionBottomBar
-import al.ahgitdevelopment.municion.ui.components.MunicionTopBar
 import al.ahgitdevelopment.municion.ui.navigation.MunicionNavHost
 import al.ahgitdevelopment.municion.ui.navigation.Routes
 import al.ahgitdevelopment.municion.ui.viewmodel.MainViewModel
@@ -23,9 +23,9 @@ import al.ahgitdevelopment.municion.ui.viewmodel.MainViewModel
  * Pantalla principal de la aplicación Munición.
  *
  * Contiene:
- * - TopAppBar con estado de sincronización
  * - BottomNavigationBar con 4 tabs
  * - NavHost para navegación entre screens
+ * - Cada pantalla gestiona su propio TopBar
  *
  * @param navController Controlador de navegación (opcional, se crea uno nuevo si no se proporciona)
  * @param viewModel ViewModel principal (inyectado por Hilt)
@@ -69,25 +69,19 @@ fun MainScreen(
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
-        topBar = {
-            MunicionTopBar(
-                syncState = syncState,
-                onSettingsClick = {
-                    navController.navigate(Routes.SETTINGS)
-                },
-                onSyncClick = {
-                    viewModel.syncFromFirebase()
-                }
-            )
-        },
         bottomBar = {
             MunicionBottomBar(navController = navController)
         },
-        snackbarHost = { SnackbarHost(snackbarHostState) }
+        snackbarHost = { SnackbarHost(snackbarHostState) },
+        // Edge-to-edge: Don't add extra insets, let TopBar/BottomBar handle them
+        contentWindowInsets = WindowInsets(0, 0, 0, 0)
     ) { innerPadding ->
         MunicionNavHost(
             navController = navController,
-            innerPadding = innerPadding
+            bottomPadding = innerPadding.calculateBottomPadding(),
+            syncState = syncState,
+            onSyncClick = { viewModel.syncFromFirebase() },
+            onSettingsClick = { navController.navigate(Routes.SETTINGS) }
         )
     }
 }

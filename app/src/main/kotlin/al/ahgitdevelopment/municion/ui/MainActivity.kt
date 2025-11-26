@@ -1,11 +1,16 @@
 package al.ahgitdevelopment.municion.ui
 
+import al.ahgitdevelopment.municion.auth.LoginActivity
+import al.ahgitdevelopment.municion.ui.main.MainScreen
+import al.ahgitdevelopment.municion.ui.theme.MunicionTheme
+import al.ahgitdevelopment.municion.ui.viewmodel.MainViewModel
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.compose.material3.AlertDialog
@@ -25,11 +30,6 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import al.ahgitdevelopment.municion.R
-import al.ahgitdevelopment.municion.auth.LoginActivity
-import al.ahgitdevelopment.municion.ui.main.MainScreen
-import al.ahgitdevelopment.municion.ui.theme.MunicionTheme
-import al.ahgitdevelopment.municion.ui.viewmodel.MainViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import dagger.hilt.android.AndroidEntryPoint
@@ -81,6 +81,7 @@ class MainActivity : ComponentActivity() {
     private var calendarPermissionRequested = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
 
         // Observe auth state for navigation to login
@@ -115,9 +116,11 @@ class MainActivity : ComponentActivity() {
                                 // Sync is triggered in MainScreen via LaunchedEffect
                             }
                         }
+
                         is MainViewModel.MainUiState.Unauthenticated -> {
                             navigateToLogin()
                         }
+
                         is MainViewModel.MainUiState.Loading -> {
                             // Do nothing, waiting for auth state
                         }
@@ -227,6 +230,7 @@ fun MunicionApp(
         is MainViewModel.MainUiState.Loading -> {
             // Could show loading indicator, but MainScreen handles this too
         }
+
         is MainViewModel.MainUiState.Authenticated,
         is MainViewModel.MainUiState.Unauthenticated -> {
             MainScreen(viewModel = mainViewModel)

@@ -1,6 +1,7 @@
 package al.ahgitdevelopment.municion.ui.compras
 
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -21,6 +22,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -29,10 +31,12 @@ import al.ahgitdevelopment.municion.data.local.room.entities.Compra
 import al.ahgitdevelopment.municion.data.local.room.entities.Guia
 import al.ahgitdevelopment.municion.ui.components.DeleteConfirmationDialog
 import al.ahgitdevelopment.municion.ui.components.EmptyState
+import al.ahgitdevelopment.municion.ui.components.ListScreenTopBar
 import al.ahgitdevelopment.municion.ui.navigation.Routes
 import al.ahgitdevelopment.municion.ui.theme.MunicionTheme
 import al.ahgitdevelopment.municion.ui.viewmodel.CompraViewModel
 import al.ahgitdevelopment.municion.ui.viewmodel.GuiaViewModel
+import al.ahgitdevelopment.municion.ui.viewmodel.MainViewModel.SyncState
 
 /**
  * Pantalla de listado de Compras (Stateful).
@@ -41,6 +45,9 @@ import al.ahgitdevelopment.municion.ui.viewmodel.GuiaViewModel
  * Delega la UI a ComprasScreenContent (stateless).
  *
  * @param navController Controlador de navegación
+ * @param syncState Estado actual de sincronización
+ * @param onSyncClick Callback para sincronización manual
+ * @param onSettingsClick Callback para el botón de settings
  * @param compraViewModel ViewModel de Compras
  * @param guiaViewModel ViewModel de Guías (para selección)
  *
@@ -49,6 +56,10 @@ import al.ahgitdevelopment.municion.ui.viewmodel.GuiaViewModel
 @Composable
 fun ComprasScreen(
     navController: NavHostController,
+    syncState: SyncState,
+    onSyncClick: () -> Unit,
+    onSettingsClick: () -> Unit,
+    bottomPadding: Dp = 0.dp,
     compraViewModel: CompraViewModel = hiltViewModel(),
     guiaViewModel: GuiaViewModel = hiltViewModel()
 ) {
@@ -113,7 +124,10 @@ fun ComprasScreen(
     ComprasScreenContent(
         compras = compras,
         guias = guias,
+        syncState = syncState,
         snackbarHostState = snackbarHostState,
+        onSyncClick = onSyncClick,
+        onSettingsClick = onSettingsClick,
         onAddClick = {
             if (guias.isEmpty()) {
                 // No hay guías
@@ -135,7 +149,8 @@ fun ComprasScreen(
                 )
             }
         },
-        onDeleteClick = { compra -> compraToDelete = compra }
+        onDeleteClick = { compra -> compraToDelete = compra },
+        bottomPadding = bottomPadding
     )
 }
 
@@ -147,7 +162,10 @@ fun ComprasScreen(
  *
  * @param compras Lista de compras a mostrar
  * @param guias Lista de guías disponibles
+ * @param syncState Estado actual de sincronización
  * @param snackbarHostState Estado del snackbar
+ * @param onSyncClick Callback para sincronización manual
+ * @param onSettingsClick Callback para el botón de settings
  * @param onAddClick Callback para añadir compra
  * @param onItemClick Callback para click en item
  * @param onItemLongClick Callback para long-press (editar)
@@ -159,15 +177,26 @@ fun ComprasScreen(
 fun ComprasScreenContent(
     compras: List<Compra>,
     guias: List<Guia>,
+    syncState: SyncState,
     snackbarHostState: SnackbarHostState,
+    onSyncClick: () -> Unit,
+    onSettingsClick: () -> Unit,
     onAddClick: () -> Unit,
     onItemClick: (Compra) -> Unit,
     onItemLongClick: (Compra) -> Unit,
     onDeleteClick: (Compra) -> Unit,
+    bottomPadding: Dp = 0.dp,
     modifier: Modifier = Modifier
 ) {
     Scaffold(
         modifier = modifier,
+        topBar = {
+            ListScreenTopBar(
+                syncState = syncState,
+                onSyncClick = onSyncClick,
+                onSettingsClick = onSettingsClick
+            )
+        },
         snackbarHost = { SnackbarHost(snackbarHostState) },
         floatingActionButton = {
             FloatingActionButton(
@@ -176,12 +205,15 @@ fun ComprasScreenContent(
             ) {
                 Icon(Icons.Default.Add, contentDescription = "Añadir compra")
             }
-        }
+        },
+        contentWindowInsets = WindowInsets(0, 0, 0, 0)
     ) { innerPadding ->
         if (compras.isEmpty()) {
             EmptyState(
                 message = "No hay compras registradas",
-                modifier = Modifier.padding(innerPadding)
+                modifier = Modifier
+                    .padding(innerPadding)
+                    .padding(bottom = bottomPadding)
             )
         } else {
             LazyColumn(
@@ -189,7 +221,7 @@ fun ComprasScreenContent(
                     .fillMaxSize()
                     .padding(innerPadding)
                     .padding(horizontal = 8.dp),
-                contentPadding = PaddingValues(vertical = 8.dp)
+                contentPadding = PaddingValues(top = 8.dp, bottom = 8.dp + bottomPadding)
             ) {
                 items(
                     items = compras,
@@ -259,7 +291,10 @@ private fun ComprasScreenContentPreview() {
                 )
             ),
             guias = emptyList(),
+            syncState = SyncState.Idle,
             snackbarHostState = SnackbarHostState(),
+            onSyncClick = {},
+            onSettingsClick = {},
             onAddClick = {},
             onItemClick = {},
             onItemLongClick = {},
@@ -275,7 +310,10 @@ private fun ComprasScreenContentEmptyPreview() {
         ComprasScreenContent(
             compras = emptyList(),
             guias = emptyList(),
+            syncState = SyncState.Idle,
             snackbarHostState = SnackbarHostState(),
+            onSyncClick = {},
+            onSettingsClick = {},
             onAddClick = {},
             onItemClick = {},
             onItemLongClick = {},

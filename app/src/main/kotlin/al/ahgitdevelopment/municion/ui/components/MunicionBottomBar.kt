@@ -7,6 +7,7 @@ import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material.icons.filled.SportsScore
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarDefaults
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Text
@@ -60,7 +61,9 @@ fun MunicionBottomBar(navController: NavHostController) {
 
     if (showBottomBar) {
         NavigationBar(
-            containerColor = BottomNavBackground
+            containerColor = BottomNavBackground,
+            // Edge-to-edge: BottomBar handles navigation bar inset
+            windowInsets = NavigationBarDefaults.windowInsets
         ) {
             items.forEach { item ->
                 val selected = currentRoute == item.route

@@ -1,7 +1,6 @@
 package al.ahgitdevelopment.municion.ui.components
 
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Sync
 import androidx.compose.material3.CircularProgressIndicator
@@ -21,58 +20,31 @@ import al.ahgitdevelopment.municion.ui.theme.PrimaryDark
 import al.ahgitdevelopment.municion.ui.viewmodel.MainViewModel.SyncState
 
 /**
- * TopAppBar de la aplicación Munición.
+ * TopAppBar para pantallas de lista (Licencias, Guías, Compras, Tiradas).
  *
  * Muestra:
  * - Título de la app
  * - Indicador de sincronización
  * - Botón de settings
- * - Botón de back (cuando aplica)
  *
- * @param title Título a mostrar
  * @param syncState Estado actual de sincronización
- * @param showBackButton Si se debe mostrar el botón de retroceso
- * @param onBackClick Callback para el botón de retroceso
- * @param onSettingsClick Callback para el botón de settings
  * @param onSyncClick Callback para sincronización manual
+ * @param onSettingsClick Callback para el botón de settings
  * @param modifier Modificador opcional
  *
  * @since v3.0.0 (Compose Migration)
- * @deprecated Este componente ha sido reemplazado por TopBars especializados.
- *             Usar [ListScreenTopBar] para pantallas de listado o
- *             [FormScreenTopBar] para pantallas de formulario.
  */
-@Deprecated(
-    message = "Usar ListScreenTopBar para listados o FormScreenTopBar para formularios",
-    replaceWith = ReplaceWith(
-        "ListScreenTopBar(syncState, onSyncClick, onSettingsClick, modifier)",
-        "al.ahgitdevelopment.municion.ui.components.ListScreenTopBar"
-    )
-)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MunicionTopBar(
-    title: String = stringResource(R.string.app_name),
+fun ListScreenTopBar(
     syncState: SyncState = SyncState.Idle,
-    showBackButton: Boolean = false,
-    onBackClick: () -> Unit = {},
-    onSettingsClick: () -> Unit = {},
     onSyncClick: () -> Unit = {},
+    onSettingsClick: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     TopAppBar(
-        title = { Text(title) },
+        title = { Text(stringResource(R.string.app_name)) },
         modifier = modifier,
-        navigationIcon = {
-            if (showBackButton) {
-                IconButton(onClick = onBackClick) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                        contentDescription = "Volver"
-                    )
-                }
-            }
-        },
         actions = {
             // Indicador de sincronización
             when (syncState) {
@@ -97,13 +69,11 @@ fun MunicionTopBar(
             }
 
             // Botón de settings
-            if (!showBackButton) {
-                IconButton(onClick = onSettingsClick) {
-                    Icon(
-                        imageVector = Icons.Default.Settings,
-                        contentDescription = "Configuración"
-                    )
-                }
+            IconButton(onClick = onSettingsClick) {
+                Icon(
+                    imageVector = Icons.Default.Settings,
+                    contentDescription = "Configuración"
+                )
             }
         },
         colors = TopAppBarDefaults.topAppBarColors(
@@ -111,6 +81,8 @@ fun MunicionTopBar(
             titleContentColor = OnPrimary,
             navigationIconContentColor = OnPrimary,
             actionIconContentColor = OnPrimary
-        )
+        ),
+        // Edge-to-edge: TopBar handles status bar inset
+        windowInsets = TopAppBarDefaults.windowInsets
     )
 }

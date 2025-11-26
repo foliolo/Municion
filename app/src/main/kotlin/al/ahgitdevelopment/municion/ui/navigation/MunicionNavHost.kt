@@ -1,9 +1,9 @@
 package al.ahgitdevelopment.municion.ui.navigation
 
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -18,6 +18,7 @@ import al.ahgitdevelopment.municion.ui.guias.GuiasScreen
 import al.ahgitdevelopment.municion.ui.licencias.LicenciasScreen
 import al.ahgitdevelopment.municion.ui.settings.AccountSettingsScreen
 import al.ahgitdevelopment.municion.ui.tiradas.TiradasScreen
+import al.ahgitdevelopment.municion.ui.viewmodel.MainViewModel.SyncState
 
 /**
  * NavHost principal de la aplicación Munición.
@@ -28,7 +29,10 @@ import al.ahgitdevelopment.municion.ui.tiradas.TiradasScreen
  * - Settings
  *
  * @param navController Controlador de navegación
- * @param innerPadding Padding interno del Scaffold
+ * @param bottomPadding Bottom padding for BottomBar (edge-to-edge)
+ * @param syncState Estado actual de sincronización (para pantallas de lista)
+ * @param onSyncClick Callback para sincronización manual
+ * @param onSettingsClick Callback para el botón de settings
  * @param modifier Modificador opcional
  *
  * @since v3.0.0 (Compose Migration)
@@ -36,30 +40,57 @@ import al.ahgitdevelopment.municion.ui.tiradas.TiradasScreen
 @Composable
 fun MunicionNavHost(
     navController: NavHostController,
-    innerPadding: PaddingValues,
+    bottomPadding: Dp = 0.dp,
+    syncState: SyncState,
+    onSyncClick: () -> Unit,
+    onSettingsClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     NavHost(
         navController = navController,
         startDestination = Routes.LICENCIAS,
-        modifier = modifier.padding(innerPadding)
+        modifier = modifier
     ) {
         // ========== TABS PRINCIPALES ==========
 
         composable(route = Routes.LICENCIAS) {
-            LicenciasScreen(navController = navController)
+            LicenciasScreen(
+                navController = navController,
+                syncState = syncState,
+                onSyncClick = onSyncClick,
+                onSettingsClick = onSettingsClick,
+                bottomPadding = bottomPadding
+            )
         }
 
         composable(route = Routes.GUIAS) {
-            GuiasScreen(navController = navController)
+            GuiasScreen(
+                navController = navController,
+                syncState = syncState,
+                onSyncClick = onSyncClick,
+                onSettingsClick = onSettingsClick,
+                bottomPadding = bottomPadding
+            )
         }
 
         composable(route = Routes.COMPRAS) {
-            ComprasScreen(navController = navController)
+            ComprasScreen(
+                navController = navController,
+                syncState = syncState,
+                onSyncClick = onSyncClick,
+                onSettingsClick = onSettingsClick,
+                bottomPadding = bottomPadding
+            )
         }
 
         composable(route = Routes.TIRADAS) {
-            TiradasScreen(navController = navController)
+            TiradasScreen(
+                navController = navController,
+                syncState = syncState,
+                onSyncClick = onSyncClick,
+                onSettingsClick = onSettingsClick,
+                bottomPadding = bottomPadding
+            )
         }
 
         composable(route = Routes.SETTINGS) {

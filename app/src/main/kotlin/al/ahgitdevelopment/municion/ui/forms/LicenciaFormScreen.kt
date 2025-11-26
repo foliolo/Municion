@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -15,7 +16,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.CalendarToday
 import androidx.compose.material.icons.filled.Save
 import androidx.compose.material3.DropdownMenuItem
@@ -31,7 +31,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -50,6 +49,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import al.ahgitdevelopment.municion.R
 import al.ahgitdevelopment.municion.data.local.room.entities.Licencia
+import al.ahgitdevelopment.municion.ui.components.FormScreenTopBar
 import al.ahgitdevelopment.municion.ui.theme.MunicionTheme
 import al.ahgitdevelopment.municion.ui.viewmodel.LicenciaViewModel
 import java.text.SimpleDateFormat
@@ -292,13 +292,9 @@ fun LicenciaFormScreenContent(
         modifier = modifier,
         snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
-            TopAppBar(
-                title = { Text(if (isEditing) "Editar licencia" else "Nueva licencia") },
-                navigationIcon = {
-                    IconButton(onClick = onBackClick) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Volver")
-                    }
-                }
+            FormScreenTopBar(
+                title = if (isEditing) "Editar licencia" else "Nueva licencia",
+                onBackClick = onBackClick
             )
         },
         floatingActionButton = {
@@ -308,7 +304,8 @@ fun LicenciaFormScreenContent(
             ) {
                 Icon(Icons.Default.Save, contentDescription = "Guardar")
             }
-        }
+        },
+        contentWindowInsets = WindowInsets(0, 0, 0, 0)
     ) { innerPadding ->
         Column(
             modifier = Modifier
