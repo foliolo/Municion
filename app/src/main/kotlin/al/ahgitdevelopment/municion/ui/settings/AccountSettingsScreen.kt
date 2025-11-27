@@ -1,5 +1,6 @@
 package al.ahgitdevelopment.municion.ui.settings
 
+import al.ahgitdevelopment.municion.R
 import al.ahgitdevelopment.municion.ui.components.TutorialDialog
 import al.ahgitdevelopment.municion.ui.theme.LicenseExpired
 import al.ahgitdevelopment.municion.ui.theme.LicenseValid
@@ -40,6 +41,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -126,7 +128,7 @@ fun AccountSettingsFields(
             ) {
                 CircularProgressIndicator()
                 Spacer(modifier = Modifier.height(16.dp))
-                Text("Cargando...")
+                Text(stringResource(R.string.loading))
             }
         }
 
@@ -146,7 +148,7 @@ fun AccountSettingsFields(
                 )
                 Spacer(modifier = Modifier.height(16.dp))
                 Text(
-                    "No autenticado",
+                    stringResource(R.string.not_authenticated),
                     style = MaterialTheme.typography.headlineSmall
                 )
             }
@@ -194,7 +196,7 @@ private fun LoadedContent(
                     )
                     Column {
                         Text(
-                            text = "Estado de cuenta",
+                            text = stringResource(R.string.account_status),
                             style = MaterialTheme.typography.titleMedium
                         )
                         Text(
@@ -214,16 +216,16 @@ private fun LoadedContent(
         ) {
             Column(modifier = Modifier.padding(16.dp)) {
                 Text(
-                    text = "Informacion de cuenta",
+                    text = stringResource(R.string.account_info),
                     style = MaterialTheme.typography.titleMedium
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    text = accountInfo.email ?: "Sin email",
+                    text = accountInfo.email ?: stringResource(R.string.no_email),
                     style = MaterialTheme.typography.bodyMedium
                 )
                 Text(
-                    text = "UID: ${accountInfo.uid.take(8)}...",
+                    text = stringResource(R.string.uid_display, accountInfo.uid.take(8)),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
                 )
@@ -254,11 +256,11 @@ private fun LoadedContent(
                     )
                     Column {
                         Text(
-                            text = "Tutorial",
+                            text = stringResource(R.string.tutorial),
                             style = MaterialTheme.typography.titleMedium
                         )
                         Text(
-                            text = "Aprende a usar la aplicacion",
+                            text = stringResource(R.string.tutorial_description),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
                         )
@@ -283,7 +285,7 @@ private fun LoadedContent(
         ) {
             Icon(Icons.AutoMirrored.Filled.Logout, contentDescription = null)
             Spacer(modifier = Modifier.size(8.dp))
-            Text("Cerrar sesion")
+            Text(stringResource(R.string.sign_out))
         }
 
         Spacer(modifier = Modifier.height(32.dp))
@@ -297,24 +299,23 @@ private fun SignOutDialog(
     onConfirm: () -> Unit
 ) {
     val message = if (isAnonymous) {
-        "Si cierras sesion con una cuenta anonima, perderas acceso a tus datos en la nube. " +
-                "Los datos locales se mantendran.\n\nEstas seguro?"
+        stringResource(R.string.sign_out_anonymous_warning)
     } else {
-        "Estas seguro de que deseas cerrar sesion?"
+        stringResource(R.string.sign_out_confirm)
     }
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Cerrar sesion") },
+        title = { Text(stringResource(R.string.sign_out)) },
         text = { Text(message) },
         confirmButton = {
             TextButton(onClick = onConfirm) {
-                Text("Cerrar sesion", color = MaterialTheme.colorScheme.error)
+                Text(stringResource(R.string.sign_out), color = MaterialTheme.colorScheme.error)
             }
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text("Cancelar")
+                Text(stringResource(R.string.cancelar))
             }
         }
     )

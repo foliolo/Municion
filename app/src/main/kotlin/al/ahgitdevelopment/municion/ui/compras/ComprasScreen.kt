@@ -1,5 +1,6 @@
 package al.ahgitdevelopment.municion.ui.compras
 
+import al.ahgitdevelopment.municion.R
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -13,6 +14,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -77,8 +79,8 @@ fun ComprasContent(
     // Dialog de confirmación de eliminación
     compraToDelete?.let { compra ->
         DeleteConfirmationDialog(
-            title = "Eliminar compra",
-            message = "¿Estás seguro de que deseas eliminar esta compra de ${compra.marca}?",
+            title = stringResource(R.string.dialog_delete_purchase_title),
+            message = stringResource(R.string.dialog_delete_purchase_message, compra.marca),
             onConfirm = {
                 compraViewModel.deleteCompra(compra)
                 compraToDelete = null
@@ -132,7 +134,7 @@ fun ComprasListContent(
 ) {
     if (compras.isEmpty()) {
         EmptyState(
-            message = "No hay compras registradas",
+            message = stringResource(R.string.empty_no_purchases),
             modifier = modifier.fillMaxSize()
         )
     } else {

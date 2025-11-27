@@ -20,30 +20,10 @@
         android:name=".MunicionApplication"
         android:allowBackup="true"
         android:enableOnBackInvokedCallback="true"
-        android:icon="@mipmap/ic_launcher_3_light"
+        android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme">
 
-<!--        <activity-->
-<!--            android:name=".LoginPasswordActivity"-->
-<!--            android:exported="true"-->
-<!--            android:screenOrientation="portrait"-->
-<!--            android:windowSoftInputMode="stateVisible">-->
-<!--&lt;!&ndash;            <intent-filter>&ndash;&gt;-->
-<!--&lt;!&ndash;                <action android:name="android.intent.action.MAIN" />&ndash;&gt;-->
-<!--&lt;!&ndash;                <action android:name="android.intent.action.VIEW" />&ndash;&gt;-->
-
-<!--&lt;!&ndash;                <category android:name="android.intent.category.LAUNCHER" />&ndash;&gt;-->
-<!--&lt;!&ndash;            </intent-filter>&ndash;&gt;-->
-<!--        </activity>-->
-
-
-<!--        <activity-->
-<!--            android:name=".FragmentMainActivity"-->
-<!--            android:label="@string/title_activity_fragment_main" />-->
-
-        <!-- MainActivity (v3.4.0 - Auth Simplification) -->
-        <!-- LoginActivity eliminado - auth ahora se maneja en NavHost -->
         <activity
             android:name=".ui.MainActivity"
             android:exported="true"

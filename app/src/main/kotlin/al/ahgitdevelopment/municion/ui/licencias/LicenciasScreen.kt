@@ -1,5 +1,6 @@
 package al.ahgitdevelopment.municion.ui.licencias
 
+import al.ahgitdevelopment.municion.R
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -13,6 +14,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -72,8 +74,8 @@ fun LicenciasContent(
     // Dialog de confirmación de eliminación
     licenciaToDelete?.let { licencia ->
         DeleteConfirmationDialog(
-            title = "Eliminar licencia",
-            message = "¿Estás seguro de que deseas eliminar la licencia ${licencia.numLicencia}?",
+            title = stringResource(R.string.dialog_delete_license_title),
+            message = stringResource(R.string.dialog_delete_license_message, licencia.numLicencia),
             onConfirm = {
                 viewModel.deleteLicencia(licencia)
                 licenciaToDelete = null
@@ -117,7 +119,7 @@ fun LicenciasListContent(
 ) {
     if (licencias.isEmpty()) {
         EmptyState(
-            message = "No hay licencias registradas",
+            message = stringResource(R.string.empty_no_licenses),
             modifier = modifier.fillMaxSize()
         )
     } else {

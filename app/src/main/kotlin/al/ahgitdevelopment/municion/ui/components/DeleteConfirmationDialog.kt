@@ -1,10 +1,12 @@
 package al.ahgitdevelopment.municion.ui.components
 
+import al.ahgitdevelopment.municion.R
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.res.stringResource
 
 /**
  * Dialog de confirmación para eliminar elementos.
@@ -32,14 +34,14 @@ fun DeleteConfirmationDialog(
                 onClick = onConfirm
             ) {
                 Text(
-                    text = "Eliminar",
+                    text = stringResource(R.string.delete),
                     color = MaterialTheme.colorScheme.error
                 )
             }
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text("Cancelar")
+                Text(stringResource(R.string.cancelar))
             }
         }
     )

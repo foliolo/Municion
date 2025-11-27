@@ -1,5 +1,6 @@
 package al.ahgitdevelopment.municion.ui.tiradas
 
+import al.ahgitdevelopment.municion.R
 import al.ahgitdevelopment.municion.data.local.room.entities.Tirada
 import al.ahgitdevelopment.municion.ui.components.DeleteConfirmationDialog
 import al.ahgitdevelopment.municion.ui.components.EmptyState
@@ -21,6 +22,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -74,8 +76,8 @@ fun TiradasContent(
     // Dialog de confirmación de eliminación
     tiradaToDelete?.let { tirada ->
         DeleteConfirmationDialog(
-            title = "Eliminar tirada",
-            message = "¿Estás seguro de que deseas eliminar la tirada \"${tirada.descripcion}\"?",
+            title = stringResource(R.string.dialog_delete_competition_title),
+            message = stringResource(R.string.dialog_delete_competition_message, tirada.descripcion),
             onConfirm = {
                 viewModel.deleteTirada(tirada)
                 tiradaToDelete = null
@@ -119,7 +121,7 @@ fun TiradasListContent(
 ) {
     if (tiradas.isEmpty()) {
         EmptyState(
-            message = "No hay tiradas registradas",
+            message = stringResource(R.string.empty_no_competitions),
             modifier = modifier.fillMaxSize()
         )
     } else {

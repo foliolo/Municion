@@ -212,4 +212,101 @@
     <string name="tirada_porcentaje_format">%.1f%% de aciertos</string>
 
     <!-- Auth removed in v3.4.0 (Auth Simplification) -->
+
+    <!-- Compose Form Validation (v3.0.0) -->
+    <string name="error_field_required">Campo obligatorio</string>
+    <string name="error_valid_units">Introduce unidades válidas</string>
+    <string name="error_exceeds_quota">Excede cupo disponible (%1$d)</string>
+    <string name="error_valid_quota">Introduce un cupo válido</string>
+    <string name="error_weight_required">Introduce el peso en gramos</string>
+    <string name="error_enter_license_number">Introduce el número de licencia</string>
+    <string name="error_enter_issue_date">Introduce la fecha de expedición</string>
+    <string name="error_enter_expiry_date">Introduce la fecha de caducidad</string>
+    <string name="error_enter_policy_number">Introduce el número de póliza</string>
+    <string name="error_enter_age">Introduce tu edad</string>
+
+    <!-- Compose Form Labels (v3.0.0) -->
+    <string name="label_ammunition_type">Tipo de munición</string>
+    <string name="label_weight_grams">Peso (gr)</string>
+    <string name="label_price_eur">Precio (EUR)</string>
+    <string name="label_store">Tienda</string>
+    <string name="label_weapon_type">Tipo de arma</string>
+    <string name="label_nickname">Apodo</string>
+    <string name="label_guide_number">Número de guía</string>
+    <string name="label_weapon_number">Número de arma</string>
+    <string name="label_annual_quota">Cupo anual</string>
+    <string name="label_spent_ammunition">Munición gastada</string>
+    <string name="label_custom_quota">Cupo personalizado</string>
+    <string name="label_license_type">Tipo de licencia</string>
+    <string name="label_dni_license_number">Número de licencia</string>
+    <string name="label_issue_date">Fecha de expedición</string>
+    <string name="label_expiry_date">Fecha de caducidad</string>
+    <string name="label_scale">Escala</string>
+    <string name="label_permit_type">Tipo de permiso</string>
+    <string name="label_age">Edad</string>
+    <string name="label_subscriber_number">Número de abonado</string>
+    <string name="label_policy_number">Número de póliza</string>
+    <string name="label_autonomous_community">Comunidad Autónoma</string>
+    <string name="label_category">Categoría</string>
+    <string name="label_description">Descripción</string>
+    <string name="label_range_gallery">Lugar / Galería</string>
+    <string name="label_exact_score">Puntuación exacta</string>
+
+    <!-- Compose Form Placeholders (v3.0.0) -->
+    <string name="placeholder_weekly_practice">Ej: Práctica semanal</string>
+    <string name="placeholder_municipal_gallery">Ej: Galería Municipal</string>
+    <string name="hint_score_range">Valor entre 0 y 600</string>
+
+    <!-- Compose Info Text (v3.0.0) -->
+    <string name="info_available_quota">Cupo disponible: %1$d / %2$d unidades</string>
+    <string name="info_score_display">Puntuación: %1$d / 600</string>
+
+    <!-- Compose Delete Dialogs (v3.0.0) -->
+    <string name="dialog_delete_license_title">Eliminar licencia</string>
+    <string name="dialog_delete_license_message">¿Estás seguro de que deseas eliminar la licencia %1$s?</string>
+    <string name="dialog_delete_guide_title">Eliminar guía</string>
+    <string name="dialog_delete_guide_message">¿Estás seguro de que deseas eliminar la guía %1$s?</string>
+    <string name="dialog_delete_purchase_title">Eliminar compra</string>
+    <string name="dialog_delete_purchase_message">¿Estás seguro de que deseas eliminar esta compra de %1$s?</string>
+    <string name="dialog_delete_competition_title">Eliminar tirada</string>
+    <string name="dialog_delete_competition_message">¿Estás seguro de que deseas eliminar la tirada \"%1$s\"?</string>
+    <string name="dialog_select_guide">Selecciona una guía</string>
+    <string name="dialog_no_guides_available">No hay guías disponibles. Primero debes crear una guía.</string>
+    <string name="label_quota">Cupo: </string>
+
+    <!-- Compose Empty States (v3.0.0) -->
+    <string name="empty_no_licenses">No hay licencias registradas</string>
+    <string name="empty_no_guides">No hay guías registradas</string>
+    <string name="empty_no_purchases">No hay compras registradas</string>
+    <string name="empty_no_competitions">No hay tiradas registradas</string>
+
+    <!-- Compose Purchase Errors (v3.0.0) -->
+    <string name="error_insufficient_quota">Cupo insuficiente</string>
+    <string name="error_insufficient_quota_detail">No puedes comprar %1$d unidades. Solo tienes %2$d de cupo disponible.</string>
+    <string name="error_insufficient_quota_generic">Cupo insuficiente para esta compra.</string>
+    <string name="error_guide_not_found">Guía no encontrada</string>
+    <string name="error_guide_not_found_detail">Error: La guía seleccionada ya no existe.</string>
+
+    <!-- Compose TopBar and Navigation (v3.0.0) -->
+    <string name="action_sync">Sincronizar</string>
+    <string name="action_back">Volver</string>
+    <string name="title_account_settings">Configuración de cuenta</string>
+    <string name="title_license">Licencia</string>
+    <string name="title_guide">Guía</string>
+    <string name="title_purchase">Compra</string>
+    <string name="title_competition">Tirada</string>
+    <string name="action_select_date">Seleccionar fecha</string>
+
+    <!-- Compose Account Settings (v3.0.0) -->
+    <string name="loading">Cargando…</string>
+    <string name="not_authenticated">No autenticado</string>
+    <string name="account_status">Estado de cuenta</string>
+    <string name="account_info">Información de cuenta</string>
+    <string name="no_email">Sin email</string>
+    <string name="uid_display">UID: %1$s…</string>
+    <string name="tutorial">Tutorial</string>
+    <string name="tutorial_description">Aprende a usar la aplicación</string>
+    <string name="sign_out">Cerrar sesión</string>
+    <string name="sign_out_anonymous_warning">Si cierras sesión con una cuenta anónima, perderás acceso a tus datos en la nube. Los datos locales se mantendrán.\n\n¿Estás seguro?</string>
+    <string name="sign_out_confirm">¿Estás seguro de que deseas cerrar sesión?</string>
 </resources>

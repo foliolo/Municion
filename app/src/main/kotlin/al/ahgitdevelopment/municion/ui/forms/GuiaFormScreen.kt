@@ -36,6 +36,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
@@ -105,36 +106,40 @@ fun GuiaFormContent(
     // Calibres disponibles
     val calibres = context.resources.getStringArray(R.array.calibres).toList()
 
+    // Strings para validaciones (capturadas para uso en lambda)
+    val errorFieldRequired = stringResource(R.string.error_field_required)
+    val errorValidQuota = stringResource(R.string.error_valid_quota)
+
     // Funcion de guardado
     val saveFunction: () -> Unit = {
         // Validaciones
         var isValid = true
         if (marca.isBlank()) {
-            marcaError = "Campo obligatorio"
+            marcaError = errorFieldRequired
             isValid = false
         }
         if (modelo.isBlank()) {
-            modeloError = "Campo obligatorio"
+            modeloError = errorFieldRequired
             isValid = false
         }
         if (apodo.isBlank()) {
-            apodoError = "Campo obligatorio"
+            apodoError = errorFieldRequired
             isValid = false
         }
         if (calibre1.isBlank()) {
-            calibre1Error = "Campo obligatorio"
+            calibre1Error = errorFieldRequired
             isValid = false
         }
         if (numGuia.isBlank()) {
-            numGuiaError = "Campo obligatorio"
+            numGuiaError = errorFieldRequired
             isValid = false
         }
         if (numArma.isBlank()) {
-            numArmaError = "Campo obligatorio"
+            numArmaError = errorFieldRequired
             isValid = false
         }
         if (cupo.isBlank() || cupo.toIntOrNull() == null || cupo.toInt() <= 0) {
-            cupoError = "Introduce un cupo valido"
+            cupoError = errorValidQuota
             isValid = false
         }
 
@@ -299,7 +304,7 @@ fun GuiaFormFields(
         // Tipo de arma
         if (tiposArma.isNotEmpty()) {
             DropdownFieldGuia(
-                label = "Tipo de arma",
+                label = stringResource(R.string.label_weapon_type),
                 selectedIndex = tipoArma,
                 options = tiposArma,
                 onSelectionChange = onTipoArmaChange
@@ -310,7 +315,7 @@ fun GuiaFormFields(
         OutlinedTextField(
             value = marca,
             onValueChange = onMarcaChange,
-            label = { Text("Marca") },
+            label = { Text(stringResource(R.string.marca)) },
             isError = marcaError != null,
             supportingText = marcaError?.let { { Text(it) } },
             modifier = Modifier.fillMaxWidth(),
@@ -322,7 +327,7 @@ fun GuiaFormFields(
         OutlinedTextField(
             value = modelo,
             onValueChange = onModeloChange,
-            label = { Text("Modelo") },
+            label = { Text(stringResource(R.string.modelo)) },
             isError = modeloError != null,
             supportingText = modeloError?.let { { Text(it) } },
             modifier = Modifier.fillMaxWidth(),
@@ -334,7 +339,7 @@ fun GuiaFormFields(
         OutlinedTextField(
             value = apodo,
             onValueChange = onApodoChange,
-            label = { Text("Apodo") },
+            label = { Text(stringResource(R.string.label_nickname)) },
             isError = apodoError != null,
             supportingText = apodoError?.let { { Text(it) } },
             modifier = Modifier.fillMaxWidth(),
@@ -346,7 +351,7 @@ fun GuiaFormFields(
         AutoCompleteTextField(
             value = calibre1,
             onValueChange = onCalibre1Change,
-            label = "Calibre",
+            label = stringResource(R.string.calibre),
             suggestions = calibres,
             error = calibre1Error
         )
@@ -360,7 +365,7 @@ fun GuiaFormFields(
                 checked = showCalibre2,
                 onCheckedChange = onShowCalibre2Change
             )
-            Text("Segundo calibre")
+            Text(stringResource(R.string.check_segundo_calibre))
         }
 
         // Calibre 2
@@ -368,7 +373,7 @@ fun GuiaFormFields(
             AutoCompleteTextField(
                 value = calibre2,
                 onValueChange = onCalibre2Change,
-                label = "Segundo calibre",
+                label = stringResource(R.string.calibre2),
                 suggestions = calibres,
                 error = null
             )
@@ -378,7 +383,7 @@ fun GuiaFormFields(
         OutlinedTextField(
             value = numGuia,
             onValueChange = onNumGuiaChange,
-            label = { Text("Numero de guia") },
+            label = { Text(stringResource(R.string.label_guide_number)) },
             isError = numGuiaError != null,
             supportingText = numGuiaError?.let { { Text(it) } },
             modifier = Modifier.fillMaxWidth(),
@@ -390,7 +395,7 @@ fun GuiaFormFields(
         OutlinedTextField(
             value = numArma,
             onValueChange = onNumArmaChange,
-            label = { Text("Numero de arma") },
+            label = { Text(stringResource(R.string.label_weapon_number)) },
             isError = numArmaError != null,
             supportingText = numArmaError?.let { { Text(it) } },
             modifier = Modifier.fillMaxWidth(),
@@ -407,14 +412,14 @@ fun GuiaFormFields(
                 checked = customCupo,
                 onCheckedChange = onCustomCupoChange
             )
-            Text("Cupo personalizado")
+            Text(stringResource(R.string.label_custom_quota))
         }
 
         // Cupo
         OutlinedTextField(
             value = cupo,
             onValueChange = onCupoChange,
-            label = { Text("Cupo anual") },
+            label = { Text(stringResource(R.string.label_annual_quota)) },
             isError = cupoError != null,
             supportingText = cupoError?.let { { Text(it) } },
             modifier = Modifier.fillMaxWidth(),
@@ -428,7 +433,7 @@ fun GuiaFormFields(
             OutlinedTextField(
                 value = gastado,
                 onValueChange = onGastadoChange,
-                label = { Text("Municion gastada") },
+                label = { Text(stringResource(R.string.label_spent_ammunition)) },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)

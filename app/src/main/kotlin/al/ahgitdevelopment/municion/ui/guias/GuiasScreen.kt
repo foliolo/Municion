@@ -13,6 +13,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -76,8 +77,8 @@ fun GuiasContent(
     // Dialog de confirmación de eliminación
     guiaToDelete?.let { guia ->
         DeleteConfirmationDialog(
-            title = "Eliminar guía",
-            message = "¿Estás seguro de que deseas eliminar la guía ${guia.numGuia}?",
+            title = stringResource(R.string.dialog_delete_guide_title),
+            message = stringResource(R.string.dialog_delete_guide_message, guia.numGuia),
             onConfirm = {
                 viewModel.deleteGuia(guia)
                 guiaToDelete = null
@@ -128,7 +129,7 @@ fun GuiasListContent(
 ) {
     if (guias.isEmpty()) {
         EmptyState(
-            message = "No hay guías registradas",
+            message = stringResource(R.string.empty_no_guides),
             modifier = modifier.fillMaxSize()
         )
     } else {

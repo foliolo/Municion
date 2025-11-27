@@ -1,5 +1,6 @@
 package al.ahgitdevelopment.municion.ui.forms
 
+import al.ahgitdevelopment.municion.R
 import al.ahgitdevelopment.municion.data.local.room.entities.Compra
 import al.ahgitdevelopment.municion.ui.theme.LicenseExpired
 import al.ahgitdevelopment.municion.ui.theme.LicenseValid
@@ -35,6 +36,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -105,41 +107,52 @@ fun CompraFormContent(
     var precioError by remember { mutableStateOf<String?>(null) }
     var fechaError by remember { mutableStateOf<String?>(null) }
     var tipoError by remember { mutableStateOf<String?>(null) }
+    var pesoError by remember { mutableStateOf<String?>(null) }
     var marcaError by remember { mutableStateOf<String?>(null) }
 
     // Validar cupo en tiempo real
     val unidadesInt = unidades.toIntOrNull() ?: 0
     val excedeCupo = unidadesInt > cupoDisponible
 
+    // Strings para validaciones (capturadas para uso en lambda)
+    val errorFieldRequired = stringResource(R.string.error_field_required)
+    val errorValidUnits = stringResource(R.string.error_valid_units)
+    val errorExceedsQuota = stringResource(R.string.error_exceeds_quota, cupoDisponible)
+    val errorWeightRequired = stringResource(R.string.error_weight_required)
+
     // Funcion de guardado
     val saveFunction: () -> Unit = {
         // Validaciones
         var isValid = true
         if (calibre1.isBlank()) {
-            calibre1Error = "Campo obligatorio"
+            calibre1Error = errorFieldRequired
             isValid = false
         }
         if (unidades.isBlank() || unidades.toIntOrNull() == null || unidades.toInt() <= 0) {
-            unidadesError = "Introduce unidades validas"
+            unidadesError = errorValidUnits
             isValid = false
         } else if (excedeCupo) {
-            unidadesError = "Excede cupo disponible ($cupoDisponible)"
+            unidadesError = errorExceedsQuota
             isValid = false
         }
         if (precio.isBlank()) {
-            precioError = "Campo obligatorio"
+            precioError = errorFieldRequired
             isValid = false
         }
         if (fecha.isBlank()) {
-            fechaError = "Campo obligatorio"
+            fechaError = errorFieldRequired
             isValid = false
         }
         if (tipo.isBlank()) {
-            tipoError = "Campo obligatorio"
+            tipoError = errorFieldRequired
             isValid = false
         }
         if (marca.isBlank()) {
-            marcaError = "Campo obligatorio"
+            marcaError = errorFieldRequired
+            isValid = false
+        }
+        if (peso.isBlank() || peso.toIntOrNull() == null || peso.toInt() <= 0) {
+            pesoError = errorWeightRequired
             isValid = false
         }
 
@@ -214,6 +227,7 @@ fun CompraFormContent(
         tipo = tipo,
         tipoError = tipoError,
         peso = peso,
+        pesoError = pesoError,
         marca = marca,
         marcaError = marcaError,
         tienda = tienda,
@@ -224,7 +238,7 @@ fun CompraFormContent(
         onPrecioChange = { precio = it; precioError = null },
         onFechaChange = { fecha = it; fechaError = null },
         onTipoChange = { tipo = it; tipoError = null },
-        onPesoChange = { peso = it },
+        onPesoChange = { peso = it; pesoError = null },
         onMarcaChange = { marca = it; marcaError = null },
         onTiendaChange = { tienda = it }
     )
@@ -255,6 +269,7 @@ fun CompraFormFields(
     tipo: String,
     tipoError: String?,
     peso: String,
+    pesoError: String?,
     marca: String,
     marcaError: String?,
     tienda: String,
@@ -306,7 +321,7 @@ fun CompraFormFields(
         // Info de cupo disponible
         if (cupoDisponible < Int.MAX_VALUE) {
             Text(
-                text = "Cupo disponible: $cupoDisponible / $cupoTotal unidades",
+                text = stringResource(R.string.info_available_quota, cupoDisponible, cupoTotal),
                 style = MaterialTheme.typography.bodyMedium,
                 color = if (excedeCupo) LicenseExpired else LicenseValid
             )
@@ -316,7 +331,7 @@ fun CompraFormFields(
         OutlinedTextField(
             value = calibre1,
             onValueChange = { },
-            label = { Text("Calibre") },
+            label = { Text(stringResource(R.string.calibre)) },
             isError = calibre1Error != null,
             supportingText = calibre1Error?.let { { Text(it) } },
             modifier = Modifier.fillMaxWidth(),
@@ -334,7 +349,7 @@ fun CompraFormFields(
                 onCheckedChange = onShowCalibre2Change,
                 enabled = false
             )
-            Text("Segundo calibre")
+            Text(stringResource(R.string.check_segundo_calibre))
         }
 
         // Calibre 2
@@ -342,7 +357,7 @@ fun CompraFormFields(
             OutlinedTextField(
                 value = calibre2,
                 onValueChange = onCalibre2Change,
-                label = { Text("Segundo calibre") },
+                label = { Text(stringResource(R.string.calibre2)) },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
                 enabled = false
@@ -353,7 +368,7 @@ fun CompraFormFields(
         OutlinedTextField(
             value = marca,
             onValueChange = onMarcaChange,
-            label = { Text("Marca") },
+            label = { Text(stringResource(R.string.marca)) },
             isError = marcaError != null,
             supportingText = marcaError?.let { { Text(it) } },
             modifier = Modifier.fillMaxWidth(),
@@ -365,7 +380,7 @@ fun CompraFormFields(
         OutlinedTextField(
             value = tipo,
             onValueChange = onTipoChange,
-            label = { Text("Tipo de municion") },
+            label = { Text(stringResource(R.string.label_ammunition_type)) },
             isError = tipoError != null,
             supportingText = tipoError?.let { { Text(it) } },
             modifier = Modifier.fillMaxWidth(),
@@ -377,7 +392,9 @@ fun CompraFormFields(
         OutlinedTextField(
             value = peso,
             onValueChange = onPesoChange,
-            label = { Text("Peso (gr)") },
+            label = { Text(stringResource(R.string.label_weight_grams)) },
+            isError = pesoError != null,
+            supportingText = pesoError?.let { { Text(it) } },
             modifier = Modifier.fillMaxWidth(),
             singleLine = true,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
@@ -387,12 +404,12 @@ fun CompraFormFields(
         OutlinedTextField(
             value = unidades,
             onValueChange = onUnidadesChange,
-            label = { Text("Unidades") },
+            label = { Text(stringResource(R.string.unidades)) },
             isError = unidadesError != null || excedeCupo,
             supportingText = {
                 when {
                     unidadesError != null -> Text(unidadesError)
-                    excedeCupo -> Text("Excede cupo disponible ($cupoDisponible)")
+                    excedeCupo -> Text(stringResource(R.string.error_exceeds_quota, cupoDisponible))
                 }
             },
             modifier = Modifier.fillMaxWidth(),
@@ -404,7 +421,7 @@ fun CompraFormFields(
         OutlinedTextField(
             value = precio,
             onValueChange = onPrecioChange,
-            label = { Text("Precio (EUR)") },
+            label = { Text(stringResource(R.string.label_price_eur)) },
             isError = precioError != null,
             supportingText = precioError?.let { { Text(it) } },
             modifier = Modifier.fillMaxWidth(),
@@ -416,7 +433,7 @@ fun CompraFormFields(
         OutlinedTextField(
             value = fecha,
             onValueChange = {},
-            label = { Text("Fecha") },
+            label = { Text(stringResource(R.string.fecha)) },
             isError = fechaError != null,
             supportingText = fechaError?.let { { Text(it) } },
             modifier = Modifier
@@ -426,7 +443,7 @@ fun CompraFormFields(
             singleLine = true,
             trailingIcon = {
                 IconButton(onClick = { datePickerDialog.show() }) {
-                    Icon(Icons.Default.CalendarToday, contentDescription = "Seleccionar fecha")
+                    Icon(Icons.Default.CalendarToday, contentDescription = stringResource(R.string.action_select_date))
                 }
             }
         )
@@ -435,7 +452,7 @@ fun CompraFormFields(
         OutlinedTextField(
             value = tienda,
             onValueChange = onTiendaChange,
-            label = { Text("Tienda") },
+            label = { Text(stringResource(R.string.label_store)) },
             modifier = Modifier.fillMaxWidth(),
             singleLine = true,
             keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences)
@@ -471,6 +488,7 @@ private fun CompraFormFieldsPreview() {
             tipo = "FMJ",
             tipoError = null,
             peso = "124",
+            pesoError = null,
             marca = "Federal",
             marcaError = null,
             tienda = "Armeria Local",

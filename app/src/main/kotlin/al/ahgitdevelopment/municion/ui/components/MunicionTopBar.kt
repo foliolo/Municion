@@ -24,6 +24,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
 /**
@@ -132,7 +133,7 @@ private fun ListTopBar(
                     IconButton(onClick = onSyncClick) {
                         Icon(
                             imageVector = Icons.Default.Sync,
-                            contentDescription = "Sincronizar"
+                            contentDescription = stringResource(R.string.action_sync)
                         )
                     }
                 }
@@ -142,7 +143,7 @@ private fun ListTopBar(
             IconButton(onClick = onSettingsClick) {
                 Icon(
                     imageVector = Icons.Default.Settings,
-                    contentDescription = "Configuración"
+                    contentDescription = stringResource(R.string.action_settings)
                 )
             }
         },
@@ -168,7 +169,7 @@ private fun FormTopBar(
             IconButton(onClick = onBackClick) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = "Volver"
+                    contentDescription = stringResource(R.string.action_back)
                 )
             }
         },
@@ -192,14 +193,15 @@ private fun topAppBarColors() = TopAppBarDefaults.topAppBarColors(
 /**
  * Obtiene el título del TopBar según la ruta del formulario.
  */
+@Composable
 private fun getFormTitle(route: String?): String {
     return when {
         route == null -> ""
-        route == Settings::class.qualifiedName -> "Configuración de cuenta"
-        route.contains("LicenciaForm") -> "Licencia"
-        route.contains("GuiaForm") -> "Guía"
-        route.contains("CompraForm") -> "Compra"
-        route.contains("TiradaForm") -> "Tirada"
+        route == Settings::class.qualifiedName -> stringResource(R.string.title_account_settings)
+        route.contains("LicenciaForm") -> stringResource(R.string.title_license)
+        route.contains("GuiaForm") -> stringResource(R.string.title_guide)
+        route.contains("CompraForm") -> stringResource(R.string.title_purchase)
+        route.contains("TiradaForm") -> stringResource(R.string.title_competition)
         else -> ""
     }
 }
@@ -213,3 +215,29 @@ private val listScreenRoutes = setOf(
     Compras::class.qualifiedName,
     Tiradas::class.qualifiedName
 )
+
+@Preview(name = "List Screen TopBar", showBackground = true)
+@Composable
+private fun PreviewMunicionTopBarList() {
+    MunicionTopBar(
+        currentRoute = Licencias::class.qualifiedName,
+        syncState = SyncState.Idle,
+    )
+}
+
+@Preview(name = "Tiradas Screen TopBar", showBackground = true)
+@Composable
+private fun PreviewMunicionTopBarTiradas() {
+    MunicionTopBar(
+        currentRoute = Tiradas::class.qualifiedName,
+        syncState = SyncState.Idle,
+    )
+}
+
+@Preview(name = "Form Screen TopBar", showBackground = true)
+@Composable
+private fun PreviewMunicionTopBarForm() {
+    MunicionTopBar(
+        currentRoute = "LicenciaForm",
+    )
+}

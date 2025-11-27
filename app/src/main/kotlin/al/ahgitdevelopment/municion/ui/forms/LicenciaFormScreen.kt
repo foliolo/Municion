@@ -34,6 +34,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
@@ -113,24 +114,30 @@ fun LicenciaFormContent(
     val showEdad = tipoLicencia == 12
     val showCategoria = tipoLicencia == 11
 
+    // Strings para validaciones (capturadas para uso en lambda)
+    val errorLicenseNumber = stringResource(R.string.error_enter_license_number)
+    val errorIssueDate = stringResource(R.string.error_enter_issue_date)
+    val errorPolicyNumber = stringResource(R.string.error_enter_policy_number)
+    val errorAge = stringResource(R.string.error_enter_age)
+
     // Función de guardado
     val saveFunction: () -> Unit = {
         // Validaciones
         var isValid = true
         if (numLicencia.isBlank()) {
-            numLicenciaError = "Introduce el número de licencia"
+            numLicenciaError = errorLicenseNumber
             isValid = false
         }
         if (fechaExpedicion.isBlank()) {
-            fechaExpedicionError = "Introduce la fecha de expedición"
+            fechaExpedicionError = errorIssueDate
             isValid = false
         }
         if (showNumSeguro && numSeguro.isBlank()) {
-            numSeguroError = "Introduce el número de póliza"
+            numSeguroError = errorPolicyNumber
             isValid = false
         }
         if (showEdad && edad.isBlank()) {
-            edadError = "Introduce tu edad"
+            edadError = errorAge
             isValid = false
         }
 
@@ -296,7 +303,7 @@ fun LicenciaFormFields(
 
         // Tipo de licencia (Dropdown)
         DropdownField(
-            label = "Tipo de licencia",
+            label = stringResource(R.string.label_license_type),
             selectedIndex = tipoLicencia,
             options = tiposLicencia,
             onSelectionChange = onTipoLicenciaChange
@@ -306,7 +313,7 @@ fun LicenciaFormFields(
         OutlinedTextField(
             value = numLicencia,
             onValueChange = onNumLicenciaChange,
-            label = { Text(if (tipoLicencia == 12) "DNI" else "Número de licencia") },
+            label = { Text(if (tipoLicencia == 12) stringResource(R.string.lbl_num_dni) else stringResource(R.string.label_dni_license_number)) },
             isError = numLicenciaError != null,
             supportingText = numLicenciaError?.let { { Text(it) } },
             modifier = Modifier.fillMaxWidth(),
@@ -316,7 +323,7 @@ fun LicenciaFormFields(
 
         // Fecha de expedición
         DateField(
-            label = "Fecha de expedición",
+            label = stringResource(R.string.label_issue_date),
             value = fechaExpedicion,
             error = fechaExpedicionError,
             onValueChange = onFechaExpedicionChange
@@ -327,7 +334,7 @@ fun LicenciaFormFields(
             OutlinedTextField(
                 value = fechaCaducidad,
                 onValueChange = {},
-                label = { Text("Fecha de caducidad") },
+                label = { Text(stringResource(R.string.label_expiry_date)) },
                 modifier = Modifier.fillMaxWidth(),
                 enabled = false,
                 singleLine = true
@@ -337,7 +344,7 @@ fun LicenciaFormFields(
         // Escala (solo para Licencia A)
         if (showEscala) {
             DropdownField(
-                label = "Escala",
+                label = stringResource(R.string.label_scale),
                 selectedIndex = escala,
                 options = escalas,
                 onSelectionChange = onEscalaChange
@@ -347,7 +354,7 @@ fun LicenciaFormFields(
         // Permiso de conducir (solo para tipo 12)
         if (showPermisoConducir) {
             DropdownField(
-                label = "Tipo de permiso",
+                label = stringResource(R.string.label_permit_type),
                 selectedIndex = tipoPermisoConducir,
                 options = tiposPermisoConducir,
                 onSelectionChange = onTipoPermisoConducirChange
@@ -359,7 +366,7 @@ fun LicenciaFormFields(
             OutlinedTextField(
                 value = edad,
                 onValueChange = onEdadChange,
-                label = { Text("Edad") },
+                label = { Text(stringResource(R.string.label_age)) },
                 isError = edadError != null,
                 supportingText = edadError?.let { { Text(it) } },
                 modifier = Modifier.fillMaxWidth(),
@@ -373,7 +380,7 @@ fun LicenciaFormFields(
             OutlinedTextField(
                 value = numAbonado,
                 onValueChange = onNumAbonadoChange,
-                label = { Text("Número de abonado") },
+                label = { Text(stringResource(R.string.label_subscriber_number)) },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
@@ -385,7 +392,7 @@ fun LicenciaFormFields(
             OutlinedTextField(
                 value = numSeguro,
                 onValueChange = onNumSeguroChange,
-                label = { Text("Número de póliza") },
+                label = { Text(stringResource(R.string.label_policy_number)) },
                 isError = numSeguroError != null,
                 supportingText = numSeguroError?.let { { Text(it) } },
                 modifier = Modifier.fillMaxWidth(),
@@ -397,7 +404,7 @@ fun LicenciaFormFields(
         // Comunidad Autónoma
         if (showAutonomia) {
             DropdownField(
-                label = "Comunidad Autónoma",
+                label = stringResource(R.string.label_autonomous_community),
                 selectedIndex = autonomia,
                 options = autonomias,
                 onSelectionChange = onAutonomiaChange
@@ -407,7 +414,7 @@ fun LicenciaFormFields(
         // Categoría (solo para Federativa)
         if (showCategoria) {
             DropdownField(
-                label = "Categoría",
+                label = stringResource(R.string.label_category),
                 selectedIndex = categoria,
                 options = categorias,
                 onSelectionChange = onCategoriaChange
@@ -464,7 +471,7 @@ private fun DateField(
         singleLine = true,
         trailingIcon = {
             IconButton(onClick = { datePickerDialog.show() }) {
-                Icon(Icons.Default.CalendarToday, contentDescription = "Seleccionar fecha")
+                Icon(Icons.Default.CalendarToday, contentDescription = stringResource(R.string.action_select_date))
             }
         }
     )

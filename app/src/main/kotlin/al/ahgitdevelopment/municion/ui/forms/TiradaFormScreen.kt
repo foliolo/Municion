@@ -1,5 +1,6 @@
 package al.ahgitdevelopment.municion.ui.forms
 
+import al.ahgitdevelopment.municion.R
 import android.app.DatePickerDialog
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -32,6 +33,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
@@ -83,16 +85,19 @@ fun TiradaFormContent(
     var descripcionError by remember { mutableStateOf<String?>(null) }
     var fechaError by remember { mutableStateOf<String?>(null) }
 
+    // Strings para validaciones (capturadas para uso en lambda)
+    val errorFieldRequired = stringResource(R.string.error_field_required)
+
     // Funcion de guardado
     val saveFunction: () -> Unit = {
         // Validaciones
         var isValid = true
         if (descripcion.isBlank()) {
-            descripcionError = "Campo obligatorio"
+            descripcionError = errorFieldRequired
             isValid = false
         }
         if (fecha.isBlank()) {
-            fechaError = "Campo obligatorio"
+            fechaError = errorFieldRequired
             isValid = false
         }
 
@@ -213,8 +218,8 @@ fun TiradaFormFields(
         OutlinedTextField(
             value = descripcion,
             onValueChange = onDescripcionChange,
-            label = { Text("Descripcion") },
-            placeholder = { Text("Ej: Practica semanal") },
+            label = { Text(stringResource(R.string.label_description)) },
+            placeholder = { Text(stringResource(R.string.placeholder_weekly_practice)) },
             isError = descripcionError != null,
             supportingText = descripcionError?.let { { Text(it) } },
             modifier = Modifier.fillMaxWidth(),
@@ -226,8 +231,8 @@ fun TiradaFormFields(
         OutlinedTextField(
             value = rango,
             onValueChange = onRangoChange,
-            label = { Text("Lugar / Galeria") },
-            placeholder = { Text("Ej: Galeria Municipal") },
+            label = { Text(stringResource(R.string.label_range_gallery)) },
+            placeholder = { Text(stringResource(R.string.placeholder_municipal_gallery)) },
             modifier = Modifier.fillMaxWidth(),
             singleLine = true,
             keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences)
@@ -237,7 +242,7 @@ fun TiradaFormFields(
         OutlinedTextField(
             value = fecha,
             onValueChange = {},
-            label = { Text("Fecha") },
+            label = { Text(stringResource(R.string.fecha)) },
             isError = fechaError != null,
             supportingText = fechaError?.let { { Text(it) } },
             modifier = Modifier
@@ -247,7 +252,7 @@ fun TiradaFormFields(
             singleLine = true,
             trailingIcon = {
                 IconButton(onClick = { datePickerDialog.show() }) {
-                    Icon(Icons.Default.CalendarToday, contentDescription = "Seleccionar fecha")
+                    Icon(Icons.Default.CalendarToday, contentDescription = stringResource(R.string.action_select_date))
                 }
             }
         )
@@ -255,7 +260,7 @@ fun TiradaFormFields(
         // Puntuacion
         Column(modifier = Modifier.fillMaxWidth()) {
             Text(
-                text = "Puntuacion: ${puntuacion.toInt()} / 600",
+                text = stringResource(R.string.info_score_display, puntuacion.toInt()),
                 style = MaterialTheme.typography.bodyLarge
             )
             Spacer(modifier = Modifier.height(8.dp))
@@ -279,11 +284,11 @@ fun TiradaFormFields(
                     onPuntuacionChange(0f)
                 }
             },
-            label = { Text("Puntuacion exacta") },
+            label = { Text(stringResource(R.string.label_exact_score)) },
             modifier = Modifier.fillMaxWidth(),
             singleLine = true,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-            supportingText = { Text("Valor entre 0 y 600") }
+            supportingText = { Text(stringResource(R.string.hint_score_range)) }
         )
 
         Spacer(modifier = Modifier.height(80.dp))
