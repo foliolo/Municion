@@ -23,7 +23,7 @@ import kotlin.reflect.KClass
  * @since v3.3.0 (NavType Architecture Migration)
  */
 abstract class BaseNavType<T : Parcelable>(
-    isNullableAllowed: Boolean = false,
+    isNullableAllowed: Boolean = true,
     private val serializer: KSerializer<T>,
     private val type: KClass<T>
 ) : NavType<T>(isNullableAllowed) {
@@ -40,9 +40,14 @@ abstract class BaseNavType<T : Parcelable>(
     }
 
     /**
-     * Serializa objeto T a String JSON para navegación
+     * Serializa objeto T a String JSON para navegación.
+     * Soporta valores null cuando isNullableAllowed = true.
      */
     override fun serializeAsValue(value: T): String {
+        // Handle null values for nullable NavTypes
+        @Suppress("UNCHECKED_CAST")
+        val nullableValue = value as T? ?: return "null"
+
         return try {
             json.encodeToString(serializer, value)
         } catch (e: SerializationException) {
@@ -59,10 +64,17 @@ abstract class BaseNavType<T : Parcelable>(
     }
 
     /**
-     * Parsea String JSON a objeto T
-     * Con validación y error handling robusto
+     * Parsea String JSON a objeto T.
+     * Con validación y error handling robusto.
+     * Soporta string "null" cuando isNullableAllowed = true.
      */
     override fun parseValue(value: String): T {
+        // Handle "null" string for nullable NavTypes
+        if (value == "null") {
+            @Suppress("UNCHECKED_CAST")
+            return null as T
+        }
+
         return try {
             val parsed = json.decodeFromString(serializer, value)
 
