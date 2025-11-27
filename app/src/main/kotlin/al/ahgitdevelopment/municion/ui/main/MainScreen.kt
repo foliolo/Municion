@@ -2,6 +2,7 @@ package al.ahgitdevelopment.municion.ui.main
 
 import al.ahgitdevelopment.municion.R
 import al.ahgitdevelopment.municion.Utils
+import al.ahgitdevelopment.municion.auth.AuthViewModel
 import al.ahgitdevelopment.municion.ui.components.MunicionBottomBar
 import al.ahgitdevelopment.municion.ui.components.MunicionFAB
 import al.ahgitdevelopment.municion.ui.components.MunicionTopBar
@@ -13,7 +14,10 @@ import al.ahgitdevelopment.municion.ui.navigation.GuiaForm
 import al.ahgitdevelopment.municion.ui.navigation.Guias
 import al.ahgitdevelopment.municion.ui.navigation.LicenciaForm
 import al.ahgitdevelopment.municion.ui.navigation.Licencias
+import al.ahgitdevelopment.municion.ui.navigation.Login
+import al.ahgitdevelopment.municion.ui.navigation.Migration
 import al.ahgitdevelopment.municion.ui.navigation.MunicionNavHost
+import al.ahgitdevelopment.municion.ui.navigation.Route
 import al.ahgitdevelopment.municion.ui.navigation.Settings
 import al.ahgitdevelopment.municion.ui.navigation.TiradaForm
 import al.ahgitdevelopment.municion.ui.navigation.Tiradas
@@ -47,25 +51,42 @@ import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.launch
 
 /**
- * Pantalla principal de la aplicación Munición.
+ * Pantalla principal de la aplicacion Municion.
  *
- * Arquitectura de Scaffold único siguiendo las mejores prácticas de Google:
- * - Un solo Scaffold con TopBar, BottomBar y FAB dinámicos
+ * Arquitectura de Scaffold unico siguiendo las mejores practicas de Google:
+ * - Un solo Scaffold con TopBar, BottomBar y FAB dinamicos
  * - Pantallas hijas sin Scaffold (solo contenido)
  * - Visibilidad condicional basada en la ruta actual
  *
- * @param navController Controlador de navegación
- * @param viewModel ViewModel principal (sincronización, auth)
- * @param guiaViewModel ViewModel de guías (para diálogos de selección)
+ * v3.4.0: Auth Simplification
+ * - authState determina startDestination (Login, Migration, Licencias)
+ * - onAuthStateChange callback para refrescar estado despues de login/migracion
+ *
+ * @param navController Controlador de navegacion
+ * @param viewModel ViewModel principal (sincronizacion, auth)
+ * @param guiaViewModel ViewModel de guias (para dialogos de seleccion)
+ * @param authState Estado de autenticacion actual
+ * @param onAuthStateChange Callback para refrescar estado de auth
  *
  * @since v3.0.0 (Compose Migration - Single Scaffold Architecture)
+ * @updated v3.4.0 (Auth Simplification)
  */
 @Composable
 fun MainScreen(
     navController: NavHostController = rememberNavController(),
     viewModel: MainViewModel = hiltViewModel(),
-    guiaViewModel: GuiaViewModel = hiltViewModel()
+    guiaViewModel: GuiaViewModel = hiltViewModel(),
+    authState: AuthViewModel.AuthState = AuthViewModel.AuthState.Loading,
+    onAuthStateChange: () -> Unit = {}
 ) {
+    // Calcular startDestination basado en authState
+    val startDestination: Route = when (authState) {
+        is AuthViewModel.AuthState.Loading -> Licencias // Temporal, se actualizara
+        is AuthViewModel.AuthState.NotAuthenticated -> Login
+        is AuthViewModel.AuthState.RequiresMigration -> Migration
+        is AuthViewModel.AuthState.Authenticated -> Licencias
+        is AuthViewModel.AuthState.Error -> Login
+    }
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val syncState by viewModel.syncState.collectAsStateWithLifecycle()
@@ -87,9 +108,12 @@ fun MainScreen(
     val guias by guiaViewModel.guias.collectAsStateWithLifecycle()
 
     // Determinar visibilidad de componentes
-    val showBottomBar = currentRoute in listScreenRoutes
-    val showFab = currentRoute in fabScreenRoutes ||
-            (currentRoute?.contains("Form") == true && formSaveCallback != null)
+    // Ocultar en pantallas de auth (Login, Migration)
+    val isAuthScreen = currentRoute in authScreenRoutes
+    val showTopBar = !isAuthScreen
+    val showBottomBar = currentRoute in listScreenRoutes && !isAuthScreen
+    val showFab = (currentRoute in fabScreenRoutes ||
+            (currentRoute?.contains("Form") == true && formSaveCallback != null)) && !isAuthScreen
 
     // Dialog de selección de licencia (para crear guía)
     if (showLicenciaDialog) {
@@ -152,24 +176,26 @@ fun MainScreen(
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
-            MunicionTopBar(
-                currentRoute = currentRoute,
-                syncState = syncState,
-                onSyncClick = { viewModel.syncFromFirebase() },
-                onSettingsClick = { navController.navigateSafely(Settings) },
-                onBackClick = { navController.popBackStack() },
-                onScoreTableClick = {
-                    try {
-                        val bitmap = BitmapFactory.decodeResource(context.resources, R.drawable.image_table)
-                        Utils.showImage(context, bitmap, "score_table")
-                    } catch (ex: Exception) {
-                        Log.e("MainScreen", "Error mostrando la tabla de tiradas", ex)
-                        scope.launch {
-                            snackbarHostState.showSnackbar("Error al mostrar la tabla de puntuaciones")
+            if (showTopBar) {
+                MunicionTopBar(
+                    currentRoute = currentRoute,
+                    syncState = syncState,
+                    onSyncClick = { viewModel.syncFromFirebase() },
+                    onSettingsClick = { navController.navigateSafely(Settings) },
+                    onBackClick = { navController.popBackStack() },
+                    onScoreTableClick = {
+                        try {
+                            val bitmap = BitmapFactory.decodeResource(context.resources, R.drawable.image_table)
+                            Utils.showImage(context, bitmap, "score_table")
+                        } catch (ex: Exception) {
+                            Log.e("MainScreen", "Error mostrando la tabla de tiradas", ex)
+                            scope.launch {
+                                snackbarHostState.showSnackbar("Error al mostrar la tabla de puntuaciones")
+                            }
                         }
                     }
-                }
-            )
+                )
+            }
         },
         bottomBar = {
             AnimatedVisibility(
@@ -216,10 +242,20 @@ fun MainScreen(
             navController = navController,
             innerPadding = innerPadding,
             snackbarHostState = snackbarHostState,
-            onRegisterSaveCallback = { callback -> formSaveCallback = callback }
+            onRegisterSaveCallback = { callback -> formSaveCallback = callback },
+            startDestination = startDestination,
+            onAuthStateChange = onAuthStateChange
         )
     }
 }
+
+/**
+ * Rutas de pantallas de autenticacion (sin TopBar, BottomBar, FAB).
+ */
+private val authScreenRoutes = setOf(
+    Login::class.qualifiedName,
+    Migration::class.qualifiedName
+)
 
 /**
  * Rutas de pantallas de lista (tabs principales).
@@ -232,6 +268,6 @@ private val listScreenRoutes = setOf(
 )
 
 /**
- * Rutas que muestran FAB de añadir.
+ * Rutas que muestran FAB de anadir.
  */
 private val fabScreenRoutes = listScreenRoutes

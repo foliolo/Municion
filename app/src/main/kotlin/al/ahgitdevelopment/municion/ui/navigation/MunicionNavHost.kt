@@ -11,6 +11,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
 import al.ahgitdevelopment.municion.ui.navigation.navtypes.municionTypeMap
+import al.ahgitdevelopment.municion.ui.auth.LoginScreen
+import al.ahgitdevelopment.municion.ui.auth.MigrationScreen
 import al.ahgitdevelopment.municion.ui.compras.ComprasContent
 import al.ahgitdevelopment.municion.ui.forms.CompraFormContent
 import al.ahgitdevelopment.municion.ui.forms.GuiaFormContent
@@ -22,20 +24,27 @@ import al.ahgitdevelopment.municion.ui.settings.AccountSettingsContent
 import al.ahgitdevelopment.municion.ui.tiradas.TiradasContent
 
 /**
- * NavHost principal de la aplicación Munición.
+ * NavHost principal de la aplicacion Municion.
  *
- * Arquitectura de Scaffold único:
+ * Arquitectura de Scaffold unico:
  * - Las pantallas NO tienen Scaffold propio (solo contenido)
- * - TopBar, BottomBar y FAB están en MainScreen
+ * - TopBar, BottomBar y FAB estan en MainScreen
  * - Las pantallas reciben callbacks para registrar funciones de guardado
  *
- * @param navController Controlador de navegación
+ * v3.4.0: Auth Simplification
+ * - startDestination determinado por AuthState (Login, Migration, Licencias)
+ * - onAuthStateChange callback para refrescar auth despues de login/migracion
+ *
+ * @param navController Controlador de navegacion
  * @param innerPadding Padding del Scaffold padre
  * @param snackbarHostState Estado del snackbar compartido
- * @param onRegisterSaveCallback Callback para registrar función de guardado de formularios
+ * @param onRegisterSaveCallback Callback para registrar funcion de guardado de formularios
+ * @param startDestination Ruta inicial basada en AuthState
+ * @param onAuthStateChange Callback para refrescar estado de auth
  * @param modifier Modificador opcional
  *
  * @since v3.0.0 (Compose Migration - Single Scaffold Architecture)
+ * @updated v3.4.0 (Auth Simplification)
  */
 @Composable
 fun MunicionNavHost(
@@ -43,14 +52,42 @@ fun MunicionNavHost(
     innerPadding: PaddingValues,
     snackbarHostState: SnackbarHostState,
     onRegisterSaveCallback: ((() -> Unit)?) -> Unit,
+    startDestination: Route = Licencias,
+    onAuthStateChange: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     NavHost(
         navController = navController,
-        startDestination = Licencias,
+        startDestination = startDestination,
         modifier = modifier.padding(innerPadding),
         typeMap = municionTypeMap  // ← Type-safe serialization
     ) {
+        // ========== AUTENTICACIÓN ==========
+
+        composable<Login> {
+            onRegisterSaveCallback(null)
+            LoginScreen(
+                onLoginSuccess = {
+                    onAuthStateChange() // Refresh auth state
+                    navController.navigate(Licencias) {
+                        popUpTo(Login) { inclusive = true }
+                    }
+                }
+            )
+        }
+
+        composable<Migration> {
+            onRegisterSaveCallback(null)
+            MigrationScreen(
+                onMigrationSuccess = {
+                    onAuthStateChange() // Refresh auth state
+                    navController.navigate(Licencias) {
+                        popUpTo(Migration) { inclusive = true }
+                    }
+                }
+            )
+        }
+
         // ========== TABS PRINCIPALES ==========
 
         composable<Licencias> {

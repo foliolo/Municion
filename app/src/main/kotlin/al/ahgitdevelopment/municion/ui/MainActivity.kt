@@ -1,11 +1,10 @@
 package al.ahgitdevelopment.municion.ui
 
-import al.ahgitdevelopment.municion.auth.LoginActivity
+import al.ahgitdevelopment.municion.auth.AuthViewModel
 import al.ahgitdevelopment.municion.ui.main.MainScreen
 import al.ahgitdevelopment.municion.ui.theme.MunicionTheme
 import al.ahgitdevelopment.municion.ui.viewmodel.MainViewModel
 import android.Manifest
-import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -27,11 +26,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -43,26 +38,20 @@ import javax.inject.Inject
 /**
  * MainActivity con Jetpack Compose.
  *
- * FASE 5: Migración completa a Compose
- * - ComponentActivity base
- * - setContent con Compose
- * - MunicionTheme
- * - MainScreen como UI principal
- * - Hilt DI
- *
- * Reemplaza la versión anterior con ViewBinding y Navigation Component Fragments.
+ * v3.4.0: Auth Simplification
+ * - LoginActivity eliminado, auth se maneja en NavHost
+ * - AuthViewModel determina startDestination (Login, Migration, o Licencias)
+ * - MainScreen contiene NavHost con todas las rutas
  *
  * @since v3.0.0 (Compose Migration)
+ * @updated v3.4.0 (Auth Simplification)
  */
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
     // ViewModels inyectados
     private val mainViewModel: MainViewModel by viewModels()
-
-    // Firebase inyectado con Hilt
-    @Inject
-    lateinit var firebaseAuth: FirebaseAuth
+    private val authViewModel: AuthViewModel by viewModels()
 
     @Inject
     lateinit var crashlytics: FirebaseCrashlytics
@@ -78,9 +67,6 @@ class MainActivity : ComponentActivity() {
     private val _permissionResult = MutableSharedFlow<Boolean>(replay = 0, extraBufferCapacity = 1)
     private val permissionResult: SharedFlow<Boolean> = _permissionResult.asSharedFlow()
 
-    // Track if calendar permission was already requested this session
-    private var calendarPermissionRequested = false
-
     override fun onCreate(savedInstanceState: Bundle?) {
         // Edge-to-edge con iconos claros (blancos) en status bar y navigation bar
         // porque TopBar y BottomBar usan PrimaryDark (fondo oscuro)
@@ -90,12 +76,10 @@ class MainActivity : ComponentActivity() {
         )
         super.onCreate(savedInstanceState)
 
-        // Observe auth state for navigation to login
-        observeAuthState()
-
         setContent {
             MunicionTheme {
                 MunicionApp(
+                    authViewModel = authViewModel,
                     mainViewModel = mainViewModel,
                     permissionResult = permissionResult,
                     onRequestCalendarPermission = ::requestCalendarPermission,
@@ -104,42 +88,6 @@ class MainActivity : ComponentActivity() {
                 )
             }
         }
-    }
-
-    /**
-     * Observe auth state to navigate to LoginActivity when unauthenticated.
-     * This runs in lifecycleScope and handles navigation outside of Compose.
-     */
-    private fun observeAuthState() {
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                mainViewModel.uiState.collect { state ->
-                    when (state) {
-                        is MainViewModel.MainUiState.Authenticated -> {
-                            // Request calendar permission once per session
-                            if (!calendarPermissionRequested) {
-                                calendarPermissionRequested = true
-                                // Sync is triggered in MainScreen via LaunchedEffect
-                            }
-                        }
-
-                        is MainViewModel.MainUiState.Unauthenticated -> {
-                            navigateToLogin()
-                        }
-
-                        is MainViewModel.MainUiState.Loading -> {
-                            // Do nothing, waiting for auth state
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    private fun navigateToLogin() {
-        firebaseAuth.signOut()
-        startActivity(Intent(this, LoginActivity::class.java))
-        finish()
     }
 
     private fun isCalendarPermissionGranted(): Boolean {
@@ -159,24 +107,26 @@ class MainActivity : ComponentActivity() {
 }
 
 /**
- * Composable principal de la aplicación.
+ * Composable principal de la aplicacion.
  *
  * Maneja:
- * - Estado de autenticación
+ * - Estado de autenticacion (Login, Migration, Authenticated)
  * - Solicitud de permisos de calendario
- * - Visualización de MainScreen cuando está autenticado
+ * - Visualizacion de MainScreen cuando esta autenticado
  *
  * @since v3.0.0 (Compose Migration)
+ * @updated v3.4.0 (Auth Simplification)
  */
 @Composable
 fun MunicionApp(
+    authViewModel: AuthViewModel,
     mainViewModel: MainViewModel,
     permissionResult: SharedFlow<Boolean>,
     onRequestCalendarPermission: () -> Unit,
     onShowCalendarRationale: () -> Boolean,
     calendarPermissionGranted: Boolean
 ) {
-    val uiState by mainViewModel.uiState.collectAsStateWithLifecycle()
+    val authState by authViewModel.authState.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
 
@@ -197,8 +147,8 @@ fun MunicionApp(
     }
 
     // Request calendar permission when authenticated
-    LaunchedEffect(uiState) {
-        if (uiState is MainViewModel.MainUiState.Authenticated && !permissionRequestedThisSession) {
+    LaunchedEffect(authState) {
+        if (authState is AuthViewModel.AuthState.Authenticated && !permissionRequestedThisSession) {
             permissionRequestedThisSession = true
             if (!calendarPermissionGranted) {
                 if (onShowCalendarRationale()) {
@@ -231,21 +181,16 @@ fun MunicionApp(
         )
     }
 
-    // Main content
-    when (uiState) {
-        is MainViewModel.MainUiState.Loading -> {
-            // Could show loading indicator, but MainScreen handles this too
-        }
-
-        is MainViewModel.MainUiState.Authenticated,
-        is MainViewModel.MainUiState.Unauthenticated -> {
-            MainScreen(viewModel = mainViewModel)
-        }
-    }
+    // Main content - auth state determines startDestination in MainScreen
+    MainScreen(
+        viewModel = mainViewModel,
+        authState = authState,
+        onAuthStateChange = { authViewModel.checkAuthState() }
+    )
 }
 
 /**
- * Dialog para explicar por qué se necesita el permiso de calendario.
+ * Dialog para explicar por que se necesita el permiso de calendario.
  *
  * @since v3.0.0 (Compose Migration)
  */

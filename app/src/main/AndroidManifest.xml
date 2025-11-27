@@ -42,12 +42,12 @@
 <!--            android:name=".FragmentMainActivity"-->
 <!--            android:label="@string/title_activity_fragment_main" />-->
 
-        <!-- New modern LoginActivity (v3.0.0) -->
+        <!-- MainActivity (v3.4.0 - Auth Simplification) -->
+        <!-- LoginActivity eliminado - auth ahora se maneja en NavHost -->
         <activity
-            android:name=".auth.LoginActivity"
+            android:name=".ui.MainActivity"
             android:exported="true"
-            android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateVisible">
+            android:label="@string/title_activity_fragment_main">
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -56,12 +56,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <!-- New modern MainActivity (v3.0.0) -->
-        <activity
-            android:name=".ui.MainActivity"
-            android:exported="false"
-            android:label="@string/title_activity_fragment_main" />
         <activity
             android:name=".forms.GuiaFormActivity"
             android:label="@string/title_nueva_guia"

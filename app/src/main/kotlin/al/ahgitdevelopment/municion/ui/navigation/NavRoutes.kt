@@ -16,6 +16,26 @@ import kotlinx.serialization.Serializable
  */
 sealed interface Route
 
+// ========== AUTENTICACIÓN ==========
+
+/**
+ * Pantalla de Login/Registro.
+ * Primera pantalla para usuarios no autenticados.
+ *
+ * @since v3.4.0 (Auth Simplification)
+ */
+@Serializable
+data object Login : Route
+
+/**
+ * Pantalla de Migración obligatoria.
+ * Para usuarios anónimos existentes que deben vincular su cuenta.
+ *
+ * @since v3.4.0 (Auth Simplification)
+ */
+@Serializable
+data object Migration : Route
+
 // ========== TABS PRINCIPALES ==========
 @Serializable
 data object Licencias : Route

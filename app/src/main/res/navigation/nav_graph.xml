@@ -29,11 +29,6 @@
         android:label="@string/section_competiciones_title"
         tools:layout="@layout/fragment_tiradas" />
 
-    <!-- Account Settings Fragment -->
-    <fragment
-        android:id="@+id/accountSettingsFragment"
-        android:name="al.ahgitdevelopment.municion.ui.settings.AccountSettingsFragment"
-        android:label="@string/account_settings_title"
-        tools:layout="@layout/fragment_account_settings" />
+    <!-- AccountSettingsFragment removed in v3.4.0 - now using Compose -->
 
 </navigation>
