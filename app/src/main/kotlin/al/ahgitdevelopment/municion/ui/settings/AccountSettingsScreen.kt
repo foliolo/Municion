@@ -1,5 +1,7 @@
 package al.ahgitdevelopment.municion.ui.settings
 
+import al.ahgitdevelopment.municion.ui.components.TutorialDialog
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -9,9 +11,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
+import androidx.compose.material.icons.automirrored.filled.Help
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Email
@@ -75,6 +80,7 @@ fun AccountSettingsContent(
     var showLinkEmailDialog by remember { mutableStateOf(false) }
     var showSignOutDialog by remember { mutableStateOf(false) }
     var showChangePinDialog by remember { mutableStateOf(false) }
+    var showTutorialDialog by remember { mutableStateOf(false) }
 
     // Mostrar mensajes de linkingState
     LaunchedEffect(linkingState) {
@@ -133,6 +139,13 @@ fun AccountSettingsContent(
         )
     }
 
+    // Dialog tutorial
+    if (showTutorialDialog) {
+        TutorialDialog(
+            onDismiss = { showTutorialDialog = false }
+        )
+    }
+
     AccountSettingsFields(
         uiState = uiState,
         linkingState = linkingState,
@@ -140,6 +153,7 @@ fun AccountSettingsContent(
         onLinkGoogleClick = { /* TODO: Implementar Google Sign-In */ },
         onBiometricChange = { viewModel.setBiometricEnabled(it) },
         onChangePinClick = { showChangePinDialog = true },
+        onShowTutorialClick = { showTutorialDialog = true },
         onSignOutClick = { showSignOutDialog = true }
     )
 }
@@ -159,6 +173,7 @@ fun AccountSettingsFields(
     onLinkGoogleClick: () -> Unit,
     onBiometricChange: (Boolean) -> Unit,
     onChangePinClick: () -> Unit,
+    onShowTutorialClick: () -> Unit,
     onSignOutClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -206,6 +221,7 @@ fun AccountSettingsFields(
                 onLinkGoogleClick = onLinkGoogleClick,
                 onBiometricChange = onBiometricChange,
                 onChangePinClick = onChangePinClick,
+                onShowTutorialClick = onShowTutorialClick,
                 onSignOutClick = onSignOutClick,
                 modifier = modifier.fillMaxSize()
             )
@@ -222,6 +238,7 @@ private fun LoadedContent(
     onLinkGoogleClick: () -> Unit,
     onBiometricChange: (Boolean) -> Unit,
     onChangePinClick: () -> Unit,
+    onShowTutorialClick: () -> Unit,
     onSignOutClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -411,6 +428,48 @@ private fun LoadedContent(
             }
         }
 
+        // Tutorial
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable { onShowTutorialClick() }
+                    .padding(16.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Icon(
+                        Icons.AutoMirrored.Filled.Help,
+                        contentDescription = null,
+                        modifier = Modifier.size(24.dp)
+                    )
+                    Column {
+                        Text(
+                            text = "Tutorial",
+                            style = MaterialTheme.typography.titleMedium
+                        )
+                        Text(
+                            text = "Aprende a usar la aplicacion",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+                        )
+                    }
+                }
+                Icon(
+                    Icons.AutoMirrored.Filled.ArrowForward,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.outline
+                )
+            }
+        }
+
         // Cerrar sesion
         Spacer(modifier = Modifier.height(16.dp))
         Button(
@@ -592,6 +651,7 @@ private fun AccountSettingsFieldsPreview() {
             onLinkGoogleClick = {},
             onBiometricChange = {},
             onChangePinClick = {},
+            onShowTutorialClick = {},
             onSignOutClick = {}
         )
     }
