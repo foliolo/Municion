@@ -56,10 +56,8 @@ import java.util.Locale
  * NO contiene Scaffold, TopBar ni FAB - estos estan en MainScreen.
  * Registra su funcion de guardado con MainScreen mediante onRegisterSaveCallback.
  *
- * @param guiaId ID de la guia asociada
- * @param compraId ID de compra a editar (null para nueva)
- * @param cupoDisponible Cupo disponible para esta guia
- * @param cupoTotal Cupo total de la guia
+ * @param compra Objeto completo para editar (null para nueva)
+ * @param guia Guia asociada (siempre necesaria para validacion de cupo y calibres)
  * @param navController Controlador de navegacion
  * @param snackbarHostState Estado del snackbar compartido desde MainScreen
  * @param onRegisterSaveCallback Callback para registrar funcion de guardado con MainScreen
@@ -69,36 +67,33 @@ import java.util.Locale
  */
 @Composable
 fun CompraFormContent(
-    guiaId: Int,
-    compraId: Int?,
-    cupoDisponible: Int,
-    cupoTotal: Int,
+    compra: Compra?,
+    guia: al.ahgitdevelopment.municion.data.local.room.entities.Guia,
     navController: NavHostController,
     snackbarHostState: SnackbarHostState,
     onRegisterSaveCallback: ((() -> Unit)?) -> Unit,
     viewModel: CompraViewModel = hiltViewModel()
 ) {
-    val compras by viewModel.compras.collectAsStateWithLifecycle()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    val isEditing = compraId != null
+    val isEditing = compra != null
 
-    // Cargar compra existente si estamos editando
-    val existingCompra = remember(compraId, compras) {
-        compraId?.let { id -> compras.find { it.id == id } }
-    }
+    // Extraer info de cupo desde el objeto guia
+    val cupoDisponible = guia.disponible()
+    val cupoTotal = guia.cupo
 
-    // Form state
-    var calibre1 by rememberSaveable { mutableStateOf(existingCompra?.calibre1 ?: "") }
-    var calibre2 by rememberSaveable { mutableStateOf(existingCompra?.calibre2 ?: "") }
-    var showCalibre2 by rememberSaveable { mutableStateOf(!existingCompra?.calibre2.isNullOrBlank()) }
-    var unidades by rememberSaveable { mutableStateOf(existingCompra?.unidades?.toString() ?: "") }
-    var precio by rememberSaveable { mutableStateOf(existingCompra?.precio?.toString() ?: "") }
-    var fecha by rememberSaveable { mutableStateOf(existingCompra?.fecha ?: getCurrentDate()) }
-    var tipo by rememberSaveable { mutableStateOf(existingCompra?.tipo ?: "") }
-    var peso by rememberSaveable { mutableStateOf(existingCompra?.peso?.toString() ?: "") }
-    var marca by rememberSaveable { mutableStateOf(existingCompra?.marca ?: "") }
-    var tienda by rememberSaveable { mutableStateOf(existingCompra?.tienda ?: "") }
+    // Form state - inicializar directamente desde el objeto
+    // Si es nueva, calibre1 se inicializa con el calibre de la guia
+    var calibre1 by rememberSaveable { mutableStateOf(compra?.calibre1 ?: guia.calibre1) }
+    var calibre2 by rememberSaveable { mutableStateOf(compra?.calibre2 ?: "") }
+    var showCalibre2 by rememberSaveable { mutableStateOf(!compra?.calibre2.isNullOrBlank()) }
+    var unidades by rememberSaveable { mutableStateOf(compra?.unidades?.toString() ?: "") }
+    var precio by rememberSaveable { mutableStateOf(compra?.precio?.toString() ?: "") }
+    var fecha by rememberSaveable { mutableStateOf(compra?.fecha ?: getCurrentDate()) }
+    var tipo by rememberSaveable { mutableStateOf(compra?.tipo ?: "") }
+    var peso by rememberSaveable { mutableStateOf(compra?.peso?.toString() ?: "") }
+    var marca by rememberSaveable { mutableStateOf(compra?.marca ?: "") }
+    var tienda by rememberSaveable { mutableStateOf(compra?.tienda ?: "") }
 
     // Error states
     var calibre1Error by remember { mutableStateOf<String?>(null) }
@@ -145,9 +140,9 @@ fun CompraFormContent(
         }
 
         if (isValid) {
-            val compra = Compra(
-                id = compraId ?: 0,
-                idPosGuia = guiaId,
+            val compraToSave = Compra(
+                id = compra?.id ?: 0,
+                idPosGuia = guia.id,
                 calibre1 = calibre1,
                 calibre2 = if (showCalibre2) calibre2 else null,
                 unidades = unidades.toInt(),
@@ -159,9 +154,9 @@ fun CompraFormContent(
                 tienda = tienda
             )
             if (isEditing) {
-                viewModel.updateCompra(compra)
+                viewModel.updateCompra(compraToSave)
             } else {
-                viewModel.createCompra(compra)
+                viewModel.createCompra(compraToSave)
             }
         }
     }

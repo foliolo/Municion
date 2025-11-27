@@ -21,7 +21,9 @@ import androidx.navigation.NavHostController
 import al.ahgitdevelopment.municion.data.local.room.entities.Compra
 import al.ahgitdevelopment.municion.ui.components.DeleteConfirmationDialog
 import al.ahgitdevelopment.municion.ui.components.EmptyState
-import al.ahgitdevelopment.municion.ui.navigation.Routes
+import al.ahgitdevelopment.municion.ui.navigation.CompraForm
+import al.ahgitdevelopment.municion.ui.navigation.Route
+import al.ahgitdevelopment.municion.ui.navigation.navtypes.navigateSafely
 import al.ahgitdevelopment.municion.ui.theme.MunicionTheme
 import al.ahgitdevelopment.municion.ui.viewmodel.CompraViewModel
 import al.ahgitdevelopment.municion.ui.viewmodel.GuiaViewModel
@@ -91,12 +93,12 @@ fun ComprasContent(
         onItemLongClick = { compra ->
             val guia = guias.find { it.id == compra.idPosGuia }
             guia?.let { g ->
-                navController.navigate(
-                    Routes.compraForm(
-                        guiaId = g.id,
-                        cupoDisponible = g.disponible() + compra.unidades,
-                        cupoTotal = g.cupo,
-                        compraId = compra.id
+                // Restaurar cupo para edicion: guia actual + unidades de esta compra
+                val guiaConCupoRestaurado = g.copy(gastado = g.gastado - compra.unidades)
+                navController.navigateSafely(
+                    CompraForm(
+                        compra = compra,
+                        guia = guiaConCupoRestaurado
                     )
                 )
             }

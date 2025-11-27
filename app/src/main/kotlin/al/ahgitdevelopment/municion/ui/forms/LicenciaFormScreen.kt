@@ -56,7 +56,7 @@ import java.util.Locale
  * NO contiene Scaffold, TopBar ni FAB - estos están en MainScreen.
  * Registra su función de guardado con MainScreen mediante onRegisterSaveCallback.
  *
- * @param licenciaId ID de licencia a editar (null para nueva)
+ * @param licencia Objeto completo para editar (null para nueva)
  * @param navController Controlador de navegación
  * @param snackbarHostState Estado del snackbar compartido desde MainScreen
  * @param onRegisterSaveCallback Callback para registrar función de guardado con MainScreen
@@ -66,35 +66,29 @@ import java.util.Locale
  */
 @Composable
 fun LicenciaFormContent(
-    licenciaId: Int?,
+    licencia: Licencia?,
     navController: NavHostController,
     snackbarHostState: SnackbarHostState,
     onRegisterSaveCallback: ((() -> Unit)?) -> Unit,
     viewModel: LicenciaViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
-    val licencias by viewModel.licencias.collectAsStateWithLifecycle()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    val isEditing = licenciaId != null
+    val isEditing = licencia != null
 
-    // Cargar licencia existente si estamos editando
-    val existingLicencia = remember(licenciaId, licencias) {
-        licenciaId?.let { id -> licencias.find { it.id == id } }
-    }
-
-    // Form state
-    var tipoLicencia by rememberSaveable { mutableIntStateOf(existingLicencia?.tipo ?: 0) }
-    var numLicencia by rememberSaveable { mutableStateOf(existingLicencia?.numLicencia ?: "") }
-    var fechaExpedicion by rememberSaveable { mutableStateOf(existingLicencia?.fechaExpedicion ?: "") }
-    var fechaCaducidad by rememberSaveable { mutableStateOf(existingLicencia?.fechaCaducidad ?: "") }
-    var numAbonado by rememberSaveable { mutableStateOf(existingLicencia?.numAbonado?.takeIf { it >= 0 }?.toString() ?: "") }
-    var numSeguro by rememberSaveable { mutableStateOf(existingLicencia?.numSeguro ?: "") }
-    var autonomia by rememberSaveable { mutableIntStateOf(existingLicencia?.autonomia?.takeIf { it >= 0 } ?: 0) }
-    var tipoPermisoConducir by rememberSaveable { mutableIntStateOf(existingLicencia?.tipoPermisoConduccion?.takeIf { it >= 0 } ?: 0) }
-    var edad by rememberSaveable { mutableStateOf(existingLicencia?.edad?.toString() ?: "") }
-    var escala by rememberSaveable { mutableIntStateOf(existingLicencia?.escala?.takeIf { it >= 0 } ?: 0) }
-    var categoria by rememberSaveable { mutableIntStateOf(existingLicencia?.categoria?.takeIf { it >= 0 } ?: 0) }
+    // Form state - inicializar directamente desde el objeto
+    var tipoLicencia by rememberSaveable { mutableIntStateOf(licencia?.tipo ?: 0) }
+    var numLicencia by rememberSaveable { mutableStateOf(licencia?.numLicencia ?: "") }
+    var fechaExpedicion by rememberSaveable { mutableStateOf(licencia?.fechaExpedicion ?: "") }
+    var fechaCaducidad by rememberSaveable { mutableStateOf(licencia?.fechaCaducidad ?: "") }
+    var numAbonado by rememberSaveable { mutableStateOf(licencia?.numAbonado?.takeIf { it >= 0 }?.toString() ?: "") }
+    var numSeguro by rememberSaveable { mutableStateOf(licencia?.numSeguro ?: "") }
+    var autonomia by rememberSaveable { mutableIntStateOf(licencia?.autonomia?.takeIf { it >= 0 } ?: 0) }
+    var tipoPermisoConducir by rememberSaveable { mutableIntStateOf(licencia?.tipoPermisoConduccion?.takeIf { it >= 0 } ?: 0) }
+    var edad by rememberSaveable { mutableStateOf(licencia?.edad?.toString() ?: "") }
+    var escala by rememberSaveable { mutableIntStateOf(licencia?.escala?.takeIf { it >= 0 } ?: 0) }
+    var categoria by rememberSaveable { mutableIntStateOf(licencia?.categoria?.takeIf { it >= 0 } ?: 0) }
 
     // Error states
     var numLicenciaError by remember { mutableStateOf<String?>(null) }
@@ -141,8 +135,8 @@ fun LicenciaFormContent(
         }
 
         if (isValid) {
-            val licencia = Licencia(
-                id = licenciaId ?: 0,
+            val licenciaToSave = Licencia(
+                id = licencia?.id ?: 0,
                 tipo = tipoLicencia,
                 nombre = tiposLicencia.getOrNull(tipoLicencia),
                 tipoPermisoConduccion = if (showPermisoConducir) tipoPermisoConducir else -1,
@@ -157,9 +151,9 @@ fun LicenciaFormContent(
                 categoria = if (showCategoria) categoria else -1
             )
             if (isEditing) {
-                viewModel.updateLicencia(licencia)
+                viewModel.updateLicencia(licenciaToSave)
             } else {
-                viewModel.saveLicencia(licencia)
+                viewModel.saveLicencia(licenciaToSave)
             }
         }
     }

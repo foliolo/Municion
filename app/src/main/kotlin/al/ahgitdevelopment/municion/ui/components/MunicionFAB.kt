@@ -1,5 +1,8 @@
 package al.ahgitdevelopment.municion.ui.components
 
+import al.ahgitdevelopment.municion.ui.navigation.Compras
+import al.ahgitdevelopment.municion.ui.navigation.Guias
+import al.ahgitdevelopment.municion.ui.navigation.Licencias
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Save
@@ -7,21 +10,22 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import al.ahgitdevelopment.municion.ui.navigation.Routes
+import al.ahgitdevelopment.municion.ui.navigation.Route
+import al.ahgitdevelopment.municion.ui.navigation.Tiradas
 
 /**
- * FAB dinámico unificado para toda la aplicación.
+ * FAB dinï¿½mico unificado para toda la aplicaciï¿½n.
  *
- * Cambia según el tipo de pantalla:
- * - ListScreens: Icono Add ’ ejecuta onAdd específico para cada pantalla
- * - FormScreens: Icono Save ’ ejecuta onSave
+ * Cambia segï¿½n el tipo de pantalla:
+ * - ListScreens: Icono Add ï¿½ ejecuta onAdd especï¿½fico para cada pantalla
+ * - FormScreens: Icono Save ï¿½ ejecuta onSave
  * - Otras pantallas: No se muestra
  *
- * @param currentRoute Ruta actual de navegación
- * @param onAddLicencia Callback para añadir licencia
- * @param onAddGuia Callback para añadir guía (abre dialog de selección de licencia)
- * @param onAddCompra Callback para añadir compra (abre dialog de selección de guía)
- * @param onAddTirada Callback para añadir tirada
+ * @param currentRoute Ruta actual de navegaciï¿½n
+ * @param onAddLicencia Callback para aï¿½adir licencia
+ * @param onAddGuia Callback para aï¿½adir guï¿½a (abre dialog de selecciï¿½n de licencia)
+ * @param onAddCompra Callback para aï¿½adir compra (abre dialog de selecciï¿½n de guï¿½a)
+ * @param onAddTirada Callback para aï¿½adir tirada
  * @param onSave Callback para guardar en formularios
  * @param hasSaveCallback Indica si hay un callback de guardado registrado
  *
@@ -38,28 +42,28 @@ fun MunicionFAB(
     hasSaveCallback: Boolean
 ) {
     when (currentRoute) {
-        Routes.LICENCIAS -> {
+        Licencias::class.qualifiedName -> {
             AddFAB(
                 onClick = onAddLicencia,
-                contentDescription = "Añadir licencia"
+                contentDescription = "Aï¿½adir licencia"
             )
         }
-        Routes.GUIAS -> {
+        Guias::class.qualifiedName -> {
             AddFAB(
                 onClick = onAddGuia,
-                contentDescription = "Añadir guía"
+                contentDescription = "Aï¿½adir guï¿½a"
             )
         }
-        Routes.COMPRAS -> {
+        Compras::class.qualifiedName -> {
             AddFAB(
                 onClick = onAddCompra,
-                contentDescription = "Añadir compra"
+                contentDescription = "Aï¿½adir compra"
             )
         }
-        Routes.TIRADAS -> {
+        Tiradas::class.qualifiedName -> {
             AddFAB(
                 onClick = onAddTirada,
-                contentDescription = "Añadir tirada"
+                contentDescription = "Aï¿½adir tirada"
             )
         }
         else -> {
@@ -72,7 +76,7 @@ fun MunicionFAB(
 }
 
 /**
- * FAB para añadir elementos.
+ * FAB para aï¿½adir elementos.
  */
 @Composable
 private fun AddFAB(

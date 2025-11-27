@@ -63,27 +63,21 @@ import java.util.Locale
  */
 @Composable
 fun TiradaFormContent(
-    tiradaId: Int?,
+    tirada: Tirada?,
     navController: NavHostController,
     snackbarHostState: SnackbarHostState,
     onRegisterSaveCallback: ((() -> Unit)?) -> Unit,
     viewModel: TiradaViewModel = hiltViewModel()
 ) {
-    val tiradas by viewModel.tiradas.collectAsStateWithLifecycle()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    val isEditing = tiradaId != null
+    val isEditing = tirada != null
 
-    // Cargar tirada existente si estamos editando
-    val existingTirada = remember(tiradaId, tiradas) {
-        tiradaId?.let { id -> tiradas.find { it.id == id } }
-    }
-
-    // Form state
-    var descripcion by rememberSaveable { mutableStateOf(existingTirada?.descripcion ?: "") }
-    var rango by rememberSaveable { mutableStateOf(existingTirada?.rango ?: "") }
-    var fecha by rememberSaveable { mutableStateOf(existingTirada?.fecha ?: getCurrentDateTirada()) }
-    var puntuacion by rememberSaveable { mutableFloatStateOf(existingTirada?.puntuacion?.toFloat() ?: 0f) }
+    // Form state - inicializar directamente desde el objeto
+    var descripcion by rememberSaveable { mutableStateOf(tirada?.descripcion ?: "") }
+    var rango by rememberSaveable { mutableStateOf(tirada?.rango ?: "") }
+    var fecha by rememberSaveable { mutableStateOf(tirada?.fecha ?: getCurrentDateTirada()) }
+    var puntuacion by rememberSaveable { mutableFloatStateOf(tirada?.puntuacion?.toFloat() ?: 0f) }
 
     // Error states
     var descripcionError by remember { mutableStateOf<String?>(null) }
@@ -103,17 +97,17 @@ fun TiradaFormContent(
         }
 
         if (isValid) {
-            val tirada = Tirada(
-                id = tiradaId ?: 0,
+            val tiradaToSave = Tirada(
+                id = tirada?.id ?: 0,
                 descripcion = descripcion,
                 rango = rango.ifBlank { null },
                 fecha = fecha,
                 puntuacion = puntuacion.toInt()
             )
             if (isEditing) {
-                viewModel.updateTirada(tirada)
+                viewModel.updateTirada(tiradaToSave)
             } else {
-                viewModel.saveTirada(tirada)
+                viewModel.saveTirada(tiradaToSave)
             }
         }
     }

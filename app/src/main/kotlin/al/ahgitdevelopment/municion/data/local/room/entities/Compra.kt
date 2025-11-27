@@ -6,6 +6,10 @@ import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
 import kotlinx.parcelize.Parcelize
+import kotlinx.serialization.Serializable
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 /**
  * Data model para Compra de munición
@@ -17,8 +21,16 @@ import kotlinx.parcelize.Parcelize
  * - Validación en init block
  * - Inmutabilidad (val instead of var)
  *
+ * NAVEGACIÓN (v3.3.0+):
+ * Esta clase implementa Parcelable + @Serializable para navegación type-safe.
+ * Se pasa completa junto con Guia en CompraForm(compra = ..., guia = ...).
+ * CompraNavType valida fecha, unidades y precio durante deserialización.
+ *
+ * @see al.ahgitdevelopment.municion.ui.navigation.navtypes.CompraNavType
+ * @see al.ahgitdevelopment.municion.ui.navigation.CompraForm
  * @since v3.0.0 (TRACK B Modernization)
  */
+@Serializable
 @Parcelize
 @Entity(
     tableName = "compras",
@@ -94,6 +106,17 @@ data class Compra(
         }
         require(fecha.isNotBlank()) {
             "Fecha cannot be blank"
+        }
+    }
+
+    /**
+     * Parsea la fecha a Date
+     */
+    fun getFechaDate(): Date? {
+        return try {
+            SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).parse(fecha)
+        } catch (e: Exception) {
+            null
         }
     }
 

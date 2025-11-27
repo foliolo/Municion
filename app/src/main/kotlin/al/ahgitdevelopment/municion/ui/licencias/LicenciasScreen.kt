@@ -21,7 +21,9 @@ import androidx.navigation.NavHostController
 import al.ahgitdevelopment.municion.data.local.room.entities.Licencia
 import al.ahgitdevelopment.municion.ui.components.DeleteConfirmationDialog
 import al.ahgitdevelopment.municion.ui.components.EmptyState
-import al.ahgitdevelopment.municion.ui.navigation.Routes
+import al.ahgitdevelopment.municion.ui.navigation.LicenciaForm
+import al.ahgitdevelopment.municion.ui.navigation.Route
+import al.ahgitdevelopment.municion.ui.navigation.navtypes.navigateSafely
 import al.ahgitdevelopment.municion.ui.theme.MunicionTheme
 import al.ahgitdevelopment.municion.ui.viewmodel.LicenciaViewModel
 
@@ -84,7 +86,7 @@ fun LicenciasContent(
         licencias = licencias,
         onItemClick = { /* Click simple: info */ },
         onItemLongClick = { licencia ->
-            navController.navigate("${Routes.LICENCIA_FORM}?licenciaId=${licencia.id}")
+            navController.navigateSafely(LicenciaForm(licencia = licencia))
         },
         onDeleteClick = { licencia -> licenciaToDelete = licencia }
     )

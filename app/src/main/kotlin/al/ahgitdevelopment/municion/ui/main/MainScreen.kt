@@ -1,12 +1,28 @@
 package al.ahgitdevelopment.municion.ui.main
 
+import al.ahgitdevelopment.municion.ui.components.MunicionBottomBar
+import al.ahgitdevelopment.municion.ui.components.MunicionFAB
+import al.ahgitdevelopment.municion.ui.components.MunicionTopBar
+import al.ahgitdevelopment.municion.ui.compras.GuiaSelectionDialog
+import al.ahgitdevelopment.municion.ui.guias.LicenciaSelectionDialog
+import al.ahgitdevelopment.municion.ui.navigation.CompraForm
+import al.ahgitdevelopment.municion.ui.navigation.Compras
+import al.ahgitdevelopment.municion.ui.navigation.GuiaForm
+import al.ahgitdevelopment.municion.ui.navigation.Guias
+import al.ahgitdevelopment.municion.ui.navigation.LicenciaForm
+import al.ahgitdevelopment.municion.ui.navigation.Licencias
+import al.ahgitdevelopment.municion.ui.navigation.MunicionNavHost
+import al.ahgitdevelopment.municion.ui.navigation.Settings
+import al.ahgitdevelopment.municion.ui.navigation.TiradaForm
+import al.ahgitdevelopment.municion.ui.navigation.Tiradas
+import al.ahgitdevelopment.municion.ui.navigation.navtypes.navigateSafely
+import al.ahgitdevelopment.municion.ui.viewmodel.GuiaViewModel
+import al.ahgitdevelopment.municion.ui.viewmodel.MainViewModel
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -23,15 +39,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import al.ahgitdevelopment.municion.ui.components.MunicionBottomBar
-import al.ahgitdevelopment.municion.ui.components.MunicionFAB
-import al.ahgitdevelopment.municion.ui.components.MunicionTopBar
-import al.ahgitdevelopment.municion.ui.compras.GuiaSelectionDialog
-import al.ahgitdevelopment.municion.ui.guias.LicenciaSelectionDialog
-import al.ahgitdevelopment.municion.ui.navigation.MunicionNavHost
-import al.ahgitdevelopment.municion.ui.navigation.Routes
-import al.ahgitdevelopment.municion.ui.viewmodel.GuiaViewModel
-import al.ahgitdevelopment.municion.ui.viewmodel.MainViewModel
 
 /**
  * Pantalla principal de la aplicación Munición.
@@ -75,7 +82,7 @@ fun MainScreen(
     // Determinar visibilidad de componentes
     val showBottomBar = currentRoute in listScreenRoutes
     val showFab = currentRoute in fabScreenRoutes ||
-        (currentRoute?.contains("Form") == true && formSaveCallback != null)
+            (currentRoute?.contains("Form") == true && formSaveCallback != null)
 
     // Dialog de selección de licencia (para crear guía)
     if (showLicenciaDialog) {
@@ -84,7 +91,7 @@ fun MainScreen(
             onLicenciaSelected = { licencia ->
                 showLicenciaDialog = false
                 val tipoLicencia = licencia.getNombre(context)
-                navController.navigate("${Routes.GUIA_FORM}/$tipoLicencia")
+                navController.navigateSafely(GuiaForm(guia = null, tipoLicencia = tipoLicencia))
             },
             onDismiss = { showLicenciaDialog = false }
         )
@@ -96,11 +103,10 @@ fun MainScreen(
             guias = guias,
             onGuiaSelected = { guia ->
                 showGuiaDialog = false
-                navController.navigate(
-                    Routes.compraForm(
-                        guiaId = guia.id,
-                        cupoDisponible = guia.disponible(),
-                        cupoTotal = guia.cupo
+                navController.navigateSafely(
+                    CompraForm(
+                        compra = null,
+                        guia = guia
                     )
                 )
             },
@@ -115,6 +121,7 @@ fun MainScreen(
                 val count = (syncState as MainViewModel.SyncState.Success).count
                 snackbarHostState.showSnackbar("Sincronización completada: $count items")
             }
+
             is MainViewModel.SyncState.SuccessWithParseErrors -> {
                 val state = syncState as MainViewModel.SyncState.SuccessWithParseErrors
                 val message = if (state.autoFixApplied) {
@@ -124,12 +131,14 @@ fun MainScreen(
                 }
                 snackbarHostState.showSnackbar(message)
             }
+
             is MainViewModel.SyncState.Error -> {
                 snackbarHostState.showSnackbar(
                     "Error de sincronización: ${(syncState as MainViewModel.SyncState.Error).message}"
                 )
             }
-            else -> { }
+
+            else -> {}
         }
     }
 
@@ -140,7 +149,7 @@ fun MainScreen(
                 currentRoute = currentRoute,
                 syncState = syncState,
                 onSyncClick = { viewModel.syncFromFirebase() },
-                onSettingsClick = { navController.navigate(Routes.SETTINGS) },
+                onSettingsClick = { navController.navigateSafely(Settings) },
                 onBackClick = { navController.popBackStack() }
             )
         },
@@ -158,7 +167,7 @@ fun MainScreen(
                 MunicionFAB(
                     currentRoute = currentRoute,
                     onAddLicencia = {
-                        navController.navigate("${Routes.LICENCIA_FORM}?licenciaId=-1")
+                        navController.navigateSafely(LicenciaForm(licencia = null))
                     },
                     onAddGuia = {
                         if (licencias.isEmpty()) {
@@ -175,7 +184,7 @@ fun MainScreen(
                         }
                     },
                     onAddTirada = {
-                        navController.navigate("${Routes.TIRADA_FORM}?tiradaId=-1")
+                        navController.navigateSafely(TiradaForm(tirada = null))
                     },
                     onSave = { formSaveCallback?.invoke() },
                     hasSaveCallback = formSaveCallback != null
@@ -198,10 +207,10 @@ fun MainScreen(
  * Rutas de pantallas de lista (tabs principales).
  */
 private val listScreenRoutes = setOf(
-    Routes.LICENCIAS,
-    Routes.GUIAS,
-    Routes.COMPRAS,
-    Routes.TIRADAS
+    Licencias::class.qualifiedName,
+    Guias::class.qualifiedName,
+    Compras::class.qualifiedName,
+    Tiradas::class.qualifiedName
 )
 
 /**

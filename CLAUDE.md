@@ -313,6 +313,91 @@ All 4 entities follow the same pattern: Fragment → FormActivity → ViewModel 
 - `ui/viewmodel/*ViewModel.kt` - State management with Hilt
 - `data/repository/*Repository.kt` - Data access with Room + Firebase
 
+## Navigation Architecture (v3.3.0+)
+
+### NavType Pattern
+
+Munición usa custom NavTypes para navegación type-safe con validación robusta, inspirado en FamilyFilmApp pero adaptado para Navigation Compose 2.9+.
+
+**Componentes clave**:
+- `BaseNavType<T>`: Clase abstracta con serialización JSON y error handling
+- `EntityNavTypes.kt`: NavTypes específicos para Licencia, Guia, Compra, Tirada
+- `MunicionTypeMap`: Registro global de tipos
+- `navigateSafely()`: Extension function con try-catch automático
+
+**Ejemplo de uso**:
+
+```kotlin
+// Navegar a formulario de edición con objeto completo
+navController.navigateSafely(
+    LicenciaForm(licencia = licenciaToEdit)
+)
+
+// Navegar a formulario de creación
+navController.navigateSafely(
+    LicenciaForm(licencia = null)
+)
+```
+
+**Validaciones automáticas**:
+- Fechas en formato "dd/MM/yyyy" válido
+- Cupo >= gastado en Guías
+- Puntuación 0-600 en Tiradas
+- Campos obligatorios no blank
+- Valores numéricos en rangos válidos
+
+**Error handling**:
+- Errores de serialización → Reportados a Crashlytics con metadata
+- Errores de validación → IllegalStateException con mensaje claro
+- Datos corruptos en navegación → Snackbar + popBackStack()
+- Fallback automático en caso de deserialización fallida
+
+### Type-Safe Routes
+
+Todas las rutas implementan `sealed interface Route` y usan `@Serializable`:
+
+```kotlin
+// Tabs principales (data object)
+@Serializable
+data object Licencias : Route
+
+// Formularios (data class con parámetros)
+@Serializable
+data class LicenciaForm(val licencia: Licencia? = null) : Route
+
+@Serializable
+data class CompraForm(
+    val compra: Compra? = null,
+    val guia: Guia  // Siempre requerida para validación de cupo
+) : Route
+```
+
+### Bundle Size
+
+Tamaños típicos de navegación (serialización JSON):
+- LicenciaForm: ~2KB
+- GuiaForm: ~3KB
+- CompraForm: ~7KB (incluye Compra + Guia completa)
+- TiradaForm: ~1KB
+
+Android soporta hasta 1MB en Bundles - nuestros tamaños están muy por debajo del límite.
+
+### Ventajas del NavType Pattern
+
+1. **Type-safety completo**: Validación en compile-time + runtime
+2. **Elimina race conditions**: Objetos completos, no IDs que requieren lookup
+3. **Validación centralizada**: Reglas de negocio en NavType
+4. **Crashlytics integration**: Errores de navegación reportados automáticamente
+5. **Fallback robusto**: UI no crashea con datos corruptos
+
+### Archivos clave
+
+- `ui/navigation/navtypes/BaseNavType.kt` - Clase base abstracta
+- `ui/navigation/navtypes/EntityNavTypes.kt` - NavTypes para 4 entidades
+- `ui/navigation/navtypes/MunicionTypeMap.kt` - Type registry + navigateSafely()
+- `ui/navigation/NavRoutes.kt` - Definiciones de rutas type-safe
+- `ui/navigation/MunicionNavHost.kt` - NavHost con typeMap y error handling
+
 ## Spanish Terms Reference
 
 - **Guia** = Firearms permit/guide (for a specific weapon)

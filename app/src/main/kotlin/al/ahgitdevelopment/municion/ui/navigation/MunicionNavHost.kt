@@ -4,12 +4,13 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
-import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.navArgument
+import androidx.navigation.toRoute
+import al.ahgitdevelopment.municion.ui.navigation.navtypes.municionTypeMap
 import al.ahgitdevelopment.municion.ui.compras.ComprasContent
 import al.ahgitdevelopment.municion.ui.forms.CompraFormContent
 import al.ahgitdevelopment.municion.ui.forms.GuiaFormContent
@@ -46,12 +47,13 @@ fun MunicionNavHost(
 ) {
     NavHost(
         navController = navController,
-        startDestination = Routes.LICENCIAS,
-        modifier = modifier.padding(innerPadding)
+        startDestination = Licencias,
+        modifier = modifier.padding(innerPadding),
+        typeMap = municionTypeMap  // ← Type-safe serialization
     ) {
         // ========== TABS PRINCIPALES ==========
 
-        composable(route = Routes.LICENCIAS) {
+        composable<Licencias> {
             onRegisterSaveCallback(null)
             LicenciasContent(
                 navController = navController,
@@ -59,7 +61,7 @@ fun MunicionNavHost(
             )
         }
 
-        composable(route = Routes.GUIAS) {
+        composable<Guias> {
             onRegisterSaveCallback(null)
             GuiasContent(
                 navController = navController,
@@ -67,7 +69,7 @@ fun MunicionNavHost(
             )
         }
 
-        composable(route = Routes.COMPRAS) {
+        composable<Compras> {
             onRegisterSaveCallback(null)
             ComprasContent(
                 navController = navController,
@@ -75,7 +77,7 @@ fun MunicionNavHost(
             )
         }
 
-        composable(route = Routes.TIRADAS) {
+        composable<Tiradas> {
             onRegisterSaveCallback(null)
             TiradasContent(
                 navController = navController,
@@ -83,7 +85,7 @@ fun MunicionNavHost(
             )
         }
 
-        composable(route = Routes.SETTINGS) {
+        composable<Settings> {
             onRegisterSaveCallback(null)
             AccountSettingsContent(
                 navController = navController,
@@ -93,88 +95,87 @@ fun MunicionNavHost(
 
         // ========== FORMULARIOS ==========
 
-        // LicenciaForm: opcional licenciaId
-        composable(
-            route = "${Routes.LICENCIA_FORM}?licenciaId={licenciaId}",
-            arguments = listOf(
-                navArgument("licenciaId") {
-                    type = NavType.IntType
-                    defaultValue = -1
-                }
-            )
+        // LicenciaForm: objeto completo Licencia (null para nueva)
+        composable<LicenciaForm>(
+            typeMap = municionTypeMap
         ) { backStackEntry ->
-            val licenciaId = backStackEntry.arguments?.getInt("licenciaId")?.takeIf { it != -1 }
+            val route: LicenciaForm = try {
+                backStackEntry.toRoute<LicenciaForm>()
+            } catch (e: Exception) {
+                // Fallback: navegar back si hay error de deserialización
+                LaunchedEffect(Unit) {
+                    snackbarHostState.showSnackbar("Error cargando formulario de licencia")
+                    navController.popBackStack()
+                }
+                return@composable  // Early return
+            }
             LicenciaFormContent(
-                licenciaId = licenciaId,
+                licencia = route.licencia,
                 navController = navController,
                 snackbarHostState = snackbarHostState,
                 onRegisterSaveCallback = onRegisterSaveCallback
             )
         }
 
-        // GuiaForm: tipoLicencia obligatorio, guiaId opcional
-        composable(
-            route = "${Routes.GUIA_FORM}/{tipoLicencia}?guiaId={guiaId}",
-            arguments = listOf(
-                navArgument("tipoLicencia") { type = NavType.StringType },
-                navArgument("guiaId") {
-                    type = NavType.IntType
-                    defaultValue = -1
-                }
-            )
+        // GuiaForm: objeto completo Guia (null para nueva) + tipoLicencia
+        composable<GuiaForm>(
+            typeMap = municionTypeMap
         ) { backStackEntry ->
-            val tipoLicencia = backStackEntry.arguments?.getString("tipoLicencia") ?: ""
-            val guiaId = backStackEntry.arguments?.getInt("guiaId")?.takeIf { it != -1 }
+            val route: GuiaForm = try {
+                backStackEntry.toRoute<GuiaForm>()
+            } catch (e: Exception) {
+                LaunchedEffect(Unit) {
+                    snackbarHostState.showSnackbar("Error cargando formulario de guía")
+                    navController.popBackStack()
+                }
+                return@composable
+            }
             GuiaFormContent(
-                tipoLicencia = tipoLicencia,
-                guiaId = guiaId,
+                guia = route.guia,
+                tipoLicencia = route.tipoLicencia,
                 navController = navController,
                 snackbarHostState = snackbarHostState,
                 onRegisterSaveCallback = onRegisterSaveCallback
             )
         }
 
-        // CompraForm: guiaId, cupoDisponible, cupoTotal obligatorios, compraId opcional
-        composable(
-            route = "${Routes.COMPRA_FORM}/{guiaId}/{cupoDisponible}/{cupoTotal}?compraId={compraId}",
-            arguments = listOf(
-                navArgument("guiaId") { type = NavType.IntType },
-                navArgument("cupoDisponible") { type = NavType.IntType },
-                navArgument("cupoTotal") { type = NavType.IntType },
-                navArgument("compraId") {
-                    type = NavType.IntType
-                    defaultValue = -1
-                }
-            )
+        // CompraForm: objeto completo Compra (null para nueva) + Guia obligatoria
+        composable<CompraForm>(
+            typeMap = municionTypeMap
         ) { backStackEntry ->
-            val guiaId = backStackEntry.arguments?.getInt("guiaId") ?: 0
-            val cupoDisponible = backStackEntry.arguments?.getInt("cupoDisponible") ?: 0
-            val cupoTotal = backStackEntry.arguments?.getInt("cupoTotal") ?: 0
-            val compraId = backStackEntry.arguments?.getInt("compraId")?.takeIf { it != -1 }
+            val route: CompraForm = try {
+                backStackEntry.toRoute<CompraForm>()
+            } catch (e: Exception) {
+                LaunchedEffect(Unit) {
+                    snackbarHostState.showSnackbar("Error cargando formulario de compra")
+                    navController.popBackStack()
+                }
+                return@composable
+            }
             CompraFormContent(
-                guiaId = guiaId,
-                compraId = compraId,
-                cupoDisponible = cupoDisponible,
-                cupoTotal = cupoTotal,
+                compra = route.compra,
+                guia = route.guia,
                 navController = navController,
                 snackbarHostState = snackbarHostState,
                 onRegisterSaveCallback = onRegisterSaveCallback
             )
         }
 
-        // TiradaForm: opcional tiradaId
-        composable(
-            route = "${Routes.TIRADA_FORM}?tiradaId={tiradaId}",
-            arguments = listOf(
-                navArgument("tiradaId") {
-                    type = NavType.IntType
-                    defaultValue = -1
-                }
-            )
+        // TiradaForm: objeto completo Tirada (null para nueva)
+        composable<TiradaForm>(
+            typeMap = municionTypeMap
         ) { backStackEntry ->
-            val tiradaId = backStackEntry.arguments?.getInt("tiradaId")?.takeIf { it != -1 }
+            val route: TiradaForm = try {
+                backStackEntry.toRoute<TiradaForm>()
+            } catch (e: Exception) {
+                LaunchedEffect(Unit) {
+                    snackbarHostState.showSnackbar("Error cargando formulario de tirada")
+                    navController.popBackStack()
+                }
+                return@composable
+            }
             TiradaFormContent(
-                tiradaId = tiradaId,
+                tirada = route.tirada,
                 navController = navController,
                 snackbarHostState = snackbarHostState,
                 onRegisterSaveCallback = onRegisterSaveCallback

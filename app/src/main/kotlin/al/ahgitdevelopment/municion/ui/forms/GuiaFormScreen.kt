@@ -50,8 +50,8 @@ import al.ahgitdevelopment.municion.ui.viewmodel.GuiaViewModel
  * NO contiene Scaffold, TopBar ni FAB - estos estan en MainScreen.
  * Registra su funcion de guardado con MainScreen mediante onRegisterSaveCallback.
  *
- * @param tipoLicencia Tipo de licencia seleccionado
- * @param guiaId ID de guia a editar (null para nueva)
+ * @param guia Objeto completo para editar (null para nueva)
+ * @param tipoLicencia Tipo de licencia seleccionado (nombre, para determinar tipos de arma)
  * @param navController Controlador de navegacion
  * @param snackbarHostState Estado del snackbar compartido desde MainScreen
  * @param onRegisterSaveCallback Callback para registrar funcion de guardado con MainScreen
@@ -61,36 +61,30 @@ import al.ahgitdevelopment.municion.ui.viewmodel.GuiaViewModel
  */
 @Composable
 fun GuiaFormContent(
+    guia: Guia?,
     tipoLicencia: String,
-    guiaId: Int?,
     navController: NavHostController,
     snackbarHostState: SnackbarHostState,
     onRegisterSaveCallback: ((() -> Unit)?) -> Unit,
     viewModel: GuiaViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
-    val guias by viewModel.guias.collectAsStateWithLifecycle()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    val isEditing = guiaId != null
+    val isEditing = guia != null
 
-    // Cargar guia existente si estamos editando
-    val existingGuia = remember(guiaId, guias) {
-        guiaId?.let { id -> guias.find { it.id == id } }
-    }
-
-    // Form state
-    var marca by rememberSaveable { mutableStateOf(existingGuia?.marca ?: "") }
-    var modelo by rememberSaveable { mutableStateOf(existingGuia?.modelo ?: "") }
-    var apodo by rememberSaveable { mutableStateOf(existingGuia?.apodo ?: "") }
-    var tipoArma by rememberSaveable { mutableIntStateOf(existingGuia?.tipoArma ?: 0) }
-    var calibre1 by rememberSaveable { mutableStateOf(existingGuia?.calibre1 ?: "") }
-    var calibre2 by rememberSaveable { mutableStateOf(existingGuia?.calibre2 ?: "") }
-    var showCalibre2 by rememberSaveable { mutableStateOf(!existingGuia?.calibre2.isNullOrBlank()) }
-    var numGuia by rememberSaveable { mutableStateOf(existingGuia?.numGuia ?: "") }
-    var numArma by rememberSaveable { mutableStateOf(existingGuia?.numArma ?: "") }
-    var cupo by rememberSaveable { mutableStateOf(existingGuia?.cupo?.toString() ?: "") }
-    var gastado by rememberSaveable { mutableStateOf(existingGuia?.gastado?.toString() ?: "0") }
+    // Form state - inicializar directamente desde el objeto
+    var marca by rememberSaveable { mutableStateOf(guia?.marca ?: "") }
+    var modelo by rememberSaveable { mutableStateOf(guia?.modelo ?: "") }
+    var apodo by rememberSaveable { mutableStateOf(guia?.apodo ?: "") }
+    var tipoArma by rememberSaveable { mutableIntStateOf(guia?.tipoArma ?: 0) }
+    var calibre1 by rememberSaveable { mutableStateOf(guia?.calibre1 ?: "") }
+    var calibre2 by rememberSaveable { mutableStateOf(guia?.calibre2 ?: "") }
+    var showCalibre2 by rememberSaveable { mutableStateOf(!guia?.calibre2.isNullOrBlank()) }
+    var numGuia by rememberSaveable { mutableStateOf(guia?.numGuia ?: "") }
+    var numArma by rememberSaveable { mutableStateOf(guia?.numArma ?: "") }
+    var cupo by rememberSaveable { mutableStateOf(guia?.cupo?.toString() ?: "") }
+    var gastado by rememberSaveable { mutableStateOf(guia?.gastado?.toString() ?: "0") }
     var customCupo by rememberSaveable { mutableStateOf(false) }
 
     // Error states
@@ -147,8 +141,8 @@ fun GuiaFormContent(
             // Obtener el tipo de licencia como Int
             val tipoLicenciaInt = getLicenciaTypeFromString(context, tipoLicencia)
 
-            val guia = Guia(
-                id = guiaId ?: 0,
+            val guiaToSave = Guia(
+                id = guia?.id ?: 0,
                 tipoLicencia = tipoLicenciaInt,
                 marca = marca,
                 modelo = modelo,
@@ -162,9 +156,9 @@ fun GuiaFormContent(
                 gastado = gastado.toIntOrNull() ?: 0
             )
             if (isEditing) {
-                viewModel.updateGuia(guia)
+                viewModel.updateGuia(guiaToSave)
             } else {
-                viewModel.saveGuia(guia)
+                viewModel.saveGuia(guiaToSave)
             }
         }
     }

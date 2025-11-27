@@ -3,7 +3,9 @@ package al.ahgitdevelopment.municion.ui.tiradas
 import al.ahgitdevelopment.municion.data.local.room.entities.Tirada
 import al.ahgitdevelopment.municion.ui.components.DeleteConfirmationDialog
 import al.ahgitdevelopment.municion.ui.components.EmptyState
-import al.ahgitdevelopment.municion.ui.navigation.Routes
+import al.ahgitdevelopment.municion.ui.navigation.Route
+import al.ahgitdevelopment.municion.ui.navigation.TiradaForm
+import al.ahgitdevelopment.municion.ui.navigation.navtypes.navigateSafely
 import al.ahgitdevelopment.municion.ui.theme.MunicionTheme
 import al.ahgitdevelopment.municion.ui.viewmodel.TiradaViewModel
 import androidx.compose.foundation.layout.PaddingValues
@@ -86,7 +88,7 @@ fun TiradasContent(
         tiradas = tiradas,
         onItemClick = { /* Info */ },
         onItemLongClick = { tirada ->
-            navController.navigate("${Routes.TIRADA_FORM}?tiradaId=${tirada.id}")
+            navController.navigateSafely(TiradaForm(tirada = tirada))
         },
         onDeleteClick = { tirada -> tiradaToDelete = tirada }
     )

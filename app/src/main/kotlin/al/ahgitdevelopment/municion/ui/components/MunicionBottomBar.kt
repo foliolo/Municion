@@ -1,5 +1,8 @@
 package al.ahgitdevelopment.municion.ui.components
 
+import al.ahgitdevelopment.municion.ui.navigation.Compras
+import al.ahgitdevelopment.municion.ui.navigation.Guias
+import al.ahgitdevelopment.municion.ui.navigation.Licencias
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Badge
 import androidx.compose.material.icons.filled.Security
@@ -17,7 +20,8 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
-import al.ahgitdevelopment.municion.ui.navigation.Routes
+import al.ahgitdevelopment.municion.ui.navigation.Route
+import al.ahgitdevelopment.municion.ui.navigation.Tiradas
 import al.ahgitdevelopment.municion.ui.theme.BottomNavBackground
 import al.ahgitdevelopment.municion.ui.theme.BottomNavItemActive
 import al.ahgitdevelopment.municion.ui.theme.BottomNavItemInactive
@@ -26,7 +30,7 @@ import al.ahgitdevelopment.municion.ui.theme.BottomNavItemInactive
  * Datos para cada item del BottomNavigationBar
  */
 data class BottomNavItem(
-    val route: String,
+    val route: Route,
     val icon: ImageVector,
     val label: String
 )
@@ -47,17 +51,17 @@ data class BottomNavItem(
 @Composable
 fun MunicionBottomBar(navController: NavHostController) {
     val items = listOf(
-        BottomNavItem(Routes.LICENCIAS, Icons.Default.Badge, "Licencias"),
-        BottomNavItem(Routes.GUIAS, Icons.Default.Security, "Guías"),
-        BottomNavItem(Routes.COMPRAS, Icons.Default.ShoppingCart, "Compras"),
-        BottomNavItem(Routes.TIRADAS, Icons.Default.SportsScore, "Tiradas")
+        BottomNavItem(Licencias, Icons.Default.Badge, "Licencias"),
+        BottomNavItem(Guias, Icons.Default.Security, "Guías"),
+        BottomNavItem(Compras, Icons.Default.ShoppingCart, "Compras"),
+        BottomNavItem(Tiradas, Icons.Default.SportsScore, "Tiradas")
     )
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
 
     // Solo mostrar BottomBar en las pantallas principales (no en formularios)
-    val showBottomBar = items.any { it.route == currentRoute }
+    val showBottomBar = items.any { it.route::class.qualifiedName == currentRoute }
 
     if (showBottomBar) {
         NavigationBar(
@@ -66,7 +70,7 @@ fun MunicionBottomBar(navController: NavHostController) {
             windowInsets = NavigationBarDefaults.windowInsets
         ) {
             items.forEach { item ->
-                val selected = currentRoute == item.route
+                val selected = currentRoute == item.route::class.qualifiedName
 
                 NavigationBarItem(
                     icon = {

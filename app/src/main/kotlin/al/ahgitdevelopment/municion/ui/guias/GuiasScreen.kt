@@ -18,12 +18,16 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
+import al.ahgitdevelopment.municion.R
 import al.ahgitdevelopment.municion.data.local.room.entities.Guia
 import al.ahgitdevelopment.municion.ui.components.DeleteConfirmationDialog
 import al.ahgitdevelopment.municion.ui.components.EmptyState
-import al.ahgitdevelopment.municion.ui.navigation.Routes
+import al.ahgitdevelopment.municion.ui.navigation.GuiaForm
+import al.ahgitdevelopment.municion.ui.navigation.Route
+import al.ahgitdevelopment.municion.ui.navigation.navtypes.navigateSafely
 import al.ahgitdevelopment.municion.ui.theme.MunicionTheme
 import al.ahgitdevelopment.municion.ui.viewmodel.GuiaViewModel
+import androidx.compose.ui.platform.LocalContext
 
 /**
  * Contenido de la pantalla de Guías para Single Scaffold Architecture.
@@ -44,6 +48,7 @@ fun GuiasContent(
     snackbarHostState: SnackbarHostState,
     viewModel: GuiaViewModel = hiltViewModel()
 ) {
+    val context = LocalContext.current
     val guias by viewModel.guias.collectAsStateWithLifecycle()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
@@ -85,10 +90,12 @@ fun GuiasContent(
         guias = guias,
         onItemClick = { /* Info */ },
         onItemLongClick = { guia ->
-            navController.navigate(
-                Routes.guiaForm(
-                    tipoLicencia = guia.tipoLicencia.toString(),
-                    guiaId = guia.id
+            val tipoLicenciaStr = context.resources.getStringArray(R.array.tipo_licencias)
+                .getOrNull(guia.tipoLicencia) ?: ""
+            navController.navigateSafely(
+                GuiaForm(
+                    guia = guia,
+                    tipoLicencia = tipoLicenciaStr
                 )
             )
         },
