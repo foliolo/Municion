@@ -22,6 +22,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 
@@ -30,6 +31,7 @@ import androidx.compose.ui.unit.dp
  *
  * Cambia según el tipo de pantalla:
  * - ListScreens (tabs): Título app + Sync + Settings
+ * - Tiradas: Título app + Tabla de puntuaciones + Sync + Settings
  * - FormScreens: Back + Título de la entidad
  * - Settings: Back + Título
  *
@@ -38,6 +40,7 @@ import androidx.compose.ui.unit.dp
  * @param onSyncClick Callback para sincronización manual
  * @param onSettingsClick Callback para ir a settings
  * @param onBackClick Callback para volver atrás
+ * @param onScoreTableClick Callback para mostrar tabla de puntuaciones (solo Tiradas)
  * @param formTitle Título opcional para formularios (override automático)
  * @param modifier Modificador opcional
  *
@@ -52,11 +55,13 @@ fun MunicionTopBar(
     onSyncClick: () -> Unit = {},
     onSettingsClick: () -> Unit = {},
     onBackClick: () -> Unit = {},
+    onScoreTableClick: () -> Unit = {},
     formTitle: String? = null,
 ) {
     val isListScreen = currentRoute in listScreenRoutes
     val isFormScreen = currentRoute?.contains("Form") == true
     val isSettings = currentRoute == Settings::class.qualifiedName
+    val isTiradasScreen = currentRoute == Tiradas::class.qualifiedName
 
     when {
         isListScreen -> {
@@ -64,6 +69,8 @@ fun MunicionTopBar(
                 syncState = syncState,
                 onSyncClick = onSyncClick,
                 onSettingsClick = onSettingsClick,
+                showScoreTable = isTiradasScreen,
+                onScoreTableClick = onScoreTableClick,
                 modifier = modifier
             )
         }
@@ -81,6 +88,13 @@ fun MunicionTopBar(
 
 /**
  * TopBar para pantallas de lista (tabs principales).
+ *
+ * @param syncState Estado de sincronización
+ * @param onSyncClick Callback para sincronizar
+ * @param onSettingsClick Callback para ir a settings
+ * @param showScoreTable Si se debe mostrar el icono de tabla de puntuaciones
+ * @param onScoreTableClick Callback para mostrar tabla de puntuaciones
+ * @param modifier Modificador opcional
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -88,12 +102,24 @@ private fun ListTopBar(
     syncState: SyncState,
     onSyncClick: () -> Unit,
     onSettingsClick: () -> Unit,
+    showScoreTable: Boolean = false,
+    onScoreTableClick: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     TopAppBar(
         title = { Text(stringResource(R.string.app_name)) },
         modifier = modifier,
         actions = {
+            // Icono de tabla de puntuaciones (solo en Tiradas)
+            if (showScoreTable) {
+                IconButton(onClick = onScoreTableClick) {
+                    Icon(
+                        painter = painterResource(R.drawable.tabla_tiradas2),
+                        contentDescription = stringResource(R.string.tabla_tiradas)
+                    )
+                }
+            }
+
             when (syncState) {
                 is SyncState.Syncing -> {
                     CircularProgressIndicator(
