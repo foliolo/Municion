@@ -81,9 +81,11 @@ fun AccountSettingsContent(
             isAnonymous = isAnonymous,
             onDismiss = { showSignOutDialog = false },
             onConfirm = {
-                viewModel.signOut()
                 showSignOutDialog = false
-                navController.popBackStack()
+                // Solo llamar signOut - el AuthStateListener en AuthViewModel detectara
+                // el cambio y MainScreen navegara automaticamente a Login
+                viewModel.signOut()
+                // NO navegar manualmente aqui - evita race condition
             }
         )
     }

@@ -107,6 +107,37 @@ fun MainScreen(
     val licencias by guiaViewModel.licencias.collectAsStateWithLifecycle()
     val guias by guiaViewModel.guias.collectAsStateWithLifecycle()
 
+    // Navegar automaticamente cuando cambia el estado de auth
+    // Esto maneja el logout correctamente - cuando AuthStateListener detecta signOut,
+    // authState cambia a NotAuthenticated y navegamos a Login
+    LaunchedEffect(authState) {
+        when (authState) {
+            is AuthViewModel.AuthState.NotAuthenticated -> {
+                // Usuario cerro sesion - navegar a Login y limpiar back stack
+                navController.navigate(Login) {
+                    popUpTo(0) { inclusive = true }
+                }
+            }
+            is AuthViewModel.AuthState.RequiresMigration -> {
+                // Usuario anonimo - navegar a Migration
+                navController.navigate(Migration) {
+                    popUpTo(0) { inclusive = true }
+                }
+            }
+            is AuthViewModel.AuthState.Authenticated -> {
+                // Usuario autenticado - navegar a Licencias si no estamos ya en contenido principal
+                val currentRoute = navController.currentDestination?.route
+                if (currentRoute == Login::class.qualifiedName ||
+                    currentRoute == Migration::class.qualifiedName) {
+                    navController.navigate(Licencias) {
+                        popUpTo(0) { inclusive = true }
+                    }
+                }
+            }
+            else -> { /* Loading, Error - no hacer nada */ }
+        }
+    }
+
     // Determinar visibilidad de componentes
     // Ocultar en pantallas de auth (Login, Migration)
     val isAuthScreen = currentRoute in authScreenRoutes
