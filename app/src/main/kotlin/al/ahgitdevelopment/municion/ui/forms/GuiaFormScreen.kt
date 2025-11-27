@@ -1,5 +1,9 @@
 package al.ahgitdevelopment.municion.ui.forms
 
+import al.ahgitdevelopment.municion.R
+import al.ahgitdevelopment.municion.data.local.room.entities.Guia
+import al.ahgitdevelopment.municion.ui.theme.MunicionTheme
+import al.ahgitdevelopment.municion.ui.viewmodel.GuiaViewModel
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -14,6 +18,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuAnchorType
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.OutlinedTextField
@@ -39,10 +44,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import kotlinx.coroutines.launch
-import al.ahgitdevelopment.municion.R
-import al.ahgitdevelopment.municion.data.local.room.entities.Guia
-import al.ahgitdevelopment.municion.ui.theme.MunicionTheme
-import al.ahgitdevelopment.municion.ui.viewmodel.GuiaViewModel
 
 /**
  * Contenido del formulario de Guia para Single Scaffold Architecture.
@@ -190,12 +191,14 @@ fun GuiaFormContent(
                     snackbarHostState.showSnackbar(message)
                 }
             }
+
             is GuiaViewModel.GuiaUiState.Error -> {
                 snackbarHostState.showSnackbar(
                     "Error: ${(uiState as GuiaViewModel.GuiaUiState.Error).message}"
                 )
                 viewModel.resetUiState()
             }
+
             else -> {}
         }
     }
@@ -449,7 +452,7 @@ private fun AutoCompleteTextField(
     error: String?
 ) {
     var expanded by remember { mutableStateOf(false) }
-    val filteredSuggestions = suggestions.filter { it.contains(value, ignoreCase = true) }.take(5)
+    val filteredSuggestions = suggestions.filter { it.contains(value, ignoreCase = true) }.take(10)
 
     ExposedDropdownMenuBox(
         expanded = expanded && filteredSuggestions.isNotEmpty(),
@@ -465,8 +468,11 @@ private fun AutoCompleteTextField(
             isError = error != null,
             supportingText = error?.let { { Text(it) } },
             modifier = Modifier
-                .fillMaxWidth(),
-//                .menuAnchor(),
+                .fillMaxWidth()
+                .menuAnchor(
+                    ExposedDropdownMenuAnchorType.PrimaryEditable,
+                    false
+                ),
             singleLine = true,
         )
         ExposedDropdownMenu(
@@ -533,7 +539,10 @@ private fun DropdownFieldGuia(
 /**
  * Obtiene los tipos de arma disponibles segun el tipo de licencia
  */
-private fun getWeaponTypesForLicense(context: android.content.Context, tipoLicencia: String): List<String> {
+private fun getWeaponTypesForLicense(
+    context: android.content.Context,
+    tipoLicencia: String
+): List<String> {
     return try {
         val licenseName = tipoLicencia.split(" ").firstOrNull() ?: return emptyList()
         val resourceId = context.resources.getIdentifier(licenseName, "array", context.packageName)

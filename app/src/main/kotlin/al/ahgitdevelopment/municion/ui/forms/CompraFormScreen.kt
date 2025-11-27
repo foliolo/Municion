@@ -83,10 +83,14 @@ fun CompraFormContent(
     val cupoTotal = guia.cupo
 
     // Form state - inicializar directamente desde el objeto
-    // Si es nueva, calibre1 se inicializa con el calibre de la guia
+    // Si es nueva, calibres se inicializan con los calibres de la guia
     var calibre1 by rememberSaveable { mutableStateOf(compra?.calibre1 ?: guia.calibre1) }
-    var calibre2 by rememberSaveable { mutableStateOf(compra?.calibre2 ?: "") }
-    var showCalibre2 by rememberSaveable { mutableStateOf(!compra?.calibre2.isNullOrBlank()) }
+    var calibre2 by rememberSaveable { mutableStateOf(compra?.calibre2 ?: guia.calibre2 ?: "") }
+    var showCalibre2 by rememberSaveable {
+        mutableStateOf(
+            !compra?.calibre2.isNullOrBlank() || !guia.calibre2.isNullOrBlank()
+        )
+    }
     var unidades by rememberSaveable { mutableStateOf(compra?.unidades?.toString() ?: "") }
     var precio by rememberSaveable { mutableStateOf(compra?.precio?.toString() ?: "") }
     var fecha by rememberSaveable { mutableStateOf(compra?.fecha ?: getCurrentDate()) }
@@ -327,7 +331,8 @@ fun CompraFormFields(
         ) {
             Checkbox(
                 checked = showCalibre2,
-                onCheckedChange = onShowCalibre2Change
+                onCheckedChange = onShowCalibre2Change,
+                enabled = false
             )
             Text("Segundo calibre")
         }
@@ -339,7 +344,8 @@ fun CompraFormFields(
                 onValueChange = onCalibre2Change,
                 label = { Text("Segundo calibre") },
                 modifier = Modifier.fillMaxWidth(),
-                singleLine = true
+                singleLine = true,
+                enabled = false
             )
         }
 

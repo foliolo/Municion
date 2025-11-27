@@ -241,8 +241,7 @@ fun MainScreen(
             if (showFab) {
                 MunicionFAB(
                     currentRoute = currentRoute,
-                    onAddLicencia = {
-                        navController.navigateSafely(LicenciaForm(licencia = null))
+                    onAddLicencia = { navController.navigateSafely(LicenciaForm(licencia = null))
                     },
                     onAddGuia = {
                         if (licencias.isEmpty()) {
