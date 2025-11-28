@@ -6,12 +6,13 @@ import al.ahgitdevelopment.municion.ui.navigation.Guias
 import al.ahgitdevelopment.municion.ui.navigation.Licencias
 import al.ahgitdevelopment.municion.ui.navigation.Settings
 import al.ahgitdevelopment.municion.ui.navigation.Tiradas
-import al.ahgitdevelopment.municion.ui.theme.OnPrimary
-import al.ahgitdevelopment.municion.ui.theme.PrimaryDark
+import androidx.compose.material3.MaterialTheme
 import al.ahgitdevelopment.municion.ui.viewmodel.MainViewModel.SyncState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Leaderboard
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.SocialDistance
 import androidx.compose.material.icons.filled.Sync
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -115,7 +116,7 @@ private fun ListTopBar(
             if (showScoreTable) {
                 IconButton(onClick = onScoreTableClick) {
                     Icon(
-                        painter = painterResource(R.drawable.tabla_tiradas2),
+                        imageVector = Icons.Filled.Leaderboard,
                         contentDescription = stringResource(R.string.tabla_tiradas)
                     )
                 }
@@ -124,7 +125,7 @@ private fun ListTopBar(
             when (syncState) {
                 is SyncState.Syncing -> {
                     CircularProgressIndicator(
-                        color = OnPrimary,
+                        color = MaterialTheme.colorScheme.onPrimary,
                         strokeWidth = 2.dp
                     )
                 }
@@ -180,14 +181,15 @@ private fun FormTopBar(
 
 /**
  * Colores compartidos para todos los TopBars.
+ * Usa colores del tema Material 3 para adaptarse a light/dark mode.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun topAppBarColors() = TopAppBarDefaults.topAppBarColors(
-    containerColor = PrimaryDark,
-    titleContentColor = OnPrimary,
-    navigationIconContentColor = OnPrimary,
-    actionIconContentColor = OnPrimary
+    containerColor = MaterialTheme.colorScheme.primary,
+    titleContentColor = MaterialTheme.colorScheme.onPrimary,
+    navigationIconContentColor = MaterialTheme.colorScheme.onPrimary,
+    actionIconContentColor = MaterialTheme.colorScheme.onPrimary
 )
 
 /**

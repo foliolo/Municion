@@ -69,7 +69,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         // Edge-to-edge con iconos claros (blancos) en status bar y navigation bar
-        // porque TopBar y BottomBar usan PrimaryDark (fondo oscuro)
+        // porque TopBar y BottomBar usan MaterialTheme.colorScheme.primary
         enableEdgeToEdge(
             statusBarStyle = SystemBarStyle.dark(android.graphics.Color.TRANSPARENT),
             navigationBarStyle = SystemBarStyle.dark(android.graphics.Color.TRANSPARENT)

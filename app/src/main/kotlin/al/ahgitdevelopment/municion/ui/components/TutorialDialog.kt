@@ -2,8 +2,6 @@ package al.ahgitdevelopment.municion.ui.components
 
 import al.ahgitdevelopment.municion.R
 import al.ahgitdevelopment.municion.ui.theme.MunicionTheme
-import al.ahgitdevelopment.municion.ui.theme.OnPrimary
-import al.ahgitdevelopment.municion.ui.theme.PrimaryDark
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -99,9 +97,9 @@ fun TutorialDialog(
                         }
                     },
                     colors = TopAppBarDefaults.topAppBarColors(
-                        containerColor = PrimaryDark,
-                        titleContentColor = OnPrimary,
-                        navigationIconContentColor = OnPrimary
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        titleContentColor = MaterialTheme.colorScheme.onPrimary,
+                        navigationIconContentColor = MaterialTheme.colorScheme.onPrimary
                     )
                 )
             }

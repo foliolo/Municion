@@ -22,9 +22,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import al.ahgitdevelopment.municion.ui.navigation.Route
 import al.ahgitdevelopment.municion.ui.navigation.Tiradas
-import al.ahgitdevelopment.municion.ui.theme.BottomNavBackground
-import al.ahgitdevelopment.municion.ui.theme.BottomNavItemActive
-import al.ahgitdevelopment.municion.ui.theme.BottomNavItemInactive
+import androidx.compose.material3.MaterialTheme
 
 /**
  * Datos para cada item del BottomNavigationBar
@@ -65,7 +63,8 @@ fun MunicionBottomBar(navController: NavHostController) {
 
     if (showBottomBar) {
         NavigationBar(
-            containerColor = BottomNavBackground,
+            containerColor = MaterialTheme.colorScheme.primary,
+            contentColor = MaterialTheme.colorScheme.onPrimary,
             // Edge-to-edge: BottomBar handles navigation bar inset
             windowInsets = NavigationBarDefaults.windowInsets
         ) {
@@ -94,11 +93,11 @@ fun MunicionBottomBar(navController: NavHostController) {
                         }
                     },
                     colors = NavigationBarItemDefaults.colors(
-                        selectedIconColor = BottomNavItemActive,
-                        selectedTextColor = BottomNavItemActive,
-                        unselectedIconColor = BottomNavItemInactive,
-                        unselectedTextColor = BottomNavItemInactive,
-                        indicatorColor = BottomNavBackground
+                        selectedIconColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                        selectedTextColor = MaterialTheme.colorScheme.onPrimary,
+                        unselectedIconColor = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.7f),
+                        unselectedTextColor = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.7f),
+                        indicatorColor = MaterialTheme.colorScheme.primaryContainer
                     )
                 )
             }

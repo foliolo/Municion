@@ -35,6 +35,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.tooling.preview.Preview
 import al.ahgitdevelopment.municion.data.local.room.entities.Compra
 import al.ahgitdevelopment.municion.ui.theme.Secondary
 
@@ -171,4 +172,24 @@ fun CompraItem(
             }
         }
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun CompraItemPreview() {
+    val compra = Compra(
+        id = 1,
+        idPosGuia = 1,
+        calibre1 = "9mm Luger",
+        calibre2 = "",
+        unidades = 50,
+        precio = 12.50,
+        fecha = "15/08/2023",
+        tipo = "FMJ",
+        peso = 124,
+        marca = "Geco",
+        tienda = "Armería Álvarez",
+        valoracion = 4.5f
+    )
+    CompraItem(compra = compra, onClick = {}, onLongClick = {}, onDelete = {})
 }
