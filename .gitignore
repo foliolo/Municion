@@ -325,3 +325,4 @@ fabric.properties
 /app/release/baselineProfiles/1/app-release.dm
 /keystore.properties
 /app/release/output-metadata.json
+/.kotlin/

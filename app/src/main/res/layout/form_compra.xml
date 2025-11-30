@@ -73,6 +73,20 @@
                     android:inputType="none|textCapSentences" />
             </com.google.android.material.textfield.TextInputLayout>
 
+            <!--CUPO DISPONIBLE INFO-->
+            <TextView
+                android:id="@+id/form_cupo_info"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:padding="12dp"
+                android:background="@color/colorPrimary"
+                android:textColor="@color/colorPrimaryDark"
+                android:textStyle="bold"
+                android:visibility="gone"
+                android:text="Cupo disponible: 0 / 0 unidades" />
+
             <!--UNIDADES-->
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/text_input_layout_unidades"

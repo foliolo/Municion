@@ -139,6 +139,265 @@ All forms use result codes (COMPLETED/UPDATED) to communicate changes back to `F
 - Network connectivity checks
 - SharedPreferences management for notifications
 
+## Authentication Flow (TRACK B Modernization)
+
+The app uses Firebase Authentication with automatic recovery for seamless user experience.
+
+```
+┌─────────────────────────────────────────────────────┐
+│                    APP STARTUP                       │
+│                  MainActivity.onCreate()             │
+└─────────────────────────┬───────────────────────────┘
+                          │
+                          ▼
+┌─────────────────────────────────────────────────────┐
+│          MainViewModel.checkAuthState()             │
+└─────────────────────────┬───────────────────────────┘
+                          │
+                          ▼
+              ┌───────────────────────┐
+              │ firebaseAuth.currentUser │
+              │        != null?        │
+              └───────────┬───────────┘
+                    ╱           ╲
+                  YES            NO
+                  │               │
+                  ▼               ▼
+       ┌──────────────────┐  ┌──────────────────────┐
+       │ State=Authenticated│  │ attemptFirebaseRecovery│
+       │ syncFromFirebase()│  │ signInAnonymously()   │
+       └──────────────────┘  └──────────┬───────────┘
+                                        │
+                                        ▼
+                              ┌─────────────────┐
+                              │ Recovery OK?    │
+                              └────────┬────────┘
+                                 ╱          ╲
+                               YES           NO
+                               │              │
+                               ▼              ▼
+                    ┌──────────────┐  ┌──────────────┐
+                    │ Authenticated│  │Unauthenticated│
+                    │ sync...      │  │→ Login Screen │
+                    └──────────────┘  └──────────────┘
+```
+
+**Key Files:**
+- `MainViewModel.kt` - Authentication state management
+- `FirebaseAuthRepository.kt` - Firebase Auth wrapper
+- `LoginActivity.kt` - Login UI
+
+## Data Synchronization Flow (TRACK B Modernization)
+
+Room is the **source of truth**. Firebase provides cloud backup and cross-device sync.
+
+```
+┌─────────────────────────────────────────────────────┐
+│       syncFromFirebaseWithAutoFix(userId)           │
+│              SyncDataUseCase.kt                     │
+└─────────────────────────┬───────────────────────────┘
+                          │
+                          ▼
+┌─────────────────────────────────────────────────────┐
+│  Download from Firebase (4 entities in parallel)    │
+│  ┌─────────┐ ┌─────────┐ ┌─────────┐ ┌─────────┐   │
+│  │Licencias│ │ Guías   │ │ Compras │ │ Tiradas │   │
+│  └─────────┘ └─────────┘ └─────────┘ └─────────┘   │
+└─────────────────────────┬───────────────────────────┘
+                          │
+                          ▼
+┌─────────────────────────────────────────────────────┐
+│  Manual field-by-field parsing                      │
+│  If error → Crashlytics.recordException()           │
+│             (userId, entity, field, value)          │
+└─────────────────────────┬───────────────────────────┘
+                          │
+                          ▼
+              ┌───────────────────────┐
+              │ Parse errors exist    │
+              │ AND Room has data?    │
+              └───────────┬───────────┘
+                    ╱           ╲
+                  YES            NO
+                  │               │
+                  ▼               ▼
+       ┌──────────────────┐  ┌──────────────────┐
+       │ AUTO-FIX:        │  │ Sync completed   │
+       │ syncToFirebase() │  │ normally         │
+       │ Room → Firebase  │  │                  │
+       └──────────────────┘  └──────────────────┘
+                          │
+                          ▼
+┌─────────────────────────────────────────────────────┐
+│  Room updated → Flow emits → UI updates             │
+└─────────────────────────────────────────────────────┘
+```
+
+### Sync Strategy: Cloud Wins with Auto-Fix
+
+1. **Download**: Firebase data replaces Room data
+2. **Parse Errors**: If Firebase has corrupt data, report to Crashlytics with:
+   - `userId` - Firebase Auth UID
+   - `entity` - Which entity failed (Licencia, Guia, etc.)
+   - `failed_field` - Which field failed validation
+   - `error_type` - Type of error (Missing, Blank, Invalid)
+   - `field_value` - Raw value (REDACTED for PII fields)
+3. **Auto-Fix**: If Firebase has errors but Room has valid data, upload Room → Firebase
+
+### Sensitive Fields (Never sent to Crashlytics)
+- `numLicencia`, `numGuia`, `numArma`
+- `nombre`, `dni`
+- `numAbonado`, `numSeguro`
+
+**Key Files:**
+- `SyncDataUseCase.kt` - Orchestrates sync with auto-fix
+- `*Repository.kt` - Individual entity sync with manual parsing
+- `SyncModels.kt` - ParseError, SyncResultWithErrors classes
+
+## Entity Creation Flow (TRACK B Modernization)
+
+All 4 entities follow the same pattern: Fragment → FormActivity → ViewModel → Repository → Room + Firebase
+
+```
+┌──────────────────────────────────────────────────────────────────┐
+│ User taps FAB                                                     │
+└─────────────────────────┬────────────────────────────────────────┘
+                          │
+                          ▼
+┌──────────────────────────────────────────────────────────────────┐
+│ [Guías/Compras only] Show selection dialog                        │
+│  - Guías: Select Licencia to associate                           │
+│  - Compras: Select Guía to associate                             │
+└─────────────────────────┬────────────────────────────────────────┘
+                          │
+                          ▼
+┌──────────────────────────────────────────────────────────────────┐
+│ Launch FormActivity with Intent extras                           │
+│  - tipo_licencia (Guías)                                         │
+│  - guia + position_guia (Compras)                                │
+└─────────────────────────┬────────────────────────────────────────┘
+                          │
+                          ▼
+┌──────────────────────────────────────────────────────────────────┐
+│ User fills form → fabSaveOnClick()                               │
+│ bundle.putParcelable("modify_xxx", getCurrentXxx())              │
+│ setResult(RESULT_OK, intent) → finish()                          │
+└─────────────────────────┬────────────────────────────────────────┘
+                          │
+                          ▼
+┌──────────────────────────────────────────────────────────────────┐
+│ Fragment.handleXxxFormResult()                                   │
+│ getParcelableExtra("modify_xxx") → Legacy entity                 │
+│ convertLegacyToRoom(legacy) → Room entity                        │
+│ viewModel.saveXxx(roomEntity)                                    │
+└─────────────────────────┬────────────────────────────────────────┘
+                          │
+                          ▼
+┌──────────────────────────────────────────────────────────────────┐
+│ Repository.saveXxx() → Room DAO insert + syncToFirebase()        │
+│ Flow emits change → UI updates automatically                     │
+└──────────────────────────────────────────────────────────────────┘
+```
+
+### Entity Dependencies
+| Entity | Requires Selection | Parent |
+|--------|-------------------|--------|
+| Licencia | None | - |
+| Tirada | None | - |
+| Guía | Licencia dialog | Licencia (by tipo) |
+| Compra | Guía dialog | Guía (by idPosGuia) |
+
+**Key Files:**
+- `ui/*/Fragment.kt` - Modern Kotlin fragments with RecyclerView
+- `forms/*FormActivity.java` - Legacy Java form activities
+- `ui/viewmodel/*ViewModel.kt` - State management with Hilt
+- `data/repository/*Repository.kt` - Data access with Room + Firebase
+
+## Navigation Architecture (v3.3.0+)
+
+### NavType Pattern
+
+Munición usa custom NavTypes para navegación type-safe con validación robusta, inspirado en FamilyFilmApp pero adaptado para Navigation Compose 2.9+.
+
+**Componentes clave**:
+- `BaseNavType<T>`: Clase abstracta con serialización JSON y error handling
+- `EntityNavTypes.kt`: NavTypes específicos para Licencia, Guia, Compra, Tirada
+- `MunicionTypeMap`: Registro global de tipos
+- `navigateSafely()`: Extension function con try-catch automático
+
+**Ejemplo de uso**:
+
+```kotlin
+// Navegar a formulario de edición con objeto completo
+navController.navigateSafely(
+    LicenciaForm(licencia = licenciaToEdit)
+)
+
+// Navegar a formulario de creación
+navController.navigateSafely(
+    LicenciaForm(licencia = null)
+)
+```
+
+**Validaciones automáticas**:
+- Fechas en formato "dd/MM/yyyy" válido
+- Cupo >= gastado en Guías
+- Puntuación 0-600 en Tiradas
+- Campos obligatorios no blank
+- Valores numéricos en rangos válidos
+
+**Error handling**:
+- Errores de serialización → Reportados a Crashlytics con metadata
+- Errores de validación → IllegalStateException con mensaje claro
+- Datos corruptos en navegación → Snackbar + popBackStack()
+- Fallback automático en caso de deserialización fallida
+
+### Type-Safe Routes
+
+Todas las rutas implementan `sealed interface Route` y usan `@Serializable`:
+
+```kotlin
+// Tabs principales (data object)
+@Serializable
+data object Licencias : Route
+
+// Formularios (data class con parámetros)
+@Serializable
+data class LicenciaForm(val licencia: Licencia? = null) : Route
+
+@Serializable
+data class CompraForm(
+    val compra: Compra? = null,
+    val guia: Guia  // Siempre requerida para validación de cupo
+) : Route
+```
+
+### Bundle Size
+
+Tamaños típicos de navegación (serialización JSON):
+- LicenciaForm: ~2KB
+- GuiaForm: ~3KB
+- CompraForm: ~7KB (incluye Compra + Guia completa)
+- TiradaForm: ~1KB
+
+Android soporta hasta 1MB en Bundles - nuestros tamaños están muy por debajo del límite.
+
+### Ventajas del NavType Pattern
+
+1. **Type-safety completo**: Validación en compile-time + runtime
+2. **Elimina race conditions**: Objetos completos, no IDs que requieren lookup
+3. **Validación centralizada**: Reglas de negocio en NavType
+4. **Crashlytics integration**: Errores de navegación reportados automáticamente
+5. **Fallback robusto**: UI no crashea con datos corruptos
+
+### Archivos clave
+
+- `ui/navigation/navtypes/BaseNavType.kt` - Clase base abstracta
+- `ui/navigation/navtypes/EntityNavTypes.kt` - NavTypes para 4 entidades
+- `ui/navigation/navtypes/MunicionTypeMap.kt` - Type registry + navigateSafely()
+- `ui/navigation/NavRoutes.kt` - Definiciones de rutas type-safe
+- `ui/navigation/MunicionNavHost.kt` - NavHost con typeMap y error handling
+
 ## Spanish Terms Reference
 
 - **Guia** = Firearms permit/guide (for a specific weapon)
