@@ -111,7 +111,7 @@ class LicenciaRepository @Inject constructor(
             licenciaDao.delete(licencia)
 
             userId?.let {
-                syncToFirebase(it)
+                syncToFirebase(it, deletedId = licencia.id)
             }
 
             Result.success(Unit)
@@ -295,21 +295,72 @@ class LicenciaRepository @Inject constructor(
     }
 
     /**
-     * Sincroniza HACIA Firebase ← Room
+     * Sincroniza HACIA Firebase ← Room (Safe Merge)
+     *
+     * Implementa estrategia Fetch-Merge-Push para evitar pérdida de datos:
+     * 1. Descarga estado actual de Firebase.
+     * 2. Fusiona con estado local (Local tiene prioridad si coincide ID).
+     * 3. Aplica borrado si se especifica deletedId.
+     * 4. Sube el resultado fusionado.
+     * 5. Actualiza Room con el resultado fusionado.
+     *
+     * @param userId ID del usuario autenticado
+     * @param deletedId ID opcional de un elemento que acaba de ser borrado localmente y debe eliminarse del merge
      */
-    suspend fun syncToFirebase(userId: String): Result<Unit> = withContext(Dispatchers.IO) {
+    suspend fun syncToFirebase(userId: String, deletedId: Int? = null): Result<Unit> = withContext(Dispatchers.IO) {
         try {
-            val localLicencias = licenciaDao.getAllLicencias()
+            // 1. Fetch Remote (para no sobrescribir datos de otros dispositivos)
+            val snapshot = firebaseDb
+                .child("users")
+                .child(userId)
+                .child("db")
+                .child("licencias")
+                .get()
+                .await()
 
+            val remoteList = mutableListOf<Licencia>()
+            // Usamos una lista temporal de errores que no reportamos para no saturar logs en cada save
+            val dummyErrors = mutableListOf<ParseError>()
+            
+            snapshot.children.forEach { child ->
+                // Intentamos recuperar todo lo posible de remoto
+                parseAndValidateLicencia(child, userId, child.key ?: "unknown", dummyErrors)?.let {
+                    remoteList.add(it)
+                }
+            }
+
+            // 2. Fetch Local
+            val localList = licenciaDao.getAllLicencias()
+
+            // 3. Merge Logic
+            // Empezamos con Remote como base
+            val mergedMap = remoteList.associateBy { it.id }.toMutableMap()
+            
+            // Aplicamos Local (Sobrescribe Remote si coincide ID, añade si es nuevo)
+            localList.forEach { mergedMap[it.id] = it }
+
+            // Aplicamos borrado explícito (porque localList ya no tiene el item, pero remote sí podría)
+            if (deletedId != null) {
+                mergedMap.remove(deletedId)
+            }
+
+            val finalList = mergedMap.values.toList()
+
+            // 4. Push to Firebase (Lista completa fusionada)
             firebaseDb
                 .child("users")
                 .child(userId)
                 .child("db")
                 .child("licencias")
-                .setValue(localLicencias)
+                .setValue(finalList)
                 .await()
 
-            android.util.Log.i("LicenciaRepository", "Synced ${localLicencias.size} licencias to Firebase")
+            // 5. Update Local (Para traer items remotos que no teníamos)
+            if (finalList.isNotEmpty() || (localList.isNotEmpty() || remoteList.isNotEmpty())) {
+                licenciaDao.replaceAll(finalList)
+            }
+
+            android.util.Log.i(TAG, "Synced ${finalList.size} licencias to Firebase (Merged Local+Remote)")
 
             Result.success(Unit)
         } catch (e: Exception) {

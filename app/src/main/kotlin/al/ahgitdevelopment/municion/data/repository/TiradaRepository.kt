@@ -108,7 +108,7 @@ class TiradaRepository @Inject constructor(
             tiradaDao.delete(tirada)
 
             userId?.let {
-                syncToFirebase(it)
+                syncToFirebase(it, deletedId = tirada.id)
             }
 
             Result.success(Unit)
@@ -249,21 +249,66 @@ class TiradaRepository @Inject constructor(
     }
 
     /**
-     * Sincroniza HACIA Firebase ← Room
+     * Sincroniza HACIA Firebase ← Room (Safe Merge)
+     *
+     * Implementa estrategia Fetch-Merge-Push para evitar pérdida de datos:
+     * 1. Descarga estado actual de Firebase.
+     * 2. Fusiona con estado local (Local tiene prioridad si coincide ID).
+     * 3. Aplica borrado si se especifica deletedId.
+     * 4. Sube el resultado fusionado.
+     * 5. Actualiza Room con el resultado fusionado.
+     *
+     * @param userId ID del usuario autenticado
+     * @param deletedId ID opcional de un elemento que acaba de ser borrado localmente
      */
-    suspend fun syncToFirebase(userId: String): Result<Unit> = withContext(Dispatchers.IO) {
+    suspend fun syncToFirebase(userId: String, deletedId: Int? = null): Result<Unit> = withContext(Dispatchers.IO) {
         try {
-            val localTiradas = tiradaDao.getAllTiradas()
+            // 1. Fetch Remote
+            val snapshot = firebaseDb
+                .child("users")
+                .child(userId)
+                .child("db")
+                .child("tiradas")
+                .get()
+                .await()
 
+            val remoteList = mutableListOf<Tirada>()
+            val dummyErrors = mutableListOf<ParseError>()
+
+            snapshot.children.forEach { child ->
+                parseAndValidateTirada(child, child.key ?: "unknown", dummyErrors)?.let {
+                    remoteList.add(it)
+                }
+            }
+
+            // 2. Fetch Local
+            val localList = tiradaDao.getAllTiradas()
+
+            // 3. Merge Logic
+            val mergedMap = remoteList.associateBy { it.id }.toMutableMap()
+            localList.forEach { mergedMap[it.id] = it }
+
+            if (deletedId != null) {
+                mergedMap.remove(deletedId)
+            }
+
+            val finalList = mergedMap.values.toList()
+
+            // 4. Push to Firebase
             firebaseDb
                 .child("users")
                 .child(userId)
                 .child("db")
                 .child("tiradas")
-                .setValue(localTiradas)
+                .setValue(finalList)
                 .await()
 
-            android.util.Log.i("TiradaRepository", "Synced ${localTiradas.size} tiradas to Firebase")
+            // 5. Update Local
+            if (finalList.isNotEmpty() || (localList.isNotEmpty() || remoteList.isNotEmpty())) {
+                tiradaDao.replaceAll(finalList)
+            }
+
+            android.util.Log.i("TiradaRepository", "Synced ${finalList.size} tiradas to Firebase (Merged Local+Remote)")
 
             Result.success(Unit)
         } catch (e: Exception) {

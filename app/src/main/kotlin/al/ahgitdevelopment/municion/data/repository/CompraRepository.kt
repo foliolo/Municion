@@ -103,7 +103,7 @@ class CompraRepository @Inject constructor(
             compraDao.delete(compra)
 
             userId?.let {
-                syncToFirebase(it)
+                syncToFirebase(it, deletedId = compra.id)
             }
 
             Result.success(Unit)
@@ -290,21 +290,66 @@ class CompraRepository @Inject constructor(
     }
 
     /**
-     * Sincroniza HACIA Firebase ← Room (upload)
+     * Sincroniza HACIA Firebase ← Room (Safe Merge)
+     *
+     * Implementa estrategia Fetch-Merge-Push para evitar pérdida de datos:
+     * 1. Descarga estado actual de Firebase.
+     * 2. Fusiona con estado local (Local tiene prioridad si coincide ID).
+     * 3. Aplica borrado si se especifica deletedId.
+     * 4. Sube el resultado fusionado.
+     * 5. Actualiza Room con el resultado fusionado.
+     *
+     * @param userId ID del usuario autenticado
+     * @param deletedId ID opcional de un elemento que acaba de ser borrado localmente
      */
-    suspend fun syncToFirebase(userId: String): Result<Unit> = withContext(Dispatchers.IO) {
+    suspend fun syncToFirebase(userId: String, deletedId: Int? = null): Result<Unit> = withContext(Dispatchers.IO) {
         try {
-            val localCompras = compraDao.getAllCompras()
+            // 1. Fetch Remote
+            val snapshot = firebaseDb
+                .child("users")
+                .child(userId)
+                .child("db")
+                .child("compras")
+                .get()
+                .await()
 
+            val remoteList = mutableListOf<Compra>()
+            val dummyErrors = mutableListOf<ParseError>()
+
+            snapshot.children.forEach { child ->
+                parseAndValidateCompra(child, child.key ?: "unknown", dummyErrors)?.let {
+                    remoteList.add(it)
+                }
+            }
+
+            // 2. Fetch Local
+            val localList = compraDao.getAllCompras()
+
+            // 3. Merge Logic
+            val mergedMap = remoteList.associateBy { it.id }.toMutableMap()
+            localList.forEach { mergedMap[it.id] = it }
+
+            if (deletedId != null) {
+                mergedMap.remove(deletedId)
+            }
+
+            val finalList = mergedMap.values.toList()
+
+            // 4. Push to Firebase
             firebaseDb
                 .child("users")
                 .child(userId)
                 .child("db")
                 .child("compras")
-                .setValue(localCompras)
+                .setValue(finalList)
                 .await()
 
-            android.util.Log.i("CompraRepository", "Synced ${localCompras.size} compras to Firebase")
+            // 5. Update Local
+            if (finalList.isNotEmpty() || (localList.isNotEmpty() || remoteList.isNotEmpty())) {
+                compraDao.replaceAll(finalList)
+            }
+
+            android.util.Log.i("CompraRepository", "Synced ${finalList.size} compras to Firebase (Merged Local+Remote)")
 
             Result.success(Unit)
         } catch (e: Exception) {

@@ -234,15 +234,16 @@ class SyncDataUseCase @Inject constructor(
     }
 
     /**
-     * Sincronización bidireccional inteligente
+     * Sincronización inicial inteligente
      *
      * Estrategia:
      * - Si el usuario NO está autenticado: no sincroniza (solo local)
      * - Si el usuario está autenticado (anónimo o vinculado):
-     *   1. Primero descarga de Firebase (por si hay cambios en otro dispositivo)
-     *   2. Luego sube cambios locales a Firebase
+     *   1. Descarga de Firebase → Room (prioridad Cloud para evitar sobrescribir datos)
+     *   2. La subida (Upload) se realiza solo de manera reactiva en los repositorios (Save/Update/Delete)
+     *      para evitar que un estado local vacío sobrescriba los datos remotos ("Last Write Wins").
      *
-     * @return BidirectionalSyncResult con detalles de ambas operaciones
+     * @return BidirectionalSyncResult con detalles de la descarga
      */
     suspend fun syncBidirectional(): Result<BidirectionalSyncResult> {
         // Verificar autenticación
@@ -265,26 +266,26 @@ class SyncDataUseCase @Inject constructor(
         }
 
         return try {
-            android.util.Log.i(TAG, "Starting bidirectional sync for user: $userId")
+            android.util.Log.i(TAG, "Starting smart sync for user: $userId")
 
             // Paso 1: Descargar de Firebase → Room
             val downloadResult = syncFromFirebase(userId).getOrNull()
             android.util.Log.i(TAG, "Download completed: ${downloadResult?.successCount ?: 0}/4")
 
-            // Paso 2: Subir de Room → Firebase
-            val uploadResult = syncToFirebase(userId).getOrNull()
-            android.util.Log.i(TAG, "Upload completed: ${uploadResult?.successCount ?: 0}/4")
+            // NOTA: Eliminamos el "Paso 2: Subir" automático para evitar data loss.
+            // La subida se delega a las operaciones individuales (save/update/delete)
+            // que ahora hacen un "Fetch-Merge-Push" seguro.
 
             Result.success(
                 BidirectionalSyncResult(
                     downloadResult = downloadResult,
-                    uploadResult = uploadResult,
+                    uploadResult = null, // No upload in auto-sync
                     skipped = false,
                     reason = null
                 )
             )
         } catch (e: Exception) {
-            android.util.Log.e(TAG, "Bidirectional sync failed", e)
+            android.util.Log.e(TAG, "Smart sync failed", e)
             crashlytics.recordException(e)
             Result.failure(e)
         }
