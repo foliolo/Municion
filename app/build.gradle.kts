@@ -58,18 +58,14 @@ android {
         }
     }
 
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
-    }
-
-    kotlinOptions {
-        jvmTarget = "17"
-        // Enable K2 compiler (Kotlin 2.0+)
-        freeCompilerArgs += listOf(
-            "-Xjvm-default=all",
-            "-opt-in=kotlin.RequiresOptIn"
-        )
+    kotlin {
+        jvmToolchain(17)
+        compilerOptions {
+            // Enable K2 compiler (Kotlin 2.0+)
+            jvmDefault.set(org.jetbrains.kotlin.gradle.dsl.JvmDefaultMode.ENABLE)
+            optIn.add("kotlin.RequiresOptIn")
+            freeCompilerArgs.add("-XXLanguage:+PropertyParamAnnotationDefaultTargetMode")
+        }
     }
 
     buildFeatures {

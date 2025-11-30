@@ -98,7 +98,7 @@
     <string name="lbl_rango_tirada">Range</string>
     <string name="lbl_descripcion_tirada">Description</string>
     <string name="lbl_puntuacion_tirada">Score [0-600]</string>
-    <string name="msg_countdown_ultima_tirada">Update your licence! Go shooting before it expire in the following days:</string>
+    <string name="msg_countdown_ultima_tirada">Update your license! Go shooting before it expire in the following days:</string>
     <string name="form_tirada_aviso_puntuacion">Score too hight</string>
 
     <!--TIRADAS-->
@@ -257,6 +257,7 @@
     <string name="dialog_delete_competition_message">Are you sure you want to delete the competition \"%1$s\"?</string>
     <string name="dialog_select_guide">Select a document</string>
     <string name="dialog_no_guides_available">No documents available. First you must create a document.</string>
+    <string name="dialog_no_licenses_available">No licenses available. First you must create a license.</string>
     <string name="label_quota">Quota: </string>
 
     <!-- Compose Empty States (v3.0.0) -->

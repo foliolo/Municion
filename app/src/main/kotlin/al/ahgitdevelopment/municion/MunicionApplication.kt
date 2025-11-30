@@ -1,5 +1,6 @@
 package al.ahgitdevelopment.municion
 
+import android.app.Application
 import dagger.hilt.android.HiltAndroidApp
 
 /**
@@ -17,12 +18,4 @@ import dagger.hilt.android.HiltAndroidApp
  * @since v3.0.0 (TRACK B Modernization)
  */
 @HiltAndroidApp
-class MunicionApplication : BaseApplication() {
-
-    override fun onCreate() {
-        super.onCreate()
-
-        // Inicializaciones globales si son necesarias
-        android.util.Log.i("MunicionApplication", "App initialized with Hilt DI")
-    }
-}
+class MunicionApplication : Application()

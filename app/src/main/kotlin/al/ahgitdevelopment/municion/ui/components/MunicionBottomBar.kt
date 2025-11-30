@@ -3,12 +3,17 @@ package al.ahgitdevelopment.municion.ui.components
 import al.ahgitdevelopment.municion.ui.navigation.Compras
 import al.ahgitdevelopment.municion.ui.navigation.Guias
 import al.ahgitdevelopment.municion.ui.navigation.Licencias
+import al.ahgitdevelopment.municion.ui.navigation.Route
+import al.ahgitdevelopment.municion.ui.navigation.Tiradas
+import androidx.annotation.StringRes
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Badge
 import androidx.compose.material.icons.filled.Security
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material.icons.filled.SportsScore
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarDefaults
 import androidx.compose.material3.NavigationBarItem
@@ -16,13 +21,13 @@ import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
-import al.ahgitdevelopment.municion.ui.navigation.Route
-import al.ahgitdevelopment.municion.ui.navigation.Tiradas
-import androidx.compose.material3.MaterialTheme
 
 /**
  * Datos para cada item del BottomNavigationBar
@@ -30,7 +35,7 @@ import androidx.compose.material3.MaterialTheme
 data class BottomNavItem(
     val route: Route,
     val icon: ImageVector,
-    val label: String
+    @StringRes val labelResId: Int
 )
 
 /**
@@ -49,10 +54,26 @@ data class BottomNavItem(
 @Composable
 fun MunicionBottomBar(navController: NavHostController) {
     val items = listOf(
-        BottomNavItem(Licencias, Icons.Default.Badge, "Licencias"),
-        BottomNavItem(Guias, Icons.Default.Security, "Guías"),
-        BottomNavItem(Compras, Icons.Default.ShoppingCart, "Compras"),
-        BottomNavItem(Tiradas, Icons.Default.SportsScore, "Tiradas")
+        BottomNavItem(
+            Licencias,
+            Icons.Default.Badge,
+            al.ahgitdevelopment.municion.R.string.section_licencias_title
+        ),
+        BottomNavItem(
+            Guias,
+            Icons.Default.Security,
+            al.ahgitdevelopment.municion.R.string.section_guias_title
+        ),
+        BottomNavItem(
+            Compras,
+            Icons.Default.ShoppingCart,
+            al.ahgitdevelopment.municion.R.string.section_compras_title
+        ),
+        BottomNavItem(
+            Tiradas,
+            Icons.Default.SportsScore,
+            al.ahgitdevelopment.municion.R.string.section_competiciones_title
+        )
     )
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
@@ -75,10 +96,16 @@ fun MunicionBottomBar(navController: NavHostController) {
                     icon = {
                         Icon(
                             imageVector = item.icon,
-                            contentDescription = item.label
+                            contentDescription = stringResource(item.labelResId)
                         )
                     },
-                    label = { Text(item.label) },
+                    label = {
+                        Text(
+                            text = stringResource(item.labelResId),
+                            modifier = Modifier.fillMaxWidth(),
+                            textAlign = TextAlign.Center
+                        )
+                    },
                     selected = selected,
                     onClick = {
                         navController.navigate(item.route) {

@@ -245,14 +245,18 @@ fun MainScreen(
                     },
                     onAddGuia = {
                         if (licencias.isEmpty()) {
-                            // TODO: Show snackbar "Primero crea una licencia"
+                            scope.launch {
+                                snackbarHostState.showSnackbar(context.getString(R.string.dialog_no_licenses_available))
+                            }
                         } else {
                             showLicenciaDialog = true
                         }
                     },
                     onAddCompra = {
                         if (guias.isEmpty()) {
-                            // TODO: Show snackbar "Primero crea una guía"
+                            scope.launch {
+                                snackbarHostState.showSnackbar(context.getString(R.string.dialog_no_guides_available))
+                            }
                         } else {
                             showGuiaDialog = true
                         }

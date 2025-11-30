@@ -2,12 +2,12 @@ package al.ahgitdevelopment.municion.ui.forms
 
 import al.ahgitdevelopment.municion.R
 import al.ahgitdevelopment.municion.data.local.room.entities.Compra
+import al.ahgitdevelopment.municion.ui.components.DatePickerField
+import al.ahgitdevelopment.municion.ui.components.getCurrentDateFormatted
 import al.ahgitdevelopment.municion.ui.theme.LicenseExpired
 import al.ahgitdevelopment.municion.ui.theme.LicenseValid
 import al.ahgitdevelopment.municion.ui.theme.MunicionTheme
 import al.ahgitdevelopment.municion.ui.viewmodel.CompraViewModel
-import android.app.DatePickerDialog
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -17,14 +17,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.CalendarToday
 import androidx.compose.material3.Checkbox
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.SnackbarHostState
@@ -37,10 +32,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
@@ -49,9 +43,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import kotlinx.coroutines.launch
-import java.text.SimpleDateFormat
-import java.util.Calendar
-import java.util.Locale
 
 /**
  * Contenido del formulario de Compra para Single Scaffold Architecture.
@@ -96,7 +87,7 @@ fun CompraFormContent(
     }
     var unidades by rememberSaveable { mutableStateOf(compra?.unidades?.toString() ?: "") }
     var precio by rememberSaveable { mutableStateOf(compra?.precio?.toString() ?: "") }
-    var fecha by rememberSaveable { mutableStateOf(compra?.fecha ?: getCurrentDate()) }
+    var fecha by rememberSaveable { mutableStateOf(compra?.fecha ?: getCurrentDateFormatted()) }
     var tipo by rememberSaveable { mutableStateOf(compra?.tipo ?: "") }
     var peso by rememberSaveable { mutableStateOf(compra?.peso?.toString() ?: "") }
     var marca by rememberSaveable { mutableStateOf(compra?.marca ?: "") }
@@ -286,30 +277,6 @@ fun CompraFormFields(
     onTiendaChange: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val context = LocalContext.current
-    val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-
-    val datePickerDialog = remember {
-        val calendar = Calendar.getInstance()
-        if (fecha.isNotBlank()) {
-            try {
-                dateFormat.parse(fecha)?.let { calendar.time = it }
-            } catch (e: Exception) { /* ignore */
-            }
-        }
-        DatePickerDialog(
-            context,
-            { _, year, month, dayOfMonth ->
-                val cal = Calendar.getInstance()
-                cal.set(year, month, dayOfMonth)
-                onFechaChange(dateFormat.format(cal.time))
-            },
-            calendar.get(Calendar.YEAR),
-            calendar.get(Calendar.MONTH),
-            calendar.get(Calendar.DAY_OF_MONTH)
-        )
-    }
-
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -431,22 +398,11 @@ fun CompraFormFields(
         )
 
         // Fecha
-        OutlinedTextField(
+        DatePickerField(
+            label = stringResource(R.string.fecha),
             value = fecha,
-            onValueChange = {},
-            label = { Text(stringResource(R.string.fecha)) },
-            isError = fechaError != null,
-            supportingText = fechaError?.let { { Text(it) } },
-            modifier = Modifier
-                .fillMaxWidth()
-                .clickable { datePickerDialog.show() },
-            enabled = false,
-            singleLine = true,
-            trailingIcon = {
-                IconButton(onClick = { datePickerDialog.show() }) {
-                    Icon(Icons.Default.CalendarToday, contentDescription = stringResource(R.string.action_select_date))
-                }
-            }
+            error = fechaError,
+            onValueChange = onFechaChange
         )
 
         // Tienda
@@ -461,11 +417,6 @@ fun CompraFormFields(
 
         Spacer(modifier = Modifier.height(80.dp))
     }
-}
-
-private fun getCurrentDate(): String {
-    val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-    return dateFormat.format(Calendar.getInstance().time)
 }
 
 @Preview(showBackground = true)

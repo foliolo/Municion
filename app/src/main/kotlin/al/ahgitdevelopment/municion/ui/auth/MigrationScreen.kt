@@ -134,7 +134,7 @@ private fun MigrationContent(
     ) {
         // Logo
         Image(
-            painter = painterResource(R.drawable.ic_bullseye),
+            painter = painterResource(R.drawable.ic_launcher_4_transparent),
             contentDescription = "Logo",
             modifier = Modifier.size(100.dp)
         )

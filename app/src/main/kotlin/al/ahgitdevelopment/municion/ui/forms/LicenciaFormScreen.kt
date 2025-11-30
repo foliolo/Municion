@@ -2,13 +2,10 @@ package al.ahgitdevelopment.municion.ui.forms
 
 import al.ahgitdevelopment.municion.R
 import al.ahgitdevelopment.municion.data.local.room.entities.Licencia
+import al.ahgitdevelopment.municion.ui.components.DatePickerField
 import al.ahgitdevelopment.municion.ui.theme.MunicionTheme
 import al.ahgitdevelopment.municion.ui.viewmodel.LicenciaViewModel
-import android.app.DatePickerDialog
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -18,16 +15,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.CalendarToday
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -343,7 +335,7 @@ fun LicenciaFormFields(
         )
 
         // Fecha de expedición
-        DateField(
+        DatePickerField(
             label = stringResource(R.string.label_issue_date),
             value = fechaExpedicion,
             error = fechaExpedicionError,
@@ -443,86 +435,6 @@ fun LicenciaFormFields(
         }
 
         Spacer(modifier = Modifier.height(80.dp)) // Espacio para FAB
-    }
-}
-
-/**
- * Campo de fecha con DatePicker
- */
-@Composable
-private fun DateField(
-    label: String,
-    value: String,
-    error: String?,
-    onValueChange: (String) -> Unit
-) {
-    val context = LocalContext.current
-    val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-
-    val datePickerDialog = remember {
-        val calendar = Calendar.getInstance()
-        if (value.isNotBlank()) {
-            try {
-                dateFormat.parse(value)?.let { calendar.time = it }
-            } catch (e: Exception) { /* ignore */
-            }
-        }
-        DatePickerDialog(
-            context,
-            { _, year, month, dayOfMonth ->
-                val cal = Calendar.getInstance()
-                cal.set(year, month, dayOfMonth)
-                onValueChange(dateFormat.format(cal.time))
-            },
-            calendar.get(Calendar.YEAR),
-            calendar.get(Calendar.MONTH),
-            calendar.get(Calendar.DAY_OF_MONTH)
-        )
-    }
-
-    // 2. Usamos un Box para capturar los clics en toda el área del campo.
-    Box(
-        modifier = Modifier.clickable(
-            // Deshabilitamos la indicación visual de clic (ripple) para que no parezca un botón.
-            interactionSource = remember { MutableInteractionSource() },
-            indication = null
-        ) {
-            datePickerDialog.show()
-        }
-    ) {
-        // 3. El OutlinedTextField se vuelve un elemento puramente visual.
-        OutlinedTextField(
-            value = value,
-            onValueChange = {}, // La lambda está vacía porque es de solo lectura.
-            label = { Text(label) },
-            isError = error != null,
-            supportingText = error?.let { { Text(it) } },
-            modifier = Modifier.fillMaxWidth(),
-            readOnly = true, // Impide la edición por teclado.
-            // Lo deshabilitamos para que no pueda obtener el foco ni mostrar el cursor,
-            // pero su apariencia no cambiará gracias a la sobreescritura de colores.
-            enabled = false,
-            singleLine = true,
-            trailingIcon = {
-                Icon(
-                    imageVector = Icons.Default.CalendarToday,
-                    contentDescription = stringResource(R.string.action_select_date)
-                    // Ya no necesita un modifier clickable aquí.
-                )
-            },
-            // 4. Sobreescribimos los colores para que parezca habilitado.
-            colors = OutlinedTextFieldDefaults.colors(
-                disabledTextColor = MaterialTheme.colorScheme.onSurface,
-                disabledBorderColor = MaterialTheme.colorScheme.outline,
-                disabledLeadingIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                disabledTrailingIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                disabledLabelColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                disabledPlaceholderColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                disabledSupportingTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                disabledPrefixColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                disabledSuffixColor = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-        )
     }
 }
 

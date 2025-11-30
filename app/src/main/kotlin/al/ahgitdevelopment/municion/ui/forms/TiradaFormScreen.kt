@@ -1,8 +1,11 @@
 package al.ahgitdevelopment.municion.ui.forms
 
 import al.ahgitdevelopment.municion.R
-import android.app.DatePickerDialog
-import androidx.compose.foundation.clickable
+import al.ahgitdevelopment.municion.data.local.room.entities.Tirada
+import al.ahgitdevelopment.municion.ui.components.DatePickerField
+import al.ahgitdevelopment.municion.ui.components.getCurrentDateFormatted
+import al.ahgitdevelopment.municion.ui.theme.MunicionTheme
+import al.ahgitdevelopment.municion.ui.viewmodel.TiradaViewModel
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -13,10 +16,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.CalendarToday
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Slider
@@ -32,7 +31,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
@@ -42,12 +40,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import kotlinx.coroutines.launch
-import al.ahgitdevelopment.municion.data.local.room.entities.Tirada
-import al.ahgitdevelopment.municion.ui.theme.MunicionTheme
-import al.ahgitdevelopment.municion.ui.viewmodel.TiradaViewModel
-import java.text.SimpleDateFormat
-import java.util.Calendar
-import java.util.Locale
 
 /**
  * Contenido del formulario de Tirada para Single Scaffold Architecture.
@@ -78,7 +70,7 @@ fun TiradaFormContent(
     // Form state - inicializar directamente desde el objeto
     var descripcion by rememberSaveable { mutableStateOf(tirada?.descripcion ?: "") }
     var rango by rememberSaveable { mutableStateOf(tirada?.rango ?: "") }
-    var fecha by rememberSaveable { mutableStateOf(tirada?.fecha ?: getCurrentDateTirada()) }
+    var fecha by rememberSaveable { mutableStateOf(tirada?.fecha ?: getCurrentDateFormatted()) }
     var puntuacion by rememberSaveable { mutableFloatStateOf(tirada?.puntuacion?.toFloat() ?: 0f) }
 
     // Error states
@@ -182,29 +174,6 @@ fun TiradaFormFields(
     onPuntuacionChange: (Float) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val context = LocalContext.current
-    val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-
-    val datePickerDialog = remember {
-        val calendar = Calendar.getInstance()
-        if (fecha.isNotBlank()) {
-            try {
-                dateFormat.parse(fecha)?.let { calendar.time = it }
-            } catch (e: Exception) { /* ignore */ }
-        }
-        DatePickerDialog(
-            context,
-            { _, year, month, dayOfMonth ->
-                val cal = Calendar.getInstance()
-                cal.set(year, month, dayOfMonth)
-                onFechaChange(dateFormat.format(cal.time))
-            },
-            calendar.get(Calendar.YEAR),
-            calendar.get(Calendar.MONTH),
-            calendar.get(Calendar.DAY_OF_MONTH)
-        )
-    }
-
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -239,22 +208,11 @@ fun TiradaFormFields(
         )
 
         // Fecha
-        OutlinedTextField(
+        DatePickerField(
+            label = stringResource(R.string.fecha),
             value = fecha,
-            onValueChange = {},
-            label = { Text(stringResource(R.string.fecha)) },
-            isError = fechaError != null,
-            supportingText = fechaError?.let { { Text(it) } },
-            modifier = Modifier
-                .fillMaxWidth()
-                .clickable { datePickerDialog.show() },
-            enabled = false,
-            singleLine = true,
-            trailingIcon = {
-                IconButton(onClick = { datePickerDialog.show() }) {
-                    Icon(Icons.Default.CalendarToday, contentDescription = stringResource(R.string.action_select_date))
-                }
-            }
+            error = fechaError,
+            onValueChange = onFechaChange
         )
 
         // Puntuacion
@@ -293,11 +251,6 @@ fun TiradaFormFields(
 
         Spacer(modifier = Modifier.height(80.dp))
     }
-}
-
-private fun getCurrentDateTirada(): String {
-    val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-    return dateFormat.format(Calendar.getInstance().time)
 }
 
 @Preview(showBackground = true)

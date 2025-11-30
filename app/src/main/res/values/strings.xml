@@ -272,6 +272,7 @@
     <string name="dialog_delete_competition_message">¿Estás seguro de que deseas eliminar la tirada \"%1$s\"?</string>
     <string name="dialog_select_guide">Selecciona una guía</string>
     <string name="dialog_no_guides_available">No hay guías disponibles. Primero debes crear una guía.</string>
+    <string name="dialog_no_licenses_available">No hay licencias disponibles. Primero debes crear una licencia.</string>
     <string name="label_quota">Cupo: </string>
 
     <!-- Compose Empty States (v3.0.0) -->
