@@ -19,9 +19,9 @@
 # Add this global rule
 -keepattributes Signature
 
-# ============================================================
+# ===========================================================
 # Firebase Realtime Database - Data Models (CRITICAL FIX v2.0.4)
-# ============================================================
+# ===========================================================
 # Firebase uses reflection to serialize/deserialize objects
 # We must prevent ProGuard from obfuscating class names, field names, and getters/setters
 
@@ -42,9 +42,9 @@
     public <init>(...);
 }
 
-# ============================================================
+# ===========================================================
 # Parcelable Implementation
-# ============================================================
+# ===========================================================
 
 -keep class * implements android.os.Parcelable {
     public static final android.os.Parcelable$Creator *;
@@ -54,9 +54,9 @@
     public static final android.os.Parcelable$Creator CREATOR;
 }
 
-# ============================================================
+# ===========================================================
 # Firebase Core Rules
-# ============================================================
+# ===========================================================
 
 # Keep Firebase classes
 -keep class com.google.firebase.** { *; }
@@ -72,10 +72,16 @@
 -keepattributes SourceFile,LineNumberTable
 -keep public class * extends java.lang.Exception
 
-# ============================================================
+# ===========================================================
 # Billing
-# ============================================================
+# ===========================================================
 
 -keep class com.android.vending.billing.**
 -keepclassmembers class al.ahgitdevelopment.municion.BillingUtil.** { public *; }
 -keep public class al.ahgitdevelopment.municion.BillingUtil.**
+
+# ===========================================================
+# Jetpack Compose Navigation
+# ===========================================================
+# Keep the names of navigation routes to prevent issues with string-based routing in release builds.
+-keepnames class al.ahgitdevelopment.municion.ui.navigation.** { *; }

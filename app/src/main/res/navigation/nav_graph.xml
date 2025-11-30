@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/licenciasFragment">
+
+    <fragment
+        android:id="@+id/guiasFragment"
+        android:name="al.ahgitdevelopment.municion.ui.guias.GuiasFragment"
+        android:label="@string/section_guias_title"
+        tools:layout="@layout/fragment_guias" />
+
+    <fragment
+        android:id="@+id/comprasFragment"
+        android:name="al.ahgitdevelopment.municion.ui.compras.ComprasFragment"
+        android:label="@string/section_compras_title"
+        tools:layout="@layout/fragment_compras" />
+
+    <fragment
+        android:id="@+id/licenciasFragment"
+        android:name="al.ahgitdevelopment.municion.ui.licencias.LicenciasFragment"
+        android:label="@string/section_licencias_title"
+        tools:layout="@layout/fragment_licencias" />
+
+    <fragment
+        android:id="@+id/tiradasFragment"
+        android:name="al.ahgitdevelopment.municion.ui.tiradas.TiradasFragment"
+        android:label="@string/section_competiciones_title"
+        tools:layout="@layout/fragment_tiradas" />
+
+    <!-- AccountSettingsFragment removed in v3.4.0 - now using Compose -->
+
+</navigation>
