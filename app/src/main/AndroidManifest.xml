@@ -20,34 +20,14 @@
         android:name=".MunicionApplication"
         android:allowBackup="true"
         android:enableOnBackInvokedCallback="true"
-        android:icon="@mipmap/ic_launcher_3_light"
+        android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme">
 
-<!--        <activity-->
-<!--            android:name=".LoginPasswordActivity"-->
-<!--            android:exported="true"-->
-<!--            android:screenOrientation="portrait"-->
-<!--            android:windowSoftInputMode="stateVisible">-->
-<!--&lt;!&ndash;            <intent-filter>&ndash;&gt;-->
-<!--&lt;!&ndash;                <action android:name="android.intent.action.MAIN" />&ndash;&gt;-->
-<!--&lt;!&ndash;                <action android:name="android.intent.action.VIEW" />&ndash;&gt;-->
-
-<!--&lt;!&ndash;                <category android:name="android.intent.category.LAUNCHER" />&ndash;&gt;-->
-<!--&lt;!&ndash;            </intent-filter>&ndash;&gt;-->
-<!--        </activity>-->
-
-
-<!--        <activity-->
-<!--            android:name=".FragmentMainActivity"-->
-<!--            android:label="@string/title_activity_fragment_main" />-->
-
-        <!-- New modern LoginActivity (v3.0.0) -->
         <activity
-            android:name=".auth.LoginActivity"
+            android:name=".ui.MainActivity"
             android:exported="true"
-            android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateVisible">
+            android:label="@string/title_activity_fragment_main">
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -56,12 +36,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <!-- New modern MainActivity (v3.0.0) -->
-        <activity
-            android:name=".ui.MainActivity"
-            android:exported="false"
-            android:label="@string/title_activity_fragment_main" />
         <activity
             android:name=".forms.GuiaFormActivity"
             android:label="@string/title_nueva_guia"

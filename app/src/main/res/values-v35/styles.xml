@@ -21,8 +21,7 @@
         <item name="windowNoTitle">true</item>
         <item name="windowActionModeOverlay">true</item>
 
-        <!-- CRITICAL FIX for API 35: Opt-out of edge-to-edge enforcement -->
-        <item name="android:windowOptOutEdgeToEdgeEnforcement">true</item>
+        <!-- Edge-to-edge enabled via enableEdgeToEdge() in MainActivity -->
     </style>
 
     <!-- AppBarLayout theme - Dark for white text on dark toolbar -->

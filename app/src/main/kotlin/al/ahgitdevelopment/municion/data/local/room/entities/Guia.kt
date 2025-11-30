@@ -6,18 +6,25 @@ import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
 import kotlinx.parcelize.Parcelize
+import kotlinx.serialization.Serializable
 
 /**
- * Data model para Gu
-
-ía de arma (permiso de compra de munición)
+ * Data model para Guía de arma (permiso de compra de munición)
  *
  * Una Guía está asociada a una Licencia y tiene un cupo anual de munición.
  *
  * FASE 2: Migración de Java → Kotlin
  *
+ * NAVEGACIÓN (v3.3.0+):
+ * Esta clase implementa Parcelable + @Serializable para navegación type-safe.
+ * Se pasa completa en GuiaForm(guia = ...) eliminando race conditions.
+ * GuiaNavType valida cupo vs gastado durante deserialización.
+ *
+ * @see al.ahgitdevelopment.municion.ui.navigation.navtypes.GuiaNavType
+ * @see al.ahgitdevelopment.municion.ui.navigation.GuiaForm
  * @since v3.0.0 (TRACK B Modernization)
  */
+@Serializable
 @Parcelize
 @Entity(
     tableName = "guias",
