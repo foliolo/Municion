@@ -16,26 +16,26 @@ import javax.inject.Singleton
 /**
  * LegacyMigrationHelper - Migración de usuarios legacy a nuevo sistema
  *
- * FASE 4: Legacy Migration
+ * v3.4.0: Auth Simplification
  * - Detecta usuarios con datos legacy (SharedPrefs + SQLite)
- * - Migra PIN de SharedPreferences a AuthManager encriptado
  * - Migra datos de SQLite a Room
  * - Intenta recuperar cuenta Firebase si existe
- * - Ofrece opción de vinculación manual si falla auto-migración
+ * - Si falla, usuario debe registrarse con email/password
  *
  * Estrategia de migración:
  * 1. Detectar si hay datos legacy
- * 2. Migrar PIN a AuthManager (si no está ya migrado)
+ * 2. Limpiar PIN legacy de SharedPreferences
  * 3. Migrar datos de SQLite a Room (si no existen en Room)
  * 4. Intentar recuperar cuenta Firebase con email+PIN legacy
- * 5. Si falla, crear usuario anónimo y ofrecer vinculación manual
+ * 5. Si falla, usuario debe registrarse manualmente
  *
  * @since v3.0.0 (TRACK B - Auth Modernization)
+ * @updated v3.4.0 (Auth Simplification - eliminado AuthManager y PIN)
  */
 @Singleton
 class LegacyMigrationHelper @Inject constructor(
     @ApplicationContext private val context: Context,
-    private val authManager: AuthManager,
+    // AuthManager eliminado en v3.4.0 - ya no usamos PIN local
     private val firebaseAuthRepository: FirebaseAuthRepository,
     private val guiaDao: GuiaDao,
     private val compraDao: CompraDao,
@@ -114,36 +114,19 @@ class LegacyMigrationHelper @Inject constructor(
     }
 
     /**
-     * Migra el PIN de SharedPreferences a AuthManager (encriptado)
+     * Migra el PIN de SharedPreferences.
+     * v3.4.0: PIN eliminado - solo limpia datos legacy y marca como hecho.
      */
     private fun migratePin(): PinMigrationResult {
-        // Si ya está migrado, no hacer nada
+        // Si ya esta migrado, no hacer nada
         if (migrationPrefs.getBoolean(KEY_MIGRATION_PIN_DONE, false)) {
             return PinMigrationResult.AlreadyMigrated
         }
 
-        // Si AuthManager ya tiene PIN configurado, no sobrescribir
-        if (authManager.hasPinConfigured()) {
-            migrationPrefs.edit().putBoolean(KEY_MIGRATION_PIN_DONE, true).apply()
-            return PinMigrationResult.AlreadyConfigured
-        }
-
-        // Obtener PIN legacy
-        val legacyPin = legacyPrefs.getString(KEY_LEGACY_PASSWORD, null)
-        if (legacyPin.isNullOrEmpty()) {
-            return PinMigrationResult.NoPinToMigrate
-        }
-
-        // Migrar a AuthManager
-        val result = authManager.setupPin(legacyPin)
-        return if (result.isSuccess) {
-            // Eliminar PIN legacy (pero mantener otros datos por compatibilidad)
-            legacyPrefs.edit().remove(KEY_LEGACY_PASSWORD).apply()
-            migrationPrefs.edit().putBoolean(KEY_MIGRATION_PIN_DONE, true).apply()
-            PinMigrationResult.Migrated
-        } else {
-            PinMigrationResult.Failed(result.exceptionOrNull()?.message ?: "Unknown error")
-        }
+        // v3.4.0: PIN eliminado - solo limpiar datos legacy y marcar como hecho
+        legacyPrefs.edit().remove(KEY_LEGACY_PASSWORD).apply()
+        migrationPrefs.edit().putBoolean(KEY_MIGRATION_PIN_DONE, true).apply()
+        return PinMigrationResult.Skipped
     }
 
     /**
@@ -247,13 +230,9 @@ class LegacyMigrationHelper @Inject constructor(
         val legacyPin = legacyPrefs.getString(KEY_LEGACY_PASSWORD, null)
 
         if (legacyEmail.isNullOrEmpty() || legacyPin.isNullOrEmpty()) {
-            // No hay credenciales legacy, crear usuario anónimo
-            val anonResult = firebaseAuthRepository.signInAnonymously()
-            return if (anonResult.isSuccess) {
-                FirebaseMigrationResult.CreatedAnonymous
-            } else {
-                FirebaseMigrationResult.Failed(anonResult.exceptionOrNull()?.message ?: "Unknown")
-            }
+            // No hay credenciales legacy, usuario debe registrarse
+            // v3.4.0: Ya no se crean usuarios anonimos
+            return FirebaseMigrationResult.RequiresRegistration
         }
 
         // Intentar recuperar cuenta con credenciales legacy
@@ -263,22 +242,15 @@ class LegacyMigrationHelper @Inject constructor(
             is MigrationResult.Success -> FirebaseMigrationResult.Recovered
             is MigrationResult.UserNotFound,
             is MigrationResult.InvalidCredentials -> {
-                // Cuenta no existe o credenciales inválidas, crear anónimo
-                val anonResult = firebaseAuthRepository.signInAnonymously()
-                if (anonResult.isSuccess) {
-                    FirebaseMigrationResult.CreatedAnonymous
-                } else {
-                    FirebaseMigrationResult.Failed("Could not create anonymous user")
-                }
+                // Cuenta no existe o credenciales invalidas, usuario debe registrarse
+                // v3.4.0: Ya no se crean usuarios anonimos
+                FirebaseMigrationResult.RequiresRegistration
             }
             is MigrationResult.NetworkError -> FirebaseMigrationResult.NetworkError
             else -> {
-                val anonResult = firebaseAuthRepository.signInAnonymously()
-                if (anonResult.isSuccess) {
-                    FirebaseMigrationResult.CreatedAnonymous
-                } else {
-                    FirebaseMigrationResult.Failed("Migration failed")
-                }
+                // Error de migracion, usuario debe registrarse
+                // v3.4.0: Ya no se crean usuarios anonimos
+                FirebaseMigrationResult.RequiresRegistration
             }
         }
     }
@@ -364,6 +336,7 @@ enum class PinMigrationResult {
     AlreadyMigrated,
     AlreadyConfigured,
     NoPinToMigrate,
+    Skipped, // v3.4.0: PIN eliminado
     Failed;
 
     companion object {
@@ -377,15 +350,20 @@ enum class PinMigrationResult {
 sealed class FirebaseMigrationResult {
     object Recovered : FirebaseMigrationResult()
     object AlreadyAuthenticated : FirebaseMigrationResult()
+    @Deprecated("Ya no se crean usuarios anonimos desde v3.4.0")
     object CreatedAnonymous : FirebaseMigrationResult()
+    /** Usuario necesita registrarse con email/password (v3.4.0+) */
+    object RequiresRegistration : FirebaseMigrationResult()
     object NetworkError : FirebaseMigrationResult()
     data class Failed(val message: String) : FirebaseMigrationResult()
 
+    @Suppress("DEPRECATION")
     val name: String
         get() = when (this) {
             is Recovered -> "Recovered"
             is AlreadyAuthenticated -> "AlreadyAuthenticated"
             is CreatedAnonymous -> "CreatedAnonymous"
+            is RequiresRegistration -> "RequiresRegistration"
             is NetworkError -> "NetworkError"
             is Failed -> "Failed: $message"
         }

@@ -6,6 +6,7 @@ import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
 import kotlinx.parcelize.Parcelize
+import kotlinx.serialization.Serializable
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
@@ -18,8 +19,16 @@ import java.util.Locale
  *
  * FASE 2: Migración de Java → Kotlin
  *
+ * NAVEGACIÓN (v3.3.0+):
+ * Esta clase implementa Parcelable + @Serializable para navegación type-safe.
+ * Se pasa completa en TiradaForm(tirada = ...) eliminando race conditions.
+ * TiradaNavType valida fechas y puntuación durante deserialización.
+ *
+ * @see al.ahgitdevelopment.municion.ui.navigation.navtypes.TiradaNavType
+ * @see al.ahgitdevelopment.municion.ui.navigation.TiradaForm
  * @since v3.0.0 (TRACK B Modernization)
  */
+@Serializable
 @Parcelize
 @Entity(
     tableName = "tiradas",

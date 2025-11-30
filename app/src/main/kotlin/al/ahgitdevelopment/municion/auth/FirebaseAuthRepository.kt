@@ -5,7 +5,6 @@ import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.tasks.await
@@ -13,16 +12,16 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 /**
- * FirebaseAuthRepository - Manejo correcto de Firebase Authentication
+ * FirebaseAuthRepository - Manejo de Firebase Authentication
  *
- * FASE 2: Firebase Auth Modernization
- * - Reemplaza código buggy de saveUserInFirebase() en FragmentMainActivity
- * - Login anónimo por defecto (privacidad)
- * - Vinculación opcional de cuenta (Google/Email)
- * - Migración de usuarios legacy
- * - Manejo correcto de errores
+ * v3.4.0: Auth Simplification
+ * - Login obligatorio con email/password desde el primer uso
+ * - Eliminado login anonimo y vinculacion con Google
+ * - Mantenido linkWithEmail() para migracion de usuarios anonimos existentes
+ * - Migración de usuarios legacy (v2.x)
  *
  * @since v3.0.0 (TRACK B - Auth Modernization)
+ * @updated v3.4.0 (Auth Simplification)
  */
 @Singleton
 class FirebaseAuthRepository @Inject constructor(
@@ -58,54 +57,15 @@ class FirebaseAuthRepository @Inject constructor(
     }
 
     /**
-     * Login anónimo - Predeterminado para nuevos usuarios
-     * No requiere datos personales, preserva privacidad
-     */
-    suspend fun signInAnonymously(): Result<FirebaseUser> {
-        return try {
-            val result = firebaseAuth.signInAnonymously().await()
-            result.user?.let { user ->
-                android.util.Log.i(TAG, "Anonymous sign-in successful: ${user.uid}")
-                Result.success(user)
-            } ?: Result.failure(Exception("Anonymous sign-in failed: user is null"))
-        } catch (e: Exception) {
-            android.util.Log.e(TAG, "Anonymous sign-in failed", e)
-            crashlytics.recordException(e)
-            Result.failure(e)
-        }
-    }
-
-    /**
-     * Vincula cuenta anónima con Google
-     * Permite sincronización multi-dispositivo
-     *
-     * @param idToken Token de Google Sign-In
-     */
-    suspend fun linkWithGoogle(idToken: String): Result<FirebaseUser> {
-        return try {
-            val currentUser = firebaseAuth.currentUser
-                ?: return Result.failure(Exception("No user to link"))
-
-            val credential = GoogleAuthProvider.getCredential(idToken, null)
-            val result = currentUser.linkWithCredential(credential).await()
-
-            result.user?.let { user ->
-                android.util.Log.i(TAG, "Google link successful: ${user.email}")
-                Result.success(user)
-            } ?: Result.failure(Exception("Google link failed: user is null"))
-        } catch (e: Exception) {
-            android.util.Log.e(TAG, "Google link failed", e)
-            crashlytics.recordException(e)
-            Result.failure(e)
-        }
-    }
-
-    /**
-     * Vincula cuenta anónima con Email/Password
-     * Alternativa a Google para usuarios que prefieren email
+     * Vincula cuenta anonima existente con Email/Password.
+     * Usado para migrar usuarios anonimos existentes a cuentas con email.
+     * Mantiene el mismo UID y todos los datos existentes.
      *
      * @param email Email del usuario
-     * @param password Contraseña elegida por el usuario
+     * @param password Contrasena elegida por el usuario
+     * @return Result con FirebaseUser si exitoso
+     *
+     * @since v3.4.0 (Auth Simplification - Migration flow)
      */
     suspend fun linkWithEmail(email: String, password: String): Result<FirebaseUser> {
         return try {
@@ -127,25 +87,11 @@ class FirebaseAuthRepository @Inject constructor(
     }
 
     /**
-     * Login con credencial existente (Google o Email)
-     * Para usuarios que ya tienen cuenta vinculada
-     */
-    suspend fun signInWithCredential(credential: AuthCredential): Result<FirebaseUser> {
-        return try {
-            val result = firebaseAuth.signInWithCredential(credential).await()
-            result.user?.let { user ->
-                android.util.Log.i(TAG, "Sign-in with credential successful: ${user.uid}")
-                Result.success(user)
-            } ?: Result.failure(Exception("Sign-in failed: user is null"))
-        } catch (e: Exception) {
-            android.util.Log.e(TAG, "Sign-in with credential failed", e)
-            crashlytics.recordException(e)
-            Result.failure(e)
-        }
-    }
-
-    /**
-     * Login con Email/Password existente
+     * Login con Email/Password existente.
+     *
+     * @param email Email del usuario
+     * @param password Contrasena del usuario
+     * @return Result con FirebaseUser si exitoso
      */
     suspend fun signInWithEmail(email: String, password: String): Result<FirebaseUser> {
         return try {
@@ -156,6 +102,49 @@ class FirebaseAuthRepository @Inject constructor(
             } ?: Result.failure(Exception("Email sign-in failed: user is null"))
         } catch (e: Exception) {
             android.util.Log.e(TAG, "Email sign-in failed", e)
+            crashlytics.recordException(e)
+            Result.failure(e)
+        }
+    }
+
+    /**
+     * Crea una nueva cuenta con Email/Password
+     *
+     * @param email Email del nuevo usuario
+     * @param password Contrasena elegida (min 6 caracteres)
+     * @return Result con FirebaseUser si exitoso
+     *
+     * @since v3.4.0 (Auth Simplification)
+     */
+    suspend fun createAccount(email: String, password: String): Result<FirebaseUser> {
+        return try {
+            val result = firebaseAuth.createUserWithEmailAndPassword(email, password).await()
+            result.user?.let { user ->
+                android.util.Log.i(TAG, "Account created: ${user.email}")
+                Result.success(user)
+            } ?: Result.failure(Exception("Account creation failed: user is null"))
+        } catch (e: Exception) {
+            android.util.Log.e(TAG, "Account creation failed", e)
+            crashlytics.recordException(e)
+            Result.failure(e)
+        }
+    }
+
+    /**
+     * Envia email de recuperacion de contrasena
+     *
+     * @param email Email de la cuenta a recuperar
+     * @return Result<Unit> indicando exito o fallo
+     *
+     * @since v3.4.0 (Auth Simplification)
+     */
+    suspend fun sendPasswordResetEmail(email: String): Result<Unit> {
+        return try {
+            firebaseAuth.sendPasswordResetEmail(email).await()
+            android.util.Log.i(TAG, "Password reset email sent to: $email")
+            Result.success(Unit)
+        } catch (e: Exception) {
+            android.util.Log.e(TAG, "Password reset email failed", e)
             crashlytics.recordException(e)
             Result.failure(e)
         }
@@ -200,16 +189,11 @@ class FirebaseAuthRepository @Inject constructor(
     }
 
     /**
-     * Cierra sesión de Firebase
-     * NOTA: Si el usuario es anónimo, sus datos se perderán
+     * Cierra sesion de Firebase.
      */
     fun signOut() {
-        val wasAnonymous = isAnonymous()
         firebaseAuth.signOut()
-
-        if (wasAnonymous) {
-            android.util.Log.w(TAG, "Anonymous user signed out - data may be lost")
-        }
+        android.util.Log.i(TAG, "User signed out")
     }
 
     /**

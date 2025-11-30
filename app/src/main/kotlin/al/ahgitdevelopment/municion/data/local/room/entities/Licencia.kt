@@ -8,6 +8,7 @@ import androidx.room.Index
 import androidx.room.PrimaryKey
 import al.ahgitdevelopment.municion.R
 import kotlinx.parcelize.Parcelize
+import kotlinx.serialization.Serializable
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
@@ -20,8 +21,16 @@ import java.util.Locale
  *
  * FASE 2: Migración de Java → Kotlin
  *
+ * NAVEGACIÓN (v3.3.0+):
+ * Esta clase implementa Parcelable + @Serializable para navegación type-safe.
+ * Se pasa completa en LicenciaForm(licencia = ...) eliminando race conditions.
+ * LicenciaNavType valida fechas durante deserialización.
+ *
+ * @see al.ahgitdevelopment.municion.ui.navigation.navtypes.LicenciaNavType
+ * @see al.ahgitdevelopment.municion.ui.navigation.LicenciaForm
  * @since v3.0.0 (TRACK B Modernization)
  */
+@Serializable
 @Parcelize
 @Entity(
     tableName = "licencias",

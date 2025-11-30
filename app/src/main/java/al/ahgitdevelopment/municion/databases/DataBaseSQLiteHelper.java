@@ -6,9 +6,10 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
+
 import java.util.ArrayList;
 
-import al.ahgitdevelopment.municion.BaseApplication;
 import al.ahgitdevelopment.municion.datamodel.Compra;
 import al.ahgitdevelopment.municion.datamodel.Guia;
 import al.ahgitdevelopment.municion.datamodel.Licencia;
@@ -18,6 +19,9 @@ import al.ahgitdevelopment.municion.datamodel.Tirada;
  * Created by Alberto on 12/04/2016.
  */
 public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
+
+    public FirebaseCrashlytics crashlytics = FirebaseCrashlytics.getInstance();
+
     // Table Names
     public static final String TABLE_GUIAS = "guias";
     public static final String TABLE_COMPRAS = "compras";
@@ -163,7 +167,7 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
         try {
             guias = getListGuias(db);
         } catch (Exception ex) {
-            ((BaseApplication) context.getApplicationContext()).crashlytics.log("Fallo obteniendo guias. No existe la tabla");
+            crashlytics.log("Fallo obteniendo guias. No existe la tabla");
         }
         try {
             // CRITICAL FIX v2.0.4: Special handling for v22→v23 migration (peso TEXT→INTEGER)
@@ -175,18 +179,18 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
             }
         } catch (Exception ex) {
             Log.e(TAG, "Error during compras migration", ex);
-            ((BaseApplication) context.getApplicationContext()).crashlytics.log("Fallo obteniendo compras. No existe la tabla");
-            ((BaseApplication) context.getApplicationContext()).crashlytics.recordException(ex);
+            crashlytics.log("Fallo obteniendo compras. No existe la tabla");
+            crashlytics.recordException(ex);
         }
         try {
             licencias = getListLicencias(db);
         } catch (Exception ex) {
-            ((BaseApplication) context.getApplicationContext()).crashlytics.log("Fallo obteniendo licencias. No existe la tabla");
+            crashlytics.log("Fallo obteniendo licencias. No existe la tabla");
         }
         try {
             tiradas = getListTiradas(db);
         } catch (Exception ex) {
-            ((BaseApplication) context.getApplicationContext()).crashlytics.log("Fallo obteniendo tiradas. No existe la tabla");
+            crashlytics.log("Fallo obteniendo tiradas. No existe la tabla");
         }
 
         // On upgrade drop older tables
@@ -240,8 +244,8 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
                         }
                     } catch (NumberFormatException e) {
                         Log.e(TAG, "v22 Migration: Invalid peso value '" + pesoStr + "', defaulting to 0", e);
-                        ((BaseApplication) context.getApplicationContext()).crashlytics.log(
-                            "v22 Migration: Invalid peso value '" + pesoStr + "' for compra marca=" + compra.getMarca()
+                        crashlytics.log(
+                                "v22 Migration: Invalid peso value '" + pesoStr + "' for compra marca=" + compra.getMarca()
                         );
                     }
                     compra.setPeso(peso);
@@ -258,8 +262,8 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
             Log.i(TAG, "v22 Migration: Successfully migrated " + compras.size() + " compras");
         } catch (Exception e) {
             Log.e(TAG, "Error during v22 compras migration", e);
-            if (context != null && context.getApplicationContext() instanceof BaseApplication) {
-                ((BaseApplication) context.getApplicationContext()).crashlytics.recordException(e);
+            if (context != null) {
+                crashlytics.recordException(e);
             }
         } finally {
             if (cursor != null) {
@@ -558,8 +562,8 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
             }
         } catch (Exception e) {
             Log.e(TAG, "Error reading compras from database", e);
-            if (context != null && context.getApplicationContext() instanceof BaseApplication) {
-                ((BaseApplication) context.getApplicationContext()).crashlytics.recordException(e);
+            if (context != null) {
+                crashlytics.recordException(e);
             }
         } finally {
             // Always close cursor to prevent memory leaks
@@ -610,8 +614,8 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
             }
         } catch (Exception e) {
             Log.e(TAG, "Error reading licencias from database", e);
-            if (context != null && context.getApplicationContext() instanceof BaseApplication) {
-                ((BaseApplication) context.getApplicationContext()).crashlytics.recordException(e);
+            if (context != null) {
+                crashlytics.recordException(e);
             }
         } finally {
             // Always close cursor to prevent memory leaks
@@ -646,8 +650,8 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
             }
         } catch (Exception e) {
             Log.e(TAG, "Error reading tiradas from database", e);
-            if (context != null && context.getApplicationContext() instanceof BaseApplication) {
-                ((BaseApplication) context.getApplicationContext()).crashlytics.recordException(e);
+            if (context != null ) {
+                crashlytics.recordException(e);
             }
         } finally {
             // Always close cursor to prevent memory leaks
@@ -704,8 +708,8 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
             Log.d(context.getPackageName(), "Guia actualizada en BBDD");
         } catch (Exception e) {
             Log.e(TAG, "Error saving guias to database", e);
-            if (context != null && context.getApplicationContext() instanceof BaseApplication) {
-                ((BaseApplication) context.getApplicationContext()).crashlytics.recordException(e);
+            if (context != null ) {
+                crashlytics.recordException(e);
             }
         } finally {
             db.endTransaction();
@@ -755,8 +759,8 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
             Log.d(context.getPackageName(), "Compra actualizada en BBDD");
         } catch (Exception e) {
             Log.e(TAG, "Error saving compras to database", e);
-            if (context != null && context.getApplicationContext() instanceof BaseApplication) {
-                ((BaseApplication) context.getApplicationContext()).crashlytics.recordException(e);
+            if (context != null ) {
+                crashlytics.recordException(e);
             }
         } finally {
             db.endTransaction();
@@ -806,8 +810,8 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
             Log.d(context.getPackageName(), "Licencia actualizada en BBDD");
         } catch (Exception e) {
             Log.e(TAG, "Error saving licencias to database", e);
-            if (context != null && context.getApplicationContext() instanceof BaseApplication) {
-                ((BaseApplication) context.getApplicationContext()).crashlytics.recordException(e);
+            if (context != null ) {
+                crashlytics.recordException(e);
             }
         } finally {
             db.endTransaction();
@@ -841,8 +845,8 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
             Log.d(context.getPackageName(), "Tirada actualizada en BBDD");
         } catch (Exception e) {
             Log.e(TAG, "Error saving tiradas to database", e);
-            if (context != null && context.getApplicationContext() instanceof BaseApplication) {
-                ((BaseApplication) context.getApplicationContext()).crashlytics.recordException(e);
+            if (context != null ) {
+                crashlytics.recordException(e);
             }
         } finally {
             db.endTransaction();
