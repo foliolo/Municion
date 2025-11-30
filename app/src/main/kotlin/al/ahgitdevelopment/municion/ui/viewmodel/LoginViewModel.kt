@@ -1,7 +1,8 @@
-package al.ahgitdevelopment.municion.ui.auth
+package al.ahgitdevelopment.municion.ui.viewmodel
 
 import al.ahgitdevelopment.municion.auth.FirebaseAuthRepository
 import android.util.Log
+import android.util.Patterns
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
@@ -96,7 +97,7 @@ class LoginViewModel @Inject constructor(
             return
         }
 
-        if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email.trim()).matches()) {
+        if (!Patterns.EMAIL_ADDRESS.matcher(email.trim()).matches()) {
             _uiState.value = LoginUiState.Error("Email no valido")
             return
         }
@@ -129,7 +130,7 @@ class LoginViewModel @Inject constructor(
                 _uiState.value = LoginUiState.Error("Introduce tu email")
                 return false
             }
-            !android.util.Patterns.EMAIL_ADDRESS.matcher(email.trim()).matches() -> {
+            !Patterns.EMAIL_ADDRESS.matcher(email.trim()).matches() -> {
                 _uiState.value = LoginUiState.Error("Email no valido")
                 return false
             }

@@ -1,10 +1,10 @@
-package al.ahgitdevelopment.municion.ui.auth
+package al.ahgitdevelopment.municion.ui.viewmodel
 
 import al.ahgitdevelopment.municion.auth.FirebaseAuthRepository
 import android.util.Log
+import android.util.Patterns
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.google.firebase.auth.FirebaseAuthWeakPasswordException
@@ -72,7 +72,7 @@ class MigrationViewModel @Inject constructor(
                 _uiState.value = MigrationUiState.Error("Introduce tu email")
                 return false
             }
-            !android.util.Patterns.EMAIL_ADDRESS.matcher(email.trim()).matches() -> {
+            !Patterns.EMAIL_ADDRESS.matcher(email.trim()).matches() -> {
                 _uiState.value = MigrationUiState.Error("Email no valido")
                 return false
             }

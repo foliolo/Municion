@@ -1,5 +1,6 @@
 package al.ahgitdevelopment.municion.ui.components
 
+import al.ahgitdevelopment.municion.ui.theme.MunicionTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -17,6 +18,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
 /**
@@ -58,3 +60,12 @@ fun EmptyState(
         )
     }
 }
+
+@Preview(showBackground = true, backgroundColor = 0xFFFFFFFF)
+@Composable
+fun EmptyStatePreview() {
+    MunicionTheme {
+        EmptyState(message = "No items to display")
+    }
+}
+

@@ -2,6 +2,7 @@ package al.ahgitdevelopment.municion.ui.auth
 
 import al.ahgitdevelopment.municion.R
 import al.ahgitdevelopment.municion.ui.theme.MunicionTheme
+import al.ahgitdevelopment.municion.ui.viewmodel.MigrationViewModel
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement

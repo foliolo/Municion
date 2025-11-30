@@ -181,7 +181,7 @@ fun MainScreen(
         when (syncState) {
             is MainViewModel.SyncState.Success -> {
                 val count = (syncState as MainViewModel.SyncState.Success).count
-                snackbarHostState.showSnackbar("Sincronización completada: $count items")
+//                snackbarHostState.showSnackbar("Sincronización completada: $count items")
             }
 
             is MainViewModel.SyncState.SuccessWithParseErrors -> {

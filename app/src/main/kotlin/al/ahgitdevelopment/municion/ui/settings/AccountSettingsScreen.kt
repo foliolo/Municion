@@ -5,6 +5,7 @@ import al.ahgitdevelopment.municion.ui.components.TutorialDialog
 import al.ahgitdevelopment.municion.ui.theme.LicenseExpired
 import al.ahgitdevelopment.municion.ui.theme.LicenseValid
 import al.ahgitdevelopment.municion.ui.theme.MunicionTheme
+import al.ahgitdevelopment.municion.ui.viewmodel.AccountSettingsViewModel
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
