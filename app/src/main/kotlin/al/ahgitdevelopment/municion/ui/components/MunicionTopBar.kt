@@ -6,23 +6,26 @@ import al.ahgitdevelopment.municion.ui.navigation.Guias
 import al.ahgitdevelopment.municion.ui.navigation.Licencias
 import al.ahgitdevelopment.municion.ui.navigation.Settings
 import al.ahgitdevelopment.municion.ui.navigation.Tiradas
-import androidx.compose.material3.MaterialTheme
 import al.ahgitdevelopment.municion.ui.viewmodel.MainViewModel.SyncState
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Leaderboard
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.filled.SocialDistance
 import androidx.compose.material.icons.filled.Sync
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -110,6 +113,16 @@ private fun ListTopBar(
 ) {
     TopAppBar(
         title = { Text(stringResource(R.string.app_name)) },
+        navigationIcon = {
+            Image(
+                painter = painterResource(R.drawable.ic_launcher_3_light),
+                contentDescription = "Logo",
+                modifier = Modifier
+                    .padding(horizontal = 10.dp)
+                    .clip(shape = MaterialTheme.shapes.extraSmall)
+                    .size(40.dp)
+            )
+        },
         modifier = modifier,
         actions = {
             // Icono de tabla de puntuaciones (solo en Tiradas)
