@@ -96,7 +96,8 @@ fun ComprasContent(
             val guia = guias.find { it.id == compra.idPosGuia }
             guia?.let { g ->
                 // Restaurar cupo para edicion: guia actual + unidades de esta compra
-                val guiaConCupoRestaurado = g.copy(gastado = g.gastado - compra.unidades)
+                // Use liberarCupo to prevent negative gastado values (Fixes IllegalArgumentException)
+                val guiaConCupoRestaurado = g.liberarCupo(compra.unidades)
                 navController.navigateSafely(
                     CompraForm(
                         compra = compra,
