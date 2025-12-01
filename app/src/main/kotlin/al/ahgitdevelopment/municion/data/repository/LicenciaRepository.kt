@@ -17,9 +17,9 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 /**
- * Repository para Licencia
+ * Repository for Licencia
  *
- * FASE 2.4: Repository Pattern
+ * PHASE 2.4: Repository Pattern
  *
  * @since v3.0.0 (TRACK B Modernization)
  */
@@ -35,40 +35,40 @@ class LicenciaRepository @Inject constructor(
     }
 
     /**
-     * Observa TODAS las licencias
+     * Observes ALL licenses
      */
     val licencias: Flow<List<Licencia>> = licenciaDao.getAllLicenciasFlow()
 
     /**
-     * Observa licencias por tipo
+     * Observes licenses by type
      */
     fun getLicenciasByTipo(tipo: Int): Flow<List<Licencia>> {
         return licenciaDao.getLicenciasByTipoFlow(tipo)
     }
 
     /**
-     * Obtiene una licencia por ID
+     * Gets a license by ID
      */
     suspend fun getLicenciaById(id: Int): Licencia? = withContext(Dispatchers.IO) {
         licenciaDao.getLicenciaById(id)
     }
 
     /**
-     * Obtiene licencia por número
+     * Gets license by number
      */
     suspend fun getLicenciaByNumero(numLicencia: String): Licencia? = withContext(Dispatchers.IO) {
         licenciaDao.getLicenciaByNumero(numLicencia)
     }
 
     /**
-     * Verifica si existe una licencia
+     * Checks if a license exists
      */
     suspend fun existsLicencia(numLicencia: String): Boolean = withContext(Dispatchers.IO) {
         licenciaDao.existsLicencia(numLicencia)
     }
 
     /**
-     * Guarda una licencia
+     * Saves a license
      */
     suspend fun saveLicencia(licencia: Licencia, userId: String? = null): Result<Long> = withContext(Dispatchers.IO) {
         try {
@@ -86,7 +86,7 @@ class LicenciaRepository @Inject constructor(
     }
 
     /**
-     * Actualiza una licencia
+     * Updates a license
      */
     suspend fun updateLicencia(licencia: Licencia, userId: String? = null): Result<Unit> = withContext(Dispatchers.IO) {
         try {
@@ -104,7 +104,7 @@ class LicenciaRepository @Inject constructor(
     }
 
     /**
-     * Elimina una licencia
+     * Deletes a license
      */
     suspend fun deleteLicencia(licencia: Licencia, userId: String? = null): Result<Unit> = withContext(Dispatchers.IO) {
         try {
@@ -122,11 +122,11 @@ class LicenciaRepository @Inject constructor(
     }
 
     /**
-     * Sincroniza DESDE Firebase → Room con parseo manual y reporte a Crashlytics
+     * Syncs FROM Firebase → Room with manual parsing and Crashlytics reporting
      */
     suspend fun syncFromFirebase(userId: String): Result<SyncResultWithErrors> = withContext(Dispatchers.IO) {
         try {
-            // Configurar userId en Crashlytics para tracking
+            // Configure userId in Crashlytics for tracking
             crashlytics.setUserId(userId)
 
             val snapshot = firebaseDb
@@ -176,7 +176,7 @@ class LicenciaRepository @Inject constructor(
     }
 
     /**
-     * Parsea y valida una Licencia campo por campo, reportando errores específicos
+     * Parses and validates a License field by field, reporting specific errors
      */
     @Suppress("UNCHECKED_CAST")
     private fun parseAndValidateLicencia(
@@ -190,7 +190,7 @@ class LicenciaRepository @Inject constructor(
             return null
         }
 
-        // Campos obligatorios con validación
+        // Mandatory fields with validation
         val tipo = (map["tipo"] as? Number)?.toInt() ?: run {
             reportFieldError(userId, itemKey, "tipo", "Missing or invalid", map["tipo"]?.toString(), parseErrors)
             return null
@@ -224,7 +224,7 @@ class LicenciaRepository @Inject constructor(
             return null
         }
 
-        // Campos opcionales
+        // Optional fields
         val id = (map["id"] as? Number)?.toInt() ?: 0
         val nombre = map["nombre"] as? String
         val tipoPermisoConduccion = (map["tipoPermisoConduccion"] as? Number)?.toInt() ?: -1
@@ -251,14 +251,14 @@ class LicenciaRepository @Inject constructor(
                 categoria = categoria
             )
         } catch (e: Exception) {
-            // Captura cualquier otra excepción del constructor
+            // Capture any other exception from the constructor
             reportFieldError(userId, itemKey, "constructor", e.message ?: "Unknown", null, parseErrors)
             null
         }
     }
 
     /**
-     * Reporta un error de campo a Crashlytics y lo agrega a la lista de errores
+     * Reports a field error to Crashlytics and adds it to the error list
      */
     private fun reportFieldError(
         userId: String,
@@ -279,7 +279,7 @@ class LicenciaRepository @Inject constructor(
         )
         parseErrors.add(error)
 
-        // Reportar a Crashlytics
+        // Report to Crashlytics
         crashlytics.apply {
             setCustomKey("entity", "Licencia")
             setCustomKey("item_key", itemKey)
@@ -295,21 +295,21 @@ class LicenciaRepository @Inject constructor(
     }
 
     /**
-     * Sincroniza HACIA Firebase ← Room (Safe Merge)
+     * Syncs TO Firebase ← Room (Safe Merge)
      *
-     * Implementa estrategia Fetch-Merge-Push para evitar pérdida de datos:
-     * 1. Descarga estado actual de Firebase.
-     * 2. Fusiona con estado local (Local tiene prioridad si coincide ID).
-     * 3. Aplica borrado si se especifica deletedId.
-     * 4. Sube el resultado fusionado.
-     * 5. Actualiza Room con el resultado fusionado.
+     * Implements Fetch-Merge-Push strategy to avoid data loss:
+     * 1. Downloads current state from Firebase.
+     * 2. Merges with local state (Local has priority if ID matches).
+     * 3. Applies deletion if deletedId is specified.
+     * 4. Uploads the merged result.
+     * 5. Updates Room with the merged result.
      *
-     * @param userId ID del usuario autenticado
-     * @param deletedId ID opcional de un elemento que acaba de ser borrado localmente y debe eliminarse del merge
+     * @param userId Authenticated user ID
+     * @param deletedId Optional ID of an item that has just been locally deleted and must be removed from the merge
      */
     suspend fun syncToFirebase(userId: String, deletedId: Int? = null): Result<Unit> = withContext(Dispatchers.IO) {
         try {
-            // 1. Fetch Remote (para no sobrescribir datos de otros dispositivos)
+            // 1. Fetch Remote (to avoid overwriting data from other devices)
             val snapshot = firebaseDb
                 .child("users")
                 .child(userId)
@@ -319,11 +319,11 @@ class LicenciaRepository @Inject constructor(
                 .await()
 
             val remoteList = mutableListOf<Licencia>()
-            // Usamos una lista temporal de errores que no reportamos para no saturar logs en cada save
+            // We use a temporary list of errors that we don't report to avoid cluttering logs on every save
             val dummyErrors = mutableListOf<ParseError>()
             
             snapshot.children.forEach { child ->
-                // Intentamos recuperar todo lo posible de remoto
+                // We try to recover everything possible from remote
                 parseAndValidateLicencia(child, userId, child.key ?: "unknown", dummyErrors)?.let {
                     remoteList.add(it)
                 }
@@ -333,20 +333,20 @@ class LicenciaRepository @Inject constructor(
             val localList = licenciaDao.getAllLicencias()
 
             // 3. Merge Logic
-            // Empezamos con Remote como base
+            // We start with Remote as base
             val mergedMap = remoteList.associateBy { it.id }.toMutableMap()
             
-            // Aplicamos Local (Sobrescribe Remote si coincide ID, añade si es nuevo)
+            // Apply Local (Overwrites Remote if ID matches, adds if new)
             localList.forEach { mergedMap[it.id] = it }
 
-            // Aplicamos borrado explícito (porque localList ya no tiene el item, pero remote sí podría)
+            // Apply explicit deletion (because localList no longer has the item, but remote might)
             if (deletedId != null) {
                 mergedMap.remove(deletedId)
             }
 
             val finalList = mergedMap.values.toList()
 
-            // 4. Push to Firebase (Lista completa fusionada)
+            // 4. Push to Firebase (Full merged list)
             firebaseDb
                 .child("users")
                 .child(userId)
@@ -355,7 +355,7 @@ class LicenciaRepository @Inject constructor(
                 .setValue(finalList)
                 .await()
 
-            // 5. Update Local (Para traer items remotos que no teníamos)
+            // 5. Update Local (To bring remote items we didn't have)
             if (finalList.isNotEmpty() || (localList.isNotEmpty() || remoteList.isNotEmpty())) {
                 licenciaDao.replaceAll(finalList)
             }

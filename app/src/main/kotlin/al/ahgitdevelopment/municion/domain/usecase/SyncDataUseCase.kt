@@ -11,14 +11,14 @@ import kotlinx.coroutines.coroutineScope
 import javax.inject.Inject
 
 /**
- * Use Case para sincronizar TODOS los datos con Firebase
+ * Use Case to sync ALL data with Firebase
  *
- * FASE 5: Sync Bidireccional Inteligente
- * - Verifica estado de autenticación antes de sincronizar
- * - Solo sincroniza si el usuario está autenticado
- * - Usuarios anónimos: sync bidireccional (local-first)
- * - Usuarios vinculados: sync completo con prioridad cloud
- * - Manejo de errores individual por entidad
+ * PHASE 5: Smart Bidirectional Sync
+ * - Verifies auth state before syncing
+ * - Only syncs if user is authenticated
+ * - Anonymous users: bidirectional sync (local-first)
+ * - Linked users: full sync with cloud priority
+ * - Individual error handling per entity
  *
  * @since v3.0.0 (TRACK B Modernization)
  */
@@ -36,25 +36,25 @@ class SyncDataUseCase @Inject constructor(
     }
 
     /**
-     * Verifica si el usuario puede sincronizar
-     * @return true si está autenticado (anónimo o vinculado)
+     * Checks if user can sync
+     * @return true if authenticated (anonymous or linked)
      */
     fun canSync(): Boolean = firebaseAuthRepository.isAuthenticated()
 
     /**
-     * Verifica si el usuario tiene cuenta vinculada (no anónima)
-     * @return true si está vinculado con Google/Email
+     * Checks if user has linked account (not anonymous)
+     * @return true if linked with Google/Email
      */
     fun isLinked(): Boolean = firebaseAuthRepository.isLinked()
 
     /**
-     * Obtiene el ID del usuario actual
+     * Gets current user ID
      */
     fun getCurrentUserId(): String? = firebaseAuthRepository.getCurrentUser()?.uid
 
     /**
-     * Sincroniza desde Firebase → Room (download)
-     * Ahora retorna información detallada de errores de parseo por entidad
+     * Syncs from Firebase -> Room (download)
+     * Now returns detailed parsing error info per entity
      */
     suspend fun syncFromFirebase(userId: String): Result<SyncResult> = coroutineScope {
         try {
@@ -71,7 +71,7 @@ class SyncDataUseCase @Inject constructor(
             val successCount = listOf(guiasResult, comprasResult, licenciasResult, tiradasResult)
                 .count { it.isSuccess }
 
-            // Log detallado de qué entidad falló
+            // Detailed log of which entity failed
             android.util.Log.i(TAG, "Sync from Firebase: $successCount/4 successful")
             if (!guiasResult.isSuccess) {
                 android.util.Log.e(TAG, "FAILED: Guias - ${guiasResult.exceptionOrNull()?.message}")
@@ -86,7 +86,7 @@ class SyncDataUseCase @Inject constructor(
                 android.util.Log.e(TAG, "FAILED: Tiradas - ${tiradasResult.exceptionOrNull()?.message}")
             }
 
-            // Recopilar todos los errores de parseo
+            // Collect all parsing errors
             val allParseErrors = mutableListOf<ParseError>()
             guiasResult.getOrNull()?.parseErrors?.let { allParseErrors.addAll(it) }
             comprasResult.getOrNull()?.parseErrors?.let { allParseErrors.addAll(it) }
@@ -120,20 +120,20 @@ class SyncDataUseCase @Inject constructor(
     }
 
     /**
-     * Sincroniza desde Firebase → Room con auto-corrección
+     * Syncs from Firebase -> Room with auto-fix
      *
-     * Si Firebase tiene errores de parseo pero Room tiene datos válidos,
-     * automáticamente sube los datos de Room a Firebase para corregir
-     * los datos corruptos.
+     * If Firebase has parsing errors but Room has valid data,
+     * automatically uploads Room data to Firebase to fix
+     * corrupt data.
      *
-     * @return SyncResultWithAutoFix con detalles de la sincronización y auto-fix
+     * @return SyncResultWithAutoFix with sync and auto-fix details
      */
     suspend fun syncFromFirebaseWithAutoFix(userId: String): Result<SyncResultWithAutoFix> = coroutineScope {
         try {
-            // Paso 1: Intentar sincronizar desde Firebase
+            // Step 1: Try to sync from Firebase
             val downloadResult = syncFromFirebase(userId).getOrThrow()
 
-            // Paso 2: Verificar si necesita auto-fix por entidad
+            // Step 2: Check if auto-fix is needed per entity
             val entitiesNeedingFix = mutableListOf<String>()
 
             if (downloadResult.guiasSyncResult?.needsAutoFix == true) {
@@ -149,7 +149,7 @@ class SyncDataUseCase @Inject constructor(
                 entitiesNeedingFix.add("Tiradas")
             }
 
-            // Paso 3: Aplicar auto-fix si es necesario
+            // Step 3: Apply auto-fix if needed
             var autoFixApplied = false
             var uploadResult: SyncResult? = null
 
@@ -157,7 +157,7 @@ class SyncDataUseCase @Inject constructor(
                 android.util.Log.w(TAG, "Auto-fix needed for: ${entitiesNeedingFix.joinToString()}")
                 crashlytics.log("Auto-fix triggered for entities: ${entitiesNeedingFix.joinToString()}")
 
-                // Subir datos de Room a Firebase para corregir
+                // Upload Room data to Firebase to fix
                 uploadResult = syncToFirebase(userId).getOrNull()
                 autoFixApplied = uploadResult?.allSuccess == true
 
@@ -186,7 +186,7 @@ class SyncDataUseCase @Inject constructor(
     }
 
     /**
-     * Sincroniza hacia Firebase ← Room (upload)
+     * Syncs to Firebase <- Room (upload)
      */
     suspend fun syncToFirebase(userId: String): Result<SyncResult> = coroutineScope {
         try {
@@ -203,7 +203,7 @@ class SyncDataUseCase @Inject constructor(
             val successCount = listOf(guiasResult, comprasResult, licenciasResult, tiradasResult)
                 .count { it.isSuccess }
 
-            // Log detallado de qué entidad falló
+            // Detailed log of which entity failed
             android.util.Log.i(TAG, "Sync to Firebase: $successCount/4 successful")
             if (!guiasResult.isSuccess) {
                 android.util.Log.e(TAG, "FAILED upload: Guias - ${guiasResult.exceptionOrNull()?.message}")
@@ -234,19 +234,19 @@ class SyncDataUseCase @Inject constructor(
     }
 
     /**
-     * Sincronización inicial inteligente
+     * Smart initial sync
      *
-     * Estrategia:
-     * - Si el usuario NO está autenticado: no sincroniza (solo local)
-     * - Si el usuario está autenticado (anónimo o vinculado):
-     *   1. Descarga de Firebase → Room (prioridad Cloud para evitar sobrescribir datos)
-     *   2. La subida (Upload) se realiza solo de manera reactiva en los repositorios (Save/Update/Delete)
-     *      para evitar que un estado local vacío sobrescriba los datos remotos ("Last Write Wins").
+     * Strategy:
+     * - If user NOT authenticated: no sync (local only)
+     * - If user is authenticated (anonymous or linked):
+     *   1. Download from Firebase -> Room (Cloud priority to avoid overwriting data)
+     *   2. Upload is only done reactively in repositories (Save/Update/Delete)
+     *      to avoid empty local state overwriting remote data ("Last Write Wins").
      *
-     * @return BidirectionalSyncResult con detalles de la descarga
+     * @return BidirectionalSyncResult with download details
      */
     suspend fun syncBidirectional(): Result<BidirectionalSyncResult> {
-        // Verificar autenticación
+        // Verify authentication
         if (!canSync()) {
             android.util.Log.w(TAG, "Cannot sync: user not authenticated")
             return Result.success(
@@ -254,7 +254,7 @@ class SyncDataUseCase @Inject constructor(
                     downloadResult = null,
                     uploadResult = null,
                     skipped = true,
-                    reason = "Usuario no autenticado"
+                    reason = "User not authenticated"
                 )
             )
         }
@@ -268,13 +268,13 @@ class SyncDataUseCase @Inject constructor(
         return try {
             android.util.Log.i(TAG, "Starting smart sync for user: $userId")
 
-            // Paso 1: Descargar de Firebase → Room
+            // Step 1: Download from Firebase -> Room
             val downloadResult = syncFromFirebase(userId).getOrNull()
             android.util.Log.i(TAG, "Download completed: ${downloadResult?.successCount ?: 0}/4")
 
-            // NOTA: Eliminamos el "Paso 2: Subir" automático para evitar data loss.
-            // La subida se delega a las operaciones individuales (save/update/delete)
-            // que ahora hacen un "Fetch-Merge-Push" seguro.
+            // NOTE: We removed the automatic "Step 2: Upload" to avoid data loss.
+            // Upload is delegated to individual operations (save/update/delete)
+            // which now use a safe "Fetch-Merge-Push" strategy.
 
             Result.success(
                 BidirectionalSyncResult(
@@ -292,13 +292,13 @@ class SyncDataUseCase @Inject constructor(
     }
 
     /**
-     * Sincronización automática al iniciar/pausar la app
-     * Solo sincroniza si hay conexión y el usuario está autenticado
+     * Automatic sync when starting/pausing app
+     * Only syncs if connected and authenticated
      */
     suspend fun autoSync(): Result<BidirectionalSyncResult> {
-        // Solo usuarios vinculados sincronizan automáticamente
-        // Usuarios anónimos deben sincronizar manualmente para evitar
-        // sobrescribir datos accidentalmente
+        // Only linked users sync automatically
+        // Anonymous users must sync manually to avoid
+        // accidentally overwriting data
         if (!isLinked()) {
             android.util.Log.d(TAG, "Auto-sync skipped: user is anonymous")
             return Result.success(
@@ -306,7 +306,7 @@ class SyncDataUseCase @Inject constructor(
                     downloadResult = null,
                     uploadResult = null,
                     skipped = true,
-                    reason = "Auto-sync solo para cuentas vinculadas"
+                    reason = "Auto-sync only for linked accounts"
                 )
             )
         }
@@ -332,7 +332,7 @@ class SyncDataUseCase @Inject constructor(
                 .count { it }
 
         /**
-         * Todos los errores de parseo de todas las entidades
+         * All parsing errors from all entities
          */
         val allParseErrors: List<ParseError>
             get() = listOfNotNull(
@@ -343,13 +343,13 @@ class SyncDataUseCase @Inject constructor(
             ).flatten()
 
         /**
-         * Indica si hubo errores de parseo
+         * Indicates if there were parsing errors
          */
         val hasParseErrors: Boolean
             get() = allParseErrors.isNotEmpty()
 
         /**
-         * Indica si alguna entidad necesita auto-fix
+         * Indicates if any entity needs auto-fix
          */
         val needsAutoFix: Boolean
             get() = guiasSyncResult?.needsAutoFix == true ||
@@ -359,7 +359,7 @@ class SyncDataUseCase @Inject constructor(
     }
 
     /**
-     * Resultado de sincronización con auto-corrección
+     * Sync result with auto-fix
      */
     data class SyncResultWithAutoFix(
         val downloadResult: SyncResult,

@@ -17,9 +17,9 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 /**
- * Repository para Guia
+ * Repository for Guia
  *
- * FASE 2.4: Repository Pattern
+ * PHASE 2.4: Repository Pattern
  *
  * @since v3.0.0 (TRACK B Modernization)
  */
@@ -35,26 +35,26 @@ class GuiaRepository @Inject constructor(
     }
 
     /**
-     * Observa TODAS las guías
+     * Observes ALL guides
      */
     val guias: Flow<List<Guia>> = guiaDao.getAllGuiasFlow()
 
     /**
-     * Observa guías por tipo de licencia
+     * Observes guides by license type
      */
     fun getGuiasByTipoLicencia(tipoLicencia: Int): Flow<List<Guia>> {
         return guiaDao.getGuiasByTipoLicenciaFlow(tipoLicencia)
     }
 
     /**
-     * Obtiene una guía por ID
+     * Gets a guide by ID
      */
     suspend fun getGuiaById(id: Int): Guia? = withContext(Dispatchers.IO) {
         guiaDao.getGuiaById(id)
     }
 
     /**
-     * Guarda una guía
+     * Saves a guide
      */
     suspend fun saveGuia(guia: Guia, userId: String? = null): Result<Long> = withContext(Dispatchers.IO) {
         try {
@@ -72,7 +72,7 @@ class GuiaRepository @Inject constructor(
     }
 
     /**
-     * Actualiza una guía
+     * Updates a guide
      */
     suspend fun updateGuia(guia: Guia, userId: String? = null): Result<Unit> = withContext(Dispatchers.IO) {
         try {
@@ -90,7 +90,7 @@ class GuiaRepository @Inject constructor(
     }
 
     /**
-     * Elimina una guía
+     * Deletes a guide
      */
     suspend fun deleteGuia(guia: Guia, userId: String? = null): Result<Unit> = withContext(Dispatchers.IO) {
         try {
@@ -108,7 +108,7 @@ class GuiaRepository @Inject constructor(
     }
 
     /**
-     * Actualiza el gastado de una guía
+     * Updates the spent amount of a guide
      */
     suspend fun updateGastado(guiaId: Int, gastado: Int): Result<Unit> = withContext(Dispatchers.IO) {
         try {
@@ -121,7 +121,7 @@ class GuiaRepository @Inject constructor(
     }
 
     /**
-     * Incrementa el cupo gastado
+     * Increments the spent amount
      */
     suspend fun incrementGastado(guiaId: Int, cantidad: Int): Result<Unit> = withContext(Dispatchers.IO) {
         try {
@@ -134,7 +134,7 @@ class GuiaRepository @Inject constructor(
     }
 
     /**
-     * Decrementa el cupo gastado (para rollback)
+     * Decrements the spent amount (for rollback)
      */
     suspend fun decrementGastado(guiaId: Int, cantidad: Int): Result<Unit> = withContext(Dispatchers.IO) {
         try {
@@ -147,7 +147,7 @@ class GuiaRepository @Inject constructor(
     }
 
     /**
-     * Resetea el cupo gastado de TODAS las guías (para año nuevo)
+     * Resets the spent amount of ALL guides (for new year)
      */
     suspend fun resetAllGastado(userId: String? = null): Result<Unit> = withContext(Dispatchers.IO) {
         try {
@@ -165,14 +165,14 @@ class GuiaRepository @Inject constructor(
     }
 
     /**
-     * Obtiene guías con cupo agotado
+     * Gets guides with exhausted quota
      */
     suspend fun getGuiasConCupoAgotado(): List<Guia> = withContext(Dispatchers.IO) {
         guiaDao.getGuiasConCupoAgotado()
     }
 
     /**
-     * Sincroniza DESDE Firebase → Room con parseo manual y reporte a Crashlytics
+     * Syncs FROM Firebase -> Room with manual parsing and Crashlytics reporting
      */
     suspend fun syncFromFirebase(userId: String): Result<SyncResultWithErrors> = withContext(Dispatchers.IO) {
         try {
@@ -236,7 +236,7 @@ class GuiaRepository @Inject constructor(
             return null
         }
 
-        // Campos obligatorios
+        // Mandatory fields
         val tipoLicencia = (map["tipoLicencia"] as? Number)?.toInt() ?: run {
             reportFieldError(userId, itemKey, "tipoLicencia", "Missing or invalid", map["tipoLicencia"]?.toString(), parseErrors)
             return null
@@ -281,7 +281,7 @@ class GuiaRepository @Inject constructor(
             return null
         }
 
-        // Campos opcionales
+        // Optional fields
         val id = (map["id"] as? Number)?.toInt() ?: 0
         val idCompra = (map["idCompra"] as? Number)?.toInt() ?: 0
         val tipoArma = (map["tipoArma"] as? Number)?.toInt() ?: 0
@@ -344,21 +344,21 @@ class GuiaRepository @Inject constructor(
     }
 
     /**
-     * Sincroniza HACIA Firebase ← Room (Safe Merge)
+     * Syncs TO Firebase <- Room (Safe Merge)
      *
-     * Implementa estrategia Fetch-Merge-Push para evitar pérdida de datos:
-     * 1. Descarga estado actual de Firebase.
-     * 2. Fusiona con estado local (Local tiene prioridad si coincide ID).
-     * 3. Aplica borrado si se especifica deletedId.
-     * 4. Sube el resultado fusionado.
-     * 5. Actualiza Room con el resultado fusionado.
+     * Implements Fetch-Merge-Push strategy to avoid data loss:
+     * 1. Downloads current state from Firebase.
+     * 2. Merges with local state (Local has priority if ID matches).
+     * 3. Applies deletion if deletedId is specified.
+     * 4. Uploads the merged result.
+     * 5. Updates Room with the merged result.
      *
-     * @param userId ID del usuario autenticado
-     * @param deletedId ID opcional de un elemento que acaba de ser borrado localmente
+     * @param userId Authenticated user ID
+     * @param deletedId Optional ID of an item that has just been locally deleted and must be removed from the merge
      */
     suspend fun syncToFirebase(userId: String, deletedId: Int? = null): Result<Unit> = withContext(Dispatchers.IO) {
         try {
-            // 1. Fetch Remote
+            // 1. Fetch Remote (to avoid overwriting data from other devices)
             val snapshot = firebaseDb
                 .child("users")
                 .child(userId)
@@ -368,9 +368,11 @@ class GuiaRepository @Inject constructor(
                 .await()
 
             val remoteList = mutableListOf<Guia>()
+            // We use a temporary list of errors that we don't report to avoid cluttering logs on every save
             val dummyErrors = mutableListOf<ParseError>()
-
+            
             snapshot.children.forEach { child ->
+                // We try to recover everything possible from remote
                 parseAndValidateGuia(child, userId, child.key ?: "unknown", dummyErrors)?.let {
                     remoteList.add(it)
                 }
@@ -380,16 +382,20 @@ class GuiaRepository @Inject constructor(
             val localList = guiaDao.getAllGuias()
 
             // 3. Merge Logic
+            // We start with Remote as base
             val mergedMap = remoteList.associateBy { it.id }.toMutableMap()
+            
+            // Apply Local (Overwrites Remote if ID matches, adds if new)
             localList.forEach { mergedMap[it.id] = it }
 
+            // Apply explicit deletion (because localList no longer has the item, but remote might)
             if (deletedId != null) {
                 mergedMap.remove(deletedId)
             }
 
             val finalList = mergedMap.values.toList()
 
-            // 4. Push to Firebase
+            // 4. Push to Firebase (Full merged list)
             firebaseDb
                 .child("users")
                 .child(userId)
@@ -398,12 +404,12 @@ class GuiaRepository @Inject constructor(
                 .setValue(finalList)
                 .await()
 
-            // 5. Update Local
+            // 5. Update Local (To bring remote items we didn't have)
             if (finalList.isNotEmpty() || (localList.isNotEmpty() || remoteList.isNotEmpty())) {
                 guiaDao.replaceAll(finalList)
             }
 
-            android.util.Log.i("GuiaRepository", "Synced ${finalList.size} guias to Firebase (Merged Local+Remote)")
+            android.util.Log.i(TAG, "Synced ${finalList.size} guias to Firebase (Merged Local+Remote)")
 
             Result.success(Unit)
         } catch (e: Exception) {

@@ -17,9 +17,9 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 /**
- * Repository para Tirada
+ * Repository for Tirada
  *
- * FASE 2.4: Repository Pattern
+ * PHASE 2.4: Repository Pattern
  *
  * @since v3.0.0 (TRACK B Modernization)
  */
@@ -35,26 +35,26 @@ class TiradaRepository @Inject constructor(
     }
 
     /**
-     * Observa TODAS las tiradas
+     * Observes ALL shoots
      */
     val tiradas: Flow<List<Tirada>> = tiradaDao.getAllTiradasFlow()
 
     /**
-     * Obtiene una tirada por ID
+     * Gets a shoot by ID
      */
     suspend fun getTiradaById(id: Int): Tirada? = withContext(Dispatchers.IO) {
         tiradaDao.getTiradaById(id)
     }
 
     /**
-     * Obtiene tiradas con puntuación
+     * Gets shoots with score
      */
     suspend fun getTiradasConPuntuacion(): List<Tirada> = withContext(Dispatchers.IO) {
         tiradaDao.getTiradasConPuntuacion()
     }
 
     /**
-     * Calcula estadísticas
+     * Calculates statistics
      */
     suspend fun getEstadisticas(): TiradaEstadisticas = withContext(Dispatchers.IO) {
         TiradaEstadisticas(
@@ -65,7 +65,7 @@ class TiradaRepository @Inject constructor(
     }
 
     /**
-     * Guarda una tirada
+     * Saves a shoot
      */
     suspend fun saveTirada(tirada: Tirada, userId: String? = null): Result<Long> = withContext(Dispatchers.IO) {
         try {
@@ -83,7 +83,7 @@ class TiradaRepository @Inject constructor(
     }
 
     /**
-     * Actualiza una tirada
+     * Updates a shoot
      */
     suspend fun updateTirada(tirada: Tirada, userId: String? = null): Result<Unit> = withContext(Dispatchers.IO) {
         try {
@@ -101,7 +101,7 @@ class TiradaRepository @Inject constructor(
     }
 
     /**
-     * Elimina una tirada
+     * Deletes a shoot
      */
     suspend fun deleteTirada(tirada: Tirada, userId: String? = null): Result<Unit> = withContext(Dispatchers.IO) {
         try {
@@ -119,7 +119,7 @@ class TiradaRepository @Inject constructor(
     }
 
     /**
-     * Sincroniza DESDE Firebase → Room con parseo manual y reporte a Crashlytics
+     * Syncs FROM Firebase -> Room with manual parsing and Crashlytics reporting
      */
     suspend fun syncFromFirebase(userId: String): Result<SyncResultWithErrors> = withContext(Dispatchers.IO) {
         try {
@@ -182,7 +182,7 @@ class TiradaRepository @Inject constructor(
             return null
         }
 
-        // Campos obligatorios
+        // Mandatory fields
         val descripcion = (map["descripcion"] as? String)?.takeIf { it.isNotBlank() } ?: run {
             reportFieldError(itemKey, "descripcion", "Blank or missing", map["descripcion"]?.toString(), parseErrors)
             return null
@@ -193,12 +193,12 @@ class TiradaRepository @Inject constructor(
             return null
         }
 
-        // Campos opcionales
+        // Optional fields
         val id = (map["id"] as? Number)?.toInt() ?: 0
         val rango = map["rango"] as? String
         val puntuacion = (map["puntuacion"] as? Number)?.toInt() ?: 0
 
-        // Validar rango de puntuacion
+        // Validate score range
         if (puntuacion < 0 || puntuacion > 600) {
             reportFieldError(itemKey, "puntuacion", "Must be 0-600", puntuacion.toString(), parseErrors)
             return null
@@ -249,17 +249,17 @@ class TiradaRepository @Inject constructor(
     }
 
     /**
-     * Sincroniza HACIA Firebase ← Room (Safe Merge)
+     * Syncs TO Firebase <- Room (Safe Merge)
      *
-     * Implementa estrategia Fetch-Merge-Push para evitar pérdida de datos:
-     * 1. Descarga estado actual de Firebase.
-     * 2. Fusiona con estado local (Local tiene prioridad si coincide ID).
-     * 3. Aplica borrado si se especifica deletedId.
-     * 4. Sube el resultado fusionado.
-     * 5. Actualiza Room con el resultado fusionado.
+     * Implements Fetch-Merge-Push strategy to avoid data loss:
+     * 1. Downloads current state from Firebase.
+     * 2. Merges with local state (Local has priority if ID matches).
+     * 3. Applies deletion if deletedId is specified.
+     * 4. Uploads the merged result.
+     * 5. Updates Room with the merged result.
      *
-     * @param userId ID del usuario autenticado
-     * @param deletedId ID opcional de un elemento que acaba de ser borrado localmente
+     * @param userId Authenticated user ID
+     * @param deletedId Optional ID of an item that has just been locally deleted and must be removed from the merge
      */
     suspend fun syncToFirebase(userId: String, deletedId: Int? = null): Result<Unit> = withContext(Dispatchers.IO) {
         try {
@@ -273,9 +273,11 @@ class TiradaRepository @Inject constructor(
                 .await()
 
             val remoteList = mutableListOf<Tirada>()
+            // We use a temporary list of errors that we don't report to avoid cluttering logs on every save
             val dummyErrors = mutableListOf<ParseError>()
-
+            
             snapshot.children.forEach { child ->
+                // We try to recover everything possible from remote
                 parseAndValidateTirada(child, child.key ?: "unknown", dummyErrors)?.let {
                     remoteList.add(it)
                 }
@@ -285,16 +287,20 @@ class TiradaRepository @Inject constructor(
             val localList = tiradaDao.getAllTiradas()
 
             // 3. Merge Logic
+            // We start with Remote as base
             val mergedMap = remoteList.associateBy { it.id }.toMutableMap()
+            
+            // Apply Local (Overwrites Remote if ID matches, adds if new)
             localList.forEach { mergedMap[it.id] = it }
 
+            // Apply explicit deletion (because localList no longer has the item, but remote might)
             if (deletedId != null) {
                 mergedMap.remove(deletedId)
             }
 
             val finalList = mergedMap.values.toList()
 
-            // 4. Push to Firebase
+            // 4. Push to Firebase (Full merged list)
             firebaseDb
                 .child("users")
                 .child(userId)
@@ -303,12 +309,12 @@ class TiradaRepository @Inject constructor(
                 .setValue(finalList)
                 .await()
 
-            // 5. Update Local
+            // 5. Update Local (To bring remote items we didn't have)
             if (finalList.isNotEmpty() || (localList.isNotEmpty() || remoteList.isNotEmpty())) {
                 tiradaDao.replaceAll(finalList)
             }
 
-            android.util.Log.i("TiradaRepository", "Synced ${finalList.size} tiradas to Firebase (Merged Local+Remote)")
+            android.util.Log.i(TAG, "Synced ${finalList.size} tiradas to Firebase (Merged Local+Remote)")
 
             Result.success(Unit)
         } catch (e: Exception) {
@@ -319,7 +325,7 @@ class TiradaRepository @Inject constructor(
     }
 
     /**
-     * Data class para estadísticas de tiradas
+     * Data class for shoot statistics
      */
     data class TiradaEstadisticas(
         val total: Int,

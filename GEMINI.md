@@ -57,3 +57,4 @@ This is a standard Android project and can be built and run using Android Studio
 *   **Testing:** The project is set up for both unit testing (JUnit, MockK) and instrumented testing (Espresso). Developers are expected to write tests for new features and bug fixes.
 *   **Dependency Management:** Dependencies are managed centrally in the `build.gradle.kts` files. Hilt is used for dependency injection, so new dependencies should be provided through Hilt modules where appropriate.
 *   **UI Development:** The project uses both XML layouts with ViewBinding and Jetpack Compose. Developers should be familiar with both approaches. New features might be implemented using Jetpack Compose, while existing screens might still use the View system.
+*   **Language & Documentation:** All code comments, documentation (KDoc), and explanations within the code must be written in English. Maintain this standard for all new code and when refactoring existing code.
