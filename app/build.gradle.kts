@@ -113,6 +113,10 @@ dependencies {
     implementation(libs.androidx.hilt.work)
     kapt(libs.androidx.hilt.compiler)
 
+    // ========== ADS & BILLING ==========
+    implementation(libs.play.services.ads)
+    implementation(libs.billing.ktx)
+
     // ========== FIREBASE ==========
     implementation(platform(libs.firebase.bom))
     implementation(libs.bundles.firebase)

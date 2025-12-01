@@ -43,6 +43,10 @@ securityCrypto = "1.1.0"
 # WorkManager
 work = "2.11.0"
 
+# Google Play Services & Billing
+playServicesAds = "23.6.0"
+billing = "7.1.1"
+
 # Firebase
 firebaseBom = "34.6.0"
 googleServices = "4.4.4"
@@ -122,6 +126,10 @@ androidx-security-crypto = { module = "androidx.security:security-crypto", versi
 
 # WorkManager
 androidx-work-runtime-ktx = { module = "androidx.work:work-runtime-ktx", version.ref = "work" }
+
+# Google Play Services & Billing
+play-services-ads = { module = "com.google.android.gms:play-services-ads", version.ref = "playServicesAds" }
+billing-ktx = { module = "com.android.billingclient:billing-ktx", version.ref = "billing" }
 
 # Firebase (BOM 34.6.0 - KTX extensions included in main libraries)
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }

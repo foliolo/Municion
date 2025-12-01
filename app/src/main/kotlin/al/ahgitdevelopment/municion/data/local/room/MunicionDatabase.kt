@@ -1,9 +1,11 @@
 package al.ahgitdevelopment.municion.data.local.room
 
+import al.ahgitdevelopment.municion.data.local.room.dao.AppPurchaseDao
 import al.ahgitdevelopment.municion.data.local.room.dao.CompraDao
 import al.ahgitdevelopment.municion.data.local.room.dao.GuiaDao
 import al.ahgitdevelopment.municion.data.local.room.dao.LicenciaDao
 import al.ahgitdevelopment.municion.data.local.room.dao.TiradaDao
+import al.ahgitdevelopment.municion.data.local.room.entities.AppPurchase
 import al.ahgitdevelopment.municion.data.local.room.entities.Compra
 import al.ahgitdevelopment.municion.data.local.room.entities.Guia
 import al.ahgitdevelopment.municion.data.local.room.entities.Licencia
@@ -21,7 +23,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase
  * Reemplaza el legacy DataBaseSQLiteHelper.java
  *
  * FASE 2.2: Room Database implementation
- * - Database version 24 (migration desde v23 legacy SQLite)
+ * - Database version 26 (migration desde v25)
  * - Export schema enabled para testing
  * - Migrations para preservar datos de usuarios
  *
@@ -32,9 +34,10 @@ import androidx.sqlite.db.SupportSQLiteDatabase
         Guia::class,
         Compra::class,
         Licencia::class,
-        Tirada::class
+        Tirada::class,
+        AppPurchase::class
     ],
-    version = 25,
+    version = 26,
     exportSchema = true
 )
 abstract class MunicionDatabase : RoomDatabase() {
@@ -43,9 +46,32 @@ abstract class MunicionDatabase : RoomDatabase() {
     abstract fun compraDao(): CompraDao
     abstract fun licenciaDao(): LicenciaDao
     abstract fun tiradaDao(): TiradaDao
+    abstract fun appPurchaseDao(): AppPurchaseDao
 
     companion object {
         private const val DATABASE_NAME = "municion.db"
+
+        /**
+         * MIGRATION: v25 → v26
+         *
+         * CAMBIO: Agregar tabla app_purchases para almacenar compras in-app (remove ads)
+         */
+        val MIGRATION_25_26 = object : Migration(25, 26) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                android.util.Log.i("MunicionDatabase", "Starting migration v25 → v26 (Add AppPurchase)")
+                database.execSQL(
+                    """
+                    CREATE TABLE IF NOT EXISTS app_purchases (
+                        sku TEXT PRIMARY KEY NOT NULL,
+                        purchaseToken TEXT NOT NULL,
+                        purchaseTime INTEGER NOT NULL,
+                        isAcknowledged INTEGER NOT NULL
+                    )
+                    """.trimIndent()
+                )
+                android.util.Log.i("MunicionDatabase", "Migration v25 → v26 completed")
+            }
+        }
 
         /**
          * MIGRATION: v24 → v25
@@ -370,7 +396,7 @@ abstract class MunicionDatabase : RoomDatabase() {
                 MunicionDatabase::class.java,
                 DATABASE_NAME
             )
-                .addMigrations(MIGRATION_23_24, MIGRATION_24_25)
+                .addMigrations(MIGRATION_23_24, MIGRATION_24_25, MIGRATION_25_26)
                 .fallbackToDestructiveMigration(false)  // Solo como último recurso
                 .build()
         }

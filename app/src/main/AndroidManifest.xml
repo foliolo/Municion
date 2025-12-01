@@ -23,6 +23,11 @@
         android:theme="@style/AppTheme"
         tools:targetApi="36">
 
+        <!-- AdMob Application ID -->
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="@string/admob_id" />
+
         <activity
             android:name=".ui.MainActivity"
             android:exported="true"

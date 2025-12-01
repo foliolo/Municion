@@ -1,12 +1,17 @@
 package al.ahgitdevelopment.municion.ui.viewmodel
 
 import al.ahgitdevelopment.municion.auth.FirebaseAuthRepository
+import al.ahgitdevelopment.municion.data.repository.BillingRepository
+import android.app.Activity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -22,7 +27,8 @@ import javax.inject.Inject
  */
 @HiltViewModel
 class AccountSettingsViewModel @Inject constructor(
-    private val firebaseAuthRepository: FirebaseAuthRepository
+    private val firebaseAuthRepository: FirebaseAuthRepository,
+    private val billingRepository: BillingRepository
 ) : ViewModel() {
 
     companion object {
@@ -31,6 +37,9 @@ class AccountSettingsViewModel @Inject constructor(
 
     private val _uiState = MutableStateFlow<AccountUiState>(AccountUiState.Loading)
     val uiState: StateFlow<AccountUiState> = _uiState.asStateFlow()
+    
+    val isAdsRemoved: StateFlow<Boolean> = billingRepository.isAdsRemoved
+        .stateIn(viewModelScope, SharingStarted.Lazily, false)
 
     init {
         loadAccountState()
@@ -56,6 +65,10 @@ class AccountSettingsViewModel @Inject constructor(
                 _uiState.value = AccountUiState.NotAuthenticated
             }
         }
+    }
+
+    fun launchPurchaseFlow(activity: Activity) {
+        billingRepository.launchBillingFlow(activity)
     }
 
     /**

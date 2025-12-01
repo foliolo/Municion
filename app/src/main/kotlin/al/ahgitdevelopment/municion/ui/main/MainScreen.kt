@@ -3,6 +3,7 @@ package al.ahgitdevelopment.municion.ui.main
 import al.ahgitdevelopment.municion.R
 import al.ahgitdevelopment.municion.Utils
 import al.ahgitdevelopment.municion.auth.AuthViewModel
+import al.ahgitdevelopment.municion.ui.components.AdBanner
 import al.ahgitdevelopment.municion.ui.components.MunicionBottomBar
 import al.ahgitdevelopment.municion.ui.components.MunicionFAB
 import al.ahgitdevelopment.municion.ui.components.MunicionTopBar
@@ -29,6 +30,7 @@ import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Scaffold
@@ -43,6 +45,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
@@ -90,6 +93,7 @@ fun MainScreen(
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val syncState by viewModel.syncState.collectAsStateWithLifecycle()
+    val showAds by viewModel.showAds.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
 
     // Observar ruta actual para UI dinámica
@@ -145,6 +149,13 @@ fun MainScreen(
     val showBottomBar = currentRoute in listScreenRoutes && !isAuthScreen
     val showFab = (currentRoute in fabScreenRoutes ||
             (currentRoute?.contains("Form") == true && formSaveCallback != null)) && !isAuthScreen
+
+    // Determine Ad Unit ID based on route
+    val adUnitId = when {
+        currentRoute == Settings::class.qualifiedName -> stringResource(R.string.banner_configuracion_id)
+        currentRoute?.contains("Form") == true -> stringResource(R.string.banner_formularios_id)
+        else -> stringResource(R.string.banner_main_id)
+    }
 
     // Dialog de selección de licencia (para crear guía)
     if (showLicenciaDialog) {
@@ -229,12 +240,19 @@ fun MainScreen(
             }
         },
         bottomBar = {
-            AnimatedVisibility(
-                visible = showBottomBar,
-                enter = slideInVertically(initialOffsetY = { it }),
-                exit = slideOutVertically(targetOffsetY = { it })
-            ) {
-                MunicionBottomBar(navController = navController)
+            Column {
+                // Show Ads if not auth screen and ads are enabled
+                if (!isAuthScreen && showAds) {
+                    AdBanner(adUnitId = adUnitId)
+                }
+
+                AnimatedVisibility(
+                    visible = showBottomBar,
+                    enter = slideInVertically(initialOffsetY = { it }),
+                    exit = slideOutVertically(targetOffsetY = { it })
+                ) {
+                    MunicionBottomBar(navController = navController)
+                }
             }
         },
         floatingActionButton = {
