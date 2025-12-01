@@ -17,13 +17,13 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 /**
- * Repository para Compra
+ * Repository for Compra
  *
- * FASE 2.4: Repository Pattern
- * - Single source of truth: Room es la fuente principal
- * - Sincronización bidireccional con Firebase
- * - Offline-first: datos siempre disponibles desde Room
- * - Flow para observar cambios reactivamente
+ * PHASE 2.4: Repository Pattern
+ * - Single source of truth: Room is the main source
+ * - Bidirectional sync with Firebase
+ * - Offline-first: data always available from Room
+ * - Flow to observe changes reactively
  *
  * @since v3.0.0 (TRACK B Modernization)
  */
@@ -39,33 +39,33 @@ class CompraRepository @Inject constructor(
     }
 
     /**
-     * Observa TODAS las compras (Room es source of truth)
+     * Observes ALL purchases (Room is source of truth)
      */
     val compras: Flow<List<Compra>> = compraDao.getAllComprasFlow()
 
     /**
-     * Observa compras de una guía específica
+     * Observes purchases for a specific guide
      */
     fun getComprasByGuia(guiaId: Int): Flow<List<Compra>> {
         return compraDao.getComprasByGuiaFlow(guiaId)
     }
 
     /**
-     * Obtiene una compra por ID
+     * Gets a purchase by ID
      */
     suspend fun getCompraById(id: Int): Compra? = withContext(Dispatchers.IO) {
         compraDao.getCompraById(id)
     }
 
     /**
-     * Guarda una compra (local + sync a Firebase)
+     * Saves a purchase (local + sync to Firebase)
      */
     suspend fun saveCompra(compra: Compra, userId: String? = null): Result<Long> = withContext(Dispatchers.IO) {
         try {
-            // 1. Guardar en Room (source of truth)
+            // 1. Save to Room (source of truth)
             val id = compraDao.insert(compra)
 
-            // 2. Sync a Firebase si hay userId
+            // 2. Sync to Firebase if userId is present
             userId?.let {
                 syncToFirebase(it)
             }
@@ -78,7 +78,7 @@ class CompraRepository @Inject constructor(
     }
 
     /**
-     * Actualiza una compra
+     * Updates a purchase
      */
     suspend fun updateCompra(compra: Compra, userId: String? = null): Result<Unit> = withContext(Dispatchers.IO) {
         try {
@@ -96,14 +96,14 @@ class CompraRepository @Inject constructor(
     }
 
     /**
-     * Elimina una compra
+     * Deletes a purchase
      */
     suspend fun deleteCompra(compra: Compra, userId: String? = null): Result<Unit> = withContext(Dispatchers.IO) {
         try {
             compraDao.delete(compra)
 
             userId?.let {
-                syncToFirebase(it)
+                syncToFirebase(it, deletedId = compra.id)
             }
 
             Result.success(Unit)
@@ -114,7 +114,7 @@ class CompraRepository @Inject constructor(
     }
 
     /**
-     * Sincroniza DESDE Firebase → Room con parseo manual y reporte a Crashlytics
+     * Syncs FROM Firebase -> Room with manual parsing and Crashlytics reporting
      */
     suspend fun syncFromFirebase(userId: String): Result<SyncResultWithErrors> = withContext(Dispatchers.IO) {
         try {
@@ -177,7 +177,7 @@ class CompraRepository @Inject constructor(
             return null
         }
 
-        // Campos obligatorios
+        // Mandatory fields
         val idPosGuia = (map["idPosGuia"] as? Number)?.toInt() ?: run {
             reportFieldError(itemKey, "idPosGuia", "Missing or invalid", map["idPosGuia"]?.toString(), parseErrors)
             return null
@@ -230,7 +230,7 @@ class CompraRepository @Inject constructor(
             return null
         }
 
-        // Campos opcionales
+        // Optional fields
         val id = (map["id"] as? Number)?.toInt() ?: 0
         val calibre2 = map["calibre2"] as? String
         val tienda = map["tienda"] as? String
@@ -290,21 +290,72 @@ class CompraRepository @Inject constructor(
     }
 
     /**
-     * Sincroniza HACIA Firebase ← Room (upload)
+     * Syncs TO Firebase <- Room (Safe Merge)
+     *
+     * Implements Fetch-Merge-Push strategy to avoid data loss:
+     * 1. Downloads current state from Firebase.
+     * 2. Merges with local state (Local has priority if ID matches).
+     * 3. Applies deletion if deletedId is specified.
+     * 4. Uploads the merged result.
+     * 5. Updates Room with the merged result.
+     *
+     * @param userId Authenticated user ID
+     * @param deletedId Optional ID of an item that has just been locally deleted and must be removed from the merge
      */
-    suspend fun syncToFirebase(userId: String): Result<Unit> = withContext(Dispatchers.IO) {
+    suspend fun syncToFirebase(userId: String, deletedId: Int? = null): Result<Unit> = withContext(Dispatchers.IO) {
         try {
-            val localCompras = compraDao.getAllCompras()
+            // 1. Fetch Remote (to avoid overwriting data from other devices)
+            val snapshot = firebaseDb
+                .child("users")
+                .child(userId)
+                .child("db")
+                .child("compras")
+                .get()
+                .await()
 
+            val remoteList = mutableListOf<Compra>()
+            // We use a temporary list of errors that we don't report to avoid cluttering logs on every save
+            val dummyErrors = mutableListOf<ParseError>()
+            
+            snapshot.children.forEach { child ->
+                // We try to recover everything possible from remote
+                parseAndValidateCompra(child, child.key ?: "unknown", dummyErrors)?.let {
+                    remoteList.add(it)
+                }
+            }
+
+            // 2. Fetch Local
+            val localList = compraDao.getAllCompras()
+
+            // 3. Merge Logic
+            // We start with Remote as base
+            val mergedMap = remoteList.associateBy { it.id }.toMutableMap()
+            
+            // Apply Local (Overwrites Remote if ID matches, adds if new)
+            localList.forEach { mergedMap[it.id] = it }
+
+            // Apply explicit deletion (because localList no longer has the item, but remote might)
+            if (deletedId != null) {
+                mergedMap.remove(deletedId)
+            }
+
+            val finalList = mergedMap.values.toList()
+
+            // 4. Push to Firebase (Full merged list)
             firebaseDb
                 .child("users")
                 .child(userId)
                 .child("db")
                 .child("compras")
-                .setValue(localCompras)
+                .setValue(finalList)
                 .await()
 
-            android.util.Log.i("CompraRepository", "Synced ${localCompras.size} compras to Firebase")
+            // 5. Update Local (To bring remote items we didn't have)
+            if (finalList.isNotEmpty() || (localList.isNotEmpty() || remoteList.isNotEmpty())) {
+                compraDao.replaceAll(finalList)
+            }
+
+            android.util.Log.i(TAG, "Synced ${finalList.size} compras to Firebase (Merged Local+Remote)")
 
             Result.success(Unit)
         } catch (e: Exception) {
@@ -315,14 +366,14 @@ class CompraRepository @Inject constructor(
     }
 
     /**
-     * Detecta compras con datos corruptos (peso = 0)
+     * Detects purchases with corrupt data (weight = 0)
      */
     suspend fun detectCorruptedCompras(): List<Compra> = withContext(Dispatchers.IO) {
         compraDao.getComprasWithCorruptedPeso()
     }
 
     /**
-     * Cuenta compras de una guía
+     * Counts purchases for a guide
      */
     suspend fun countComprasByGuia(guiaId: Int): Int = withContext(Dispatchers.IO) {
         compraDao.countComprasByGuia(guiaId)
