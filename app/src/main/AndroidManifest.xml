@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <uses-feature
         android:name="android.hardware.camera"
@@ -11,18 +12,16 @@
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.READ_CALENDAR" />
     <uses-permission android:name="android.permission.WRITE_CALENDAR" />
-    <!-- REMOVED v3.0.0: GET_ACCOUNTS was used by deprecated getUserEmail() -->
-    <!-- <uses-permission android:name="android.permission.GET_ACCOUNTS" /> -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.USE_BIOMETRIC" />
 
     <application
         android:name=".MunicionApplication"
         android:allowBackup="true"
-        android:enableOnBackInvokedCallback="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        tools:targetApi="36">
 
         <activity
             android:name=".ui.MainActivity"
@@ -36,43 +35,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".forms.GuiaFormActivity"
-            android:label="@string/title_nueva_guia"
-            android:windowSoftInputMode="stateHidden" />
-        <activity
-            android:name=".forms.CompraFormActivity"
-            android:label="@string/title_nueva_compra"
-            android:windowSoftInputMode="stateHidden" />
-        <activity
-            android:name=".forms.LicenciaFormActivity"
-            android:label="@string/title_nueva_licencia"
-            android:windowSoftInputMode="stateHidden" />
-        <activity
-            android:name=".forms.TiradaFormActivity"
-            android:label="@string/title_nueva_tirada"
-            android:windowSoftInputMode="stateHidden" />
-
-        <activity
-            android:name=".SettingsFragment"
-            android:label="@string/title_activity_settings"
-            android:theme="@style/Theme.AppCompat.Light.DarkActionBar" />
-
-        <receiver
-            android:name=".NotificationPublisher"
-            android:exported="false"
-            android:label="BroadcastReceiverAux">
-            <intent-filter>
-                <action android:name="ALARM" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </receiver>
-
-        <activity
-            android:name=".FragmentTutorialActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme" />
 
         <provider
             android:name="androidx.core.content.FileProvider"
@@ -92,13 +54,7 @@
             </intent-filter>
         </service>
 
-        <service
-            android:name=".MyFirebaseInstanceIDService"
-            android:exported="false">
-            <intent-filter>
-                <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
-            </intent-filter>
-        </service>
+
     </application>
 
 </manifest>
