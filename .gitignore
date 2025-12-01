@@ -326,3 +326,4 @@ fabric.properties
 /keystore.properties
 /app/release/output-metadata.json
 /.kotlin/
+/.gemini-clipboard/

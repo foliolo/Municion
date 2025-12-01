@@ -300,13 +300,24 @@ class TiradaRepository @Inject constructor(
 
             val finalList = mergedMap.values.toList()
 
+            // Create map for Firebase to avoid "stability" field issues or serialization errors
+            val firebaseData = finalList.map { tirada ->
+                mapOf(
+                    "id" to tirada.id,
+                    "descripcion" to tirada.descripcion,
+                    "rango" to tirada.rango,
+                    "fecha" to tirada.fecha,
+                    "puntuacion" to tirada.puntuacion
+                )
+            }
+
             // 4. Push to Firebase (Full merged list)
             firebaseDb
                 .child("users")
                 .child(userId)
                 .child("db")
                 .child("tiradas")
-                .setValue(finalList)
+                .setValue(firebaseData)
                 .await()
 
             // 5. Update Local (To bring remote items we didn't have)
