@@ -35,7 +35,7 @@ import java.util.Locale
 @Entity(
     tableName = "licencias",
     indices = [
-        Index(value = ["num_licencia"], unique = true),
+        Index(value = ["num_licencia"]),
         Index(value = ["fecha_caducidad"])
     ]
 )

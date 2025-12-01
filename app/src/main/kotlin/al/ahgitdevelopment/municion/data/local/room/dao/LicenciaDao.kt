@@ -39,7 +39,10 @@ interface LicenciaDao {
     suspend fun getLicenciaById(id: Int): Licencia?
 
     /**
-     * Obtiene licencia por número
+     * Obtiene licencia por número.
+     *
+     * @warning Desde v25, num_licencia NO es único. Este método retornará
+     * la primera coincidencia arbitraria. Usar con precaución.
      */
     @Query("SELECT * FROM licencias WHERE num_licencia = :numLicencia")
     suspend fun getLicenciaByNumero(numLicencia: String): Licencia?
