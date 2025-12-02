@@ -2,7 +2,9 @@ package al.ahgitdevelopment.municion.ui.viewmodel
 
 import al.ahgitdevelopment.municion.auth.FirebaseAuthRepository
 import al.ahgitdevelopment.municion.data.repository.BillingRepository
+import al.ahgitdevelopment.municion.domain.usecase.ClearLocalDataUseCase
 import android.app.Activity
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -28,7 +30,8 @@ import javax.inject.Inject
 @HiltViewModel
 class AccountSettingsViewModel @Inject constructor(
     private val firebaseAuthRepository: FirebaseAuthRepository,
-    private val billingRepository: BillingRepository
+    private val billingRepository: BillingRepository,
+    private val clearLocalDataUseCase: ClearLocalDataUseCase
 ) : ViewModel() {
 
     companion object {
@@ -76,12 +79,20 @@ class AccountSettingsViewModel @Inject constructor(
     }
 
     /**
-     * Cierra sesion de Firebase.
+     * Cierra sesion de Firebase y limpia datos locales.
      */
     fun signOut() {
         viewModelScope.launch {
-            firebaseAuthRepository.signOut()
-            _uiState.value = AccountUiState.NotAuthenticated
+            try {
+                Log.i(TAG, "SignOut requested - clearing local data...")
+                clearLocalDataUseCase()
+                Log.i(TAG, "Local data cleared.")
+            } catch (e: Exception) {
+                Log.e(TAG, "Error clearing local data during sign out", e)
+            } finally {
+                firebaseAuthRepository.signOut()
+                _uiState.value = AccountUiState.NotAuthenticated
+            }
         }
     }
 

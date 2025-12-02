@@ -194,8 +194,7 @@ private fun LoadedContent(
     modifier: Modifier = Modifier
 ) {
     Column(
-        modifier = modifier
-            .padding(16.dp)
+        modifier = modifier.padding(16.dp)
     ) {
 
         Column(

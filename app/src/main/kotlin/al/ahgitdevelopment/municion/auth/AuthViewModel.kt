@@ -2,14 +2,12 @@ package al.ahgitdevelopment.municion.auth
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 /**
@@ -26,8 +24,7 @@ import javax.inject.Inject
  */
 @HiltViewModel
 class AuthViewModel @Inject constructor(
-    private val firebaseAuth: FirebaseAuth,
-    private val clearLocalDataUseCase: al.ahgitdevelopment.municion.domain.usecase.ClearLocalDataUseCase
+    private val firebaseAuth: FirebaseAuth
 ) : ViewModel() {
 
     companion object {
@@ -88,28 +85,6 @@ class AuthViewModel @Inject constructor(
      */
     fun checkAuthState() {
         updateAuthState(firebaseAuth.currentUser)
-    }
-
-    /**
-     * Cierra sesion de Firebase y limpia base de datos local.
-     * El AuthStateListener actualizara el estado automaticamente cuando complete.
-     */
-    fun signOut() {
-        Log.i(TAG, "Signing out...")
-        
-        // Lanzar coroutine para limpiar DB antes de hacer signOut de Firebase
-        // Nota: Idealmente esperariamos a que termine, pero signOut es sincrono en UI.
-        // Usamos viewModelScope para asegurar que se ejecute.
-        viewModelScope.launch {
-            try {
-                clearLocalDataUseCase()
-            } catch (e: Exception) {
-                Log.e(TAG, "Error clearing data on logout", e)
-            } finally {
-                firebaseAuth.signOut()
-                // No es necesario actualizar _authState aqui - AuthStateListener lo hara
-            }
-        }
     }
 
     /**
