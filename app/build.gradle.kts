@@ -1,5 +1,5 @@
-import java.util.Properties
 import java.io.FileInputStream
+import java.util.Properties
 
 plugins {
     alias(libs.plugins.android.application)
@@ -53,8 +53,8 @@ android {
                 getDefaultProguardFile("proguard-android.txt"),
                 "proguard-rules.pro"
             )
-            isDebuggable = false
-            isMinifyEnabled = true
+            isDebuggable = true
+            isMinifyEnabled = false
         }
     }
 
@@ -64,7 +64,10 @@ android {
             // Enable K2 compiler (Kotlin 2.0+)
             jvmDefault.set(org.jetbrains.kotlin.gradle.dsl.JvmDefaultMode.ENABLE)
             optIn.add("kotlin.RequiresOptIn")
-            freeCompilerArgs.add("-XXLanguage:+PropertyParamAnnotationDefaultTargetMode")
+            freeCompilerArgs.apply {
+                add("-XXLanguage:+PropertyParamAnnotationDefaultTargetMode")
+                add("-XXLanguage:+ExplicitBackingFields")
+            }
         }
     }
 

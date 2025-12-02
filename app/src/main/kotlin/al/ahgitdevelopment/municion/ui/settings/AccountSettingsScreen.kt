@@ -75,6 +75,7 @@ fun AccountSettingsContent(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val isAdsRemoved by viewModel.isAdsRemoved.collectAsStateWithLifecycle()
+    val isPurchaseAvailable by viewModel.isPurchaseAvailable.collectAsStateWithLifecycle()
     val context = LocalContext.current
 
     // Dialogs state
@@ -106,6 +107,7 @@ fun AccountSettingsContent(
     AccountSettingsFields(
         uiState = uiState,
         isAdsRemoved = isAdsRemoved,
+        isPurchaseAvailable = isPurchaseAvailable,
         onShowTutorialClick = { showTutorialDialog = true },
         onSignOutClick = { showSignOutDialog = true },
         onRemoveAdsClick = {
@@ -126,6 +128,7 @@ fun AccountSettingsContent(
 fun AccountSettingsFields(
     uiState: AccountSettingsViewModel.AccountUiState,
     isAdsRemoved: Boolean,
+    isPurchaseAvailable: Boolean,
     onShowTutorialClick: () -> Unit,
     onSignOutClick: () -> Unit,
     onRemoveAdsClick: () -> Unit,
@@ -170,6 +173,7 @@ fun AccountSettingsFields(
             LoadedContent(
                 accountInfo = uiState.accountInfo,
                 isAdsRemoved = isAdsRemoved,
+                isPurchaseAvailable = isPurchaseAvailable,
                 onShowTutorialClick = onShowTutorialClick,
                 onSignOutClick = onSignOutClick,
                 onRemoveAdsClick = onRemoveAdsClick,
@@ -183,6 +187,7 @@ fun AccountSettingsFields(
 private fun LoadedContent(
     accountInfo: AccountSettingsViewModel.AccountInfo,
     isAdsRemoved: Boolean,
+    isPurchaseAvailable: Boolean,
     onShowTutorialClick: () -> Unit,
     onSignOutClick: () -> Unit,
     onRemoveAdsClick: () -> Unit,
@@ -259,7 +264,7 @@ private fun LoadedContent(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clickable(enabled = !isAdsRemoved) { onRemoveAdsClick() }
+                    .clickable(enabled = !isAdsRemoved && isPurchaseAvailable) { onRemoveAdsClick() }
                     .padding(16.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
@@ -281,7 +286,7 @@ private fun LoadedContent(
                         )
                         if (!isAdsRemoved) {
                             Text(
-                                text = "Apoya el desarrollo y elimina los anuncios",
+                                text = if (isPurchaseAvailable) "Apoya el desarrollo y elimina los anuncios" else "Cargando información...",
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
                             )
@@ -289,11 +294,18 @@ private fun LoadedContent(
                     }
                 }
                 if (!isAdsRemoved) {
-                    Icon(
-                        Icons.AutoMirrored.Filled.ArrowForward,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.outline
-                    )
+                    if (isPurchaseAvailable) {
+                        Icon(
+                            Icons.AutoMirrored.Filled.ArrowForward,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.outline
+                        )
+                    } else {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(20.dp),
+                            strokeWidth = 2.dp
+                        )
+                    }
                 }
             }
         }
@@ -411,6 +423,7 @@ private fun AccountSettingsFieldsPreview() {
                 )
             ),
             isAdsRemoved = false,
+            isPurchaseAvailable = true,
             onShowTutorialClick = {},
             onSignOutClick = {},
             onRemoveAdsClick = {}

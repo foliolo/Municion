@@ -10,6 +10,7 @@ import com.android.billingclient.api.BillingClient
 import com.android.billingclient.api.BillingClientStateListener
 import com.android.billingclient.api.BillingFlowParams
 import com.android.billingclient.api.BillingResult
+import com.android.billingclient.api.PendingPurchasesParams
 import com.android.billingclient.api.ProductDetails
 import com.android.billingclient.api.Purchase
 import com.android.billingclient.api.PurchasesUpdatedListener
@@ -20,8 +21,9 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -34,17 +36,23 @@ class BillingRepository @Inject constructor(
 
     companion object {
         private const val TAG = "BillingRepository"
+
         // TODO: Confirm this SKU with Play Console
         const val SKU_REMOVE_ADS = "remove_ads"
     }
 
-    private val _billingClient = BillingClient.newBuilder(context)
+    private val billingClient = BillingClient.newBuilder(context)
         .setListener(this)
-        .enablePendingPurchases()
+        .enablePendingPurchases(
+            PendingPurchasesParams.newBuilder()
+                .enableOneTimeProducts()
+                .build()
+        )
+        .enableAutoServiceReconnection()
         .build()
 
-    private val _productDetails = MutableStateFlow<ProductDetails?>(null)
-    val productDetails = _productDetails.asStateFlow()
+    val productDetails: StateFlow<ProductDetails?>
+        field = MutableStateFlow<ProductDetails?>(null)
 
     // Observes if the "remove_ads" SKU exists in the local database
     val isAdsRemoved: Flow<Boolean> = appPurchaseDao.getPurchaseFlow(SKU_REMOVE_ADS)
@@ -55,7 +63,7 @@ class BillingRepository @Inject constructor(
     }
 
     private fun startConnection() {
-        _billingClient.startConnection(object : BillingClientStateListener {
+        billingClient.startConnection(object : BillingClientStateListener {
             override fun onBillingSetupFinished(billingResult: BillingResult) {
                 if (billingResult.responseCode == BillingClient.BillingResponseCode.OK) {
                     Log.d(TAG, "Billing Setup Finished")
@@ -68,9 +76,25 @@ class BillingRepository @Inject constructor(
 
             override fun onBillingServiceDisconnected() {
                 Log.d(TAG, "Billing Service Disconnected")
-                // Retry connection logic could go here
             }
         })
+    }
+
+    private fun queryPurchases() {
+        val params = QueryPurchasesParams.newBuilder()
+            .setProductType(BillingClient.ProductType.INAPP)
+            .build()
+
+        billingClient.queryPurchasesAsync(params) { billingResult, purchasesList ->
+            if (billingResult.responseCode == BillingClient.BillingResponseCode.OK) {
+                Log.d(TAG, "Query Purchases: Found ${purchasesList.size} purchases")
+                for (purchase in purchasesList) {
+                    handlePurchase(purchase)
+                }
+            } else {
+                Log.e(TAG, "Query Purchases Failed: ${billingResult.debugMessage}")
+            }
+        }
     }
 
     private fun queryProductDetails() {
@@ -85,12 +109,18 @@ class BillingRepository @Inject constructor(
             .setProductList(productList)
             .build()
 
-        _billingClient.queryProductDetailsAsync(params) { billingResult, productDetailsList ->
+        billingClient.queryProductDetailsAsync(params) { billingResult, productDetailsList ->
             if (billingResult.responseCode == BillingClient.BillingResponseCode.OK) {
-                if (productDetailsList.isNotEmpty()) {
-                    _productDetails.value = productDetailsList[0]
-                } else {
-                    Log.w(TAG, "No product details found for $SKU_REMOVE_ADS")
+                for (productDetails in productDetailsList.productDetailsList) {
+                    Log.d(TAG, "Product Details Found: ${productDetails.name} - ${productDetails.productId}")
+                    this@BillingRepository.productDetails.update { productDetails }
+                }
+
+                for (unfetchedProduct in productDetailsList.unfetchedProductList) {
+                    // Handle any unfetched products as appropriate.
+                    Log.w(
+                        TAG, "No product details found for $SKU_REMOVE_ADS. Check Play Console configuration."
+                    )
                 }
             } else {
                 Log.e(TAG, "Query Product Details Failed: ${billingResult.debugMessage}")
@@ -98,26 +128,15 @@ class BillingRepository @Inject constructor(
         }
     }
 
-    private fun queryPurchases() {
-        val params = QueryPurchasesParams.newBuilder()
-            .setProductType(BillingClient.ProductType.INAPP)
-            .build()
-
-        _billingClient.queryPurchasesAsync(params) { billingResult, purchases ->
-            if (billingResult.responseCode == BillingClient.BillingResponseCode.OK) {
-                for (purchase in purchases) {
-                    handlePurchase(purchase)
-                }
-            }
-        }
-    }
-
     fun launchBillingFlow(activity: Activity) {
-        val details = _productDetails.value
+        val details = productDetails.value
+        Log.i(TAG, "Product Detail token: ${details?.oneTimePurchaseOfferDetails?.offerToken.orEmpty()}")
+
         if (details != null) {
             val productDetailsParamsList = listOf(
                 BillingFlowParams.ProductDetailsParams.newBuilder()
                     .setProductDetails(details)
+                    .setOfferToken(details.oneTimePurchaseOfferDetails?.offerToken.orEmpty())
                     .build()
             )
 
@@ -125,13 +144,22 @@ class BillingRepository @Inject constructor(
                 .setProductDetailsParamsList(productDetailsParamsList)
                 .build()
 
-            _billingClient.launchBillingFlow(activity, billingFlowParams)
+            billingClient.launchBillingFlow(activity, billingFlowParams)
         } else {
-            Log.e(TAG, "Cannot launch billing flow: Product Details not loaded")
+            Log.e(TAG, "Cannot launch billing flow: Product Details not loaded. Retrying query...")
+            // Try to query again if details are missing, maybe connection was lost/restored
+            if (billingClient.isReady) {
+                queryProductDetails()
+            } else {
+                startConnection()
+            }
         }
     }
 
-    override fun onPurchasesUpdated(billingResult: BillingResult, purchases: MutableList<Purchase>?) {
+    override fun onPurchasesUpdated(
+        billingResult: BillingResult,
+        purchases: MutableList<Purchase>?
+    ) {
         if (billingResult.responseCode == BillingClient.BillingResponseCode.OK && purchases != null) {
             for (purchase in purchases) {
                 handlePurchase(purchase)
@@ -150,7 +178,7 @@ class BillingRepository @Inject constructor(
                     .setPurchaseToken(purchase.purchaseToken)
                     .build()
 
-                _billingClient.acknowledgePurchase(acknowledgePurchaseParams) { billingResult ->
+                billingClient.acknowledgePurchase(acknowledgePurchaseParams) { billingResult ->
                     if (billingResult.responseCode == BillingClient.BillingResponseCode.OK) {
                         Log.d(TAG, "Purchase acknowledged")
                         savePurchaseToRoom(purchase)

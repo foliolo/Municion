@@ -45,7 +45,7 @@ work = "2.11.0"
 
 # Google Play Services & Billing
 playServicesAds = "23.6.0"
-billing = "7.1.1"
+billing = "8.1.0"
 
 # Firebase
 firebaseBom = "34.6.0"

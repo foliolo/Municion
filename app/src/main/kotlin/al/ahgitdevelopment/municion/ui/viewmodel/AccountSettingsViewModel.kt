@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -37,8 +37,12 @@ class AccountSettingsViewModel @Inject constructor(
 
     private val _uiState = MutableStateFlow<AccountUiState>(AccountUiState.Loading)
     val uiState: StateFlow<AccountUiState> = _uiState.asStateFlow()
-    
+
     val isAdsRemoved: StateFlow<Boolean> = billingRepository.isAdsRemoved
+        .stateIn(viewModelScope, SharingStarted.Lazily, false)
+
+    val isPurchaseAvailable: StateFlow<Boolean> = billingRepository.productDetails
+        .map { it != null }
         .stateIn(viewModelScope, SharingStarted.Lazily, false)
 
     init {
