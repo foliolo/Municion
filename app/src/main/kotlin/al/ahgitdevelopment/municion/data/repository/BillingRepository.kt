@@ -25,13 +25,15 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class BillingRepository @Inject constructor(
     @ApplicationContext private val context: Context,
-    private val appPurchaseDao: AppPurchaseDao
+    private val appPurchaseDao: AppPurchaseDao,
+    private val firebaseDb: com.google.firebase.database.DatabaseReference
 ) : PurchasesUpdatedListener {
 
     companion object {
@@ -201,8 +203,60 @@ class BillingRepository @Inject constructor(
                         isAcknowledged = purchase.isAcknowledged
                     )
                     appPurchaseDao.insert(appPurchase)
+
+                    // Sync to Firebase Realtime DB: users/{uid}/settings/ads_removed = true
+                    try {
+                        val userId = com.google.firebase.auth.FirebaseAuth.getInstance().currentUser?.uid
+                        if (userId != null) {
+                            firebaseDb
+                                .child("users")
+                                .child(userId)
+                                .child("settings")
+                                .child("ads_removed")
+                                .setValue(true)
+                                .addOnFailureListener { e ->
+                                    Log.e(TAG, "Failed to sync purchase to Firebase", e)
+                                }
+                        }
+                    } catch (e: Exception) {
+                        Log.e(TAG, "Error syncing purchase to Firebase", e)
+                    }
                 }
             }
+        }
+    }
+
+    /**
+     * Checks Firebase for "ads_removed" status and updates local DB if true.
+     * This allows manual control via Firebase console or cross-device sync.
+     */
+    suspend fun syncAdsStatus(userId: String) {
+        try {
+            val snapshot = firebaseDb
+                .child("users")
+                .child(userId)
+                .child("settings")
+                .child("ads_removed")
+                .get()
+                .await()
+
+
+            val isAdsRemoved = snapshot.value as? Boolean ?: false
+            if (isAdsRemoved) {
+                Log.i(TAG, "Sync: Ads are removed for user $userId (from Firebase)")
+                // Insert dummy purchase if not exists to unlock feature locally
+                val dummyPurchase = AppPurchase(
+                    sku = SKU_REMOVE_ADS,
+                    purchaseToken = "firebase_sync_${System.currentTimeMillis()}",
+                    purchaseTime = System.currentTimeMillis(),
+                    isAcknowledged = true
+                )
+                appPurchaseDao.insert(dummyPurchase)
+            } else {
+                Log.d(TAG, "Sync: Ads are NOT removed for user $userId")
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "Error syncing ads status from Firebase", e)
         }
     }
 }

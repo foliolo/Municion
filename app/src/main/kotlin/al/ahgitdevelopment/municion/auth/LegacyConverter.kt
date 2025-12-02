@@ -4,6 +4,7 @@ import al.ahgitdevelopment.municion.data.local.room.entities.Compra
 import al.ahgitdevelopment.municion.data.local.room.entities.Guia
 import al.ahgitdevelopment.municion.data.local.room.entities.Licencia
 import al.ahgitdevelopment.municion.data.local.room.entities.Tirada
+import android.util.Log
 import al.ahgitdevelopment.municion.datamodel.Guia as LegacyGuia
 import al.ahgitdevelopment.municion.datamodel.Compra as LegacyCompra
 import al.ahgitdevelopment.municion.datamodel.Licencia as LegacyLicencia
@@ -45,7 +46,7 @@ object LegacyConverter {
                 imagePath = legacy.imagePath?.takeIf { it.isNotBlank() }
             )
         } catch (e: Exception) {
-            android.util.Log.e("LegacyConverter", "Error converting Guia ${legacy.id}", e)
+            Log.e("LegacyConverter", "Error converting Guia ${legacy.id}", e)
             null
         }
     }
@@ -72,7 +73,7 @@ object LegacyConverter {
                 imagePath = legacy.imagePath?.takeIf { it.isNotBlank() }
             )
         } catch (e: Exception) {
-            android.util.Log.e("LegacyConverter", "Error converting Compra ${legacy.id}", e)
+            Log.e("LegacyConverter", "Error converting Compra ${legacy.id}", e)
             null
         }
     }
@@ -99,7 +100,7 @@ object LegacyConverter {
                 categoria = legacy.categoria
             )
         } catch (e: Exception) {
-            android.util.Log.e("LegacyConverter", "Error converting Licencia ${legacy.id}", e)
+            Log.e("LegacyConverter", "Error converting Licencia ${legacy.id}", e)
             null
         }
     }
@@ -118,7 +119,7 @@ object LegacyConverter {
                 puntuacion = legacy.puntuacion.coerceIn(0, 600)
             )
         } catch (e: Exception) {
-            android.util.Log.e("LegacyConverter", "Error converting Tirada", e)
+            Log.e("LegacyConverter", "Error converting Tirada", e)
             null
         }
     }

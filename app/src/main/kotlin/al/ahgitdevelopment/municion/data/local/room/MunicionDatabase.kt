@@ -11,6 +11,7 @@ import al.ahgitdevelopment.municion.data.local.room.entities.Guia
 import al.ahgitdevelopment.municion.data.local.room.entities.Licencia
 import al.ahgitdevelopment.municion.data.local.room.entities.Tirada
 import android.content.Context
+import android.util.Log
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
@@ -58,7 +59,7 @@ abstract class MunicionDatabase : RoomDatabase() {
          */
         val MIGRATION_25_26 = object : Migration(25, 26) {
             override fun migrate(database: SupportSQLiteDatabase) {
-                android.util.Log.i("MunicionDatabase", "Starting migration v25 → v26 (Add AppPurchase)")
+                Log.i("MunicionDatabase", "Starting migration v25 → v26 (Add AppPurchase)")
                 database.execSQL(
                     """
                     CREATE TABLE IF NOT EXISTS app_purchases (

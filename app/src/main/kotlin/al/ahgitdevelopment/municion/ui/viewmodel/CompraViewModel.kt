@@ -6,6 +6,7 @@ import al.ahgitdevelopment.municion.data.local.room.entities.Compra
 import al.ahgitdevelopment.municion.data.repository.CompraRepository
 import al.ahgitdevelopment.municion.domain.usecase.CreateCompraUseCase
 import al.ahgitdevelopment.municion.domain.usecase.DeleteCompraUseCase
+import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -51,7 +52,7 @@ class CompraViewModel @Inject constructor(
                 createCompraUseCase(compra, userId).getOrThrow()
                 _uiState.value = CompraUiState.Success("Compra creada exitosamente")
             } catch (e: Exception) {
-                android.util.Log.e("CompraViewModel", "Error creating compra", e)
+                Log.e("CompraViewModel", "Error creating compra", e)
                 crashlytics.recordException(e)
                 _uiState.value = CompraUiState.Error(e.message ?: "Error desconocido")
             }
@@ -66,7 +67,7 @@ class CompraViewModel @Inject constructor(
                 compraRepository.updateCompra(compra, userId).getOrThrow()
                 _uiState.value = CompraUiState.Success("Compra actualizada")
             } catch (e: Exception) {
-                android.util.Log.e("CompraViewModel", "Error updating compra", e)
+                Log.e("CompraViewModel", "Error updating compra", e)
                 crashlytics.recordException(e)
                 _uiState.value = CompraUiState.Error(e.message ?: "Error desconocido")
             }
@@ -81,7 +82,7 @@ class CompraViewModel @Inject constructor(
                 deleteCompraUseCase(compra, userId).getOrThrow()
                 _uiState.value = CompraUiState.Success("Compra eliminada")
             } catch (e: Exception) {
-                android.util.Log.e("CompraViewModel", "Error deleting compra", e)
+                Log.e("CompraViewModel", "Error deleting compra", e)
                 crashlytics.recordException(e)
                 _uiState.value = CompraUiState.Error(e.message ?: "Error desconocido")
             }

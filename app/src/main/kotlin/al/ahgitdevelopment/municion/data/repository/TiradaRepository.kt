@@ -6,6 +6,7 @@ import al.ahgitdevelopment.municion.domain.usecase.FirebaseParseException
 import al.ahgitdevelopment.municion.domain.usecase.ParseError
 import al.ahgitdevelopment.municion.domain.usecase.SensitiveFields
 import al.ahgitdevelopment.municion.domain.usecase.SyncResultWithErrors
+import android.util.Log
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseReference
@@ -134,7 +135,7 @@ class TiradaRepository @Inject constructor(
                 .await()
 
             val totalInFirebase = snapshot.childrenCount.toInt()
-            android.util.Log.d(TAG, "Firebase snapshot: $totalInFirebase tiradas")
+            Log.d(TAG, "Firebase snapshot: $totalInFirebase tiradas")
 
             val firebaseTiradas = mutableListOf<Tirada>()
             val parseErrors = mutableListOf<ParseError>()
@@ -147,24 +148,26 @@ class TiradaRepository @Inject constructor(
 
             if (firebaseTiradas.isNotEmpty()) {
                 tiradaDao.replaceAll(firebaseTiradas)
-                android.util.Log.i(TAG, "Synced ${firebaseTiradas.size} tiradas from Firebase (${parseErrors.size} errors)")
+                Log.i(TAG, "Synced ${firebaseTiradas.size} tiradas from Firebase (${parseErrors.size} errors)")
             } else if (totalInFirebase > 0) {
-                android.util.Log.w(TAG, "Firebase has $totalInFirebase tiradas but 0 parsed successfully")
+                Log.w(TAG, "Firebase has $totalInFirebase tiradas but 0 parsed successfully")
             } else {
-                android.util.Log.d(TAG, "No tiradas in Firebase")
+                Log.d(TAG, "No tiradas in Firebase")
             }
 
             val hasLocalData = tiradaDao.countTiradas() > 0
 
-            Result.success(SyncResultWithErrors(
-                success = true,
-                syncedCount = firebaseTiradas.size,
-                totalInFirebase = totalInFirebase,
-                parseErrors = parseErrors,
-                hasLocalData = hasLocalData
-            ))
+            Result.success(
+                SyncResultWithErrors(
+                    success = true,
+                    syncedCount = firebaseTiradas.size,
+                    totalInFirebase = totalInFirebase,
+                    parseErrors = parseErrors,
+                    hasLocalData = hasLocalData
+                )
+            )
         } catch (e: Exception) {
-            android.util.Log.e(TAG, "Sync failed: ${e.message}", e)
+            Log.e(TAG, "Sync failed: ${e.message}", e)
             crashlytics.log("Failed to sync tiradas from Firebase: ${e.message}")
             crashlytics.recordException(e)
             Result.failure(e)
@@ -245,7 +248,7 @@ class TiradaRepository @Inject constructor(
             recordException(FirebaseParseException("[Tirada] Field '$fieldName' failed: $errorType"))
         }
 
-        android.util.Log.e(TAG, "Parse error Tirada[$itemKey].$fieldName: $errorType (value: $redactedValue)")
+        Log.e(TAG, "Parse error Tirada[$itemKey].$fieldName: $errorType (value: $redactedValue)")
     }
 
     /**
@@ -275,7 +278,7 @@ class TiradaRepository @Inject constructor(
             val remoteList = mutableListOf<Tirada>()
             // We use a temporary list of errors that we don't report to avoid cluttering logs on every save
             val dummyErrors = mutableListOf<ParseError>()
-            
+
             snapshot.children.forEach { child ->
                 // We try to recover everything possible from remote
                 parseAndValidateTirada(child, child.key ?: "unknown", dummyErrors)?.let {
@@ -289,7 +292,7 @@ class TiradaRepository @Inject constructor(
             // 3. Merge Logic
             // We start with Remote as base
             val mergedMap = remoteList.associateBy { it.id }.toMutableMap()
-            
+
             // Apply Local (Overwrites Remote if ID matches, adds if new)
             localList.forEach { mergedMap[it.id] = it }
 
@@ -325,7 +328,7 @@ class TiradaRepository @Inject constructor(
                 tiradaDao.replaceAll(finalList)
             }
 
-            android.util.Log.i(TAG, "Synced ${finalList.size} tiradas to Firebase (Merged Local+Remote)")
+            Log.i(TAG, "Synced ${finalList.size} tiradas to Firebase (Merged Local+Remote)")
 
             Result.success(Unit)
         } catch (e: Exception) {

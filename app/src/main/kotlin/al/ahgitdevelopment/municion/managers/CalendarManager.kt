@@ -10,6 +10,7 @@ import android.database.Cursor
 import android.provider.CalendarContract
 import androidx.core.content.ContextCompat
 import al.ahgitdevelopment.municion.data.local.room.entities.Licencia
+import android.util.Log
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
@@ -76,10 +77,10 @@ class CalendarManager @Inject constructor(
                 description = licencia.getDescripcionCalendario()
             )
 
-            android.util.Log.i("CalendarManager", "Created calendar events for license: ${licencia.numLicencia}")
+            Log.i("CalendarManager", "Created calendar events for license: ${licencia.numLicencia}")
             Result.success(Unit)
         } catch (e: Exception) {
-            android.util.Log.e("CalendarManager", "Error creating calendar events", e)
+            Log.e("CalendarManager", "Error creating calendar events", e)
             crashlytics.recordException(e)
             Result.failure(e)
         }
@@ -108,10 +109,10 @@ class CalendarManager @Inject constructor(
                 title = "Tu licencia caduca dentro de un mes"
             )
 
-            android.util.Log.i("CalendarManager", "Deleted calendar events for license: ${licencia.numLicencia}")
+            Log.i("CalendarManager", "Deleted calendar events for license: ${licencia.numLicencia}")
             Result.success(Unit)
         } catch (e: Exception) {
-            android.util.Log.e("CalendarManager", "Error deleting calendar events", e)
+            Log.e("CalendarManager", "Error deleting calendar events", e)
             crashlytics.recordException(e)
             Result.failure(e)
         }
@@ -212,10 +213,10 @@ class CalendarManager @Inject constructor(
                 val eventId = cursor.getLong(0)
                 val uri = ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, eventId)
                 contentResolver.delete(uri, null, null)
-                android.util.Log.d("CalendarManager", "Deleted calendar event: $eventId")
+                Log.d("CalendarManager", "Deleted calendar event: $eventId")
             }
         } catch (e: Exception) {
-            android.util.Log.e("CalendarManager", "Error deleting event", e)
+            Log.e("CalendarManager", "Error deleting event", e)
             crashlytics.recordException(e)
         } finally {
             // CRITICAL: Always close cursor
