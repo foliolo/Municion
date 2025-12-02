@@ -2,6 +2,7 @@ package al.ahgitdevelopment.municion.ui.settings
 
 import al.ahgitdevelopment.municion.BuildConfig
 import al.ahgitdevelopment.municion.R
+import al.ahgitdevelopment.municion.ui.components.AdBanner
 import al.ahgitdevelopment.municion.ui.components.TutorialDialog
 import al.ahgitdevelopment.municion.ui.theme.LicenseExpired
 import al.ahgitdevelopment.municion.ui.theme.LicenseValid
@@ -355,17 +356,25 @@ private fun LoadedContent(
             Spacer(modifier = Modifier.height(16.dp))
 
         }
-        // Version
-        Text(
-            text = "v${BuildConfig.VERSION_NAME}",
-            style = MaterialTheme.typography.labelMedium,
-            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f),
-            modifier = Modifier
-                .fillMaxWidth()
-                .align(Alignment.Start)
-        )
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Column {
+
+            // Version
+            Text(
+                text = "v${BuildConfig.VERSION_NAME}",
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .align(Alignment.Start)
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            if (!isAdsRemoved) {
+                AdBanner(adUnitId = stringResource(R.string.banner_configuracion_id))
+            }
+        }
     }
 }
 

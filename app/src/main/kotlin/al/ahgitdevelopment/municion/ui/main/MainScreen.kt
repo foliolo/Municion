@@ -153,7 +153,6 @@ fun MainScreen(
 
     // Determine Ad Unit ID based on route
     val adUnitId = when {
-        currentRoute == Settings::class.qualifiedName -> stringResource(R.string.banner_configuracion_id)
         currentRoute?.contains("Form") == true -> stringResource(R.string.banner_formularios_id)
         else -> stringResource(R.string.banner_main_id)
     }
@@ -242,8 +241,9 @@ fun MainScreen(
         },
         bottomBar = {
             Column {
-                // Show Ads if not auth screen and ads are enabled
-                if (!isAuthScreen && showAds) {
+                // Show Ads if not auth screen, not settings screen and ads are enabled
+                val isSettingsScreen = currentRoute == Settings::class.qualifiedName
+                if (!isAuthScreen && !isSettingsScreen && showAds) {
                     key(currentRoute) {
                         AdBanner(adUnitId = adUnitId)
                     }

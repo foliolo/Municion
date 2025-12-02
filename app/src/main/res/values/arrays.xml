@@ -140,12 +140,9 @@
         <item>3ª Categoría</item>
     </string-array>
 
-
-    <string-array name="preguntas_seguridad">
-        <item>¿Cómo se llama tu mascota?</item>
-        <item>¿En qué colegio estudiaste?</item>
-        <item>¿Cuál es tu película preferida?</item>
-        <item>¿Cuál es tu libro favorito?</item>
+    <string-array name="lugar_compra">
+        <item>Tienda</item>
+        <item>Campo de tiro</item>
     </string-array>
 
     <string-array name="calibres">

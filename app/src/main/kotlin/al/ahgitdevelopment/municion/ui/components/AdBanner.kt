@@ -25,6 +25,23 @@ fun AdBanner(
                 AdView(context).apply {
                     setAdSize(AdSize.FULL_BANNER)
                     this.adUnitId = adUnitId
+                    
+                    adListener = object : com.google.android.gms.ads.AdListener() {
+                        override fun onAdLoaded() {
+                            super.onAdLoaded()
+                            android.util.Log.d("AdBanner", "Ad loaded successfully for unit: $adUnitId")
+                        }
+
+                        override fun onAdFailedToLoad(error: com.google.android.gms.ads.LoadAdError) {
+                            super.onAdFailedToLoad(error)
+                            android.util.Log.e("AdBanner", "Ad failed to load for unit: $adUnitId")
+                            android.util.Log.e("AdBanner", "Error Code: ${error.code} (3 = NO_FILL)")
+                            android.util.Log.e("AdBanner", "Message: ${error.message}")
+                            android.util.Log.e("AdBanner", "Domain: ${error.domain}")
+                            android.util.Log.e("AdBanner", "Response Info: ${error.responseInfo}")
+                        }
+                    }
+
                     loadAd(AdRequest.Builder().build())
                 }
             }
