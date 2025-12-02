@@ -39,8 +39,8 @@ android {
         applicationId = "al.ahgitdevelopment.municion"
         minSdk = 26
         targetSdk = 36
-        versionCode = 41
-        versionName = "3.2.0"
+        versionCode = 42
+        versionName = "3.2.1"
 
         testInstrumentationRunner = "android.support.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
@@ -53,8 +53,9 @@ android {
                 getDefaultProguardFile("proguard-android.txt"),
                 "proguard-rules.pro"
             )
-            isDebuggable = true
-            isMinifyEnabled = false
+            isDebuggable = false
+            isMinifyEnabled = true
+            isShrinkResources = true
         }
     }
 

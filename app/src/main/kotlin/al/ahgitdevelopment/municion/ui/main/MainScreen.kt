@@ -39,6 +39,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -243,7 +244,9 @@ fun MainScreen(
             Column {
                 // Show Ads if not auth screen and ads are enabled
                 if (!isAuthScreen && showAds) {
-                    AdBanner(adUnitId = adUnitId)
+                    key(currentRoute) {
+                        AdBanner(adUnitId = adUnitId)
+                    }
                 }
 
                 AnimatedVisibility(
