@@ -83,7 +83,7 @@ fun DropdownField(
     }
 }
 
-@Preview(backgroundColor = 0xFFFFFFFF, showBackground = true, showSystemUi = true)
+@Preview(backgroundColor = 0xFFFFFFFF, showBackground = true, showSystemUi = false)
 @Composable
 fun DropdownFieldPreview() {
     var selectedOption by remember { mutableStateOf("Option 2") }

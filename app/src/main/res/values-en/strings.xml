@@ -234,12 +234,12 @@
     <string name="label_autonomous_community">Autonomous Community</string>
     <string name="label_category">Category</string>
     <string name="label_description">Description</string>
-    <string name="label_range_gallery">Range / Gallery</string>
+    <string name="label_tirada_localizacion">Location</string>
     <string name="label_exact_score">Exact score</string>
 
     <!-- Compose Form Placeholders (v3.0.0) -->
     <string name="placeholder_weekly_practice">E.g: Weekly practice</string>
-    <string name="placeholder_municipal_gallery">E.g: Municipal Gallery</string>
+    <string name="placeholder_municipal_gallery">Address</string>
     <string name="hint_score_range">Value between 0 and 600</string>
 
     <!-- Compose Info Text (v3.0.0) -->

@@ -200,7 +200,7 @@ fun TiradaFormFields(
         OutlinedTextField(
             value = rango,
             onValueChange = onRangoChange,
-            label = { Text(stringResource(R.string.label_range_gallery)) },
+            label = { Text(stringResource(R.string.label_tirada_localizacion)) },
             placeholder = { Text(stringResource(R.string.placeholder_municipal_gallery)) },
             modifier = Modifier.fillMaxWidth(),
             singleLine = true,

@@ -249,12 +249,12 @@
     <string name="label_autonomous_community">Comunidad Autónoma</string>
     <string name="label_category">Categoría</string>
     <string name="label_description">Descripción</string>
-    <string name="label_range_gallery">Lugar / Galería</string>
+    <string name="label_tirada_localizacion">Localización</string>
     <string name="label_exact_score">Puntuación exacta</string>
 
     <!-- Compose Form Placeholders (v3.0.0) -->
     <string name="placeholder_weekly_practice">Ej: Práctica semanal</string>
-    <string name="placeholder_municipal_gallery">Ej: Galería Municipal</string>
+    <string name="placeholder_municipal_gallery">Dirección</string>
     <string name="hint_score_range">Valor entre 0 y 600</string>
 
     <!-- Compose Info Text (v3.0.0) -->
