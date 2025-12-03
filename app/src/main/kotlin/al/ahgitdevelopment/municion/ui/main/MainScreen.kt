@@ -195,7 +195,7 @@ fun MainScreen(
             is MainViewModel.SyncState.SuccessWithParseErrors -> {
                 val state = syncState as MainViewModel.SyncState.SuccessWithParseErrors
                 val message = if (state.autoFixApplied) {
-                    "Sincronizado con correcciones automáticas"
+                    context.getString(R.string.sync_completed_with_fixes)
                 } else {
                     "Sincronizado con ${state.parseErrorCount} errores"
                 }

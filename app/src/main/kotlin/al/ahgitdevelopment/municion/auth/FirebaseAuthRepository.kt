@@ -63,7 +63,7 @@ class FirebaseAuthRepository @Inject constructor(
      * Mantiene el mismo UID y todos los datos existentes.
      *
      * @param email Email del usuario
-     * @param password Contrasena elegida por el usuario
+     * @param password Contraseña elegida por el usuario
      * @return Result con FirebaseUser si exitoso
      *
      * @since v3.4.0 (Auth Simplification - Migration flow)
@@ -91,7 +91,7 @@ class FirebaseAuthRepository @Inject constructor(
      * Login con Email/Password existente.
      *
      * @param email Email del usuario
-     * @param password Contrasena del usuario
+     * @param password Contraseña del usuario
      * @return Result con FirebaseUser si exitoso
      */
     suspend fun signInWithEmail(email: String, password: String): Result<FirebaseUser> {
@@ -112,7 +112,7 @@ class FirebaseAuthRepository @Inject constructor(
      * Crea una nueva cuenta con Email/Password
      *
      * @param email Email del nuevo usuario
-     * @param password Contrasena elegida (min 6 caracteres)
+     * @param password Contraseña elegida (min 6 caracteres)
      * @return Result con FirebaseUser si exitoso
      *
      * @since v3.4.0 (Auth Simplification)
@@ -132,7 +132,7 @@ class FirebaseAuthRepository @Inject constructor(
     }
 
     /**
-     * Envia email de recuperacion de contrasena
+     * Envia email de recuperacion de contraseña
      *
      * @param email Email de la cuenta a recuperar
      * @return Result<Unit> indicando exito o fallo

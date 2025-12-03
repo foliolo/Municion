@@ -1,5 +1,6 @@
 package al.ahgitdevelopment.municion.managers
 
+import al.ahgitdevelopment.municion.R
 import android.Manifest
 import android.content.ContentResolver
 import android.content.ContentUris
@@ -65,7 +66,7 @@ class CalendarManager @Inject constructor(
             createCalendarEvent(
                 licencia = licencia,
                 daysOffset = 0,
-                title = "Tu licencia caduca hoy",
+                title = context.getString(R.string.calendar_event_expires_today),
                 description = licencia.getDescripcionCalendario()
             )
 
@@ -73,7 +74,7 @@ class CalendarManager @Inject constructor(
             createCalendarEvent(
                 licencia = licencia,
                 daysOffset = -30,
-                title = "Tu licencia caduca dentro de un mes",
+                title = context.getString(R.string.calendar_event_expires_one_month),
                 description = licencia.getDescripcionCalendario()
             )
 
@@ -99,14 +100,14 @@ class CalendarManager @Inject constructor(
             deleteCalendarEvent(
                 licencia = licencia,
                 daysOffset = 0,
-                title = "Tu licencia caduca hoy"
+                title = context.getString(R.string.calendar_event_expires_today)
             )
 
             // Eliminar evento 1 mes antes
             deleteCalendarEvent(
                 licencia = licencia,
                 daysOffset = -30,
-                title = "Tu licencia caduca dentro de un mes"
+                title = context.getString(R.string.calendar_event_expires_one_month)
             )
 
             Log.i("CalendarManager", "Deleted calendar events for license: ${licencia.numLicencia}")

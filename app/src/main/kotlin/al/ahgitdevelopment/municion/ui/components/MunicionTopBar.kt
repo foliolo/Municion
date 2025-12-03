@@ -106,7 +106,7 @@ private fun ListTopBar(
         navigationIcon = {
             Image(
                 painter = painterResource(R.drawable.ic_launcher_3_light),
-                contentDescription = "Logo",
+                contentDescription = stringResource(R.string.cd_logo),
                 modifier = Modifier
                     .padding(horizontal = 10.dp)
                     .clip(shape = MaterialTheme.shapes.extraSmall)

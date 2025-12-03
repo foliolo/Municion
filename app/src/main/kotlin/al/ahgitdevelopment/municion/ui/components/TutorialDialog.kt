@@ -37,6 +37,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
@@ -87,12 +88,12 @@ fun TutorialDialog(
         Scaffold(
             topBar = {
                 TopAppBar(
-                    title = { Text("Tutorial") },
+                    title = { Text(stringResource(R.string.tutorial)) },
                     navigationIcon = {
                         IconButton(onClick = onDismiss) {
                             Icon(
                                 imageVector = Icons.Default.Close,
-                                contentDescription = "Cerrar"
+                                contentDescription = stringResource(R.string.cd_close)
                             )
                         }
                     },
@@ -152,7 +153,7 @@ fun TutorialDialog(
                     ) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
-                            contentDescription = "Anterior",
+                            contentDescription = stringResource(R.string.cd_previous),
                             modifier = Modifier.size(32.dp)
                         )
                     }
@@ -166,7 +167,7 @@ fun TutorialDialog(
                     // Boton Siguiente o Cerrar
                     if (pagerState.currentPage == tutorialImages.size - 1) {
                         Button(onClick = onDismiss) {
-                            Text("Cerrar")
+                            Text(stringResource(R.string.cd_close))
                         }
                     } else {
                         IconButton(
@@ -178,7 +179,7 @@ fun TutorialDialog(
                         ) {
                             Icon(
                                 imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-                                contentDescription = "Siguiente",
+                                contentDescription = stringResource(R.string.cd_next),
                                 modifier = Modifier.size(32.dp)
                             )
                         }

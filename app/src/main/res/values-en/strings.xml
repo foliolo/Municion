@@ -299,4 +299,92 @@
     <string name="sign_out">Sign out</string>
     <string name="sign_out_anonymous_warning">If you sign out of an anonymous account, you will lose access to your cloud data. Local data will be kept.\n\nAre you sure?</string>
     <string name="sign_out_confirm">Are you sure you want to sign out?</string>
+
+    <!-- Calendar Permissions (v3.3.0) -->
+    <string name="calendar_permission_granted">Calendar permission granted</string>
+    <string name="calendar_permission_denied">Calendar permission denied</string>
+    <string name="calendar_permission_title">Calendar permission</string>
+    <string name="calendar_permission_rationale">The app needs access to calendar to create license expiration reminders</string>
+    <string name="action_allow">Allow</string>
+
+    <!-- Calendar Events (v3.3.0) -->
+    <string name="calendar_event_expires_today">Your license expires today</string>
+    <string name="calendar_event_expires_one_month">Your license expires in one month</string>
+
+    <!-- Premium/Ads (v3.3.0) -->
+    <string name="premium_status">Premium (No Ads)</string>
+    <string name="remove_ads_title">Remove Ads</string>
+    <string name="remove_ads_description">Support development and remove ads</string>
+    <string name="loading_info">Loading information…</string>
+
+    <!-- Login/Auth UI (v3.3.0) -->
+    <string name="app_title">Tu Armería</string>
+    <string name="login_subtitle">Sign in to continue</string>
+    <string name="register_subtitle">Create a new account</string>
+    <string name="label_email">Email</string>
+    <string name="label_password">Password</string>
+    <string name="label_confirm_password">Confirm password</string>
+    <string name="action_show">Show</string>
+    <string name="action_hide">Hide</string>
+    <string name="action_login">Sign in</string>
+    <string name="action_create_account">Create account</string>
+    <string name="switch_to_register">Don\'t have an account? Create account</string>
+    <string name="switch_to_login">Already have an account? Sign in</string>
+    <string name="forgot_password">Forgot my password</string>
+
+    <!-- Auth Validation Errors (v3.3.0) -->
+    <string name="error_passwords_not_match">Passwords do not match</string>
+    <string name="error_enter_email">Enter your email</string>
+    <string name="error_invalid_email">Invalid email</string>
+    <string name="error_enter_password">Enter your password</string>
+    <string name="error_no_account">No account exists with this email</string>
+    <string name="error_wrong_credentials">Wrong email or password</string>
+    <string name="error_weak_password">Password is too weak</string>
+    <string name="error_account_exists">An account with this email already exists</string>
+    <string name="error_network">Connection error. Check your internet</string>
+    <string name="error_too_many_attempts">Too many attempts. Try again later</string>
+    <string name="error_unknown">Unknown error</string>
+    <string name="error_invalid_credentials">Invalid credentials</string>
+
+    <!-- Migration Screen (v3.3.0) -->
+    <string name="migration_title">Update Required</string>
+    <string name="requires_migration">Requires migration</string>
+
+    <!-- CRUD Success Messages (v3.3.0) -->
+    <string name="guia_saved">Document saved</string>
+    <string name="guia_updated">Document updated</string>
+    <string name="guia_deleted">Document deleted</string>
+    <string name="compra_saved">Purchase created successfully</string>
+    <string name="compra_updated">Purchase updated</string>
+    <string name="compra_deleted">Purchase deleted</string>
+    <string name="licencia_saved">License saved</string>
+    <string name="licencia_updated">License updated</string>
+    <string name="licencia_deleted">License deleted</string>
+    <string name="tirada_saved">Competition saved</string>
+    <string name="tirada_updated">Competition updated</string>
+    <string name="tirada_deleted">Competition deleted</string>
+
+    <!-- Content Descriptions (v3.3.0) -->
+    <string name="cd_delete">Delete</string>
+    <string name="cd_logo">Logo</string>
+    <string name="cd_save">Save</string>
+    <string name="cd_close">Close</string>
+    <string name="cd_previous">Previous</string>
+    <string name="cd_next">Next</string>
+
+    <!-- Sync Messages (v3.3.0) -->
+    <string name="sync_completed_with_fixes">Synced with automatic fixes</string>
+
+    <!-- License Status (v3.3.0) -->
+    <string name="license_status_expired">Expired</string>
+    <string name="license_status_active">Active</string>
+
+    <!-- Navigation Errors (v3.3.0) -->
+    <string name="error_loading_license_form">Error loading license form</string>
+    <string name="error_loading_guide_form">Error loading document form</string>
+    <string name="error_loading_purchase_form">Error loading purchase form</string>
+    <string name="error_loading_competition_form">Error loading competition form</string>
+
+    <!-- Dialog Actions (v3.3.0) -->
+    <string name="dialog_select_license">Select a license</string>
 </resources>

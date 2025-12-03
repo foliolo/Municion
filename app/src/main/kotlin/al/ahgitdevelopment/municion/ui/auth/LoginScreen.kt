@@ -46,6 +46,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -82,14 +83,17 @@ fun LoginScreen(
             is LoginViewModel.LoginUiState.Success -> {
                 onLoginSuccess()
             }
+
             is LoginViewModel.LoginUiState.PasswordResetSent -> {
                 snackbarHostState.showSnackbar("Email de recuperacion enviado. Revisa tu bandeja de entrada.")
                 viewModel.resetState()
             }
+
             is LoginViewModel.LoginUiState.Error -> {
                 snackbarHostState.showSnackbar((uiState as LoginViewModel.LoginUiState.Error).message)
                 viewModel.resetState()
             }
+
             else -> {}
         }
     }
@@ -139,12 +143,12 @@ private fun LoginContent(
             .verticalScroll(rememberScrollState())
             .padding(24.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+        verticalArrangement = Arrangement.Top
     ) {
         // Logo
         Image(
             painter = painterResource(R.drawable.ic_launcher_4_transparent),
-            contentDescription = "Logo",
+            contentDescription = stringResource(R.string.cd_logo),
             modifier = Modifier.size(120.dp)
         )
 
@@ -152,7 +156,7 @@ private fun LoginContent(
 
         // Titulo
         Text(
-            text = "Tu Armeria",
+            text = stringResource(R.string.app_title),
             style = MaterialTheme.typography.headlineLarge,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.onBackground
@@ -162,7 +166,7 @@ private fun LoginContent(
 
         // Subtitulo
         Text(
-            text = if (isLoginMode) "Inicia sesion para continuar" else "Crea una cuenta nueva",
+            text = if (isLoginMode) stringResource(R.string.login_subtitle) else stringResource(R.string.register_subtitle),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f)
         )
@@ -173,7 +177,7 @@ private fun LoginContent(
         OutlinedTextField(
             value = email,
             onValueChange = { email = it },
-            label = { Text("Email") },
+            label = { Text(stringResource(R.string.label_email)) },
             leadingIcon = { Icon(Icons.Default.Email, contentDescription = null) },
             singleLine = true,
             enabled = !isLoading,
@@ -193,13 +197,15 @@ private fun LoginContent(
         OutlinedTextField(
             value = password,
             onValueChange = { password = it },
-            label = { Text("Contrasena") },
+            label = { Text(stringResource(R.string.label_password)) },
             leadingIcon = { Icon(Icons.Default.Lock, contentDescription = null) },
             trailingIcon = {
                 IconButton(onClick = { passwordVisible = !passwordVisible }) {
                     Icon(
                         imageVector = if (passwordVisible) Icons.Default.VisibilityOff else Icons.Default.Visibility,
-                        contentDescription = if (passwordVisible) "Ocultar" else "Mostrar"
+                        contentDescription = if (passwordVisible) stringResource(R.string.action_hide) else stringResource(
+                            R.string.action_show
+                        )
                     )
                 }
             },
@@ -227,13 +233,15 @@ private fun LoginContent(
             OutlinedTextField(
                 value = confirmPassword,
                 onValueChange = { confirmPassword = it },
-                label = { Text("Confirmar contrasena") },
+                label = { Text(stringResource(R.string.label_confirm_password)) },
                 leadingIcon = { Icon(Icons.Default.Lock, contentDescription = null) },
                 trailingIcon = {
                     IconButton(onClick = { confirmPasswordVisible = !confirmPasswordVisible }) {
                         Icon(
                             imageVector = if (confirmPasswordVisible) Icons.Default.VisibilityOff else Icons.Default.Visibility,
-                            contentDescription = if (confirmPasswordVisible) "Ocultar" else "Mostrar"
+                            contentDescription = if (confirmPasswordVisible) stringResource(R.string.action_hide) else stringResource(
+                                R.string.action_show
+                            )
                         )
                     }
                 },
@@ -278,7 +286,7 @@ private fun LoginContent(
                 )
             } else {
                 Text(
-                    text = if (isLoginMode) "Iniciar sesion" else "Crear cuenta",
+                    text = if (isLoginMode) stringResource(R.string.action_login) else stringResource(R.string.action_create_account),
                     style = MaterialTheme.typography.titleMedium
                 )
             }
@@ -295,23 +303,23 @@ private fun LoginContent(
             enabled = !isLoading
         ) {
             Text(
-                text = if (isLoginMode) "No tienes cuenta? Crear cuenta" else "Ya tienes cuenta? Iniciar sesion",
+                text = if (isLoginMode) stringResource(R.string.switch_to_register) else stringResource(R.string.switch_to_login),
                 color = MaterialTheme.colorScheme.primary
             )
         }
 
-        // Link recuperar contrasena (solo en modo login)
-        if (isLoginMode) {
-            TextButton(
-                onClick = { onResetPassword(email) },
-                enabled = !isLoading
-            ) {
-                Text(
-                    text = "Olvide mi contrasena",
-                    color = MaterialTheme.colorScheme.primary.copy(alpha = 0.7f)
-                )
-            }
-        }
+//        // Link recuperar contraseña (solo en modo login)
+//        if (isLoginMode) {
+//            TextButton(
+//                onClick = { onResetPassword(email) },
+//                enabled = !isLoading
+//            ) {
+//                Text(
+//                    text = stringResource(R.string.forgot_password),
+//                    color = MaterialTheme.colorScheme.primary.copy(alpha = 0.7f)
+//                )
+//            }
+//        }
 
         Spacer(modifier = Modifier.height(32.dp))
 

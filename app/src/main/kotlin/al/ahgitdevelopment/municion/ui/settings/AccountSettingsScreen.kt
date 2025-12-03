@@ -282,12 +282,12 @@ private fun LoadedContent(
                         )
                         Column {
                             Text(
-                                text = if (isAdsRemoved) "Premium (Sin Anuncios)" else "Eliminar Publicidad",
+                                text = if (isAdsRemoved) stringResource(R.string.premium_status) else stringResource(R.string.remove_ads_title),
                                 style = MaterialTheme.typography.titleMedium
                             )
                             if (!isAdsRemoved) {
                                 Text(
-                                    text = if (isPurchaseAvailable) "Apoya el desarrollo y elimina los anuncios" else "Cargando información...",
+                                    text = if (isPurchaseAvailable) stringResource(R.string.remove_ads_description) else stringResource(R.string.loading_info),
                                     style = MaterialTheme.typography.bodySmall,
                                     color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
                                 )

@@ -77,15 +77,15 @@ class MigrationViewModel @Inject constructor(
                 return false
             }
             password.isBlank() -> {
-                _uiState.value = MigrationUiState.Error("Introduce tu contrasena")
+                _uiState.value = MigrationUiState.Error("Introduce tu contraseña")
                 return false
             }
             password.length < MIN_PASSWORD_LENGTH -> {
-                _uiState.value = MigrationUiState.Error("La contrasena debe tener al menos $MIN_PASSWORD_LENGTH caracteres")
+                _uiState.value = MigrationUiState.Error("La contraseña debe tener al menos $MIN_PASSWORD_LENGTH caracteres")
                 return false
             }
             password != confirmPassword -> {
-                _uiState.value = MigrationUiState.Error("Las contrasenas no coinciden")
+                _uiState.value = MigrationUiState.Error("Las contraseñas no coinciden")
                 return false
             }
         }
@@ -95,7 +95,7 @@ class MigrationViewModel @Inject constructor(
     private fun mapFirebaseError(error: Throwable): String {
         return when (error) {
             is FirebaseAuthInvalidCredentialsException -> "Credenciales no validas"
-            is FirebaseAuthWeakPasswordException -> "La contrasena es demasiado debil"
+            is FirebaseAuthWeakPasswordException -> "La contraseña es demasiado debil"
             is FirebaseAuthUserCollisionException -> "Ya existe una cuenta con este email. Contacta soporte para migrar tus datos."
             else -> {
                 val message = error.message ?: "Error desconocido"

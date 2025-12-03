@@ -23,7 +23,7 @@ import javax.inject.Inject
  * Maneja:
  * - Login con email/password
  * - Registro de nueva cuenta
- * - Recuperacion de contrasena
+ * - Recuperacion de contraseña
  * - Estados de UI (loading, error, success)
  *
  * @since v3.4.0 (Auth Simplification)
@@ -69,7 +69,7 @@ class LoginViewModel @Inject constructor(
         if (!validateInput(email, password)) return
 
         if (password != confirmPassword) {
-            _uiState.value = LoginUiState.Error("Las contrasenas no coinciden")
+            _uiState.value = LoginUiState.Error("Las contraseñas no coinciden")
             return
         }
 
@@ -89,7 +89,7 @@ class LoginViewModel @Inject constructor(
     }
 
     /**
-     * Envia email de recuperacion de contrasena.
+     * Envia email de recuperacion de contraseña.
      */
     fun resetPassword(email: String) {
         if (email.isBlank()) {
@@ -135,11 +135,11 @@ class LoginViewModel @Inject constructor(
                 return false
             }
             password.isBlank() -> {
-                _uiState.value = LoginUiState.Error("Introduce tu contrasena")
+                _uiState.value = LoginUiState.Error("Introduce tu contraseña")
                 return false
             }
             password.length < MIN_PASSWORD_LENGTH -> {
-                _uiState.value = LoginUiState.Error("La contrasena debe tener al menos $MIN_PASSWORD_LENGTH caracteres")
+                _uiState.value = LoginUiState.Error("La contraseña debe tener al menos $MIN_PASSWORD_LENGTH caracteres")
                 return false
             }
         }
@@ -149,8 +149,8 @@ class LoginViewModel @Inject constructor(
     private fun mapFirebaseError(error: Throwable): String {
         return when (error) {
             is FirebaseAuthInvalidUserException -> "No existe una cuenta con este email"
-            is FirebaseAuthInvalidCredentialsException -> "Email o contrasena incorrectos"
-            is FirebaseAuthWeakPasswordException -> "La contrasena es demasiado debil"
+            is FirebaseAuthInvalidCredentialsException -> "Email o contraseña incorrectos"
+            is FirebaseAuthWeakPasswordException -> "La contraseña es demasiado debil"
             is FirebaseAuthUserCollisionException -> "Ya existe una cuenta con este email"
             else -> {
                 val message = error.message ?: "Error desconocido"
