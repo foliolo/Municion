@@ -45,7 +45,10 @@ data class Tirada(
     val descripcion: String,
 
     @ColumnInfo(name = "rango")
-    val rango: String? = null,  // Lugar/galería de tiro
+    val localizacion: String? = null,  // Lugar/galería de tiro (columna "rango" por compatibilidad)
+
+    @ColumnInfo(name = "categoria")
+    val categoria: String? = null,  // Categoría: Nacional, Autonómica, Local/Social
 
     @ColumnInfo(name = "fecha")
     val fecha: String,  // Format: "dd/MM/yyyy"
@@ -117,16 +120,16 @@ data class Tirada(
     fun tienePuntuacion(): Boolean = puntuacion > 0
 
     /**
-     * Verifica si tiene rango/lugar
+     * Verifica si tiene localización/lugar
      */
-    fun tieneRango(): Boolean = !rango.isNullOrBlank()
+    fun tieneLocalizacion(): Boolean = !localizacion.isNullOrBlank()
 
     /**
      * Descripción completa para display
      */
     fun descripcionCompleta(): String {
         val parts = mutableListOf(descripcion)
-        if (tieneRango()) parts.add("en $rango")
+        if (tieneLocalizacion()) parts.add("en $localizacion")
         if (tienePuntuacion()) parts.add(formatPuntuacion())
         return parts.joinToString(" ")
     }
@@ -137,7 +140,7 @@ data class Tirada(
          */
         fun empty() = Tirada(
             descripcion = "Práctica semanal",
-            rango = "Galería Municipal",
+            localizacion = "Galería Municipal",
             fecha = "01/01/2024",
             puntuacion = 85
         )

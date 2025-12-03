@@ -39,10 +39,11 @@ interface TiradaDao {
     suspend fun getTiradasConPuntuacion(): List<Tirada>
 
     /**
-     * Obtiene tiradas de un rango específico
+     * Obtiene tiradas de una localización específica
+     * NOTA: La columna en BD se llama "rango" por compatibilidad
      */
-    @Query("SELECT * FROM tiradas WHERE rango = :rango ORDER BY fecha DESC")
-    suspend fun getTiradasByRango(rango: String): List<Tirada>
+    @Query("SELECT * FROM tiradas WHERE rango = :localizacion ORDER BY fecha DESC")
+    suspend fun getTiradasByLocalizacion(localizacion: String): List<Tirada>
 
     /**
      * Cuenta tiradas totales

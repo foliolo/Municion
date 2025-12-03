@@ -38,7 +38,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase
         Tirada::class,
         AppPurchase::class
     ],
-    version = 26,
+    version = 27,
     exportSchema = true
 )
 abstract class MunicionDatabase : RoomDatabase() {
@@ -51,6 +51,24 @@ abstract class MunicionDatabase : RoomDatabase() {
 
     companion object {
         private const val DATABASE_NAME = "municion.db"
+
+        /**
+         * MIGRATION: v26 → v27
+         *
+         * CAMBIO: Agregar columna 'categoria' a tabla tiradas
+         * para clasificar tiradas como Nacional, Autonómica o Local/Social
+         */
+        val MIGRATION_26_27 = object : Migration(26, 27) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                Log.i("MunicionDatabase", "Starting migration v26 → v27 (Add categoria to tiradas)")
+                database.execSQL(
+                    """
+                    ALTER TABLE tiradas ADD COLUMN categoria TEXT DEFAULT NULL
+                    """.trimIndent()
+                )
+                Log.i("MunicionDatabase", "Migration v26 → v27 completed")
+            }
+        }
 
         /**
          * MIGRATION: v25 → v26
@@ -397,7 +415,7 @@ abstract class MunicionDatabase : RoomDatabase() {
                 MunicionDatabase::class.java,
                 DATABASE_NAME
             )
-                .addMigrations(MIGRATION_23_24, MIGRATION_24_25, MIGRATION_25_26)
+                .addMigrations(MIGRATION_23_24, MIGRATION_24_25, MIGRATION_25_26, MIGRATION_26_27)
                 .fallbackToDestructiveMigration(false)  // Solo como último recurso
                 .build()
         }

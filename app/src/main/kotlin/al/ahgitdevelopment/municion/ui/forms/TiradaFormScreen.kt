@@ -3,6 +3,7 @@ package al.ahgitdevelopment.municion.ui.forms
 import al.ahgitdevelopment.municion.R
 import al.ahgitdevelopment.municion.data.local.room.entities.Tirada
 import al.ahgitdevelopment.municion.ui.components.DatePickerField
+import al.ahgitdevelopment.municion.ui.components.DropdownField
 import al.ahgitdevelopment.municion.ui.components.getCurrentDateFormatted
 import al.ahgitdevelopment.municion.ui.theme.MunicionTheme
 import al.ahgitdevelopment.municion.ui.viewmodel.TiradaViewModel
@@ -31,6 +32,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
@@ -69,7 +71,8 @@ fun TiradaFormContent(
 
     // Form state - inicializar directamente desde el objeto
     var descripcion by rememberSaveable { mutableStateOf(tirada?.descripcion ?: "") }
-    var rango by rememberSaveable { mutableStateOf(tirada?.rango ?: "") }
+    var localizacion by rememberSaveable { mutableStateOf(tirada?.localizacion ?: "") }
+    var categoria by rememberSaveable { mutableStateOf(tirada?.categoria ?: "") }
     var fecha by rememberSaveable { mutableStateOf(tirada?.fecha ?: getCurrentDateFormatted()) }
     var puntuacion by rememberSaveable { mutableFloatStateOf(tirada?.puntuacion?.toFloat() ?: 0f) }
 
@@ -79,6 +82,12 @@ fun TiradaFormContent(
 
     // Strings para validaciones (capturadas para uso en lambda)
     val errorFieldRequired = stringResource(R.string.error_field_required)
+
+    // Categoria options from string-array
+    val context = LocalContext.current
+    val categoriaOptions = remember {
+        context.resources.getStringArray(R.array.categoria_tirada).toList()
+    }
 
     // Funcion de guardado
     val saveFunction: () -> Unit = {
@@ -97,7 +106,8 @@ fun TiradaFormContent(
             val tiradaToSave = Tirada(
                 id = tirada?.id ?: 0,
                 descripcion = descripcion,
-                rango = rango.ifBlank { null },
+                localizacion = localizacion.ifBlank { null },
+                categoria = categoria.ifBlank { null },
                 fecha = fecha,
                 puntuacion = puntuacion.toInt()
             )
@@ -142,12 +152,15 @@ fun TiradaFormContent(
     TiradaFormFields(
         descripcion = descripcion,
         descripcionError = descripcionError,
-        rango = rango,
+        localizacion = localizacion,
+        categoria = categoria,
+        categoriaOptions = categoriaOptions,
         fecha = fecha,
         fechaError = fechaError,
         puntuacion = puntuacion,
         onDescripcionChange = { descripcion = it; descripcionError = null },
-        onRangoChange = { rango = it },
+        onLocalizacionChange = { localizacion = it },
+        onCategoriaChange = { categoria = it },
         onFechaChange = { fecha = it; fechaError = null },
         onPuntuacionChange = { puntuacion = it.coerceIn(0f, 600f) }
     )
@@ -164,12 +177,15 @@ fun TiradaFormContent(
 fun TiradaFormFields(
     descripcion: String,
     descripcionError: String?,
-    rango: String,
+    localizacion: String,
+    categoria: String,
+    categoriaOptions: List<String>,
     fecha: String,
     fechaError: String?,
     puntuacion: Float,
     onDescripcionChange: (String) -> Unit,
-    onRangoChange: (String) -> Unit,
+    onLocalizacionChange: (String) -> Unit,
+    onCategoriaChange: (String) -> Unit,
     onFechaChange: (String) -> Unit,
     onPuntuacionChange: (Float) -> Unit,
     modifier: Modifier = Modifier
@@ -196,15 +212,24 @@ fun TiradaFormFields(
             keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences)
         )
 
-        // Rango / Lugar
+        // Localización / Lugar
         OutlinedTextField(
-            value = rango,
-            onValueChange = onRangoChange,
+            value = localizacion,
+            onValueChange = onLocalizacionChange,
             label = { Text(stringResource(R.string.label_tirada_localizacion)) },
             placeholder = { Text(stringResource(R.string.placeholder_municipal_gallery)) },
             modifier = Modifier.fillMaxWidth(),
             singleLine = true,
             keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences)
+        )
+
+        // Categoría (Nacional, Autonómica, Local/Social)
+        DropdownField(
+            label = stringResource(R.string.lbl_categoria_tirada),
+            options = categoriaOptions,
+            selectedOption = categoria,
+            onOptionSelected = onCategoriaChange,
+            modifier = Modifier.fillMaxWidth()
         )
 
         // Fecha
@@ -260,12 +285,15 @@ private fun TiradaFormFieldsPreview() {
         TiradaFormFields(
             descripcion = "Practica semanal",
             descripcionError = null,
-            rango = "Galeria Municipal",
+            localizacion = "Galeria Municipal",
+            categoria = "Nacional",
+            categoriaOptions = listOf("Nacional", "Autonómica", "Local/Social"),
             fecha = "01/01/2024",
             fechaError = null,
             puntuacion = 450f,
             onDescripcionChange = {},
-            onRangoChange = {},
+            onLocalizacionChange = {},
+            onCategoriaChange = {},
             onFechaChange = {},
             onPuntuacionChange = {}
         )

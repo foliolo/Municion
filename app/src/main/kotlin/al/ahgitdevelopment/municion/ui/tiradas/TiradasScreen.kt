@@ -156,14 +156,14 @@ private fun TiradasListContentPreview() {
                 Tirada(
                     id = 1,
                     descripcion = "Práctica semanal",
-                    rango = "Galería Municipal",
+                    localizacion = "Galería Municipal",
                     fecha = "01/01/2024",
                     puntuacion = 520
                 ),
                 Tirada(
                     id = 2,
                     descripcion = "Competición regional",
-                    rango = "Club de Tiro",
+                    localizacion = "Club de Tiro",
                     fecha = "15/01/2024",
                     puntuacion = 380
                 )

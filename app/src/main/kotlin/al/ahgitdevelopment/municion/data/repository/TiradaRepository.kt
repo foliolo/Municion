@@ -198,7 +198,8 @@ class TiradaRepository @Inject constructor(
 
         // Optional fields
         val id = (map["id"] as? Number)?.toInt() ?: 0
-        val rango = map["rango"] as? String
+        val localizacion = map["rango"] as? String  // Firebase usa "rango" por compatibilidad
+        val categoria = map["categoria"] as? String
         val puntuacion = (map["puntuacion"] as? Number)?.toInt() ?: 0
 
         // Validate score range
@@ -211,7 +212,8 @@ class TiradaRepository @Inject constructor(
             Tirada(
                 id = id,
                 descripcion = descripcion,
-                rango = rango,
+                localizacion = localizacion,
+                categoria = categoria,
                 fecha = fecha,
                 puntuacion = puntuacion
             )
@@ -304,11 +306,13 @@ class TiradaRepository @Inject constructor(
             val finalList = mergedMap.values.toList()
 
             // Create map for Firebase to avoid "stability" field issues or serialization errors
+            // NOTA: Se usa "rango" en Firebase por compatibilidad con datos existentes
             val firebaseData = finalList.map { tirada ->
                 mapOf(
                     "id" to tirada.id,
                     "descripcion" to tirada.descripcion,
-                    "rango" to tirada.rango,
+                    "rango" to tirada.localizacion,  // Firebase usa "rango" por compatibilidad
+                    "categoria" to tirada.categoria,
                     "fecha" to tirada.fecha,
                     "puntuacion" to tirada.puntuacion
                 )

@@ -29,9 +29,14 @@ public class Tirada implements Parcelable {
      */
     private String descripcion;
     /**
-     * Rango de la tirada [nacional, autonomica, local/social]
+     * Localización de la tirada [lugar/galería de tiro]
+     * NOTA: Se mantiene el nombre interno para compatibilidad con Parcelable legacy
      */
-    private String rango;
+    private String localizacion;
+    /**
+     * Categoría de la tirada [Nacional, Autonómica, Local/Social]
+     */
+    private String categoria;
     /**
      * Fecha de la tirada
      */
@@ -43,21 +48,24 @@ public class Tirada implements Parcelable {
 
     public Tirada() {
         this.descripcion = "";
-        this.rango = "";
+        this.localizacion = "";
+        this.categoria = "";
         this.fecha = "";
         this.puntuacion = 0;
     }
 
     public Tirada(Parcel in) {
         descripcion = in.readString();
-        rango = in.readString();
+        localizacion = in.readString();
+        categoria = in.readString();
         fecha = in.readString();
         puntuacion = in.readInt();
     }
 
     public Tirada(Tirada tirada) {
         this.descripcion = tirada.descripcion;
-        this.rango = tirada.rango;
+        this.localizacion = tirada.localizacion;
+        this.categoria = tirada.categoria;
         this.fecha = tirada.fecha;
         this.puntuacion = tirada.puntuacion;
     }
@@ -86,12 +94,20 @@ public class Tirada implements Parcelable {
         this.descripcion = descripcion;
     }
 
-    public String getRango() {
-        return rango;
+    public String getLocalizacion() {
+        return localizacion;
     }
 
-    public void setRango(String rango) {
-        this.rango = rango;
+    public void setLocalizacion(String localizacion) {
+        this.localizacion = localizacion;
+    }
+
+    public String getCategoria() {
+        return categoria;
+    }
+
+    public void setCategoria(String categoria) {
+        this.categoria = categoria;
     }
 
     public String getFecha() {
@@ -118,7 +134,8 @@ public class Tirada implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(descripcion);
-        dest.writeString(rango);
+        dest.writeString(localizacion);
+        dest.writeString(categoria);
         dest.writeString(fecha);
         dest.writeInt(puntuacion);
     }

@@ -146,10 +146,10 @@ fun TiradaItem(
 
                     Spacer(modifier = Modifier.height(4.dp))
 
-                    // Rango (lugar)
-                    if (tirada.tieneRango()) {
+                    // Localización (lugar)
+                    if (tirada.tieneLocalizacion()) {
                         Text(
-                            text = tirada.rango ?: "",
+                            text = tirada.localizacion ?: "",
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
                         )
