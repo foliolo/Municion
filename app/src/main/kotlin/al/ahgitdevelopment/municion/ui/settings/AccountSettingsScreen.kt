@@ -4,6 +4,7 @@ import al.ahgitdevelopment.municion.BuildConfig
 import al.ahgitdevelopment.municion.R
 import al.ahgitdevelopment.municion.ui.components.AdBanner
 import al.ahgitdevelopment.municion.ui.components.TutorialDialog
+import al.ahgitdevelopment.municion.ui.components.ZoomableImageDialog
 import al.ahgitdevelopment.municion.ui.theme.LicenseExpired
 import al.ahgitdevelopment.municion.ui.theme.LicenseValid
 import al.ahgitdevelopment.municion.ui.theme.MunicionTheme
@@ -23,11 +24,11 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
-import androidx.compose.material.icons.automirrored.filled.Help
 import androidx.compose.material.icons.automirrored.filled.Logout
-import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.outlined.Check
+import androidx.compose.material.icons.outlined.Close
+import androidx.compose.material.icons.outlined.School
+import androidx.compose.material.icons.outlined.StarBorder
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -47,6 +48,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -82,6 +84,7 @@ fun AccountSettingsContent(
     // Dialogs state
     var showSignOutDialog by remember { mutableStateOf(false) }
     var showTutorialDialog by remember { mutableStateOf(false) }
+    var showScoreTableDialog by remember { mutableStateOf(false) }
 
     // Dialog cerrar sesion
     if (showSignOutDialog) {
@@ -105,6 +108,15 @@ fun AccountSettingsContent(
         )
     }
 
+    // Dialog tabla de puntuaciones con zoom
+    if (showScoreTableDialog) {
+        ZoomableImageDialog(
+            imageRes = R.drawable.image_table,
+            contentDescription = stringResource(R.string.tabla_tiradas),
+            onDismiss = { showScoreTableDialog = false }
+        )
+    }
+
     AccountSettingsFields(
         uiState = uiState,
         isAdsRemoved = isAdsRemoved,
@@ -115,7 +127,8 @@ fun AccountSettingsContent(
             if (context is Activity) {
                 viewModel.launchPurchaseFlow(context)
             }
-        }
+        },
+        onScoreTableClick = { showScoreTableDialog = true }
     )
 }
 
@@ -133,6 +146,7 @@ fun AccountSettingsFields(
     onShowTutorialClick: () -> Unit,
     onSignOutClick: () -> Unit,
     onRemoveAdsClick: () -> Unit,
+    onScoreTableClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     when (uiState) {
@@ -178,6 +192,7 @@ fun AccountSettingsFields(
                 onShowTutorialClick = onShowTutorialClick,
                 onSignOutClick = onSignOutClick,
                 onRemoveAdsClick = onRemoveAdsClick,
+                onScoreTableClick = onScoreTableClick,
                 modifier = modifier.fillMaxSize()
             )
         }
@@ -192,6 +207,7 @@ private fun LoadedContent(
     onShowTutorialClick: () -> Unit,
     onSignOutClick: () -> Unit,
     onRemoveAdsClick: () -> Unit,
+    onScoreTableClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -215,7 +231,7 @@ private fun LoadedContent(
                         horizontalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
                         Icon(
-                            imageVector = if (accountInfo.isAnonymous) Icons.Default.Close else Icons.Default.Check,
+                            imageVector = if (accountInfo.isAnonymous) Icons.Outlined.Close else Icons.Outlined.Check,
                             contentDescription = null,
                             tint = if (accountInfo.isAnonymous) LicenseExpired else LicenseValid,
                             modifier = Modifier.size(32.dp)
@@ -260,10 +276,9 @@ private fun LoadedContent(
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
                         Icon(
-                            Icons.Default.Star,
+                            imageVector = Icons.Outlined.StarBorder,
                             contentDescription = null,
-                            modifier = Modifier.size(24.dp),
-                            tint = if (isAdsRemoved) LicenseValid else MaterialTheme.colorScheme.primary
+                            modifier = Modifier.size(35.dp),
                         )
                         Column {
                             Text(
@@ -314,9 +329,9 @@ private fun LoadedContent(
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
                         Icon(
-                            Icons.AutoMirrored.Filled.Help,
+                            imageVector = Icons.Outlined.School,
                             contentDescription = null,
-                            modifier = Modifier.size(24.dp)
+                            modifier = Modifier.size(35.dp)
                         )
                         Column {
                             Text(
@@ -325,6 +340,47 @@ private fun LoadedContent(
                             )
                             Text(
                                 text = stringResource(R.string.tutorial_description),
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+                            )
+                        }
+                    }
+                    Icon(
+                        Icons.AutoMirrored.Filled.ArrowForward,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.outline
+                    )
+                }
+            }
+
+            // Tabla de puntuaciones de ascenso
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable { onScoreTableClick() }
+                        .padding(16.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.outline_trophy_24), contentDescription = null,
+                            modifier = Modifier.size(35.dp)
+                        )
+                        Column {
+                            Text(
+                                text = stringResource(R.string.tabla_tiradas),
+                                style = MaterialTheme.typography.titleMedium
+                            )
+                            Text(
+                                text = stringResource(R.string.tabla_tiradas_description),
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
                             )
@@ -424,7 +480,8 @@ private fun AccountSettingsFieldsPreview() {
             isPurchaseAvailable = true,
             onShowTutorialClick = {},
             onSignOutClick = {},
-            onRemoveAdsClick = {}
+            onRemoveAdsClick = {},
+            onScoreTableClick = {}
         )
     }
 }
@@ -446,7 +503,8 @@ private fun AccountSettingsFieldsPreview2() {
             isPurchaseAvailable = false,
             onShowTutorialClick = {},
             onSignOutClick = {},
-            onRemoveAdsClick = {}
+            onRemoveAdsClick = {},
+            onScoreTableClick = {}
         )
     }
 }

@@ -1,7 +1,6 @@
 package al.ahgitdevelopment.municion.ui.main
 
 import al.ahgitdevelopment.municion.R
-import al.ahgitdevelopment.municion.Utils
 import al.ahgitdevelopment.municion.auth.AuthViewModel
 import al.ahgitdevelopment.municion.ui.components.AdBanner
 import al.ahgitdevelopment.municion.ui.components.MunicionBottomBar
@@ -25,8 +24,6 @@ import al.ahgitdevelopment.municion.ui.navigation.Tiradas
 import al.ahgitdevelopment.municion.ui.navigation.navtypes.navigateSafely
 import al.ahgitdevelopment.municion.ui.viewmodel.GuiaViewModel
 import al.ahgitdevelopment.municion.ui.viewmodel.MainViewModel
-import android.graphics.BitmapFactory
-import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
@@ -224,18 +221,7 @@ fun MainScreen(
                     syncState = syncState,
                     onSyncClick = { viewModel.syncFromFirebase() },
                     onSettingsClick = { navController.navigateSafely(Settings) },
-                    onBackClick = { navController.popBackStack() },
-                    onScoreTableClick = {
-                        try {
-                            val bitmap = BitmapFactory.decodeResource(context.resources, R.drawable.image_table)
-                            Utils.showImage(context, bitmap, "score_table")
-                        } catch (ex: Exception) {
-                            Log.e("MainScreen", "Error mostrando la tabla de tiradas", ex)
-                            scope.launch {
-                                snackbarHostState.showSnackbar("Error al mostrar la tabla de puntuaciones")
-                            }
-                        }
-                    }
+                    onBackClick = { navController.popBackStack() }
                 )
             }
         },

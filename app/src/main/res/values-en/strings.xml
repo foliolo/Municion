@@ -185,6 +185,7 @@
     <string name="purchase_done">Ads already removed</string>
     <string name="purchase_not_support">This device not support purchases</string>
     <string name="tabla_tiradas">Promotions scores</string>
+    <string name="tabla_tiradas_description">View score table for categories</string>
     <string name="error_downloading_image">Error downloading the image</string>
     <string name="change_image">Change</string>
     <string name="delete_image">Delete</string>
