@@ -38,11 +38,15 @@ public class Tirada implements Parcelable {
      */
     private String categoria;
     /**
+     * Modalidad de puntuación [Precisión (0-600 pts), IPSC (0-100%)]
+     */
+    private String modalidad;
+    /**
      * Fecha de la tirada
      */
     private String fecha;
     /**
-     * Puntuación conseguida en la tirada [0-600]
+     * Puntuación conseguida en la tirada [0-600 para Precisión, 0-100 para IPSC]
      */
     private int puntuacion;
 
@@ -50,6 +54,7 @@ public class Tirada implements Parcelable {
         this.descripcion = "";
         this.localizacion = "";
         this.categoria = "";
+        this.modalidad = "";
         this.fecha = "";
         this.puntuacion = 0;
     }
@@ -58,6 +63,7 @@ public class Tirada implements Parcelable {
         descripcion = in.readString();
         localizacion = in.readString();
         categoria = in.readString();
+        modalidad = in.readString();
         fecha = in.readString();
         puntuacion = in.readInt();
     }
@@ -66,6 +72,7 @@ public class Tirada implements Parcelable {
         this.descripcion = tirada.descripcion;
         this.localizacion = tirada.localizacion;
         this.categoria = tirada.categoria;
+        this.modalidad = tirada.modalidad;
         this.fecha = tirada.fecha;
         this.puntuacion = tirada.puntuacion;
     }
@@ -110,6 +117,14 @@ public class Tirada implements Parcelable {
         this.categoria = categoria;
     }
 
+    public String getModalidad() {
+        return modalidad;
+    }
+
+    public void setModalidad(String modalidad) {
+        this.modalidad = modalidad;
+    }
+
     public String getFecha() {
         return fecha;
     }
@@ -136,6 +151,7 @@ public class Tirada implements Parcelable {
         dest.writeString(descripcion);
         dest.writeString(localizacion);
         dest.writeString(categoria);
+        dest.writeString(modalidad);
         dest.writeString(fecha);
         dest.writeInt(puntuacion);
     }

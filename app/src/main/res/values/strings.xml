@@ -97,10 +97,13 @@
     <!--String Tirada Form-->
     <string name="title_nueva_tirada">Nueva Tirada</string>
     <string name="lbl_categoria_tirada">Categoría</string>
+    <string name="lbl_modalidad_tirada">Modalidad de puntuación</string>
     <string name="lbl_descripcion_tirada">Descripción</string>
     <string name="lbl_puntuacion_tirada">Puntuación [0-600]</string>
     <string name="msg_countdown_ultima_tirada">Para renovar tu licencia necesitas una tirada antes de éstos días:</string>
     <string name="form_tirada_aviso_puntuacion">Puntuación por encima del límite (600 pts)</string>
+    <string name="hint_score_range_precision">Rango válido: 0-600 puntos</string>
+    <string name="hint_score_range_ipsc">Rango válido: 0-100%</string>
 
     <!--TIRADAS-->
     <string name="lbl_caducidad_tirada">Tiempo máximo permitido hasta la próxima tirada %s días</string>

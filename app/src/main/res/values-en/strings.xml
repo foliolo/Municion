@@ -96,10 +96,13 @@
     <!--String Tirada Form-->
     <string name="title_nueva_tirada">New Competition</string>
     <string name="lbl_categoria_tirada">Category</string>
+    <string name="lbl_modalidad_tirada">Scoring mode</string>
     <string name="lbl_descripcion_tirada">Description</string>
     <string name="lbl_puntuacion_tirada">Score [0-600]</string>
     <string name="msg_countdown_ultima_tirada">Update your license! Go shooting before it expire in the following days:</string>
-    <string name="form_tirada_aviso_puntuacion">Score too hight</string>
+    <string name="form_tirada_aviso_puntuacion">Score too high</string>
+    <string name="hint_score_range_precision">Valid range: 0-600 points</string>
+    <string name="hint_score_range_ipsc">Valid range: 0-100%</string>
 
     <!--TIRADAS-->
     <string name="lbl_caducidad_tirada">Maximum time allowed until the next competition %s days</string>

@@ -50,18 +50,23 @@ data class Tirada(
     @ColumnInfo(name = "categoria")
     val categoria: String? = null,  // Categoría: Nacional, Autonómica, Local/Social
 
+    @ColumnInfo(name = "modalidad")
+    val modalidad: String? = null,  // Modalidad: Precisión (0-600 pts) o IPSC (0-100%)
+
     @ColumnInfo(name = "fecha")
     val fecha: String,  // Format: "dd/MM/yyyy"
 
     @ColumnInfo(name = "puntuacion")
-    val puntuacion: Int = 0  // Puntuación obtenida [0-600] (compatible con Java original)
+    val puntuacion: Int = 0  // Puntuación: 0-600 (Precisión) o 0-100 (IPSC)
 ) : Parcelable {
 
     init {
         require(descripcion.isNotBlank()) { "Descripcion cannot be blank" }
         require(fecha.isNotBlank()) { "Fecha cannot be blank" }
         require(puntuacion >= 0) { "Puntuacion must be >= 0, got: $puntuacion" }
-        require(puntuacion <= 600) { "Puntuacion must be <= 600, got: $puntuacion" }
+        // Validación de puntuación según modalidad
+        val maxPuntuacion = getMaxPuntuacion(modalidad)
+        require(puntuacion <= maxPuntuacion) { "Puntuacion must be <= $maxPuntuacion for modalidad $modalidad, got: $puntuacion" }
     }
 
     /**
@@ -111,7 +116,8 @@ data class Tirada(
      * Formatea la puntuación para display
      */
     fun formatPuntuacion(): String {
-        return if (puntuacion > 0) "$puntuacion pts" else "0 pts"
+        val suffix = if (modalidad == MODALIDAD_IPSC) "%" else "pts"
+        return if (puntuacion > 0) "$puntuacion $suffix" else "0 $suffix"
     }
 
     /**
@@ -135,12 +141,23 @@ data class Tirada(
     }
 
     companion object {
+        const val MODALIDAD_PRECISION = "Precisión"
+        const val MODALIDAD_IPSC = "IPSC"
+
+        /**
+         * Obtiene la puntuación máxima según la modalidad
+         */
+        fun getMaxPuntuacion(modalidad: String?): Int {
+            return if (modalidad == MODALIDAD_IPSC) 100 else 600
+        }
+
         /**
          * Factory para testing/preview
          */
         fun empty() = Tirada(
             descripcion = "Práctica semanal",
             localizacion = "Galería Municipal",
+            modalidad = MODALIDAD_PRECISION,
             fecha = "01/01/2024",
             puntuacion = 85
         )

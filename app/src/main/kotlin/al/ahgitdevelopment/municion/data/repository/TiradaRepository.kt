@@ -200,11 +200,13 @@ class TiradaRepository @Inject constructor(
         val id = (map["id"] as? Number)?.toInt() ?: 0
         val localizacion = map["rango"] as? String  // Firebase usa "rango" por compatibilidad
         val categoria = map["categoria"] as? String
+        val modalidad = map["modalidad"] as? String
         val puntuacion = (map["puntuacion"] as? Number)?.toInt() ?: 0
 
-        // Validate score range
-        if (puntuacion < 0 || puntuacion > 600) {
-            reportFieldError(itemKey, "puntuacion", "Must be 0-600", puntuacion.toString(), parseErrors)
+        // Validate score range based on modalidad
+        val maxPuntuacion = Tirada.getMaxPuntuacion(modalidad)
+        if (puntuacion < 0 || puntuacion > maxPuntuacion) {
+            reportFieldError(itemKey, "puntuacion", "Must be 0-$maxPuntuacion for $modalidad", puntuacion.toString(), parseErrors)
             return null
         }
 
@@ -214,6 +216,7 @@ class TiradaRepository @Inject constructor(
                 descripcion = descripcion,
                 localizacion = localizacion,
                 categoria = categoria,
+                modalidad = modalidad,
                 fecha = fecha,
                 puntuacion = puntuacion
             )
@@ -313,6 +316,7 @@ class TiradaRepository @Inject constructor(
                     "descripcion" to tirada.descripcion,
                     "rango" to tirada.localizacion,  // Firebase usa "rango" por compatibilidad
                     "categoria" to tirada.categoria,
+                    "modalidad" to tirada.modalidad,
                     "fecha" to tirada.fecha,
                     "puntuacion" to tirada.puntuacion
                 )

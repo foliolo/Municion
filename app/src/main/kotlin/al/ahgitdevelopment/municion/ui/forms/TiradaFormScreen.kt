@@ -69,12 +69,27 @@ fun TiradaFormContent(
 
     val isEditing = tirada != null
 
+    // Categoria y modalidad options from string-array
+    val context = LocalContext.current
+    val categoriaOptions = remember {
+        context.resources.getStringArray(R.array.categoria_tirada).toList()
+    }
+    val modalidadOptions = remember {
+        context.resources.getStringArray(R.array.modalidad_tirada).toList()
+    }
+
     // Form state - inicializar directamente desde el objeto
     var descripcion by rememberSaveable { mutableStateOf(tirada?.descripcion ?: "") }
     var localizacion by rememberSaveable { mutableStateOf(tirada?.localizacion ?: "") }
     var categoria by rememberSaveable { mutableStateOf(tirada?.categoria ?: "") }
+    var modalidad by rememberSaveable { mutableStateOf(tirada?.modalidad ?: Tirada.MODALIDAD_PRECISION) }
     var fecha by rememberSaveable { mutableStateOf(tirada?.fecha ?: getCurrentDateFormatted()) }
     var puntuacion by rememberSaveable { mutableFloatStateOf(tirada?.puntuacion?.toFloat() ?: 0f) }
+
+    // Calcular max puntuación según modalidad
+    val maxPuntuacion = remember(modalidad) {
+        Tirada.getMaxPuntuacion(modalidad).toFloat()
+    }
 
     // Error states
     var descripcionError by remember { mutableStateOf<String?>(null) }
@@ -82,12 +97,6 @@ fun TiradaFormContent(
 
     // Strings para validaciones (capturadas para uso en lambda)
     val errorFieldRequired = stringResource(R.string.error_field_required)
-
-    // Categoria options from string-array
-    val context = LocalContext.current
-    val categoriaOptions = remember {
-        context.resources.getStringArray(R.array.categoria_tirada).toList()
-    }
 
     // Funcion de guardado
     val saveFunction: () -> Unit = {
@@ -108,8 +117,9 @@ fun TiradaFormContent(
                 descripcion = descripcion,
                 localizacion = localizacion.ifBlank { null },
                 categoria = categoria.ifBlank { null },
+                modalidad = modalidad.ifBlank { null },
                 fecha = fecha,
-                puntuacion = puntuacion.toInt()
+                puntuacion = puntuacion.toInt().coerceIn(0, maxPuntuacion.toInt())
             )
             if (isEditing) {
                 viewModel.updateTirada(tiradaToSave)
@@ -155,14 +165,25 @@ fun TiradaFormContent(
         localizacion = localizacion,
         categoria = categoria,
         categoriaOptions = categoriaOptions,
+        modalidad = modalidad,
+        modalidadOptions = modalidadOptions,
         fecha = fecha,
         fechaError = fechaError,
         puntuacion = puntuacion,
+        maxPuntuacion = maxPuntuacion,
         onDescripcionChange = { descripcion = it; descripcionError = null },
         onLocalizacionChange = { localizacion = it },
         onCategoriaChange = { categoria = it },
+        onModalidadChange = { newModalidad ->
+            modalidad = newModalidad
+            // Ajustar puntuación si excede el nuevo máximo
+            val newMax = Tirada.getMaxPuntuacion(newModalidad).toFloat()
+            if (puntuacion > newMax) {
+                puntuacion = newMax
+            }
+        },
         onFechaChange = { fecha = it; fechaError = null },
-        onPuntuacionChange = { puntuacion = it.coerceIn(0f, 600f) }
+        onPuntuacionChange = { puntuacion = it.coerceIn(0f, maxPuntuacion) }
     )
 }
 
@@ -180,16 +201,25 @@ fun TiradaFormFields(
     localizacion: String,
     categoria: String,
     categoriaOptions: List<String>,
+    modalidad: String,
+    modalidadOptions: List<String>,
     fecha: String,
     fechaError: String?,
     puntuacion: Float,
+    maxPuntuacion: Float,
     onDescripcionChange: (String) -> Unit,
     onLocalizacionChange: (String) -> Unit,
     onCategoriaChange: (String) -> Unit,
+    onModalidadChange: (String) -> Unit,
     onFechaChange: (String) -> Unit,
     onPuntuacionChange: (Float) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    // Determinar si es IPSC para mostrar sufijo y hint correctos
+    val isIpsc = modalidad == Tirada.MODALIDAD_IPSC
+    val scoreSuffix = if (isIpsc) "%" else "pts"
+    val scoreHint = if (isIpsc) R.string.hint_score_range_ipsc else R.string.hint_score_range_precision
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -231,7 +261,6 @@ fun TiradaFormFields(
             onOptionSelected = onCategoriaChange,
             modifier = Modifier.fillMaxWidth()
         )
-
         // Fecha
         DatePickerField(
             label = stringResource(R.string.fecha),
@@ -240,18 +269,27 @@ fun TiradaFormFields(
             onValueChange = onFechaChange
         )
 
-        // Puntuacion
+        // Modalidad de puntuación (Precisión o IPSC)
+        DropdownField(
+            label = stringResource(R.string.lbl_modalidad_tirada),
+            options = modalidadOptions,
+            selectedOption = modalidad,
+            onOptionSelected = onModalidadChange,
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        // Puntuacion con rango dinámico según modalidad
         Column(modifier = Modifier.fillMaxWidth()) {
             Text(
-                text = stringResource(R.string.info_score_display, puntuacion.toInt()),
+                text = "${puntuacion.toInt()} $scoreSuffix",
                 style = MaterialTheme.typography.bodyLarge
             )
             Spacer(modifier = Modifier.height(8.dp))
             Slider(
                 value = puntuacion,
                 onValueChange = onPuntuacionChange,
-                valueRange = 0f..600f,
-                steps = 59, // Incrementos de 10
+                valueRange = 0f..maxPuntuacion,
+                steps = if (isIpsc) 100 else 59, // Incrementos de 10
                 modifier = Modifier.fillMaxWidth()
             )
         }
@@ -262,7 +300,7 @@ fun TiradaFormFields(
             onValueChange = { newValue ->
                 val intValue = newValue.toIntOrNull()
                 if (intValue != null) {
-                    onPuntuacionChange(intValue.coerceIn(0, 600).toFloat())
+                    onPuntuacionChange(intValue.coerceIn(0, maxPuntuacion.toInt()).toFloat())
                 } else if (newValue.isEmpty()) {
                     onPuntuacionChange(0f)
                 }
@@ -271,7 +309,7 @@ fun TiradaFormFields(
             modifier = Modifier.fillMaxWidth(),
             singleLine = true,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-            supportingText = { Text(stringResource(R.string.hint_score_range)) }
+            supportingText = { Text(stringResource(scoreHint)) }
         )
 
         Spacer(modifier = Modifier.height(80.dp))
@@ -288,12 +326,16 @@ private fun TiradaFormFieldsPreview() {
             localizacion = "Galeria Municipal",
             categoria = "Nacional",
             categoriaOptions = listOf("Nacional", "Autonómica", "Local/Social"),
+            modalidad = Tirada.MODALIDAD_PRECISION,
+            modalidadOptions = listOf("Precisión", "IPSC"),
             fecha = "01/01/2024",
             fechaError = null,
             puntuacion = 450f,
+            maxPuntuacion = 600f,
             onDescripcionChange = {},
             onLocalizacionChange = {},
             onCategoriaChange = {},
+            onModalidadChange = {},
             onFechaChange = {},
             onPuntuacionChange = {}
         )
