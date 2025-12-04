@@ -7,6 +7,7 @@ import al.ahgitdevelopment.municion.data.local.room.dao.GuiaDao
 import al.ahgitdevelopment.municion.data.local.room.dao.LicenciaDao
 import al.ahgitdevelopment.municion.data.local.room.dao.TiradaDao
 import al.ahgitdevelopment.municion.databases.DataBaseSQLiteHelper
+import android.util.Log
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -84,19 +85,19 @@ class LegacyMigrationHelper @Inject constructor(
     suspend fun executeMigration(): MigrationStatus {
         return withContext(Dispatchers.IO) {
             try {
-                android.util.Log.i(TAG, "Starting legacy migration...")
+                Log.i(TAG, "Starting legacy migration...")
 
                 // Paso 1: Migrar PIN si existe
                 val pinMigrationResult = migratePin()
-                android.util.Log.i(TAG, "PIN migration: ${pinMigrationResult.name}")
+                Log.i(TAG, "PIN migration: ${pinMigrationResult.name}")
 
                 // Paso 2: Migrar datos de SQLite a Room
                 val dataMigrationResult = migrateData()
-                android.util.Log.i(TAG, "Data migration: $dataMigrationResult items migrated")
+                Log.i(TAG, "Data migration: $dataMigrationResult items migrated")
 
                 // Paso 3: Intentar recuperar cuenta Firebase
                 val firebaseMigrationResult = attemptFirebaseMigration()
-                android.util.Log.i(TAG, "Firebase migration: ${firebaseMigrationResult.name}")
+                Log.i(TAG, "Firebase migration: ${firebaseMigrationResult.name}")
 
                 // Marcar migración como completada
                 markMigrationCompleted()
@@ -107,7 +108,7 @@ class LegacyMigrationHelper @Inject constructor(
                     firebaseRecovered = firebaseMigrationResult == FirebaseMigrationResult.Recovered
                 )
             } catch (e: Exception) {
-                android.util.Log.e(TAG, "Migration failed", e)
+                Log.e(TAG, "Migration failed", e)
                 MigrationStatus.Failed(e.message ?: "Unknown error")
             }
         }
@@ -151,7 +152,7 @@ class LegacyMigrationHelper @Inject constructor(
                     tiradaDao.getCount() > 0
 
             if (roomHasData) {
-                android.util.Log.i(TAG, "Room already has data, skipping SQLite migration")
+                Log.i(TAG, "Room already has data, skipping SQLite migration")
                 migrationPrefs.edit().putBoolean(KEY_MIGRATION_DATA_DONE, true).apply()
                 dbHelper.close()
                 return 0
@@ -165,7 +166,7 @@ class LegacyMigrationHelper @Inject constructor(
                     licenciaDao.insert(licencia)
                     totalMigrated++
                 } catch (e: Exception) {
-                    android.util.Log.e(TAG, "Error migrating licencia: ${licencia.id}", e)
+                    Log.e(TAG, "Error migrating licencia: ${licencia.id}", e)
                 }
             }
 
@@ -177,7 +178,7 @@ class LegacyMigrationHelper @Inject constructor(
                     guiaDao.insert(guia)
                     totalMigrated++
                 } catch (e: Exception) {
-                    android.util.Log.e(TAG, "Error migrating guia: ${guia.id}", e)
+                    Log.e(TAG, "Error migrating guia: ${guia.id}", e)
                 }
             }
 
@@ -189,7 +190,7 @@ class LegacyMigrationHelper @Inject constructor(
                     compraDao.insert(compra)
                     totalMigrated++
                 } catch (e: Exception) {
-                    android.util.Log.e(TAG, "Error migrating compra: ${compra.id}", e)
+                    Log.e(TAG, "Error migrating compra: ${compra.id}", e)
                 }
             }
 
@@ -201,16 +202,16 @@ class LegacyMigrationHelper @Inject constructor(
                     tiradaDao.insert(tirada)
                     totalMigrated++
                 } catch (e: Exception) {
-                    android.util.Log.e(TAG, "Error migrating tirada: ${tirada.id}", e)
+                    Log.e(TAG, "Error migrating tirada: ${tirada.id}", e)
                 }
             }
 
             dbHelper.close()
             migrationPrefs.edit().putBoolean(KEY_MIGRATION_DATA_DONE, true).apply()
 
-            android.util.Log.i(TAG, "Data migration completed: $totalMigrated items")
+            Log.i(TAG, "Data migration completed: $totalMigrated items")
         } catch (e: Exception) {
-            android.util.Log.e(TAG, "Data migration failed", e)
+            Log.e(TAG, "Data migration failed", e)
         }
 
         return totalMigrated
@@ -271,9 +272,9 @@ class LegacyMigrationHelper @Inject constructor(
                 return accounts[0].name
             }
         } catch (e: SecurityException) {
-            android.util.Log.w(TAG, "Cannot get accounts - permission denied")
+            Log.w(TAG, "Cannot get accounts - permission denied")
         } catch (e: Exception) {
-            android.util.Log.e(TAG, "Error getting legacy email", e)
+            Log.e(TAG, "Error getting legacy email", e)
         }
         return null
     }
@@ -291,7 +292,7 @@ class LegacyMigrationHelper @Inject constructor(
             dbHelper.close()
             hasData
         } catch (e: Exception) {
-            android.util.Log.e(TAG, "Error checking SQLite data", e)
+            Log.e(TAG, "Error checking SQLite data", e)
             false
         }
     }

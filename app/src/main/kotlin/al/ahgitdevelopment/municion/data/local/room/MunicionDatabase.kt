@@ -1,14 +1,17 @@
 package al.ahgitdevelopment.municion.data.local.room
 
+import al.ahgitdevelopment.municion.data.local.room.dao.AppPurchaseDao
 import al.ahgitdevelopment.municion.data.local.room.dao.CompraDao
 import al.ahgitdevelopment.municion.data.local.room.dao.GuiaDao
 import al.ahgitdevelopment.municion.data.local.room.dao.LicenciaDao
 import al.ahgitdevelopment.municion.data.local.room.dao.TiradaDao
+import al.ahgitdevelopment.municion.data.local.room.entities.AppPurchase
 import al.ahgitdevelopment.municion.data.local.room.entities.Compra
 import al.ahgitdevelopment.municion.data.local.room.entities.Guia
 import al.ahgitdevelopment.municion.data.local.room.entities.Licencia
 import al.ahgitdevelopment.municion.data.local.room.entities.Tirada
 import android.content.Context
+import android.util.Log
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
@@ -21,7 +24,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase
  * Reemplaza el legacy DataBaseSQLiteHelper.java
  *
  * FASE 2.2: Room Database implementation
- * - Database version 24 (migration desde v23 legacy SQLite)
+ * - Database version 26 (migration desde v25)
  * - Export schema enabled para testing
  * - Migrations para preservar datos de usuarios
  *
@@ -32,9 +35,10 @@ import androidx.sqlite.db.SupportSQLiteDatabase
         Guia::class,
         Compra::class,
         Licencia::class,
-        Tirada::class
+        Tirada::class,
+        AppPurchase::class
     ],
-    version = 25,
+    version = 28,
     exportSchema = true
 )
 abstract class MunicionDatabase : RoomDatabase() {
@@ -43,9 +47,68 @@ abstract class MunicionDatabase : RoomDatabase() {
     abstract fun compraDao(): CompraDao
     abstract fun licenciaDao(): LicenciaDao
     abstract fun tiradaDao(): TiradaDao
+    abstract fun appPurchaseDao(): AppPurchaseDao
 
     companion object {
         private const val DATABASE_NAME = "municion.db"
+
+        /**
+         * MIGRATION: v27 → v28
+         *
+         * CAMBIO: Agregar columna 'modalidad' a tabla tiradas
+         * para especificar tipo de puntuación: Precisión (0-600) o IPSC (0-100)
+         */
+        val MIGRATION_27_28 = object : Migration(27, 28) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                Log.i("MunicionDatabase", "Starting migration v27 → v28 (Add modalidad to tiradas)")
+                database.execSQL(
+                    """
+                    ALTER TABLE tiradas ADD COLUMN modalidad TEXT DEFAULT NULL
+                    """.trimIndent()
+                )
+                Log.i("MunicionDatabase", "Migration v27 → v28 completed")
+            }
+        }
+
+        /**
+         * MIGRATION: v26 → v27
+         *
+         * CAMBIO: Agregar columna 'categoria' a tabla tiradas
+         * para clasificar tiradas como Nacional, Autonómica o Local/Social
+         */
+        val MIGRATION_26_27 = object : Migration(26, 27) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                Log.i("MunicionDatabase", "Starting migration v26 → v27 (Add categoria to tiradas)")
+                database.execSQL(
+                    """
+                    ALTER TABLE tiradas ADD COLUMN categoria TEXT DEFAULT NULL
+                    """.trimIndent()
+                )
+                Log.i("MunicionDatabase", "Migration v26 → v27 completed")
+            }
+        }
+
+        /**
+         * MIGRATION: v25 → v26
+         *
+         * CAMBIO: Agregar tabla app_purchases para almacenar compras in-app (remove ads)
+         */
+        val MIGRATION_25_26 = object : Migration(25, 26) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                Log.i("MunicionDatabase", "Starting migration v25 → v26 (Add AppPurchase)")
+                database.execSQL(
+                    """
+                    CREATE TABLE IF NOT EXISTS app_purchases (
+                        sku TEXT PRIMARY KEY NOT NULL,
+                        purchaseToken TEXT NOT NULL,
+                        purchaseTime INTEGER NOT NULL,
+                        isAcknowledged INTEGER NOT NULL
+                    )
+                    """.trimIndent()
+                )
+                android.util.Log.i("MunicionDatabase", "Migration v25 → v26 completed")
+            }
+        }
 
         /**
          * MIGRATION: v24 → v25
@@ -370,7 +433,7 @@ abstract class MunicionDatabase : RoomDatabase() {
                 MunicionDatabase::class.java,
                 DATABASE_NAME
             )
-                .addMigrations(MIGRATION_23_24, MIGRATION_24_25)
+                .addMigrations(MIGRATION_23_24, MIGRATION_24_25, MIGRATION_25_26, MIGRATION_26_27, MIGRATION_27_28)
                 .fallbackToDestructiveMigration(false)  // Solo como último recurso
                 .build()
         }

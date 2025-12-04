@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
+import android.util.Log
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.storage.FirebaseStorage
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -67,11 +68,11 @@ class ImageManager @Inject constructor(
             // Step 5: Liberar bitmap
             bitmap.recycle()
 
-            android.util.Log.i("ImageManager", "Image optimized: ${optimizedFile.absolutePath}, size=${optimizedFile.length() / 1024}KB")
+            Log.i("ImageManager", "Image optimized: ${optimizedFile.absolutePath}, size=${optimizedFile.length() / 1024}KB")
 
             Result.success(optimizedFile.absolutePath)
         } catch (e: Exception) {
-            android.util.Log.e("ImageManager", "Error optimizing image", e)
+            Log.e("ImageManager", "Error optimizing image", e)
             crashlytics.recordException(e)
             Result.failure(e)
         }
@@ -99,11 +100,11 @@ class ImageManager @Inject constructor(
             // Get download URL
             val downloadUrl = ref.downloadUrl.await().toString()
 
-            android.util.Log.i("ImageManager", "Image uploaded to Firebase: $fileName")
+            Log.i("ImageManager", "Image uploaded to Firebase: $fileName")
 
             Result.success(downloadUrl)
         } catch (e: Exception) {
-            android.util.Log.e("ImageManager", "Error uploading image to Firebase", e)
+            Log.e("ImageManager", "Error uploading image to Firebase", e)
             crashlytics.recordException(e)
             Result.failure(e)
         }
@@ -122,11 +123,11 @@ class ImageManager @Inject constructor(
 
             ref.getFile(localFile).await()
 
-            android.util.Log.i("ImageManager", "Image downloaded from Firebase: $localFileName")
+            Log.i("ImageManager", "Image downloaded from Firebase: $localFileName")
 
             Result.success(localFile.absolutePath)
         } catch (e: Exception) {
-            android.util.Log.e("ImageManager", "Error downloading image from Firebase", e)
+            Log.e("ImageManager", "Error downloading image from Firebase", e)
             crashlytics.recordException(e)
             Result.failure(e)
         }
@@ -174,7 +175,7 @@ class ImageManager @Inject constructor(
                 }
             }
 
-            android.util.Log.i("ImageManager", "Cleared $deletedCount optimized images from cache")
+            Log.i("ImageManager", "Cleared $deletedCount optimized images from cache")
             Result.success(deletedCount)
         } catch (e: Exception) {
             android.util.Log.e("ImageManager", "Error clearing cache", e)

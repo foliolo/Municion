@@ -5,6 +5,7 @@ import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import al.ahgitdevelopment.municion.domain.usecase.SyncDataUseCase
+import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import dagger.assisted.Assisted
@@ -31,13 +32,13 @@ class SyncWorker @AssistedInject constructor(
 ) : CoroutineWorker(appContext, workerParams) {
 
     override suspend fun doWork(): Result {
-        android.util.Log.i("SyncWorker", "Starting background sync...")
+        Log.i("SyncWorker", "Starting background sync...")
 
         return try {
             // Obtener userId
             val userId = firebaseAuth.currentUser?.uid
             if (userId == null) {
-                android.util.Log.w("SyncWorker", "User not authenticated, skipping sync")
+                Log.w("SyncWorker", "User not authenticated, skipping sync")
                 return Result.success()
             }
 
@@ -45,10 +46,10 @@ class SyncWorker @AssistedInject constructor(
             val syncResult = syncDataUseCase.syncFromFirebase(userId).getOrThrow()
 
             if (syncResult.allSuccess) {
-                android.util.Log.i("SyncWorker", "Sync completed successfully: ${syncResult.successCount}/4")
+                Log.i("SyncWorker", "Sync completed successfully: ${syncResult.successCount}/4")
                 Result.success()
             } else {
-                android.util.Log.w("SyncWorker", "Sync completed with errors: ${syncResult.successCount}/4")
+                Log.w("SyncWorker", "Sync completed with errors: ${syncResult.successCount}/4")
                 // Retry si no todas las entidades se sincronizaron
                 if (runAttemptCount < 3) {
                     Result.retry()
@@ -57,7 +58,7 @@ class SyncWorker @AssistedInject constructor(
                 }
             }
         } catch (e: Exception) {
-            android.util.Log.e("SyncWorker", "Sync failed", e)
+            Log.e("SyncWorker", "Sync failed", e)
             crashlytics.log("SyncWorker failed: ${e.message}")
             crashlytics.recordException(e)
 

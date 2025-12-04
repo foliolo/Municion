@@ -1,11 +1,15 @@
 package al.ahgitdevelopment.municion.ui.settings
 
+import al.ahgitdevelopment.municion.BuildConfig
 import al.ahgitdevelopment.municion.R
+import al.ahgitdevelopment.municion.ui.components.AdBanner
 import al.ahgitdevelopment.municion.ui.components.TutorialDialog
+import al.ahgitdevelopment.municion.ui.components.ZoomableImageDialog
 import al.ahgitdevelopment.municion.ui.theme.LicenseExpired
 import al.ahgitdevelopment.municion.ui.theme.LicenseValid
 import al.ahgitdevelopment.municion.ui.theme.MunicionTheme
 import al.ahgitdevelopment.municion.ui.viewmodel.AccountSettingsViewModel
+import android.app.Activity
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -20,10 +24,11 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
-import androidx.compose.material.icons.automirrored.filled.Help
 import androidx.compose.material.icons.automirrored.filled.Logout
-import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.outlined.Check
+import androidx.compose.material.icons.outlined.Close
+import androidx.compose.material.icons.outlined.School
+import androidx.compose.material.icons.outlined.StarBorder
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -42,6 +47,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -70,10 +77,14 @@ fun AccountSettingsContent(
     viewModel: AccountSettingsViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val isAdsRemoved by viewModel.isAdsRemoved.collectAsStateWithLifecycle()
+    val isPurchaseAvailable by viewModel.isPurchaseAvailable.collectAsStateWithLifecycle()
+    val context = LocalContext.current
 
     // Dialogs state
     var showSignOutDialog by remember { mutableStateOf(false) }
     var showTutorialDialog by remember { mutableStateOf(false) }
+    var showScoreTableDialog by remember { mutableStateOf(false) }
 
     // Dialog cerrar sesion
     if (showSignOutDialog) {
@@ -85,10 +96,7 @@ fun AccountSettingsContent(
             onDismiss = { showSignOutDialog = false },
             onConfirm = {
                 showSignOutDialog = false
-                // Solo llamar signOut - el AuthStateListener en AuthViewModel detectara
-                // el cambio y MainScreen navegara automaticamente a Login
                 viewModel.signOut()
-                // NO navegar manualmente aqui - evita race condition
             }
         )
     }
@@ -100,10 +108,27 @@ fun AccountSettingsContent(
         )
     }
 
+    // Dialog tabla de puntuaciones con zoom
+    if (showScoreTableDialog) {
+        ZoomableImageDialog(
+            imageRes = R.drawable.image_table,
+            contentDescription = stringResource(R.string.tabla_tiradas),
+            onDismiss = { showScoreTableDialog = false }
+        )
+    }
+
     AccountSettingsFields(
         uiState = uiState,
+        isAdsRemoved = isAdsRemoved,
+        isPurchaseAvailable = isPurchaseAvailable,
         onShowTutorialClick = { showTutorialDialog = true },
-        onSignOutClick = { showSignOutDialog = true }
+        onSignOutClick = { showSignOutDialog = true },
+        onRemoveAdsClick = {
+            if (context is Activity) {
+                viewModel.launchPurchaseFlow(context)
+            }
+        },
+        onScoreTableClick = { showScoreTableDialog = true }
     )
 }
 
@@ -116,8 +141,12 @@ fun AccountSettingsContent(
 @Composable
 fun AccountSettingsFields(
     uiState: AccountSettingsViewModel.AccountUiState,
+    isAdsRemoved: Boolean,
+    isPurchaseAvailable: Boolean,
     onShowTutorialClick: () -> Unit,
     onSignOutClick: () -> Unit,
+    onRemoveAdsClick: () -> Unit,
+    onScoreTableClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     when (uiState) {
@@ -134,32 +163,36 @@ fun AccountSettingsFields(
         }
 
         is AccountSettingsViewModel.AccountUiState.NotAuthenticated -> {
-            Column(
-                modifier = modifier
-                    .fillMaxSize()
-                    .padding(16.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
-            ) {
-                Icon(
-                    Icons.Default.Close,
-                    contentDescription = null,
-                    tint = LicenseExpired,
-                    modifier = Modifier.size(64.dp)
-                )
-                Spacer(modifier = Modifier.height(16.dp))
-                Text(
-                    stringResource(R.string.not_authenticated),
-                    style = MaterialTheme.typography.headlineSmall
-                )
-            }
+//            Column(
+//                modifier = modifier
+//                    .fillMaxSize()
+//                    .padding(16.dp),
+//                horizontalAlignment = Alignment.CenterHorizontally,
+//                verticalArrangement = Arrangement.Center
+//            ) {
+//                Icon(
+//                    Icons.Default.Close,
+//                    contentDescription = null,
+//                    tint = LicenseExpired,
+//                    modifier = Modifier.size(64.dp)
+//                )
+//                Spacer(modifier = Modifier.height(16.dp))
+//                Text(
+//                    stringResource(R.string.not_authenticated),
+//                    style = MaterialTheme.typography.headlineSmall
+//                )
+//            }
         }
 
         is AccountSettingsViewModel.AccountUiState.Loaded -> {
             LoadedContent(
                 accountInfo = uiState.accountInfo,
+                isAdsRemoved = isAdsRemoved,
+                isPurchaseAvailable = isPurchaseAvailable,
                 onShowTutorialClick = onShowTutorialClick,
                 onSignOutClick = onSignOutClick,
+                onRemoveAdsClick = onRemoveAdsClick,
+                onScoreTableClick = onScoreTableClick,
                 modifier = modifier.fillMaxSize()
             )
         }
@@ -169,127 +202,235 @@ fun AccountSettingsFields(
 @Composable
 private fun LoadedContent(
     accountInfo: AccountSettingsViewModel.AccountInfo,
+    isAdsRemoved: Boolean,
+    isPurchaseAvailable: Boolean,
     onShowTutorialClick: () -> Unit,
     onSignOutClick: () -> Unit,
+    onRemoveAdsClick: () -> Unit,
+    onScoreTableClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
-        modifier = modifier
-            .padding(16.dp)
-            .verticalScroll(rememberScrollState()),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+        modifier = modifier.padding(16.dp)
     ) {
-        // Estado de cuenta
-        Card(
-            modifier = Modifier.fillMaxWidth(),
-            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+
+        Column(
+            modifier = Modifier
+                .weight(1f)
+                .verticalScroll(rememberScrollState()),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            Column(modifier = Modifier.padding(16.dp)) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
-                    Icon(
-                        imageVector = if (accountInfo.isAnonymous) Icons.Default.Close else Icons.Default.Check,
-                        contentDescription = null,
-                        tint = if (accountInfo.isAnonymous) LicenseExpired else LicenseValid,
-                        modifier = Modifier.size(32.dp)
-                    )
-                    Column {
-                        Text(
-                            text = stringResource(R.string.account_status),
-                            style = MaterialTheme.typography.titleMedium
+            // Estado de cuenta
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+            ) {
+                Column(modifier = Modifier.padding(16.dp)) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        Icon(
+                            imageVector = if (accountInfo.isAnonymous) Icons.Outlined.Close else Icons.Outlined.Check,
+                            contentDescription = null,
+                            tint = if (accountInfo.isAnonymous) LicenseExpired else LicenseValid,
+                            modifier = Modifier.size(32.dp)
                         )
-                        Text(
-                            text = accountInfo.statusText,
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
-                        )
+                        Column(
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Text(
+                                text = stringResource(R.string.account_status),
+                                style = MaterialTheme.typography.titleMedium
+                            )
+                            Text(
+                                text = accountInfo.statusText,
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+                            )
+                            Text(
+                                text = stringResource(R.string.uid_display, accountInfo.uid.take(10)),
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
+                            )
+                        }
                     }
                 }
             }
-        }
 
-        // Info de cuenta
-        Card(
-            modifier = Modifier.fillMaxWidth(),
-            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
-        ) {
-            Column(modifier = Modifier.padding(16.dp)) {
-                Text(
-                    text = stringResource(R.string.account_info),
-                    style = MaterialTheme.typography.titleMedium
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-                Text(
-                    text = accountInfo.email ?: stringResource(R.string.no_email),
-                    style = MaterialTheme.typography.bodyMedium
-                )
-                Text(
-                    text = stringResource(R.string.uid_display, accountInfo.uid.take(8)),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
-                )
-            }
-        }
-
-        // Tutorial
-        Card(
-            modifier = Modifier.fillMaxWidth(),
-            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
-        ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable { onShowTutorialClick() }
-                    .padding(16.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+            // Remove Ads / Premium Status
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
             ) {
                 Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable(enabled = !isAdsRemoved && isPurchaseAvailable) { onRemoveAdsClick() }
+                        .padding(16.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Icon(
-                        Icons.AutoMirrored.Filled.Help,
-                        contentDescription = null,
-                        modifier = Modifier.size(24.dp)
-                    )
-                    Column {
-                        Text(
-                            text = stringResource(R.string.tutorial),
-                            style = MaterialTheme.typography.titleMedium
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Outlined.StarBorder,
+                            contentDescription = null,
+                            modifier = Modifier.size(35.dp),
                         )
-                        Text(
-                            text = stringResource(R.string.tutorial_description),
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
-                        )
+                        Column {
+                            Text(
+                                text = if (isAdsRemoved) stringResource(R.string.premium_status) else stringResource(R.string.remove_ads_title),
+                                style = MaterialTheme.typography.titleMedium
+                            )
+                            if (!isAdsRemoved) {
+                                Text(
+                                    text = if (isPurchaseAvailable) stringResource(R.string.remove_ads_description) else stringResource(R.string.loading_info),
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+                                )
+                            }
+                        }
+                    }
+                    if (!isAdsRemoved) {
+                        if (isPurchaseAvailable) {
+                            Icon(
+                                Icons.AutoMirrored.Filled.ArrowForward,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.outline
+                            )
+                        } else {
+                            CircularProgressIndicator(
+                                modifier = Modifier.size(20.dp),
+                                strokeWidth = 2.dp
+                            )
+                        }
                     }
                 }
-                Icon(
-                    Icons.AutoMirrored.Filled.ArrowForward,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.outline
+            }
+
+            // Tutorial
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable { onShowTutorialClick() }
+                        .padding(16.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Outlined.School,
+                            contentDescription = null,
+                            modifier = Modifier.size(35.dp)
+                        )
+                        Column {
+                            Text(
+                                text = stringResource(R.string.tutorial),
+                                style = MaterialTheme.typography.titleMedium
+                            )
+                            Text(
+                                text = stringResource(R.string.tutorial_description),
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+                            )
+                        }
+                    }
+                    Icon(
+                        Icons.AutoMirrored.Filled.ArrowForward,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.outline
+                    )
+                }
+            }
+
+            // Tabla de puntuaciones de ascenso
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable { onScoreTableClick() }
+                        .padding(16.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.outline_trophy_24), contentDescription = null,
+                            modifier = Modifier.size(35.dp)
+                        )
+                        Column {
+                            Text(
+                                text = stringResource(R.string.tabla_tiradas),
+                                style = MaterialTheme.typography.titleMedium
+                            )
+                            Text(
+                                text = stringResource(R.string.tabla_tiradas_description),
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+                            )
+                        }
+                    }
+                    Icon(
+                        Icons.AutoMirrored.Filled.ArrowForward,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.outline
+                    )
+                }
+            }
+
+            // Cerrar sesion
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Button(
+                onClick = onSignOutClick,
+                modifier = Modifier.fillMaxWidth(),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.error
                 )
+            ) {
+                Icon(Icons.AutoMirrored.Filled.Logout, contentDescription = null)
+                Spacer(modifier = Modifier.size(8.dp))
+                Text(stringResource(R.string.sign_out))
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+        }
+
+        Column {
+
+            // Version
+            Text(
+                text = "v${BuildConfig.VERSION_NAME}",
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .align(Alignment.Start)
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            if (!isAdsRemoved) {
+                AdBanner(adUnitId = stringResource(R.string.banner_configuracion_id))
             }
         }
-
-        // Cerrar sesion
-        Spacer(modifier = Modifier.height(16.dp))
-        Button(
-            onClick = onSignOutClick,
-            modifier = Modifier.fillMaxWidth(),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = MaterialTheme.colorScheme.error
-            )
-        ) {
-            Icon(Icons.AutoMirrored.Filled.Logout, contentDescription = null)
-            Spacer(modifier = Modifier.size(8.dp))
-            Text(stringResource(R.string.sign_out))
-        }
-
-        Spacer(modifier = Modifier.height(32.dp))
     }
 }
 
@@ -335,8 +476,35 @@ private fun AccountSettingsFieldsPreview() {
                     isAnonymous = false
                 )
             ),
+            isAdsRemoved = false,
+            isPurchaseAvailable = true,
             onShowTutorialClick = {},
-            onSignOutClick = {}
+            onSignOutClick = {},
+            onRemoveAdsClick = {},
+            onScoreTableClick = {}
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun AccountSettingsFieldsPreview2() {
+    MunicionTheme {
+        AccountSettingsFields(
+            uiState = AccountSettingsViewModel.AccountUiState.Loaded(
+                accountInfo = AccountSettingsViewModel.AccountInfo(
+                    email = "user@example.com",
+                    uid = "abc123def456",
+                    displayName = null,
+                    isAnonymous = false
+                )
+            ),
+            isAdsRemoved = true,
+            isPurchaseAvailable = false,
+            onShowTutorialClick = {},
+            onSignOutClick = {},
+            onRemoveAdsClick = {},
+            onScoreTableClick = {}
         )
     }
 }

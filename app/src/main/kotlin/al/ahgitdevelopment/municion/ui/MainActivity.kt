@@ -1,5 +1,6 @@
 package al.ahgitdevelopment.municion.ui
 
+import al.ahgitdevelopment.municion.R
 import al.ahgitdevelopment.municion.auth.AuthViewModel
 import al.ahgitdevelopment.municion.ui.main.MainScreen
 import al.ahgitdevelopment.municion.ui.theme.MunicionTheme
@@ -25,6 +26,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.firebase.crashlytics.FirebaseCrashlytics
@@ -133,14 +136,15 @@ fun MunicionApp(
     // Dialog states
     var showCalendarRationaleDialog by remember { mutableStateOf(false) }
     var permissionRequestedThisSession by remember { mutableStateOf(false) }
+    val context = LocalContext.current
 
     // Collect permission results
     LaunchedEffect(Unit) {
         permissionResult.collect { granted ->
             val message = if (granted) {
-                "Permiso de calendario concedido"
+                context.getString(R.string.calendar_permission_granted)
             } else {
-                "Permiso de calendario denegado"
+                context.getString(R.string.calendar_permission_denied)
             }
             snackbarHostState.showSnackbar(message, duration = SnackbarDuration.Short)
         }
@@ -173,7 +177,7 @@ fun MunicionApp(
                 showCalendarRationaleDialog = false
                 scope.launch {
                     snackbarHostState.showSnackbar(
-                        "Permiso de calendario denegado",
+                        context.getString(R.string.calendar_permission_denied),
                         duration = SnackbarDuration.Short
                     )
                 }
@@ -201,18 +205,18 @@ fun CalendarPermissionDialog(
 ) {
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Permiso de calendario") },
+        title = { Text(stringResource(R.string.calendar_permission_title)) },
         text = {
-            Text("La app necesita acceso al calendario para crear recordatorios de caducidad de licencias")
+            Text(stringResource(R.string.calendar_permission_rationale))
         },
         confirmButton = {
             TextButton(onClick = onConfirm) {
-                Text("Permitir")
+                Text(stringResource(R.string.action_allow))
             }
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text("Cancelar")
+                Text(stringResource(R.string.cancelar))
             }
         }
     )

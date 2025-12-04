@@ -162,7 +162,7 @@ private fun MigrationContent(
                 modifier = Modifier.padding(16.dp)
             ) {
                 Text(
-                    text = "Para continuar usando la app, necesitas crear una cuenta con email y contrasena.",
+                    text = "Para continuar usando la app, necesitas crear una cuenta con email y contraseña.",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onPrimaryContainer,
                     textAlign = TextAlign.Center
@@ -207,7 +207,7 @@ private fun MigrationContent(
         OutlinedTextField(
             value = password,
             onValueChange = { password = it },
-            label = { Text("Contrasena") },
+            label = { Text("Contraseña") },
             leadingIcon = { Icon(Icons.Default.Lock, contentDescription = null) },
             trailingIcon = {
                 IconButton(onClick = { passwordVisible = !passwordVisible }) {
@@ -236,7 +236,7 @@ private fun MigrationContent(
         OutlinedTextField(
             value = confirmPassword,
             onValueChange = { confirmPassword = it },
-            label = { Text("Confirmar contrasena") },
+            label = { Text("Confirmar contraseña") },
             leadingIcon = { Icon(Icons.Default.Lock, contentDescription = null) },
             trailingIcon = {
                 IconButton(onClick = { confirmPasswordVisible = !confirmPasswordVisible }) {
@@ -292,7 +292,7 @@ private fun MigrationContent(
 
         // Texto informativo adicional
         Text(
-            text = "Al crear tu cuenta, podras acceder a tus datos desde cualquier dispositivo y recuperar tu contrasena si la olvidas.",
+            text = "Al crear tu cuenta, podras acceder a tus datos desde cualquier dispositivo y recuperar tu contraseña si la olvidas.",
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f),
             textAlign = TextAlign.Center,

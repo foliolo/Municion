@@ -156,16 +156,18 @@ private fun TiradasListContentPreview() {
                 Tirada(
                     id = 1,
                     descripcion = "Práctica semanal",
-                    rango = "Galería Municipal",
+                    localizacion = "Galería Municipal",
+                    modalidad = Tirada.MODALIDAD_PRECISION,
                     fecha = "01/01/2024",
                     puntuacion = 520
                 ),
                 Tirada(
                     id = 2,
-                    descripcion = "Competición regional",
-                    rango = "Club de Tiro",
+                    descripcion = "Competición IPSC",
+                    localizacion = "Club de Tiro",
+                    modalidad = Tirada.MODALIDAD_IPSC,
                     fecha = "15/01/2024",
-                    puntuacion = 380
+                    puntuacion = 85
                 )
             ),
             onItemClick = {},

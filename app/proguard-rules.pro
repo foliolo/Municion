@@ -76,9 +76,7 @@
 # Billing
 # ===========================================================
 
--keep class com.android.vending.billing.**
--keepclassmembers class al.ahgitdevelopment.municion.BillingUtil.** { public *; }
--keep public class al.ahgitdevelopment.municion.BillingUtil.**
+-keep class com.android.billingclient.** { *; }
 
 # ===========================================================
 # Jetpack Compose Navigation

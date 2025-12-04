@@ -1,8 +1,8 @@
 package al.ahgitdevelopment.municion.ui.main
 
 import al.ahgitdevelopment.municion.R
-import al.ahgitdevelopment.municion.Utils
 import al.ahgitdevelopment.municion.auth.AuthViewModel
+import al.ahgitdevelopment.municion.ui.components.AdBanner
 import al.ahgitdevelopment.municion.ui.components.MunicionBottomBar
 import al.ahgitdevelopment.municion.ui.components.MunicionFAB
 import al.ahgitdevelopment.municion.ui.components.MunicionTopBar
@@ -24,11 +24,10 @@ import al.ahgitdevelopment.municion.ui.navigation.Tiradas
 import al.ahgitdevelopment.municion.ui.navigation.navtypes.navigateSafely
 import al.ahgitdevelopment.municion.ui.viewmodel.GuiaViewModel
 import al.ahgitdevelopment.municion.ui.viewmodel.MainViewModel
-import android.graphics.BitmapFactory
-import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Scaffold
@@ -37,12 +36,14 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
@@ -90,6 +91,7 @@ fun MainScreen(
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val syncState by viewModel.syncState.collectAsStateWithLifecycle()
+    val showAds by viewModel.showAds.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
 
     // Observar ruta actual para UI dinámica
@@ -146,6 +148,12 @@ fun MainScreen(
     val showFab = (currentRoute in fabScreenRoutes ||
             (currentRoute?.contains("Form") == true && formSaveCallback != null)) && !isAuthScreen
 
+    // Determine Ad Unit ID based on route
+    val adUnitId = when {
+        currentRoute?.contains("Form") == true -> stringResource(R.string.banner_formularios_id)
+        else -> stringResource(R.string.banner_main_id)
+    }
+
     // Dialog de selección de licencia (para crear guía)
     if (showLicenciaDialog) {
         LicenciaSelectionDialog(
@@ -187,7 +195,7 @@ fun MainScreen(
             is MainViewModel.SyncState.SuccessWithParseErrors -> {
                 val state = syncState as MainViewModel.SyncState.SuccessWithParseErrors
                 val message = if (state.autoFixApplied) {
-                    "Sincronizado con correcciones automáticas"
+                    context.getString(R.string.sync_completed_with_fixes)
                 } else {
                     "Sincronizado con ${state.parseErrorCount} errores"
                 }
@@ -213,28 +221,27 @@ fun MainScreen(
                     syncState = syncState,
                     onSyncClick = { viewModel.syncFromFirebase() },
                     onSettingsClick = { navController.navigateSafely(Settings) },
-                    onBackClick = { navController.popBackStack() },
-                    onScoreTableClick = {
-                        try {
-                            val bitmap = BitmapFactory.decodeResource(context.resources, R.drawable.image_table)
-                            Utils.showImage(context, bitmap, "score_table")
-                        } catch (ex: Exception) {
-                            Log.e("MainScreen", "Error mostrando la tabla de tiradas", ex)
-                            scope.launch {
-                                snackbarHostState.showSnackbar("Error al mostrar la tabla de puntuaciones")
-                            }
-                        }
-                    }
+                    onBackClick = { navController.popBackStack() }
                 )
             }
         },
         bottomBar = {
-            AnimatedVisibility(
-                visible = showBottomBar,
-                enter = slideInVertically(initialOffsetY = { it }),
-                exit = slideOutVertically(targetOffsetY = { it })
-            ) {
-                MunicionBottomBar(navController = navController)
+            Column {
+                // Show Ads if not auth screen, not settings screen and ads are enabled
+                val isSettingsScreen = currentRoute == Settings::class.qualifiedName
+                if (!isAuthScreen && !isSettingsScreen && showAds) {
+                    key(currentRoute) {
+                        AdBanner(adUnitId = adUnitId)
+                    }
+                }
+
+                AnimatedVisibility(
+                    visible = showBottomBar,
+                    enter = slideInVertically(initialOffsetY = { it }),
+                    exit = slideOutVertically(targetOffsetY = { it })
+                ) {
+                    MunicionBottomBar(navController = navController)
+                }
             }
         },
         floatingActionButton = {

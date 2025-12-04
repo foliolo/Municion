@@ -12,7 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Leaderboard
+
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Sync
 import androidx.compose.material3.CircularProgressIndicator
@@ -36,7 +36,6 @@ import androidx.compose.ui.unit.dp
  *
  * Cambia según el tipo de pantalla:
  * - ListScreens (tabs): Título app + Sync + Settings
- * - Tiradas: Título app + Tabla de puntuaciones + Sync + Settings
  * - FormScreens: Back + Título de la entidad
  * - Settings: Back + Título
  *
@@ -45,7 +44,6 @@ import androidx.compose.ui.unit.dp
  * @param onSyncClick Callback para sincronización manual
  * @param onSettingsClick Callback para ir a settings
  * @param onBackClick Callback para volver atrás
- * @param onScoreTableClick Callback para mostrar tabla de puntuaciones (solo Tiradas)
  * @param formTitle Título opcional para formularios (override automático)
  * @param modifier Modificador opcional
  *
@@ -60,13 +58,11 @@ fun MunicionTopBar(
     onSyncClick: () -> Unit = {},
     onSettingsClick: () -> Unit = {},
     onBackClick: () -> Unit = {},
-    onScoreTableClick: () -> Unit = {},
     formTitle: String? = null,
 ) {
     val isListScreen = currentRoute in listScreenRoutes
     val isFormScreen = currentRoute?.contains("Form") == true
     val isSettings = currentRoute == Settings::class.qualifiedName
-    val isTiradasScreen = currentRoute == Tiradas::class.qualifiedName
 
     when {
         isListScreen -> {
@@ -74,8 +70,6 @@ fun MunicionTopBar(
                 syncState = syncState,
                 onSyncClick = onSyncClick,
                 onSettingsClick = onSettingsClick,
-                showScoreTable = isTiradasScreen,
-                onScoreTableClick = onScoreTableClick,
                 modifier = modifier
             )
         }
@@ -97,8 +91,6 @@ fun MunicionTopBar(
  * @param syncState Estado de sincronización
  * @param onSyncClick Callback para sincronizar
  * @param onSettingsClick Callback para ir a settings
- * @param showScoreTable Si se debe mostrar el icono de tabla de puntuaciones
- * @param onScoreTableClick Callback para mostrar tabla de puntuaciones
  * @param modifier Modificador opcional
  */
 @OptIn(ExperimentalMaterial3Api::class)
@@ -107,8 +99,6 @@ private fun ListTopBar(
     syncState: SyncState,
     onSyncClick: () -> Unit,
     onSettingsClick: () -> Unit,
-    showScoreTable: Boolean = false,
-    onScoreTableClick: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     TopAppBar(
@@ -116,7 +106,7 @@ private fun ListTopBar(
         navigationIcon = {
             Image(
                 painter = painterResource(R.drawable.ic_launcher_3_light),
-                contentDescription = "Logo",
+                contentDescription = stringResource(R.string.cd_logo),
                 modifier = Modifier
                     .padding(horizontal = 10.dp)
                     .clip(shape = MaterialTheme.shapes.extraSmall)
@@ -125,16 +115,6 @@ private fun ListTopBar(
         },
         modifier = modifier,
         actions = {
-            // Icono de tabla de puntuaciones (solo en Tiradas)
-            if (showScoreTable) {
-                IconButton(onClick = onScoreTableClick) {
-                    Icon(
-                        imageVector = Icons.Filled.Leaderboard,
-                        contentDescription = stringResource(R.string.tabla_tiradas)
-                    )
-                }
-            }
-
             when (syncState) {
                 is SyncState.Syncing -> {
                     CircularProgressIndicator(
@@ -236,15 +216,6 @@ private val listScreenRoutes = setOf(
 private fun PreviewMunicionTopBarList() {
     MunicionTopBar(
         currentRoute = Licencias::class.qualifiedName,
-        syncState = SyncState.Idle,
-    )
-}
-
-@Preview(name = "Tiradas Screen TopBar", showBackground = true)
-@Composable
-private fun PreviewMunicionTopBarTiradas() {
-    MunicionTopBar(
-        currentRoute = Tiradas::class.qualifiedName,
         syncState = SyncState.Idle,
     )
 }

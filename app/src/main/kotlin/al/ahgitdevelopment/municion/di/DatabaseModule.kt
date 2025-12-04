@@ -2,10 +2,12 @@ package al.ahgitdevelopment.municion.di
 
 import android.content.Context
 import al.ahgitdevelopment.municion.data.local.room.MunicionDatabase
+import al.ahgitdevelopment.municion.data.local.room.dao.AppPurchaseDao
 import al.ahgitdevelopment.municion.data.local.room.dao.CompraDao
 import al.ahgitdevelopment.municion.data.local.room.dao.GuiaDao
 import al.ahgitdevelopment.municion.data.local.room.dao.LicenciaDao
 import al.ahgitdevelopment.municion.data.local.room.dao.TiradaDao
+import al.ahgitdevelopment.municion.data.local.room.entities.AppPurchase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -52,5 +54,10 @@ object DatabaseModule {
     @Provides
     fun provideTiradaDao(database: MunicionDatabase): TiradaDao {
         return database.tiradaDao()
+    }
+
+    @Provides
+    fun provideAppPurchaseDao(database: MunicionDatabase): AppPurchaseDao {
+        return database.appPurchaseDao()
     }
 }
