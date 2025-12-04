@@ -1,11 +1,13 @@
 package al.ahgitdevelopment.municion.ui.navigation
 
+import al.ahgitdevelopment.municion.R
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -136,12 +138,13 @@ fun MunicionNavHost(
         composable<LicenciaForm>(
             typeMap = municionTypeMap
         ) { backStackEntry ->
+            val context = LocalContext.current
             val route: LicenciaForm = try {
                 backStackEntry.toRoute<LicenciaForm>()
             } catch (e: Exception) {
                 // Fallback: navegar back si hay error de deserialización
                 LaunchedEffect(Unit) {
-                    snackbarHostState.showSnackbar("Error cargando formulario de licencia")
+                    snackbarHostState.showSnackbar(context.getString(R.string.error_loading_license_form))
                     navController.popBackStack()
                 }
                 return@composable  // Early return
@@ -158,11 +161,12 @@ fun MunicionNavHost(
         composable<GuiaForm>(
             typeMap = municionTypeMap
         ) { backStackEntry ->
+            val context = LocalContext.current
             val route: GuiaForm = try {
                 backStackEntry.toRoute<GuiaForm>()
             } catch (e: Exception) {
                 LaunchedEffect(Unit) {
-                    snackbarHostState.showSnackbar("Error cargando formulario de guía")
+                    snackbarHostState.showSnackbar(context.getString(R.string.error_loading_guide_form))
                     navController.popBackStack()
                 }
                 return@composable
@@ -180,11 +184,12 @@ fun MunicionNavHost(
         composable<CompraForm>(
             typeMap = municionTypeMap
         ) { backStackEntry ->
+            val context = LocalContext.current
             val route: CompraForm = try {
                 backStackEntry.toRoute<CompraForm>()
             } catch (e: Exception) {
                 LaunchedEffect(Unit) {
-                    snackbarHostState.showSnackbar("Error cargando formulario de compra")
+                    snackbarHostState.showSnackbar(context.getString(R.string.error_loading_purchase_form))
                     navController.popBackStack()
                 }
                 return@composable
@@ -202,11 +207,12 @@ fun MunicionNavHost(
         composable<TiradaForm>(
             typeMap = municionTypeMap
         ) { backStackEntry ->
+            val context = LocalContext.current
             val route: TiradaForm = try {
                 backStackEntry.toRoute<TiradaForm>()
             } catch (e: Exception) {
                 LaunchedEffect(Unit) {
-                    snackbarHostState.showSnackbar("Error cargando formulario de tirada")
+                    snackbarHostState.showSnackbar(context.getString(R.string.error_loading_competition_form))
                     navController.popBackStack()
                 }
                 return@composable

@@ -1,5 +1,6 @@
 package al.ahgitdevelopment.municion.ui.guias
 
+import al.ahgitdevelopment.municion.R
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -13,6 +14,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import al.ahgitdevelopment.municion.data.local.room.entities.Licencia
 
@@ -35,10 +37,10 @@ fun LicenciaSelectionDialog(
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Selecciona una licencia") },
+        title = { Text(stringResource(R.string.dialog_select_license)) },
         text = {
             if (licencias.isEmpty()) {
-                Text("No hay licencias disponibles. Primero debes crear una licencia.")
+                Text(stringResource(R.string.dialog_no_licenses_available))
             } else {
                 LazyColumn {
                     items(licencias) { licencia ->
@@ -58,7 +60,7 @@ fun LicenciaSelectionDialog(
         confirmButton = {},
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text("Cancelar")
+                Text(stringResource(R.string.cancelar))
             }
         }
     )

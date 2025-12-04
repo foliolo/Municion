@@ -3,13 +3,17 @@ package al.ahgitdevelopment.municion.ui.viewmodel
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import al.ahgitdevelopment.municion.data.repository.BillingRepository
 import al.ahgitdevelopment.municion.domain.usecase.SyncDataUseCase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -28,7 +32,8 @@ import javax.inject.Inject
 class MainViewModel @Inject constructor(
     private val firebaseAuth: FirebaseAuth,
     private val syncDataUseCase: SyncDataUseCase,
-    private val crashlytics: FirebaseCrashlytics
+    private val crashlytics: FirebaseCrashlytics,
+    private val billingRepository: BillingRepository
 ) : ViewModel() {
 
     companion object {
@@ -37,6 +42,11 @@ class MainViewModel @Inject constructor(
 
     private val _syncState = MutableStateFlow<SyncState>(SyncState.Idle)
     val syncState: StateFlow<SyncState> = _syncState.asStateFlow()
+
+    // Show ads if NOT removed
+    val showAds: StateFlow<Boolean> = billingRepository.isAdsRemoved
+        .map { !it }
+        .stateIn(viewModelScope, SharingStarted.Lazily, true)
 
     val currentUserId: String?
         get() = firebaseAuth.currentUser?.uid

@@ -45,20 +45,28 @@ data class Tirada(
     val descripcion: String,
 
     @ColumnInfo(name = "rango")
-    val rango: String? = null,  // Lugar/galería de tiro
+    val localizacion: String? = null,  // Lugar/galería de tiro (columna "rango" por compatibilidad)
+
+    @ColumnInfo(name = "categoria")
+    val categoria: String? = null,  // Categoría: Nacional, Autonómica, Local/Social
+
+    @ColumnInfo(name = "modalidad")
+    val modalidad: String? = null,  // Modalidad: Precisión (0-600 pts) o IPSC (0-100%)
 
     @ColumnInfo(name = "fecha")
     val fecha: String,  // Format: "dd/MM/yyyy"
 
     @ColumnInfo(name = "puntuacion")
-    val puntuacion: Int = 0  // Puntuación obtenida [0-600] (compatible con Java original)
+    val puntuacion: Int = 0  // Puntuación: 0-600 (Precisión) o 0-100 (IPSC)
 ) : Parcelable {
 
     init {
         require(descripcion.isNotBlank()) { "Descripcion cannot be blank" }
         require(fecha.isNotBlank()) { "Fecha cannot be blank" }
         require(puntuacion >= 0) { "Puntuacion must be >= 0, got: $puntuacion" }
-        require(puntuacion <= 600) { "Puntuacion must be <= 600, got: $puntuacion" }
+        // Validación de puntuación según modalidad
+        val maxPuntuacion = getMaxPuntuacion(modalidad)
+        require(puntuacion <= maxPuntuacion) { "Puntuacion must be <= $maxPuntuacion for modalidad $modalidad, got: $puntuacion" }
     }
 
     /**
@@ -108,7 +116,8 @@ data class Tirada(
      * Formatea la puntuación para display
      */
     fun formatPuntuacion(): String {
-        return if (puntuacion > 0) "$puntuacion pts" else "0 pts"
+        val suffix = if (modalidad == MODALIDAD_IPSC) "%" else "pts"
+        return if (puntuacion > 0) "$puntuacion $suffix" else "0 $suffix"
     }
 
     /**
@@ -117,27 +126,38 @@ data class Tirada(
     fun tienePuntuacion(): Boolean = puntuacion > 0
 
     /**
-     * Verifica si tiene rango/lugar
+     * Verifica si tiene localización/lugar
      */
-    fun tieneRango(): Boolean = !rango.isNullOrBlank()
+    fun tieneLocalizacion(): Boolean = !localizacion.isNullOrBlank()
 
     /**
      * Descripción completa para display
      */
     fun descripcionCompleta(): String {
         val parts = mutableListOf(descripcion)
-        if (tieneRango()) parts.add("en $rango")
+        if (tieneLocalizacion()) parts.add("en $localizacion")
         if (tienePuntuacion()) parts.add(formatPuntuacion())
         return parts.joinToString(" ")
     }
 
     companion object {
+        const val MODALIDAD_PRECISION = "Precisión"
+        const val MODALIDAD_IPSC = "IPSC"
+
+        /**
+         * Obtiene la puntuación máxima según la modalidad
+         */
+        fun getMaxPuntuacion(modalidad: String?): Int {
+            return if (modalidad == MODALIDAD_IPSC) 100 else 600
+        }
+
         /**
          * Factory para testing/preview
          */
         fun empty() = Tirada(
             descripcion = "Práctica semanal",
-            rango = "Galería Municipal",
+            localizacion = "Galería Municipal",
+            modalidad = MODALIDAD_PRECISION,
             fecha = "01/01/2024",
             puntuacion = 85
         )

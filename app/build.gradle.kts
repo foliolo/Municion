@@ -1,5 +1,5 @@
-import java.util.Properties
 import java.io.FileInputStream
+import java.util.Properties
 
 plugins {
     alias(libs.plugins.android.application)
@@ -39,8 +39,8 @@ android {
         applicationId = "al.ahgitdevelopment.municion"
         minSdk = 26
         targetSdk = 36
-        versionCode = 40
-        versionName = "3.1.2"
+        versionCode = 42
+        versionName = "3.2.1"
 
         testInstrumentationRunner = "android.support.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
@@ -55,6 +55,7 @@ android {
             )
             isDebuggable = false
             isMinifyEnabled = true
+            isShrinkResources = true
         }
     }
 
@@ -64,7 +65,10 @@ android {
             // Enable K2 compiler (Kotlin 2.0+)
             jvmDefault.set(org.jetbrains.kotlin.gradle.dsl.JvmDefaultMode.ENABLE)
             optIn.add("kotlin.RequiresOptIn")
-            freeCompilerArgs.add("-XXLanguage:+PropertyParamAnnotationDefaultTargetMode")
+            freeCompilerArgs.apply {
+                add("-XXLanguage:+PropertyParamAnnotationDefaultTargetMode")
+                add("-XXLanguage:+ExplicitBackingFields")
+            }
         }
     }
 
@@ -112,6 +116,10 @@ dependencies {
     implementation(libs.androidx.work.runtime.ktx)
     implementation(libs.androidx.hilt.work)
     kapt(libs.androidx.hilt.compiler)
+
+    // ========== ADS & BILLING ==========
+    implementation(libs.play.services.ads)
+    implementation(libs.billing.ktx)
 
     // ========== FIREBASE ==========
     implementation(platform(libs.firebase.bom))
