@@ -6,6 +6,7 @@ import al.ahgitdevelopment.municion.domain.usecase.FirebaseParseException
 import al.ahgitdevelopment.municion.domain.usecase.ParseError
 import al.ahgitdevelopment.municion.domain.usecase.SensitiveFields
 import al.ahgitdevelopment.municion.domain.usecase.SyncResultWithErrors
+import android.util.Log
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseReference
@@ -187,7 +188,7 @@ class GuiaRepository @Inject constructor(
                 .await()
 
             val totalInFirebase = snapshot.childrenCount.toInt()
-            android.util.Log.d(TAG, "Firebase snapshot: $totalInFirebase guias")
+            Log.d(TAG, "Firebase snapshot: $totalInFirebase guias")
 
             val firebaseGuias = mutableListOf<Guia>()
             val parseErrors = mutableListOf<ParseError>()
@@ -200,11 +201,11 @@ class GuiaRepository @Inject constructor(
 
             if (firebaseGuias.isNotEmpty()) {
                 guiaDao.replaceAll(firebaseGuias)
-                android.util.Log.i(TAG, "Synced ${firebaseGuias.size} guias from Firebase (${parseErrors.size} errors)")
+                Log.i(TAG, "Synced ${firebaseGuias.size} guias from Firebase (${parseErrors.size} errors)")
             } else if (totalInFirebase > 0) {
-                android.util.Log.w(TAG, "Firebase has $totalInFirebase guias but 0 parsed successfully")
+                Log.w(TAG, "Firebase has $totalInFirebase guias but 0 parsed successfully")
             } else {
-                android.util.Log.d(TAG, "No guias in Firebase")
+                Log.d(TAG, "No guias in Firebase")
             }
 
             val hasLocalData = guiaDao.getCount() > 0
@@ -217,7 +218,7 @@ class GuiaRepository @Inject constructor(
                 hasLocalData = hasLocalData
             ))
         } catch (e: Exception) {
-            android.util.Log.e(TAG, "Sync failed: ${e.message}", e)
+            Log.e(TAG, "Sync failed: ${e.message}", e)
             crashlytics.log("Failed to sync guias from Firebase: ${e.message}")
             crashlytics.recordException(e)
             Result.failure(e)
@@ -340,7 +341,7 @@ class GuiaRepository @Inject constructor(
             recordException(FirebaseParseException("[Guia] Field '$fieldName' failed: $errorType"))
         }
 
-        android.util.Log.e(TAG, "Parse error Guia[$itemKey].$fieldName: $errorType (value: $redactedValue)")
+        Log.e(TAG, "Parse error Guia[$itemKey].$fieldName: $errorType (value: $redactedValue)")
     }
 
     /**
@@ -409,7 +410,7 @@ class GuiaRepository @Inject constructor(
                 guiaDao.replaceAll(finalList)
             }
 
-            android.util.Log.i(TAG, "Synced ${finalList.size} guias to Firebase (Merged Local+Remote)")
+            Log.i(TAG, "Synced ${finalList.size} guias to Firebase (Merged Local+Remote)")
 
             Result.success(Unit)
         } catch (e: Exception) {

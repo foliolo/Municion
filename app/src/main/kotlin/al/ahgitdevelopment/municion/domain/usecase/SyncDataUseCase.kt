@@ -5,9 +5,11 @@ import al.ahgitdevelopment.municion.data.repository.CompraRepository
 import al.ahgitdevelopment.municion.data.repository.GuiaRepository
 import al.ahgitdevelopment.municion.data.repository.LicenciaRepository
 import al.ahgitdevelopment.municion.data.repository.TiradaRepository
+import android.util.Log
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 /**
@@ -27,6 +29,7 @@ class SyncDataUseCase @Inject constructor(
     private val compraRepository: CompraRepository,
     private val licenciaRepository: LicenciaRepository,
     private val tiradaRepository: TiradaRepository,
+    private val billingRepository: al.ahgitdevelopment.municion.data.repository.BillingRepository,
     private val firebaseAuthRepository: FirebaseAuthRepository,
     private val crashlytics: FirebaseCrashlytics
 ) {
@@ -58,6 +61,9 @@ class SyncDataUseCase @Inject constructor(
      */
     suspend fun syncFromFirebase(userId: String): Result<SyncResult> = coroutineScope {
         try {
+            // Trigger ads status sync independently
+            launch { billingRepository.syncAdsStatus(userId) }
+
             val guiasDeferred = async { guiaRepository.syncFromFirebase(userId) }
             val comprasDeferred = async { compraRepository.syncFromFirebase(userId) }
             val licenciasDeferred = async { licenciaRepository.syncFromFirebase(userId) }
@@ -72,18 +78,18 @@ class SyncDataUseCase @Inject constructor(
                 .count { it.isSuccess }
 
             // Detailed log of which entity failed
-            android.util.Log.i(TAG, "Sync from Firebase: $successCount/4 successful")
+            Log.i(TAG, "Sync from Firebase: $successCount/4 successful")
             if (!guiasResult.isSuccess) {
-                android.util.Log.e(TAG, "FAILED: Guias - ${guiasResult.exceptionOrNull()?.message}")
+                Log.e(TAG, "FAILED: Guias - ${guiasResult.exceptionOrNull()?.message}")
             }
             if (!comprasResult.isSuccess) {
-                android.util.Log.e(TAG, "FAILED: Compras - ${comprasResult.exceptionOrNull()?.message}")
+                Log.e(TAG, "FAILED: Compras - ${comprasResult.exceptionOrNull()?.message}")
             }
             if (!licenciasResult.isSuccess) {
-                android.util.Log.e(TAG, "FAILED: Licencias - ${licenciasResult.exceptionOrNull()?.message}")
+                Log.e(TAG, "FAILED: Licencias - ${licenciasResult.exceptionOrNull()?.message}")
             }
             if (!tiradasResult.isSuccess) {
-                android.util.Log.e(TAG, "FAILED: Tiradas - ${tiradasResult.exceptionOrNull()?.message}")
+                Log.e(TAG, "FAILED: Tiradas - ${tiradasResult.exceptionOrNull()?.message}")
             }
 
             // Collect all parsing errors
@@ -94,9 +100,9 @@ class SyncDataUseCase @Inject constructor(
             tiradasResult.getOrNull()?.parseErrors?.let { allParseErrors.addAll(it) }
 
             if (allParseErrors.isNotEmpty()) {
-                android.util.Log.w(TAG, "Total parse errors: ${allParseErrors.size}")
+                Log.w(TAG, "Total parse errors: ${allParseErrors.size}")
                 allParseErrors.forEach { error ->
-                    android.util.Log.w(TAG, "  - ${error.entity}[${error.itemKey}].${error.failedField}: ${error.errorType}")
+                    Log.w(TAG, "  - ${error.entity}[${error.itemKey}].${error.failedField}: ${error.errorType}")
                 }
             }
 
@@ -113,7 +119,7 @@ class SyncDataUseCase @Inject constructor(
                 )
             )
         } catch (e: Exception) {
-            android.util.Log.e("SyncDataUseCase", "Error syncing from Firebase", e)
+            Log.e("SyncDataUseCase", "Error syncing from Firebase", e)
             crashlytics.recordException(e)
             Result.failure(e)
         }
@@ -154,7 +160,7 @@ class SyncDataUseCase @Inject constructor(
             var uploadResult: SyncResult? = null
 
             if (entitiesNeedingFix.isNotEmpty()) {
-                android.util.Log.w(TAG, "Auto-fix needed for: ${entitiesNeedingFix.joinToString()}")
+                Log.w(TAG, "Auto-fix needed for: ${entitiesNeedingFix.joinToString()}")
                 crashlytics.log("Auto-fix triggered for entities: ${entitiesNeedingFix.joinToString()}")
 
                 // Upload Room data to Firebase to fix

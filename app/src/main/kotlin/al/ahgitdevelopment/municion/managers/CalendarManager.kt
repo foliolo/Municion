@@ -1,5 +1,6 @@
 package al.ahgitdevelopment.municion.managers
 
+import al.ahgitdevelopment.municion.R
 import android.Manifest
 import android.content.ContentResolver
 import android.content.ContentUris
@@ -10,6 +11,7 @@ import android.database.Cursor
 import android.provider.CalendarContract
 import androidx.core.content.ContextCompat
 import al.ahgitdevelopment.municion.data.local.room.entities.Licencia
+import android.util.Log
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
@@ -64,7 +66,7 @@ class CalendarManager @Inject constructor(
             createCalendarEvent(
                 licencia = licencia,
                 daysOffset = 0,
-                title = "Tu licencia caduca hoy",
+                title = context.getString(R.string.calendar_event_expires_today),
                 description = licencia.getDescripcionCalendario()
             )
 
@@ -72,14 +74,14 @@ class CalendarManager @Inject constructor(
             createCalendarEvent(
                 licencia = licencia,
                 daysOffset = -30,
-                title = "Tu licencia caduca dentro de un mes",
+                title = context.getString(R.string.calendar_event_expires_one_month),
                 description = licencia.getDescripcionCalendario()
             )
 
-            android.util.Log.i("CalendarManager", "Created calendar events for license: ${licencia.numLicencia}")
+            Log.i("CalendarManager", "Created calendar events for license: ${licencia.numLicencia}")
             Result.success(Unit)
         } catch (e: Exception) {
-            android.util.Log.e("CalendarManager", "Error creating calendar events", e)
+            Log.e("CalendarManager", "Error creating calendar events", e)
             crashlytics.recordException(e)
             Result.failure(e)
         }
@@ -98,20 +100,20 @@ class CalendarManager @Inject constructor(
             deleteCalendarEvent(
                 licencia = licencia,
                 daysOffset = 0,
-                title = "Tu licencia caduca hoy"
+                title = context.getString(R.string.calendar_event_expires_today)
             )
 
             // Eliminar evento 1 mes antes
             deleteCalendarEvent(
                 licencia = licencia,
                 daysOffset = -30,
-                title = "Tu licencia caduca dentro de un mes"
+                title = context.getString(R.string.calendar_event_expires_one_month)
             )
 
-            android.util.Log.i("CalendarManager", "Deleted calendar events for license: ${licencia.numLicencia}")
+            Log.i("CalendarManager", "Deleted calendar events for license: ${licencia.numLicencia}")
             Result.success(Unit)
         } catch (e: Exception) {
-            android.util.Log.e("CalendarManager", "Error deleting calendar events", e)
+            Log.e("CalendarManager", "Error deleting calendar events", e)
             crashlytics.recordException(e)
             Result.failure(e)
         }
@@ -212,10 +214,10 @@ class CalendarManager @Inject constructor(
                 val eventId = cursor.getLong(0)
                 val uri = ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, eventId)
                 contentResolver.delete(uri, null, null)
-                android.util.Log.d("CalendarManager", "Deleted calendar event: $eventId")
+                Log.d("CalendarManager", "Deleted calendar event: $eventId")
             }
         } catch (e: Exception) {
-            android.util.Log.e("CalendarManager", "Error deleting event", e)
+            Log.e("CalendarManager", "Error deleting event", e)
             crashlytics.recordException(e)
         } finally {
             // CRITICAL: Always close cursor

@@ -1,6 +1,7 @@
 package al.ahgitdevelopment.municion.auth
 
 import android.content.Context
+import android.util.Log
 import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
@@ -62,7 +63,7 @@ class FirebaseAuthRepository @Inject constructor(
      * Mantiene el mismo UID y todos los datos existentes.
      *
      * @param email Email del usuario
-     * @param password Contrasena elegida por el usuario
+     * @param password Contraseña elegida por el usuario
      * @return Result con FirebaseUser si exitoso
      *
      * @since v3.4.0 (Auth Simplification - Migration flow)
@@ -76,11 +77,11 @@ class FirebaseAuthRepository @Inject constructor(
             val result = currentUser.linkWithCredential(credential).await()
 
             result.user?.let { user ->
-                android.util.Log.i(TAG, "Email link successful: ${user.email}")
+                Log.i(TAG, "Email link successful: ${user.email}")
                 Result.success(user)
             } ?: Result.failure(Exception("Email link failed: user is null"))
         } catch (e: Exception) {
-            android.util.Log.e(TAG, "Email link failed", e)
+            Log.e(TAG, "Email link failed", e)
             crashlytics.recordException(e)
             Result.failure(e)
         }
@@ -90,18 +91,18 @@ class FirebaseAuthRepository @Inject constructor(
      * Login con Email/Password existente.
      *
      * @param email Email del usuario
-     * @param password Contrasena del usuario
+     * @param password Contraseña del usuario
      * @return Result con FirebaseUser si exitoso
      */
     suspend fun signInWithEmail(email: String, password: String): Result<FirebaseUser> {
         return try {
             val result = firebaseAuth.signInWithEmailAndPassword(email, password).await()
             result.user?.let { user ->
-                android.util.Log.i(TAG, "Email sign-in successful: ${user.email}")
+                Log.i(TAG, "Email sign-in successful: ${user.email}")
                 Result.success(user)
             } ?: Result.failure(Exception("Email sign-in failed: user is null"))
         } catch (e: Exception) {
-            android.util.Log.e(TAG, "Email sign-in failed", e)
+            Log.e(TAG, "Email sign-in failed", e)
             crashlytics.recordException(e)
             Result.failure(e)
         }
@@ -111,7 +112,7 @@ class FirebaseAuthRepository @Inject constructor(
      * Crea una nueva cuenta con Email/Password
      *
      * @param email Email del nuevo usuario
-     * @param password Contrasena elegida (min 6 caracteres)
+     * @param password Contraseña elegida (min 6 caracteres)
      * @return Result con FirebaseUser si exitoso
      *
      * @since v3.4.0 (Auth Simplification)
@@ -120,18 +121,18 @@ class FirebaseAuthRepository @Inject constructor(
         return try {
             val result = firebaseAuth.createUserWithEmailAndPassword(email, password).await()
             result.user?.let { user ->
-                android.util.Log.i(TAG, "Account created: ${user.email}")
+                Log.i(TAG, "Account created: ${user.email}")
                 Result.success(user)
             } ?: Result.failure(Exception("Account creation failed: user is null"))
         } catch (e: Exception) {
-            android.util.Log.e(TAG, "Account creation failed", e)
+            Log.e(TAG, "Account creation failed", e)
             crashlytics.recordException(e)
             Result.failure(e)
         }
     }
 
     /**
-     * Envia email de recuperacion de contrasena
+     * Envia email de recuperacion de contraseña
      *
      * @param email Email de la cuenta a recuperar
      * @return Result<Unit> indicando exito o fallo
@@ -141,10 +142,10 @@ class FirebaseAuthRepository @Inject constructor(
     suspend fun sendPasswordResetEmail(email: String): Result<Unit> {
         return try {
             firebaseAuth.sendPasswordResetEmail(email).await()
-            android.util.Log.i(TAG, "Password reset email sent to: $email")
+            Log.i(TAG, "Password reset email sent to: $email")
             Result.success(Unit)
         } catch (e: Exception) {
-            android.util.Log.e(TAG, "Password reset email failed", e)
+            Log.e(TAG, "Password reset email failed", e)
             crashlytics.recordException(e)
             Result.failure(e)
         }
@@ -164,11 +165,11 @@ class FirebaseAuthRepository @Inject constructor(
             val signInResult = firebaseAuth.signInWithEmailAndPassword(email, pin).await()
 
             signInResult.user?.let { user ->
-                android.util.Log.i(TAG, "Legacy migration successful for: ${user.email}")
+                Log.i(TAG, "Legacy migration successful for: ${user.email}")
                 Result.success(MigrationResult.Success(user))
             } ?: Result.success(MigrationResult.Failed("User is null after sign-in"))
         } catch (e: Exception) {
-            android.util.Log.w(TAG, "Legacy migration failed, user may need manual linking", e)
+            Log.w(TAG, "Legacy migration failed, user may need manual linking", e)
 
             // Determinar tipo de fallo
             val failureType = when {
@@ -193,7 +194,7 @@ class FirebaseAuthRepository @Inject constructor(
      */
     fun signOut() {
         firebaseAuth.signOut()
-        android.util.Log.i(TAG, "User signed out")
+        Log.i(TAG, "User signed out")
     }
 
     /**
@@ -206,10 +207,10 @@ class FirebaseAuthRepository @Inject constructor(
                 ?: return Result.failure(Exception("No user to delete"))
 
             user.delete().await()
-            android.util.Log.i(TAG, "Account deleted successfully")
+            Log.i(TAG, "Account deleted successfully")
             Result.success(Unit)
         } catch (e: Exception) {
-            android.util.Log.e(TAG, "Account deletion failed", e)
+            Log.e(TAG, "Account deletion failed", e)
             crashlytics.recordException(e)
             Result.failure(e)
         }
@@ -227,7 +228,7 @@ class FirebaseAuthRepository @Inject constructor(
             user.reauthenticate(credential).await()
             Result.success(Unit)
         } catch (e: Exception) {
-            android.util.Log.e(TAG, "Reauthentication failed", e)
+            Log.e(TAG, "Reauthentication failed", e)
             crashlytics.recordException(e)
             Result.failure(e)
         }

@@ -1,12 +1,19 @@
 package al.ahgitdevelopment.municion.ui.viewmodel
 
 import al.ahgitdevelopment.municion.auth.FirebaseAuthRepository
+import al.ahgitdevelopment.municion.data.repository.BillingRepository
+import al.ahgitdevelopment.municion.domain.usecase.ClearLocalDataUseCase
+import android.app.Activity
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -22,7 +29,9 @@ import javax.inject.Inject
  */
 @HiltViewModel
 class AccountSettingsViewModel @Inject constructor(
-    private val firebaseAuthRepository: FirebaseAuthRepository
+    private val firebaseAuthRepository: FirebaseAuthRepository,
+    private val billingRepository: BillingRepository,
+    private val clearLocalDataUseCase: ClearLocalDataUseCase
 ) : ViewModel() {
 
     companion object {
@@ -31,6 +40,13 @@ class AccountSettingsViewModel @Inject constructor(
 
     private val _uiState = MutableStateFlow<AccountUiState>(AccountUiState.Loading)
     val uiState: StateFlow<AccountUiState> = _uiState.asStateFlow()
+
+    val isAdsRemoved: StateFlow<Boolean> = billingRepository.isAdsRemoved
+        .stateIn(viewModelScope, SharingStarted.Lazily, false)
+
+    val isPurchaseAvailable: StateFlow<Boolean> = billingRepository.productDetails
+        .map { it != null }
+        .stateIn(viewModelScope, SharingStarted.Lazily, false)
 
     init {
         loadAccountState()
@@ -58,13 +74,25 @@ class AccountSettingsViewModel @Inject constructor(
         }
     }
 
+    fun launchPurchaseFlow(activity: Activity) {
+        billingRepository.launchBillingFlow(activity)
+    }
+
     /**
-     * Cierra sesion de Firebase.
+     * Cierra sesion de Firebase y limpia datos locales.
      */
     fun signOut() {
         viewModelScope.launch {
-            firebaseAuthRepository.signOut()
-            _uiState.value = AccountUiState.NotAuthenticated
+            try {
+                Log.i(TAG, "SignOut requested - clearing local data...")
+                clearLocalDataUseCase()
+                Log.i(TAG, "Local data cleared.")
+            } catch (e: Exception) {
+                Log.e(TAG, "Error clearing local data during sign out", e)
+            } finally {
+                firebaseAuthRepository.signOut()
+                _uiState.value = AccountUiState.NotAuthenticated
+            }
         }
     }
 

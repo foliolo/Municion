@@ -1,5 +1,6 @@
 package al.ahgitdevelopment.municion.ui.components
 
+import al.ahgitdevelopment.municion.R
 import al.ahgitdevelopment.municion.ui.navigation.Compras
 import al.ahgitdevelopment.municion.ui.navigation.Guias
 import al.ahgitdevelopment.municion.ui.navigation.Licencias
@@ -10,6 +11,7 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.res.stringResource
 import al.ahgitdevelopment.municion.ui.navigation.Route
 import al.ahgitdevelopment.municion.ui.navigation.Tiradas
 
@@ -107,7 +109,7 @@ private fun SaveFAB(
     ) {
         Icon(
             imageVector = Icons.Default.Save,
-            contentDescription = "Guardar"
+            contentDescription = stringResource(R.string.cd_save)
         )
     }
 }
