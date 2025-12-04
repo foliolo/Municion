@@ -641,7 +641,7 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
                 do {
                     Tirada tirada = new Tirada();
                     tirada.setDescripcion(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_TIRADAS_DESCRIPCION)));
-                    tirada.setRango(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_TIRADAS_RANGO)));
+                    tirada.setLocalizacion(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_TIRADAS_RANGO)));
                     tirada.setFecha(cursor.getString(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_TIRADAS_FECHA)));
                     tirada.setPuntuacion(cursor.getInt(cursor.getColumnIndex(DataBaseSQLiteHelper.KEY_TIRADAS_PUNTUACION)));
                     // Adding to list
@@ -835,7 +835,7 @@ public class DataBaseSQLiteHelper extends SQLiteOpenHelper {
                             KEY_TIRADAS_PUNTUACION +
                             ") VALUES (" +
                             "'" + tirada.getDescripcion() + "' , " +
-                            "'" + tirada.getRango() + "' , " +
+                            "'" + tirada.getLocalizacion() + "' , " +
                             "'" + tirada.getFecha() + "' , " +
                             "'" + tirada.getPuntuacion() + "'" +
                             ");");

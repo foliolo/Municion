@@ -6,6 +6,7 @@ import al.ahgitdevelopment.municion.domain.usecase.FirebaseParseException
 import al.ahgitdevelopment.municion.domain.usecase.ParseError
 import al.ahgitdevelopment.municion.domain.usecase.SensitiveFields
 import al.ahgitdevelopment.municion.domain.usecase.SyncResultWithErrors
+import android.util.Log
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseReference
@@ -138,7 +139,7 @@ class LicenciaRepository @Inject constructor(
                 .await()
 
             val totalInFirebase = snapshot.childrenCount.toInt()
-            android.util.Log.d(TAG, "Firebase snapshot: $totalInFirebase licencias")
+            Log.d(TAG, "Firebase snapshot: $totalInFirebase licencias")
 
             val firebaseLicencias = mutableListOf<Licencia>()
             val parseErrors = mutableListOf<ParseError>()
@@ -151,11 +152,11 @@ class LicenciaRepository @Inject constructor(
 
             if (firebaseLicencias.isNotEmpty()) {
                 licenciaDao.replaceAll(firebaseLicencias)
-                android.util.Log.i(TAG, "Synced ${firebaseLicencias.size} licencias from Firebase (${parseErrors.size} errors)")
+                Log.i(TAG, "Synced ${firebaseLicencias.size} licencias from Firebase (${parseErrors.size} errors)")
             } else if (totalInFirebase > 0) {
-                android.util.Log.w(TAG, "Firebase has $totalInFirebase licencias but 0 parsed successfully")
+                Log.w(TAG, "Firebase has $totalInFirebase licencias but 0 parsed successfully")
             } else {
-                android.util.Log.d(TAG, "No licencias in Firebase")
+                Log.d(TAG, "No licencias in Firebase")
             }
 
             val hasLocalData = licenciaDao.countLicencias() > 0
@@ -168,7 +169,7 @@ class LicenciaRepository @Inject constructor(
                 hasLocalData = hasLocalData
             ))
         } catch (e: Exception) {
-            android.util.Log.e(TAG, "Sync failed: ${e.message}", e)
+            Log.e(TAG, "Sync failed: ${e.message}", e)
             crashlytics.log("Failed to sync licencias from Firebase: ${e.message}")
             crashlytics.recordException(e)
             Result.failure(e)
@@ -291,7 +292,7 @@ class LicenciaRepository @Inject constructor(
             ))
         }
 
-        android.util.Log.e(TAG, "Parse error Licencia[$itemKey].$fieldName: $errorType (value: $redactedValue)")
+        Log.e(TAG, "Parse error Licencia[$itemKey].$fieldName: $errorType (value: $redactedValue)")
     }
 
     /**
@@ -360,7 +361,7 @@ class LicenciaRepository @Inject constructor(
                 licenciaDao.replaceAll(finalList)
             }
 
-            android.util.Log.i(TAG, "Synced ${finalList.size} licencias to Firebase (Merged Local+Remote)")
+            Log.i(TAG, "Synced ${finalList.size} licencias to Firebase (Merged Local+Remote)")
 
             Result.success(Unit)
         } catch (e: Exception) {

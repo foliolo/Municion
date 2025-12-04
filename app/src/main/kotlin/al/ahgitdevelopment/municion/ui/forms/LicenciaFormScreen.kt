@@ -510,7 +510,7 @@ private fun calculateFechaCaducidad(
         }
 
         1, 5 -> { // Licencia B, F - 3 años
-            calendar.add(Calendar.YEAR, 3)
+            calendar.add(Calendar.YEAR, 5)
         }
 
         2, 3, 4, 6, 7, 8 -> { // Licencia C, D, E, AE, AER, Libre Coleccionista - 5 años

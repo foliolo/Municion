@@ -96,11 +96,14 @@
 
     <!--String Tirada Form-->
     <string name="title_nueva_tirada">Nueva Tirada</string>
-    <string name="lbl_rango_tirada">Rango</string>
+    <string name="lbl_categoria_tirada">Categoría</string>
+    <string name="lbl_modalidad_tirada">Modalidad de puntuación</string>
     <string name="lbl_descripcion_tirada">Descripción</string>
     <string name="lbl_puntuacion_tirada">Puntuación [0-600]</string>
     <string name="msg_countdown_ultima_tirada">Para renovar tu licencia necesitas una tirada antes de éstos días:</string>
-    <string name="form_tirada_aviso_puntuacion">Puntuación por encima de rango (600 pts)</string>
+    <string name="form_tirada_aviso_puntuacion">Puntuación por encima del límite (600 pts)</string>
+    <string name="hint_score_range_precision">Rango válido: 0-600 puntos</string>
+    <string name="hint_score_range_ipsc">Rango válido: 0-100%</string>
 
     <!--TIRADAS-->
     <string name="lbl_caducidad_tirada">Tiempo máximo permitido hasta la próxima tirada %s días</string>
@@ -193,6 +196,7 @@
     <string name="purchase_done">Ya has eliminado la publicidad</string>
     <string name="purchase_not_support">Tu dispositivo no soporta compras integradas</string>
     <string name="tabla_tiradas">Puntuaciones de ascenso</string>
+    <string name="tabla_tiradas_description">Ver tabla de puntuaciones para categorías</string>
     <string name="url_tabla_tiradas" translatable="false">https://firebasestorage.googleapis.com/v0/b/municion-95caa.appspot.com/o/Resources%2Ftabla_ventana_tiradas.png?alt=media&amp;token=88037b28-5aca-4e96-9d67-bfcbeb1ef2bb</string>
     <string name="storage_element_tabla_tiradas" translatable="false">Resources/tabla_ventana_tiradas3.png</string>
     <string name="error_downloading_image">Error descargando la imagen</string>
@@ -249,12 +253,12 @@
     <string name="label_autonomous_community">Comunidad Autónoma</string>
     <string name="label_category">Categoría</string>
     <string name="label_description">Descripción</string>
-    <string name="label_range_gallery">Lugar / Galería</string>
+    <string name="label_tirada_localizacion">Localización</string>
     <string name="label_exact_score">Puntuación exacta</string>
 
     <!-- Compose Form Placeholders (v3.0.0) -->
     <string name="placeholder_weekly_practice">Ej: Práctica semanal</string>
-    <string name="placeholder_municipal_gallery">Ej: Galería Municipal</string>
+    <string name="placeholder_municipal_gallery">Dirección</string>
     <string name="hint_score_range">Valor entre 0 y 600</string>
 
     <!-- Compose Info Text (v3.0.0) -->
@@ -310,4 +314,92 @@
     <string name="sign_out">Cerrar sesión</string>
     <string name="sign_out_anonymous_warning">Si cierras sesión con una cuenta anónima, perderás acceso a tus datos en la nube. Los datos locales se mantendrán.\n\n¿Estás seguro?</string>
     <string name="sign_out_confirm">¿Estás seguro de que deseas cerrar sesión?</string>
+
+    <!-- Calendar Permissions (v3.3.0) -->
+    <string name="calendar_permission_granted">Permiso de calendario concedido</string>
+    <string name="calendar_permission_denied">Permiso de calendario denegado</string>
+    <string name="calendar_permission_title">Permiso de calendario</string>
+    <string name="calendar_permission_rationale">La app necesita acceso al calendario para crear recordatorios de caducidad de licencias</string>
+    <string name="action_allow">Permitir</string>
+
+    <!-- Calendar Events (v3.3.0) -->
+    <string name="calendar_event_expires_today">Tu licencia caduca hoy</string>
+    <string name="calendar_event_expires_one_month">Tu licencia caduca dentro de un mes</string>
+
+    <!-- Premium/Ads (v3.3.0) -->
+    <string name="premium_status">Premium (Sin Anuncios)</string>
+    <string name="remove_ads_title">Eliminar Publicidad</string>
+    <string name="remove_ads_description">Apoya el desarrollo y elimina los anuncios</string>
+    <string name="loading_info">Cargando información…</string>
+
+    <!-- Login/Auth UI (v3.3.0) -->
+    <string name="app_title">Tu Armería</string>
+    <string name="login_subtitle">Inicia sesión para continuar</string>
+    <string name="register_subtitle">Crea una cuenta nueva</string>
+    <string name="label_email">Email</string>
+    <string name="label_password">Contraseña</string>
+    <string name="label_confirm_password">Confirmar contraseña</string>
+    <string name="action_show">Mostrar</string>
+    <string name="action_hide">Ocultar</string>
+    <string name="action_login">Iniciar sesión</string>
+    <string name="action_create_account">Crear cuenta</string>
+    <string name="switch_to_register">¿No tienes cuenta? Crear cuenta</string>
+    <string name="switch_to_login">¿Ya tienes cuenta? Iniciar sesión</string>
+    <string name="forgot_password">Olvidé mi contraseña</string>
+
+    <!-- Auth Validation Errors (v3.3.0) -->
+    <string name="error_passwords_not_match">Las contraseñas no coinciden</string>
+    <string name="error_enter_email">Introduce tu email</string>
+    <string name="error_invalid_email">Email no válido</string>
+    <string name="error_enter_password">Introduce tu contraseña</string>
+    <string name="error_no_account">No existe una cuenta con este email</string>
+    <string name="error_wrong_credentials">Email o contraseña incorrectos</string>
+    <string name="error_weak_password">La contraseña es demasiado débil</string>
+    <string name="error_account_exists">Ya existe una cuenta con este email</string>
+    <string name="error_network">Error de conexión. Comprueba tu internet</string>
+    <string name="error_too_many_attempts">Demasiados intentos. Intenta más tarde</string>
+    <string name="error_unknown">Error desconocido</string>
+    <string name="error_invalid_credentials">Credenciales no válidas</string>
+
+    <!-- Migration Screen (v3.3.0) -->
+    <string name="migration_title">Actualización Requerida</string>
+    <string name="requires_migration">Requiere migración</string>
+
+    <!-- CRUD Success Messages (v3.3.0) -->
+    <string name="guia_saved">Guía guardada</string>
+    <string name="guia_updated">Guía actualizada</string>
+    <string name="guia_deleted">Guía eliminada</string>
+    <string name="compra_saved">Compra creada exitosamente</string>
+    <string name="compra_updated">Compra actualizada</string>
+    <string name="compra_deleted">Compra eliminada</string>
+    <string name="licencia_saved">Licencia guardada</string>
+    <string name="licencia_updated">Licencia actualizada</string>
+    <string name="licencia_deleted">Licencia eliminada</string>
+    <string name="tirada_saved">Tirada guardada</string>
+    <string name="tirada_updated">Tirada actualizada</string>
+    <string name="tirada_deleted">Tirada eliminada</string>
+
+    <!-- Content Descriptions (v3.3.0) -->
+    <string name="cd_delete">Eliminar</string>
+    <string name="cd_logo">Logo</string>
+    <string name="cd_save">Guardar</string>
+    <string name="cd_close">Cerrar</string>
+    <string name="cd_previous">Anterior</string>
+    <string name="cd_next">Siguiente</string>
+
+    <!-- Sync Messages (v3.3.0) -->
+    <string name="sync_completed_with_fixes">Sincronizado con correcciones automáticas</string>
+
+    <!-- License Status (v3.3.0) -->
+    <string name="license_status_expired">Caducada</string>
+    <string name="license_status_active">Activa</string>
+
+    <!-- Navigation Errors (v3.3.0) -->
+    <string name="error_loading_license_form">Error cargando formulario de licencia</string>
+    <string name="error_loading_guide_form">Error cargando formulario de guía</string>
+    <string name="error_loading_purchase_form">Error cargando formulario de compra</string>
+    <string name="error_loading_competition_form">Error cargando formulario de tirada</string>
+
+    <!-- Dialog Actions (v3.3.0) -->
+    <string name="dialog_select_license">Selecciona una licencia</string>
 </resources>

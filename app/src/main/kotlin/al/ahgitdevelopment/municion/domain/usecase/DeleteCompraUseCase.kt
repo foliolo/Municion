@@ -3,6 +3,7 @@ package al.ahgitdevelopment.municion.domain.usecase
 import al.ahgitdevelopment.municion.data.local.room.entities.Compra
 import al.ahgitdevelopment.municion.data.repository.CompraRepository
 import al.ahgitdevelopment.municion.data.repository.GuiaRepository
+import android.util.Log
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import javax.inject.Inject
 
@@ -27,7 +28,7 @@ class DeleteCompraUseCase @Inject constructor(
             // 2. Eliminar compra
             compraRepository.deleteCompra(compra, userId).getOrThrow()
 
-            android.util.Log.i("DeleteCompraUseCase", "Compra deleted: id=${compra.id}, unidades liberadas=${compra.unidades}")
+            Log.i("DeleteCompraUseCase", "Compra deleted: id=${compra.id}, unidades liberadas=${compra.unidades}")
 
             Result.success(Unit)
         } catch (e: Exception) {

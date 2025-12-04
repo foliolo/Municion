@@ -3,6 +3,7 @@ package al.ahgitdevelopment.municion.domain.usecase
 import al.ahgitdevelopment.municion.data.local.room.entities.Compra
 import al.ahgitdevelopment.municion.data.repository.CompraRepository
 import al.ahgitdevelopment.municion.data.repository.GuiaRepository
+import android.util.Log
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import javax.inject.Inject
 
@@ -43,7 +44,7 @@ class CreateCompraUseCase @Inject constructor(
             // 4. Actualizar gastado de guía
             guiaRepository.incrementGastado(guia.id, compra.unidades).getOrThrow()
 
-            android.util.Log.i("CreateCompraUseCase", "Compra created: id=$compraId, guia=${guia.apodo}, unidades=${compra.unidades}")
+            Log.i("CreateCompraUseCase", "Compra created: id=$compraId, guia=${guia.apodo}, unidades=${compra.unidades}")
 
             Result.success(compraId)
         } catch (e: Exception) {

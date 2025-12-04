@@ -1,7 +1,11 @@
 package al.ahgitdevelopment.municion
 
 import android.app.Application
+import com.google.android.gms.ads.MobileAds
 import dagger.hilt.android.HiltAndroidApp
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 /**
  * Application class con Hilt
@@ -18,4 +22,12 @@ import dagger.hilt.android.HiltAndroidApp
  * @since v3.0.0 (TRACK B Modernization)
  */
 @HiltAndroidApp
-class MunicionApplication : Application()
+class MunicionApplication : Application() {
+    override fun onCreate() {
+        super.onCreate()
+        // Initialize Mobile Ads SDK
+        CoroutineScope(Dispatchers.IO).launch {
+            MobileAds.initialize(this@MunicionApplication) {}
+        }
+    }
+}

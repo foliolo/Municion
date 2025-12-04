@@ -1,14 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string-array name="settings_options">
-        <item>Gestion de contraseñas</item>
-        <item>Mostrar tutorial</item>
-        <item>Pregunta de seguridad</item>
-        <item>Reiniciar contraseña</item>
-<!--        <item>Eliminar publicidad</item>-->
-<!--        <item>Consumir publicidad</item>-->
-    </string-array>
-
     <string-array name="tipo_armas">
         <item>Pistola</item>
         <item>Escopeta</item>
@@ -17,10 +8,15 @@
         <item>Avancarga</item>
     </string-array>
 
-    <string-array name="rango_tirada">
+    <string-array name="categoria_tirada">
         <item>Nacional</item>
         <item>Autonómica</item>
         <item>Local/Social</item>
+    </string-array>
+
+    <string-array name="modalidad_tirada">
+        <item>Precisión</item>
+        <item>IPSC</item>
     </string-array>
 
     <string-array name="tipo_licencias">
@@ -149,12 +145,9 @@
         <item>3ª Categoría</item>
     </string-array>
 
-
-    <string-array name="preguntas_seguridad">
-        <item>¿Cómo se llama tu mascota?</item>
-        <item>¿En qué colegio estudiaste?</item>
-        <item>¿Cuál es tu película preferida?</item>
-        <item>¿Cuál es tu libro favorito?</item>
+    <string-array name="lugar_compra">
+        <item>Tienda</item>
+        <item>Campo de tiro</item>
     </string-array>
 
     <string-array name="calibres">

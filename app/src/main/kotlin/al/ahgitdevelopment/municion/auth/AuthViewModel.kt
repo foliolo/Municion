@@ -88,16 +88,6 @@ class AuthViewModel @Inject constructor(
     }
 
     /**
-     * Cierra sesion de Firebase.
-     * El AuthStateListener actualizara el estado automaticamente cuando complete.
-     */
-    fun signOut() {
-        Log.i(TAG, "Signing out...")
-        firebaseAuth.signOut()
-        // No es necesario actualizar _authState aqui - AuthStateListener lo hara
-    }
-
-    /**
      * Obtiene el UID del usuario actual.
      */
     fun getCurrentUserId(): String? = firebaseAuth.currentUser?.uid
