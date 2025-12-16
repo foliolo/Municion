@@ -38,7 +38,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase
         Tirada::class,
         AppPurchase::class
     ],
-    version = 28,
+    version = 29,
     exportSchema = true
 )
 abstract class MunicionDatabase : RoomDatabase() {
@@ -51,6 +51,29 @@ abstract class MunicionDatabase : RoomDatabase() {
 
     companion object {
         private const val DATABASE_NAME = "municion.db"
+
+        /**
+         * MIGRATION: v28 → v29
+         *
+         * CAMBIO: Agregar columnas 'foto_url' y 'storage_path' a tabla guias
+         * para almacenar la URL de Firebase Storage y la ruta de borrado
+         */
+        val MIGRATION_28_29 = object : Migration(28, 29) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                Log.i("MunicionDatabase", "Starting migration v28 → v29 (Add foto_url and storage_path to guias)")
+                database.execSQL(
+                    """
+                    ALTER TABLE guias ADD COLUMN foto_url TEXT DEFAULT NULL
+                    """.trimIndent()
+                )
+                database.execSQL(
+                    """
+                    ALTER TABLE guias ADD COLUMN storage_path TEXT DEFAULT NULL
+                    """.trimIndent()
+                )
+                Log.i("MunicionDatabase", "Migration v28 → v29 completed")
+            }
+        }
 
         /**
          * MIGRATION: v27 → v28
@@ -433,7 +456,7 @@ abstract class MunicionDatabase : RoomDatabase() {
                 MunicionDatabase::class.java,
                 DATABASE_NAME
             )
-                .addMigrations(MIGRATION_23_24, MIGRATION_24_25, MIGRATION_25_26, MIGRATION_26_27, MIGRATION_27_28)
+                .addMigrations(MIGRATION_23_24, MIGRATION_24_25, MIGRATION_25_26, MIGRATION_26_27, MIGRATION_27_28, MIGRATION_28_29)
                 .fallbackToDestructiveMigration(false)  // Solo como último recurso
                 .build()
         }

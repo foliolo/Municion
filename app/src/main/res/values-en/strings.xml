@@ -220,6 +220,7 @@
     <string name="label_price_eur">Price (EUR)</string>
     <string name="label_store">Store</string>
     <string name="label_weapon_type">Weapon type</string>
+    <string name="label_weapon_photo">Weapon photo</string>
     <string name="label_nickname">Nickname</string>
     <string name="label_guide_number">Document number</string>
     <string name="label_weapon_number">Weapon number</string>
@@ -326,6 +327,8 @@
     <string name="label_confirm_password">Confirm password</string>
     <string name="action_show">Show</string>
     <string name="action_hide">Hide</string>
+    <string name="action_add_photo">Add photo</string>
+    <string name="action_remove_image">Remove image</string>
     <string name="action_login">Sign in</string>
     <string name="action_create_account">Create account</string>
     <string name="switch_to_register">Don\'t have an account? Create account</string>
@@ -371,6 +374,7 @@
     <string name="cd_close">Close</string>
     <string name="cd_previous">Previous</string>
     <string name="cd_next">Next</string>
+    <string name="content_description_weapon_image">Weapon image</string>
 
     <!-- Sync Messages (v3.3.0) -->
     <string name="sync_completed_with_fixes">Synced with automatic fixes</string>

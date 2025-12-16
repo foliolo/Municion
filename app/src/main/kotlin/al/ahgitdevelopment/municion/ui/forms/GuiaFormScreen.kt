@@ -4,7 +4,15 @@ import al.ahgitdevelopment.municion.R
 import al.ahgitdevelopment.municion.data.local.room.entities.Guia
 import al.ahgitdevelopment.municion.ui.theme.MunicionTheme
 import al.ahgitdevelopment.municion.ui.viewmodel.GuiaViewModel
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -12,15 +20,25 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AddAPhoto
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuAnchorType
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
@@ -35,6 +53,9 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardCapitalization
@@ -44,6 +65,8 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import kotlinx.coroutines.launch
 
 /**
@@ -60,6 +83,7 @@ import kotlinx.coroutines.launch
  * @param viewModel ViewModel de Guias
  *
  * @since v3.0.0 (Compose Migration - Single Scaffold Architecture)
+ * @since v3.2.2 (Image Upload Feature)
  */
 @Composable
 fun GuiaFormContent(
@@ -72,6 +96,7 @@ fun GuiaFormContent(
 ) {
     val context = LocalContext.current
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val selectedImageUri by viewModel.selectedImageUri.collectAsStateWithLifecycle()
 
     val isEditing = guia != null
 
@@ -109,6 +134,16 @@ fun GuiaFormContent(
     // Strings para validaciones (capturadas para uso en lambda)
     val errorFieldRequired = stringResource(R.string.error_field_required)
     val errorValidQuota = stringResource(R.string.error_valid_quota)
+
+    // Image picker launcher usando el contrato moderno PickVisualMedia
+    val imagePickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.PickVisualMedia()
+    ) { uri: Uri? ->
+        uri?.let { viewModel.setSelectedImageUri(it) }
+    }
+
+    // Determinar qué imagen mostrar: nueva selección, existente en Storage, o ninguna
+    val currentImageUrl = selectedImageUri?.toString() ?: guia?.fotoUrl
 
     // Funcion de guardado
     val saveFunction: () -> Unit = {
@@ -159,12 +194,28 @@ fun GuiaFormContent(
                 numGuia = numGuia,
                 numArma = numArma,
                 cupo = cupo.toInt(),
-                gastado = gastado.toIntOrNull() ?: 0
+                gastado = gastado.toIntOrNull() ?: 0,
+                // Preservar imagen existente si no se ha seleccionado nueva
+                fotoUrl = guia?.fotoUrl,
+                storagePath = guia?.storagePath
             )
-            if (isEditing) {
-                viewModel.updateGuia(guiaToSave)
+
+            // Decidir si guardar con imagen nueva o sin cambios en imagen
+            val newImageUri = selectedImageUri
+            if (newImageUri != null) {
+                // Hay nueva imagen seleccionada
+                if (isEditing) {
+                    viewModel.updateGuiaWithImage(guiaToSave, newImageUri)
+                } else {
+                    viewModel.saveGuiaWithImage(guiaToSave, newImageUri)
+                }
             } else {
-                viewModel.saveGuia(guiaToSave)
+                // Sin cambios en imagen
+                if (isEditing) {
+                    viewModel.updateGuia(guiaToSave)
+                } else {
+                    viewModel.saveGuia(guiaToSave)
+                }
             }
         }
     }
@@ -204,9 +255,19 @@ fun GuiaFormContent(
                 viewModel.resetUiState()
             }
 
+            is GuiaViewModel.GuiaUiState.Uploading -> {
+                // El estado Uploading se maneja en el UI mostrando el progreso
+            }
+
             else -> {}
         }
     }
+
+    // Determinar si está subiendo
+    val isUploading = uiState is GuiaViewModel.GuiaUiState.Uploading
+    val uploadProgress = if (uiState is GuiaViewModel.GuiaUiState.Uploading) {
+        (uiState as GuiaViewModel.GuiaUiState.Uploading).progress
+    } else 0f
 
     GuiaFormFields(
         isEditing = isEditing,
@@ -231,6 +292,24 @@ fun GuiaFormContent(
         cupoError = cupoError,
         customCupo = customCupo,
         gastado = gastado,
+        // Parámetros de imagen
+        currentImageUrl = currentImageUrl,
+        isUploading = isUploading,
+        uploadProgress = uploadProgress,
+        onSelectImage = {
+            imagePickerLauncher.launch(
+                PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+            )
+        },
+        onRemoveImage = {
+            viewModel.setSelectedImageUri(null)
+            // Si estamos editando y hay imagen en Storage, eliminarla
+            guia?.let { existingGuia ->
+                if (existingGuia.fotoUrl != null) {
+                    viewModel.removeGuiaImage(existingGuia)
+                }
+            }
+        },
         onMarcaChange = { marca = it; marcaError = null },
         onModeloChange = { modelo = it; modeloError = null },
         onApodoChange = { apodo = it; apodoError = null },
@@ -252,6 +331,7 @@ fun GuiaFormContent(
  * Sin Scaffold - solo los campos del formulario.
  *
  * @since v3.0.0 (Compose Migration - Single Scaffold Architecture)
+ * @since v3.2.2 (Image Upload Feature)
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -278,6 +358,12 @@ fun GuiaFormFields(
     cupoError: String?,
     customCupo: Boolean,
     gastado: String,
+    // Parámetros de imagen
+    currentImageUrl: String?,
+    isUploading: Boolean,
+    uploadProgress: Float,
+    onSelectImage: () -> Unit,
+    onRemoveImage: () -> Unit,
     onMarcaChange: (String) -> Unit,
     onModeloChange: (String) -> Unit,
     onApodoChange: (String) -> Unit,
@@ -300,6 +386,15 @@ fun GuiaFormFields(
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         Spacer(modifier = Modifier.height(8.dp))
+
+        // Selector de imagen del arma
+        GuiaImagePicker(
+            currentImageUrl = currentImageUrl,
+            isUploading = isUploading,
+            uploadProgress = uploadProgress,
+            onSelectImage = onSelectImage,
+            onRemoveImage = onRemoveImage
+        )
 
         // Tipo de arma
         if (tiposArma.isNotEmpty()) {
@@ -587,6 +682,141 @@ private fun getLicenciaTypeFromString(context: android.content.Context, tipoLice
     }
 }
 
+/**
+ * Componente para seleccionar y mostrar la imagen del arma
+ *
+ * @param currentImageUrl URL de la imagen actual (local Uri o Firebase URL)
+ * @param isUploading Si se está subiendo la imagen
+ * @param uploadProgress Progreso de subida (0-1)
+ * @param onSelectImage Callback para seleccionar nueva imagen
+ * @param onRemoveImage Callback para eliminar la imagen
+ *
+ * @since v3.2.2 (Image Upload Feature)
+ */
+@Composable
+private fun GuiaImagePicker(
+    currentImageUrl: String?,
+    isUploading: Boolean,
+    uploadProgress: Float,
+    onSelectImage: () -> Unit,
+    onRemoveImage: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val context = LocalContext.current
+    val imageSize = 180.dp
+
+    Column(
+        modifier = modifier.fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(
+            text = stringResource(R.string.label_weapon_photo),
+            style = MaterialTheme.typography.labelLarge,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        Box(
+            modifier = Modifier
+                .size(imageSize)
+                .clip(RoundedCornerShape(12.dp))
+                .border(
+                    width = 2.dp,
+                    color = MaterialTheme.colorScheme.outline,
+                    shape = RoundedCornerShape(12.dp)
+                )
+                .background(MaterialTheme.colorScheme.surfaceVariant)
+                .clickable(enabled = !isUploading) { onSelectImage() },
+            contentAlignment = Alignment.Center
+        ) {
+            if (currentImageUrl != null) {
+                // Mostrar imagen seleccionada o existente
+                AsyncImage(
+                    model = ImageRequest.Builder(context)
+                        .data(currentImageUrl)
+                        .crossfade(true)
+                        .build(),
+                    contentDescription = stringResource(R.string.content_description_weapon_image),
+                    modifier = Modifier.fillMaxSize(),
+                    contentScale = ContentScale.Crop
+                )
+
+                // Botón para eliminar imagen (solo si no está subiendo)
+                if (!isUploading) {
+                    IconButton(
+                        onClick = onRemoveImage,
+                        modifier = Modifier
+                            .align(Alignment.TopEnd)
+                            .padding(4.dp)
+                            .size(32.dp)
+                            .background(
+                                color = Color.Black.copy(alpha = 0.6f),
+                                shape = RoundedCornerShape(16.dp)
+                            )
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Close,
+                            contentDescription = stringResource(R.string.action_remove_image),
+                            tint = Color.White,
+                            modifier = Modifier.size(20.dp)
+                        )
+                    }
+                }
+
+                // Overlay de subida
+                if (isUploading) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+//                            .background(Color.Black.copy(alpha = 0.5f)),
+                            .background(MaterialTheme.colorScheme.surfaceVariant),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator(
+//                            progress = { uploadProgress },
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                }
+            } else {
+                // Placeholder para añadir imagen
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.AddAPhoto,
+                        contentDescription = null,
+                        modifier = Modifier.size(48.dp),
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        text = stringResource(R.string.action_add_photo),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+            }
+        }
+
+        // Barra de progreso de subida
+        if (isUploading) {
+            Spacer(modifier = Modifier.height(8.dp))
+            LinearProgressIndicator(
+                progress = { uploadProgress },
+                modifier = Modifier.fillMaxWidth(0.6f)
+            )
+            Text(
+                text = "${(uploadProgress * 100).toInt()}%",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
+    }
+}
+
 @Preview(showBackground = true)
 @Composable
 private fun GuiaFormFieldsPreview() {
@@ -614,6 +844,11 @@ private fun GuiaFormFieldsPreview() {
             cupoError = null,
             customCupo = false,
             gastado = "0",
+            currentImageUrl = null,
+            isUploading = false,
+            uploadProgress = 0f,
+            onSelectImage = {},
+            onRemoveImage = {},
             onMarcaChange = {},
             onModeloChange = {},
             onApodoChange = {},
@@ -627,5 +862,31 @@ private fun GuiaFormFieldsPreview() {
             onCustomCupoChange = {},
             onGastadoChange = {}
         )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun GuiaImagePickerPreview() {
+    MunicionTheme {
+        Column {
+            // Sin imagen
+            GuiaImagePicker(
+                currentImageUrl = null,
+                isUploading = false,
+                uploadProgress = 0f,
+                onSelectImage = {},
+                onRemoveImage = {}
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            // Subiendo
+            GuiaImagePicker(
+                currentImageUrl = "https://example.com/image.jpg",
+                isUploading = true,
+                uploadProgress = 0.65f,
+                onSelectImage = {},
+                onRemoveImage = {}
+            )
+        }
     }
 }

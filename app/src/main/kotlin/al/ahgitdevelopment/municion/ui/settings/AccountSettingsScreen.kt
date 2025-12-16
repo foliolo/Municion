@@ -428,7 +428,7 @@ private fun LoadedContent(
             Spacer(modifier = Modifier.height(16.dp))
 
             if (!isAdsRemoved) {
-                AdBanner(adUnitId = stringResource(R.string.banner_configuracion_id))
+                AdBanner(adUnitId = stringResource(R.string.banner_login_id))
             }
         }
     }

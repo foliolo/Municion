@@ -75,7 +75,15 @@ data class Guia(
     val gastado: Int = 0,  // Munición ya gastada este año
 
     @ColumnInfo(name = "image_path")
-    val imagePath: String? = null
+    val imagePath: String? = null,
+
+    /** URL pública de la foto en Firebase Storage */
+    @ColumnInfo(name = "foto_url")
+    val fotoUrl: String? = null,
+
+    /** Ruta en Firebase Storage para facilitar el borrado */
+    @ColumnInfo(name = "storage_path")
+    val storagePath: String? = null
 ) : Parcelable {
 
     init {
@@ -130,9 +138,9 @@ data class Guia(
     }
 
     /**
-     * Verifica si tiene imagen
+     * Verifica si tiene imagen (local o en Storage)
      */
-    fun hasImage(): Boolean = !imagePath.isNullOrBlank()
+    fun hasImage(): Boolean = !imagePath.isNullOrBlank() || !fotoUrl.isNullOrBlank()
 
     companion object {
         /**
