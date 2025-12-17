@@ -60,14 +60,9 @@ data class Tirada(
     val puntuacion: Int = 0  // Puntuación: 0-600 (Precisión) o 0-100 (IPSC)
 ) : Parcelable {
 
-    init {
-        require(descripcion.isNotBlank()) { "Descripcion cannot be blank" }
-        require(fecha.isNotBlank()) { "Fecha cannot be blank" }
-        require(puntuacion >= 0) { "Puntuacion must be >= 0, got: $puntuacion" }
-        // Validación de puntuación según modalidad
-        val maxPuntuacion = getMaxPuntuacion(modalidad)
-        require(puntuacion <= maxPuntuacion) { "Puntuacion must be <= $maxPuntuacion for modalidad $modalidad, got: $puntuacion" }
-    }
+    // NOTA: NO usar init{require()} aquí porque rompe la deserialización JSON
+    // durante la navegación type-safe (Navigation Compose + Kotlinx Serialization).
+    // Las validaciones se realizan en el formulario antes de guardar.
 
     /**
      * Parsea la fecha a Date

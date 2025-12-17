@@ -136,6 +136,12 @@ fun GuiaFormContent(
     val errorFieldRequired = stringResource(R.string.error_field_required)
     val errorValidQuota = stringResource(R.string.error_valid_quota)
 
+    // Resetear la imagen seleccionada al entrar al formulario
+    // Esto evita que se muestre una imagen de una sesión de edición anterior
+//    LaunchedEffect(guia?.id) {
+//        viewModel.setSelectedImageUri(null)
+//    }
+
     // Image picker launcher usando el contrato moderno PickVisualMedia
     val imagePickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickVisualMedia()
@@ -741,7 +747,11 @@ private fun GuiaImagePicker(
                         .build(),
                     contentDescription = stringResource(R.string.content_description_weapon_image),
                     modifier = Modifier.fillMaxSize(),
-                    contentScale = ContentScale.Crop
+                    contentScale = ContentScale.Crop,
+                    onError = {
+                        // Log error for debugging
+                        android.util.Log.e("GuiaImagePicker", "Failed to load image: $currentImageUrl", it.result.throwable)
+                    }
                 )
 
                 // Botón para eliminar imagen (solo si no está subiendo)

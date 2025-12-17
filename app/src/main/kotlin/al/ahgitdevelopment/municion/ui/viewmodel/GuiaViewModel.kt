@@ -231,7 +231,7 @@ class GuiaViewModel @Inject constructor(
 
                 // 2. Eliminar de Room + Firebase Database
                 guiaRepository.deleteGuia(guia, userId).getOrThrow()
-                _uiState.value = GuiaUiState.Success("Guía eliminada")
+//                _uiState.value = GuiaUiState.Success("Guía eliminada")
 
             } catch (e: Exception) {
                 crashlytics.recordException(e)

@@ -35,6 +35,8 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -43,6 +45,8 @@ import al.ahgitdevelopment.municion.ui.theme.LicenseExpired
 import al.ahgitdevelopment.municion.ui.theme.LicenseExpiring
 import al.ahgitdevelopment.municion.ui.theme.LicenseValid
 import al.ahgitdevelopment.municion.ui.theme.Primary
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 
 /**
  * Item de Guía para mostrar en LazyColumn.
@@ -54,6 +58,7 @@ import al.ahgitdevelopment.municion.ui.theme.Primary
  * @param modifier Modificador opcional
  *
  * @since v3.0.0 (Compose Migration)
+ * @since v3.2.2 (Image display feature)
  */
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
@@ -64,6 +69,7 @@ fun GuiaItem(
     onDelete: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val context = LocalContext.current
     val dismissState = rememberSwipeToDismissBoxState()
 
     LaunchedEffect(dismissState.currentValue) {
@@ -114,26 +120,40 @@ fun GuiaItem(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(16.dp),
+                    .padding(12.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                // Icono
+                // Imagen del arma o icono por defecto
                 Box(
                     modifier = Modifier
-                        .size(48.dp)
+                        .size(72.dp)
                         .clip(RoundedCornerShape(8.dp))
                         .background(Primary.copy(alpha = 0.15f)),
                     contentAlignment = Alignment.Center
                 ) {
-                    Icon(
-                        imageVector = Icons.Default.Security,
-                        contentDescription = null,
-                        tint = Primary,
-                        modifier = Modifier.size(28.dp)
-                    )
+                    if (guia.hasImage()) {
+                        // Mostrar imagen del arma
+                        AsyncImage(
+                            model = ImageRequest.Builder(context)
+                                .data(guia.fotoUrl ?: guia.imagePath)
+                                .crossfade(true)
+                                .build(),
+                            contentDescription = stringResource(R.string.content_description_weapon_image),
+                            modifier = Modifier.fillMaxSize(),
+                            contentScale = ContentScale.Crop
+                        )
+                    } else {
+                        // Mostrar icono por defecto
+                        Icon(
+                            imageVector = Icons.Default.Security,
+                            contentDescription = null,
+                            tint = Primary,
+                            modifier = Modifier.size(36.dp)
+                        )
+                    }
                 }
 
-                Spacer(modifier = Modifier.width(16.dp))
+                Spacer(modifier = Modifier.width(12.dp))
 
                 // Contenido
                 Column(modifier = Modifier.weight(1f)) {

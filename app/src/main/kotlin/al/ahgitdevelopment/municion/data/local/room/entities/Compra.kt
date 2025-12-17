@@ -81,33 +81,9 @@ data class Compra(
     val imagePath: String? = null  // Nullable - campo opcional
 ) : Parcelable {
 
-    init {
-        // Validación de datos (fail-fast)
-        require(unidades > 0) {
-            "Unidades must be > 0, got: $unidades"
-        }
-        require(precio >= 0) {
-            "Precio must be >= 0, got: $precio"
-        }
-        require(peso > 0) {
-            "Peso must be > 0, got: $peso"
-        }
-        require(valoracion in 0f..5f) {
-            "Valoracion must be between 0.0 and 5.0, got: $valoracion"
-        }
-        require(calibre1.isNotBlank()) {
-            "Calibre1 cannot be blank"
-        }
-        require(tipo.isNotBlank()) {
-            "Tipo cannot be blank"
-        }
-        require(marca.isNotBlank()) {
-            "Marca cannot be blank"
-        }
-        require(fecha.isNotBlank()) {
-            "Fecha cannot be blank"
-        }
-    }
+    // NOTA: NO usar init{require()} aquí porque rompe la deserialización JSON
+    // durante la navegación type-safe (Navigation Compose + Kotlinx Serialization).
+    // Las validaciones se realizan en el formulario antes de guardar.
 
     /**
      * Parsea la fecha a Date
