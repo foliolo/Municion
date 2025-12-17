@@ -18,13 +18,18 @@ import javax.inject.Singleton
 /**
  * Repository para gestionar imágenes en Firebase Storage
  *
- * Estructura de almacenamiento: v3_userdata/{userId}/armas/{armaId}.jpg
+ * Estructura de almacenamiento: 
+ * - Armas: v3_userdata/{userId}/armas/{armaId}.jpg
+ * - Licencias: v3_userdata/{userId}/licencias/{licenciaId}.jpg
+ * - Compras: v3_userdata/{userId}/compras/{compraId}.jpg
  *
  * @since v3.2.2 (Image Upload Feature)
+ * @since v3.2.2 (Extended for Licencias)
+ * @since v3.2.3 (Extended for Compras)
  */
 interface ImageRepository {
     /**
-     * Sube una imagen a Firebase Storage
+     * Sube una imagen de arma a Firebase Storage
      *
      * @param uri Uri local del archivo de imagen
      * @param userId ID del usuario autenticado
@@ -40,12 +45,60 @@ interface ImageRepository {
     ): Result<ImageUploadResult>
 
     /**
-     * Elimina una imagen de Firebase Storage
+     * Elimina una imagen de arma de Firebase Storage
      *
      * @param storagePath Ruta completa en Storage (ej: v3_userdata/{userId}/armas/{armaId}.jpg)
      * @return Result indicando éxito o fallo
      */
     suspend fun deleteGuiaImage(storagePath: String): Result<Unit>
+
+    /**
+     * Sube una imagen de licencia a Firebase Storage
+     *
+     * @param uri Uri local del archivo de imagen
+     * @param userId ID del usuario autenticado
+     * @param licenciaId ID único de la licencia
+     * @param compressQuality Calidad de compresión JPEG (0-100). Por defecto 80.
+     * @return Result con la URL de descarga pública y el storagePath
+     */
+    suspend fun uploadLicenciaImage(
+        uri: Uri,
+        userId: String,
+        licenciaId: String,
+        compressQuality: Int = 80
+    ): Result<ImageUploadResult>
+
+    /**
+     * Elimina una imagen de licencia de Firebase Storage
+     *
+     * @param storagePath Ruta completa en Storage
+     * @return Result indicando éxito o fallo
+     */
+    suspend fun deleteLicenciaImage(storagePath: String): Result<Unit>
+
+    /**
+     * Sube una imagen de compra a Firebase Storage
+     *
+     * @param uri Uri local del archivo de imagen
+     * @param userId ID del usuario autenticado
+     * @param compraId ID único de la compra
+     * @param compressQuality Calidad de compresión JPEG (0-100). Por defecto 80.
+     * @return Result con la URL de descarga pública y el storagePath
+     */
+    suspend fun uploadCompraImage(
+        uri: Uri,
+        userId: String,
+        compraId: String,
+        compressQuality: Int = 80
+    ): Result<ImageUploadResult>
+
+    /**
+     * Elimina una imagen de compra de Firebase Storage
+     *
+     * @param storagePath Ruta completa en Storage
+     * @return Result indicando éxito o fallo
+     */
+    suspend fun deleteCompraImage(storagePath: String): Result<Unit>
 
     /**
      * Obtiene la URL de descarga de una imagen existente
@@ -81,18 +134,84 @@ class ImageRepositoryImpl @Inject constructor(
         private const val TAG = "ImageRepository"
         private const val STORAGE_VERSION = "v3_userdata"
         private const val ARMAS_FOLDER = "armas"
+        private const val LICENCIAS_FOLDER = "licencias"
+        private const val COMPRAS_FOLDER = "compras"
         private const val MAX_IMAGE_DIMENSION = 1920 // Máximo ancho/alto para redimensionar
         private const val IMAGE_EXTENSION = ".jpg"
     }
+
+    // ==================== GUÍAS (ARMAS) ====================
 
     override suspend fun uploadGuiaImage(
         uri: Uri,
         userId: String,
         armaId: String,
         compressQuality: Int
+    ): Result<ImageUploadResult> = uploadImage(
+        uri = uri,
+        userId = userId,
+        entityId = armaId,
+        folder = ARMAS_FOLDER,
+        entityType = "arma",
+        compressQuality = compressQuality
+    )
+
+    override suspend fun deleteGuiaImage(storagePath: String): Result<Unit> = 
+        deleteImage(storagePath)
+
+    // ==================== LICENCIAS ====================
+
+    override suspend fun uploadLicenciaImage(
+        uri: Uri,
+        userId: String,
+        licenciaId: String,
+        compressQuality: Int
+    ): Result<ImageUploadResult> = uploadImage(
+        uri = uri,
+        userId = userId,
+        entityId = licenciaId,
+        folder = LICENCIAS_FOLDER,
+        entityType = "licencia",
+        compressQuality = compressQuality
+    )
+
+    override suspend fun deleteLicenciaImage(storagePath: String): Result<Unit> = 
+        deleteImage(storagePath)
+
+    // ==================== COMPRAS ====================
+
+    override suspend fun uploadCompraImage(
+        uri: Uri,
+        userId: String,
+        compraId: String,
+        compressQuality: Int
+    ): Result<ImageUploadResult> = uploadImage(
+        uri = uri,
+        userId = userId,
+        entityId = compraId,
+        folder = COMPRAS_FOLDER,
+        entityType = "compra",
+        compressQuality = compressQuality
+    )
+
+    override suspend fun deleteCompraImage(storagePath: String): Result<Unit> = 
+        deleteImage(storagePath)
+
+    // ==================== MÉTODOS COMUNES ====================
+
+    /**
+     * Sube una imagen genérica a Firebase Storage
+     */
+    private suspend fun uploadImage(
+        uri: Uri,
+        userId: String,
+        entityId: String,
+        folder: String,
+        entityType: String,
+        compressQuality: Int
     ): Result<ImageUploadResult> = withContext(Dispatchers.IO) {
         try {
-            Log.d(TAG, "Starting upload for armaId=$armaId, userId=$userId")
+            Log.d(TAG, "Starting upload for $entityType=$entityId, userId=$userId")
 
             // 1. Comprimir imagen
             val compressedBytes = compressImage(uri, compressQuality)
@@ -103,7 +222,7 @@ class ImageRepositoryImpl @Inject constructor(
             Log.d(TAG, "Image compressed: ${compressedBytes.size} bytes")
 
             // 2. Construir ruta de almacenamiento
-            val storagePath = buildStoragePath(userId, armaId)
+            val storagePath = buildStoragePath(userId, entityId, folder)
             val storageRef = firebaseStorage.reference.child(storagePath)
 
             Log.d(TAG, "Uploading to: $storagePath")
@@ -127,13 +246,16 @@ class ImageRepositoryImpl @Inject constructor(
             )
         } catch (e: Exception) {
             Log.e(TAG, "Upload failed: ${e.message}", e)
-            crashlytics.log("Image upload failed for armaId=$armaId: ${e.message}")
+            crashlytics.log("Image upload failed for $entityType=$entityId: ${e.message}")
             crashlytics.recordException(e)
             Result.failure(e)
         }
     }
 
-    override suspend fun deleteGuiaImage(storagePath: String): Result<Unit> = withContext(Dispatchers.IO) {
+    /**
+     * Elimina una imagen de Firebase Storage
+     */
+    private suspend fun deleteImage(storagePath: String): Result<Unit> = withContext(Dispatchers.IO) {
         try {
             if (storagePath.isBlank()) {
                 Log.w(TAG, "Attempted to delete with blank storagePath")
@@ -247,9 +369,9 @@ class ImageRepositoryImpl @Inject constructor(
     /**
      * Construye la ruta de almacenamiento según la especificación
      *
-     * Formato: v3_userdata/{userId}/armas/{armaId}.jpg
+     * Formato: v3_userdata/{userId}/{folder}/{entityId}.jpg
      */
-    private fun buildStoragePath(userId: String, armaId: String): String {
-        return "$STORAGE_VERSION/$userId/$ARMAS_FOLDER/$armaId$IMAGE_EXTENSION"
+    private fun buildStoragePath(userId: String, entityId: String, folder: String = ARMAS_FOLDER): String {
+        return "$STORAGE_VERSION/$userId/$folder/$entityId$IMAGE_EXTENSION"
     }
 }

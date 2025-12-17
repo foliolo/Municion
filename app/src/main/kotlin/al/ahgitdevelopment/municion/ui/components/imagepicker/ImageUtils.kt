@@ -28,7 +28,7 @@ import java.util.Locale
  * 3. Pasar Uri a TakePicture contract
  * 4. Procesar imagen con processAndCorrectOrientation()
  * 
- * @since v3.3.0
+ * @since v3.2.2
  */
 object ImageUtils {
     

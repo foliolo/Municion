@@ -4,9 +4,9 @@ import al.ahgitdevelopment.municion.R
 import al.ahgitdevelopment.municion.ui.auth.LoginScreen
 import al.ahgitdevelopment.municion.ui.auth.MigrationScreen
 import al.ahgitdevelopment.municion.ui.compras.ComprasContent
-import al.ahgitdevelopment.municion.ui.forms.CompraFormContent
-import al.ahgitdevelopment.municion.ui.forms.LicenciaFormContent
-import al.ahgitdevelopment.municion.ui.forms.TiradaFormContent
+import al.ahgitdevelopment.municion.ui.forms.compra.CompraFormContent
+import al.ahgitdevelopment.municion.ui.forms.licencia.LicenciaFormScreen
+import al.ahgitdevelopment.municion.ui.forms.tirada.TiradaFormContent
 import al.ahgitdevelopment.municion.ui.forms.guia.GuiaFormScreen
 import al.ahgitdevelopment.municion.ui.guias.GuiasContent
 import al.ahgitdevelopment.municion.ui.licencias.LicenciasContent
@@ -149,7 +149,7 @@ fun MunicionNavHost(
                 }
                 return@composable  // Early return
             }
-            LicenciaFormContent(
+            LicenciaFormScreen(
                 licencia = route.licencia,
                 navController = navController,
                 snackbarHostState = snackbarHostState,

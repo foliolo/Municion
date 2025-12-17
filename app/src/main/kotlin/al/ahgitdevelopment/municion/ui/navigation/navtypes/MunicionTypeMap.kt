@@ -27,7 +27,7 @@ import kotlin.reflect.typeOf
  * }
  * ```
  *
- * @since v3.3.0 (NavType Architecture Migration)
+ * @since v3.2.2 (NavType Architecture Migration)
  */
 val municionTypeMap: Map<KType, NavType<*>> = mapOf(
     // Licencia (nullable y non-nullable)

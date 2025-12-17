@@ -78,7 +78,15 @@ data class Licencia(
     val escala: Int = -1,
 
     @ColumnInfo(name = "categoria")
-    val categoria: Int = -1
+    val categoria: Int = -1,
+
+    /** URL de descarga de Firebase Storage para la foto de la licencia */
+    @ColumnInfo(name = "foto_url")
+    val fotoUrl: String? = null,
+
+    /** Ruta en Firebase Storage para facilitar el borrado (v3_userdata/{userId}/licencias/{id}.jpg) */
+    @ColumnInfo(name = "storage_path")
+    val storagePath: String? = null
 ) : Parcelable {
 
     // NOTA: NO usar init{require()} aquí porque rompe la deserialización JSON

@@ -33,6 +33,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -42,6 +43,8 @@ import al.ahgitdevelopment.municion.data.local.room.entities.Licencia
 import al.ahgitdevelopment.municion.ui.theme.LicenseExpired
 import al.ahgitdevelopment.municion.ui.theme.LicenseExpiring
 import al.ahgitdevelopment.municion.ui.theme.LicenseValid
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 
 /**
  * Item de Licencia para mostrar en LazyColumn.
@@ -124,26 +127,40 @@ fun LicenciaItem(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(16.dp),
+                    .padding(12.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                // Icono con indicador de estado
+                // Imagen o icono (ampliado a 64dp como en GuiaItem)
                 Box(
                     modifier = Modifier
-                        .size(48.dp)
+                        .size(64.dp)
                         .clip(RoundedCornerShape(8.dp))
                         .background(statusColor.copy(alpha = 0.15f)),
                     contentAlignment = Alignment.Center
                 ) {
-                    Icon(
-                        imageVector = Icons.Default.Badge,
-                        contentDescription = null,
-                        tint = statusColor,
-                        modifier = Modifier.size(28.dp)
-                    )
+                    if (!licencia.fotoUrl.isNullOrBlank()) {
+                        // Mostrar imagen de Firebase Storage
+                        AsyncImage(
+                            model = ImageRequest.Builder(context)
+                                .data(licencia.fotoUrl)
+                                .crossfade(true)
+                                .build(),
+                            contentDescription = stringResource(R.string.content_description_license_image),
+                            modifier = Modifier.fillMaxSize(),
+                            contentScale = ContentScale.Crop
+                        )
+                    } else {
+                        // Mostrar icono por defecto
+                        Icon(
+                            imageVector = Icons.Default.Badge,
+                            contentDescription = null,
+                            tint = statusColor,
+                            modifier = Modifier.size(36.dp)
+                        )
+                    }
                 }
 
-                Spacer(modifier = Modifier.width(16.dp))
+                Spacer(modifier = Modifier.width(12.dp))
 
                 // Contenido
                 Column(modifier = Modifier.weight(1f)) {

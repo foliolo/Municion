@@ -89,7 +89,7 @@ data class ImagePickerState(
  * @param label Etiqueta mostrada sobre el selector
  * @param imageSize Tamaño del contenedor de imagen
  * 
- * @since v3.3.0
+ * @since v3.2.2
  */
 @Composable
 fun ImagePickerWithCamera(

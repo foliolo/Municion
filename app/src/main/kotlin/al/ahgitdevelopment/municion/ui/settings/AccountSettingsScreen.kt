@@ -287,7 +287,9 @@ private fun LoadedContent(
                             )
                             if (!isAdsRemoved) {
                                 Text(
-                                    text = if (isPurchaseAvailable) stringResource(R.string.remove_ads_description) else stringResource(R.string.loading_info),
+                                    text = if (isPurchaseAvailable) stringResource(R.string.remove_ads_description) else stringResource(
+                                        R.string.loading_info
+                                    ),
                                     style = MaterialTheme.typography.bodySmall,
                                     color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
                                 )
@@ -406,7 +408,11 @@ private fun LoadedContent(
             ) {
                 Icon(Icons.AutoMirrored.Filled.Logout, contentDescription = null)
                 Spacer(modifier = Modifier.size(8.dp))
-                Text(stringResource(R.string.sign_out))
+                Text(
+                    text = stringResource(R.string.sign_out),
+                    modifier = Modifier.padding(8.dp),
+                    style = MaterialTheme.typography.titleMedium
+                )
             }
 
             Spacer(modifier = Modifier.height(16.dp))

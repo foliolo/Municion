@@ -375,6 +375,11 @@
     <string name="cd_previous">Previous</string>
     <string name="cd_next">Next</string>
     <string name="content_description_weapon_image">Weapon image</string>
+    <string name="content_description_license_image">License image</string>
+    <string name="content_description_ammunition_image">Ammunition image</string>
+    <string name="label_license_photo">License photo</string>
+    <string name="label_ammunition_photo">Ammunition photo</string>
+    <string name="image_section_ammunition">Ammunition photo</string>
 
     <!-- Image Picker (v3.3.0) -->
     <string name="dialog_select_image_source">Select image</string>

@@ -32,7 +32,7 @@ import javax.inject.Inject
  * - Eventos unidireccionales (GuiaFormEvent)
  * - Efectos secundarios (navegación, snackbars)
  *
- * @since v3.3.0 (Form Architecture Refactor)
+ * @since v3.2.2 (Form Architecture Refactor)
  */
 @HiltViewModel
 class GuiaFormViewModel @Inject constructor(

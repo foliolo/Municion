@@ -23,7 +23,7 @@ import kotlinx.serialization.json.Json
  * IMPORTANTE: Usamos Uri.encode/decode SOLO en serializeAsValue/parseValue
  * para que la URL de navegación sea válida. El JSON interno se mantiene intacto.
  *
- * @since v3.3.0 (NavType Architecture Migration)
+ * @since v3.2.2 (NavType Architecture Migration)
  */
 
 inline fun <reified T : Any> createJsonNavType(isNullableAllowed: Boolean = true): NavType<T?> {

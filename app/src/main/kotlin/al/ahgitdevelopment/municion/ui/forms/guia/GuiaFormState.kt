@@ -9,7 +9,7 @@ import android.net.Uri
  * Encapsula todos los campos del formulario y sus errores de validación.
  * Inmutable - cada cambio genera una nueva instancia.
  *
- * @since v3.3.0 (Form Architecture Refactor)
+ * @since v3.2.2 (Form Architecture Refactor)
  */
 data class GuiaFormState(
     // Campos del formulario

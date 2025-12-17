@@ -237,6 +237,8 @@ class CompraRepository @Inject constructor(
         val tienda = map["tienda"] as? String
         val valoracion = (map["valoracion"] as? Number)?.toFloat() ?: 0f
         val imagePath = map["imagePath"] as? String
+        val fotoUrl = map["fotoUrl"] as? String
+        val storagePath = map["storagePath"] as? String
 
         return try {
             Compra(
@@ -252,7 +254,9 @@ class CompraRepository @Inject constructor(
                 marca = marca,
                 tienda = tienda,
                 valoracion = valoracion.coerceIn(0f, 5f),
-                imagePath = imagePath
+                imagePath = imagePath,
+                fotoUrl = fotoUrl,
+                storagePath = storagePath
             )
         } catch (e: Exception) {
             reportFieldError(itemKey, "constructor", e.message ?: "Unknown", null, parseErrors)

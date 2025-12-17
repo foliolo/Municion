@@ -389,6 +389,11 @@
     <string name="cd_previous">Anterior</string>
     <string name="cd_next">Siguiente</string>
     <string name="content_description_weapon_image">Imagen del arma</string>
+    <string name="content_description_license_image">Imagen de la licencia</string>
+    <string name="content_description_ammunition_image">Imagen de la munición</string>
+    <string name="label_license_photo">Foto de la licencia</string>
+    <string name="label_ammunition_photo">Foto de la munición</string>
+    <string name="image_section_ammunition">Foto de la munición</string>
 
     <!-- Image Picker (v3.3.0) -->
     <string name="dialog_select_image_source">Seleccionar imagen</string>

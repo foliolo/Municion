@@ -58,7 +58,7 @@ import kotlinx.coroutines.flow.collectLatest
  * @param onRegisterSaveCallback Callback para registrar función de guardado
  * @param viewModel ViewModel del formulario
  *
- * @since v3.3.0 (Form Architecture Refactor)
+ * @since v3.2.2 (Form Architecture Refactor)
  */
 @Composable
 fun GuiaFormScreen(

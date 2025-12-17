@@ -67,7 +67,7 @@ private val tutorialImages = listOf(
  *
  * @param onDismiss Callback cuando se cierra el dialog
  *
- * @since v3.3.0 (Tutorial feature)
+ * @since v3.2.1 (Tutorial feature)
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

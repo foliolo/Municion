@@ -78,7 +78,13 @@ data class Compra(
     val valoracion: Float = 0f,
 
     @ColumnInfo(name = "image_path")
-    val imagePath: String? = null  // Nullable - campo opcional
+    val imagePath: String? = null,  // Nullable - campo opcional (legacy local path)
+
+    @ColumnInfo(name = "foto_url")
+    val fotoUrl: String? = null,  // URL pública de Firebase Storage
+
+    @ColumnInfo(name = "storage_path")
+    val storagePath: String? = null  // Ruta en Storage para borrado
 ) : Parcelable {
 
     // NOTA: NO usar init{require()} aquí porque rompe la deserialización JSON
@@ -104,9 +110,14 @@ data class Compra(
     }
 
     /**
-     * Verifica si la compra tiene imagen
+     * Verifica si la compra tiene imagen (Firebase o legacy)
      */
-    fun hasImage(): Boolean = !imagePath.isNullOrBlank()
+    fun hasImage(): Boolean = !fotoUrl.isNullOrBlank() || !imagePath.isNullOrBlank()
+
+    /**
+     * URL de imagen preferida (Firebase sobre legacy)
+     */
+    fun getImageUrl(): String? = fotoUrl ?: imagePath
 
     /**
      * Formatea el precio para mostrar

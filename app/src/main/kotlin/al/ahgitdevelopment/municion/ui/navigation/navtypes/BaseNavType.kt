@@ -20,7 +20,7 @@ import kotlin.reflect.KClass
  * @param serializer KSerializer para kotlinx.serialization
  * @param type KClass del tipo T
  *
- * @since v3.3.0 (NavType Architecture Migration)
+ * @since v3.2.2 (NavType Architecture Migration)
  */
 abstract class BaseNavType<T : Parcelable>(
     isNullableAllowed: Boolean = true,
