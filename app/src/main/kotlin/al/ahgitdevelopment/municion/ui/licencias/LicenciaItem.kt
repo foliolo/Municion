@@ -3,6 +3,7 @@ package al.ahgitdevelopment.municion.ui.licencias
 import al.ahgitdevelopment.municion.R
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -56,14 +57,17 @@ import coil.request.ImageRequest
  * - Fecha de caducidad con estado visual
  * - Swipe-to-delete
  * - Long-press para editar
+ * - Click en imagen para ver en grande
  *
  * @param licencia Datos de la licencia
  * @param onClick Callback para click simple
  * @param onLongClick Callback para long-press (editar)
  * @param onDelete Callback para swipe-to-delete
+ * @param onImageClick Callback para click en la imagen (null si no tiene imagen)
  * @param modifier Modificador opcional
  *
  * @since v3.0.0 (Compose Migration)
+ * @since v3.2.3 (Added image click to zoom)
  */
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
@@ -72,6 +76,7 @@ fun LicenciaItem(
     onClick: () -> Unit,
     onLongClick: () -> Unit,
     onDelete: () -> Unit,
+    onImageClick: ((String) -> Unit)? = null,
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
@@ -135,7 +140,14 @@ fun LicenciaItem(
                     modifier = Modifier
                         .size(64.dp)
                         .clip(RoundedCornerShape(8.dp))
-                        .background(statusColor.copy(alpha = 0.15f)),
+                        .background(statusColor.copy(alpha = 0.15f))
+                        .then(
+                            if (!licencia.fotoUrl.isNullOrBlank() && onImageClick != null) {
+                                Modifier.clickable { onImageClick(licencia.fotoUrl!!) }
+                            } else {
+                                Modifier
+                            }
+                        ),
                     contentAlignment = Alignment.Center
                 ) {
                     if (!licencia.fotoUrl.isNullOrBlank()) {

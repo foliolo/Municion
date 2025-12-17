@@ -1,6 +1,15 @@
 package al.ahgitdevelopment.municion.ui.compras
 
 import al.ahgitdevelopment.municion.R
+import al.ahgitdevelopment.municion.data.local.room.entities.Compra
+import al.ahgitdevelopment.municion.ui.components.DeleteConfirmationDialog
+import al.ahgitdevelopment.municion.ui.components.EmptyState
+import al.ahgitdevelopment.municion.ui.components.ZoomableImageDialog
+import al.ahgitdevelopment.municion.ui.navigation.CompraForm
+import al.ahgitdevelopment.municion.ui.navigation.navtypes.navigateSafely
+import al.ahgitdevelopment.municion.ui.theme.MunicionTheme
+import al.ahgitdevelopment.municion.ui.viewmodel.CompraViewModel
+import al.ahgitdevelopment.municion.ui.viewmodel.GuiaViewModel
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -20,15 +29,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
-import al.ahgitdevelopment.municion.data.local.room.entities.Compra
-import al.ahgitdevelopment.municion.ui.components.DeleteConfirmationDialog
-import al.ahgitdevelopment.municion.ui.components.EmptyState
-import al.ahgitdevelopment.municion.ui.navigation.CompraForm
-import al.ahgitdevelopment.municion.ui.navigation.Route
-import al.ahgitdevelopment.municion.ui.navigation.navtypes.navigateSafely
-import al.ahgitdevelopment.municion.ui.theme.MunicionTheme
-import al.ahgitdevelopment.municion.ui.viewmodel.CompraViewModel
-import al.ahgitdevelopment.municion.ui.viewmodel.GuiaViewModel
 
 /**
  * Contenido de la pantalla de Compras para Single Scaffold Architecture.
@@ -56,6 +56,7 @@ fun ComprasContent(
     val uiState by compraViewModel.uiState.collectAsStateWithLifecycle()
 
     var compraToDelete by remember { mutableStateOf<Compra?>(null) }
+    var imageUrlToShow by remember { mutableStateOf<String?>(null) }
 
     // Mostrar mensajes de UiState
     LaunchedEffect(uiState) {
@@ -89,6 +90,15 @@ fun ComprasContent(
         )
     }
 
+    // Dialog de imagen con zoom
+    imageUrlToShow?.let { imageUrl ->
+        ZoomableImageDialog(
+            imageUrl = imageUrl,
+            contentDescription = stringResource(R.string.content_description_ammunition_image),
+            onDismiss = { imageUrlToShow = null }
+        )
+    }
+
     ComprasListContent(
         compras = compras,
         onItemClick = { /* Info */ },
@@ -106,7 +116,8 @@ fun ComprasContent(
                 )
             }
         },
-        onDeleteClick = { compra -> compraToDelete = compra }
+        onDeleteClick = { compra -> compraToDelete = compra },
+        onImageClick = { url -> imageUrlToShow = url }
     )
 }
 
@@ -121,9 +132,11 @@ fun ComprasContent(
  * @param onItemClick Callback para click en item
  * @param onItemLongClick Callback para long-press (editar)
  * @param onDeleteClick Callback para swipe-to-delete
+ * @param onImageClick Callback para click en imagen (mostrar zoom)
  * @param modifier Modificador opcional
  *
  * @since v3.0.0 (Compose Migration - Single Scaffold Architecture)
+ * @since v3.2.3 (Added image click to zoom)
  */
 @Composable
 fun ComprasListContent(
@@ -131,6 +144,7 @@ fun ComprasListContent(
     onItemClick: (Compra) -> Unit,
     onItemLongClick: (Compra) -> Unit,
     onDeleteClick: (Compra) -> Unit,
+    onImageClick: (String) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     if (compras.isEmpty()) {
@@ -154,6 +168,7 @@ fun ComprasListContent(
                     onClick = { onItemClick(compra) },
                     onLongClick = { onItemLongClick(compra) },
                     onDelete = { onDeleteClick(compra) },
+                    onImageClick = onImageClick,
                     modifier = Modifier.padding(vertical = 4.dp)
                 )
             }

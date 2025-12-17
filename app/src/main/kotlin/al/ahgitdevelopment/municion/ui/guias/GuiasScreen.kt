@@ -4,6 +4,7 @@ import al.ahgitdevelopment.municion.R
 import al.ahgitdevelopment.municion.data.local.room.entities.Guia
 import al.ahgitdevelopment.municion.ui.components.DeleteConfirmationDialog
 import al.ahgitdevelopment.municion.ui.components.EmptyState
+import al.ahgitdevelopment.municion.ui.components.ZoomableImageDialog
 import al.ahgitdevelopment.municion.ui.navigation.GuiaForm
 import al.ahgitdevelopment.municion.ui.navigation.navtypes.navigateSafely
 import al.ahgitdevelopment.municion.ui.theme.MunicionTheme
@@ -53,6 +54,7 @@ fun GuiasContent(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     var guiaToDelete by remember { mutableStateOf<Guia?>(null) }
+    var imageUrlToShow by remember { mutableStateOf<String?>(null) }
 
     // Mostrar mensajes de UiState
     LaunchedEffect(uiState) {
@@ -88,6 +90,15 @@ fun GuiasContent(
         )
     }
 
+    // Dialog de imagen con zoom
+    imageUrlToShow?.let { imageUrl ->
+        ZoomableImageDialog(
+            imageUrl = imageUrl,
+            contentDescription = stringResource(R.string.content_description_weapon_image),
+            onDismiss = { imageUrlToShow = null }
+        )
+    }
+
     GuiasListContent(
         guias = guias,
         onItemClick = { /* Info */ },
@@ -101,7 +112,8 @@ fun GuiasContent(
                 )
             )
         },
-        onDeleteClick = { guia -> guiaToDelete = guia }
+        onDeleteClick = { guia -> guiaToDelete = guia },
+        onImageClick = { url -> imageUrlToShow = url }
     )
 }
 
@@ -116,9 +128,11 @@ fun GuiasContent(
  * @param onItemClick Callback para click en item
  * @param onItemLongClick Callback para long-press (editar)
  * @param onDeleteClick Callback para swipe-to-delete
+ * @param onImageClick Callback para click en imagen (mostrar zoom)
  * @param modifier Modificador opcional
  *
  * @since v3.0.0 (Compose Migration - Single Scaffold Architecture)
+ * @since v3.2.3 (Added image click to zoom)
  */
 @Composable
 fun GuiasListContent(
@@ -126,6 +140,7 @@ fun GuiasListContent(
     onItemClick: (Guia) -> Unit,
     onItemLongClick: (Guia) -> Unit,
     onDeleteClick: (Guia) -> Unit,
+    onImageClick: (String) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     if (guias.isEmpty()) {
@@ -149,6 +164,7 @@ fun GuiasListContent(
                     onClick = { onItemClick(guia) },
                     onLongClick = { onItemLongClick(guia) },
                     onDelete = { onDeleteClick(guia) },
+                    onImageClick = onImageClick,
                     modifier = Modifier.padding(vertical = 4.dp)
                 )
             }

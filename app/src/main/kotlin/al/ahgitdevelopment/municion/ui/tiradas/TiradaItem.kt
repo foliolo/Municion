@@ -1,6 +1,11 @@
 package al.ahgitdevelopment.municion.ui.tiradas
 
 import al.ahgitdevelopment.municion.R
+import al.ahgitdevelopment.municion.data.local.room.entities.Tirada
+import al.ahgitdevelopment.municion.ui.theme.LicenseExpired
+import al.ahgitdevelopment.municion.ui.theme.LicenseExpiring
+import al.ahgitdevelopment.municion.ui.theme.LicenseValid
+import al.ahgitdevelopment.municion.ui.theme.Tertiary
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
@@ -18,7 +23,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.SportsScore
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -33,15 +37,12 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import al.ahgitdevelopment.municion.data.local.room.entities.Tirada
-import al.ahgitdevelopment.municion.ui.theme.LicenseExpired
-import al.ahgitdevelopment.municion.ui.theme.LicenseExpiring
-import al.ahgitdevelopment.municion.ui.theme.LicenseValid
-import al.ahgitdevelopment.municion.ui.theme.Tertiary
 
 /**
  * Item de Tirada para mostrar en LazyColumn.
@@ -58,10 +59,10 @@ import al.ahgitdevelopment.municion.ui.theme.Tertiary
 @Composable
 fun TiradaItem(
     tirada: Tirada,
-    onClick: () -> Unit,
-    onLongClick: () -> Unit,
-    onDelete: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit = {},
+    onLongClick: () -> Unit = {},
+    onDelete: () -> Unit = {},
 ) {
     val dismissState = rememberSwipeToDismissBoxState()
 
@@ -126,7 +127,7 @@ fun TiradaItem(
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
-                        imageVector = Icons.Default.SportsScore,
+                        painter = painterResource(R.drawable.outline_social_leaderboard_24),
                         contentDescription = null,
                         tint = Tertiary,
                         modifier = Modifier.size(28.dp)
@@ -180,4 +181,15 @@ fun TiradaItem(
             }
         }
     }
+}
+
+@Preview
+@Composable
+private fun TiradaItemPreview() {
+    TiradaItem(
+        tirada = Tirada(
+            descripcion = "Description",
+            fecha = "12/12/2025"
+        ),
+    )
 }

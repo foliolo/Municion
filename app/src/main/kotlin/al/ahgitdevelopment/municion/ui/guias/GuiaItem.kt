@@ -1,8 +1,14 @@
 package al.ahgitdevelopment.municion.ui.guias
 
 import al.ahgitdevelopment.municion.R
+import al.ahgitdevelopment.municion.data.local.room.entities.Guia
+import al.ahgitdevelopment.municion.ui.theme.LicenseExpired
+import al.ahgitdevelopment.municion.ui.theme.LicenseExpiring
+import al.ahgitdevelopment.municion.ui.theme.LicenseValid
+import al.ahgitdevelopment.municion.ui.theme.Primary
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -29,7 +35,6 @@ import androidx.compose.material3.SwipeToDismissBox
 import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberSwipeToDismissBoxState
-import androidx.compose.ui.res.stringResource
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
@@ -37,14 +42,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import al.ahgitdevelopment.municion.data.local.room.entities.Guia
-import al.ahgitdevelopment.municion.ui.theme.LicenseExpired
-import al.ahgitdevelopment.municion.ui.theme.LicenseExpiring
-import al.ahgitdevelopment.municion.ui.theme.LicenseValid
-import al.ahgitdevelopment.municion.ui.theme.Primary
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 
@@ -55,10 +56,12 @@ import coil.request.ImageRequest
  * @param onClick Callback para click simple
  * @param onLongClick Callback para long-press (editar)
  * @param onDelete Callback para swipe-to-delete
+ * @param onImageClick Callback para click en la imagen (null si no tiene imagen)
  * @param modifier Modificador opcional
  *
  * @since v3.0.0 (Compose Migration)
  * @since v3.2.2 (Image display feature)
+ * @since v3.2.3 (Added image click to zoom)
  */
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
@@ -67,6 +70,7 @@ fun GuiaItem(
     onClick: () -> Unit,
     onLongClick: () -> Unit,
     onDelete: () -> Unit,
+    onImageClick: ((String) -> Unit)? = null,
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
@@ -124,17 +128,26 @@ fun GuiaItem(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 // Imagen del arma o icono por defecto
+                val hasValidImage = guia.hasImage()
+                val imageUrl = if (hasValidImage) {
+                    fixFirebaseStorageUrl(guia.fotoUrl ?: guia.imagePath ?: "")
+                } else ""
+                
                 Box(
                     modifier = Modifier
                         .size(72.dp)
                         .clip(RoundedCornerShape(8.dp))
-                        .background(Primary.copy(alpha = 0.15f)),
+                        .background(Primary.copy(alpha = 0.15f))
+                        .then(
+                            if (hasValidImage && onImageClick != null) {
+                                Modifier.clickable { onImageClick(imageUrl) }
+                            } else {
+                                Modifier
+                            }
+                        ),
                     contentAlignment = Alignment.Center
                 ) {
-                    if (guia.hasImage()) {
-                        // Corregir URL de Firebase Storage si es necesario
-                        val imageUrl = fixFirebaseStorageUrl(guia.fotoUrl ?: guia.imagePath ?: "")
-                        
+                    if (hasValidImage) {
                         // Mostrar imagen del arma
                         AsyncImage(
                             model = ImageRequest.Builder(context)

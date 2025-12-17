@@ -5,6 +5,7 @@ import al.ahgitdevelopment.municion.data.local.room.entities.Compra
 import al.ahgitdevelopment.municion.ui.theme.Secondary
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -52,10 +53,11 @@ import coil.request.ImageRequest
  * @param onClick Callback para click simple
  * @param onLongClick Callback para long-press (editar)
  * @param onDelete Callback para swipe-to-delete
+ * @param onImageClick Callback para click en la imagen (null si no tiene imagen)
  * @param modifier Modificador opcional
  *
  * @since v3.0.0 (Compose Migration)
- * @since v3.2.3 (Added image support)
+ * @since v3.2.3 (Added image support and click to zoom)
  */
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
@@ -64,6 +66,7 @@ fun CompraItem(
     onClick: () -> Unit,
     onLongClick: () -> Unit,
     onDelete: () -> Unit,
+    onImageClick: ((String) -> Unit)? = null,
     modifier: Modifier = Modifier
 ) {
     val dismissState = rememberSwipeToDismissBoxState()
@@ -113,15 +116,24 @@ fun CompraItem(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 // Imagen o icono por defecto (tamaño ampliado: 64dp)
+                val imageUrl = compra.getImageUrl()
+                val hasValidImage = !imageUrl.isNullOrBlank()
+                
                 Box(
                     modifier = Modifier
                         .size(64.dp)
                         .clip(RoundedCornerShape(8.dp))
-                        .background(Secondary.copy(alpha = 0.15f)),
+                        .background(Secondary.copy(alpha = 0.15f))
+                        .then(
+                            if (hasValidImage && onImageClick != null) {
+                                Modifier.clickable { onImageClick(imageUrl!!) }
+                            } else {
+                                Modifier
+                            }
+                        ),
                     contentAlignment = Alignment.Center
                 ) {
-                    val imageUrl = compra.getImageUrl()
-                    if (!imageUrl.isNullOrBlank()) {
+                    if (hasValidImage) {
                         AsyncImage(
                             model = ImageRequest.Builder(LocalContext.current)
                                 .data(imageUrl)
