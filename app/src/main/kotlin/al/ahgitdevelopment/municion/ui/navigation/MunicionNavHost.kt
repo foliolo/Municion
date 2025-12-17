@@ -1,18 +1,6 @@
 package al.ahgitdevelopment.municion.ui.navigation
 
 import al.ahgitdevelopment.municion.R
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.SnackbarHostState
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.toRoute
-import al.ahgitdevelopment.municion.ui.navigation.navtypes.municionTypeMap
 import al.ahgitdevelopment.municion.ui.auth.LoginScreen
 import al.ahgitdevelopment.municion.ui.auth.MigrationScreen
 import al.ahgitdevelopment.municion.ui.compras.ComprasContent
@@ -22,8 +10,21 @@ import al.ahgitdevelopment.municion.ui.forms.LicenciaFormContent
 import al.ahgitdevelopment.municion.ui.forms.TiradaFormContent
 import al.ahgitdevelopment.municion.ui.guias.GuiasContent
 import al.ahgitdevelopment.municion.ui.licencias.LicenciasContent
+import al.ahgitdevelopment.municion.ui.navigation.navtypes.municionTypeMap
 import al.ahgitdevelopment.municion.ui.settings.AccountSettingsContent
 import al.ahgitdevelopment.municion.ui.tiradas.TiradasContent
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalResources
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.toRoute
 
 /**
  * NavHost principal de la aplicacion Municion.
@@ -58,6 +59,8 @@ fun MunicionNavHost(
     onAuthStateChange: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
+
+    val resources = LocalResources.current
     NavHost(
         navController = navController,
         startDestination = startDestination,
@@ -138,13 +141,12 @@ fun MunicionNavHost(
         composable<LicenciaForm>(
             typeMap = municionTypeMap
         ) { backStackEntry ->
-            val context = LocalContext.current
             val route: LicenciaForm = try {
                 backStackEntry.toRoute<LicenciaForm>()
             } catch (e: Exception) {
                 // Fallback: navegar back si hay error de deserialización
                 LaunchedEffect(Unit) {
-                    snackbarHostState.showSnackbar(context.getString(R.string.error_loading_license_form))
+                    snackbarHostState.showSnackbar(resources.getString(R.string.error_loading_license_form))
                     navController.popBackStack()
                 }
                 return@composable  // Early return
@@ -180,7 +182,7 @@ fun MunicionNavHost(
             )
         }
 
-        // CompraForm: objeto completo Compra (null para nueva) + Guia obligatoria
+        // CompraForm: objeto completo Compra (null para nueva) + Guia asociada
         composable<CompraForm>(
             typeMap = municionTypeMap
         ) { backStackEntry ->
@@ -189,6 +191,15 @@ fun MunicionNavHost(
                 backStackEntry.toRoute<CompraForm>()
             } catch (e: Exception) {
                 LaunchedEffect(Unit) {
+                    snackbarHostState.showSnackbar(resources.getString(R.string.error_loading_purchase_form))
+                    navController.popBackStack()
+                }
+                return@composable
+            }
+            // Validar que guia no sea null (requerida para el formulario)
+            val guia = route.guia
+            if (guia == null) {
+                LaunchedEffect(Unit) {
                     snackbarHostState.showSnackbar(context.getString(R.string.error_loading_purchase_form))
                     navController.popBackStack()
                 }
@@ -196,7 +207,7 @@ fun MunicionNavHost(
             }
             CompraFormContent(
                 compra = route.compra,
-                guia = route.guia,
+                guia = guia,
                 navController = navController,
                 snackbarHostState = snackbarHostState,
                 onRegisterSaveCallback = onRegisterSaveCallback

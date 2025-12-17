@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
@@ -381,20 +382,10 @@ fun GuiaFormFields(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .padding(horizontal = 16.dp)
+            .padding(16.dp)
             .verticalScroll(rememberScrollState()),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        Spacer(modifier = Modifier.height(8.dp))
-
-        // Selector de imagen del arma
-        GuiaImagePicker(
-            currentImageUrl = currentImageUrl,
-            isUploading = isUploading,
-            uploadProgress = uploadProgress,
-            onSelectImage = onSelectImage,
-            onRemoveImage = onRemoveImage
-        )
 
         // Tipo de arma
         if (tiposArma.isNotEmpty()) {
@@ -535,7 +526,18 @@ fun GuiaFormFields(
             )
         }
 
-        Spacer(modifier = Modifier.height(80.dp))
+        Spacer(modifier = Modifier.height(8.dp))
+
+        // Selector de imagen del arma
+        GuiaImagePicker(
+            currentImageUrl = currentImageUrl,
+            isUploading = isUploading,
+            uploadProgress = uploadProgress,
+            onSelectImage = onSelectImage,
+            onRemoveImage = onRemoveImage
+        )
+
+        Spacer(modifier = Modifier.height(12.dp))
     }
 }
 

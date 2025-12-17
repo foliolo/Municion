@@ -4,7 +4,9 @@ import al.ahgitdevelopment.municion.data.local.room.entities.Compra
 import al.ahgitdevelopment.municion.data.local.room.entities.Guia
 import al.ahgitdevelopment.municion.data.local.room.entities.Licencia
 import al.ahgitdevelopment.municion.data.local.room.entities.Tirada
+import android.net.Uri
 import android.os.Bundle
+import android.os.Parcelable
 import androidx.navigation.NavType
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -25,31 +27,31 @@ inline fun <reified T : Any> createJsonNavType(isNullableAllowed: Boolean = true
     return object : NavType<T?>(isNullableAllowed) {
         override fun get(bundle: Bundle, key: String): T? {
             @Suppress("DEPRECATION")
-            return bundle.getParcelable(key)
+            return bundle.getParcelable(key) as? T
         }
 
         override fun parseValue(value: String): T? {
-            return if (value == "null") {
+            val decodedValue = Uri.decode(value)
+            return if (decodedValue == "null") {
                 null
             } else {
-                Json.decodeFromString<T>(value)
+                Json.decodeFromString<T>(decodedValue)
             }
         }
 
         override fun put(bundle: Bundle, key: String, value: T?) {
-            bundle.putParcelable(key, value as? android.os.Parcelable)
+            bundle.putParcelable(key, value as? Parcelable)
         }
 
         override fun serializeAsValue(value: T?): String {
             return if (value == null) {
                 "null"
             } else {
-                Json.encodeToString(value)
+                Uri.encode(Json.encodeToString(value))
             }
         }
     }
 }
-
 
 val LicenciaNavType: NavType<Licencia?> = createJsonNavType()
 val GuiaNavType: NavType<Guia?> = createJsonNavType()
