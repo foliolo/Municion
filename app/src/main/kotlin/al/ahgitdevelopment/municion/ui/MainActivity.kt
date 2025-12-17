@@ -47,7 +47,7 @@ import javax.inject.Inject
  * - MainScreen contiene NavHost con todas las rutas
  *
  * @since v3.0.0 (Compose Migration)
- * @updated v3.4.0 (Auth Simplification)
+ * @updated v3.2.2 (Auth Simplification)
  */
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -118,7 +118,7 @@ class MainActivity : ComponentActivity() {
  * - Visualizacion de MainScreen cuando esta autenticado
  *
  * @since v3.0.0 (Compose Migration)
- * @updated v3.4.0 (Auth Simplification)
+ * @updated v3.2.2 (Auth Simplification)
  */
 @Composable
 fun MunicionApp(

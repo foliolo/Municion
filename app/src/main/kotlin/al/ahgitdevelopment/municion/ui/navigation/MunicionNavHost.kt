@@ -5,9 +5,9 @@ import al.ahgitdevelopment.municion.ui.auth.LoginScreen
 import al.ahgitdevelopment.municion.ui.auth.MigrationScreen
 import al.ahgitdevelopment.municion.ui.compras.ComprasContent
 import al.ahgitdevelopment.municion.ui.forms.CompraFormContent
-import al.ahgitdevelopment.municion.ui.forms.GuiaFormContent
 import al.ahgitdevelopment.municion.ui.forms.LicenciaFormContent
 import al.ahgitdevelopment.municion.ui.forms.TiradaFormContent
+import al.ahgitdevelopment.municion.ui.forms.guia.GuiaFormScreen
 import al.ahgitdevelopment.municion.ui.guias.GuiasContent
 import al.ahgitdevelopment.municion.ui.licencias.LicenciasContent
 import al.ahgitdevelopment.municion.ui.navigation.navtypes.municionTypeMap
@@ -20,7 +20,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalResources
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -47,7 +46,7 @@ import androidx.navigation.toRoute
  * @param modifier Modificador opcional
  *
  * @since v3.0.0 (Compose Migration - Single Scaffold Architecture)
- * @updated v3.4.0 (Auth Simplification)
+ * @updated v3.2.2 (Auth Simplification)
  */
 @Composable
 fun MunicionNavHost(
@@ -59,8 +58,6 @@ fun MunicionNavHost(
     onAuthStateChange: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
-
-    val resources = LocalResources.current
     NavHost(
         navController = navController,
         startDestination = startDestination,
@@ -141,12 +138,13 @@ fun MunicionNavHost(
         composable<LicenciaForm>(
             typeMap = municionTypeMap
         ) { backStackEntry ->
+            val context = LocalContext.current
             val route: LicenciaForm = try {
                 backStackEntry.toRoute<LicenciaForm>()
             } catch (e: Exception) {
                 // Fallback: navegar back si hay error de deserialización
                 LaunchedEffect(Unit) {
-                    snackbarHostState.showSnackbar(resources.getString(R.string.error_loading_license_form))
+                    snackbarHostState.showSnackbar(context.getString(R.string.error_loading_license_form))
                     navController.popBackStack()
                 }
                 return@composable  // Early return
@@ -173,7 +171,7 @@ fun MunicionNavHost(
                 }
                 return@composable
             }
-            GuiaFormContent(
+            GuiaFormScreen(
                 guia = route.guia,
                 tipoLicencia = route.tipoLicencia,
                 navController = navController,
@@ -191,7 +189,7 @@ fun MunicionNavHost(
                 backStackEntry.toRoute<CompraForm>()
             } catch (e: Exception) {
                 LaunchedEffect(Unit) {
-                    snackbarHostState.showSnackbar(resources.getString(R.string.error_loading_purchase_form))
+                    snackbarHostState.showSnackbar(context.getString(R.string.error_loading_purchase_form))
                     navController.popBackStack()
                 }
                 return@composable

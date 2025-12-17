@@ -132,10 +132,13 @@ fun GuiaItem(
                     contentAlignment = Alignment.Center
                 ) {
                     if (guia.hasImage()) {
+                        // Corregir URL de Firebase Storage si es necesario
+                        val imageUrl = fixFirebaseStorageUrl(guia.fotoUrl ?: guia.imagePath ?: "")
+                        
                         // Mostrar imagen del arma
                         AsyncImage(
                             model = ImageRequest.Builder(context)
-                                .data(guia.fotoUrl ?: guia.imagePath)
+                                .data(imageUrl)
                                 .crossfade(true)
                                 .build(),
                             contentDescription = stringResource(R.string.content_description_weapon_image),
@@ -206,5 +209,37 @@ fun GuiaItem(
                 }
             }
         }
+    }
+}
+
+/**
+ * Corrige URLs de Firebase Storage que tienen el path decodificado incorrectamente.
+ * 
+ * Firebase Storage requiere que el path después de /o/ esté URL-encoded.
+ * Ejemplo correcto: .../o/v3_userdata%2FuserId%2Farmas%2F6.jpg?alt=media...
+ * Ejemplo incorrecto: .../o/v3_userdata/userId/armas/6.jpg?alt=media...
+ */
+private fun fixFirebaseStorageUrl(url: String): String {
+    if (url.isBlank() || !url.contains("firebasestorage.googleapis.com")) {
+        return url
+    }
+    
+    // Si ya tiene %2F en el path, está correctamente codificada
+    if (url.contains("/o/") && url.substringAfter("/o/").substringBefore("?").contains("%2F")) {
+        return url
+    }
+    
+    return try {
+        val baseUrl = url.substringBefore("/o/") + "/o/"
+        val pathAndQuery = url.substringAfter("/o/")
+        val path = pathAndQuery.substringBefore("?")
+        val query = if (pathAndQuery.contains("?")) "?" + pathAndQuery.substringAfter("?") else ""
+        
+        val encodedPath = java.net.URLEncoder.encode(path, "UTF-8")
+            .replace("+", "%20")
+        
+        baseUrl + encodedPath + query
+    } catch (e: Exception) {
+        url
     }
 }

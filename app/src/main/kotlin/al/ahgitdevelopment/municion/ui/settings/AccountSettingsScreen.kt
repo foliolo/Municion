@@ -68,7 +68,7 @@ import androidx.navigation.NavHostController
  * @param viewModel ViewModel de configuracion
  *
  * @since v3.0.0 (Compose Migration - Single Scaffold Architecture)
- * @updated v3.4.0 (Auth Simplification)
+ * @updated v3.2.2 (Auth Simplification)
  */
 @Composable
 fun AccountSettingsContent(
@@ -136,7 +136,7 @@ fun AccountSettingsContent(
  * Campos de configuracion de cuenta (Stateless).
  *
  * @since v3.0.0 (Compose Migration - Single Scaffold Architecture)
- * @updated v3.4.0 (Auth Simplification)
+ * @updated v3.2.2 (Auth Simplification)
  */
 @Composable
 fun AccountSettingsFields(

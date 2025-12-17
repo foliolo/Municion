@@ -20,6 +20,9 @@ import kotlinx.serialization.json.Json
  * - Reporta errores a Crashlytics
  * - Soporta valores nullable (para formularios de creación)
  *
+ * IMPORTANTE: Usamos Uri.encode/decode SOLO en serializeAsValue/parseValue
+ * para que la URL de navegación sea válida. El JSON interno se mantiene intacto.
+ *
  * @since v3.3.0 (NavType Architecture Migration)
  */
 
@@ -31,6 +34,7 @@ inline fun <reified T : Any> createJsonNavType(isNullableAllowed: Boolean = true
         }
 
         override fun parseValue(value: String): T? {
+            // Decodificar el valor URL-encoded que viene de la navegación
             val decodedValue = Uri.decode(value)
             return if (decodedValue == "null") {
                 null
@@ -47,6 +51,8 @@ inline fun <reified T : Any> createJsonNavType(isNullableAllowed: Boolean = true
             return if (value == null) {
                 "null"
             } else {
+                // Serializar a JSON y luego URL-encode para navegación segura
+                // Esto preserva los %2F internos de URLs de Firebase
                 Uri.encode(Json.encodeToString(value))
             }
         }

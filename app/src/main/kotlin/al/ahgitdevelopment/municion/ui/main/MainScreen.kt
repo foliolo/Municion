@@ -71,7 +71,7 @@ import kotlinx.coroutines.launch
  * @param onAuthStateChange Callback para refrescar estado de auth
  *
  * @since v3.0.0 (Compose Migration - Single Scaffold Architecture)
- * @updated v3.4.0 (Auth Simplification)
+ * @updated v3.2.2 (Auth Simplification)
  */
 @Composable
 fun MainScreen(
