@@ -40,6 +40,9 @@ datastore = "1.2.0"
 biometric = "1.1.0"
 securityCrypto = "1.1.0"
 
+# ExifInterface (for image rotation fix)
+exifinterface = "1.4.1"
+
 # WorkManager
 work = "2.11.0"
 
@@ -123,6 +126,9 @@ androidx-datastore-preferences = { module = "androidx.datastore:datastore-prefer
 # Security
 androidx-biometric = { module = "androidx.biometric:biometric", version.ref = "biometric" }
 androidx-security-crypto = { module = "androidx.security:security-crypto", version.ref = "securityCrypto" }
+
+# ExifInterface (for EXIF rotation fix)
+androidx-exifinterface = { module = "androidx.exifinterface:exifinterface", version.ref = "exifinterface" }
 
 # WorkManager
 androidx-work-runtime-ktx = { module = "androidx.work:work-runtime-ktx", version.ref = "work" }

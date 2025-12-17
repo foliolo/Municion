@@ -390,6 +390,18 @@
     <string name="cd_next">Siguiente</string>
     <string name="content_description_weapon_image">Imagen del arma</string>
 
+    <!-- Image Picker (v3.3.0) -->
+    <string name="dialog_select_image_source">Seleccionar imagen</string>
+    <string name="dialog_select_image_source_description">¿De dónde quieres obtener la imagen?</string>
+    <string name="option_camera">Cámara</string>
+    <string name="option_gallery">Galería</string>
+    <string name="processing_image">Procesando…</string>
+    <string name="error_processing_image">Error al procesar la imagen</string>
+    <string name="dialog_camera_permission_title">Permiso de cámara</string>
+    <string name="dialog_camera_permission_rationale">Para tomar fotos de tus armas, la aplicación necesita acceso a la cámara. También puedes seleccionar una imagen desde la galería.</string>
+    <string name="action_grant_permission">Conceder permiso</string>
+    <string name="action_use_gallery">Usar galería</string>
+
     <!-- Sync Messages (v3.3.0) -->
     <string name="sync_completed_with_fixes">Sincronizado con correcciones automáticas</string>
 

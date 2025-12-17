@@ -376,6 +376,18 @@
     <string name="cd_next">Next</string>
     <string name="content_description_weapon_image">Weapon image</string>
 
+    <!-- Image Picker (v3.3.0) -->
+    <string name="dialog_select_image_source">Select image</string>
+    <string name="dialog_select_image_source_description">Where do you want to get the image from?</string>
+    <string name="option_camera">Camera</string>
+    <string name="option_gallery">Gallery</string>
+    <string name="processing_image">Processing…</string>
+    <string name="error_processing_image">Error processing image</string>
+    <string name="dialog_camera_permission_title">Camera permission</string>
+    <string name="dialog_camera_permission_rationale">To take photos of your weapons, the app needs access to the camera. You can also select an image from the gallery.</string>
+    <string name="action_grant_permission">Grant permission</string>
+    <string name="action_use_gallery">Use gallery</string>
+
     <!-- Sync Messages (v3.3.0) -->
     <string name="sync_completed_with_fixes">Synced with automatic fixes</string>
 

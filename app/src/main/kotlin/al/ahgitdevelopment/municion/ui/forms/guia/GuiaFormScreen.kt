@@ -2,15 +2,9 @@ package al.ahgitdevelopment.municion.ui.forms.guia
 
 import al.ahgitdevelopment.municion.R
 import al.ahgitdevelopment.municion.data.local.room.entities.Guia
+import al.ahgitdevelopment.municion.ui.components.imagepicker.ImagePickerWithCamera
 import al.ahgitdevelopment.municion.ui.theme.MunicionTheme
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.PickVisualMediaRequest
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -18,24 +12,14 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AddAPhoto
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Checkbox
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.LinearProgressIndicator
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
@@ -48,9 +32,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardCapitalization
@@ -60,8 +41,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
-import coil.compose.AsyncImage
-import coil.request.ImageRequest
 import kotlinx.coroutines.flow.collectLatest
 
 /**
@@ -127,13 +106,6 @@ fun GuiaFormScreen(
         }
     }
     
-    // Image picker launcher
-    val imagePickerLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.PickVisualMedia()
-    ) { uri ->
-        uri?.let { viewModel.onEvent(GuiaFormEvent.ImageSelected(it)) }
-    }
-    
     // Registrar función de guardado
     DisposableEffect(Unit) {
         onRegisterSaveCallback { viewModel.onEvent(GuiaFormEvent.Save) }
@@ -156,12 +128,7 @@ fun GuiaFormScreen(
         calibres = calibres,
         isUploading = isUploading,
         uploadProgress = uploadProgress,
-        onEvent = viewModel::onEvent,
-        onSelectImage = {
-            imagePickerLauncher.launch(
-                PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
-            )
-        }
+        onEvent = viewModel::onEvent
     )
 }
 
@@ -180,7 +147,6 @@ private fun GuiaFormContent(
     isUploading: Boolean,
     uploadProgress: Float,
     onEvent: (GuiaFormEvent) -> Unit,
-    onSelectImage: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -296,13 +262,13 @@ private fun GuiaFormContent(
         
         Spacer(modifier = Modifier.height(8.dp))
         
-        // Selector de imagen
-        ImagePicker(
+        // Selector de imagen con cámara y galería
+        ImagePickerWithCamera(
             currentImageUrl = state.currentImageUrl,
             isUploading = isUploading,
             uploadProgress = uploadProgress,
-            onSelectImage = onSelectImage,
-            onRemoveImage = { onEvent(GuiaFormEvent.ImageRemoved) }
+            onImageSelected = { uri -> onEvent(GuiaFormEvent.ImageSelected(uri)) },
+            onImageRemoved = { onEvent(GuiaFormEvent.ImageRemoved) }
         )
         
         Spacer(modifier = Modifier.height(12.dp))
@@ -446,117 +412,6 @@ private fun AutoCompleteField(
     }
 }
 
-@Composable
-private fun ImagePicker(
-    currentImageUrl: String?,
-    isUploading: Boolean,
-    uploadProgress: Float,
-    onSelectImage: () -> Unit,
-    onRemoveImage: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    val context = LocalContext.current
-    val imageSize = 180.dp
-    
-    Column(
-        modifier = modifier.fillMaxWidth(),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(
-            text = stringResource(R.string.label_weapon_photo),
-            style = MaterialTheme.typography.labelLarge,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
-        
-        Spacer(modifier = Modifier.height(8.dp))
-        
-        Box(
-            modifier = Modifier
-                .size(imageSize)
-                .clip(RoundedCornerShape(12.dp))
-                .border(2.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(12.dp))
-                .background(MaterialTheme.colorScheme.surfaceVariant)
-                .clickable(enabled = !isUploading) { onSelectImage() },
-            contentAlignment = Alignment.Center
-        ) {
-            if (currentImageUrl != null) {
-                // Corregir URL de Firebase Storage si es necesario
-                val fixedUrl = fixFirebaseStorageUrl(currentImageUrl)
-                
-                AsyncImage(
-                    model = ImageRequest.Builder(context)
-                        .data(fixedUrl)
-                        .crossfade(true)
-                        .build(),
-                    contentDescription = stringResource(R.string.content_description_weapon_image),
-                    modifier = Modifier.fillMaxSize(),
-                    contentScale = ContentScale.Crop
-                )
-                
-                if (!isUploading) {
-                    IconButton(
-                        onClick = onRemoveImage,
-                        modifier = Modifier
-                            .align(Alignment.TopEnd)
-                            .padding(4.dp)
-                            .size(32.dp)
-                            .background(Color.Black.copy(alpha = 0.6f), RoundedCornerShape(16.dp))
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Close,
-                            contentDescription = stringResource(R.string.action_remove_image),
-                            tint = Color.White,
-                            modifier = Modifier.size(20.dp)
-                        )
-                    }
-                }
-                
-                if (isUploading) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .background(MaterialTheme.colorScheme.surfaceVariant),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        CircularProgressIndicator(color = MaterialTheme.colorScheme.onSurfaceVariant)
-                    }
-                }
-            } else {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.AddAPhoto,
-                        contentDescription = null,
-                        modifier = Modifier.size(48.dp),
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Text(
-                        text = stringResource(R.string.action_add_photo),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
-            }
-        }
-        
-        if (isUploading) {
-            Spacer(modifier = Modifier.height(8.dp))
-            LinearProgressIndicator(
-                progress = { uploadProgress },
-                modifier = Modifier.fillMaxWidth(0.6f)
-            )
-            Text(
-                text = "${(uploadProgress * 100).toInt()}%",
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-        }
-    }
-}
-
 // ============== UTILIDADES ==============
 
 private fun getWeaponTypesForLicense(
@@ -576,44 +431,6 @@ private fun getWeaponTypesForLicense(
     }
 }
 
-/**
- * Corrige URLs de Firebase Storage que tienen el path decodificado incorrectamente.
- * 
- * Firebase Storage requiere que el path después de /o/ esté URL-encoded.
- * Ejemplo correcto: .../o/v3_userdata%2FuserId%2Farmas%2F6.jpg?alt=media...
- * Ejemplo incorrecto: .../o/v3_userdata/userId/armas/6.jpg?alt=media...
- * 
- * Si la URL es local (content:// o file://) o ya está correctamente codificada, se devuelve sin cambios.
- */
-private fun fixFirebaseStorageUrl(url: String): String {
-    // Si no es una URL de Firebase Storage, devolver sin cambios
-    if (!url.contains("firebasestorage.googleapis.com")) {
-        return url
-    }
-    
-    // Si ya tiene %2F en el path, está correctamente codificada
-    if (url.contains("/o/") && url.substringAfter("/o/").substringBefore("?").contains("%2F")) {
-        return url
-    }
-    
-    // Extraer y re-codificar el path
-    return try {
-        val baseUrl = url.substringBefore("/o/") + "/o/"
-        val pathAndQuery = url.substringAfter("/o/")
-        val path = pathAndQuery.substringBefore("?")
-        val query = if (pathAndQuery.contains("?")) "?" + pathAndQuery.substringAfter("?") else ""
-        
-        // Codificar el path (reemplazar / por %2F)
-        val encodedPath = java.net.URLEncoder.encode(path, "UTF-8")
-            .replace("+", "%20") // URLEncoder usa + para espacios, pero Firebase usa %20
-        
-        baseUrl + encodedPath + query
-    } catch (e: Exception) {
-        // Si falla, devolver la URL original
-        url
-    }
-}
-
 // ============== PREVIEWS ==============
 
 @Preview(showBackground = true)
@@ -626,8 +443,7 @@ private fun GuiaFormContentPreview() {
             calibres = listOf("9mm Para", "12/70", ".22 LR"),
             isUploading = false,
             uploadProgress = 0f,
-            onEvent = {},
-            onSelectImage = {}
+            onEvent = {}
         )
     }
 }
@@ -651,8 +467,7 @@ private fun GuiaFormContentEditingPreview() {
             calibres = listOf("9mm Para", "12/70", ".22 LR"),
             isUploading = false,
             uploadProgress = 0f,
-            onEvent = {},
-            onSelectImage = {}
+            onEvent = {}
         )
     }
 }

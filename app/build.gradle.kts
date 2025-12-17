@@ -131,6 +131,9 @@ dependencies {
     // ========== IMAGE LOADING ==========
     implementation(libs.bundles.coil)
 
+    // ========== IMAGE PROCESSING (EXIF) ==========
+    implementation(libs.androidx.exifinterface)
+
     // ========== JETPACK COMPOSE ==========
     implementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(platform(libs.androidx.compose.bom))
