@@ -220,6 +220,7 @@
     <string name="label_price_eur">Price (EUR)</string>
     <string name="label_store">Store</string>
     <string name="label_weapon_type">Weapon type</string>
+    <string name="label_weapon_photo">Weapon photo</string>
     <string name="label_nickname">Nickname</string>
     <string name="label_guide_number">Document number</string>
     <string name="label_weapon_number">Weapon number</string>
@@ -326,6 +327,8 @@
     <string name="label_confirm_password">Confirm password</string>
     <string name="action_show">Show</string>
     <string name="action_hide">Hide</string>
+    <string name="action_add_photo">Add photo</string>
+    <string name="action_remove_image">Remove image</string>
     <string name="action_login">Sign in</string>
     <string name="action_create_account">Create account</string>
     <string name="switch_to_register">Don\'t have an account? Create account</string>
@@ -371,6 +374,24 @@
     <string name="cd_close">Close</string>
     <string name="cd_previous">Previous</string>
     <string name="cd_next">Next</string>
+    <string name="content_description_weapon_image">Weapon image</string>
+    <string name="content_description_license_image">License image</string>
+    <string name="content_description_ammunition_image">Ammunition image</string>
+    <string name="label_license_photo">License photo</string>
+    <string name="label_ammunition_photo">Ammunition photo</string>
+    <string name="image_section_ammunition">Ammunition photo</string>
+
+    <!-- Image Picker (v3.3.0) -->
+    <string name="dialog_select_image_source">Select image</string>
+    <string name="dialog_select_image_source_description">Where do you want to get the image from?</string>
+    <string name="option_camera">Camera</string>
+    <string name="option_gallery">Gallery</string>
+    <string name="processing_image">Processing…</string>
+    <string name="error_processing_image">Error processing image</string>
+    <string name="dialog_camera_permission_title">Camera permission</string>
+    <string name="dialog_camera_permission_rationale">To take photos of your weapons, the app needs access to the camera. You can also select an image from the gallery.</string>
+    <string name="action_grant_permission">Grant permission</string>
+    <string name="action_use_gallery">Use gallery</string>
 
     <!-- Sync Messages (v3.3.0) -->
     <string name="sync_completed_with_fixes">Synced with automatic fixes</string>

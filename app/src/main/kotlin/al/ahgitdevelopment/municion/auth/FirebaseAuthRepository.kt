@@ -22,7 +22,7 @@ import javax.inject.Singleton
  * - Migración de usuarios legacy (v2.x)
  *
  * @since v3.0.0 (TRACK B - Auth Modernization)
- * @updated v3.4.0 (Auth Simplification)
+ * @updated v3.2.2 (Auth Simplification)
  */
 @Singleton
 class FirebaseAuthRepository @Inject constructor(

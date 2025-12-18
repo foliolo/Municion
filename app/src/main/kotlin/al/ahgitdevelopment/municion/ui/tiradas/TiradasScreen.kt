@@ -88,8 +88,7 @@ fun TiradasContent(
 
     TiradasListContent(
         tiradas = tiradas,
-        onItemClick = { /* Info */ },
-        onItemLongClick = { tirada ->
+        onItemClick = { tirada ->
             navController.navigateSafely(TiradaForm(tirada = tirada))
         },
         onDeleteClick = { tirada -> tiradaToDelete = tirada }
@@ -104,18 +103,17 @@ fun TiradasContent(
  * Fácil de previsualizar y testear.
  *
  * @param tiradas Lista de tiradas a mostrar
- * @param onItemClick Callback para click en item
- * @param onItemLongClick Callback para long-press (editar)
+ * @param onItemClick Callback para click en item (editar)
  * @param onDeleteClick Callback para swipe-to-delete
  * @param modifier Modificador opcional
  *
  * @since v3.0.0 (Compose Migration - Single Scaffold Architecture)
+ * @since v3.2.4 (Changed long-click to click for edit)
  */
 @Composable
 fun TiradasListContent(
     tiradas: List<Tirada>,
     onItemClick: (Tirada) -> Unit,
-    onItemLongClick: (Tirada) -> Unit,
     onDeleteClick: (Tirada) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -138,7 +136,6 @@ fun TiradasListContent(
                 TiradaItem(
                     tirada = tirada,
                     onClick = { onItemClick(tirada) },
-                    onLongClick = { onItemLongClick(tirada) },
                     onDelete = { onDeleteClick(tirada) },
                     modifier = Modifier.padding(vertical = 4.dp)
                 )
@@ -171,7 +168,6 @@ private fun TiradasListContentPreview() {
                 )
             ),
             onItemClick = {},
-            onItemLongClick = {},
             onDeleteClick = {}
         )
     }
@@ -184,7 +180,6 @@ private fun TiradasListContentEmptyPreview() {
         TiradasListContent(
             tiradas = emptyList(),
             onItemClick = {},
-            onItemLongClick = {},
             onDeleteClick = {}
         )
     }

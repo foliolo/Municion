@@ -31,7 +31,7 @@ import javax.inject.Singleton
  * 5. Si falla, usuario debe registrarse manualmente
  *
  * @since v3.0.0 (TRACK B - Auth Modernization)
- * @updated v3.4.0 (Auth Simplification - eliminado AuthManager y PIN)
+ * @updated v3.2.2 (Auth Simplification - eliminado AuthManager y PIN)
  */
 @Singleton
 class LegacyMigrationHelper @Inject constructor(

@@ -20,7 +20,7 @@ import javax.inject.Inject
  * - Usa AuthStateListener para reaccionar automaticamente a cambios de auth
  *
  * @since v3.0.0 (TRACK B - Auth Modernization)
- * @updated v3.4.0 (Auth Simplification)
+ * @updated v3.2.2 (Auth Simplification)
  */
 @HiltViewModel
 class AuthViewModel @Inject constructor(
