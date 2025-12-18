@@ -2,6 +2,7 @@ package al.ahgitdevelopment.municion.ui.forms.compra
 
 import al.ahgitdevelopment.municion.data.local.room.entities.Compra
 import al.ahgitdevelopment.municion.data.local.room.entities.Guia
+import al.ahgitdevelopment.municion.ui.components.imagepicker.ImageState
 import android.net.Uri
 
 /**
@@ -11,6 +12,7 @@ import android.net.Uri
  * Inmutable - cada cambio genera una nueva instancia.
  *
  * @since v3.2.3 (Form Architecture Refactor for Compras)
+ * @since v3.2.4 (ImageState simplification)
  */
 data class CompraFormState(
     // Campos del formulario
@@ -26,10 +28,8 @@ data class CompraFormState(
     val tienda: String = "",
     val valoracion: Float = 0f,
     
-    // Estado de imagen
-    val selectedImageUri: Uri? = null,
-    val existingImageUrl: String? = null,
-    val storagePath: String? = null,
+    // Estado de imagen unificado
+    val imageState: ImageState = ImageState.NoImage,
     
     // Metadata
     val compraId: Int = 0,
@@ -49,16 +49,16 @@ data class CompraFormState(
     val tiendaError: String? = null
 ) {
     /**
-     * URL de imagen a mostrar: nueva selección > existente > null
+     * URL de imagen a mostrar (delegado a ImageState)
      */
     val currentImageUrl: String?
-        get() = selectedImageUri?.toString() ?: existingImageUrl
+        get() = imageState.displayUrl
     
     /**
      * Tiene nueva imagen seleccionada (pendiente de subir)
      */
     val hasNewImage: Boolean
-        get() = selectedImageUri != null
+        get() = imageState.hasNewImage
     
     /**
      * Valida si el formulario tiene errores
@@ -79,9 +79,12 @@ data class CompraFormState(
         }
     
     /**
-     * Crea una instancia de Compra desde el estado actual
+     * Crea una instancia de Compra desde el estado actual.
+     * 
+     * NOTA: fotoUrl y storagePath se establecen desde ImageState
+     * después del proceso de guardado (con imagen ya subida si aplica).
      */
-    fun toCompra(): Compra = Compra(
+    fun toCompra(fotoUrl: String? = null, storagePath: String? = null): Compra = Compra(
         id = compraId,
         idPosGuia = guiaId,
         calibre1 = calibre1,
@@ -94,8 +97,27 @@ data class CompraFormState(
         fecha = fecha,
         tienda = tienda,
         valoracion = valoracion,
-        fotoUrl = existingImageUrl,
+        fotoUrl = fotoUrl,
         storagePath = storagePath
+    )
+    
+    /**
+     * Selecciona una nueva imagen
+     */
+    fun selectImage(uri: Uri): CompraFormState = copy(
+        imageState = ImageState.New(uri = uri, previousState = imageState)
+    )
+    
+    /**
+     * Elimina la imagen actual
+     */
+    fun removeImage(): CompraFormState = copy(imageState = ImageState.NoImage)
+    
+    /**
+     * Actualiza con imagen subida exitosamente
+     */
+    fun withUploadedImage(url: String, storagePath: String): CompraFormState = copy(
+        imageState = ImageState.Existing(url = url, storagePath = storagePath)
     )
     
     companion object {
@@ -116,8 +138,7 @@ data class CompraFormState(
             fecha = compra.fecha,
             tienda = compra.tienda ?: "",
             valoracion = compra.valoracion,
-            existingImageUrl = compra.fotoUrl,
-            storagePath = compra.storagePath,
+            imageState = ImageState.fromEntity(compra.fotoUrl, compra.storagePath),
             cupoDisponible = guia.disponible() + compra.unidades, // Al editar, sumar las unidades actuales
             cupoTotal = guia.cupo,
             isEditing = true

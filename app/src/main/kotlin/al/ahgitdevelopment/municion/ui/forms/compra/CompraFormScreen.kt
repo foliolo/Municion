@@ -7,6 +7,7 @@ import al.ahgitdevelopment.municion.ui.components.DatePickerField
 import al.ahgitdevelopment.municion.ui.components.DropdownField
 import al.ahgitdevelopment.municion.ui.components.getCurrentDateFormatted
 import al.ahgitdevelopment.municion.ui.components.imagepicker.ImagePickerWithCamera
+import al.ahgitdevelopment.municion.ui.navigation.Compras
 import al.ahgitdevelopment.municion.ui.theme.LicenseExpired
 import al.ahgitdevelopment.municion.ui.theme.LicenseValid
 import al.ahgitdevelopment.municion.ui.theme.MunicionTheme
@@ -91,20 +92,27 @@ fun CompraFormContent(
     LaunchedEffect(Unit) {
         viewModel.effects.collect { effect ->
             when (effect) {
-                is CompraFormEffect.NavigateBack -> navController.popBackStack()
+                is CompraFormEffect.NavigateBack -> {
+                    // Navegar explícitamente a Compras para evitar problemas con el backstack del BottomNav
+                    // popBackStack() lleva a Licencias porque el BottomNav usa saveState=true
+                    navController.navigate(Compras) {
+                        popUpTo(Compras) { inclusive = true }
+                        launchSingleTop = true
+                    }
+                }
                 is CompraFormEffect.ShowSnackbar -> snackbarHostState.showSnackbar(effect.message)
                 is CompraFormEffect.ShowError -> snackbarHostState.showSnackbar("Error: ${effect.message}")
             }
         }
     }
 
-    // Manejar estados de UI
+    // Manejar estados de UI (solo errores - Success se maneja en effects para evitar doble navegación)
     LaunchedEffect(uiState) {
         when (uiState) {
             is CompraFormUiState.Success -> {
+                // Solo mostrar mensaje, la navegación ya se hace en NavigateBack effect
                 val message = (uiState as CompraFormUiState.Success).message
                 viewModel.resetUiState()
-                navController.popBackStack()
                 launch { snackbarHostState.showSnackbar(message) }
             }
 

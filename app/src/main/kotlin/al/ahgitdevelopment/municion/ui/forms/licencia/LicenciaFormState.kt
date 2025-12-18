@@ -1,6 +1,7 @@
 package al.ahgitdevelopment.municion.ui.forms.licencia
 
 import al.ahgitdevelopment.municion.data.local.room.entities.Licencia
+import al.ahgitdevelopment.municion.ui.components.imagepicker.ImageState
 import android.net.Uri
 
 /**
@@ -10,6 +11,7 @@ import android.net.Uri
  * Inmutable - cada cambio genera una nueva instancia.
  *
  * @since v3.2.2 (Form Architecture Refactor)
+ * @since v3.2.4 (ImageState simplification)
  */
 data class LicenciaFormState(
     // Campos del formulario
@@ -25,10 +27,8 @@ data class LicenciaFormState(
     val escala: Int = 0,
     val categoria: Int = 0,
     
-    // Estado de imagen
-    val selectedImageUri: Uri? = null,
-    val existingImageUrl: String? = null,
-    val storagePath: String? = null,
+    // Estado de imagen unificado
+    val imageState: ImageState = ImageState.NoImage,
     
     // Metadata
     val licenciaId: Int = 0,
@@ -41,16 +41,16 @@ data class LicenciaFormState(
     val edadError: String? = null
 ) {
     /**
-     * URL de imagen a mostrar: nueva selección > existente > null
+     * URL de imagen a mostrar (delegado a ImageState)
      */
     val currentImageUrl: String?
-        get() = selectedImageUri?.toString() ?: existingImageUrl
+        get() = imageState.displayUrl
     
     /**
      * Tiene nueva imagen seleccionada (pendiente de subir)
      */
     val hasNewImage: Boolean
-        get() = selectedImageUri != null
+        get() = imageState.hasNewImage
     
     /**
      * Valida si el formulario tiene errores
@@ -71,9 +71,12 @@ data class LicenciaFormState(
     val showCategoria: Boolean get() = tipoLicencia == 11
     
     /**
-     * Crea una instancia de Licencia desde el estado actual
+     * Crea una instancia de Licencia desde el estado actual.
+     * 
+     * NOTA: fotoUrl y storagePath se establecen desde ImageState
+     * después del proceso de guardado (con imagen ya subida si aplica).
      */
-    fun toLicencia(tiposLicencia: List<String>): Licencia = Licencia(
+    fun toLicencia(tiposLicencia: List<String>, fotoUrl: String? = null, storagePath: String? = null): Licencia = Licencia(
         id = licenciaId,
         tipo = tipoLicencia,
         nombre = tiposLicencia.getOrNull(tipoLicencia),
@@ -87,8 +90,27 @@ data class LicenciaFormState(
         autonomia = if (showAutonomia) autonomia else -1,
         escala = if (showEscala) escala else -1,
         categoria = if (showCategoria) categoria else -1,
-        fotoUrl = existingImageUrl,
+        fotoUrl = fotoUrl,
         storagePath = storagePath
+    )
+    
+    /**
+     * Selecciona una nueva imagen
+     */
+    fun selectImage(uri: Uri): LicenciaFormState = copy(
+        imageState = ImageState.New(uri = uri, previousState = imageState)
+    )
+    
+    /**
+     * Elimina la imagen actual
+     */
+    fun removeImage(): LicenciaFormState = copy(imageState = ImageState.NoImage)
+    
+    /**
+     * Actualiza con imagen subida exitosamente
+     */
+    fun withUploadedImage(url: String, storagePath: String): LicenciaFormState = copy(
+        imageState = ImageState.Existing(url = url, storagePath = storagePath)
     )
     
     companion object {
@@ -108,8 +130,7 @@ data class LicenciaFormState(
             edad = licencia.edad.toString(),
             escala = licencia.escala.takeIf { it >= 0 } ?: 0,
             categoria = licencia.categoria.takeIf { it >= 0 } ?: 0,
-            existingImageUrl = licencia.fotoUrl,
-            storagePath = licencia.storagePath,
+            imageState = ImageState.fromEntity(licencia.fotoUrl, licencia.storagePath),
             isEditing = true
         )
         

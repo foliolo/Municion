@@ -1,6 +1,7 @@
 package al.ahgitdevelopment.municion.ui.forms.guia
 
 import al.ahgitdevelopment.municion.data.local.room.entities.Guia
+import al.ahgitdevelopment.municion.ui.components.imagepicker.ImageState
 import android.net.Uri
 
 /**
@@ -10,6 +11,7 @@ import android.net.Uri
  * Inmutable - cada cambio genera una nueva instancia.
  *
  * @since v3.2.2 (Form Architecture Refactor)
+ * @since v3.2.4 (ImageState simplification)
  */
 data class GuiaFormState(
     // Campos del formulario
@@ -26,10 +28,8 @@ data class GuiaFormState(
     val gastado: String = "0",
     val customCupo: Boolean = false,
     
-    // Estado de imagen
-    val selectedImageUri: Uri? = null,
-    val existingImageUrl: String? = null,
-    val storagePath: String? = null,
+    // Estado de imagen unificado
+    val imageState: ImageState = ImageState.NoImage,
     
     // Metadata
     val guiaId: Int = 0,
@@ -46,16 +46,16 @@ data class GuiaFormState(
     val cupoError: String? = null
 ) {
     /**
-     * URL de imagen a mostrar: nueva selección > existente > null
+     * URL de imagen a mostrar (delegado a ImageState)
      */
     val currentImageUrl: String?
-        get() = selectedImageUri?.toString() ?: existingImageUrl
+        get() = imageState.displayUrl
     
     /**
      * Tiene nueva imagen seleccionada (pendiente de subir)
      */
     val hasNewImage: Boolean
-        get() = selectedImageUri != null
+        get() = imageState.hasNewImage
     
     /**
      * Valida si el formulario tiene errores
@@ -67,9 +67,12 @@ data class GuiaFormState(
         ).any { it != null }
     
     /**
-     * Crea una instancia de Guia desde el estado actual
+     * Crea una instancia de Guia desde el estado actual.
+     * 
+     * NOTA: fotoUrl y storagePath se establecen desde ImageState
+     * después del proceso de guardado (con imagen ya subida si aplica).
      */
-    fun toGuia(): Guia = Guia(
+    fun toGuia(fotoUrl: String? = null, storagePath: String? = null): Guia = Guia(
         id = guiaId,
         tipoLicencia = tipoLicencia,
         marca = marca,
@@ -82,8 +85,27 @@ data class GuiaFormState(
         numArma = numArma,
         cupo = cupo.toIntOrNull() ?: 0,
         gastado = gastado.toIntOrNull() ?: 0,
-        fotoUrl = existingImageUrl,
+        fotoUrl = fotoUrl,
         storagePath = storagePath
+    )
+    
+    /**
+     * Selecciona una nueva imagen
+     */
+    fun selectImage(uri: Uri): GuiaFormState = copy(
+        imageState = ImageState.New(uri = uri, previousState = imageState)
+    )
+    
+    /**
+     * Elimina la imagen actual
+     */
+    fun removeImage(): GuiaFormState = copy(imageState = ImageState.NoImage)
+    
+    /**
+     * Actualiza con imagen subida exitosamente
+     */
+    fun withUploadedImage(url: String, storagePath: String): GuiaFormState = copy(
+        imageState = ImageState.Existing(url = url, storagePath = storagePath)
     )
     
     companion object {
@@ -104,8 +126,7 @@ data class GuiaFormState(
             numArma = guia.numArma,
             cupo = guia.cupo.toString(),
             gastado = guia.gastado.toString(),
-            existingImageUrl = guia.fotoUrl,
-            storagePath = guia.storagePath,
+            imageState = ImageState.fromEntity(guia.fotoUrl, guia.storagePath),
             isEditing = true
         )
         

@@ -4,9 +4,9 @@ import al.ahgitdevelopment.municion.data.local.room.entities.Compra
 import al.ahgitdevelopment.municion.data.local.room.entities.Guia
 import al.ahgitdevelopment.municion.data.local.room.entities.Licencia
 import al.ahgitdevelopment.municion.data.local.room.entities.Tirada
-import android.net.Uri
 import android.os.Bundle
 import android.os.Parcelable
+import android.util.Base64
 import androidx.navigation.NavType
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -20,11 +20,22 @@ import kotlinx.serialization.json.Json
  * - Reporta errores a Crashlytics
  * - Soporta valores nullable (para formularios de creación)
  *
- * IMPORTANTE: Usamos Uri.encode/decode SOLO en serializeAsValue/parseValue
- * para que la URL de navegación sea válida. El JSON interno se mantiene intacto.
+ * IMPORTANTE: Usamos Base64 para codificar el JSON en navegación.
+ * Esto evita problemas con URLs de Firebase Storage que contienen %2F
+ * que se corrompían con Uri.encode/decode (doble codificación).
  *
  * @since v3.2.2 (NavType Architecture Migration)
+ * @since v3.2.5 (Base64 encoding to fix Firebase URL corruption)
  */
+
+/**
+ * JSON configurado para navegación type-safe.
+ */
+@PublishedApi
+internal val navJson = Json {
+    ignoreUnknownKeys = true
+    encodeDefaults = true
+}
 
 inline fun <reified T : Any> createJsonNavType(isNullableAllowed: Boolean = true): NavType<T?> {
     return object : NavType<T?>(isNullableAllowed) {
@@ -34,12 +45,22 @@ inline fun <reified T : Any> createJsonNavType(isNullableAllowed: Boolean = true
         }
 
         override fun parseValue(value: String): T? {
-            // Decodificar el valor URL-encoded que viene de la navegación
-            val decodedValue = Uri.decode(value)
-            return if (decodedValue == "null") {
+            return if (value == "null" || value.isEmpty()) {
                 null
             } else {
-                Json.decodeFromString<T>(decodedValue)
+                try {
+                    // Decodificar Base64 → JSON → Objeto
+                    val jsonBytes = Base64.decode(value, Base64.URL_SAFE or Base64.NO_WRAP)
+                    val json = String(jsonBytes, Charsets.UTF_8)
+                    navJson.decodeFromString<T>(json)
+                } catch (e: Exception) {
+                    // Fallback: intentar parsear como JSON directo (compatibilidad)
+                    try {
+                        navJson.decodeFromString<T>(value)
+                    } catch (e2: Exception) {
+                        null
+                    }
+                }
             }
         }
 
@@ -51,9 +72,12 @@ inline fun <reified T : Any> createJsonNavType(isNullableAllowed: Boolean = true
             return if (value == null) {
                 "null"
             } else {
-                // Serializar a JSON y luego URL-encode para navegación segura
-                // Esto preserva los %2F internos de URLs de Firebase
-                Uri.encode(Json.encodeToString(value))
+                // Objeto → JSON → Base64 (URL-safe, sin padding problemático)
+                val json = navJson.encodeToString(value)
+                Base64.encodeToString(
+                    json.toByteArray(Charsets.UTF_8),
+                    Base64.URL_SAFE or Base64.NO_WRAP
+                )
             }
         }
     }

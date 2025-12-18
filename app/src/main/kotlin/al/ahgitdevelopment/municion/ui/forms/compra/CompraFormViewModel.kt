@@ -5,6 +5,7 @@ import al.ahgitdevelopment.municion.data.local.room.entities.Guia
 import al.ahgitdevelopment.municion.data.repository.CompraRepository
 import al.ahgitdevelopment.municion.data.repository.ImageRepository
 import al.ahgitdevelopment.municion.domain.usecase.CreateCompraUseCase
+import al.ahgitdevelopment.municion.ui.components.imagepicker.ImageState
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -26,6 +27,7 @@ import javax.inject.Inject
  * Sigue el patrón MVI (Model-View-Intent) con eventos y efectos.
  *
  * @since v3.2.3 (Form Architecture Refactor for Compras)
+ * @since v3.2.4 (ImageState simplification)
  */
 @HiltViewModel
 class CompraFormViewModel @Inject constructor(
@@ -57,7 +59,7 @@ class CompraFormViewModel @Inject constructor(
     fun initialize(compra: Compra?, guia: Guia) {
         if (compra != null) {
             _formState.value = CompraFormState.fromCompra(compra, guia)
-            Log.d(TAG, "Initialized for editing: id=${compra.id}")
+            Log.d(TAG, "Initialized for editing: id=${compra.id}, imageState=${_formState.value.imageState}")
         } else {
             _formState.value = CompraFormState.fromGuia(guia)
             Log.d(TAG, "Initialized for creating new compra for guia=${guia.id}")
@@ -114,13 +116,13 @@ class CompraFormViewModel @Inject constructor(
                 it.copy(valoracion = event.value)
             }
 
-            // Imagen
+            // Imagen - usando el nuevo ImageState
             is CompraFormEvent.ImageSelected -> _formState.update {
-                it.copy(selectedImageUri = event.uri)
+                it.selectImage(event.uri)
             }
 
             CompraFormEvent.ImageRemoved -> _formState.update {
-                it.copy(selectedImageUri = null, existingImageUrl = null)
+                it.removeImage()
             }
 
             // Acciones
@@ -192,67 +194,18 @@ class CompraFormViewModel @Inject constructor(
                 val userId = firebaseAuth.currentUser?.uid
                     ?: throw IllegalStateException("User not authenticated")
 
-                var finalFotoUrl = state.existingImageUrl
-                var finalStoragePath = state.storagePath
+                // Determinar URLs de imagen finales según el ImageState
+                val (finalFotoUrl, finalStoragePath) = processImageState(state, userId)
 
-                // Subir nueva imagen si se seleccionó
-                if (state.hasNewImage && state.selectedImageUri != null) {
-                    // Paso 1: Iniciando subida
-
-                    // Eliminar imagen anterior si existe (en edición)
-                    if (state.isEditing && state.storagePath != null) {
-                        imageRepository.deleteCompraImage(state.storagePath)
-                    }
-
-                    _uiState.value = CompraFormUiState.Uploading(0.3f)
-
-                    // Paso 2: Subiendo imagen
-                    // Generar ID para la imagen
-                    val imageId = if (state.isEditing) {
-                        state.compraId.toString()
-                    } else {
-                        System.currentTimeMillis().toString()
-                    }
-
-                    val uploadResult = imageRepository.uploadCompraImage(
-                        uri = state.selectedImageUri,
-                        userId = userId,
-                        compraId = imageId
-                    )
-
-                    _uiState.value = CompraFormUiState.Uploading(0.7f)
-
-                    uploadResult.fold(
-                        onSuccess = { result ->
-                            finalFotoUrl = result.downloadUrl
-                            finalStoragePath = result.storagePath
-                            Log.d(TAG, "Image uploaded: $finalFotoUrl")
-                        },
-                        onFailure = { error ->
-                            Log.e(TAG, "Failed to upload image", error)
-                            _effects.send(CompraFormEffect.ShowError("Error al subir imagen: ${error.message}"))
-                        }
-                    )
-
-                    // Paso 3: Guardando datos
-                    _uiState.value = CompraFormUiState.Uploading(0.9f)
-                } else {
-                    _uiState.value = CompraFormUiState.Loading
-                }
-
-                // Actualizar estado con URLs de imagen
-                _formState.update {
-                    it.copy(
-                        existingImageUrl = finalFotoUrl,
-                        storagePath = finalStoragePath
-                    )
-                }
+                _uiState.value = CompraFormUiState.Uploading(0.9f)
 
                 // Crear compra para guardar
-                val compraToSave = _formState.value.toCompra().copy(
+                val compraToSave = state.toCompra(
                     fotoUrl = finalFotoUrl,
                     storagePath = finalStoragePath
                 )
+
+                Log.d(TAG, "Saving compra with fotoUrl=$finalFotoUrl, storagePath=$finalStoragePath")
 
                 _uiState.value = CompraFormUiState.Uploading(1f)
 
@@ -270,6 +223,78 @@ class CompraFormViewModel @Inject constructor(
             } catch (e: Exception) {
                 Log.e(TAG, "Error saving compra", e)
                 _uiState.value = CompraFormUiState.Error(e.message ?: "Error desconocido")
+            }
+        }
+    }
+
+    /**
+     * Procesa el ImageState y retorna (fotoUrl, storagePath) finales.
+     *
+     * - NoImage: retorna (null, null)
+     * - Existing: retorna la URL y path existentes
+     * - New: sube la imagen, elimina la anterior si existía, retorna nuevas URLs
+     */
+    private suspend fun processImageState(
+        state: CompraFormState,
+        userId: String
+    ): Pair<String?, String?> {
+        return when (val imageState = state.imageState) {
+            is ImageState.NoImage -> {
+                // Si había imagen antes y ahora no, eliminarla de Storage
+                // (esto ya se maneja en removeImage del estado anterior)
+                Pair(null, null)
+            }
+
+            is ImageState.Existing -> {
+                // Imagen existente, no hay cambios - preservar URLs
+                Log.d(TAG, "Preserving existing image: ${imageState.url}")
+                Pair(imageState.url, imageState.storagePath)
+            }
+
+            is ImageState.New -> {
+                // Nueva imagen - subir a Firebase
+                _uiState.value = CompraFormUiState.Uploading(0.1f)
+
+                // Eliminar imagen anterior si existe
+                val previousStoragePath = imageState.existingStoragePath
+                if (previousStoragePath != null) {
+                    Log.d(TAG, "Deleting previous image: $previousStoragePath")
+                    imageRepository.deleteCompraImage(previousStoragePath)
+                }
+
+                _uiState.value = CompraFormUiState.Uploading(0.3f)
+
+                // Generar ID para la imagen
+                val imageId = if (state.isEditing) {
+                    state.compraId.toString()
+                } else {
+                    System.currentTimeMillis().toString()
+                }
+
+                // Subir nueva imagen
+                val uploadResult = imageRepository.uploadCompraImage(
+                    uri = imageState.uri,
+                    userId = userId,
+                    compraId = imageId
+                )
+
+                _uiState.value = CompraFormUiState.Uploading(0.7f)
+
+                uploadResult.fold(
+                    onSuccess = { result ->
+                        Log.d(TAG, "Image uploaded successfully: ${result.downloadUrl}")
+                        Pair(result.downloadUrl, result.storagePath)
+                    },
+                    onFailure = { error ->
+                        Log.e(TAG, "Failed to upload image", error)
+                        _effects.send(CompraFormEffect.ShowError("Error al subir imagen: ${error.message}"))
+                        // En caso de error, preservar imagen anterior si existía
+                        when (val prev = imageState.previousState) {
+                            is ImageState.Existing -> Pair(prev.url, prev.storagePath)
+                            else -> Pair(null, null)
+                        }
+                    }
+                )
             }
         }
     }

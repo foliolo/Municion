@@ -3,9 +3,8 @@ package al.ahgitdevelopment.municion.ui.forms.licencia
 import al.ahgitdevelopment.municion.data.local.room.entities.Licencia
 import al.ahgitdevelopment.municion.data.repository.ImageRepository
 import al.ahgitdevelopment.municion.data.repository.LicenciaRepository
-import al.ahgitdevelopment.municion.ui.forms.compra.CompraFormUiState
+import al.ahgitdevelopment.municion.ui.components.imagepicker.ImageState
 import android.util.Log
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseAuth
@@ -29,6 +28,7 @@ import javax.inject.Inject
  * Sigue el patrón MVI (Model-View-Intent) con eventos y efectos.
  *
  * @since v3.2.2 (Form Architecture Refactor)
+ * @since v3.2.4 (ImageState simplification)
  */
 @HiltViewModel
 class LicenciaFormViewModel @Inject constructor(
@@ -58,8 +58,9 @@ class LicenciaFormViewModel @Inject constructor(
      */
     fun initialize(licencia: Licencia?) {
         if (licencia != null) {
+            Log.d(TAG, "Initializing with licencia: id=${licencia.id}, fotoUrl=${licencia.fotoUrl}, storagePath=${licencia.storagePath}")
             _formState.value = LicenciaFormState.fromLicencia(licencia)
-            Log.d(TAG, "Initialized for editing: id=${licencia.id}")
+            Log.d(TAG, "Initialized for editing: id=${licencia.id}, imageState=${_formState.value.imageState}, currentImageUrl=${_formState.value.currentImageUrl}")
         } else {
             _formState.value = LicenciaFormState.empty()
             Log.d(TAG, "Initialized for creating new licencia")
@@ -111,12 +112,12 @@ class LicenciaFormViewModel @Inject constructor(
                 it.copy(categoria = event.value)
             }
 
-            // Imagen
+            // Imagen - usando el nuevo ImageState
             is LicenciaFormEvent.ImageSelected -> _formState.update {
-                it.copy(selectedImageUri = event.uri)
+                it.selectImage(event.uri)
             }
             LicenciaFormEvent.ImageRemoved -> _formState.update {
-                it.copy(selectedImageUri = null, existingImageUrl = null)
+                it.removeImage()
             }
 
             // Acciones
@@ -179,75 +180,28 @@ class LicenciaFormViewModel @Inject constructor(
                 val userId = firebaseAuth.currentUser?.uid
                     ?: throw IllegalStateException("User not authenticated")
 
-                var finalFotoUrl = state.existingImageUrl
-                var finalStoragePath = state.storagePath
+                // Procesar imagen y obtener URLs finales
+                val (finalFotoUrl, finalStoragePath) = processImageState(state, userId)
 
-                // Subir nueva imagen si se seleccionó
-                if (state.hasNewImage && state.selectedImageUri != null) {
-                    // Paso 1: Iniciando subida
-                    // Eliminar imagen anterior si existe (en edición)
-                    if (state.isEditing && state.storagePath != null) {
-                        imageRepository.deleteLicenciaImage(state.storagePath)
-                    }
-
-                    _uiState.value = LicenciaFormUiState.Uploading(0.3f)
-
-                    // Paso 2: Subiendo imagen
-                    // Generar ID para la imagen
-                    val imageId = if (state.isEditing) {
-                        state.licenciaId.toString()
-                    } else {
-                        System.currentTimeMillis().toString()
-                    }
-
-                    val uploadResult = imageRepository.uploadLicenciaImage(
-                        uri = state.selectedImageUri,
-                        userId = userId,
-                        licenciaId = imageId
-                    )
-
-                    _uiState.value = LicenciaFormUiState.Uploading(0.7f)
-
-                    uploadResult.fold(
-                        onSuccess = { result ->
-                            finalFotoUrl = result.downloadUrl
-                            finalStoragePath = result.storagePath
-                            Log.d(TAG, "Image uploaded: $finalFotoUrl")
-                        },
-                        onFailure = { error ->
-                            Log.e(TAG, "Failed to upload image", error)
-                            _effects.send(LicenciaFormEffect.ShowError("Error al subir imagen: ${error.message}"))
-                        }
-                    )
-
-                    // Paso 3: Guardando datos
-                    _uiState.value = LicenciaFormUiState.Uploading(0.9f)
-                } else {
-                    _uiState.value = LicenciaFormUiState.Loading
-                }
-
-                // Actualizar estado con URLs de imagen
-                _formState.update {
-                    it.copy(
-                        existingImageUrl = finalFotoUrl,
-                        storagePath = finalStoragePath
-                    )
-                }
+                _uiState.value = LicenciaFormUiState.Uploading(0.9f)
 
                 // Crear licencia para guardar
-                val licenciaToSave = _formState.value.toLicencia(emptyList()).copy(
+                val licenciaToSave = state.toLicencia(
+                    tiposLicencia = emptyList(),
                     fotoUrl = finalFotoUrl,
                     storagePath = finalStoragePath
                 )
 
+                Log.d(TAG, "Saving licencia with fotoUrl=$finalFotoUrl, storagePath=$finalStoragePath")
+
                 _uiState.value = LicenciaFormUiState.Uploading(1f)
 
-                // Guardar o actualizar
+                // Guardar o actualizar (pasar userId para sincronizar con Firebase)
                 if (state.isEditing) {
-                    licenciaRepository.updateLicencia(licenciaToSave)
+                    licenciaRepository.updateLicencia(licenciaToSave, userId)
                     _uiState.value = LicenciaFormUiState.Success("Licencia actualizada")
                 } else {
-                    licenciaRepository.saveLicencia(licenciaToSave)
+                    licenciaRepository.saveLicencia(licenciaToSave, userId)
                     _uiState.value = LicenciaFormUiState.Success("Licencia guardada")
                 }
 
@@ -256,6 +210,76 @@ class LicenciaFormViewModel @Inject constructor(
             } catch (e: Exception) {
                 Log.e(TAG, "Error saving licencia", e)
                 _uiState.value = LicenciaFormUiState.Error(e.message ?: "Error desconocido")
+            }
+        }
+    }
+
+    /**
+     * Procesa el ImageState y retorna (fotoUrl, storagePath) finales.
+     *
+     * - NoImage: retorna (null, null)
+     * - Existing: retorna la URL y path existentes
+     * - New: sube la imagen, elimina la anterior si existía, retorna nuevas URLs
+     */
+    private suspend fun processImageState(
+        state: LicenciaFormState,
+        userId: String
+    ): Pair<String?, String?> {
+        return when (val imageState = state.imageState) {
+            is ImageState.NoImage -> {
+                Pair(null, null)
+            }
+
+            is ImageState.Existing -> {
+                // Imagen existente, no hay cambios - preservar URLs
+                Log.d(TAG, "Preserving existing image: ${imageState.url}")
+                Pair(imageState.url, imageState.storagePath)
+            }
+
+            is ImageState.New -> {
+                // Nueva imagen - subir a Firebase
+                _uiState.value = LicenciaFormUiState.Uploading(0.1f)
+
+                // Eliminar imagen anterior si existe
+                val previousStoragePath = imageState.existingStoragePath
+                if (previousStoragePath != null) {
+                    Log.d(TAG, "Deleting previous image: $previousStoragePath")
+                    imageRepository.deleteLicenciaImage(previousStoragePath)
+                }
+
+                _uiState.value = LicenciaFormUiState.Uploading(0.3f)
+
+                // Generar ID para la imagen
+                val imageId = if (state.isEditing) {
+                    state.licenciaId.toString()
+                } else {
+                    System.currentTimeMillis().toString()
+                }
+
+                // Subir nueva imagen
+                val uploadResult = imageRepository.uploadLicenciaImage(
+                    uri = imageState.uri,
+                    userId = userId,
+                    licenciaId = imageId
+                )
+
+                _uiState.value = LicenciaFormUiState.Uploading(0.7f)
+
+                uploadResult.fold(
+                    onSuccess = { result ->
+                        Log.d(TAG, "Image uploaded successfully: ${result.downloadUrl}")
+                        Pair(result.downloadUrl, result.storagePath)
+                    },
+                    onFailure = { error ->
+                        Log.e(TAG, "Failed to upload image", error)
+                        _effects.send(LicenciaFormEffect.ShowError("Error al subir imagen: ${error.message}"))
+                        // En caso de error, preservar imagen anterior si existía
+                        when (val prev = imageState.previousState) {
+                            is ImageState.Existing -> Pair(prev.url, prev.storagePath)
+                            else -> Pair(null, null)
+                        }
+                    }
+                )
             }
         }
     }
