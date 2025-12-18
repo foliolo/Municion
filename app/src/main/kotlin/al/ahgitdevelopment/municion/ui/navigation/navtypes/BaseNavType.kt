@@ -9,6 +9,7 @@ import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.Json
 import kotlin.reflect.KClass
 
+// TODO delete this class if not needed
 /**
  * Base class for custom NavTypes with validation and error handling.
  *
