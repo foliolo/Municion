@@ -1,17 +1,18 @@
 package al.ahgitdevelopment.municion.ui.components
 
+import al.ahgitdevelopment.municion.R
 import al.ahgitdevelopment.municion.ui.navigation.Compras
 import al.ahgitdevelopment.municion.ui.navigation.Guias
 import al.ahgitdevelopment.municion.ui.navigation.Licencias
 import al.ahgitdevelopment.municion.ui.navigation.Route
 import al.ahgitdevelopment.municion.ui.navigation.Tiradas
+import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Badge
 import androidx.compose.material.icons.filled.Security
 import androidx.compose.material.icons.filled.ShoppingCart
-import androidx.compose.material.icons.filled.SportsScore
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
@@ -23,18 +24,24 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 
+sealed interface IconSource {
+    data class Vector(val imageVector: ImageVector) : IconSource
+    data class Drawable(@DrawableRes val id: Int) : IconSource
+}
+
 /**
  * Datos para cada item del BottomNavigationBar
  */
 data class BottomNavItem(
     val route: Route,
-    val icon: ImageVector,
+    val icon: IconSource,
     @StringRes val labelResId: Int
 )
 
@@ -56,23 +63,23 @@ fun MunicionBottomBar(navController: NavHostController) {
     val items = listOf(
         BottomNavItem(
             Licencias,
-            Icons.Default.Badge,
-            al.ahgitdevelopment.municion.R.string.section_licencias_title
+            IconSource.Vector(Icons.Default.Badge),
+            R.string.section_licencias_title
         ),
         BottomNavItem(
             Guias,
-            Icons.Default.Security,
-            al.ahgitdevelopment.municion.R.string.section_guias_title
+            IconSource.Vector(Icons.Default.Security),
+            R.string.section_guias_title
         ),
         BottomNavItem(
             Compras,
-            Icons.Default.ShoppingCart,
-            al.ahgitdevelopment.municion.R.string.section_compras_title
+            IconSource.Vector(Icons.Default.ShoppingCart),
+            R.string.section_compras_title
         ),
         BottomNavItem(
             Tiradas,
-            Icons.Default.SportsScore,
-            al.ahgitdevelopment.municion.R.string.section_competiciones_title
+            IconSource.Drawable(R.drawable.outline_social_leaderboard_24),
+            R.string.section_competiciones_title
         )
     )
 
@@ -94,10 +101,21 @@ fun MunicionBottomBar(navController: NavHostController) {
 
                 NavigationBarItem(
                     icon = {
-                        Icon(
-                            imageVector = item.icon,
-                            contentDescription = stringResource(item.labelResId)
-                        )
+                        when (val source = item.icon) {
+                            is IconSource.Vector -> {
+                                Icon(
+                                    imageVector = source.imageVector,
+                                    contentDescription = stringResource(item.labelResId)
+                                )
+                            }
+
+                            is IconSource.Drawable -> {
+                                Icon(
+                                    painter = painterResource(id = source.id),
+                                    contentDescription = stringResource(item.labelResId)
+                                )
+                            }
+                        }
                     },
                     label = {
                         Text(

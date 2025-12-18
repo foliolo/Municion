@@ -39,8 +39,8 @@ android {
         applicationId = "al.ahgitdevelopment.municion"
         minSdk = 26
         targetSdk = 36
-        versionCode = 42
-        versionName = "3.2.1"
+        versionCode = 43
+        versionName = "3.2.2"
 
         testInstrumentationRunner = "android.support.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
@@ -130,6 +130,9 @@ dependencies {
 
     // ========== IMAGE LOADING ==========
     implementation(libs.bundles.coil)
+
+    // ========== IMAGE PROCESSING (EXIF) ==========
+    implementation(libs.androidx.exifinterface)
 
     // ========== JETPACK COMPOSE ==========
     implementation(platform(libs.androidx.compose.bom))

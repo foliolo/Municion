@@ -1,5 +1,14 @@
 package al.ahgitdevelopment.municion.ui.guias
 
+import al.ahgitdevelopment.municion.R
+import al.ahgitdevelopment.municion.data.local.room.entities.Guia
+import al.ahgitdevelopment.municion.ui.components.DeleteConfirmationDialog
+import al.ahgitdevelopment.municion.ui.components.EmptyState
+import al.ahgitdevelopment.municion.ui.components.ZoomableImageDialog
+import al.ahgitdevelopment.municion.ui.navigation.GuiaForm
+import al.ahgitdevelopment.municion.ui.navigation.navtypes.navigateSafely
+import al.ahgitdevelopment.municion.ui.theme.MunicionTheme
+import al.ahgitdevelopment.municion.ui.viewmodel.GuiaViewModel
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -13,22 +22,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
-import al.ahgitdevelopment.municion.R
-import al.ahgitdevelopment.municion.data.local.room.entities.Guia
-import al.ahgitdevelopment.municion.ui.components.DeleteConfirmationDialog
-import al.ahgitdevelopment.municion.ui.components.EmptyState
-import al.ahgitdevelopment.municion.ui.navigation.GuiaForm
-import al.ahgitdevelopment.municion.ui.navigation.Route
-import al.ahgitdevelopment.municion.ui.navigation.navtypes.navigateSafely
-import al.ahgitdevelopment.municion.ui.theme.MunicionTheme
-import al.ahgitdevelopment.municion.ui.viewmodel.GuiaViewModel
-import androidx.compose.ui.platform.LocalContext
 
 /**
  * Contenido de la pantalla de Guías para Single Scaffold Architecture.
@@ -49,11 +49,12 @@ fun GuiasContent(
     snackbarHostState: SnackbarHostState,
     viewModel: GuiaViewModel = hiltViewModel()
 ) {
-    val context = LocalContext.current
+    val resources = LocalResources.current
     val guias by viewModel.guias.collectAsStateWithLifecycle()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     var guiaToDelete by remember { mutableStateOf<Guia?>(null) }
+    var imageUrlToShow by remember { mutableStateOf<String?>(null) }
 
     // Mostrar mensajes de UiState
     LaunchedEffect(uiState) {
@@ -64,12 +65,14 @@ fun GuiasContent(
                 )
                 viewModel.resetUiState()
             }
+
             is GuiaViewModel.GuiaUiState.Error -> {
                 snackbarHostState.showSnackbar(
                     "Error: ${(uiState as GuiaViewModel.GuiaUiState.Error).message}"
                 )
                 viewModel.resetUiState()
             }
+
             else -> {}
         }
     }
@@ -87,11 +90,19 @@ fun GuiasContent(
         )
     }
 
+    // Dialog de imagen con zoom
+    imageUrlToShow?.let { imageUrl ->
+        ZoomableImageDialog(
+            imageUrl = imageUrl,
+            contentDescription = stringResource(R.string.content_description_weapon_image),
+            onDismiss = { imageUrlToShow = null }
+        )
+    }
+
     GuiasListContent(
         guias = guias,
-        onItemClick = { /* Info */ },
-        onItemLongClick = { guia ->
-            val tipoLicenciaStr = context.resources.getStringArray(R.array.tipo_licencias)
+        onItemClick = { guia ->
+            val tipoLicenciaStr = resources.getStringArray(R.array.tipo_licencias)
                 .getOrNull(guia.tipoLicencia) ?: ""
             navController.navigateSafely(
                 GuiaForm(
@@ -100,7 +111,8 @@ fun GuiasContent(
                 )
             )
         },
-        onDeleteClick = { guia -> guiaToDelete = guia }
+        onDeleteClick = { guia -> guiaToDelete = guia },
+        onImageClick = { url -> imageUrlToShow = url }
     )
 }
 
@@ -112,19 +124,21 @@ fun GuiasContent(
  * Fácil de previsualizar y testear.
  *
  * @param guias Lista de guías a mostrar
- * @param onItemClick Callback para click en item
- * @param onItemLongClick Callback para long-press (editar)
+ * @param onItemClick Callback para click en item (editar)
  * @param onDeleteClick Callback para swipe-to-delete
+ * @param onImageClick Callback para click en imagen (mostrar zoom)
  * @param modifier Modificador opcional
  *
  * @since v3.0.0 (Compose Migration - Single Scaffold Architecture)
+ * @since v3.2.3 (Added image click to zoom)
+ * @since v3.2.4 (Changed long-click to click for edit)
  */
 @Composable
 fun GuiasListContent(
     guias: List<Guia>,
     onItemClick: (Guia) -> Unit,
-    onItemLongClick: (Guia) -> Unit,
     onDeleteClick: (Guia) -> Unit,
+    onImageClick: (String) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     if (guias.isEmpty()) {
@@ -146,8 +160,8 @@ fun GuiasListContent(
                 GuiaItem(
                     guia = guia,
                     onClick = { onItemClick(guia) },
-                    onLongClick = { onItemLongClick(guia) },
                     onDelete = { onDeleteClick(guia) },
+                    onImageClick = onImageClick,
                     modifier = Modifier.padding(vertical = 4.dp)
                 )
             }
@@ -189,7 +203,6 @@ private fun GuiasListContentPreview() {
                 )
             ),
             onItemClick = {},
-            onItemLongClick = {},
             onDeleteClick = {}
         )
     }
@@ -202,7 +215,6 @@ private fun GuiasListContentEmptyPreview() {
         GuiasListContent(
             guias = emptyList(),
             onItemClick = {},
-            onItemLongClick = {},
             onDeleteClick = {}
         )
     }

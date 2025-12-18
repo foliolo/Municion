@@ -1,9 +1,13 @@
 package al.ahgitdevelopment.municion.ui.guias
 
 import al.ahgitdevelopment.municion.R
-import androidx.compose.foundation.ExperimentalFoundationApi
+import al.ahgitdevelopment.municion.data.local.room.entities.Guia
+import al.ahgitdevelopment.municion.ui.theme.LicenseExpired
+import al.ahgitdevelopment.municion.ui.theme.LicenseExpiring
+import al.ahgitdevelopment.municion.ui.theme.LicenseValid
+import al.ahgitdevelopment.municion.ui.theme.Primary
 import androidx.compose.foundation.background
-import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -29,41 +33,44 @@ import androidx.compose.material3.SwipeToDismissBox
 import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberSwipeToDismissBoxState
-import androidx.compose.ui.res.stringResource
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import al.ahgitdevelopment.municion.data.local.room.entities.Guia
-import al.ahgitdevelopment.municion.ui.theme.LicenseExpired
-import al.ahgitdevelopment.municion.ui.theme.LicenseExpiring
-import al.ahgitdevelopment.municion.ui.theme.LicenseValid
-import al.ahgitdevelopment.municion.ui.theme.Primary
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 
 /**
  * Item de Guía para mostrar en LazyColumn.
  *
  * @param guia Datos de la guía
- * @param onClick Callback para click simple
- * @param onLongClick Callback para long-press (editar)
+ * @param onClick Callback para click (editar)
  * @param onDelete Callback para swipe-to-delete
+ * @param onImageClick Callback para click en la imagen (null si no tiene imagen)
  * @param modifier Modificador opcional
  *
  * @since v3.0.0 (Compose Migration)
+ * @since v3.2.2 (Image display feature)
+ * @since v3.2.3 (Added image click to zoom)
+ * @since v3.2.4 (Changed long-click to click for edit)
  */
-@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun GuiaItem(
     guia: Guia,
     onClick: () -> Unit,
-    onLongClick: () -> Unit,
     onDelete: () -> Unit,
+    onImageClick: ((String) -> Unit)? = null,
     modifier: Modifier = Modifier
 ) {
+    val context = LocalContext.current
     val dismissState = rememberSwipeToDismissBoxState()
 
     LaunchedEffect(dismissState.currentValue) {
@@ -104,36 +111,59 @@ fun GuiaItem(
         Card(
             modifier = Modifier
                 .fillMaxWidth()
-                .combinedClickable(
-                    onClick = onClick,
-                    onLongClick = onLongClick
-                ),
+                .clickable(onClick = onClick),
             shape = RoundedCornerShape(12.dp),
             elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
         ) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(16.dp),
+                    .padding(12.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                // Icono
+                // Imagen del arma o icono por defecto
+                val hasValidImage = guia.hasImage()
+                val imageUrl = if (hasValidImage) {
+                    fixFirebaseStorageUrl(guia.fotoUrl ?: guia.imagePath ?: "")
+                } else ""
+                
                 Box(
                     modifier = Modifier
-                        .size(48.dp)
+                        .size(72.dp)
                         .clip(RoundedCornerShape(8.dp))
-                        .background(Primary.copy(alpha = 0.15f)),
+                        .background(Primary.copy(alpha = 0.15f))
+                        .then(
+                            if (hasValidImage && onImageClick != null) {
+                                Modifier.clickable { onImageClick(imageUrl) }
+                            } else {
+                                Modifier
+                            }
+                        ),
                     contentAlignment = Alignment.Center
                 ) {
-                    Icon(
-                        imageVector = Icons.Default.Security,
-                        contentDescription = null,
-                        tint = Primary,
-                        modifier = Modifier.size(28.dp)
-                    )
+                    if (hasValidImage) {
+                        // Mostrar imagen del arma
+                        AsyncImage(
+                            model = ImageRequest.Builder(context)
+                                .data(imageUrl)
+                                .crossfade(true)
+                                .build(),
+                            contentDescription = stringResource(R.string.content_description_weapon_image),
+                            modifier = Modifier.fillMaxSize(),
+                            contentScale = ContentScale.Crop
+                        )
+                    } else {
+                        // Mostrar icono por defecto
+                        Icon(
+                            imageVector = Icons.Default.Security,
+                            contentDescription = null,
+                            tint = Primary,
+                            modifier = Modifier.size(36.dp)
+                        )
+                    }
                 }
 
-                Spacer(modifier = Modifier.width(16.dp))
+                Spacer(modifier = Modifier.width(12.dp))
 
                 // Contenido
                 Column(modifier = Modifier.weight(1f)) {
@@ -186,5 +216,37 @@ fun GuiaItem(
                 }
             }
         }
+    }
+}
+
+/**
+ * Corrige URLs de Firebase Storage que tienen el path decodificado incorrectamente.
+ * 
+ * Firebase Storage requiere que el path después de /o/ esté URL-encoded.
+ * Ejemplo correcto: .../o/v3_userdata%2FuserId%2Farmas%2F6.jpg?alt=media...
+ * Ejemplo incorrecto: .../o/v3_userdata/userId/armas/6.jpg?alt=media...
+ */
+private fun fixFirebaseStorageUrl(url: String): String {
+    if (url.isBlank() || !url.contains("firebasestorage.googleapis.com")) {
+        return url
+    }
+    
+    // Si ya tiene %2F en el path, está correctamente codificada
+    if (url.contains("/o/") && url.substringAfter("/o/").substringBefore("?").contains("%2F")) {
+        return url
+    }
+    
+    return try {
+        val baseUrl = url.substringBefore("/o/") + "/o/"
+        val pathAndQuery = url.substringAfter("/o/")
+        val path = pathAndQuery.substringBefore("?")
+        val query = if (pathAndQuery.contains("?")) "?" + pathAndQuery.substringAfter("?") else ""
+        
+        val encodedPath = java.net.URLEncoder.encode(path, "UTF-8")
+            .replace("+", "%20")
+        
+        baseUrl + encodedPath + query
+    } catch (e: Exception) {
+        url
     }
 }

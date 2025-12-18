@@ -75,19 +75,20 @@ data class Guia(
     val gastado: Int = 0,  // Munición ya gastada este año
 
     @ColumnInfo(name = "image_path")
-    val imagePath: String? = null
+    val imagePath: String? = null,
+
+    /** URL pública de la foto en Firebase Storage */
+    @ColumnInfo(name = "foto_url")
+    val fotoUrl: String? = null,
+
+    /** Ruta en Firebase Storage para facilitar el borrado */
+    @ColumnInfo(name = "storage_path")
+    val storagePath: String? = null
 ) : Parcelable {
 
-    init {
-        require(marca.isNotBlank()) { "Marca cannot be blank" }
-        require(modelo.isNotBlank()) { "Modelo cannot be blank" }
-        require(apodo.isNotBlank()) { "Apodo cannot be blank" }
-        require(calibre1.isNotBlank()) { "Calibre1 cannot be blank" }
-        require(numGuia.isNotBlank()) { "NumGuia cannot be blank" }
-        require(numArma.isNotBlank()) { "NumArma cannot be blank" }
-        require(cupo > 0) { "Cupo must be > 0, got: $cupo" }
-        require(gastado >= 0) { "Gastado must be >= 0, got: $gastado" }
-    }
+    // NOTA: NO usar init{require()} aquí porque rompe la deserialización JSON
+    // durante la navegación type-safe (Navigation Compose + Kotlinx Serialization).
+    // Las validaciones se realizan en el formulario antes de guardar.
 
     /**
      * Munición restante disponible
@@ -130,9 +131,9 @@ data class Guia(
     }
 
     /**
-     * Verifica si tiene imagen
+     * Verifica si tiene imagen (local o en Storage)
      */
-    fun hasImage(): Boolean = !imagePath.isNullOrBlank()
+    fun hasImage(): Boolean = !imagePath.isNullOrBlank() || !fotoUrl.isNullOrBlank()
 
     companion object {
         /**

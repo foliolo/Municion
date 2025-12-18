@@ -289,6 +289,8 @@ class GuiaRepository @Inject constructor(
         val calibre2 = map["calibre2"] as? String
         val gastado = (map["gastado"] as? Number)?.toInt() ?: 0
         val imagePath = map["imagePath"] as? String
+        val fotoUrl = map["fotoUrl"] as? String
+        val storagePath = map["storagePath"] as? String
 
         return try {
             Guia(
@@ -305,7 +307,9 @@ class GuiaRepository @Inject constructor(
                 numArma = numArma,
                 cupo = cupo,
                 gastado = gastado,
-                imagePath = imagePath
+                imagePath = imagePath,
+                fotoUrl = fotoUrl,
+                storagePath = storagePath
             )
         } catch (e: Exception) {
             reportFieldError(userId, itemKey, "constructor", e.message ?: "Unknown", null, parseErrors)

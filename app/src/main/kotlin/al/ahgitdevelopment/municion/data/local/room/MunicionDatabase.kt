@@ -38,7 +38,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase
         Tirada::class,
         AppPurchase::class
     ],
-    version = 28,
+    version = 31,
     exportSchema = true
 )
 abstract class MunicionDatabase : RoomDatabase() {
@@ -51,6 +51,75 @@ abstract class MunicionDatabase : RoomDatabase() {
 
     companion object {
         private const val DATABASE_NAME = "municion.db"
+
+        /**
+         * MIGRATION: v29 → v30
+         *
+         * CAMBIO: Agregar columnas 'foto_url' y 'storage_path' a tabla licencias
+         * para almacenar la URL de Firebase Storage y la ruta de borrado
+         */
+        /**
+         * MIGRATION: v30 → v31
+         *
+         * CAMBIO: Agregar columnas 'foto_url' y 'storage_path' a tabla compras
+         * para almacenar la URL de Firebase Storage y la ruta de borrado
+         */
+        val MIGRATION_30_31 = object : Migration(30, 31) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                Log.i("MunicionDatabase", "Starting migration v30 → v31 (Add foto_url and storage_path to compras)")
+                database.execSQL(
+                    """
+                    ALTER TABLE compras ADD COLUMN foto_url TEXT DEFAULT NULL
+                    """.trimIndent()
+                )
+                database.execSQL(
+                    """
+                    ALTER TABLE compras ADD COLUMN storage_path TEXT DEFAULT NULL
+                    """.trimIndent()
+                )
+                Log.i("MunicionDatabase", "Migration v30 → v31 completed")
+            }
+        }
+
+        val MIGRATION_29_30 = object : Migration(29, 30) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                Log.i("MunicionDatabase", "Starting migration v29 → v30 (Add foto_url and storage_path to licencias)")
+                database.execSQL(
+                    """
+                    ALTER TABLE licencias ADD COLUMN foto_url TEXT DEFAULT NULL
+                    """.trimIndent()
+                )
+                database.execSQL(
+                    """
+                    ALTER TABLE licencias ADD COLUMN storage_path TEXT DEFAULT NULL
+                    """.trimIndent()
+                )
+                Log.i("MunicionDatabase", "Migration v29 → v30 completed")
+            }
+        }
+
+        /**
+         * MIGRATION: v28 → v29
+         *
+         * CAMBIO: Agregar columnas 'foto_url' y 'storage_path' a tabla guias
+         * para almacenar la URL de Firebase Storage y la ruta de borrado
+         */
+        val MIGRATION_28_29 = object : Migration(28, 29) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                Log.i("MunicionDatabase", "Starting migration v28 → v29 (Add foto_url and storage_path to guias)")
+                database.execSQL(
+                    """
+                    ALTER TABLE guias ADD COLUMN foto_url TEXT DEFAULT NULL
+                    """.trimIndent()
+                )
+                database.execSQL(
+                    """
+                    ALTER TABLE guias ADD COLUMN storage_path TEXT DEFAULT NULL
+                    """.trimIndent()
+                )
+                Log.i("MunicionDatabase", "Migration v28 → v29 completed")
+            }
+        }
 
         /**
          * MIGRATION: v27 → v28
@@ -433,7 +502,16 @@ abstract class MunicionDatabase : RoomDatabase() {
                 MunicionDatabase::class.java,
                 DATABASE_NAME
             )
-                .addMigrations(MIGRATION_23_24, MIGRATION_24_25, MIGRATION_25_26, MIGRATION_26_27, MIGRATION_27_28)
+                .addMigrations(
+                    MIGRATION_23_24,
+                    MIGRATION_24_25,
+                    MIGRATION_25_26,
+                    MIGRATION_26_27,
+                    MIGRATION_27_28,
+                    MIGRATION_28_29,
+                    MIGRATION_29_30,
+                    MIGRATION_30_31
+                )
                 .fallbackToDestructiveMigration(false)  // Solo como último recurso
                 .build()
         }

@@ -27,7 +27,7 @@ import kotlin.reflect.typeOf
  * }
  * ```
  *
- * @since v3.3.0 (NavType Architecture Migration)
+ * @since v3.2.2 (NavType Architecture Migration)
  */
 val municionTypeMap: Map<KType, NavType<*>> = mapOf(
     // Licencia (nullable y non-nullable)
@@ -60,8 +60,6 @@ inline fun <reified T : Any> NavController.navigateSafely(route: T) {
     try {
         this.navigate(route)
     } catch (e: IllegalArgumentException) {
-        // Error de serialización - ya reportado a Crashlytics por NavType
         Log.e("MunicionNavigation", "Failed to navigate to ${T::class.simpleName}", e)
-        // Opcional: mostrar snackbar al usuario
     }
 }

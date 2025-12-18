@@ -1,24 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#13747d</color>
-    <color name="colorPrimaryDark">#ff29221f</color>
-    <color name="colorAccent">#fffc354c</color>
-    <color name="statusBarColor">#ff29221f</color>
-    <color name="navigation">#ff29221f</color>
+    <!-- Military/Tactical Theme - Olive Brown Primary -->
+    <color name="colorPrimary">#4A5A2B</color>
+    <color name="colorPrimaryDark">#282819</color>
+    <color name="colorAccent">#7D5700</color>
+    <color name="statusBarColor">#1C1B18</color>
+    <color name="navigation">#1C1B18</color>
 
-    <color name="selected">#acb3b4</color>
-    <color name="control_background">#cc4285f4</color>
-    <color name="light_yellow">#fafad2</color>
+    <color name="selected">#C8C6BD</color>
+    <color name="control_background">#CC4A5A2B</color>
+    <color name="light_yellow">#FFDEA6</color>
 
     <!-- Material Design colors for proper theming -->
     <color name="colorOnPrimary">#FFFFFF</color>
-    <color name="colorSurface">#FFFFFF</color>
-    <color name="colorOnSurface">#1C1C1C</color>
+    <color name="colorSurface">#FDF9F3</color>
+    <color name="colorOnSurface">#1C1B18</color>
     <color name="colorOnSecondary">#FFFFFF</color>
 
     <!-- BottomNavigation colors -->
-    <color name="bottomNavBackground">@color/colorPrimaryDark</color>
-    <color name="bottomNavItemActive">#FFFFFF</color>
-    <color name="bottomNavItemInactive">#99FFFFFF</color>
+    <color name="bottomNavBackground">#1C1B18</color>
+    <color name="bottomNavItemActive">#B0CA89</color>
+    <color name="bottomNavItemInactive">#99E7E2D9</color>
 
 </resources>
