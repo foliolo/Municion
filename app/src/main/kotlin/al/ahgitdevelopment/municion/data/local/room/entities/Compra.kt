@@ -78,36 +78,18 @@ data class Compra(
     val valoracion: Float = 0f,
 
     @ColumnInfo(name = "image_path")
-    val imagePath: String? = null  // Nullable - campo opcional
+    val imagePath: String? = null,  // Nullable - campo opcional (legacy local path)
+
+    @ColumnInfo(name = "foto_url")
+    val fotoUrl: String? = null,  // URL pública de Firebase Storage
+
+    @ColumnInfo(name = "storage_path")
+    val storagePath: String? = null  // Ruta en Storage para borrado
 ) : Parcelable {
 
-    init {
-        // Validación de datos (fail-fast)
-        require(unidades > 0) {
-            "Unidades must be > 0, got: $unidades"
-        }
-        require(precio >= 0) {
-            "Precio must be >= 0, got: $precio"
-        }
-        require(peso > 0) {
-            "Peso must be > 0, got: $peso"
-        }
-        require(valoracion in 0f..5f) {
-            "Valoracion must be between 0.0 and 5.0, got: $valoracion"
-        }
-        require(calibre1.isNotBlank()) {
-            "Calibre1 cannot be blank"
-        }
-        require(tipo.isNotBlank()) {
-            "Tipo cannot be blank"
-        }
-        require(marca.isNotBlank()) {
-            "Marca cannot be blank"
-        }
-        require(fecha.isNotBlank()) {
-            "Fecha cannot be blank"
-        }
-    }
+    // NOTA: NO usar init{require()} aquí porque rompe la deserialización JSON
+    // durante la navegación type-safe (Navigation Compose + Kotlinx Serialization).
+    // Las validaciones se realizan en el formulario antes de guardar.
 
     /**
      * Parsea la fecha a Date
@@ -128,9 +110,14 @@ data class Compra(
     }
 
     /**
-     * Verifica si la compra tiene imagen
+     * Verifica si la compra tiene imagen (Firebase o legacy)
      */
-    fun hasImage(): Boolean = !imagePath.isNullOrBlank()
+    fun hasImage(): Boolean = !fotoUrl.isNullOrBlank() || !imagePath.isNullOrBlank()
+
+    /**
+     * URL de imagen preferida (Firebase sobre legacy)
+     */
+    fun getImageUrl(): String? = fotoUrl ?: imagePath
 
     /**
      * Formatea el precio para mostrar

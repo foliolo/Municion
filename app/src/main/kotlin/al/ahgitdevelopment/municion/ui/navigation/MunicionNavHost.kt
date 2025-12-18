@@ -1,6 +1,18 @@
 package al.ahgitdevelopment.municion.ui.navigation
 
 import al.ahgitdevelopment.municion.R
+import al.ahgitdevelopment.municion.ui.auth.LoginScreen
+import al.ahgitdevelopment.municion.ui.auth.MigrationScreen
+import al.ahgitdevelopment.municion.ui.compras.ComprasContent
+import al.ahgitdevelopment.municion.ui.forms.compra.CompraFormContent
+import al.ahgitdevelopment.municion.ui.forms.licencia.LicenciaFormScreen
+import al.ahgitdevelopment.municion.ui.forms.tirada.TiradaFormContent
+import al.ahgitdevelopment.municion.ui.forms.guia.GuiaFormScreen
+import al.ahgitdevelopment.municion.ui.guias.GuiasContent
+import al.ahgitdevelopment.municion.ui.licencias.LicenciasContent
+import al.ahgitdevelopment.municion.ui.navigation.navtypes.municionTypeMap
+import al.ahgitdevelopment.municion.ui.settings.AccountSettingsContent
+import al.ahgitdevelopment.municion.ui.tiradas.TiradasContent
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.SnackbarHostState
@@ -12,18 +24,6 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
-import al.ahgitdevelopment.municion.ui.navigation.navtypes.municionTypeMap
-import al.ahgitdevelopment.municion.ui.auth.LoginScreen
-import al.ahgitdevelopment.municion.ui.auth.MigrationScreen
-import al.ahgitdevelopment.municion.ui.compras.ComprasContent
-import al.ahgitdevelopment.municion.ui.forms.CompraFormContent
-import al.ahgitdevelopment.municion.ui.forms.GuiaFormContent
-import al.ahgitdevelopment.municion.ui.forms.LicenciaFormContent
-import al.ahgitdevelopment.municion.ui.forms.TiradaFormContent
-import al.ahgitdevelopment.municion.ui.guias.GuiasContent
-import al.ahgitdevelopment.municion.ui.licencias.LicenciasContent
-import al.ahgitdevelopment.municion.ui.settings.AccountSettingsContent
-import al.ahgitdevelopment.municion.ui.tiradas.TiradasContent
 
 /**
  * NavHost principal de la aplicacion Municion.
@@ -46,7 +46,7 @@ import al.ahgitdevelopment.municion.ui.tiradas.TiradasContent
  * @param modifier Modificador opcional
  *
  * @since v3.0.0 (Compose Migration - Single Scaffold Architecture)
- * @updated v3.4.0 (Auth Simplification)
+ * @updated v3.2.2 (Auth Simplification)
  */
 @Composable
 fun MunicionNavHost(
@@ -149,7 +149,7 @@ fun MunicionNavHost(
                 }
                 return@composable  // Early return
             }
-            LicenciaFormContent(
+            LicenciaFormScreen(
                 licencia = route.licencia,
                 navController = navController,
                 snackbarHostState = snackbarHostState,
@@ -171,7 +171,7 @@ fun MunicionNavHost(
                 }
                 return@composable
             }
-            GuiaFormContent(
+            GuiaFormScreen(
                 guia = route.guia,
                 tipoLicencia = route.tipoLicencia,
                 navController = navController,
@@ -180,7 +180,7 @@ fun MunicionNavHost(
             )
         }
 
-        // CompraForm: objeto completo Compra (null para nueva) + Guia obligatoria
+        // CompraForm: objeto completo Compra (null para nueva) + Guia asociada
         composable<CompraForm>(
             typeMap = municionTypeMap
         ) { backStackEntry ->
@@ -194,9 +194,18 @@ fun MunicionNavHost(
                 }
                 return@composable
             }
+            // Validar que guia no sea null (requerida para el formulario)
+            val guia = route.guia
+            if (guia == null) {
+                LaunchedEffect(Unit) {
+                    snackbarHostState.showSnackbar(context.getString(R.string.error_loading_purchase_form))
+                    navController.popBackStack()
+                }
+                return@composable
+            }
             CompraFormContent(
                 compra = route.compra,
-                guia = route.guia,
+                guia = guia,
                 navController = navController,
                 snackbarHostState = snackbarHostState,
                 onRegisterSaveCallback = onRegisterSaveCallback

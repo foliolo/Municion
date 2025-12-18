@@ -234,6 +234,8 @@ class LicenciaRepository @Inject constructor(
         val autonomia = (map["autonomia"] as? Number)?.toInt() ?: -1
         val escala = (map["escala"] as? Number)?.toInt() ?: -1
         val categoria = (map["categoria"] as? Number)?.toInt() ?: -1
+        val fotoUrl = map["fotoUrl"] as? String
+        val storagePath = map["storagePath"] as? String
 
         return try {
             Licencia(
@@ -249,7 +251,9 @@ class LicenciaRepository @Inject constructor(
                 numSeguro = numSeguro,
                 autonomia = autonomia,
                 escala = escala,
-                categoria = categoria
+                categoria = categoria,
+                fotoUrl = fotoUrl,
+                storagePath = storagePath
             )
         } catch (e: Exception) {
             // Capture any other exception from the constructor

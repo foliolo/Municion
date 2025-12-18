@@ -9,6 +9,7 @@ import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.Json
 import kotlin.reflect.KClass
 
+// TODO delete this class if not needed
 /**
  * Base class for custom NavTypes with validation and error handling.
  *
@@ -20,7 +21,7 @@ import kotlin.reflect.KClass
  * @param serializer KSerializer para kotlinx.serialization
  * @param type KClass del tipo T
  *
- * @since v3.3.0 (NavType Architecture Migration)
+ * @since v3.2.2 (NavType Architecture Migration)
  */
 abstract class BaseNavType<T : Parcelable>(
     isNullableAllowed: Boolean = true,

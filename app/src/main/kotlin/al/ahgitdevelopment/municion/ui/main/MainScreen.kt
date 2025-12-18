@@ -30,6 +30,7 @@ import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -70,7 +71,7 @@ import kotlinx.coroutines.launch
  * @param onAuthStateChange Callback para refrescar estado de auth
  *
  * @since v3.0.0 (Compose Migration - Single Scaffold Architecture)
- * @updated v3.4.0 (Auth Simplification)
+ * @updated v3.2.2 (Auth Simplification)
  */
 @Composable
 fun MainScreen(
@@ -120,23 +121,28 @@ fun MainScreen(
                     popUpTo(0) { inclusive = true }
                 }
             }
+
             is AuthViewModel.AuthState.RequiresMigration -> {
                 // Usuario anonimo - navegar a Migration
                 navController.navigate(Migration) {
                     popUpTo(0) { inclusive = true }
                 }
             }
+
             is AuthViewModel.AuthState.Authenticated -> {
                 // Usuario autenticado - navegar a Licencias si no estamos ya en contenido principal
                 val currentRoute = navController.currentDestination?.route
                 if (currentRoute == Login::class.qualifiedName ||
-                    currentRoute == Migration::class.qualifiedName) {
+                    currentRoute == Migration::class.qualifiedName
+                ) {
                     navController.navigate(Licencias) {
                         popUpTo(0) { inclusive = true }
                     }
                 }
             }
-            else -> { /* Loading, Error - no hacer nada */ }
+
+            else -> { /* Loading, Error - no hacer nada */
+            }
         }
     }
 
@@ -248,7 +254,8 @@ fun MainScreen(
             if (showFab) {
                 MunicionFAB(
                     currentRoute = currentRoute,
-                    onAddLicencia = { navController.navigateSafely(LicenciaForm(licencia = null))
+                    onAddLicencia = {
+                        navController.navigateSafely(LicenciaForm(licencia = null))
                     },
                     onAddGuia = {
                         if (licencias.isEmpty()) {
@@ -277,7 +284,7 @@ fun MainScreen(
             }
         },
         snackbarHost = { SnackbarHost(snackbarHostState) },
-        contentWindowInsets = WindowInsets(0, 0, 0, 0)
+        contentWindowInsets = WindowInsets.safeDrawing
     ) { innerPadding ->
         MunicionNavHost(
             navController = navController,

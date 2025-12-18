@@ -1,6 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <paths>
-    <external-path
+    <!-- Directorio de imágenes externo de la app -->
+    <external-files-path
         name="my_images"
+        path="Pictures" />
+    
+    <!-- Directorio de caché para archivos temporales -->
+    <cache-path
+        name="cache_images"
+        path="images" />
+    
+    <!-- Legado: mantener compatibilidad con versiones anteriores -->
+    <external-path
+        name="external_images"
         path="Android/data/al.ahgitdevelopment.municion/files/Pictures" />
 </paths>

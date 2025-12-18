@@ -1,6 +1,14 @@
 package al.ahgitdevelopment.municion.ui.licencias
 
 import al.ahgitdevelopment.municion.R
+import al.ahgitdevelopment.municion.data.local.room.entities.Licencia
+import al.ahgitdevelopment.municion.ui.components.DeleteConfirmationDialog
+import al.ahgitdevelopment.municion.ui.components.EmptyState
+import al.ahgitdevelopment.municion.ui.components.ZoomableImageDialog
+import al.ahgitdevelopment.municion.ui.navigation.LicenciaForm
+import al.ahgitdevelopment.municion.ui.navigation.navtypes.navigateSafely
+import al.ahgitdevelopment.municion.ui.theme.MunicionTheme
+import al.ahgitdevelopment.municion.ui.viewmodel.LicenciaViewModel
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -20,14 +28,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
-import al.ahgitdevelopment.municion.data.local.room.entities.Licencia
-import al.ahgitdevelopment.municion.ui.components.DeleteConfirmationDialog
-import al.ahgitdevelopment.municion.ui.components.EmptyState
-import al.ahgitdevelopment.municion.ui.navigation.LicenciaForm
-import al.ahgitdevelopment.municion.ui.navigation.Route
-import al.ahgitdevelopment.municion.ui.navigation.navtypes.navigateSafely
-import al.ahgitdevelopment.municion.ui.theme.MunicionTheme
-import al.ahgitdevelopment.municion.ui.viewmodel.LicenciaViewModel
 
 /**
  * Contenido de la pantalla de Licencias para Single Scaffold Architecture.
@@ -51,6 +51,7 @@ fun LicenciasContent(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     var licenciaToDelete by remember { mutableStateOf<Licencia?>(null) }
+    var imageUrlToShow by remember { mutableStateOf<String?>(null) }
 
     // Mostrar mensajes de UiState
     LaunchedEffect(uiState) {
@@ -84,13 +85,22 @@ fun LicenciasContent(
         )
     }
 
+    // Dialog de imagen con zoom
+    imageUrlToShow?.let { imageUrl ->
+        ZoomableImageDialog(
+            imageUrl = imageUrl,
+            contentDescription = stringResource(R.string.content_description_license_image),
+            onDismiss = { imageUrlToShow = null }
+        )
+    }
+
     LicenciasListContent(
         licencias = licencias,
-        onItemClick = { /* Click simple: info */ },
-        onItemLongClick = { licencia ->
+        onItemClick = { licencia ->
             navController.navigateSafely(LicenciaForm(licencia = licencia))
         },
-        onDeleteClick = { licencia -> licenciaToDelete = licencia }
+        onDeleteClick = { licencia -> licenciaToDelete = licencia },
+        onImageClick = { url -> imageUrlToShow = url }
     )
 }
 
@@ -102,19 +112,21 @@ fun LicenciasContent(
  * Fácil de previsualizar y testear.
  *
  * @param licencias Lista de licencias a mostrar
- * @param onItemClick Callback para click en item
- * @param onItemLongClick Callback para long-press (editar)
+ * @param onItemClick Callback para click en item (editar)
  * @param onDeleteClick Callback para swipe-to-delete
+ * @param onImageClick Callback para click en imagen (mostrar zoom)
  * @param modifier Modificador opcional
  *
  * @since v3.0.0 (Compose Migration - Single Scaffold Architecture)
+ * @since v3.2.3 (Added image click to zoom)
+ * @since v3.2.4 (Changed long-click to click for edit)
  */
 @Composable
 fun LicenciasListContent(
     licencias: List<Licencia>,
     onItemClick: (Licencia) -> Unit,
-    onItemLongClick: (Licencia) -> Unit,
     onDeleteClick: (Licencia) -> Unit,
+    onImageClick: (String) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     if (licencias.isEmpty()) {
@@ -136,8 +148,8 @@ fun LicenciasListContent(
                 LicenciaItem(
                     licencia = licencia,
                     onClick = { onItemClick(licencia) },
-                    onLongClick = { onItemLongClick(licencia) },
                     onDelete = { onDeleteClick(licencia) },
+                    onImageClick = onImageClick,
                     modifier = Modifier.padding(vertical = 4.dp)
                 )
             }
@@ -169,7 +181,6 @@ private fun LicenciasListContentPreview() {
                 )
             ),
             onItemClick = {},
-            onItemLongClick = {},
             onDeleteClick = {}
         )
     }
@@ -182,7 +193,6 @@ private fun LicenciasListContentEmptyPreview() {
         LicenciasListContent(
             licencias = emptyList(),
             onItemClick = {},
-            onItemLongClick = {},
             onDeleteClick = {}
         )
     }

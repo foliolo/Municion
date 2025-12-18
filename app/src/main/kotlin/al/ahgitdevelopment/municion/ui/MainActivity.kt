@@ -14,12 +14,14 @@ import androidx.activity.SystemBarStyle
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -47,7 +49,7 @@ import javax.inject.Inject
  * - MainScreen contiene NavHost con todas las rutas
  *
  * @since v3.0.0 (Compose Migration)
- * @updated v3.4.0 (Auth Simplification)
+ * @updated v3.2.2 (Auth Simplification)
  */
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -71,16 +73,34 @@ class MainActivity : ComponentActivity() {
     private val permissionResult: SharedFlow<Boolean> = _permissionResult.asSharedFlow()
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        // Edge-to-edge con iconos claros (blancos) en status bar y navigation bar
-        // porque TopBar y BottomBar usan MaterialTheme.colorScheme.primary
-        enableEdgeToEdge(
-            statusBarStyle = SystemBarStyle.dark(android.graphics.Color.TRANSPARENT),
-            navigationBarStyle = SystemBarStyle.dark(android.graphics.Color.TRANSPARENT)
-        )
         super.onCreate(savedInstanceState)
 
         setContent {
-            MunicionTheme {
+            val darkTheme = isSystemInDarkTheme()
+            
+            // Edge-to-edge con adaptación dinámica al tema
+            // Siguiendo las guías de Material Design 3 y Android 15+
+            DisposableEffect(darkTheme) {
+                enableEdgeToEdge(
+                    statusBarStyle = SystemBarStyle.auto(
+                        android.graphics.Color.TRANSPARENT,
+                        android.graphics.Color.TRANSPARENT
+                    ) { darkTheme },
+                    // Navigation bar: usar estilo que contraste con el contenido
+                    // En light theme: iconos oscuros, en dark theme: iconos claros
+                    navigationBarStyle = if (darkTheme) {
+                        SystemBarStyle.dark(android.graphics.Color.TRANSPARENT)
+                    } else {
+                        SystemBarStyle.light(
+                            android.graphics.Color.TRANSPARENT,
+                            android.graphics.Color.TRANSPARENT
+                        )
+                    }
+                )
+                onDispose {}
+            }
+            
+            MunicionTheme(darkTheme = darkTheme) {
                 MunicionApp(
                     authViewModel = authViewModel,
                     mainViewModel = mainViewModel,
@@ -118,7 +138,7 @@ class MainActivity : ComponentActivity() {
  * - Visualizacion de MainScreen cuando esta autenticado
  *
  * @since v3.0.0 (Compose Migration)
- * @updated v3.4.0 (Auth Simplification)
+ * @updated v3.2.2 (Auth Simplification)
  */
 @Composable
 fun MunicionApp(

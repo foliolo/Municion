@@ -1,9 +1,8 @@
 package al.ahgitdevelopment.municion.ui.licencias
 
 import al.ahgitdevelopment.municion.R
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -33,6 +32,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -42,6 +42,8 @@ import al.ahgitdevelopment.municion.data.local.room.entities.Licencia
 import al.ahgitdevelopment.municion.ui.theme.LicenseExpired
 import al.ahgitdevelopment.municion.ui.theme.LicenseExpiring
 import al.ahgitdevelopment.municion.ui.theme.LicenseValid
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 
 /**
  * Item de Licencia para mostrar en LazyColumn.
@@ -52,23 +54,26 @@ import al.ahgitdevelopment.municion.ui.theme.LicenseValid
  * - Subtítulo (número de licencia)
  * - Fecha de caducidad con estado visual
  * - Swipe-to-delete
- * - Long-press para editar
+ * - Click para editar
+ * - Click en imagen para ver en grande
  *
  * @param licencia Datos de la licencia
- * @param onClick Callback para click simple
- * @param onLongClick Callback para long-press (editar)
+ * @param onClick Callback para click (editar)
  * @param onDelete Callback para swipe-to-delete
+ * @param onImageClick Callback para click en la imagen (null si no tiene imagen)
  * @param modifier Modificador opcional
  *
  * @since v3.0.0 (Compose Migration)
+ * @since v3.2.3 (Added image click to zoom)
+ * @since v3.2.4 (Changed long-click to click for edit)
  */
-@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LicenciaItem(
     licencia: Licencia,
     onClick: () -> Unit,
-    onLongClick: () -> Unit,
     onDelete: () -> Unit,
+    onImageClick: ((String) -> Unit)? = null,
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
@@ -114,36 +119,54 @@ fun LicenciaItem(
         Card(
             modifier = Modifier
                 .fillMaxWidth()
-                .combinedClickable(
-                    onClick = onClick,
-                    onLongClick = onLongClick
-                ),
+                .clickable(onClick = onClick),
             shape = RoundedCornerShape(12.dp),
             elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
         ) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(16.dp),
+                    .padding(12.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                // Icono con indicador de estado
+                // Imagen o icono (ampliado a 64dp como en GuiaItem)
                 Box(
                     modifier = Modifier
-                        .size(48.dp)
+                        .size(64.dp)
                         .clip(RoundedCornerShape(8.dp))
-                        .background(statusColor.copy(alpha = 0.15f)),
+                        .background(statusColor.copy(alpha = 0.15f))
+                        .then(
+                            if (!licencia.fotoUrl.isNullOrBlank() && onImageClick != null) {
+                                Modifier.clickable { onImageClick(licencia.fotoUrl!!) }
+                            } else {
+                                Modifier
+                            }
+                        ),
                     contentAlignment = Alignment.Center
                 ) {
-                    Icon(
-                        imageVector = Icons.Default.Badge,
-                        contentDescription = null,
-                        tint = statusColor,
-                        modifier = Modifier.size(28.dp)
-                    )
+                    if (!licencia.fotoUrl.isNullOrBlank()) {
+                        // Mostrar imagen de Firebase Storage
+                        AsyncImage(
+                            model = ImageRequest.Builder(context)
+                                .data(licencia.fotoUrl)
+                                .crossfade(true)
+                                .build(),
+                            contentDescription = stringResource(R.string.content_description_license_image),
+                            modifier = Modifier.fillMaxSize(),
+                            contentScale = ContentScale.Crop
+                        )
+                    } else {
+                        // Mostrar icono por defecto
+                        Icon(
+                            imageVector = Icons.Default.Badge,
+                            contentDescription = null,
+                            tint = statusColor,
+                            modifier = Modifier.size(36.dp)
+                        )
+                    }
                 }
 
-                Spacer(modifier = Modifier.width(16.dp))
+                Spacer(modifier = Modifier.width(12.dp))
 
                 // Contenido
                 Column(modifier = Modifier.weight(1f)) {

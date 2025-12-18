@@ -75,12 +75,12 @@ data class GuiaForm(
 /**
  * Formulario de Compra.
  * @param compra Objeto completo para editar, null para crear nueva
- * @param guia Guía asociada (siempre necesaria para validación de cupo)
+ * @param guia Guía asociada (necesaria para validación de cupo, null no debería pasar)
  */
 @Serializable
 data class CompraForm(
     val compra: Compra? = null,
-    val guia: Guia
+    val guia: Guia? = null
 ) : Route
 
 /**

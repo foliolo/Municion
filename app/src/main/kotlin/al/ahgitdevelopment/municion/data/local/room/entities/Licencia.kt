@@ -78,16 +78,20 @@ data class Licencia(
     val escala: Int = -1,
 
     @ColumnInfo(name = "categoria")
-    val categoria: Int = -1
+    val categoria: Int = -1,
+
+    /** URL de descarga de Firebase Storage para la foto de la licencia */
+    @ColumnInfo(name = "foto_url")
+    val fotoUrl: String? = null,
+
+    /** Ruta en Firebase Storage para facilitar el borrado (v3_userdata/{userId}/licencias/{id}.jpg) */
+    @ColumnInfo(name = "storage_path")
+    val storagePath: String? = null
 ) : Parcelable {
 
-    init {
-        require(numLicencia.isNotBlank()) { "NumLicencia cannot be blank" }
-        require(fechaExpedicion.isNotBlank()) { "FechaExpedicion cannot be blank" }
-        require(fechaCaducidad.isNotBlank()) { "FechaCaducidad cannot be blank" }
-        require(edad > 0) { "Edad must be > 0, got: $edad" }
-        require(tipo >= 0) { "Tipo must be >= 0, got: $tipo" }
-    }
+    // NOTA: NO usar init{require()} aquí porque rompe la deserialización JSON
+    // durante la navegación type-safe (Navigation Compose + Kotlinx Serialization).
+    // Las validaciones se realizan en el formulario antes de guardar.
 
     /**
      * Parsea la fecha de caducidad a Date
