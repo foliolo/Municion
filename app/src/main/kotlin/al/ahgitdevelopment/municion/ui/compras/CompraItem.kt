@@ -3,10 +3,8 @@ package al.ahgitdevelopment.municion.ui.compras
 import al.ahgitdevelopment.municion.R
 import al.ahgitdevelopment.municion.data.local.room.entities.Compra
 import al.ahgitdevelopment.municion.ui.theme.Secondary
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -50,21 +48,20 @@ import coil.request.ImageRequest
  * Item de Compra para mostrar en LazyColumn.
  *
  * @param compra Datos de la compra
- * @param onClick Callback para click simple
- * @param onLongClick Callback para long-press (editar)
+ * @param onClick Callback para click (editar)
  * @param onDelete Callback para swipe-to-delete
  * @param onImageClick Callback para click en la imagen (null si no tiene imagen)
  * @param modifier Modificador opcional
  *
  * @since v3.0.0 (Compose Migration)
  * @since v3.2.3 (Added image support and click to zoom)
+ * @since v3.2.4 (Changed long-click to click for edit)
  */
-@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CompraItem(
     compra: Compra,
     onClick: () -> Unit,
-    onLongClick: () -> Unit,
     onDelete: () -> Unit,
     onImageClick: ((String) -> Unit)? = null,
     modifier: Modifier = Modifier
@@ -102,10 +99,7 @@ fun CompraItem(
         Card(
             modifier = Modifier
                 .fillMaxWidth()
-                .combinedClickable(
-                    onClick = onClick,
-                    onLongClick = onLongClick
-                ),
+                .clickable(onClick = onClick),
             shape = RoundedCornerShape(12.dp),
             elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
         ) {
@@ -223,5 +217,5 @@ fun CompraItemPreview() {
         tienda = "Armería Álvarez",
         valoracion = 4.5f
     )
-    CompraItem(compra = compra, onClick = {}, onLongClick = {}, onDelete = {})
+    CompraItem(compra = compra, onClick = {}, onDelete = {})
 }

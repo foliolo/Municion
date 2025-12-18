@@ -96,8 +96,7 @@ fun LicenciasContent(
 
     LicenciasListContent(
         licencias = licencias,
-        onItemClick = { /* Click simple: info */ },
-        onItemLongClick = { licencia ->
+        onItemClick = { licencia ->
             navController.navigateSafely(LicenciaForm(licencia = licencia))
         },
         onDeleteClick = { licencia -> licenciaToDelete = licencia },
@@ -113,20 +112,19 @@ fun LicenciasContent(
  * Fácil de previsualizar y testear.
  *
  * @param licencias Lista de licencias a mostrar
- * @param onItemClick Callback para click en item
- * @param onItemLongClick Callback para long-press (editar)
+ * @param onItemClick Callback para click en item (editar)
  * @param onDeleteClick Callback para swipe-to-delete
  * @param onImageClick Callback para click en imagen (mostrar zoom)
  * @param modifier Modificador opcional
  *
  * @since v3.0.0 (Compose Migration - Single Scaffold Architecture)
  * @since v3.2.3 (Added image click to zoom)
+ * @since v3.2.4 (Changed long-click to click for edit)
  */
 @Composable
 fun LicenciasListContent(
     licencias: List<Licencia>,
     onItemClick: (Licencia) -> Unit,
-    onItemLongClick: (Licencia) -> Unit,
     onDeleteClick: (Licencia) -> Unit,
     onImageClick: (String) -> Unit = {},
     modifier: Modifier = Modifier
@@ -150,7 +148,6 @@ fun LicenciasListContent(
                 LicenciaItem(
                     licencia = licencia,
                     onClick = { onItemClick(licencia) },
-                    onLongClick = { onItemLongClick(licencia) },
                     onDelete = { onDeleteClick(licencia) },
                     onImageClick = onImageClick,
                     modifier = Modifier.padding(vertical = 4.dp)
@@ -184,7 +181,6 @@ private fun LicenciasListContentPreview() {
                 )
             ),
             onItemClick = {},
-            onItemLongClick = {},
             onDeleteClick = {}
         )
     }
@@ -197,7 +193,6 @@ private fun LicenciasListContentEmptyPreview() {
         LicenciasListContent(
             licencias = emptyList(),
             onItemClick = {},
-            onItemLongClick = {},
             onDeleteClick = {}
         )
     }

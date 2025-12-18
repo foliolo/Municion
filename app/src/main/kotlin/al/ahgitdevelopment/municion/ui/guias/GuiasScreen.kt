@@ -101,8 +101,7 @@ fun GuiasContent(
 
     GuiasListContent(
         guias = guias,
-        onItemClick = { /* Info */ },
-        onItemLongClick = { guia ->
+        onItemClick = { guia ->
             val tipoLicenciaStr = resources.getStringArray(R.array.tipo_licencias)
                 .getOrNull(guia.tipoLicencia) ?: ""
             navController.navigateSafely(
@@ -125,20 +124,19 @@ fun GuiasContent(
  * Fácil de previsualizar y testear.
  *
  * @param guias Lista de guías a mostrar
- * @param onItemClick Callback para click en item
- * @param onItemLongClick Callback para long-press (editar)
+ * @param onItemClick Callback para click en item (editar)
  * @param onDeleteClick Callback para swipe-to-delete
  * @param onImageClick Callback para click en imagen (mostrar zoom)
  * @param modifier Modificador opcional
  *
  * @since v3.0.0 (Compose Migration - Single Scaffold Architecture)
  * @since v3.2.3 (Added image click to zoom)
+ * @since v3.2.4 (Changed long-click to click for edit)
  */
 @Composable
 fun GuiasListContent(
     guias: List<Guia>,
     onItemClick: (Guia) -> Unit,
-    onItemLongClick: (Guia) -> Unit,
     onDeleteClick: (Guia) -> Unit,
     onImageClick: (String) -> Unit = {},
     modifier: Modifier = Modifier
@@ -162,7 +160,6 @@ fun GuiasListContent(
                 GuiaItem(
                     guia = guia,
                     onClick = { onItemClick(guia) },
-                    onLongClick = { onItemLongClick(guia) },
                     onDelete = { onDeleteClick(guia) },
                     onImageClick = onImageClick,
                     modifier = Modifier.padding(vertical = 4.dp)
@@ -206,7 +203,6 @@ private fun GuiasListContentPreview() {
                 )
             ),
             onItemClick = {},
-            onItemLongClick = {},
             onDeleteClick = {}
         )
     }
@@ -219,7 +215,6 @@ private fun GuiasListContentEmptyPreview() {
         GuiasListContent(
             guias = emptyList(),
             onItemClick = {},
-            onItemLongClick = {},
             onDeleteClick = {}
         )
     }

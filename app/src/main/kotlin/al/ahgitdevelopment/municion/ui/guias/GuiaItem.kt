@@ -6,10 +6,8 @@ import al.ahgitdevelopment.municion.ui.theme.LicenseExpired
 import al.ahgitdevelopment.municion.ui.theme.LicenseExpiring
 import al.ahgitdevelopment.municion.ui.theme.LicenseValid
 import al.ahgitdevelopment.municion.ui.theme.Primary
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -53,8 +51,7 @@ import coil.request.ImageRequest
  * Item de Guía para mostrar en LazyColumn.
  *
  * @param guia Datos de la guía
- * @param onClick Callback para click simple
- * @param onLongClick Callback para long-press (editar)
+ * @param onClick Callback para click (editar)
  * @param onDelete Callback para swipe-to-delete
  * @param onImageClick Callback para click en la imagen (null si no tiene imagen)
  * @param modifier Modificador opcional
@@ -62,13 +59,13 @@ import coil.request.ImageRequest
  * @since v3.0.0 (Compose Migration)
  * @since v3.2.2 (Image display feature)
  * @since v3.2.3 (Added image click to zoom)
+ * @since v3.2.4 (Changed long-click to click for edit)
  */
-@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun GuiaItem(
     guia: Guia,
     onClick: () -> Unit,
-    onLongClick: () -> Unit,
     onDelete: () -> Unit,
     onImageClick: ((String) -> Unit)? = null,
     modifier: Modifier = Modifier
@@ -114,10 +111,7 @@ fun GuiaItem(
         Card(
             modifier = Modifier
                 .fillMaxWidth()
-                .combinedClickable(
-                    onClick = onClick,
-                    onLongClick = onLongClick
-                ),
+                .clickable(onClick = onClick),
             shape = RoundedCornerShape(12.dp),
             elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
         ) {

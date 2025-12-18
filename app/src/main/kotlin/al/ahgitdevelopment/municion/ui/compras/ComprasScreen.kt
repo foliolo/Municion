@@ -101,8 +101,7 @@ fun ComprasContent(
 
     ComprasListContent(
         compras = compras,
-        onItemClick = { /* Info */ },
-        onItemLongClick = { compra ->
+        onItemClick = { compra ->
             val guia = guias.find { it.id == compra.idPosGuia }
             guia?.let { g ->
                 // Restaurar cupo para edicion: guia actual + unidades de esta compra
@@ -129,20 +128,19 @@ fun ComprasContent(
  * Fácil de previsualizar y testear.
  *
  * @param compras Lista de compras a mostrar
- * @param onItemClick Callback para click en item
- * @param onItemLongClick Callback para long-press (editar)
+ * @param onItemClick Callback para click en item (editar)
  * @param onDeleteClick Callback para swipe-to-delete
  * @param onImageClick Callback para click en imagen (mostrar zoom)
  * @param modifier Modificador opcional
  *
  * @since v3.0.0 (Compose Migration - Single Scaffold Architecture)
  * @since v3.2.3 (Added image click to zoom)
+ * @since v3.2.4 (Changed long-click to click for edit)
  */
 @Composable
 fun ComprasListContent(
     compras: List<Compra>,
     onItemClick: (Compra) -> Unit,
-    onItemLongClick: (Compra) -> Unit,
     onDeleteClick: (Compra) -> Unit,
     onImageClick: (String) -> Unit = {},
     modifier: Modifier = Modifier
@@ -166,7 +164,6 @@ fun ComprasListContent(
                 CompraItem(
                     compra = compra,
                     onClick = { onItemClick(compra) },
-                    onLongClick = { onItemLongClick(compra) },
                     onDelete = { onDeleteClick(compra) },
                     onImageClick = onImageClick,
                     modifier = Modifier.padding(vertical = 4.dp)
@@ -227,7 +224,6 @@ private fun ComprasListContentPreview() {
                 )
             ),
             onItemClick = {},
-            onItemLongClick = {},
             onDeleteClick = {}
         )
     }
@@ -240,7 +236,6 @@ private fun ComprasListContentEmptyPreview() {
         ComprasListContent(
             compras = emptyList(),
             onItemClick = {},
-            onItemLongClick = {},
             onDeleteClick = {}
         )
     }
