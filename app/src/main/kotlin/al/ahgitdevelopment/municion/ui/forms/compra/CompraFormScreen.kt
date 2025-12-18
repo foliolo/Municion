@@ -288,12 +288,6 @@ fun CompraFormFields(
         )
 
         // Sección de imagen
-        Text(
-            text = stringResource(R.string.image_section_ammunition),
-            style = MaterialTheme.typography.titleMedium,
-            modifier = Modifier.padding(top = 16.dp)
-        )
-
         ImagePickerWithCamera(
             currentImageUrl = formState.currentImageUrl,
             isUploading = isUploading,
@@ -301,7 +295,7 @@ fun CompraFormFields(
             onImageSelected = { uri -> onEvent(CompraFormEvent.ImageSelected(uri)) },
             onImageRemoved = { onEvent(CompraFormEvent.ImageRemoved) },
             label = stringResource(R.string.label_ammunition_photo),
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth().padding(top = 16.dp)
         )
 
         Spacer(modifier = Modifier.height(80.dp))

@@ -12,6 +12,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import java.io.ByteArrayOutputStream
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -19,13 +22,17 @@ import javax.inject.Singleton
  * Repository para gestionar imágenes en Firebase Storage
  *
  * Estructura de almacenamiento: 
- * - Armas: v3_userdata/{userId}/armas/{armaId}.jpg
- * - Licencias: v3_userdata/{userId}/licencias/{licenciaId}.jpg
- * - Compras: v3_userdata/{userId}/compras/{compraId}.jpg
+ * - Armas: v3_userdata/{userId}/armas/{armaId}_{timestamp}.jpg
+ * - Licencias: v3_userdata/{userId}/licencias/{licenciaId}_{timestamp}.jpg
+ * - Compras: v3_userdata/{userId}/compras/{compraId}_{timestamp}.jpg
+ *
+ * El timestamp tiene formato: yyyyMMdd_HHmmss (ej: 20251217_220315)
+ * Ejemplo completo: v3_userdata/abc123/armas/5_20251217_220315.jpg
  *
  * @since v3.2.2 (Image Upload Feature)
  * @since v3.2.2 (Extended for Licencias)
  * @since v3.2.3 (Extended for Compras)
+ * @since v3.2.3 (Improved naming with timestamp)
  */
 interface ImageRepository {
     /**
@@ -369,9 +376,17 @@ class ImageRepositoryImpl @Inject constructor(
     /**
      * Construye la ruta de almacenamiento según la especificación
      *
-     * Formato: v3_userdata/{userId}/{folder}/{entityId}.jpg
+     * Formato: v3_userdata/{userId}/{folder}/{entityId}_{timestamp}.jpg
+     * Ejemplo: v3_userdata/abc123/armas/5_20251217_220315.jpg
+     *
+     * @param userId ID del usuario
+     * @param entityId ID de la entidad (licencia, guia, compra)
+     * @param folder Carpeta destino (armas, licencias, compras)
+     * @return Ruta completa del archivo en Storage
      */
     private fun buildStoragePath(userId: String, entityId: String, folder: String = ARMAS_FOLDER): String {
-        return "$STORAGE_VERSION/$userId/$folder/$entityId$IMAGE_EXTENSION"
+        val timestamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
+        val fileName = "${entityId}_$timestamp"
+        return "$STORAGE_VERSION/$userId/$folder/$fileName$IMAGE_EXTENSION"
     }
 }

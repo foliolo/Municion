@@ -41,7 +41,6 @@ class GuiaFormViewModel @Inject constructor(
     private val firebaseAuth: FirebaseAuth,
     private val crashlytics: FirebaseCrashlytics,
     @ApplicationContext private val context: Context,
-    savedStateHandle: SavedStateHandle
 ) : ViewModel() {
     
     // Estado del formulario
@@ -213,7 +212,9 @@ class GuiaFormViewModel @Inject constructor(
             fotoUrl = uploadResult.downloadUrl,
             storagePath = uploadResult.storagePath
         )
-        
+
+        _uiState.value = GuiaFormUiState.Uploading(1f)
+
         if (state.isEditing) {
             guiaRepository.updateGuia(guiaWithImage, userId).getOrThrow()
         } else {

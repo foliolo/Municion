@@ -3,6 +3,7 @@ package al.ahgitdevelopment.municion.ui.forms.licencia
 import al.ahgitdevelopment.municion.data.local.room.entities.Licencia
 import al.ahgitdevelopment.municion.data.repository.ImageRepository
 import al.ahgitdevelopment.municion.data.repository.LicenciaRepository
+import al.ahgitdevelopment.municion.ui.forms.compra.CompraFormUiState
 import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -34,7 +35,6 @@ class LicenciaFormViewModel @Inject constructor(
     private val licenciaRepository: LicenciaRepository,
     private val imageRepository: ImageRepository,
     private val firebaseAuth: FirebaseAuth,
-    savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
     companion object {
@@ -174,9 +174,8 @@ class LicenciaFormViewModel @Inject constructor(
         if (hasErrors) return
 
         viewModelScope.launch {
+            _uiState.value = LicenciaFormUiState.Uploading(0f)
             try {
-                _uiState.value = LicenciaFormUiState.Loading
-
                 val userId = firebaseAuth.currentUser?.uid
                     ?: throw IllegalStateException("User not authenticated")
 
@@ -185,8 +184,15 @@ class LicenciaFormViewModel @Inject constructor(
 
                 // Subir nueva imagen si se seleccionó
                 if (state.hasNewImage && state.selectedImageUri != null) {
-                    _uiState.value = LicenciaFormUiState.Uploading(0f)
+                    // Paso 1: Iniciando subida
+                    // Eliminar imagen anterior si existe (en edición)
+                    if (state.isEditing && state.storagePath != null) {
+                        imageRepository.deleteLicenciaImage(state.storagePath)
+                    }
 
+                    _uiState.value = LicenciaFormUiState.Uploading(0.3f)
+
+                    // Paso 2: Subiendo imagen
                     // Generar ID para la imagen
                     val imageId = if (state.isEditing) {
                         state.licenciaId.toString()
@@ -200,6 +206,8 @@ class LicenciaFormViewModel @Inject constructor(
                         licenciaId = imageId
                     )
 
+                    _uiState.value = LicenciaFormUiState.Uploading(0.7f)
+
                     uploadResult.fold(
                         onSuccess = { result ->
                             finalFotoUrl = result.downloadUrl
@@ -211,6 +219,11 @@ class LicenciaFormViewModel @Inject constructor(
                             _effects.send(LicenciaFormEffect.ShowError("Error al subir imagen: ${error.message}"))
                         }
                     )
+
+                    // Paso 3: Guardando datos
+                    _uiState.value = LicenciaFormUiState.Uploading(0.9f)
+                } else {
+                    _uiState.value = LicenciaFormUiState.Loading
                 }
 
                 // Actualizar estado con URLs de imagen
@@ -226,6 +239,8 @@ class LicenciaFormViewModel @Inject constructor(
                     fotoUrl = finalFotoUrl,
                     storagePath = finalStoragePath
                 )
+
+                _uiState.value = LicenciaFormUiState.Uploading(1f)
 
                 // Guardar o actualizar
                 if (state.isEditing) {

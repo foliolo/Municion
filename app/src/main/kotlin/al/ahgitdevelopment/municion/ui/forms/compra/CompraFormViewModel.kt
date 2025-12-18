@@ -73,33 +73,43 @@ class CompraFormViewModel @Inject constructor(
             is CompraFormEvent.Calibre1Changed -> _formState.update {
                 it.copy(calibre1 = event.value, calibre1Error = null)
             }
+
             is CompraFormEvent.Calibre2Changed -> _formState.update {
                 it.copy(calibre2 = event.value)
             }
+
             is CompraFormEvent.ShowCalibre2Changed -> _formState.update {
                 it.copy(showCalibre2 = event.value, calibre2 = if (!event.value) "" else it.calibre2)
             }
+
             is CompraFormEvent.MarcaChanged -> _formState.update {
                 it.copy(marca = event.value, marcaError = null)
             }
+
             is CompraFormEvent.TipoChanged -> _formState.update {
                 it.copy(tipo = event.value, tipoError = null)
             }
+
             is CompraFormEvent.PesoChanged -> _formState.update {
                 it.copy(peso = event.value, pesoError = null)
             }
+
             is CompraFormEvent.UnidadesChanged -> _formState.update {
                 it.copy(unidades = event.value, unidadesError = null)
             }
+
             is CompraFormEvent.PrecioChanged -> _formState.update {
                 it.copy(precio = event.value, precioError = null)
             }
+
             is CompraFormEvent.FechaChanged -> _formState.update {
                 it.copy(fecha = event.value, fechaError = null)
             }
+
             is CompraFormEvent.TiendaChanged -> _formState.update {
                 it.copy(tienda = event.value, tiendaError = null)
             }
+
             is CompraFormEvent.ValoracionChanged -> _formState.update {
                 it.copy(valoracion = event.value)
             }
@@ -108,6 +118,7 @@ class CompraFormViewModel @Inject constructor(
             is CompraFormEvent.ImageSelected -> _formState.update {
                 it.copy(selectedImageUri = event.uri)
             }
+
             CompraFormEvent.ImageRemoved -> _formState.update {
                 it.copy(selectedImageUri = null, existingImageUrl = null)
             }
@@ -176,9 +187,8 @@ class CompraFormViewModel @Inject constructor(
         if (hasErrors) return
 
         viewModelScope.launch {
+            _uiState.value = CompraFormUiState.Uploading(0f)
             try {
-                _uiState.value = CompraFormUiState.Loading
-
                 val userId = firebaseAuth.currentUser?.uid
                     ?: throw IllegalStateException("User not authenticated")
 
@@ -187,8 +197,16 @@ class CompraFormViewModel @Inject constructor(
 
                 // Subir nueva imagen si se seleccionó
                 if (state.hasNewImage && state.selectedImageUri != null) {
-                    _uiState.value = CompraFormUiState.Uploading(0f)
+                    // Paso 1: Iniciando subida
 
+                    // Eliminar imagen anterior si existe (en edición)
+                    if (state.isEditing && state.storagePath != null) {
+                        imageRepository.deleteCompraImage(state.storagePath)
+                    }
+
+                    _uiState.value = CompraFormUiState.Uploading(0.3f)
+
+                    // Paso 2: Subiendo imagen
                     // Generar ID para la imagen
                     val imageId = if (state.isEditing) {
                         state.compraId.toString()
@@ -202,6 +220,8 @@ class CompraFormViewModel @Inject constructor(
                         compraId = imageId
                     )
 
+                    _uiState.value = CompraFormUiState.Uploading(0.7f)
+
                     uploadResult.fold(
                         onSuccess = { result ->
                             finalFotoUrl = result.downloadUrl
@@ -213,6 +233,11 @@ class CompraFormViewModel @Inject constructor(
                             _effects.send(CompraFormEffect.ShowError("Error al subir imagen: ${error.message}"))
                         }
                     )
+
+                    // Paso 3: Guardando datos
+                    _uiState.value = CompraFormUiState.Uploading(0.9f)
+                } else {
+                    _uiState.value = CompraFormUiState.Loading
                 }
 
                 // Actualizar estado con URLs de imagen
@@ -228,6 +253,8 @@ class CompraFormViewModel @Inject constructor(
                     fotoUrl = finalFotoUrl,
                     storagePath = finalStoragePath
                 )
+
+                _uiState.value = CompraFormUiState.Uploading(1f)
 
                 // Guardar o actualizar
                 if (state.isEditing) {
