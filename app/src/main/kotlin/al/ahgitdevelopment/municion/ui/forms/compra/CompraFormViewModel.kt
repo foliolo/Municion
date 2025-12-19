@@ -5,6 +5,7 @@ import al.ahgitdevelopment.municion.data.local.room.entities.Guia
 import al.ahgitdevelopment.municion.data.repository.CompraRepository
 import al.ahgitdevelopment.municion.data.repository.ImageRepository
 import al.ahgitdevelopment.municion.domain.usecase.CreateCompraUseCase
+import al.ahgitdevelopment.municion.domain.usecase.UpdateCompraUseCase
 import al.ahgitdevelopment.municion.ui.components.imagepicker.ImageState
 import android.util.Log
 import androidx.lifecycle.ViewModel
@@ -26,13 +27,19 @@ import javax.inject.Inject
  * Gestiona el estado del formulario, validación, subida de imágenes y guardado.
  * Sigue el patrón MVI (Model-View-Intent) con eventos y efectos.
  *
+ * LEGISLACIÓN ESPAÑOLA:
+ * - Munición comprada en TIENDA: Contabiliza contra el cupo anual
+ * - Munición comprada en CAMPO DE TIRO: NO contabiliza (se consume in situ)
+ *
  * @since v3.2.3 (Form Architecture Refactor for Compras)
  * @since v3.2.4 (ImageState simplification)
+ * @since v3.3.0 (Campo de tiro exemption)
  */
 @HiltViewModel
 class CompraFormViewModel @Inject constructor(
     private val compraRepository: CompraRepository,
     private val createCompraUseCase: CreateCompraUseCase,
+    private val updateCompraUseCase: UpdateCompraUseCase,
     private val imageRepository: ImageRepository,
     private val firebaseAuth: FirebaseAuth
 ) : ViewModel() {
@@ -205,16 +212,20 @@ class CompraFormViewModel @Inject constructor(
                     storagePath = finalStoragePath
                 )
 
-                Log.d(TAG, "Saving compra with fotoUrl=$finalFotoUrl, storagePath=$finalStoragePath")
+                Log.d(TAG, "Saving compra with fotoUrl=$finalFotoUrl, storagePath=$finalStoragePath, tienda=${compraToSave.tienda}")
 
                 _uiState.value = CompraFormUiState.Uploading(1f)
 
                 // Guardar o actualizar
                 if (state.isEditing) {
-                    compraRepository.updateCompra(compraToSave, userId)
+                    // Usar UpdateCompraUseCase para manejar correctamente el cupo
+                    val originalCompra = state.originalCompra
+                        ?: throw IllegalStateException("Original compra not found for editing")
+                    
+                    updateCompraUseCase(originalCompra, compraToSave, userId).getOrThrow()
                     _uiState.value = CompraFormUiState.Success("Compra actualizada")
                 } else {
-                    createCompraUseCase(compraToSave, userId)
+                    createCompraUseCase(compraToSave, userId).getOrThrow()
                     _uiState.value = CompraFormUiState.Success("Compra guardada")
                 }
 

@@ -2,6 +2,7 @@ package al.ahgitdevelopment.municion.ui.forms.compra
 
 import al.ahgitdevelopment.municion.data.local.room.entities.Compra
 import al.ahgitdevelopment.municion.data.local.room.entities.Guia
+import al.ahgitdevelopment.municion.ui.components.getCurrentDateFormatted
 import al.ahgitdevelopment.municion.ui.components.imagepicker.ImageState
 import android.net.Uri
 
@@ -38,6 +39,9 @@ data class CompraFormState(
     val cupoTotal: Int = 0,
     val isEditing: Boolean = false,
     
+    // Compra original para comparar cambios al actualizar
+    val originalCompra: Compra? = null,
+    
     // Errores de validación
     val calibre1Error: String? = null,
     val marcaError: String? = null,
@@ -70,13 +74,27 @@ data class CompraFormState(
         ).any { it != null }
     
     /**
-     * Verifica si las unidades exceden el cupo disponible
+     * Verifica si las unidades exceden el cupo disponible.
+     * 
+     * NOTA: La munición comprada en "Campo de tiro" NO contabiliza para el cupo
+     * según la legislación española (se consume en el mismo lugar).
+     * Solo la munición comprada en "Tienda" cuenta contra el cupo.
      */
     val excedeCupo: Boolean
         get() {
+            // Si es compra en campo de tiro, nunca excede cupo
+            if (isCompraCampoTiro) return false
+            
             val unidadesInt = unidades.toIntOrNull() ?: 0
             return unidadesInt > cupoDisponible
         }
+    
+    /**
+     * Indica si la compra es en campo de tiro (no contabiliza cupo)
+     */
+    val isCompraCampoTiro: Boolean
+        get() = tienda.equals("Campo de tiro", ignoreCase = true) || 
+                tienda.equals("Shooting range", ignoreCase = true)
     
     /**
      * Crea una instancia de Compra desde el estado actual.
@@ -141,17 +159,20 @@ data class CompraFormState(
             imageState = ImageState.fromEntity(compra.fotoUrl, compra.storagePath),
             cupoDisponible = guia.disponible() + compra.unidades, // Al editar, sumar las unidades actuales
             cupoTotal = guia.cupo,
-            isEditing = true
+            isEditing = true,
+            originalCompra = compra // Guardar para comparar cambios
         )
         
         /**
-         * Crea estado inicial vacío (creación) con datos de la guía
+         * Crea estado inicial vacío (creación) con datos de la guía.
+         * La fecha se inicializa con la fecha actual.
          */
         fun fromGuia(guia: Guia): CompraFormState = CompraFormState(
             guiaId = guia.id,
             calibre1 = guia.calibre1,
             calibre2 = guia.calibre2 ?: "",
             showCalibre2 = !guia.calibre2.isNullOrBlank(),
+            fecha = getCurrentDateFormatted(), // Fecha actual por defecto
             cupoDisponible = guia.disponible(),
             cupoTotal = guia.cupo,
             isEditing = false
