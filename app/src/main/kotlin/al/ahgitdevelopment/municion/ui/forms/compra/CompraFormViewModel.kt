@@ -33,7 +33,7 @@ import javax.inject.Inject
  *
  * @since v3.2.3 (Form Architecture Refactor for Compras)
  * @since v3.2.4 (ImageState simplification)
- * @since v3.3.0 (Campo de tiro exemption)
+ * @since v3.2.3 (Campo de tiro exemption)
  */
 @HiltViewModel
 class CompraFormViewModel @Inject constructor(

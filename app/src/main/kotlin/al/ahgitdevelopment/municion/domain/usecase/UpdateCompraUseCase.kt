@@ -22,7 +22,7 @@ import javax.inject.Inject
  * 3. Tienda → Campo: Liberar unidades antiguas
  * 4. Campo → Tienda: Añadir unidades nuevas (validar cupo)
  *
- * @since v3.3.0 (Campo de tiro exemption)
+ * @since v3.2.3 (Campo de tiro exemption)
  */
 class UpdateCompraUseCase @Inject constructor(
     private val compraRepository: CompraRepository,

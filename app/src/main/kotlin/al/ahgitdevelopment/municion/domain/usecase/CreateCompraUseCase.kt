@@ -21,7 +21,7 @@ import javax.inject.Inject
  * - Munición comprada en CAMPO DE TIRO: NO contabiliza (se consume in situ)
  *
  * @since v3.0.0 (TRACK B Modernization)
- * @since v3.3.0 (Campo de tiro exemption)
+ * @since v3.2.3 (Campo de tiro exemption)
  */
 class CreateCompraUseCase @Inject constructor(
     private val compraRepository: CompraRepository,

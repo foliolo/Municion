@@ -2,6 +2,7 @@ package al.ahgitdevelopment.municion.ui.forms.compra
 
 import al.ahgitdevelopment.municion.data.local.room.entities.Compra
 import al.ahgitdevelopment.municion.data.local.room.entities.Guia
+import al.ahgitdevelopment.municion.domain.usecase.CreateCompraUseCase
 import al.ahgitdevelopment.municion.ui.components.getCurrentDateFormatted
 import al.ahgitdevelopment.municion.ui.components.imagepicker.ImageState
 import android.net.Uri
@@ -90,11 +91,11 @@ data class CompraFormState(
         }
     
     /**
-     * Indica si la compra es en campo de tiro (no contabiliza cupo)
+     * Indica si la compra es en campo de tiro (no contabiliza cupo).
+     * Delega a CreateCompraUseCase para mantener una única fuente de verdad.
      */
     val isCompraCampoTiro: Boolean
-        get() = tienda.equals("Campo de tiro", ignoreCase = true) || 
-                tienda.equals("Shooting range", ignoreCase = true)
+        get() = CreateCompraUseCase.isCompraCampoTiro(tienda)
     
     /**
      * Crea una instancia de Compra desde el estado actual.
@@ -157,7 +158,9 @@ data class CompraFormState(
             tienda = compra.tienda ?: "",
             valoracion = compra.valoracion,
             imageState = ImageState.fromEntity(compra.fotoUrl, compra.storagePath),
-            cupoDisponible = guia.disponible() + compra.unidades, // Al editar, sumar las unidades actuales
+            // Al editar, solo sumar las unidades si la compra original contabilizaba cupo.
+            // Las compras en campo de tiro nunca restaron del cupo, así que no hay nada que recuperar.
+            cupoDisponible = guia.disponible() + if (CreateCompraUseCase.isCompraCampoTiro(compra.tienda)) 0 else compra.unidades,
             cupoTotal = guia.cupo,
             isEditing = true,
             originalCompra = compra // Guardar para comparar cambios

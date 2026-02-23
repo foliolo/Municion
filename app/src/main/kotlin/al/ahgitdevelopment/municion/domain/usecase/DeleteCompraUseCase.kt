@@ -17,7 +17,7 @@ import javax.inject.Inject
  * - Las compras en CAMPO DE TIRO no afectan el cupo
  *
  * @since v3.0.0 (TRACK B Modernization)
- * @since v3.3.0 (Campo de tiro exemption)
+ * @since v3.2.3 (Campo de tiro exemption)
  */
 class DeleteCompraUseCase @Inject constructor(
     private val compraRepository: CompraRepository,
