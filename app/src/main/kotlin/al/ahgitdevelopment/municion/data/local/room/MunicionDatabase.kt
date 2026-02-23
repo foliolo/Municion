@@ -38,7 +38,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase
         Tirada::class,
         AppPurchase::class
     ],
-    version = 31,
+    version = 32,
     exportSchema = true
 )
 abstract class MunicionDatabase : RoomDatabase() {
@@ -78,6 +78,24 @@ abstract class MunicionDatabase : RoomDatabase() {
                     """.trimIndent()
                 )
                 Log.i("MunicionDatabase", "Migration v30 → v31 completed")
+            }
+        }
+
+        /**
+         * MIGRATION: v31 → v32
+         *
+         * CAMBIO: Agregar columna 'updated_at' a las 4 tablas principales
+         * para soporte de sincronización diff (comparar timestamps local vs remoto)
+         */
+        val MIGRATION_31_32 = object : Migration(31, 32) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                Log.i("MunicionDatabase", "Starting migration v31 → v32 (Add updated_at to all tables)")
+                val now = System.currentTimeMillis()
+                database.execSQL("ALTER TABLE guias ADD COLUMN updated_at INTEGER NOT NULL DEFAULT $now")
+                database.execSQL("ALTER TABLE compras ADD COLUMN updated_at INTEGER NOT NULL DEFAULT $now")
+                database.execSQL("ALTER TABLE licencias ADD COLUMN updated_at INTEGER NOT NULL DEFAULT $now")
+                database.execSQL("ALTER TABLE tiradas ADD COLUMN updated_at INTEGER NOT NULL DEFAULT $now")
+                Log.i("MunicionDatabase", "Migration v31 → v32 completed")
             }
         }
 
@@ -510,7 +528,8 @@ abstract class MunicionDatabase : RoomDatabase() {
                     MIGRATION_27_28,
                     MIGRATION_28_29,
                     MIGRATION_29_30,
-                    MIGRATION_30_31
+                    MIGRATION_30_31,
+                    MIGRATION_31_32
                 )
                 .fallbackToDestructiveMigration(false)  // Solo como último recurso
                 .build()

@@ -84,7 +84,11 @@ data class Compra(
     val fotoUrl: String? = null,  // URL pública de Firebase Storage
 
     @ColumnInfo(name = "storage_path")
-    val storagePath: String? = null  // Ruta en Storage para borrado
+    val storagePath: String? = null,  // Ruta en Storage para borrado
+
+    /** Timestamp de última modificación (para sync diff) */
+    @ColumnInfo(name = "updated_at")
+    val updatedAt: Long = System.currentTimeMillis()
 ) : Parcelable {
 
     // NOTA: NO usar init{require()} aquí porque rompe la deserialización JSON
