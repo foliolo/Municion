@@ -2,6 +2,7 @@ package al.ahgitdevelopment.municion
 
 import android.app.Application
 import com.google.android.gms.ads.MobileAds
+import com.google.firebase.database.FirebaseDatabase
 import dagger.hilt.android.HiltAndroidApp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -25,6 +26,11 @@ import kotlinx.coroutines.launch
 class MunicionApplication : Application() {
     override fun onCreate() {
         super.onCreate()
+
+        // Enable Firebase RTDB disk persistence BEFORE any reference is obtained.
+        // Offline writes are queued and sent automatically on reconnect.
+        FirebaseDatabase.getInstance().setPersistenceEnabled(true)
+
         // Initialize Mobile Ads SDK
         CoroutineScope(Dispatchers.IO).launch {
             MobileAds.initialize(this@MunicionApplication) {}

@@ -67,6 +67,12 @@ interface CompraDao {
     suspend fun getTotalUnidadesByGuia(guiaId: Int): Int?
 
     /**
+     * Obtiene ID y timestamp de todas las compras (para diff sync)
+     */
+    @Query("SELECT id, updated_at FROM compras")
+    suspend fun getAllTimestamps(): Map<@MapColumn(columnName = "id") Int, @MapColumn(columnName = "updated_at") Long>
+
+    /**
      * Inserta una compra
      * @return ID de la compra insertada
      */

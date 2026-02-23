@@ -6,6 +6,7 @@ import al.ahgitdevelopment.municion.ui.theme.LicenseExpired
 import al.ahgitdevelopment.municion.ui.theme.LicenseExpiring
 import al.ahgitdevelopment.municion.ui.theme.LicenseValid
 import al.ahgitdevelopment.municion.ui.theme.Primary
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -27,7 +28,6 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SwipeToDismissBox
 import androidx.compose.material3.SwipeToDismissBoxValue
@@ -38,6 +38,10 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -80,11 +84,15 @@ fun GuiaItem(
         }
     }
 
-    // Color según uso de cupo
+    // Fracción de cupo restante: 1.0 = todo disponible, 0.0 = agotado
+    val remainingFraction = if (guia.cupo > 0) {
+        (guia.disponible().toFloat() / guia.cupo.toFloat()).coerceIn(0f, 1f)
+    } else 0f
+
+    // Color con interpolación continua: verde (lleno) → amarillo (medio) → rojo (vacío)
     val cupoColor = when {
-        guia.cupoAgotado() -> LicenseExpired
-        guia.porcentajeUsado() > 0.8f -> LicenseExpiring
-        else -> LicenseValid
+        remainingFraction >= 0.5f -> lerp(LicenseExpiring, LicenseValid, (remainingFraction - 0.5f) * 2f)
+        else -> lerp(LicenseExpired, LicenseExpiring, remainingFraction * 2f)
     }
 
     SwipeToDismissBox(
@@ -167,42 +175,69 @@ fun GuiaItem(
 
                 // Contenido
                 Column(modifier = Modifier.weight(1f)) {
-                    // Marca y modelo
+                    // Apodo
                     Text(
-                        text = "${guia.marca} ${guia.modelo}",
+                        text = guia.apodo,
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.SemiBold,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )
 
-                    Spacer(modifier = Modifier.height(4.dp))
+                    Spacer(modifier = Modifier.height(2.dp))
+
+                    // Marca y modelo
+                    Text(
+                        text = "${guia.marca} ${guia.modelo}",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+
+                    Spacer(modifier = Modifier.height(2.dp))
 
                     // Calibre
                     Text(
                         text = guia.calibre1,
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
                     )
 
-                    Spacer(modifier = Modifier.height(8.dp))
+                    Spacer(modifier = Modifier.height(6.dp))
 
-                    // Barra de progreso de cupo
+                    // Barra de cupo disponible con degradado
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Column(modifier = Modifier.weight(1f)) {
-                            LinearProgressIndicator(
-                                progress = { guia.porcentajeUsado() },
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(6.dp)
-                                    .clip(RoundedCornerShape(3.dp)),
-                                color = cupoColor,
-                                trackColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f)
+                        val trackColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f)
+                        val barBrush = Brush.horizontalGradient(
+                            colors = listOf(
+                                lerp(cupoColor, LicenseValid, 0.3f),
+                                cupoColor
                             )
+                        )
+                        Canvas(
+                            modifier = Modifier
+                                .weight(1f)
+                                .height(6.dp)
+                        ) {
+                            val cornerRadius = CornerRadius(size.height / 2f)
+                            // Track (fondo)
+                            drawRoundRect(
+                                color = trackColor,
+                                cornerRadius = cornerRadius
+                            )
+                            // Barra de cupo restante
+                            if (remainingFraction > 0f) {
+                                drawRoundRect(
+                                    brush = barBrush,
+                                    size = Size(size.width * remainingFraction, size.height),
+                                    cornerRadius = cornerRadius
+                                )
+                            }
                         }
 
                         Spacer(modifier = Modifier.width(12.dp))

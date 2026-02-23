@@ -327,3 +327,6 @@ fabric.properties
 /app/release/output-metadata.json
 /.kotlin/
 /.gemini-clipboard/
+
+# Claude Code MCP config (contains tokens)
+.mcp.json

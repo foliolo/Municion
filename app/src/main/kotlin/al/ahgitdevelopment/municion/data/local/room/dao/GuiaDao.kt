@@ -69,6 +69,12 @@ interface GuiaDao {
     suspend fun getCount(): Int
 
     /**
+     * Obtiene ID y timestamp de todas las guías (para diff sync)
+     */
+    @Query("SELECT id, updated_at FROM guias")
+    suspend fun getAllTimestamps(): Map<@MapColumn(columnName = "id") Int, @MapColumn(columnName = "updated_at") Long>
+
+    /**
      * Inserta una guía
      */
     @Insert(onConflict = OnConflictStrategy.REPLACE)

@@ -57,7 +57,11 @@ data class Tirada(
     val fecha: String,  // Format: "dd/MM/yyyy"
 
     @ColumnInfo(name = "puntuacion")
-    val puntuacion: Int = 0  // Puntuación: 0-600 (Precisión) o 0-100 (IPSC)
+    val puntuacion: Int = 0,  // Puntuación: 0-600 (Precisión) o 0-100 (IPSC)
+
+    /** Timestamp de última modificación (para sync diff) */
+    @ColumnInfo(name = "updated_at")
+    val updatedAt: Long = System.currentTimeMillis()
 ) : Parcelable {
 
     // NOTA: NO usar init{require()} aquí porque rompe la deserialización JSON

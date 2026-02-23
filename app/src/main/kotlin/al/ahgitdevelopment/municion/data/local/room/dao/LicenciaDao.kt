@@ -66,6 +66,12 @@ interface LicenciaDao {
     suspend fun getCount(): Int
 
     /**
+     * Obtiene ID y timestamp de todas las licencias (para diff sync)
+     */
+    @Query("SELECT id, updated_at FROM licencias")
+    suspend fun getAllTimestamps(): Map<@MapColumn(columnName = "id") Int, @MapColumn(columnName = "updated_at") Long>
+
+    /**
      * Inserta una licencia
      */
     @Insert(onConflict = OnConflictStrategy.REPLACE)
