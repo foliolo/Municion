@@ -7,6 +7,7 @@ import android.net.Uri
 import android.util.Log
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.storageMetadata
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.tasks.await
@@ -234,8 +235,10 @@ class ImageRepositoryImpl @Inject constructor(
 
             Log.d(TAG, "Uploading to: $storagePath")
 
-            // 3. Subir archivo
-            val uploadTask = storageRef.putBytes(compressedBytes)
+            // 3. Subir archivo con metadata de content-type
+            //    Requerido por las Storage Security Rules que validan contentType
+            val metadata = storageMetadata { contentType = "image/jpeg" }
+            val uploadTask = storageRef.putBytes(compressedBytes, metadata)
             uploadTask.await()
 
             Log.d(TAG, "Upload completed")

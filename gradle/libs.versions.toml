@@ -61,11 +61,11 @@ coil = "2.7.0"
 
 # Utilities
 gson = "2.13.2"
-serialization = "1.9.0"
+serialization = "1.10.0"
 
 # Testing
-junit = "6.0.1"
-mockk = "1.14.7"
+junit = "6.0.3"
+mockk = "1.14.9"
 espresso = "3.7.0"
 androidxTest = "1.7.0"
 androidxTestRules = "1.7.0"

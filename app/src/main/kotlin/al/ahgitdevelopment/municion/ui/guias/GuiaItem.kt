@@ -175,25 +175,36 @@ fun GuiaItem(
 
                 // Contenido
                 Column(modifier = Modifier.weight(1f)) {
-                    // Marca y modelo
+                    // Apodo
                     Text(
-                        text = "${guia.marca} ${guia.modelo}",
+                        text = guia.apodo,
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.SemiBold,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )
 
-                    Spacer(modifier = Modifier.height(4.dp))
+                    Spacer(modifier = Modifier.height(2.dp))
+
+                    // Marca y modelo
+                    Text(
+                        text = "${guia.marca} ${guia.modelo}",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+
+                    Spacer(modifier = Modifier.height(2.dp))
 
                     // Calibre
                     Text(
                         text = guia.calibre1,
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
                     )
 
-                    Spacer(modifier = Modifier.height(8.dp))
+                    Spacer(modifier = Modifier.height(6.dp))
 
                     // Barra de cupo disponible con degradado
                     Row(
