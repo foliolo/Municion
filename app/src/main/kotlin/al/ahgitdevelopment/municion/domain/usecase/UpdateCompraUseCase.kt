@@ -95,9 +95,9 @@ class UpdateCompraUseCase @Inject constructor(
             // Aplicar ajuste de cupo
             if (ajusteCupo != 0) {
                 if (ajusteCupo > 0) {
-                    guiaRepository.incrementGastado(guia.id, ajusteCupo).getOrThrow()
+                    guiaRepository.incrementGastado(guia.id, ajusteCupo, userId).getOrThrow()
                 } else {
-                    guiaRepository.decrementGastado(guia.id, -ajusteCupo).getOrThrow()
+                    guiaRepository.decrementGastado(guia.id, -ajusteCupo, userId).getOrThrow()
                 }
                 Log.d(TAG, "Cupo ajustado en $ajusteCupo unidades")
             }

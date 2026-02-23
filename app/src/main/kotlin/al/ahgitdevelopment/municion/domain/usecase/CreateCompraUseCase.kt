@@ -74,7 +74,7 @@ class CreateCompraUseCase @Inject constructor(
 
             // 5. Actualizar gastado de guía (solo si contabiliza)
             if (contabilizaCupo) {
-                guiaRepository.incrementGastado(guia.id, compra.unidades).getOrThrow()
+                guiaRepository.incrementGastado(guia.id, compra.unidades, userId).getOrThrow()
                 Log.i(TAG, "Compra created: id=$compraId, guia=${guia.apodo}, unidades=${compra.unidades}, gastado actualizado")
             } else {
                 Log.i(TAG, "Compra created: id=$compraId, guia=${guia.apodo}, unidades=${compra.unidades}, campo de tiro (sin afectar cupo)")

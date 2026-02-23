@@ -4,7 +4,7 @@ import java.util.Properties
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
-    alias(libs.plugins.kotlin.kapt)
+    alias(libs.plugins.ksp)
     alias(libs.plugins.kotlin.parcelize)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.kotlin.compose)
@@ -50,7 +50,7 @@ android {
         release {
             signingConfig = signingConfigs.getByName("config")
             proguardFiles(
-                getDefaultProguardFile("proguard-android.txt"),
+                getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
             isDebuggable = false
@@ -77,6 +77,13 @@ android {
         buildConfig = true
         compose = true
     }
+
+    testOptions {
+        unitTests.all {
+            it.useJUnitPlatform()
+        }
+        unitTests.isReturnDefaultValues = true
+    }
 }
 
 dependencies {
@@ -91,11 +98,11 @@ dependencies {
 
     // ========== ROOM DATABASE ==========
     implementation(libs.bundles.room)
-    kapt(libs.androidx.room.compiler)
+    ksp(libs.androidx.room.compiler)
 
     // ========== HILT DEPENDENCY INJECTION ==========
     implementation(libs.hilt.android)
-    kapt(libs.hilt.compiler)
+    ksp(libs.hilt.compiler)
 
     // ========== LIFECYCLE ==========
     implementation(libs.bundles.lifecycle)
@@ -115,7 +122,7 @@ dependencies {
     // ========== WORK MANAGER ==========
     implementation(libs.androidx.work.runtime.ktx)
     implementation(libs.androidx.hilt.work)
-    kapt(libs.androidx.hilt.compiler)
+    ksp(libs.androidx.hilt.compiler)
 
     // ========== ADS & BILLING ==========
     implementation(libs.play.services.ads)
@@ -161,6 +168,7 @@ dependencies {
     // JUnit 5
     testImplementation(libs.bundles.junit)
     testRuntimeOnly(libs.junit.jupiter.engine)
+    testRuntimeOnly(libs.junit.platform.launcher)
 
     // MockK
     testImplementation(libs.bundles.mockk)
@@ -173,7 +181,7 @@ dependencies {
 
     // Hilt testing
     androidTestImplementation(libs.hilt.android.testing)
-    kaptAndroidTest(libs.hilt.compiler)
+    kspAndroidTest(libs.hilt.compiler)
 
     // Espresso UI testing
     androidTestImplementation(libs.bundles.android.test)

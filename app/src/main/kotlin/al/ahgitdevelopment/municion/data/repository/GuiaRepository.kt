@@ -111,9 +111,14 @@ class GuiaRepository @Inject constructor(
     /**
      * Updates the spent amount of a guide
      */
-    suspend fun updateGastado(guiaId: Int, gastado: Int): Result<Unit> = withContext(Dispatchers.IO) {
+    suspend fun updateGastado(guiaId: Int, gastado: Int, userId: String? = null): Result<Unit> = withContext(Dispatchers.IO) {
         try {
             guiaDao.updateGastado(guiaId, gastado)
+
+            userId?.let {
+                syncToFirebase(it)
+            }
+
             Result.success(Unit)
         } catch (e: Exception) {
             crashlytics.recordException(e)
@@ -124,9 +129,14 @@ class GuiaRepository @Inject constructor(
     /**
      * Increments the spent amount
      */
-    suspend fun incrementGastado(guiaId: Int, cantidad: Int): Result<Unit> = withContext(Dispatchers.IO) {
+    suspend fun incrementGastado(guiaId: Int, cantidad: Int, userId: String? = null): Result<Unit> = withContext(Dispatchers.IO) {
         try {
             guiaDao.incrementGastado(guiaId, cantidad)
+
+            userId?.let {
+                syncToFirebase(it)
+            }
+
             Result.success(Unit)
         } catch (e: Exception) {
             crashlytics.recordException(e)
@@ -137,9 +147,14 @@ class GuiaRepository @Inject constructor(
     /**
      * Decrements the spent amount (for rollback)
      */
-    suspend fun decrementGastado(guiaId: Int, cantidad: Int): Result<Unit> = withContext(Dispatchers.IO) {
+    suspend fun decrementGastado(guiaId: Int, cantidad: Int, userId: String? = null): Result<Unit> = withContext(Dispatchers.IO) {
         try {
             guiaDao.decrementGastado(guiaId, cantidad)
+
+            userId?.let {
+                syncToFirebase(it)
+            }
+
             Result.success(Unit)
         } catch (e: Exception) {
             crashlytics.recordException(e)

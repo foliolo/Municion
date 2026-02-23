@@ -36,7 +36,7 @@ class DeleteCompraUseCase @Inject constructor(
             
             if (contabilizabaCupo) {
                 // 1. Liberar cupo de guía
-                guiaRepository.decrementGastado(compra.idPosGuia, compra.unidades).getOrThrow()
+                guiaRepository.decrementGastado(compra.idPosGuia, compra.unidades, userId).getOrThrow()
                 Log.i(TAG, "Compra deleted: id=${compra.id}, unidades liberadas=${compra.unidades}")
             } else {
                 Log.i(TAG, "Compra deleted: id=${compra.id}, campo de tiro (sin liberar cupo)")
