@@ -2,17 +2,16 @@ package al.ahgitdevelopment.municion.data.repository
 
 import al.ahgitdevelopment.municion.data.local.room.dao.CompraDao
 import al.ahgitdevelopment.municion.data.local.room.entities.Compra
+import al.ahgitdevelopment.municion.data.sync.FirebaseSyncHelper
+import al.ahgitdevelopment.municion.data.sync.toFirebaseMap
 import al.ahgitdevelopment.municion.domain.usecase.FirebaseParseException
 import al.ahgitdevelopment.municion.domain.usecase.ParseError
 import al.ahgitdevelopment.municion.domain.usecase.SensitiveFields
 import al.ahgitdevelopment.municion.domain.usecase.SyncResultWithErrors
 import android.util.Log
 import com.google.firebase.crashlytics.FirebaseCrashlytics
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseReference
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -20,55 +19,40 @@ import javax.inject.Singleton
 /**
  * Repository for Compra
  *
- * PHASE 2.4: Repository Pattern
- * - Single source of truth: Room is the main source
- * - Bidirectional sync with Firebase
- * - Offline-first: data always available from Room
- * - Flow to observe changes reactively
+ * Uses per-entity Firebase writes instead of full-list sync.
  *
  * @since v3.0.0 (TRACK B Modernization)
  */
 @Singleton
 class CompraRepository @Inject constructor(
     private val compraDao: CompraDao,
-    private val firebaseDb: DatabaseReference,
+    private val syncHelper: FirebaseSyncHelper,
     private val crashlytics: FirebaseCrashlytics
 ) {
 
     companion object {
         private const val TAG = "CompraRepository"
+        private const val ENTITY_PATH = "compras"
     }
 
-    /**
-     * Observes ALL purchases (Room is source of truth)
-     */
     val compras: Flow<List<Compra>> = compraDao.getAllComprasFlow()
 
-    /**
-     * Observes purchases for a specific guide
-     */
     fun getComprasByGuia(guiaId: Int): Flow<List<Compra>> {
         return compraDao.getComprasByGuiaFlow(guiaId)
     }
 
-    /**
-     * Gets a purchase by ID
-     */
     suspend fun getCompraById(id: Int): Compra? = withContext(Dispatchers.IO) {
         compraDao.getCompraById(id)
     }
 
-    /**
-     * Saves a purchase (local + sync to Firebase)
-     */
     suspend fun saveCompra(compra: Compra, userId: String? = null): Result<Long> = withContext(Dispatchers.IO) {
         try {
-            // 1. Save to Room (source of truth)
-            val id = compraDao.insert(compra)
+            val stamped = compra.copy(updatedAt = System.currentTimeMillis())
+            val id = compraDao.insert(stamped)
+            val saved = stamped.copy(id = id.toInt())
 
-            // 2. Sync to Firebase if userId is present
             userId?.let {
-                syncToFirebase(it)
+                syncHelper.writeEntity(it, ENTITY_PATH, saved.id, saved.toFirebaseMap())
             }
 
             Result.success(id)
@@ -78,15 +62,13 @@ class CompraRepository @Inject constructor(
         }
     }
 
-    /**
-     * Updates a purchase
-     */
     suspend fun updateCompra(compra: Compra, userId: String? = null): Result<Unit> = withContext(Dispatchers.IO) {
         try {
-            compraDao.update(compra)
+            val stamped = compra.copy(updatedAt = System.currentTimeMillis())
+            compraDao.update(stamped)
 
             userId?.let {
-                syncToFirebase(it)
+                syncHelper.writeEntity(it, ENTITY_PATH, stamped.id, stamped.toFirebaseMap())
             }
 
             Result.success(Unit)
@@ -96,15 +78,12 @@ class CompraRepository @Inject constructor(
         }
     }
 
-    /**
-     * Deletes a purchase
-     */
     suspend fun deleteCompra(compra: Compra, userId: String? = null): Result<Unit> = withContext(Dispatchers.IO) {
         try {
             compraDao.delete(compra)
 
             userId?.let {
-                syncToFirebase(it, deletedId = compra.id)
+                syncHelper.deleteEntity(it, ENTITY_PATH, compra.id)
             }
 
             Result.success(Unit)
@@ -115,47 +94,37 @@ class CompraRepository @Inject constructor(
     }
 
     /**
-     * Syncs FROM Firebase -> Room with manual parsing and Crashlytics reporting
+     * Syncs FROM Firebase -> Room using smart diff
      */
     suspend fun syncFromFirebase(userId: String): Result<SyncResultWithErrors> = withContext(Dispatchers.IO) {
         try {
             crashlytics.setUserId(userId)
 
-            val snapshot = firebaseDb
-                .child("users")
-                .child(userId)
-                .child("db")
-                .child("compras")
-                .get()
-                .await()
+            val localTimestamps = compraDao.getAllTimestamps()
+            val localIds = localTimestamps.keys
 
-            val totalInFirebase = snapshot.childrenCount.toInt()
-            Log.d(TAG, "Firebase snapshot: $totalInFirebase compras")
-
-            val firebaseCompras = mutableListOf<Compra>()
             val parseErrors = mutableListOf<ParseError>()
 
-            snapshot.children.forEach { child ->
-                val itemKey = child.key ?: "unknown"
-                val result = parseAndValidateCompra(child, itemKey, parseErrors)
-                result?.let { firebaseCompras.add(it) }
-            }
-
-            if (firebaseCompras.isNotEmpty()) {
-                compraDao.replaceAll(firebaseCompras)
-                Log.i(TAG, "Synced ${firebaseCompras.size} compras from Firebase (${parseErrors.size} errors)")
-            } else if (totalInFirebase > 0) {
-                Log.w(TAG, "Firebase has $totalInFirebase compras but 0 parsed successfully")
-            } else {
-                Log.d(TAG, "No compras in Firebase")
-            }
+            val diffResult = syncHelper.syncFromFirebaseWithDiff(
+                userId = userId,
+                entityPath = ENTITY_PATH,
+                localIds = localIds,
+                localTimestamps = localTimestamps,
+                parser = { key, value ->
+                    parseCompraFromMap(key, value, parseErrors)
+                },
+                getId = { it.id },
+                getUpdatedAt = { it.updatedAt },
+                upsert = { compraDao.insert(it) },
+                deleteLocal = { compraDao.deleteById(it) }
+            )
 
             val hasLocalData = compraDao.getCount() > 0
 
             Result.success(SyncResultWithErrors(
-                success = true,
-                syncedCount = firebaseCompras.size,
-                totalInFirebase = totalInFirebase,
+                success = diffResult.success,
+                syncedCount = diffResult.upserted,
+                totalInFirebase = diffResult.totalInFirebase,
                 parseErrors = parseErrors,
                 hasLocalData = hasLocalData
             ))
@@ -167,18 +136,42 @@ class CompraRepository @Inject constructor(
         }
     }
 
+    /**
+     * Full sync TO Firebase (all compras as map). Used for auto-fix only.
+     */
+    suspend fun syncToFirebase(userId: String): Result<Unit> = withContext(Dispatchers.IO) {
+        try {
+            val allCompras = compraDao.getAllCompras()
+            val entityMaps = allCompras.associate { it.id.toString() to it.toFirebaseMap() }
+            syncHelper.fullSyncToFirebase(userId, ENTITY_PATH, entityMaps)
+        } catch (e: Exception) {
+            crashlytics.log("Failed to full-sync compras to Firebase: ${e.message}")
+            crashlytics.recordException(e)
+            Result.failure(e)
+        }
+    }
+
+    suspend fun detectCorruptedCompras(): List<Compra> = withContext(Dispatchers.IO) {
+        compraDao.getComprasWithCorruptedPeso()
+    }
+
+    suspend fun countComprasByGuia(guiaId: Int): Int = withContext(Dispatchers.IO) {
+        compraDao.countComprasByGuia(guiaId)
+    }
+
+    // --- Parsing ---
+
     @Suppress("UNCHECKED_CAST")
-    private fun parseAndValidateCompra(
-        snapshot: DataSnapshot,
+    private fun parseCompraFromMap(
         itemKey: String,
+        value: Any?,
         parseErrors: MutableList<ParseError>
     ): Compra? {
-        val map = snapshot.value as? Map<String, Any?> ?: run {
-            reportFieldError(itemKey, "root", "Not a Map", snapshot.value?.toString(), parseErrors)
+        val map = value as? Map<String, Any?> ?: run {
+            reportFieldError(itemKey, "root", "Not a Map", value?.toString(), parseErrors)
             return null
         }
 
-        // Mandatory fields
         val idPosGuia = (map["idPosGuia"] as? Number)?.toInt() ?: run {
             reportFieldError(itemKey, "idPosGuia", "Missing or invalid", map["idPosGuia"]?.toString(), parseErrors)
             return null
@@ -231,7 +224,6 @@ class CompraRepository @Inject constructor(
             return null
         }
 
-        // Optional fields
         val id = (map["id"] as? Number)?.toInt() ?: 0
         val calibre2 = map["calibre2"] as? String
         val tienda = map["tienda"] as? String
@@ -239,6 +231,7 @@ class CompraRepository @Inject constructor(
         val imagePath = map["imagePath"] as? String
         val fotoUrl = map["fotoUrl"] as? String
         val storagePath = map["storagePath"] as? String
+        val updatedAt = (map["updatedAt"] as? Number)?.toLong() ?: System.currentTimeMillis()
 
         return try {
             Compra(
@@ -256,7 +249,8 @@ class CompraRepository @Inject constructor(
                 valoracion = valoracion.coerceIn(0f, 5f),
                 imagePath = imagePath,
                 fotoUrl = fotoUrl,
-                storagePath = storagePath
+                storagePath = storagePath,
+                updatedAt = updatedAt
             )
         } catch (e: Exception) {
             reportFieldError(itemKey, "constructor", e.message ?: "Unknown", null, parseErrors)
@@ -273,14 +267,13 @@ class CompraRepository @Inject constructor(
     ) {
         val redactedValue = SensitiveFields.redactIfNeeded(fieldName, fieldValue)
 
-        val error = ParseError(
+        parseErrors.add(ParseError(
             entity = "Compra",
             itemKey = itemKey,
             failedField = fieldName,
             errorType = errorType,
             fieldValue = redactedValue
-        )
-        parseErrors.add(error)
+        ))
 
         crashlytics.apply {
             setCustomKey("entity", "Compra")
@@ -292,95 +285,5 @@ class CompraRepository @Inject constructor(
         }
 
         Log.e(TAG, "Parse error Compra[$itemKey].$fieldName: $errorType (value: $redactedValue)")
-    }
-
-    /**
-     * Syncs TO Firebase <- Room (Safe Merge)
-     *
-     * Implements Fetch-Merge-Push strategy to avoid data loss:
-     * 1. Downloads current state from Firebase.
-     * 2. Merges with local state (Local has priority if ID matches).
-     * 3. Applies deletion if deletedId is specified.
-     * 4. Uploads the merged result.
-     * 5. Updates Room with the merged result.
-     *
-     * @param userId Authenticated user ID
-     * @param deletedId Optional ID of an item that has just been locally deleted and must be removed from the merge
-     */
-    suspend fun syncToFirebase(userId: String, deletedId: Int? = null): Result<Unit> = withContext(Dispatchers.IO) {
-        try {
-            // 1. Fetch Remote (to avoid overwriting data from other devices)
-            val snapshot = firebaseDb
-                .child("users")
-                .child(userId)
-                .child("db")
-                .child("compras")
-                .get()
-                .await()
-
-            val remoteList = mutableListOf<Compra>()
-            // We use a temporary list of errors that we don't report to avoid cluttering logs on every save
-            val dummyErrors = mutableListOf<ParseError>()
-            
-            snapshot.children.forEach { child ->
-                // We try to recover everything possible from remote
-                parseAndValidateCompra(child, child.key ?: "unknown", dummyErrors)?.let {
-                    remoteList.add(it)
-                }
-            }
-
-            // 2. Fetch Local
-            val localList = compraDao.getAllCompras()
-
-            // 3. Merge Logic
-            // We start with Remote as base
-            val mergedMap = remoteList.associateBy { it.id }.toMutableMap()
-            
-            // Apply Local (Overwrites Remote if ID matches, adds if new)
-            localList.forEach { mergedMap[it.id] = it }
-
-            // Apply explicit deletion (because localList no longer has the item, but remote might)
-            if (deletedId != null) {
-                mergedMap.remove(deletedId)
-            }
-
-            val finalList = mergedMap.values.toList()
-
-            // 4. Push to Firebase (Full merged list)
-            firebaseDb
-                .child("users")
-                .child(userId)
-                .child("db")
-                .child("compras")
-                .setValue(finalList)
-                .await()
-
-            // 5. Update Local (To bring remote items we didn't have)
-            if (finalList.isNotEmpty() || (localList.isNotEmpty() || remoteList.isNotEmpty())) {
-                compraDao.replaceAll(finalList)
-            }
-
-            Log.i(TAG, "Synced ${finalList.size} compras to Firebase (Merged Local+Remote)")
-
-            Result.success(Unit)
-        } catch (e: Exception) {
-            crashlytics.log("Failed to sync compras to Firebase: ${e.message}")
-            crashlytics.recordException(e)
-            Result.failure(e)
-        }
-    }
-
-    /**
-     * Detects purchases with corrupt data (weight = 0)
-     */
-    suspend fun detectCorruptedCompras(): List<Compra> = withContext(Dispatchers.IO) {
-        compraDao.getComprasWithCorruptedPeso()
-    }
-
-    /**
-     * Counts purchases for a guide
-     */
-    suspend fun countComprasByGuia(guiaId: Int): Int = withContext(Dispatchers.IO) {
-        compraDao.countComprasByGuia(guiaId)
     }
 }

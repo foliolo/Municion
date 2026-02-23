@@ -8,6 +8,7 @@ import al.ahgitdevelopment.municion.ui.navigation.Settings
 import al.ahgitdevelopment.municion.ui.navigation.Tiradas
 import al.ahgitdevelopment.municion.ui.viewmodel.MainViewModel.SyncState
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
@@ -28,8 +29,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 
 /**
  * TopBar dinámico unificado para toda la aplicación.
@@ -67,6 +70,7 @@ fun MunicionTopBar(
     when {
         isListScreen -> {
             ListTopBar(
+                currentRoute = currentRoute,
                 syncState = syncState,
                 onSyncClick = onSyncClick,
                 onSettingsClick = onSettingsClick,
@@ -96,13 +100,23 @@ fun MunicionTopBar(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun ListTopBar(
+    currentRoute: String?,
     syncState: SyncState,
     onSyncClick: () -> Unit,
     onSettingsClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     TopAppBar(
-        title = { Text(stringResource(R.string.app_name)) },
+        title = {
+            Column {
+                Text(stringResource(R.string.app_name))
+                Text(
+                    text = getSectionTitle(currentRoute),
+                    fontSize = 13.sp,
+                    fontWeight = FontWeight.Normal
+                )
+            }
+        },
         navigationIcon = {
             Image(
                 painter = painterResource(R.drawable.ic_launcher_3_light),
@@ -184,6 +198,20 @@ private fun topAppBarColors() = TopAppBarDefaults.topAppBarColors(
     navigationIconContentColor = MaterialTheme.colorScheme.onPrimary,
     actionIconContentColor = MaterialTheme.colorScheme.onPrimary
 )
+
+/**
+ * Obtiene el título de la sección según la ruta actual.
+ */
+@Composable
+private fun getSectionTitle(route: String?): String {
+    return when (route) {
+        Licencias::class.qualifiedName -> stringResource(R.string.section_licencias_title)
+        Guias::class.qualifiedName -> stringResource(R.string.section_guias_title)
+        Compras::class.qualifiedName -> stringResource(R.string.section_compras_title)
+        Tiradas::class.qualifiedName -> stringResource(R.string.section_competiciones_title)
+        else -> ""
+    }
+}
 
 /**
  * Obtiene el título del TopBar según la ruta del formulario.

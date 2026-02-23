@@ -70,6 +70,12 @@ interface TiradaDao {
     suspend fun getMejorPuntuacion(): Float?
 
     /**
+     * Obtiene ID y timestamp de todas las tiradas (para diff sync)
+     */
+    @Query("SELECT id, updated_at FROM tiradas")
+    suspend fun getAllTimestamps(): Map<@MapColumn(columnName = "id") Int, @MapColumn(columnName = "updated_at") Long>
+
+    /**
      * Inserta una tirada
      */
     @Insert(onConflict = OnConflictStrategy.REPLACE)
