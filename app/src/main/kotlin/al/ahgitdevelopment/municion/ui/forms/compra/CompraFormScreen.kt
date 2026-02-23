@@ -5,7 +5,6 @@ import al.ahgitdevelopment.municion.data.local.room.entities.Compra
 import al.ahgitdevelopment.municion.data.local.room.entities.Guia
 import al.ahgitdevelopment.municion.ui.components.DatePickerField
 import al.ahgitdevelopment.municion.ui.components.DropdownField
-import al.ahgitdevelopment.municion.ui.components.getCurrentDateFormatted
 import al.ahgitdevelopment.municion.ui.components.imagepicker.ImagePickerWithCamera
 import al.ahgitdevelopment.municion.ui.navigation.Compras
 import al.ahgitdevelopment.municion.ui.theme.LicenseExpired
@@ -255,7 +254,7 @@ fun CompraFormFields(
             isError = formState.unidadesError != null || formState.excedeCupo,
             supportingText = {
                 when {
-                    formState.unidadesError != null -> Text(formState.unidadesError!!)
+                    formState.unidadesError != null -> Text(formState.unidadesError)
                     formState.excedeCupo -> Text(
                         stringResource(R.string.error_exceeds_quota, formState.cupoDisponible)
                     )
@@ -281,7 +280,7 @@ fun CompraFormFields(
         // Fecha
         DatePickerField(
             label = stringResource(R.string.fecha),
-            value = formState.fecha.ifBlank { getCurrentDateFormatted() },
+            value = formState.fecha,
             error = formState.fechaError,
             onValueChange = { onEvent(CompraFormEvent.FechaChanged(it)) }
         )

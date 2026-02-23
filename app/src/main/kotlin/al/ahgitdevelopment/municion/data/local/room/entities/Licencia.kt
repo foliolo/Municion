@@ -86,7 +86,11 @@ data class Licencia(
 
     /** Ruta en Firebase Storage para facilitar el borrado (v3_userdata/{userId}/licencias/{id}.jpg) */
     @ColumnInfo(name = "storage_path")
-    val storagePath: String? = null
+    val storagePath: String? = null,
+
+    /** Timestamp de última modificación (para sync diff) */
+    @ColumnInfo(name = "updated_at")
+    val updatedAt: Long = System.currentTimeMillis()
 ) : Parcelable {
 
     // NOTA: NO usar init{require()} aquí porque rompe la deserialización JSON
