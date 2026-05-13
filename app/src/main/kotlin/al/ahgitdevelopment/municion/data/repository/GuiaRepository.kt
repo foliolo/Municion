@@ -1,42 +1,57 @@
 package al.ahgitdevelopment.municion.data.repository
 
+import al.ahgitdevelopment.municion.data.local.room.MunicionDatabase
 import al.ahgitdevelopment.municion.data.local.room.dao.GuiaDao
+import al.ahgitdevelopment.municion.data.local.room.dao.SyncOperationDao
 import al.ahgitdevelopment.municion.data.local.room.entities.Guia
-import al.ahgitdevelopment.municion.data.sync.FirebaseSyncHelper
-import al.ahgitdevelopment.municion.data.sync.toFirebaseMap
-import al.ahgitdevelopment.municion.domain.usecase.FirebaseParseException
+import al.ahgitdevelopment.municion.data.sync.SyncIdGenerator
+import al.ahgitdevelopment.municion.data.sync.SyncOutboxEnqueuer
+import al.ahgitdevelopment.municion.data.sync.SyncOutboxWorker
+import al.ahgitdevelopment.municion.data.sync.TolerantParsers
 import al.ahgitdevelopment.municion.domain.usecase.ParseError
-import al.ahgitdevelopment.municion.domain.usecase.SensitiveFields
 import al.ahgitdevelopment.municion.domain.usecase.SyncResultWithErrors
+import android.content.Context
 import android.util.Log
+import androidx.room.withTransaction
 import com.google.firebase.crashlytics.FirebaseCrashlytics
+import com.google.firebase.database.DatabaseReference
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
 
 /**
- * Repository for Guia
+ * Repository for Guia.
  *
- * Uses per-entity Firebase writes instead of full-list sync.
- * syncFromFirebase uses smart diff (upsert newer, delete removed).
+ * Same write/read contract as [LicenciaRepository]: writes go through the
+ * outbox; reads are non-destructive.
  *
  * @since v3.0.0 (TRACK B Modernization)
+ * @updated v3.3.0 (Sync redesign)
  */
 @Singleton
 class GuiaRepository @Inject constructor(
+    @ApplicationContext private val appContext: Context,
+    private val database: MunicionDatabase,
     private val guiaDao: GuiaDao,
-    private val syncHelper: FirebaseSyncHelper,
+    private val outboxDao: SyncOperationDao,
+    private val outboxEnqueuer: SyncOutboxEnqueuer,
+    private val firebaseDb: DatabaseReference,
     private val crashlytics: FirebaseCrashlytics
 ) {
 
     companion object {
         private const val TAG = "GuiaRepository"
         private const val ENTITY_PATH = "guias"
+        private const val ENTITY_TYPE = "Guia"
     }
 
     val guias: Flow<List<Guia>> = guiaDao.getAllGuiasFlow()
+
+    val needsAttentionCount: Flow<Int> = guiaDao.countNeedsAttentionFlow()
 
     fun getGuiasByTipoLicencia(tipoLicencia: Int): Flow<List<Guia>> {
         return guiaDao.getGuiasByTipoLicenciaFlow(tipoLicencia)
@@ -46,16 +61,25 @@ class GuiaRepository @Inject constructor(
         guiaDao.getGuiaById(id)
     }
 
+    suspend fun getGuiaBySyncId(syncId: String): Guia? = withContext(Dispatchers.IO) {
+        guiaDao.getGuiaBySyncId(syncId)
+    }
+
     suspend fun saveGuia(guia: Guia, userId: String? = null): Result<Long> = withContext(Dispatchers.IO) {
         try {
-            val stamped = guia.copy(updatedAt = System.currentTimeMillis())
-            val id = guiaDao.insert(stamped)
-            val saved = stamped.copy(id = id.toInt())
-
-            userId?.let {
-                syncHelper.writeEntity(it, ENTITY_PATH, saved.id, saved.toFirebaseMap())
+            val stamped = guia.copy(
+                syncId = guia.syncId.takeIf { it.isNotBlank() } ?: SyncIdGenerator.newSyncId(),
+                deleted = false,
+                deletedAt = null,
+                updatedAt = System.currentTimeMillis()
+            )
+            val id = database.withTransaction {
+                val rowId = guiaDao.insert(stamped)
+                val saved = stamped.copy(id = rowId.toInt())
+                outboxEnqueuer.enqueueUpsert(saved, userId)
+                rowId
             }
-
+            triggerSync(userId)
             Result.success(id)
         } catch (e: Exception) {
             crashlytics.recordException(e)
@@ -65,13 +89,15 @@ class GuiaRepository @Inject constructor(
 
     suspend fun updateGuia(guia: Guia, userId: String? = null): Result<Unit> = withContext(Dispatchers.IO) {
         try {
-            val stamped = guia.copy(updatedAt = System.currentTimeMillis())
-            guiaDao.update(stamped)
-
-            userId?.let {
-                syncHelper.writeEntity(it, ENTITY_PATH, stamped.id, stamped.toFirebaseMap())
+            val stamped = guia.copy(
+                syncId = guia.syncId.takeIf { it.isNotBlank() } ?: SyncIdGenerator.newSyncId(),
+                updatedAt = System.currentTimeMillis()
+            )
+            database.withTransaction {
+                guiaDao.update(stamped)
+                outboxEnqueuer.enqueueUpsert(stamped, userId)
             }
-
+            triggerSync(userId)
             Result.success(Unit)
         } catch (e: Exception) {
             crashlytics.recordException(e)
@@ -81,12 +107,18 @@ class GuiaRepository @Inject constructor(
 
     suspend fun deleteGuia(guia: Guia, userId: String? = null): Result<Unit> = withContext(Dispatchers.IO) {
         try {
-            guiaDao.delete(guia)
-
-            userId?.let {
-                syncHelper.deleteEntity(it, ENTITY_PATH, guia.id)
+            val now = System.currentTimeMillis()
+            val tombstoned = guia.copy(
+                syncId = guia.syncId.takeIf { it.isNotBlank() } ?: SyncIdGenerator.newSyncId(),
+                deleted = true,
+                deletedAt = now,
+                updatedAt = now
+            )
+            database.withTransaction {
+                guiaDao.update(tombstoned)
+                outboxEnqueuer.enqueueUpsert(tombstoned, userId)
             }
-
+            triggerSync(userId)
             Result.success(Unit)
         } catch (e: Exception) {
             crashlytics.recordException(e)
@@ -96,15 +128,15 @@ class GuiaRepository @Inject constructor(
 
     suspend fun updateGastado(guiaId: Int, gastado: Int, userId: String? = null): Result<Unit> = withContext(Dispatchers.IO) {
         try {
-            guiaDao.updateGastado(guiaId, gastado)
-
-            // Write the updated entity to Firebase
-            userId?.let { uid ->
+            database.withTransaction {
+                guiaDao.updateGastado(guiaId, gastado)
                 guiaDao.getGuiaById(guiaId)?.let { updated ->
-                    syncHelper.writeEntity(uid, ENTITY_PATH, updated.id, updated.toFirebaseMap())
+                    val stamped = updated.copy(updatedAt = System.currentTimeMillis())
+                    guiaDao.update(stamped)
+                    outboxEnqueuer.enqueueUpsert(stamped, userId)
                 }
             }
-
+            triggerSync(userId)
             Result.success(Unit)
         } catch (e: Exception) {
             crashlytics.recordException(e)
@@ -114,14 +146,15 @@ class GuiaRepository @Inject constructor(
 
     suspend fun incrementGastado(guiaId: Int, cantidad: Int, userId: String? = null): Result<Unit> = withContext(Dispatchers.IO) {
         try {
-            guiaDao.incrementGastado(guiaId, cantidad)
-
-            userId?.let { uid ->
+            database.withTransaction {
+                guiaDao.incrementGastado(guiaId, cantidad)
                 guiaDao.getGuiaById(guiaId)?.let { updated ->
-                    syncHelper.writeEntity(uid, ENTITY_PATH, updated.id, updated.toFirebaseMap())
+                    val stamped = updated.copy(updatedAt = System.currentTimeMillis())
+                    guiaDao.update(stamped)
+                    outboxEnqueuer.enqueueUpsert(stamped, userId)
                 }
             }
-
+            triggerSync(userId)
             Result.success(Unit)
         } catch (e: Exception) {
             crashlytics.recordException(e)
@@ -131,14 +164,15 @@ class GuiaRepository @Inject constructor(
 
     suspend fun decrementGastado(guiaId: Int, cantidad: Int, userId: String? = null): Result<Unit> = withContext(Dispatchers.IO) {
         try {
-            guiaDao.decrementGastado(guiaId, cantidad)
-
-            userId?.let { uid ->
+            database.withTransaction {
+                guiaDao.decrementGastado(guiaId, cantidad)
                 guiaDao.getGuiaById(guiaId)?.let { updated ->
-                    syncHelper.writeEntity(uid, ENTITY_PATH, updated.id, updated.toFirebaseMap())
+                    val stamped = updated.copy(updatedAt = System.currentTimeMillis())
+                    guiaDao.update(stamped)
+                    outboxEnqueuer.enqueueUpsert(stamped, userId)
                 }
             }
-
+            triggerSync(userId)
             Result.success(Unit)
         } catch (e: Exception) {
             crashlytics.recordException(e)
@@ -146,13 +180,23 @@ class GuiaRepository @Inject constructor(
         }
     }
 
+    /**
+     * Annual quota reset. Updates each guia individually and enqueues a
+     * single outbox row per guia (coalesced if multiple updates land on
+     * the same entity).
+     */
     suspend fun resetAllGastado(userId: String? = null): Result<Unit> = withContext(Dispatchers.IO) {
         try {
-            guiaDao.resetAllGastado()
-
-            // Full sync needed since we updated all guias
-            userId?.let { syncToFirebase(it) }
-
+            database.withTransaction {
+                guiaDao.resetAllGastado()
+                val now = System.currentTimeMillis()
+                for (guia in guiaDao.getAllGuias()) {
+                    val stamped = guia.copy(gastado = 0, updatedAt = now)
+                    guiaDao.update(stamped)
+                    outboxEnqueuer.enqueueUpsert(stamped, userId)
+                }
+            }
+            triggerSync(userId)
             Result.success(Unit)
         } catch (e: Exception) {
             crashlytics.recordException(e)
@@ -164,185 +208,84 @@ class GuiaRepository @Inject constructor(
         guiaDao.getGuiasConCupoAgotado()
     }
 
-    /**
-     * Syncs FROM Firebase -> Room using smart diff (upsert newer, delete removed).
-     */
     suspend fun syncFromFirebase(userId: String): Result<SyncResultWithErrors> = withContext(Dispatchers.IO) {
         try {
             crashlytics.setUserId(userId)
+            val snapshot = firebaseDb
+                .child("users").child(userId).child("db").child(ENTITY_PATH)
+                .get().await()
 
-            val localTimestamps = guiaDao.getAllTimestamps()
-            val localIds = localTimestamps.keys
-
+            val totalInFirebase = snapshot.childrenCount.toInt()
             val parseErrors = mutableListOf<ParseError>()
+            val degradedSyncIds = mutableListOf<String>()
+            val localBySyncId = guiaDao.getAllGuiasIncludingDeleted().associateBy { it.syncId }
+            val pendingSyncIds = outboxDao.pendingSyncIdsFor(ENTITY_TYPE).toSet()
 
-            val diffResult = syncHelper.syncFromFirebaseWithDiff(
-                userId = userId,
-                entityPath = ENTITY_PATH,
-                localIds = localIds,
-                localTimestamps = localTimestamps,
-                parser = { key, value ->
-                    parseGuiaFromMap(key, value, userId, parseErrors)
-                },
-                getId = { it.id },
-                getUpdatedAt = { it.updatedAt },
-                upsert = { guiaDao.insert(it) },
-                deleteLocal = { guiaDao.deleteById(it) }
-            )
+            var upserted = 0
+            var skippedPending = 0
+            var skippedOlder = 0
 
-            val hasLocalData = guiaDao.getCount() > 0
+            snapshot.children.forEach { child ->
+                val key = child.key
+                val parsed = TolerantParsers.parseGuia(key, child.value)
+                if (parsed == null) {
+                    parseErrors += ParseError(
+                        entity = "Guia",
+                        itemKey = key ?: "?",
+                        failedField = "<unparseable>",
+                        errorType = "InvalidShape",
+                        fieldValue = "[REDACTED]"
+                    )
+                    return@forEach
+                }
+
+                if (parsed.dataQuality == "degraded" || parsed.dataQuality == "lost") {
+                    degradedSyncIds += parsed.syncId
+                }
+
+                if (parsed.syncId in pendingSyncIds) {
+                    skippedPending++
+                    return@forEach
+                }
+
+                val local = localBySyncId[parsed.syncId]
+                if (local == null || parsed.updatedAt > local.updatedAt) {
+                    val toInsert = if (local != null) parsed.copy(id = local.id) else parsed.copy(id = 0)
+                    guiaDao.insert(toInsert)
+                    upserted++
+                } else {
+                    skippedOlder++
+                }
+            }
+
+            Log.i(TAG, "Sync $ENTITY_PATH: total=$totalInFirebase upserted=$upserted skippedPending=$skippedPending skippedOlder=$skippedOlder degraded=${degradedSyncIds.size}")
+            if (degradedSyncIds.isNotEmpty()) {
+                crashlytics.log("Guia degraded count: ${degradedSyncIds.size}")
+            }
 
             Result.success(SyncResultWithErrors(
-                success = diffResult.success,
-                syncedCount = diffResult.upserted,
-                totalInFirebase = diffResult.totalInFirebase,
+                success = true,
+                syncedCount = upserted,
+                totalInFirebase = totalInFirebase,
                 parseErrors = parseErrors,
-                hasLocalData = hasLocalData
+                hasLocalData = guiaDao.getCount() > 0
             ))
         } catch (e: Exception) {
             Log.e(TAG, "Sync failed: ${e.message}", e)
-            crashlytics.log("Failed to sync guias from Firebase: ${e.message}")
             crashlytics.recordException(e)
             Result.failure(e)
         }
     }
 
-    /**
-     * Full sync TO Firebase (all guias as map). Used for auto-fix and manual sync only.
-     */
+    @Deprecated("Outbox is the source of truth for writes; this is now a no-op")
     suspend fun syncToFirebase(userId: String): Result<Unit> = withContext(Dispatchers.IO) {
-        try {
-            val allGuias = guiaDao.getAllGuias()
-            val entityMaps = allGuias.associate { it.id.toString() to it.toFirebaseMap() }
-            syncHelper.fullSyncToFirebase(userId, ENTITY_PATH, entityMaps)
-        } catch (e: Exception) {
-            crashlytics.log("Failed to full-sync guias to Firebase: ${e.message}")
-            crashlytics.recordException(e)
-            Result.failure(e)
-        }
+        Log.w(TAG, "Deprecated syncToFirebase ignored; outbox handles writes")
+        triggerSync(userId)
+        Result.success(Unit)
     }
 
-    // --- Parsing ---
-
-    @Suppress("UNCHECKED_CAST")
-    private fun parseGuiaFromMap(
-        itemKey: String,
-        value: Any?,
-        userId: String,
-        parseErrors: MutableList<ParseError>
-    ): Guia? {
-        val map = value as? Map<String, Any?> ?: run {
-            reportFieldError(userId, itemKey, "root", "Not a Map", value?.toString(), parseErrors)
-            return null
-        }
-
-        val tipoLicencia = (map["tipoLicencia"] as? Number)?.toInt() ?: run {
-            reportFieldError(userId, itemKey, "tipoLicencia", "Missing or invalid", map["tipoLicencia"]?.toString(), parseErrors)
-            return null
-        }
-
-        val marca = (map["marca"] as? String)?.takeIf { it.isNotBlank() } ?: run {
-            reportFieldError(userId, itemKey, "marca", "Blank or missing", map["marca"]?.toString(), parseErrors)
-            return null
-        }
-
-        val modelo = (map["modelo"] as? String)?.takeIf { it.isNotBlank() } ?: run {
-            reportFieldError(userId, itemKey, "modelo", "Blank or missing", map["modelo"]?.toString(), parseErrors)
-            return null
-        }
-
-        val apodo = (map["apodo"] as? String)?.takeIf { it.isNotBlank() } ?: run {
-            reportFieldError(userId, itemKey, "apodo", "Blank or missing", map["apodo"]?.toString(), parseErrors)
-            return null
-        }
-
-        val calibre1 = (map["calibre1"] as? String)?.takeIf { it.isNotBlank() } ?: run {
-            reportFieldError(userId, itemKey, "calibre1", "Blank or missing", map["calibre1"]?.toString(), parseErrors)
-            return null
-        }
-
-        val numGuia = (map["numGuia"] as? String)?.takeIf { it.isNotBlank() } ?: run {
-            reportFieldError(userId, itemKey, "numGuia", "Blank or missing", null, parseErrors)
-            return null
-        }
-
-        val numArma = (map["numArma"] as? String)?.takeIf { it.isNotBlank() } ?: run {
-            reportFieldError(userId, itemKey, "numArma", "Blank or missing", null, parseErrors)
-            return null
-        }
-
-        val cupo = (map["cupo"] as? Number)?.toInt() ?: run {
-            reportFieldError(userId, itemKey, "cupo", "Missing or invalid", map["cupo"]?.toString(), parseErrors)
-            return null
-        }
-        if (cupo <= 0) {
-            reportFieldError(userId, itemKey, "cupo", "Must be > 0", cupo.toString(), parseErrors)
-            return null
-        }
-
-        val id = (map["id"] as? Number)?.toInt() ?: 0
-        val idCompra = (map["idCompra"] as? Number)?.toInt() ?: 0
-        val tipoArma = (map["tipoArma"] as? Number)?.toInt() ?: 0
-        val calibre2 = map["calibre2"] as? String
-        val gastado = (map["gastado"] as? Number)?.toInt() ?: 0
-        val imagePath = map["imagePath"] as? String
-        val fotoUrl = map["fotoUrl"] as? String
-        val storagePath = map["storagePath"] as? String
-        val updatedAt = (map["updatedAt"] as? Number)?.toLong() ?: System.currentTimeMillis()
-
-        return try {
-            Guia(
-                id = id,
-                idCompra = idCompra,
-                tipoLicencia = tipoLicencia,
-                marca = marca,
-                modelo = modelo,
-                apodo = apodo,
-                tipoArma = tipoArma,
-                calibre1 = calibre1,
-                calibre2 = calibre2,
-                numGuia = numGuia,
-                numArma = numArma,
-                cupo = cupo,
-                gastado = gastado,
-                imagePath = imagePath,
-                fotoUrl = fotoUrl,
-                storagePath = storagePath,
-                updatedAt = updatedAt
-            )
-        } catch (e: Exception) {
-            reportFieldError(userId, itemKey, "constructor", e.message ?: "Unknown", null, parseErrors)
-            null
-        }
-    }
-
-    private fun reportFieldError(
-        userId: String,
-        itemKey: String,
-        fieldName: String,
-        errorType: String,
-        fieldValue: String?,
-        parseErrors: MutableList<ParseError>
-    ) {
-        val redactedValue = SensitiveFields.redactIfNeeded(fieldName, fieldValue)
-
-        parseErrors.add(ParseError(
-            entity = "Guia",
-            itemKey = itemKey,
-            failedField = fieldName,
-            errorType = errorType,
-            fieldValue = redactedValue
-        ))
-
-        crashlytics.apply {
-            setCustomKey("entity", "Guia")
-            setCustomKey("item_key", itemKey)
-            setCustomKey("failed_field", fieldName)
-            setCustomKey("error_type", errorType)
-            setCustomKey("field_value", redactedValue)
-            recordException(FirebaseParseException("[Guia] Field '$fieldName' failed: $errorType"))
-        }
-
-        Log.e(TAG, "Parse error Guia[$itemKey].$fieldName: $errorType (value: $redactedValue)")
+    private fun triggerSync(userId: String?) {
+        if (userId.isNullOrBlank()) return
+        SyncOutboxWorker.enqueueOneShot(appContext)
     }
 }

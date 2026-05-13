@@ -35,6 +35,10 @@ class LicenciaViewModel @Inject constructor(
     val licencias: StateFlow<List<Licencia>> = licenciaRepository.licencias
         .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
 
+    /** Number of licencias whose data the v3.3 parser flagged for review. */
+    val needsAttentionCount: StateFlow<Int> = licenciaRepository.needsAttentionCount
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), 0)
+
     private val _uiState = MutableStateFlow<LicenciaUiState>(LicenciaUiState.Idle)
     val uiState: StateFlow<LicenciaUiState> = _uiState.asStateFlow()
 

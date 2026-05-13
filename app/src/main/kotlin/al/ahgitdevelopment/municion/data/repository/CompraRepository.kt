@@ -1,41 +1,61 @@
 package al.ahgitdevelopment.municion.data.repository
 
+import al.ahgitdevelopment.municion.data.local.room.MunicionDatabase
 import al.ahgitdevelopment.municion.data.local.room.dao.CompraDao
+import al.ahgitdevelopment.municion.data.local.room.dao.GuiaDao
+import al.ahgitdevelopment.municion.data.local.room.dao.SyncOperationDao
 import al.ahgitdevelopment.municion.data.local.room.entities.Compra
-import al.ahgitdevelopment.municion.data.sync.FirebaseSyncHelper
-import al.ahgitdevelopment.municion.data.sync.toFirebaseMap
-import al.ahgitdevelopment.municion.domain.usecase.FirebaseParseException
+import al.ahgitdevelopment.municion.data.sync.SyncIdGenerator
+import al.ahgitdevelopment.municion.data.sync.SyncOutboxEnqueuer
+import al.ahgitdevelopment.municion.data.sync.SyncOutboxWorker
+import al.ahgitdevelopment.municion.data.sync.TolerantParsers
 import al.ahgitdevelopment.municion.domain.usecase.ParseError
-import al.ahgitdevelopment.municion.domain.usecase.SensitiveFields
 import al.ahgitdevelopment.municion.domain.usecase.SyncResultWithErrors
+import android.content.Context
 import android.util.Log
+import androidx.room.withTransaction
 import com.google.firebase.crashlytics.FirebaseCrashlytics
+import com.google.firebase.database.DatabaseReference
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
 
 /**
- * Repository for Compra
+ * Repository for Compra.
  *
- * Uses per-entity Firebase writes instead of full-list sync.
+ * Inherits the same write/read contract as the other repos. Additionally,
+ * fills [Compra.guiaSyncId] from the parent Guia at save time so future
+ * cross-device sync can resolve the parent by syncId instead of the
+ * fragile positional [Compra.idPosGuia].
  *
  * @since v3.0.0 (TRACK B Modernization)
+ * @updated v3.3.0 (Sync redesign)
  */
 @Singleton
 class CompraRepository @Inject constructor(
+    @ApplicationContext private val appContext: Context,
+    private val database: MunicionDatabase,
     private val compraDao: CompraDao,
-    private val syncHelper: FirebaseSyncHelper,
+    private val guiaDao: GuiaDao,
+    private val outboxDao: SyncOperationDao,
+    private val outboxEnqueuer: SyncOutboxEnqueuer,
+    private val firebaseDb: DatabaseReference,
     private val crashlytics: FirebaseCrashlytics
 ) {
 
     companion object {
         private const val TAG = "CompraRepository"
         private const val ENTITY_PATH = "compras"
+        private const val ENTITY_TYPE = "Compra"
     }
 
     val compras: Flow<List<Compra>> = compraDao.getAllComprasFlow()
+
+    val needsAttentionCount: Flow<Int> = compraDao.countNeedsAttentionFlow()
 
     fun getComprasByGuia(guiaId: Int): Flow<List<Compra>> {
         return compraDao.getComprasByGuiaFlow(guiaId)
@@ -45,16 +65,29 @@ class CompraRepository @Inject constructor(
         compraDao.getCompraById(id)
     }
 
+    suspend fun getCompraBySyncId(syncId: String): Compra? = withContext(Dispatchers.IO) {
+        compraDao.getCompraBySyncId(syncId)
+    }
+
     suspend fun saveCompra(compra: Compra, userId: String? = null): Result<Long> = withContext(Dispatchers.IO) {
         try {
-            val stamped = compra.copy(updatedAt = System.currentTimeMillis())
-            val id = compraDao.insert(stamped)
-            val saved = stamped.copy(id = id.toInt())
-
-            userId?.let {
-                syncHelper.writeEntity(it, ENTITY_PATH, saved.id, saved.toFirebaseMap())
+            val now = System.currentTimeMillis()
+            val id = database.withTransaction {
+                val parentSyncId = compra.guiaSyncId
+                    ?: guiaDao.getGuiaById(compra.idPosGuia)?.syncId
+                val stamped = compra.copy(
+                    syncId = compra.syncId.takeIf { it.isNotBlank() } ?: SyncIdGenerator.newSyncId(),
+                    guiaSyncId = parentSyncId,
+                    deleted = false,
+                    deletedAt = null,
+                    updatedAt = now
+                )
+                val rowId = compraDao.insert(stamped)
+                val saved = stamped.copy(id = rowId.toInt())
+                outboxEnqueuer.enqueueUpsert(saved, userId)
+                rowId
             }
-
+            triggerSync(userId)
             Result.success(id)
         } catch (e: Exception) {
             crashlytics.recordException(e)
@@ -64,13 +97,18 @@ class CompraRepository @Inject constructor(
 
     suspend fun updateCompra(compra: Compra, userId: String? = null): Result<Unit> = withContext(Dispatchers.IO) {
         try {
-            val stamped = compra.copy(updatedAt = System.currentTimeMillis())
-            compraDao.update(stamped)
-
-            userId?.let {
-                syncHelper.writeEntity(it, ENTITY_PATH, stamped.id, stamped.toFirebaseMap())
+            database.withTransaction {
+                val parentSyncId = compra.guiaSyncId
+                    ?: guiaDao.getGuiaById(compra.idPosGuia)?.syncId
+                val stamped = compra.copy(
+                    syncId = compra.syncId.takeIf { it.isNotBlank() } ?: SyncIdGenerator.newSyncId(),
+                    guiaSyncId = parentSyncId,
+                    updatedAt = System.currentTimeMillis()
+                )
+                compraDao.update(stamped)
+                outboxEnqueuer.enqueueUpsert(stamped, userId)
             }
-
+            triggerSync(userId)
             Result.success(Unit)
         } catch (e: Exception) {
             crashlytics.recordException(e)
@@ -80,12 +118,18 @@ class CompraRepository @Inject constructor(
 
     suspend fun deleteCompra(compra: Compra, userId: String? = null): Result<Unit> = withContext(Dispatchers.IO) {
         try {
-            compraDao.delete(compra)
-
-            userId?.let {
-                syncHelper.deleteEntity(it, ENTITY_PATH, compra.id)
+            val now = System.currentTimeMillis()
+            val tombstoned = compra.copy(
+                syncId = compra.syncId.takeIf { it.isNotBlank() } ?: SyncIdGenerator.newSyncId(),
+                deleted = true,
+                deletedAt = now,
+                updatedAt = now
+            )
+            database.withTransaction {
+                compraDao.update(tombstoned)
+                outboxEnqueuer.enqueueUpsert(tombstoned, userId)
             }
-
+            triggerSync(userId)
             Result.success(Unit)
         } catch (e: Exception) {
             crashlytics.recordException(e)
@@ -93,62 +137,80 @@ class CompraRepository @Inject constructor(
         }
     }
 
-    /**
-     * Syncs FROM Firebase -> Room using smart diff
-     */
     suspend fun syncFromFirebase(userId: String): Result<SyncResultWithErrors> = withContext(Dispatchers.IO) {
         try {
             crashlytics.setUserId(userId)
+            val snapshot = firebaseDb
+                .child("users").child(userId).child("db").child(ENTITY_PATH)
+                .get().await()
 
-            val localTimestamps = compraDao.getAllTimestamps()
-            val localIds = localTimestamps.keys
-
+            val totalInFirebase = snapshot.childrenCount.toInt()
             val parseErrors = mutableListOf<ParseError>()
+            val degradedSyncIds = mutableListOf<String>()
+            val localBySyncId = compraDao.getAllComprasIncludingDeleted().associateBy { it.syncId }
+            val pendingSyncIds = outboxDao.pendingSyncIdsFor(ENTITY_TYPE).toSet()
 
-            val diffResult = syncHelper.syncFromFirebaseWithDiff(
-                userId = userId,
-                entityPath = ENTITY_PATH,
-                localIds = localIds,
-                localTimestamps = localTimestamps,
-                parser = { key, value ->
-                    parseCompraFromMap(key, value, parseErrors)
-                },
-                getId = { it.id },
-                getUpdatedAt = { it.updatedAt },
-                upsert = { compraDao.insert(it) },
-                deleteLocal = { compraDao.deleteById(it) }
-            )
+            var upserted = 0
+            var skippedPending = 0
+            var skippedOlder = 0
 
-            val hasLocalData = compraDao.getCount() > 0
+            snapshot.children.forEach { child ->
+                val key = child.key
+                val parsed = TolerantParsers.parseCompra(key, child.value)
+                if (parsed == null) {
+                    parseErrors += ParseError(
+                        entity = "Compra",
+                        itemKey = key ?: "?",
+                        failedField = "<unparseable>",
+                        errorType = "InvalidShape",
+                        fieldValue = "[REDACTED]"
+                    )
+                    return@forEach
+                }
+
+                if (parsed.dataQuality == "degraded" || parsed.dataQuality == "lost") {
+                    degradedSyncIds += parsed.syncId
+                }
+
+                if (parsed.syncId in pendingSyncIds) {
+                    skippedPending++
+                    return@forEach
+                }
+
+                val local = localBySyncId[parsed.syncId]
+                if (local == null || parsed.updatedAt > local.updatedAt) {
+                    val toInsert = if (local != null) parsed.copy(id = local.id) else parsed.copy(id = 0)
+                    compraDao.insert(toInsert)
+                    upserted++
+                } else {
+                    skippedOlder++
+                }
+            }
+
+            Log.i(TAG, "Sync $ENTITY_PATH: total=$totalInFirebase upserted=$upserted skippedPending=$skippedPending skippedOlder=$skippedOlder degraded=${degradedSyncIds.size}")
+            if (degradedSyncIds.isNotEmpty()) {
+                crashlytics.log("Compra degraded count: ${degradedSyncIds.size}")
+            }
 
             Result.success(SyncResultWithErrors(
-                success = diffResult.success,
-                syncedCount = diffResult.upserted,
-                totalInFirebase = diffResult.totalInFirebase,
+                success = true,
+                syncedCount = upserted,
+                totalInFirebase = totalInFirebase,
                 parseErrors = parseErrors,
-                hasLocalData = hasLocalData
+                hasLocalData = compraDao.getCount() > 0
             ))
         } catch (e: Exception) {
             Log.e(TAG, "Sync failed: ${e.message}", e)
-            crashlytics.log("Failed to sync compras from Firebase: ${e.message}")
             crashlytics.recordException(e)
             Result.failure(e)
         }
     }
 
-    /**
-     * Full sync TO Firebase (all compras as map). Used for auto-fix only.
-     */
+    @Deprecated("Outbox is the source of truth for writes; this is now a no-op")
     suspend fun syncToFirebase(userId: String): Result<Unit> = withContext(Dispatchers.IO) {
-        try {
-            val allCompras = compraDao.getAllCompras()
-            val entityMaps = allCompras.associate { it.id.toString() to it.toFirebaseMap() }
-            syncHelper.fullSyncToFirebase(userId, ENTITY_PATH, entityMaps)
-        } catch (e: Exception) {
-            crashlytics.log("Failed to full-sync compras to Firebase: ${e.message}")
-            crashlytics.recordException(e)
-            Result.failure(e)
-        }
+        Log.w(TAG, "Deprecated syncToFirebase ignored; outbox handles writes")
+        triggerSync(userId)
+        Result.success(Unit)
     }
 
     suspend fun detectCorruptedCompras(): List<Compra> = withContext(Dispatchers.IO) {
@@ -159,131 +221,8 @@ class CompraRepository @Inject constructor(
         compraDao.countComprasByGuia(guiaId)
     }
 
-    // --- Parsing ---
-
-    @Suppress("UNCHECKED_CAST")
-    private fun parseCompraFromMap(
-        itemKey: String,
-        value: Any?,
-        parseErrors: MutableList<ParseError>
-    ): Compra? {
-        val map = value as? Map<String, Any?> ?: run {
-            reportFieldError(itemKey, "root", "Not a Map", value?.toString(), parseErrors)
-            return null
-        }
-
-        val idPosGuia = (map["idPosGuia"] as? Number)?.toInt() ?: run {
-            reportFieldError(itemKey, "idPosGuia", "Missing or invalid", map["idPosGuia"]?.toString(), parseErrors)
-            return null
-        }
-
-        val calibre1 = (map["calibre1"] as? String)?.takeIf { it.isNotBlank() } ?: run {
-            reportFieldError(itemKey, "calibre1", "Blank or missing", map["calibre1"]?.toString(), parseErrors)
-            return null
-        }
-
-        val unidades = (map["unidades"] as? Number)?.toInt() ?: run {
-            reportFieldError(itemKey, "unidades", "Missing or invalid", map["unidades"]?.toString(), parseErrors)
-            return null
-        }
-        if (unidades <= 0) {
-            reportFieldError(itemKey, "unidades", "Must be > 0", unidades.toString(), parseErrors)
-            return null
-        }
-
-        val precio = (map["precio"] as? Number)?.toDouble() ?: run {
-            reportFieldError(itemKey, "precio", "Missing or invalid", map["precio"]?.toString(), parseErrors)
-            return null
-        }
-        if (precio < 0) {
-            reportFieldError(itemKey, "precio", "Must be >= 0", precio.toString(), parseErrors)
-            return null
-        }
-
-        val fecha = (map["fecha"] as? String)?.takeIf { it.isNotBlank() } ?: run {
-            reportFieldError(itemKey, "fecha", "Blank or missing", map["fecha"]?.toString(), parseErrors)
-            return null
-        }
-
-        val tipo = (map["tipo"] as? String)?.takeIf { it.isNotBlank() } ?: run {
-            reportFieldError(itemKey, "tipo", "Blank or missing", map["tipo"]?.toString(), parseErrors)
-            return null
-        }
-
-        val peso = (map["peso"] as? Number)?.toInt() ?: run {
-            reportFieldError(itemKey, "peso", "Missing or invalid", map["peso"]?.toString(), parseErrors)
-            return null
-        }
-        if (peso <= 0) {
-            reportFieldError(itemKey, "peso", "Must be > 0", peso.toString(), parseErrors)
-            return null
-        }
-
-        val marca = (map["marca"] as? String)?.takeIf { it.isNotBlank() } ?: run {
-            reportFieldError(itemKey, "marca", "Blank or missing", map["marca"]?.toString(), parseErrors)
-            return null
-        }
-
-        val id = (map["id"] as? Number)?.toInt() ?: 0
-        val calibre2 = map["calibre2"] as? String
-        val tienda = map["tienda"] as? String
-        val valoracion = (map["valoracion"] as? Number)?.toFloat() ?: 0f
-        val imagePath = map["imagePath"] as? String
-        val fotoUrl = map["fotoUrl"] as? String
-        val storagePath = map["storagePath"] as? String
-        val updatedAt = (map["updatedAt"] as? Number)?.toLong() ?: System.currentTimeMillis()
-
-        return try {
-            Compra(
-                id = id,
-                idPosGuia = idPosGuia,
-                calibre1 = calibre1,
-                calibre2 = calibre2,
-                unidades = unidades,
-                precio = precio,
-                fecha = fecha,
-                tipo = tipo,
-                peso = peso,
-                marca = marca,
-                tienda = tienda,
-                valoracion = valoracion.coerceIn(0f, 5f),
-                imagePath = imagePath,
-                fotoUrl = fotoUrl,
-                storagePath = storagePath,
-                updatedAt = updatedAt
-            )
-        } catch (e: Exception) {
-            reportFieldError(itemKey, "constructor", e.message ?: "Unknown", null, parseErrors)
-            null
-        }
-    }
-
-    private fun reportFieldError(
-        itemKey: String,
-        fieldName: String,
-        errorType: String,
-        fieldValue: String?,
-        parseErrors: MutableList<ParseError>
-    ) {
-        val redactedValue = SensitiveFields.redactIfNeeded(fieldName, fieldValue)
-
-        parseErrors.add(ParseError(
-            entity = "Compra",
-            itemKey = itemKey,
-            failedField = fieldName,
-            errorType = errorType,
-            fieldValue = redactedValue
-        ))
-
-        crashlytics.apply {
-            setCustomKey("entity", "Compra")
-            setCustomKey("item_key", itemKey)
-            setCustomKey("failed_field", fieldName)
-            setCustomKey("error_type", errorType)
-            setCustomKey("field_value", redactedValue)
-            recordException(FirebaseParseException("[Compra] Field '$fieldName' failed: $errorType"))
-        }
-
-        Log.e(TAG, "Parse error Compra[$itemKey].$fieldName: $errorType (value: $redactedValue)")
+    private fun triggerSync(userId: String?) {
+        if (userId.isNullOrBlank()) return
+        SyncOutboxWorker.enqueueOneShot(appContext)
     }
 }

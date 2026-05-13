@@ -1,0 +1,59 @@
+{
+  "rules": {
+    ".read": false,
+    ".write": false,
+
+    "global_database":   { ".read": "auth != null" },
+    "global_settings":   { ".read": "auth != null" },
+
+    "users": {
+      "$uid": {
+        ".read":  "auth != null && auth.uid === $uid",
+        ".write": "auth != null && auth.uid === $uid",
+
+        "db": {
+          "_meta": {
+            "format_version": {
+              ".validate": "newData.isNumber() && (data.exists() ? newData.val() >= data.val() : true)"
+            }
+          },
+
+          "licencias": {
+            "$key": {
+              "syncId":    { ".validate": "newData.val() === $key || newData.val() == null" },
+              "updatedAt": { ".validate": "newData.isNumber() || newData.val() == null" },
+              "deleted":   { ".validate": "newData.isBoolean() || newData.val() == null" }
+            }
+          },
+
+          "guias": {
+            "$key": {
+              "syncId":    { ".validate": "newData.val() === $key || newData.val() == null" },
+              "updatedAt": { ".validate": "newData.isNumber() || newData.val() == null" },
+              "deleted":   { ".validate": "newData.isBoolean() || newData.val() == null" },
+              "cupo":      { ".validate": "newData.isNumber() && newData.val() > 0 || newData.val() == null" },
+              "gastado":   { ".validate": "newData.isNumber() && newData.val() >= 0 || newData.val() == null" }
+            }
+          },
+
+          "compras": {
+            "$key": {
+              "syncId":    { ".validate": "newData.val() === $key || newData.val() == null" },
+              "updatedAt": { ".validate": "newData.isNumber() || newData.val() == null" },
+              "deleted":   { ".validate": "newData.isBoolean() || newData.val() == null" },
+              "unidades":  { ".validate": "newData.isNumber() && newData.val() > 0 || newData.val() == null" }
+            }
+          },
+
+          "tiradas": {
+            "$key": {
+              "syncId":    { ".validate": "newData.val() === $key || newData.val() == null" },
+              "updatedAt": { ".validate": "newData.isNumber() || newData.val() == null" },
+              "deleted":   { ".validate": "newData.isBoolean() || newData.val() == null" }
+            }
+          }
+        }
+      }
+    }
+  }
+}

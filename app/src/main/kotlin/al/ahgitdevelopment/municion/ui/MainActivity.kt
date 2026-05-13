@@ -155,7 +155,12 @@ fun MunicionApp(
 
     // Dialog states
     var showCalendarRationaleDialog by remember { mutableStateOf(false) }
+    // Calendar permission is asked at most once per app session.
     var permissionRequestedThisSession by remember { mutableStateOf(false) }
+    // Sync is triggered every time the authenticated UID changes (including
+    // logout → null → login again to the same UID). This prevents the
+    // v3.2.x bug where a logout+login round-trip left the app un-synced.
+    var lastSyncedUserId by remember { mutableStateOf<String?>(null) }
     val context = LocalContext.current
 
     // Collect permission results
@@ -170,19 +175,31 @@ fun MunicionApp(
         }
     }
 
-    // Request calendar permission when authenticated
     LaunchedEffect(authState) {
-        if (authState is AuthViewModel.AuthState.Authenticated && !permissionRequestedThisSession) {
-            permissionRequestedThisSession = true
-            if (!calendarPermissionGranted) {
-                if (onShowCalendarRationale()) {
-                    showCalendarRationaleDialog = true
-                } else {
-                    onRequestCalendarPermission()
+        when (val s = authState) {
+            is AuthViewModel.AuthState.Authenticated -> {
+                if (!permissionRequestedThisSession) {
+                    permissionRequestedThisSession = true
+                    if (!calendarPermissionGranted) {
+                        if (onShowCalendarRationale()) {
+                            showCalendarRationaleDialog = true
+                        } else {
+                            onRequestCalendarPermission()
+                        }
+                    }
+                }
+                val currentUid = s.user.uid
+                if (currentUid != lastSyncedUserId) {
+                    lastSyncedUserId = currentUid
+                    mainViewModel.syncFromFirebase()
                 }
             }
-            // Trigger sync
-            mainViewModel.syncFromFirebase()
+            is AuthViewModel.AuthState.NotAuthenticated -> {
+                // After signOut, allow the next login (even to the same UID)
+                // to trigger a fresh sync.
+                lastSyncedUserId = null
+            }
+            else -> { /* Loading / RequiresMigration / Error: noop */ }
         }
     }
 

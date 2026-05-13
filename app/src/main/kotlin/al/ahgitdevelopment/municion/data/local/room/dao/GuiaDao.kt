@@ -1,6 +1,14 @@
 package al.ahgitdevelopment.municion.data.local.room.dao
 
-import androidx.room.*
+import androidx.room.ColumnInfo
+import androidx.room.Dao
+import androidx.room.Delete
+import androidx.room.Insert
+import androidx.room.MapColumn
+import androidx.room.OnConflictStrategy
+import androidx.room.Query
+import androidx.room.Transaction
+import androidx.room.Update
 import al.ahgitdevelopment.municion.data.local.room.entities.Guia
 import kotlinx.coroutines.flow.Flow
 
@@ -15,61 +23,77 @@ import kotlinx.coroutines.flow.Flow
 interface GuiaDao {
 
     /**
-     * Observa TODAS las guías
+     * Observa TODAS las guías (filtra tombstones).
      */
-    @Query("SELECT * FROM guias ORDER BY apodo ASC")
+    @Query("SELECT * FROM guias WHERE deleted = 0 ORDER BY apodo ASC")
     fun getAllGuiasFlow(): Flow<List<Guia>>
 
     /**
-     * Obtiene todas las guías
+     * Obtiene todas las guías (filtra tombstones).
      */
-    @Query("SELECT * FROM guias ORDER BY apodo ASC")
+    @Query("SELECT * FROM guias WHERE deleted = 0 ORDER BY apodo ASC")
     suspend fun getAllGuias(): List<Guia>
 
     /**
-     * Obtiene guías de un tipo de licencia específico
+     * Obtiene TODAS las guías incluyendo tombstones (uso interno del sync).
      */
-    @Query("SELECT * FROM guias WHERE tipo_licencia = :tipoLicencia ORDER BY apodo ASC")
+    @Query("SELECT * FROM guias ORDER BY apodo ASC")
+    suspend fun getAllGuiasIncludingDeleted(): List<Guia>
+
+    /**
+     * Obtiene guías de un tipo de licencia específico.
+     */
+    @Query("SELECT * FROM guias WHERE tipo_licencia = :tipoLicencia AND deleted = 0 ORDER BY apodo ASC")
     fun getGuiasByTipoLicenciaFlow(tipoLicencia: Int): Flow<List<Guia>>
 
     /**
-     * Obtiene una guía por ID
+     * Obtiene una guía por ID (incluye tombstones para resolución de
+     * referencias desde compras que aún apuntan a guías borradas).
      */
     @Query("SELECT * FROM guias WHERE id = :id")
     suspend fun getGuiaById(id: Int): Guia?
 
     /**
-     * Obtiene guía por número de guía
+     * Obtiene una guía por syncId.
      */
-    @Query("SELECT * FROM guias WHERE num_guia = :numGuia")
+    @Query("SELECT * FROM guias WHERE sync_id = :syncId")
+    suspend fun getGuiaBySyncId(syncId: String): Guia?
+
+    /**
+     * Obtiene guía por número de guía (excluye tombstones).
+     */
+    @Query("SELECT * FROM guias WHERE num_guia = :numGuia AND deleted = 0")
     suspend fun getGuiaByNumero(numGuia: String): Guia?
 
     /**
-     * Obtiene guías con cupo agotado
+     * Obtiene guías con cupo agotado.
      */
-    @Query("SELECT * FROM guias WHERE gastado >= cupo")
+    @Query("SELECT * FROM guias WHERE gastado >= cupo AND deleted = 0")
     suspend fun getGuiasConCupoAgotado(): List<Guia>
 
     /**
-     * Obtiene guías con cupo disponible
+     * Obtiene guías con cupo disponible.
      */
-    @Query("SELECT * FROM guias WHERE gastado < cupo")
+    @Query("SELECT * FROM guias WHERE gastado < cupo AND deleted = 0")
     suspend fun getGuiasConCupoDisponible(): List<Guia>
 
     /**
-     * Cuenta guías de un tipo de licencia
+     * Cuenta guías de un tipo de licencia.
      */
-    @Query("SELECT COUNT(*) FROM guias WHERE tipo_licencia = :tipoLicencia")
+    @Query("SELECT COUNT(*) FROM guias WHERE tipo_licencia = :tipoLicencia AND deleted = 0")
     suspend fun countGuiasByTipoLicencia(tipoLicencia: Int): Int
 
     /**
-     * Cuenta TODAS las guías (para migración)
+     * Cuenta TODAS las guías (para migración).
      */
-    @Query("SELECT COUNT(*) FROM guias")
+    @Query("SELECT COUNT(*) FROM guias WHERE deleted = 0")
     suspend fun getCount(): Int
 
+    @Query("SELECT sync_id, updated_at, deleted FROM guias")
+    suspend fun getAllSyncMetadata(): List<GuiaSyncMeta>
+
     /**
-     * Obtiene ID y timestamp de todas las guías (para diff sync)
+     * @deprecated Used by the legacy diff sync; replaced by [getAllSyncMetadata].
      */
     @Query("SELECT id, updated_at FROM guias")
     suspend fun getAllTimestamps(): Map<@MapColumn(columnName = "id") Int, @MapColumn(columnName = "updated_at") Long>
@@ -142,4 +166,22 @@ interface GuiaDao {
         deleteAll()
         insertAll(guias)
     }
+
+    @Query("SELECT COUNT(*) FROM guias WHERE deleted = 0 AND data_quality != 'ok'")
+    fun countNeedsAttentionFlow(): Flow<Int>
+
+    @Query("UPDATE guias SET deleted = 1, deleted_at = :now, updated_at = :now WHERE sync_id = :syncId")
+    suspend fun tombstoneBySyncId(syncId: String, now: Long): Int
+
+    @Query("DELETE FROM guias WHERE deleted = 1 AND deleted_at IS NOT NULL AND deleted_at < :before")
+    suspend fun purgeTombstonesBefore(before: Long): Int
 }
+
+data class GuiaSyncMeta(
+    @ColumnInfo(name = "sync_id")
+    val syncId: String,
+    @ColumnInfo(name = "updated_at")
+    val updatedAt: Long,
+    @ColumnInfo(name = "deleted")
+    val deleted: Boolean
+)

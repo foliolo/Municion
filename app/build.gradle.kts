@@ -39,10 +39,10 @@ android {
         applicationId = "al.ahgitdevelopment.municion"
         minSdk = 26
         targetSdk = 36
-        versionCode = 44
-        versionName = "3.2.3"
+        versionCode = 45
+        versionName = "3.3.0"
 
-        testInstrumentationRunner = "android.support.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
     }
 
@@ -83,6 +83,30 @@ android {
             it.useJUnitPlatform()
         }
         unitTests.isReturnDefaultValues = true
+    }
+
+    sourceSets {
+        // Expose the exported Room schemas to MigrationTestHelper so the
+        // v32 → v33 migration can be tested as an instrumented test.
+        getByName("androidTest").assets.srcDirs("$projectDir/schemas")
+    }
+}
+
+ksp {
+    // Make Room emit a JSON snapshot of each schema version under
+    // app/schemas, which the migration tests consume. Required for
+    // Room.exportSchema = true on MunicionDatabase.
+    arg("room.schemaLocation", "$projectDir/schemas")
+    arg("room.incremental", "true")
+}
+
+// Resolve the conflicting transitive constraint pulled in by
+// hilt-android-testing 2.59.2 / espresso-core 3.7.0 (both want 1.2.0)
+// vs. older deps that pin 1.1.0. 1.2.0 is binary-compatible.
+configurations.configureEach {
+    resolutionStrategy {
+        force("androidx.concurrent:concurrent-futures:1.2.0")
+        force("androidx.concurrent:concurrent-futures-ktx:1.2.0")
     }
 }
 
@@ -187,6 +211,7 @@ dependencies {
     androidTestImplementation(libs.bundles.android.test)
     androidTestImplementation(libs.androidx.navigation.testing)
     androidTestImplementation(libs.androidx.fragment.testing)
+    androidTestImplementation(libs.androidx.test.ext.junit)
 
     // LeakCanary (debug only)
     debugImplementation(libs.leakcanary)

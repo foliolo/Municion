@@ -1,35 +1,55 @@
 package al.ahgitdevelopment.municion.domain.usecase
 
 import al.ahgitdevelopment.municion.auth.FirebaseAuthRepository
+import al.ahgitdevelopment.municion.data.repository.BillingRepository
 import al.ahgitdevelopment.municion.data.repository.CompraRepository
 import al.ahgitdevelopment.municion.data.repository.GuiaRepository
 import al.ahgitdevelopment.municion.data.repository.LicenciaRepository
 import al.ahgitdevelopment.municion.data.repository.TiradaRepository
 import al.ahgitdevelopment.municion.data.sync.FirebaseFormatMigrator
+import al.ahgitdevelopment.municion.data.sync.SyncOutboxWorker
+import android.content.Context
 import android.util.Log
 import com.google.firebase.crashlytics.FirebaseCrashlytics
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 /**
- * Use Case to sync ALL data with Firebase
+ * Orchestrates the download side of sync.
  *
- * PHASE 5: Smart Bidirectional Sync
- * - Verifies auth state before syncing
- * - Runs FirebaseFormatMigrator (array→map) on first sync
- * - Uses smart diff-based sync (upsert newer, delete removed)
- * - Full upload only for auto-fix
+ * v3.3+ redesign:
+ *
+ *  - **Download** (`syncFromFirebase`) reads each collection from
+ *    Firebase and applies a non-destructive merge per the new
+ *    repository contract. Tolerant parsing keeps every parseable
+ *    entity, including stability-corrupt ones (flagged dataQuality).
+ *
+ *  - **Upload** (`syncToFirebase`) is no longer a thing. The
+ *    [SyncOutboxWorker] is the only writer to Firebase, and it runs
+ *    automatically on each save/update/delete plus on a periodic
+ *    schedule. Callers that used to invoke `syncToFirebase` get a
+ *    one-shot trigger of the worker instead — convenient as a manual
+ *    "force sync" button without re-introducing the destructive path.
+ *
+ *  - **Auto-fix** (the old `syncFromFirebaseWithAutoFix` that called
+ *    `fullSyncToFirebase`) is removed. Its destructive `setValue(map)`
+ *    on the entire collection was the proximate cause of the bulk
+ *    data-loss incidents. The new code returns the same result shape
+ *    but `autoFixApplied` is always `false`.
  *
  * @since v3.0.0 (TRACK B Modernization)
+ * @updated v3.3.0 (Sync redesign — no destructive paths)
  */
 class SyncDataUseCase @Inject constructor(
+    @ApplicationContext private val appContext: Context,
     private val guiaRepository: GuiaRepository,
     private val compraRepository: CompraRepository,
     private val licenciaRepository: LicenciaRepository,
     private val tiradaRepository: TiradaRepository,
-    private val billingRepository: al.ahgitdevelopment.municion.data.repository.BillingRepository,
+    private val billingRepository: BillingRepository,
     private val firebaseAuthRepository: FirebaseAuthRepository,
     private val firebaseFormatMigrator: FirebaseFormatMigrator,
     private val crashlytics: FirebaseCrashlytics
@@ -46,15 +66,12 @@ class SyncDataUseCase @Inject constructor(
     fun getCurrentUserId(): String? = firebaseAuthRepository.getCurrentUser()?.uid
 
     /**
-     * Syncs from Firebase -> Room (download) with smart diff.
-     * Runs format migration (array→map) before first sync.
+     * Pulls each collection from Firebase and applies a non-destructive
+     * merge. Returns per-entity results and any parse errors observed.
      */
     suspend fun syncFromFirebase(userId: String): Result<SyncResult> = coroutineScope {
         try {
-            // Run format migration (idempotent, fast if already done)
             launch { firebaseFormatMigrator.migrateIfNeeded(userId) }
-
-            // Trigger ads status sync independently
             launch { billingRepository.syncAdsStatus(userId) }
 
             val guiasDeferred = async { guiaRepository.syncFromFirebase(userId) }
@@ -71,24 +88,23 @@ class SyncDataUseCase @Inject constructor(
                 .count { it.isSuccess }
 
             Log.i(TAG, "Sync from Firebase: $successCount/4 successful")
-            if (!guiasResult.isSuccess) {
-                Log.e(TAG, "FAILED: Guias - ${guiasResult.exceptionOrNull()?.message}")
-            }
-            if (!comprasResult.isSuccess) {
-                Log.e(TAG, "FAILED: Compras - ${comprasResult.exceptionOrNull()?.message}")
-            }
-            if (!licenciasResult.isSuccess) {
-                Log.e(TAG, "FAILED: Licencias - ${licenciasResult.exceptionOrNull()?.message}")
-            }
-            if (!tiradasResult.isSuccess) {
-                Log.e(TAG, "FAILED: Tiradas - ${tiradasResult.exceptionOrNull()?.message}")
+            listOf(
+                "guias" to guiasResult,
+                "compras" to comprasResult,
+                "licencias" to licenciasResult,
+                "tiradas" to tiradasResult
+            ).forEach { (label, result) ->
+                if (!result.isSuccess) {
+                    Log.e(TAG, "FAILED: $label - ${result.exceptionOrNull()?.message}")
+                }
             }
 
-            val allParseErrors = mutableListOf<ParseError>()
-            guiasResult.getOrNull()?.parseErrors?.let { allParseErrors.addAll(it) }
-            comprasResult.getOrNull()?.parseErrors?.let { allParseErrors.addAll(it) }
-            licenciasResult.getOrNull()?.parseErrors?.let { allParseErrors.addAll(it) }
-            tiradasResult.getOrNull()?.parseErrors?.let { allParseErrors.addAll(it) }
+            val allParseErrors = listOfNotNull(
+                guiasResult.getOrNull()?.parseErrors,
+                comprasResult.getOrNull()?.parseErrors,
+                licenciasResult.getOrNull()?.parseErrors,
+                tiradasResult.getOrNull()?.parseErrors
+            ).flatten()
 
             if (allParseErrors.isNotEmpty()) {
                 Log.w(TAG, "Total parse errors: ${allParseErrors.size}")
@@ -97,18 +113,20 @@ class SyncDataUseCase @Inject constructor(
                 }
             }
 
-            Result.success(
-                SyncResult(
-                    guiasSuccess = guiasResult.isSuccess,
-                    comprasSuccess = comprasResult.isSuccess,
-                    licenciasSuccess = licenciasResult.isSuccess,
-                    tiradasSuccess = tiradasResult.isSuccess,
-                    guiasSyncResult = guiasResult.getOrNull(),
-                    comprasSyncResult = comprasResult.getOrNull(),
-                    licenciasSyncResult = licenciasResult.getOrNull(),
-                    tiradasSyncResult = tiradasResult.getOrNull()
-                )
-            )
+            // Trigger outbox drain so any pending local writes propagate now
+            // that we know there's a usable network and an authenticated user.
+            SyncOutboxWorker.enqueueOneShot(appContext)
+
+            Result.success(SyncResult(
+                guiasSuccess = guiasResult.isSuccess,
+                comprasSuccess = comprasResult.isSuccess,
+                licenciasSuccess = licenciasResult.isSuccess,
+                tiradasSuccess = tiradasResult.isSuccess,
+                guiasSyncResult = guiasResult.getOrNull(),
+                comprasSyncResult = comprasResult.getOrNull(),
+                licenciasSyncResult = licenciasResult.getOrNull(),
+                tiradasSyncResult = tiradasResult.getOrNull()
+            ))
         } catch (e: Exception) {
             Log.e(TAG, "Error syncing from Firebase", e)
             crashlytics.recordException(e)
@@ -117,144 +135,48 @@ class SyncDataUseCase @Inject constructor(
     }
 
     /**
-     * Syncs from Firebase with auto-fix for corrupt data.
+     * Compatibility alias kept so existing callers (MainViewModel) keep
+     * working. v3.3+ never auto-fixes by re-uploading Room; the worker
+     * handles upload. Returns success with `autoFixApplied=false`.
      */
-    suspend fun syncFromFirebaseWithAutoFix(userId: String): Result<SyncResultWithAutoFix> = coroutineScope {
-        try {
-            val downloadResult = syncFromFirebase(userId).getOrThrow()
-
-            val entitiesNeedingFix = mutableListOf<String>()
-
-            if (downloadResult.guiasSyncResult?.needsAutoFix == true) {
-                entitiesNeedingFix.add("Guias")
-            }
-            if (downloadResult.comprasSyncResult?.needsAutoFix == true) {
-                entitiesNeedingFix.add("Compras")
-            }
-            if (downloadResult.licenciasSyncResult?.needsAutoFix == true) {
-                entitiesNeedingFix.add("Licencias")
-            }
-            if (downloadResult.tiradasSyncResult?.needsAutoFix == true) {
-                entitiesNeedingFix.add("Tiradas")
-            }
-
-            var autoFixApplied = false
-            var uploadResult: SyncResult? = null
-
-            if (entitiesNeedingFix.isNotEmpty()) {
-                Log.w(TAG, "Auto-fix needed for: ${entitiesNeedingFix.joinToString()}")
-                crashlytics.log("Auto-fix triggered for entities: ${entitiesNeedingFix.joinToString()}")
-
-                uploadResult = syncToFirebase(userId).getOrNull()
-                autoFixApplied = uploadResult?.allSuccess == true
-
-                if (autoFixApplied) {
-                    Log.i(TAG, "Auto-fix applied successfully")
-                    crashlytics.log("Auto-fix completed successfully")
-                } else {
-                    Log.e(TAG, "Auto-fix upload failed")
-                    crashlytics.log("Auto-fix upload failed")
-                }
-            }
-
-            Result.success(
-                SyncResultWithAutoFix(
-                    downloadResult = downloadResult,
-                    autoFixApplied = autoFixApplied,
-                    entitiesFixed = if (autoFixApplied) entitiesNeedingFix else emptyList(),
-                    uploadResult = uploadResult
-                )
+    suspend fun syncFromFirebaseWithAutoFix(userId: String): Result<SyncResultWithAutoFix> {
+        return syncFromFirebase(userId).map { downloadResult ->
+            SyncResultWithAutoFix(
+                downloadResult = downloadResult,
+                autoFixApplied = false,
+                entitiesFixed = emptyList(),
+                uploadResult = null
             )
-        } catch (e: Exception) {
-            Log.e(TAG, "Sync with auto-fix failed", e)
-            crashlytics.recordException(e)
-            Result.failure(e)
         }
     }
 
     /**
-     * Full sync to Firebase (upload all). Used for auto-fix only.
+     * Triggers a one-shot drain of the [sync_outbox]. Kept for compatibility
+     * with the MainViewModel "manual sync" button. Never performs the
+     * destructive setValue(map) of v3.2.x.
      */
-    suspend fun syncToFirebase(userId: String): Result<SyncResult> = coroutineScope {
-        try {
-            val guiasDeferred = async { guiaRepository.syncToFirebase(userId) }
-            val comprasDeferred = async { compraRepository.syncToFirebase(userId) }
-            val licenciasDeferred = async { licenciaRepository.syncToFirebase(userId) }
-            val tiradasDeferred = async { tiradaRepository.syncToFirebase(userId) }
-
-            val guiasResult = guiasDeferred.await()
-            val comprasResult = comprasDeferred.await()
-            val licenciasResult = licenciasDeferred.await()
-            val tiradasResult = tiradasDeferred.await()
-
-            val successCount = listOf(guiasResult, comprasResult, licenciasResult, tiradasResult)
-                .count { it.isSuccess }
-
-            Log.i(TAG, "Full sync to Firebase: $successCount/4 successful")
-            if (!guiasResult.isSuccess) {
-                Log.e(TAG, "FAILED upload: Guias - ${guiasResult.exceptionOrNull()?.message}")
-            }
-            if (!comprasResult.isSuccess) {
-                Log.e(TAG, "FAILED upload: Compras - ${comprasResult.exceptionOrNull()?.message}")
-            }
-            if (!licenciasResult.isSuccess) {
-                Log.e(TAG, "FAILED upload: Licencias - ${licenciasResult.exceptionOrNull()?.message}")
-            }
-            if (!tiradasResult.isSuccess) {
-                Log.e(TAG, "FAILED upload: Tiradas - ${tiradasResult.exceptionOrNull()?.message}")
-            }
-
-            Result.success(
-                SyncResult(
-                    guiasSuccess = guiasResult.isSuccess,
-                    comprasSuccess = comprasResult.isSuccess,
-                    licenciasSuccess = licenciasResult.isSuccess,
-                    tiradasSuccess = tiradasResult.isSuccess
-                )
-            )
-        } catch (e: Exception) {
-            Log.e(TAG, "Error syncing to Firebase", e)
-            crashlytics.recordException(e)
-            Result.failure(e)
-        }
+    suspend fun syncToFirebase(userId: String): Result<SyncResult> {
+        SyncOutboxWorker.enqueueOneShot(appContext)
+        return Result.success(SyncResult(
+            guiasSuccess = true,
+            comprasSuccess = true,
+            licenciasSuccess = true,
+            tiradasSuccess = true
+        ))
     }
 
-    /**
-     * Smart initial sync (download only, upload is per-entity on save/update/delete)
-     */
     suspend fun syncBidirectional(): Result<BidirectionalSyncResult> {
         if (!canSync()) {
             Log.w(TAG, "Cannot sync: user not authenticated")
-            return Result.success(
-                BidirectionalSyncResult(
-                    downloadResult = null,
-                    uploadResult = null,
-                    skipped = true,
-                    reason = "User not authenticated"
-                )
-            )
+            return Result.success(BidirectionalSyncResult(null, null, true, "User not authenticated"))
         }
 
         val userId = getCurrentUserId()
-        if (userId == null) {
-            Log.w(TAG, "Cannot sync: no user ID")
-            return Result.failure(Exception("No user ID available"))
-        }
+            ?: return Result.failure(Exception("No user ID available"))
 
         return try {
-            Log.i(TAG, "Starting smart sync for user: $userId")
-
             val downloadResult = syncFromFirebase(userId).getOrNull()
-            Log.i(TAG, "Download completed: ${downloadResult?.successCount ?: 0}/4")
-
-            Result.success(
-                BidirectionalSyncResult(
-                    downloadResult = downloadResult,
-                    uploadResult = null,
-                    skipped = false,
-                    reason = null
-                )
-            )
+            Result.success(BidirectionalSyncResult(downloadResult, null, false, null))
         } catch (e: Exception) {
             Log.e(TAG, "Smart sync failed", e)
             crashlytics.recordException(e)
@@ -264,17 +186,8 @@ class SyncDataUseCase @Inject constructor(
 
     suspend fun autoSync(): Result<BidirectionalSyncResult> {
         if (!isLinked()) {
-            Log.d(TAG, "Auto-sync skipped: user is anonymous")
-            return Result.success(
-                BidirectionalSyncResult(
-                    downloadResult = null,
-                    uploadResult = null,
-                    skipped = true,
-                    reason = "Auto-sync only for linked accounts"
-                )
-            )
+            return Result.success(BidirectionalSyncResult(null, null, true, "Auto-sync only for linked accounts"))
         }
-
         return syncBidirectional()
     }
 
@@ -292,8 +205,7 @@ class SyncDataUseCase @Inject constructor(
             get() = guiasSuccess && comprasSuccess && licenciasSuccess && tiradasSuccess
 
         val successCount: Int
-            get() = listOf(guiasSuccess, comprasSuccess, licenciasSuccess, tiradasSuccess)
-                .count { it }
+            get() = listOf(guiasSuccess, comprasSuccess, licenciasSuccess, tiradasSuccess).count { it }
 
         val allParseErrors: List<ParseError>
             get() = listOfNotNull(
@@ -306,11 +218,10 @@ class SyncDataUseCase @Inject constructor(
         val hasParseErrors: Boolean
             get() = allParseErrors.isNotEmpty()
 
+        /** Always false in v3.3+: auto-fix has been removed. */
+        @Deprecated("auto-fix removed in v3.3", ReplaceWith("false"))
         val needsAutoFix: Boolean
-            get() = guiasSyncResult?.needsAutoFix == true ||
-                    comprasSyncResult?.needsAutoFix == true ||
-                    licenciasSyncResult?.needsAutoFix == true ||
-                    tiradasSyncResult?.needsAutoFix == true
+            get() = false
     }
 
     data class SyncResultWithAutoFix(
@@ -320,7 +231,7 @@ class SyncDataUseCase @Inject constructor(
         val uploadResult: SyncResult?
     ) {
         val allSuccess: Boolean
-            get() = downloadResult.allSuccess && (!autoFixApplied || uploadResult?.allSuccess == true)
+            get() = downloadResult.allSuccess
 
         val hasParseErrors: Boolean
             get() = downloadResult.hasParseErrors
@@ -336,9 +247,7 @@ class SyncDataUseCase @Inject constructor(
         val reason: String?
     ) {
         val allSuccess: Boolean
-            get() = !skipped &&
-                    (downloadResult?.allSuccess ?: false) &&
-                    (uploadResult?.allSuccess ?: false)
+            get() = !skipped && (downloadResult?.allSuccess ?: false)
 
         val totalSuccessCount: Int
             get() = (downloadResult?.successCount ?: 0) + (uploadResult?.successCount ?: 0)

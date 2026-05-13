@@ -4,11 +4,13 @@ import al.ahgitdevelopment.municion.data.local.room.dao.AppPurchaseDao
 import al.ahgitdevelopment.municion.data.local.room.dao.CompraDao
 import al.ahgitdevelopment.municion.data.local.room.dao.GuiaDao
 import al.ahgitdevelopment.municion.data.local.room.dao.LicenciaDao
+import al.ahgitdevelopment.municion.data.local.room.dao.SyncOperationDao
 import al.ahgitdevelopment.municion.data.local.room.dao.TiradaDao
 import al.ahgitdevelopment.municion.data.local.room.entities.AppPurchase
 import al.ahgitdevelopment.municion.data.local.room.entities.Compra
 import al.ahgitdevelopment.municion.data.local.room.entities.Guia
 import al.ahgitdevelopment.municion.data.local.room.entities.Licencia
+import al.ahgitdevelopment.municion.data.local.room.entities.SyncOperation
 import al.ahgitdevelopment.municion.data.local.room.entities.Tirada
 import android.content.Context
 import android.util.Log
@@ -36,9 +38,10 @@ import androidx.sqlite.db.SupportSQLiteDatabase
         Compra::class,
         Licencia::class,
         Tirada::class,
-        AppPurchase::class
+        AppPurchase::class,
+        SyncOperation::class
     ],
-    version = 32,
+    version = 33,
     exportSchema = true
 )
 abstract class MunicionDatabase : RoomDatabase() {
@@ -48,6 +51,7 @@ abstract class MunicionDatabase : RoomDatabase() {
     abstract fun licenciaDao(): LicenciaDao
     abstract fun tiradaDao(): TiradaDao
     abstract fun appPurchaseDao(): AppPurchaseDao
+    abstract fun syncOperationDao(): SyncOperationDao
 
     companion object {
         private const val DATABASE_NAME = "municion.db"
@@ -82,11 +86,125 @@ abstract class MunicionDatabase : RoomDatabase() {
         }
 
         /**
-         * MIGRATION: v31 → v32
+         * MIGRATION: v32 → v33
          *
-         * CAMBIO: Agregar columna 'updated_at' a las 4 tablas principales
-         * para soporte de sincronización diff (comparar timestamps local vs remoto)
+         * Adds the sync-redesign columns to all four entity tables and creates
+         * the [SyncOperation] outbox table.
+         *
+         * Added columns (per table):
+         *   - sync_id TEXT NOT NULL DEFAULT ''  — UUID, assigned IN THIS MIGRATION
+         *     via [SyncIdGenerator.deterministicSyncId]. Indexed UNIQUE afterwards.
+         *   - deleted INTEGER NOT NULL DEFAULT 0  — tombstone flag.
+         *   - deleted_at INTEGER  — tombstone timestamp.
+         *   - data_quality TEXT NOT NULL DEFAULT 'ok'  — 'ok' | 'degraded' | 'lost'.
+         *
+         * Additionally, [compras] gets `guia_sync_id TEXT` (nullable) as the
+         * future replacement for `id_pos_guia`. Both coexist during v3.3–v3.5.
+         *
+         * **Crucially, this migration is SYNCHRONOUS and SELF-CONTAINED**:
+         * by the time it returns, every row already has a real deterministic
+         * UUID in sync_id. No placeholders, no follow-up async work needed.
+         * This closes the race window where a sync could fire between the
+         * migration and a separate backfill pass, comparing local placeholder
+         * syncIds against remote real UUIDs and treating every entity as new
+         * (the bug in the first cut of the redesign).
+         *
+         * [SyncIdBackfill] is kept as an idempotent safety net.
+         *
+         * @see al.ahgitdevelopment.municion.data.sync.SyncIdGenerator
          */
+        val MIGRATION_32_33 = object : Migration(32, 33) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                Log.i("MunicionDatabase", "Starting migration v32 → v33 (sync redesign columns)")
+
+                val entityTablesByType = linkedMapOf(
+                    "licencias" to "Licencia",
+                    "guias" to "Guia",
+                    "compras" to "Compra",
+                    "tiradas" to "Tirada"
+                )
+
+                for (table in entityTablesByType.keys) {
+                    database.execSQL("ALTER TABLE $table ADD COLUMN sync_id TEXT NOT NULL DEFAULT ''")
+                    database.execSQL("ALTER TABLE $table ADD COLUMN deleted INTEGER NOT NULL DEFAULT 0")
+                    database.execSQL("ALTER TABLE $table ADD COLUMN deleted_at INTEGER")
+                    database.execSQL("ALTER TABLE $table ADD COLUMN data_quality TEXT NOT NULL DEFAULT 'ok'")
+                }
+
+                database.execSQL("ALTER TABLE compras ADD COLUMN guia_sync_id TEXT")
+
+                // Assign deterministic UUIDs to every existing row. The same
+                // (entityType, legacyId) pair always yields the same UUID, so
+                // multiple devices observing the same legacy entity converge
+                // on the same syncId without coordination. We compute the
+                // UUID in Kotlin and UPDATE row-by-row inside the migration
+                // transaction.
+                for ((table, entityType) in entityTablesByType) {
+                    val cursor = database.query("SELECT id FROM $table")
+                    val rows = mutableListOf<Pair<Int, String>>()
+                    cursor.use {
+                        while (it.moveToNext()) {
+                            val legacyId = it.getInt(0)
+                            val syncId = al.ahgitdevelopment.municion.data.sync.SyncIdGenerator
+                                .deterministicSyncId(entityType, legacyId)
+                            rows += legacyId to syncId
+                        }
+                    }
+                    for ((legacyId, syncId) in rows) {
+                        database.execSQL(
+                            "UPDATE $table SET sync_id = ? WHERE id = ?",
+                            arrayOf<Any?>(syncId, legacyId)
+                        )
+                    }
+                    Log.i("MunicionDatabase", "Migration v32→v33: assigned syncId to ${rows.size} rows in $table")
+                }
+
+                // Link compras.guia_sync_id to the parent guia's sync_id
+                // (using the existing positional reference). Orphan compras
+                // keep guia_sync_id = NULL and will surface as dataQuality
+                // problems on the next sync.
+                database.execSQL(
+                    """
+                    UPDATE compras
+                    SET guia_sync_id = (
+                        SELECT g.sync_id FROM guias g WHERE g.id = compras.id_pos_guia LIMIT 1
+                    )
+                    """.trimIndent()
+                )
+                database.execSQL("CREATE INDEX IF NOT EXISTS index_compras_guia_sync_id ON compras(guia_sync_id)")
+
+                // Now that every row has a real (unique-per-table) sync_id we
+                // can create the UNIQUE index without conflicts.
+                for (table in entityTablesByType.keys) {
+                    database.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS index_${table}_sync_id ON $table(sync_id)")
+                }
+
+                // Outbox table for the new write pipeline.
+                database.execSQL(
+                    """
+                    CREATE TABLE IF NOT EXISTS sync_outbox (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                        entity_type TEXT NOT NULL,
+                        entity_sync_id TEXT NOT NULL,
+                        operation TEXT NOT NULL,
+                        payload_json TEXT NOT NULL,
+                        user_id TEXT NOT NULL,
+                        created_at INTEGER NOT NULL,
+                        last_attempt_at INTEGER,
+                        retry_count INTEGER NOT NULL DEFAULT 0,
+                        last_error TEXT,
+                        status TEXT NOT NULL DEFAULT 'PENDING'
+                    )
+                    """.trimIndent()
+                )
+                database.execSQL("CREATE INDEX IF NOT EXISTS index_sync_outbox_status ON sync_outbox(status)")
+                database.execSQL("CREATE INDEX IF NOT EXISTS index_sync_outbox_entity_type_entity_sync_id ON sync_outbox(entity_type, entity_sync_id)")
+                database.execSQL("CREATE INDEX IF NOT EXISTS index_sync_outbox_created_at ON sync_outbox(created_at)")
+
+                Log.i("MunicionDatabase", "Migration v32 → v33 completed")
+            }
+        }
+
         val MIGRATION_31_32 = object : Migration(31, 32) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 Log.i("MunicionDatabase", "Starting migration v31 → v32 (Add updated_at to all tables)")
@@ -529,7 +647,8 @@ abstract class MunicionDatabase : RoomDatabase() {
                     MIGRATION_28_29,
                     MIGRATION_29_30,
                     MIGRATION_30_31,
-                    MIGRATION_31_32
+                    MIGRATION_31_32,
+                    MIGRATION_32_33
                 )
                 .fallbackToDestructiveMigration(false)  // Solo como último recurso
                 .build()

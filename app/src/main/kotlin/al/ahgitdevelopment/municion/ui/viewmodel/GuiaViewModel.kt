@@ -40,6 +40,10 @@ class GuiaViewModel @Inject constructor(
     val guias: StateFlow<List<Guia>> = guiaRepository.guias
         .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
 
+    /** Number of guias whose data the v3.3 parser flagged for review. */
+    val needsAttentionCount: StateFlow<Int> = guiaRepository.needsAttentionCount
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), 0)
+
     /**
      * Licencias disponibles para seleccionar al crear una Guía
      */
