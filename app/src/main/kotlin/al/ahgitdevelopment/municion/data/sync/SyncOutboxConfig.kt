@@ -17,10 +17,14 @@ object SyncOutboxConfig {
     const val BACKOFF_BASE_MS = 1_000L
     const val BACKOFF_MAX_MS = 60 * 60 * 1_000L  // 1 hour
 
-    /** Window used by [SyncOperationDao.nextBatch] to skip recently-attempted rows. */
+    /**
+     * Exponential backoff: retry 1 → BASE, retry 2 → 2·BASE, retry 3 → 4·BASE, …
+     * Capped at [BACKOFF_MAX_MS]. Retry 0 means "never attempted yet" and
+     * waits no time.
+     */
     fun computeBackoffMs(retryCount: Int): Long {
         if (retryCount <= 0) return 0L
-        val shift = retryCount.coerceAtMost(20)
+        val shift = (retryCount - 1).coerceAtMost(20)
         val ms = BACKOFF_BASE_MS shl shift
         return if (ms <= 0 || ms > BACKOFF_MAX_MS) BACKOFF_MAX_MS else ms
     }
