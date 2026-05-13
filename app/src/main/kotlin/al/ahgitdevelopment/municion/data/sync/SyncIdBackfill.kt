@@ -7,21 +7,30 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 /**
- * Replaces the placeholder sync_id values inserted by
- * [al.ahgitdevelopment.municion.data.local.room.MunicionDatabase.Companion.MIGRATION_32_33]
- * with proper deterministic UUIDs derived from `table:legacyId`.
+ * Idempotent safety-net pass that ensures every entity row has a real
+ * deterministic syncId.
  *
- * Idempotent: skips rows whose sync_id is already a real UUID.
+ * Since v3.3.0 the heavy lifting is done by
+ * [al.ahgitdevelopment.municion.data.local.room.MunicionDatabase.Companion.MIGRATION_32_33],
+ * which assigns deterministic UUIDs to every row as part of the migration
+ * transaction. This class runs at startup as a defense in depth:
  *
- * Also backfills `compras.guia_sync_id` from the parent guia's sync_id
- * (using `compras.id_pos_guia` as the join key, since v3.x stored that
- * as a positional reference but in practice it has held the parent
- * guia.id since v3.0.0+).
+ *  - Re-runs the deterministic UUID assignment for any row whose `sync_id`
+ *    is empty or matches the legacy placeholder pattern
+ *    `00000000-0000-0000-0000-...`. This catches the unlikely case where
+ *    the migration was interrupted before completing.
  *
- * Called from [al.ahgitdevelopment.municion.MunicionApplication.onCreate]
- * once on each app start. The op is cheap and idempotent after the first
- * full pass; subsequent runs only touch new rows (there shouldn't be any
- * because we now generate the syncId in code on insert).
+ *  - Repairs `compras.guia_sync_id` for any row whose link is missing but
+ *    whose `id_pos_guia` still points to an existing guia.
+ *
+ * Calling [run] is safe in any state:
+ *
+ *  - On a freshly migrated database, it finds zero placeholder rows and
+ *    is a near-instant no-op.
+ *
+ *  - On a partially-migrated database, it finishes the job.
+ *
+ *  - On a fully-migrated, already-backfilled database, it's a no-op.
  *
  * @since v3.3.0 (Sync redesign)
  */
@@ -34,7 +43,6 @@ class SyncIdBackfill @Inject constructor(
         private const val TAG = "SyncIdBackfill"
         private const val PLACEHOLDER_PREFIX = "00000000-0000-0000-0000-"
 
-        /** Maps Room table names to the entity-type label used by [SyncIdGenerator]. */
         private val TABLES: List<Pair<String, String>> = listOf(
             "licencias" to "Licencia",
             "guias" to "Guia",
@@ -44,17 +52,14 @@ class SyncIdBackfill @Inject constructor(
     }
 
     suspend fun run() {
-        val db = database.openHelper.writableDatabase
         var totalBackfilled = 0
-
         for ((table, entityType) in TABLES) {
             totalBackfilled += backfillTable(table, entityType)
         }
-
-        totalBackfilled += backfillCompraGuiaSyncId()
+        totalBackfilled += repairCompraGuiaSyncId()
 
         if (totalBackfilled > 0) {
-            Log.i(TAG, "Backfilled $totalBackfilled sync_id values")
+            Log.i(TAG, "Backfilled $totalBackfilled sync_id values (safety net)")
         } else {
             Log.d(TAG, "No sync_id placeholders found; backfill is a no-op")
         }
@@ -62,25 +67,24 @@ class SyncIdBackfill @Inject constructor(
 
     private fun backfillTable(table: String, entityType: String): Int {
         val db = database.openHelper.writableDatabase
-        // Read the (id, sync_id) of every row that still has a placeholder.
-        val placeholders = mutableListOf<Pair<Int, String>>()
+        val toFix = mutableListOf<Int>()
         db.query(
             SimpleSQLiteQuery(
-                "SELECT id, sync_id FROM $table WHERE sync_id LIKE ?",
+                "SELECT id FROM $table WHERE sync_id = '' OR sync_id LIKE ?",
                 arrayOf<Any?>("$PLACEHOLDER_PREFIX%")
             )
         ).use { cursor ->
             while (cursor.moveToNext()) {
-                placeholders += cursor.getInt(0) to cursor.getString(1)
+                toFix += cursor.getInt(0)
             }
         }
 
-        if (placeholders.isEmpty()) return 0
+        if (toFix.isEmpty()) return 0
 
         var count = 0
         db.beginTransaction()
         try {
-            for ((legacyId, _) in placeholders) {
+            for (legacyId in toFix) {
                 val newSyncId = SyncIdGenerator.deterministicSyncId(entityType, legacyId)
                 db.execSQL(
                     "UPDATE $table SET sync_id = ? WHERE id = ?",
@@ -97,42 +101,25 @@ class SyncIdBackfill @Inject constructor(
         return count
     }
 
-    /**
-     * Populates compras.guia_sync_id by joining on the existing positional
-     * reference compras.id_pos_guia → guias.id. Rows where the parent
-     * Guia no longer exists (orphan compras from the catastrophic deletion
-     * chain) get an empty string sentinel so the sync layer can flag them
-     * as `dataQuality='degraded'` rather than silently lose them.
-     */
-    private fun backfillCompraGuiaSyncId(): Int {
+    private fun repairCompraGuiaSyncId(): Int {
         val db = database.openHelper.writableDatabase
-
         db.execSQL(
             """
             UPDATE compras
             SET guia_sync_id = (
-                SELECT g.sync_id FROM guias g
-                WHERE g.id = compras.id_pos_guia
-                LIMIT 1
+                SELECT g.sync_id FROM guias g WHERE g.id = compras.id_pos_guia LIMIT 1
             )
             WHERE guia_sync_id IS NULL
             """.trimIndent()
         )
 
-        // Count how many were filled vs orphan
-        var filled = 0
-        db.query(SimpleSQLiteQuery("SELECT COUNT(*) FROM compras WHERE guia_sync_id IS NOT NULL")).use {
-            if (it.moveToNext()) filled = it.getInt(0)
-        }
         var orphans = 0
         db.query(SimpleSQLiteQuery("SELECT COUNT(*) FROM compras WHERE guia_sync_id IS NULL")).use {
             if (it.moveToNext()) orphans = it.getInt(0)
         }
-
         if (orphans > 0) {
             Log.w(TAG, "Found $orphans orphan compras (parent Guia missing)")
         }
-        Log.i(TAG, "Linked $filled compras to their parent Guia via guia_sync_id")
-        return filled
+        return 0  // we don't count linked rows here; the migration handled the bulk
     }
 }

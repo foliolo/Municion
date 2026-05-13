@@ -1,5 +1,6 @@
 package al.ahgitdevelopment.municion.data.repository
 
+import al.ahgitdevelopment.municion.data.local.room.MunicionDatabase
 import al.ahgitdevelopment.municion.data.local.room.dao.CompraDao
 import al.ahgitdevelopment.municion.data.local.room.dao.GuiaDao
 import al.ahgitdevelopment.municion.data.local.room.dao.SyncOperationDao
@@ -12,6 +13,7 @@ import al.ahgitdevelopment.municion.domain.usecase.ParseError
 import al.ahgitdevelopment.municion.domain.usecase.SyncResultWithErrors
 import android.content.Context
 import android.util.Log
+import androidx.room.withTransaction
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.database.DatabaseReference
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -36,6 +38,7 @@ import javax.inject.Singleton
 @Singleton
 class CompraRepository @Inject constructor(
     @ApplicationContext private val appContext: Context,
+    private val database: MunicionDatabase,
     private val compraDao: CompraDao,
     private val guiaDao: GuiaDao,
     private val outboxDao: SyncOperationDao,
@@ -67,18 +70,21 @@ class CompraRepository @Inject constructor(
     suspend fun saveCompra(compra: Compra, userId: String? = null): Result<Long> = withContext(Dispatchers.IO) {
         try {
             val now = System.currentTimeMillis()
-            val parentSyncId = compra.guiaSyncId
-                ?: guiaDao.getGuiaById(compra.idPosGuia)?.syncId
-            val stamped = compra.copy(
-                syncId = compra.syncId.takeIf { it.isNotBlank() } ?: SyncIdGenerator.newSyncId(),
-                guiaSyncId = parentSyncId,
-                deleted = false,
-                deletedAt = null,
-                updatedAt = now
-            )
-            val id = compraDao.insert(stamped)
-            val saved = stamped.copy(id = id.toInt())
-            outboxEnqueuer.enqueueUpsert(saved, userId)
+            val id = database.withTransaction {
+                val parentSyncId = compra.guiaSyncId
+                    ?: guiaDao.getGuiaById(compra.idPosGuia)?.syncId
+                val stamped = compra.copy(
+                    syncId = compra.syncId.takeIf { it.isNotBlank() } ?: SyncIdGenerator.newSyncId(),
+                    guiaSyncId = parentSyncId,
+                    deleted = false,
+                    deletedAt = null,
+                    updatedAt = now
+                )
+                val rowId = compraDao.insert(stamped)
+                val saved = stamped.copy(id = rowId.toInt())
+                outboxEnqueuer.enqueueUpsert(saved, userId)
+                rowId
+            }
             triggerSync(userId)
             Result.success(id)
         } catch (e: Exception) {
@@ -89,15 +95,17 @@ class CompraRepository @Inject constructor(
 
     suspend fun updateCompra(compra: Compra, userId: String? = null): Result<Unit> = withContext(Dispatchers.IO) {
         try {
-            val parentSyncId = compra.guiaSyncId
-                ?: guiaDao.getGuiaById(compra.idPosGuia)?.syncId
-            val stamped = compra.copy(
-                syncId = compra.syncId.takeIf { it.isNotBlank() } ?: SyncIdGenerator.newSyncId(),
-                guiaSyncId = parentSyncId,
-                updatedAt = System.currentTimeMillis()
-            )
-            compraDao.update(stamped)
-            outboxEnqueuer.enqueueUpsert(stamped, userId)
+            database.withTransaction {
+                val parentSyncId = compra.guiaSyncId
+                    ?: guiaDao.getGuiaById(compra.idPosGuia)?.syncId
+                val stamped = compra.copy(
+                    syncId = compra.syncId.takeIf { it.isNotBlank() } ?: SyncIdGenerator.newSyncId(),
+                    guiaSyncId = parentSyncId,
+                    updatedAt = System.currentTimeMillis()
+                )
+                compraDao.update(stamped)
+                outboxEnqueuer.enqueueUpsert(stamped, userId)
+            }
             triggerSync(userId)
             Result.success(Unit)
         } catch (e: Exception) {
@@ -115,8 +123,10 @@ class CompraRepository @Inject constructor(
                 deletedAt = now,
                 updatedAt = now
             )
-            compraDao.update(tombstoned)
-            outboxEnqueuer.enqueueUpsert(tombstoned, userId)
+            database.withTransaction {
+                compraDao.update(tombstoned)
+                outboxEnqueuer.enqueueUpsert(tombstoned, userId)
+            }
             triggerSync(userId)
             Result.success(Unit)
         } catch (e: Exception) {

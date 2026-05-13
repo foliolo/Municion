@@ -92,14 +92,24 @@ abstract class MunicionDatabase : RoomDatabase() {
          * the [SyncOperation] outbox table.
          *
          * Added columns (per table):
-         *   - sync_id TEXT NOT NULL DEFAULT ''  — UUID, backfilled in code on
-         *     first DB access via SyncIdBackfill. Marked UNIQUE.
+         *   - sync_id TEXT NOT NULL DEFAULT ''  — UUID, assigned IN THIS MIGRATION
+         *     via [SyncIdGenerator.deterministicSyncId]. Indexed UNIQUE afterwards.
          *   - deleted INTEGER NOT NULL DEFAULT 0  — tombstone flag.
          *   - deleted_at INTEGER  — tombstone timestamp.
-         *   - data_quality TEXT NOT NULL DEFAULT 'ok'  — 'ok' | 'degraded'.
+         *   - data_quality TEXT NOT NULL DEFAULT 'ok'  — 'ok' | 'degraded' | 'lost'.
          *
          * Additionally, [compras] gets `guia_sync_id TEXT` (nullable) as the
-         * future replacement for `id_pos_guia`. Both coexist during v3.3-v3.5.
+         * future replacement for `id_pos_guia`. Both coexist during v3.3–v3.5.
+         *
+         * **Crucially, this migration is SYNCHRONOUS and SELF-CONTAINED**:
+         * by the time it returns, every row already has a real deterministic
+         * UUID in sync_id. No placeholders, no follow-up async work needed.
+         * This closes the race window where a sync could fire between the
+         * migration and a separate backfill pass, comparing local placeholder
+         * syncIds against remote real UUIDs and treating every entity as new
+         * (the bug in the first cut of the redesign).
+         *
+         * [SyncIdBackfill] is kept as an idempotent safety net.
          *
          * @see al.ahgitdevelopment.municion.data.sync.SyncIdGenerator
          */
@@ -107,53 +117,71 @@ abstract class MunicionDatabase : RoomDatabase() {
             override fun migrate(database: SupportSQLiteDatabase) {
                 Log.i("MunicionDatabase", "Starting migration v32 → v33 (sync redesign columns)")
 
-                val entityTables = listOf("licencias", "guias", "compras", "tiradas")
-                for (table in entityTables) {
+                val entityTablesByType = linkedMapOf(
+                    "licencias" to "Licencia",
+                    "guias" to "Guia",
+                    "compras" to "Compra",
+                    "tiradas" to "Tirada"
+                )
+
+                for (table in entityTablesByType.keys) {
                     database.execSQL("ALTER TABLE $table ADD COLUMN sync_id TEXT NOT NULL DEFAULT ''")
                     database.execSQL("ALTER TABLE $table ADD COLUMN deleted INTEGER NOT NULL DEFAULT 0")
                     database.execSQL("ALTER TABLE $table ADD COLUMN deleted_at INTEGER")
                     database.execSQL("ALTER TABLE $table ADD COLUMN data_quality TEXT NOT NULL DEFAULT 'ok'")
                 }
 
-                // compras.guia_sync_id — populated by SyncIdBackfill after migration,
-                // once each Guia has its own sync_id assigned.
                 database.execSQL("ALTER TABLE compras ADD COLUMN guia_sync_id TEXT")
+
+                // Assign deterministic UUIDs to every existing row. The same
+                // (entityType, legacyId) pair always yields the same UUID, so
+                // multiple devices observing the same legacy entity converge
+                // on the same syncId without coordination. We compute the
+                // UUID in Kotlin and UPDATE row-by-row inside the migration
+                // transaction.
+                for ((table, entityType) in entityTablesByType) {
+                    val cursor = database.query("SELECT id FROM $table")
+                    val rows = mutableListOf<Pair<Int, String>>()
+                    cursor.use {
+                        while (it.moveToNext()) {
+                            val legacyId = it.getInt(0)
+                            val syncId = al.ahgitdevelopment.municion.data.sync.SyncIdGenerator
+                                .deterministicSyncId(entityType, legacyId)
+                            rows += legacyId to syncId
+                        }
+                    }
+                    for ((legacyId, syncId) in rows) {
+                        database.execSQL(
+                            "UPDATE $table SET sync_id = ? WHERE id = ?",
+                            arrayOf<Any?>(syncId, legacyId)
+                        )
+                    }
+                    Log.i("MunicionDatabase", "Migration v32→v33: assigned syncId to ${rows.size} rows in $table")
+                }
+
+                // Link compras.guia_sync_id to the parent guia's sync_id
+                // (using the existing positional reference). Orphan compras
+                // keep guia_sync_id = NULL and will surface as dataQuality
+                // problems on the next sync.
+                database.execSQL(
+                    """
+                    UPDATE compras
+                    SET guia_sync_id = (
+                        SELECT g.sync_id FROM guias g WHERE g.id = compras.id_pos_guia LIMIT 1
+                    )
+                    """.trimIndent()
+                )
                 database.execSQL("CREATE INDEX IF NOT EXISTS index_compras_guia_sync_id ON compras(guia_sync_id)")
 
-                // Unique indices on sync_id. They are unique on '' too, so we
-                // cannot index until the backfill assigns real values. Defer
-                // index creation to SyncIdBackfill once the backfill is done
-                // for that table. We use partial-state indices: create the
-                // non-unique secondary index now so Room doesn't fail
-                // schema validation; SyncIdBackfill will rebuild as UNIQUE
-                // after backfill completes.
-                //
-                // Room validates indices against the entity definition, so
-                // we MUST create them with the expected unique constraint.
-                // The backfill runs SYNCHRONOUSLY before any consumer can
-                // query the DB (Room.databaseBuilder.addCallback onCreate
-                // is too late; we do it via the database provider).
-                //
-                // For v3.3 the safest path is to leave sync_id empty until
-                // the post-migration coroutine runs, and have the unique
-                // index applied to '' values — SQLite UNIQUE allows multiple
-                // NULL but not multiple ''. Therefore, the migration backfills
-                // sync_id with a unique placeholder per row (the legacy id),
-                // and the in-code backfill replaces it with the deterministic
-                // UUID. The unique constraint never sees duplicate ''.
-                //
-                // Placeholder backfill: a UUID-shaped string that includes
-                // the legacy id. The post-migration step will overwrite this
-                // with the deterministic UUID v3 once kotlin code runs.
-                for (table in entityTables) {
-                    database.execSQL(
-                        "UPDATE $table SET sync_id = '00000000-0000-0000-0000-' || printf('%012d', id) WHERE sync_id = ''"
-                    )
+                // Now that every row has a real (unique-per-table) sync_id we
+                // can create the UNIQUE index without conflicts.
+                for (table in entityTablesByType.keys) {
                     database.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS index_${table}_sync_id ON $table(sync_id)")
                 }
 
                 // Outbox table for the new write pipeline.
-                database.execSQL("""
+                database.execSQL(
+                    """
                     CREATE TABLE IF NOT EXISTS sync_outbox (
                         id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
                         entity_type TEXT NOT NULL,
@@ -167,7 +195,8 @@ abstract class MunicionDatabase : RoomDatabase() {
                         last_error TEXT,
                         status TEXT NOT NULL DEFAULT 'PENDING'
                     )
-                """.trimIndent())
+                    """.trimIndent()
+                )
                 database.execSQL("CREATE INDEX IF NOT EXISTS index_sync_outbox_status ON sync_outbox(status)")
                 database.execSQL("CREATE INDEX IF NOT EXISTS index_sync_outbox_entity_type_entity_sync_id ON sync_outbox(entity_type, entity_sync_id)")
                 database.execSQL("CREATE INDEX IF NOT EXISTS index_sync_outbox_created_at ON sync_outbox(created_at)")

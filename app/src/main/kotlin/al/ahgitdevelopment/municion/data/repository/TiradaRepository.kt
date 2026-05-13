@@ -1,5 +1,6 @@
 package al.ahgitdevelopment.municion.data.repository
 
+import al.ahgitdevelopment.municion.data.local.room.MunicionDatabase
 import al.ahgitdevelopment.municion.data.local.room.dao.SyncOperationDao
 import al.ahgitdevelopment.municion.data.local.room.dao.TiradaDao
 import al.ahgitdevelopment.municion.data.local.room.entities.Tirada
@@ -11,6 +12,7 @@ import al.ahgitdevelopment.municion.domain.usecase.ParseError
 import al.ahgitdevelopment.municion.domain.usecase.SyncResultWithErrors
 import android.content.Context
 import android.util.Log
+import androidx.room.withTransaction
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.database.DatabaseReference
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -32,6 +34,7 @@ import javax.inject.Singleton
 @Singleton
 class TiradaRepository @Inject constructor(
     @ApplicationContext private val appContext: Context,
+    private val database: MunicionDatabase,
     private val tiradaDao: TiradaDao,
     private val outboxDao: SyncOperationDao,
     private val outboxEnqueuer: SyncOutboxEnqueuer,
@@ -75,9 +78,12 @@ class TiradaRepository @Inject constructor(
                 deletedAt = null,
                 updatedAt = System.currentTimeMillis()
             )
-            val id = tiradaDao.insert(stamped)
-            val saved = stamped.copy(id = id.toInt())
-            outboxEnqueuer.enqueueUpsert(saved, userId)
+            val id = database.withTransaction {
+                val rowId = tiradaDao.insert(stamped)
+                val saved = stamped.copy(id = rowId.toInt())
+                outboxEnqueuer.enqueueUpsert(saved, userId)
+                rowId
+            }
             triggerSync(userId)
             Result.success(id)
         } catch (e: Exception) {
@@ -92,8 +98,10 @@ class TiradaRepository @Inject constructor(
                 syncId = tirada.syncId.takeIf { it.isNotBlank() } ?: SyncIdGenerator.newSyncId(),
                 updatedAt = System.currentTimeMillis()
             )
-            tiradaDao.update(stamped)
-            outboxEnqueuer.enqueueUpsert(stamped, userId)
+            database.withTransaction {
+                tiradaDao.update(stamped)
+                outboxEnqueuer.enqueueUpsert(stamped, userId)
+            }
             triggerSync(userId)
             Result.success(Unit)
         } catch (e: Exception) {
@@ -111,8 +119,10 @@ class TiradaRepository @Inject constructor(
                 deletedAt = now,
                 updatedAt = now
             )
-            tiradaDao.update(tombstoned)
-            outboxEnqueuer.enqueueUpsert(tombstoned, userId)
+            database.withTransaction {
+                tiradaDao.update(tombstoned)
+                outboxEnqueuer.enqueueUpsert(tombstoned, userId)
+            }
             triggerSync(userId)
             Result.success(Unit)
         } catch (e: Exception) {

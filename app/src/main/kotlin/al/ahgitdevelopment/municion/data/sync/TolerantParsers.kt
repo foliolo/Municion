@@ -38,11 +38,16 @@ object TolerantParsers {
     private const val TAG = "TolerantParsers"
 
     /**
-     * The catastrophic "stability bug" pattern from v3.0.0-v3.1.1: a single
-     * `stability` field is the only thing left of the entity.
+     * The catastrophic "stability bug" pattern from v3.0.0-v3.1.1: the entity
+     * is reduced to exactly `{"stability": <n>}` — no other fields survived.
+     * Verified empirically on the affected users in the May 2026 audit (see
+     * `docs/affected_users.txt`).
+     *
+     * Strict size==1 match avoids false positives on legitimate entities that
+     * happen to carry a `stability` field for some other reason.
      */
     private fun isStabilityCorrupt(map: Map<String, Any?>): Boolean {
-        return map.keys.size <= 2 && "stability" in map.keys
+        return map.keys.size == 1 && "stability" in map.keys
     }
 
     private fun resolveSyncId(

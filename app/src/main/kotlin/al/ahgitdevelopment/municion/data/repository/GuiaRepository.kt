@@ -1,5 +1,6 @@
 package al.ahgitdevelopment.municion.data.repository
 
+import al.ahgitdevelopment.municion.data.local.room.MunicionDatabase
 import al.ahgitdevelopment.municion.data.local.room.dao.GuiaDao
 import al.ahgitdevelopment.municion.data.local.room.dao.SyncOperationDao
 import al.ahgitdevelopment.municion.data.local.room.entities.Guia
@@ -11,6 +12,7 @@ import al.ahgitdevelopment.municion.domain.usecase.ParseError
 import al.ahgitdevelopment.municion.domain.usecase.SyncResultWithErrors
 import android.content.Context
 import android.util.Log
+import androidx.room.withTransaction
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.database.DatabaseReference
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -33,6 +35,7 @@ import javax.inject.Singleton
 @Singleton
 class GuiaRepository @Inject constructor(
     @ApplicationContext private val appContext: Context,
+    private val database: MunicionDatabase,
     private val guiaDao: GuiaDao,
     private val outboxDao: SyncOperationDao,
     private val outboxEnqueuer: SyncOutboxEnqueuer,
@@ -68,12 +71,13 @@ class GuiaRepository @Inject constructor(
                 deletedAt = null,
                 updatedAt = System.currentTimeMillis()
             )
-            val id = guiaDao.insert(stamped)
-            val saved = stamped.copy(id = id.toInt())
-
-            outboxEnqueuer.enqueueUpsert(saved, userId)
+            val id = database.withTransaction {
+                val rowId = guiaDao.insert(stamped)
+                val saved = stamped.copy(id = rowId.toInt())
+                outboxEnqueuer.enqueueUpsert(saved, userId)
+                rowId
+            }
             triggerSync(userId)
-
             Result.success(id)
         } catch (e: Exception) {
             crashlytics.recordException(e)
@@ -87,11 +91,11 @@ class GuiaRepository @Inject constructor(
                 syncId = guia.syncId.takeIf { it.isNotBlank() } ?: SyncIdGenerator.newSyncId(),
                 updatedAt = System.currentTimeMillis()
             )
-            guiaDao.update(stamped)
-
-            outboxEnqueuer.enqueueUpsert(stamped, userId)
+            database.withTransaction {
+                guiaDao.update(stamped)
+                outboxEnqueuer.enqueueUpsert(stamped, userId)
+            }
             triggerSync(userId)
-
             Result.success(Unit)
         } catch (e: Exception) {
             crashlytics.recordException(e)
@@ -108,8 +112,10 @@ class GuiaRepository @Inject constructor(
                 deletedAt = now,
                 updatedAt = now
             )
-            guiaDao.update(tombstoned)
-            outboxEnqueuer.enqueueUpsert(tombstoned, userId)
+            database.withTransaction {
+                guiaDao.update(tombstoned)
+                outboxEnqueuer.enqueueUpsert(tombstoned, userId)
+            }
             triggerSync(userId)
             Result.success(Unit)
         } catch (e: Exception) {
@@ -120,13 +126,15 @@ class GuiaRepository @Inject constructor(
 
     suspend fun updateGastado(guiaId: Int, gastado: Int, userId: String? = null): Result<Unit> = withContext(Dispatchers.IO) {
         try {
-            guiaDao.updateGastado(guiaId, gastado)
-            guiaDao.getGuiaById(guiaId)?.let { updated ->
-                val stamped = updated.copy(updatedAt = System.currentTimeMillis())
-                guiaDao.update(stamped)
-                outboxEnqueuer.enqueueUpsert(stamped, userId)
-                triggerSync(userId)
+            database.withTransaction {
+                guiaDao.updateGastado(guiaId, gastado)
+                guiaDao.getGuiaById(guiaId)?.let { updated ->
+                    val stamped = updated.copy(updatedAt = System.currentTimeMillis())
+                    guiaDao.update(stamped)
+                    outboxEnqueuer.enqueueUpsert(stamped, userId)
+                }
             }
+            triggerSync(userId)
             Result.success(Unit)
         } catch (e: Exception) {
             crashlytics.recordException(e)
@@ -136,13 +144,15 @@ class GuiaRepository @Inject constructor(
 
     suspend fun incrementGastado(guiaId: Int, cantidad: Int, userId: String? = null): Result<Unit> = withContext(Dispatchers.IO) {
         try {
-            guiaDao.incrementGastado(guiaId, cantidad)
-            guiaDao.getGuiaById(guiaId)?.let { updated ->
-                val stamped = updated.copy(updatedAt = System.currentTimeMillis())
-                guiaDao.update(stamped)
-                outboxEnqueuer.enqueueUpsert(stamped, userId)
-                triggerSync(userId)
+            database.withTransaction {
+                guiaDao.incrementGastado(guiaId, cantidad)
+                guiaDao.getGuiaById(guiaId)?.let { updated ->
+                    val stamped = updated.copy(updatedAt = System.currentTimeMillis())
+                    guiaDao.update(stamped)
+                    outboxEnqueuer.enqueueUpsert(stamped, userId)
+                }
             }
+            triggerSync(userId)
             Result.success(Unit)
         } catch (e: Exception) {
             crashlytics.recordException(e)
@@ -152,13 +162,15 @@ class GuiaRepository @Inject constructor(
 
     suspend fun decrementGastado(guiaId: Int, cantidad: Int, userId: String? = null): Result<Unit> = withContext(Dispatchers.IO) {
         try {
-            guiaDao.decrementGastado(guiaId, cantidad)
-            guiaDao.getGuiaById(guiaId)?.let { updated ->
-                val stamped = updated.copy(updatedAt = System.currentTimeMillis())
-                guiaDao.update(stamped)
-                outboxEnqueuer.enqueueUpsert(stamped, userId)
-                triggerSync(userId)
+            database.withTransaction {
+                guiaDao.decrementGastado(guiaId, cantidad)
+                guiaDao.getGuiaById(guiaId)?.let { updated ->
+                    val stamped = updated.copy(updatedAt = System.currentTimeMillis())
+                    guiaDao.update(stamped)
+                    outboxEnqueuer.enqueueUpsert(stamped, userId)
+                }
             }
+            triggerSync(userId)
             Result.success(Unit)
         } catch (e: Exception) {
             crashlytics.recordException(e)
@@ -173,12 +185,14 @@ class GuiaRepository @Inject constructor(
      */
     suspend fun resetAllGastado(userId: String? = null): Result<Unit> = withContext(Dispatchers.IO) {
         try {
-            guiaDao.resetAllGastado()
-            val now = System.currentTimeMillis()
-            for (guia in guiaDao.getAllGuias()) {
-                val stamped = guia.copy(gastado = 0, updatedAt = now)
-                guiaDao.update(stamped)
-                outboxEnqueuer.enqueueUpsert(stamped, userId)
+            database.withTransaction {
+                guiaDao.resetAllGastado()
+                val now = System.currentTimeMillis()
+                for (guia in guiaDao.getAllGuias()) {
+                    val stamped = guia.copy(gastado = 0, updatedAt = now)
+                    guiaDao.update(stamped)
+                    outboxEnqueuer.enqueueUpsert(stamped, userId)
+                }
             }
             triggerSync(userId)
             Result.success(Unit)
