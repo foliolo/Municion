@@ -83,3 +83,57 @@
 # ===========================================================
 # Keep the names of navigation routes to prevent issues with string-based routing in release builds.
 -keepnames class al.ahgitdevelopment.municion.ui.navigation.** { *; }
+
+# ===========================================================
+# Room entities (v3.3 sync redesign)
+# ===========================================================
+# These classes are @Parcelize + @Serializable. They are:
+#   - written/read by Room (KSP-generated DAOs reflect on field names)
+#   - serialized/deserialized by kotlinx.serialization in the outbox worker
+#     (SyncOutboxWorker.processOperation uses Json.decodeFromString<Licencia>)
+#   - serialized by NavType.serializeAsValue for type-safe navigation
+# Without these rules the outbox payload decode would crash in release builds
+# the moment any user edits an entity offline (the entity is in Room but
+# can't be parsed back from the outbox JSON).
+-keep class al.ahgitdevelopment.municion.data.local.room.entities.** { *; }
+
+# Kotlinx Serialization needs the synthetic `$Companion` and `$serializer`
+# of every @Serializable class. Standard rules from the official docs.
+-keepattributes RuntimeVisibleAnnotations,RuntimeInvisibleAnnotations
+-keepattributes RuntimeVisibleParameterAnnotations,RuntimeInvisibleParameterAnnotations
+
+-if @kotlinx.serialization.Serializable class **
+-keepclassmembers class <1> {
+    static <1>$Companion Companion;
+}
+
+-if @kotlinx.serialization.Serializable class ** {
+    static **$* *;
+}
+-keepclassmembers class <2>$<3> {
+    kotlinx.serialization.KSerializer serializer(...);
+}
+
+-if @kotlinx.serialization.Serializable class ** {
+    public static ** INSTANCE;
+}
+-keepclassmembers class <1> {
+    public static <1> INSTANCE;
+    kotlinx.serialization.KSerializer serializer(...);
+}
+
+# ===========================================================
+# Sync subsystem (v3.3 redesign)
+# ===========================================================
+# The outbox worker uses reflection-light kotlinx.serialization and
+# the SyncOperation enum-as-string constants. Keep the whole subsystem.
+-keep class al.ahgitdevelopment.municion.data.sync.** { *; }
+-keep class al.ahgitdevelopment.municion.data.local.room.dao.** { *; }
+
+# ===========================================================
+# Hilt + WorkManager
+# ===========================================================
+# The HiltWorkerFactory uses reflection on the @HiltWorker-annotated
+# constructor. Keep our workers.
+-keep class al.ahgitdevelopment.municion.data.sync.SyncOutboxWorker { *; }
+-keep class al.ahgitdevelopment.municion.data.sync.TombstoneCleanupWorker { *; }

@@ -60,6 +60,7 @@ gen-external-apklibs
 *.BACKUP.*
 *.BASE.*
 *.LOCAL.*
+!app/schemas/**
 *.REMOTE.*
 *_BACKUP_*.txt
 *_BASE_*.txt
@@ -330,3 +331,9 @@ fabric.properties
 
 # Claude Code MCP config (contains tokens)
 .mcp.json
+
+# Firebase RTDB backups (contain user PII)
+.backups/
+
+# Affected users report (contains emails)
+docs/affected_users.txt

@@ -21,6 +21,12 @@ data class TiradaFormState(
     
     // Metadata
     val tiradaId: Int = 0,
+    /**
+     * Stable identity preserved across the fromTirada → toTirada round-trip;
+     * see [al.ahgitdevelopment.municion.ui.forms.licencia.LicenciaFormState.syncId]
+     * for the rationale.
+     */
+    val syncId: String = "",
     val isEditing: Boolean = false,
     
     // Errores de validación
@@ -61,7 +67,8 @@ data class TiradaFormState(
         categoria = categoria.ifBlank { null },
         modalidad = modalidad.ifBlank { null },
         fecha = fecha,
-        puntuacion = puntuacion.toInt().coerceIn(0, maxPuntuacion.toInt())
+        puntuacion = puntuacion.toInt().coerceIn(0, maxPuntuacion.toInt()),
+        syncId = syncId
     )
     
     companion object {
@@ -70,6 +77,7 @@ data class TiradaFormState(
          */
         fun fromTirada(tirada: Tirada): TiradaFormState = TiradaFormState(
             tiradaId = tirada.id,
+            syncId = tirada.syncId,
             descripcion = tirada.descripcion,
             localizacion = tirada.localizacion ?: "",
             categoria = tirada.categoria ?: "",

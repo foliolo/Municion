@@ -25,6 +25,9 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.automirrored.filled.Logout
+import androidx.compose.material.icons.filled.CloudOff
+import androidx.compose.material.icons.filled.CloudUpload
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.outlined.Check
 import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material.icons.outlined.School
@@ -79,6 +82,8 @@ fun AccountSettingsContent(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val isAdsRemoved by viewModel.isAdsRemoved.collectAsStateWithLifecycle()
     val isPurchaseAvailable by viewModel.isPurchaseAvailable.collectAsStateWithLifecycle()
+    val pendingSyncCount by viewModel.pendingSyncCount.collectAsStateWithLifecycle()
+    val failedSyncCount by viewModel.failedSyncCount.collectAsStateWithLifecycle()
     val context = LocalContext.current
 
     // Dialogs state
@@ -93,10 +98,14 @@ fun AccountSettingsContent(
 
         SignOutDialog(
             isAnonymous = isAnonymous,
+            pendingSyncCount = pendingSyncCount,
             onDismiss = { showSignOutDialog = false },
             onConfirm = {
                 showSignOutDialog = false
-                viewModel.signOut()
+                // When the user has unsynced changes and chose to sign out
+                // anyway, pass force=true to skip the drain wait. We've
+                // already warned them via SignOutDialog.
+                viewModel.signOut(force = pendingSyncCount > 0)
             }
         )
     }
@@ -121,6 +130,8 @@ fun AccountSettingsContent(
         uiState = uiState,
         isAdsRemoved = isAdsRemoved,
         isPurchaseAvailable = isPurchaseAvailable,
+        pendingSyncCount = pendingSyncCount,
+        failedSyncCount = failedSyncCount,
         onShowTutorialClick = { showTutorialDialog = true },
         onSignOutClick = { showSignOutDialog = true },
         onRemoveAdsClick = {
@@ -128,7 +139,8 @@ fun AccountSettingsContent(
                 viewModel.launchPurchaseFlow(context)
             }
         },
-        onScoreTableClick = { showScoreTableDialog = true }
+        onScoreTableClick = { showScoreTableDialog = true },
+        onRetryFailedSyncClick = { viewModel.retryFailedSync() }
     )
 }
 
@@ -143,10 +155,13 @@ fun AccountSettingsFields(
     uiState: AccountSettingsViewModel.AccountUiState,
     isAdsRemoved: Boolean,
     isPurchaseAvailable: Boolean,
+    pendingSyncCount: Int,
+    failedSyncCount: Int,
     onShowTutorialClick: () -> Unit,
     onSignOutClick: () -> Unit,
     onRemoveAdsClick: () -> Unit,
     onScoreTableClick: () -> Unit,
+    onRetryFailedSyncClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     when (uiState) {
@@ -189,10 +204,13 @@ fun AccountSettingsFields(
                 accountInfo = uiState.accountInfo,
                 isAdsRemoved = isAdsRemoved,
                 isPurchaseAvailable = isPurchaseAvailable,
+                pendingSyncCount = pendingSyncCount,
+                failedSyncCount = failedSyncCount,
                 onShowTutorialClick = onShowTutorialClick,
                 onSignOutClick = onSignOutClick,
                 onRemoveAdsClick = onRemoveAdsClick,
                 onScoreTableClick = onScoreTableClick,
+                onRetryFailedSyncClick = onRetryFailedSyncClick,
                 modifier = modifier.fillMaxSize()
             )
         }
@@ -204,10 +222,13 @@ private fun LoadedContent(
     accountInfo: AccountSettingsViewModel.AccountInfo,
     isAdsRemoved: Boolean,
     isPurchaseAvailable: Boolean,
+    pendingSyncCount: Int,
+    failedSyncCount: Int,
     onShowTutorialClick: () -> Unit,
     onSignOutClick: () -> Unit,
     onRemoveAdsClick: () -> Unit,
     onScoreTableClick: () -> Unit,
+    onRetryFailedSyncClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -256,6 +277,15 @@ private fun LoadedContent(
                         }
                     }
                 }
+            }
+
+            // Sync status — only rendered when there's something to surface.
+            if (pendingSyncCount > 0 || failedSyncCount > 0) {
+                SyncStatusCard(
+                    pendingCount = pendingSyncCount,
+                    failedCount = failedSyncCount,
+                    onRetryClick = onRetryFailedSyncClick
+                )
             }
 
             // Remove Ads / Premium Status
@@ -443,13 +473,25 @@ private fun LoadedContent(
 @Composable
 private fun SignOutDialog(
     isAnonymous: Boolean,
+    pendingSyncCount: Int,
     onDismiss: () -> Unit,
     onConfirm: () -> Unit
 ) {
-    val message = if (isAnonymous) {
+    val baseMessage = if (isAnonymous) {
         stringResource(R.string.sign_out_anonymous_warning)
     } else {
         stringResource(R.string.sign_out_confirm)
+    }
+
+    val message = if (pendingSyncCount > 0) {
+        // Highlight the data-loss risk loudly when there are unsynced writes.
+        // signOut() in the ViewModel will force=true in that case, skipping
+        // the drain wait — the user has explicitly accepted the trade-off
+        // by tapping the confirm button after seeing this warning.
+        "$baseMessage\n\n⚠️ Tienes $pendingSyncCount cambio${if (pendingSyncCount == 1) "" else "s"} sin sincronizar. " +
+            "Si cierras sesión ahora se perderán."
+    } else {
+        baseMessage
     }
 
     AlertDialog(
@@ -469,6 +511,76 @@ private fun SignOutDialog(
     )
 }
 
+/**
+ * Compact card surfacing the outbox state to the user. Renders only when
+ * there are pending or failed writes — the calling site already gates on
+ * `pendingCount > 0 || failedCount > 0` to avoid showing an empty card.
+ *
+ * @since v3.3.0 (closes the recovery loop for users affected by the
+ *                stability-bug data loss; gives them a Retry button for
+ *                FAILED outbox rows)
+ */
+@Composable
+private fun SyncStatusCard(
+    pendingCount: Int,
+    failedCount: Int,
+    onRetryClick: () -> Unit
+) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                Icon(
+                    imageVector = if (failedCount > 0) Icons.Filled.CloudOff else Icons.Filled.CloudUpload,
+                    contentDescription = null,
+                    tint = if (failedCount > 0) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.size(32.dp)
+                )
+                Column(modifier = Modifier.fillMaxWidth()) {
+                    Text(
+                        text = "Sincronización",
+                        style = MaterialTheme.typography.titleMedium
+                    )
+                    if (pendingCount > 0) {
+                        Text(
+                            text = "$pendingCount cambio${if (pendingCount == 1) "" else "s"} pendiente${if (pendingCount == 1) "" else "s"} de subir",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+                        )
+                    }
+                    if (failedCount > 0) {
+                        Text(
+                            text = "$failedCount cambio${if (failedCount == 1) "" else "s"} no se ${if (failedCount == 1) "ha podido" else "han podido"} subir tras varios intentos",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.error
+                        )
+                    }
+                }
+            }
+
+            if (failedCount > 0) {
+                Spacer(modifier = Modifier.height(12.dp))
+                Button(
+                    onClick = onRetryClick,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.Refresh,
+                        contentDescription = null
+                    )
+                    Spacer(modifier = Modifier.size(8.dp))
+                    Text(text = "Reintentar")
+                }
+            }
+        }
+    }
+}
+
 @Preview(showBackground = true)
 @Composable
 private fun AccountSettingsFieldsPreview() {
@@ -484,10 +596,13 @@ private fun AccountSettingsFieldsPreview() {
             ),
             isAdsRemoved = false,
             isPurchaseAvailable = true,
+            pendingSyncCount = 0,
+            failedSyncCount = 0,
             onShowTutorialClick = {},
             onSignOutClick = {},
             onRemoveAdsClick = {},
-            onScoreTableClick = {}
+            onScoreTableClick = {},
+            onRetryFailedSyncClick = {}
         )
     }
 }
@@ -507,10 +622,13 @@ private fun AccountSettingsFieldsPreview2() {
             ),
             isAdsRemoved = true,
             isPurchaseAvailable = false,
+            pendingSyncCount = 3,
+            failedSyncCount = 1,
             onShowTutorialClick = {},
             onSignOutClick = {},
             onRemoveAdsClick = {},
-            onScoreTableClick = {}
+            onScoreTableClick = {},
+            onRetryFailedSyncClick = {}
         )
     }
 }

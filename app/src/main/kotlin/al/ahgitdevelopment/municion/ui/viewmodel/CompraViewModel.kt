@@ -41,6 +41,9 @@ class CompraViewModel @Inject constructor(
     val compras: StateFlow<List<Compra>> = compraRepository.compras
         .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
 
+    val needsAttentionCount: StateFlow<Int> = compraRepository.needsAttentionCount
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), 0)
+
     private val _uiState = MutableStateFlow<CompraUiState>(CompraUiState.Idle)
     val uiState: StateFlow<CompraUiState> = _uiState.asStateFlow()
 
