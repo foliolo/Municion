@@ -1,8 +1,53 @@
 # Rediseño del Subsistema de Sincronización Room ↔ Firebase
 
-> **Estado:** Plan aprobado por @foliolo (2026-05-13). Pendiente de implementación.
-> **Versión objetivo:** v3.5.0 (consolidado, sin hotfix intermedio).
+> **Estado:** ✅ Implementado en `feature/database-sync-refactor` (2026-05-13).
+> **Versión objetivo:** v3.3.0 (consolidado en una sola release; no se desplegará hasta que el owner valide).
 > **Motivación:** Bugs sistémicos en el sync actual están provocando pérdida de datos en usuarios de producción.
+
+---
+
+## Estado de implementación
+
+Commits en el branch:
+
+| Commit | Alcance |
+|--------|---------|
+| `c77eda1` | chore: bump versionCode a 45, versionName a 3.3.0, dependencias |
+| `d650c02` | docs: este documento + .gitignore para reports |
+| `f91b552` | feat(db): syncId, tombstones, outbox table, MIGRATION_32_33 |
+| `b7796df` | feat(sync): outbox worker, tolerant parser, repositorios reescritos |
+| `7afd0fc` | test+rules: 22 tests JVM verdes + reglas RTDB fase-1 |
+| `3304bf6` | test+build: instrumented test SyncIdBackfill + schema export |
+
+Componentes finales:
+
+- ✅ `SyncIdGenerator` — UUID v4 random + UUID v3 determinista (`<table>:<id>`)
+- ✅ `SyncOperation` + `SyncOperationDao` — tabla outbox con coalescing UPSERTs
+- ✅ `SyncOutboxConfig` — tunables (batch, retries, backoff exponencial)
+- ✅ `SyncOutboxEnqueuer` — JSON serialize entity → outbox row
+- ✅ `SyncOutboxWorker` — drena outbox a Firebase, exponential backoff, marca SYNCED/RETRY/FAILED
+- ✅ `SyncIdBackfill` — reemplaza placeholders post-migración con UUIDs deterministas; rellena `compras.guia_sync_id`
+- ✅ `TolerantParsers` — nunca descarta entidades; marca `degraded`/`lost` en su lugar
+- ✅ `FirebaseFormatMigrator` v2 → v3 — rekey de Int → syncId en Firebase, idempotente
+- ✅ `TombstoneCleanupWorker` — purga diaria de tombstones >30d y outbox synced >7d
+- ✅ Repositorios reescritos (Licencia/Guia/Compra/Tirada): write-path por outbox, read-path no destructivo
+- ✅ `SyncDataUseCase` — orquesta downloads + dispara outbox; auto-fix y syncToFirebase neutralizados (no-op)
+- ✅ `database.rules.json` — reglas RTDB fase-1 (per-user + validación de tipos críticos)
+- ✅ `MunicionApplication` — Configuration.Provider para HiltWorkerFactory + boot de los workers + SyncIdBackfill
+
+Tests:
+
+- ✅ 22 tests JVM unitarios verdes (SyncIdGenerator, TolerantParsers, SyncOutboxConfig, SyncOutboxEnqueuer)
+- ✅ Test instrumented (`SyncIdBackfillAndroidTest`) — 5 escenarios cubriendo idempotencia, determinismo cross-device, vinculación parent-child
+
+Eliminado:
+
+- ❌ `FirebaseSyncHelper` (raíz del Bug #2 + #3)
+- ❌ `fullSyncToFirebase` (el `setValue(map)` que vaciaba colecciones)
+- ❌ Auto-fix vía `syncFromFirebaseWithAutoFix` (camino destructivo del Bug #4)
+- ❌ `workers/SyncWorker` (código muerto)
+
+Próximo paso: validar el branch por el owner y desplegar.
 
 ---
 
