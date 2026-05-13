@@ -136,6 +136,9 @@ interface TiradaDao {
         insertAll(tiradas)
     }
 
+    @Query("SELECT COUNT(*) FROM tiradas WHERE deleted = 0 AND data_quality != 'ok'")
+    fun countNeedsAttentionFlow(): Flow<Int>
+
     @Query("UPDATE tiradas SET deleted = 1, deleted_at = :now, updated_at = :now WHERE sync_id = :syncId")
     suspend fun tombstoneBySyncId(syncId: String, now: Long): Int
 

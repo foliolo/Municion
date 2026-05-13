@@ -55,6 +55,8 @@ class CompraRepository @Inject constructor(
 
     val compras: Flow<List<Compra>> = compraDao.getAllComprasFlow()
 
+    val needsAttentionCount: Flow<Int> = compraDao.countNeedsAttentionFlow()
+
     fun getComprasByGuia(guiaId: Int): Flow<List<Compra>> {
         return compraDao.getComprasByGuiaFlow(guiaId)
     }

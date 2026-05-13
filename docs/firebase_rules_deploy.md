@@ -35,9 +35,27 @@ the payload `syncId` to equal the key (instead of allowing null). See
 
 ## Emergency rollback
 
+The pre-v3.3 production rules (snapshot 2026-05-13) are saved in
+`docs/firebase_rules_rollback.json`. To roll back:
+
 ```bash
-# Restore the previous rules from a local backup (the CLI keeps one if
-# you ran deploy from this same machine). Otherwise pull from console.
-firebase database:set / --project municion-95caa /path/to/backup.json
-firebase deploy --only database --project municion-95caa  # ← with old rules
+# 1. Backup the currently-deployed rules first (in case you need to
+#    re-apply them later).
+firebase database:get "/.settings/rules" --project municion-95caa \
+    > /tmp/rules_before_rollback.json
+
+# 2. Apply the rollback. Easiest path: temporarily replace the active
+#    rules file the firebase CLI deploys.
+cp database.rules.json database.rules.json.bak
+cp docs/firebase_rules_rollback.json database.rules.json
+firebase deploy --only database --project municion-95caa
+
+# 3. Restore the working tree (the rollback rules are in Firebase now,
+#    the v3.3 rules are back in your working tree).
+mv database.rules.json.bak database.rules.json
 ```
+
+⚠️ The rollback rules have a known privacy weakness — `users/.read: true`
+exposes every user's tree to any authenticated user. Use them only as a
+short-lived recovery; re-deploy `database.rules.json` (phase-1) as soon
+as the cause of the rollback is understood.

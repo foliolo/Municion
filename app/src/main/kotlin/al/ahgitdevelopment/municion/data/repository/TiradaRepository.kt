@@ -50,6 +50,8 @@ class TiradaRepository @Inject constructor(
 
     val tiradas: Flow<List<Tirada>> = tiradaDao.getAllTiradasFlow()
 
+    val needsAttentionCount: Flow<Int> = tiradaDao.countNeedsAttentionFlow()
+
     suspend fun getTiradaById(id: Int): Tirada? = withContext(Dispatchers.IO) {
         tiradaDao.getTiradaById(id)
     }

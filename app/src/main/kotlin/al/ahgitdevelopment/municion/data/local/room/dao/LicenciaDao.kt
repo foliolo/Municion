@@ -151,6 +151,15 @@ interface LicenciaDao {
      * are propagated to remote devices via Firebase. The row remains in
      * the DB until [purgeTombstonesBefore] cleans it up.
      */
+    /**
+     * Counts non-deleted rows whose data is suspect — i.e. the v3.3 parser
+     * resolved them with safe defaults (`dataQuality = "degraded"`) or the
+     * legacy stability-bug pattern (`dataQuality = "lost"`). Drives the
+     * "X entidades necesitan revisión" banner.
+     */
+    @Query("SELECT COUNT(*) FROM licencias WHERE deleted = 0 AND data_quality != 'ok'")
+    fun countNeedsAttentionFlow(): Flow<Int>
+
     @Query("UPDATE licencias SET deleted = 1, deleted_at = :now, updated_at = :now WHERE sync_id = :syncId")
     suspend fun tombstoneBySyncId(syncId: String, now: Long): Int
 

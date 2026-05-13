@@ -144,4 +144,21 @@ interface SyncOperationDao {
         WHERE status = 'IN_FLIGHT'
     """)
     suspend fun resetInFlight(): Int
+
+    /**
+     * Resets all FAILED rows back to PENDING with retryCount=0 so the
+     * worker tries them again from scratch. Surfaced as a user-facing
+     * "Retry failed syncs" button in Settings — the data is still in
+     * Room (we never lose writes there), but Firebase doesn't have it
+     * until the worker drains the outbox.
+     */
+    @Query("""
+        UPDATE sync_outbox
+        SET status = 'PENDING',
+            retry_count = 0,
+            last_attempt_at = NULL,
+            last_error = NULL
+        WHERE status = 'FAILED'
+    """)
+    suspend fun resetFailedToRetry(): Int
 }

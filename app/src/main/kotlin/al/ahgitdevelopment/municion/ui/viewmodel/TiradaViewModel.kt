@@ -35,6 +35,9 @@ class TiradaViewModel @Inject constructor(
     val tiradas: StateFlow<List<Tirada>> = tiradaRepository.tiradas
         .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
 
+    val needsAttentionCount: StateFlow<Int> = tiradaRepository.needsAttentionCount
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), 0)
+
     private val _uiState = MutableStateFlow<TiradaUiState>(TiradaUiState.Idle)
     val uiState: StateFlow<TiradaUiState> = _uiState.asStateFlow()
 

@@ -167,6 +167,9 @@ interface GuiaDao {
         insertAll(guias)
     }
 
+    @Query("SELECT COUNT(*) FROM guias WHERE deleted = 0 AND data_quality != 'ok'")
+    fun countNeedsAttentionFlow(): Flow<Int>
+
     @Query("UPDATE guias SET deleted = 1, deleted_at = :now, updated_at = :now WHERE sync_id = :syncId")
     suspend fun tombstoneBySyncId(syncId: String, now: Long): Int
 

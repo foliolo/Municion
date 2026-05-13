@@ -103,6 +103,20 @@ class AccountSettingsViewModel @Inject constructor(
     }
 
     /**
+     * Re-enqueues every FAILED outbox row for another drain pass. Used
+     * by the Settings UI button after the user reviews the failed count.
+     * The data is still in Room (writes were never lost locally), this
+     * just gives Firebase another chance.
+     */
+    fun retryFailedSync() {
+        viewModelScope.launch {
+            val reset = syncOperationDao.resetFailedToRetry()
+            Log.i(TAG, "Re-enqueued $reset FAILED outbox rows for retry")
+            SyncOutboxWorker.enqueueOneShot(appContext)
+        }
+    }
+
+    /**
      * Cierra sesion de Firebase y limpia datos locales.
      *
      * @param force when true, skip the outbox drain and sign out immediately.

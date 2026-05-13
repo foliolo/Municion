@@ -2,6 +2,7 @@ package al.ahgitdevelopment.municion.ui.tiradas
 
 import al.ahgitdevelopment.municion.R
 import al.ahgitdevelopment.municion.data.local.room.entities.Tirada
+import al.ahgitdevelopment.municion.ui.components.DataQualityBanner
 import al.ahgitdevelopment.municion.ui.components.DeleteConfirmationDialog
 import al.ahgitdevelopment.municion.ui.components.EmptyState
 import al.ahgitdevelopment.municion.ui.navigation.Route
@@ -49,6 +50,7 @@ fun TiradasContent(
 ) {
     val tiradas by viewModel.tiradas.collectAsStateWithLifecycle()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val needsAttentionCount by viewModel.needsAttentionCount.collectAsStateWithLifecycle()
 
     var tiradaToDelete by remember { mutableStateOf<Tirada?>(null) }
 
@@ -88,6 +90,7 @@ fun TiradasContent(
 
     TiradasListContent(
         tiradas = tiradas,
+        needsAttentionCount = needsAttentionCount,
         onItemClick = { tirada ->
             navController.navigateSafely(TiradaForm(tirada = tirada))
         },
@@ -115,6 +118,7 @@ fun TiradasListContent(
     tiradas: List<Tirada>,
     onItemClick: (Tirada) -> Unit,
     onDeleteClick: (Tirada) -> Unit,
+    needsAttentionCount: Int = 0,
     modifier: Modifier = Modifier
 ) {
     if (tiradas.isEmpty()) {
@@ -129,6 +133,11 @@ fun TiradasListContent(
                 .padding(horizontal = 8.dp),
             contentPadding = PaddingValues(vertical = 8.dp)
         ) {
+            if (needsAttentionCount > 0) {
+                item(key = "data_quality_banner") {
+                    DataQualityBanner(count = needsAttentionCount, entityLabel = "tirada")
+                }
+            }
             items(
                 items = tiradas,
                 key = { it.id }

@@ -2,6 +2,7 @@ package al.ahgitdevelopment.municion.ui.licencias
 
 import al.ahgitdevelopment.municion.R
 import al.ahgitdevelopment.municion.data.local.room.entities.Licencia
+import al.ahgitdevelopment.municion.ui.components.DataQualityBanner
 import al.ahgitdevelopment.municion.ui.components.DeleteConfirmationDialog
 import al.ahgitdevelopment.municion.ui.components.EmptyState
 import al.ahgitdevelopment.municion.ui.components.ZoomableImageDialog
@@ -49,6 +50,7 @@ fun LicenciasContent(
 ) {
     val licencias by viewModel.licencias.collectAsStateWithLifecycle()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val needsAttentionCount by viewModel.needsAttentionCount.collectAsStateWithLifecycle()
 
     var licenciaToDelete by remember { mutableStateOf<Licencia?>(null) }
     var imageUrlToShow by remember { mutableStateOf<String?>(null) }
@@ -96,6 +98,7 @@ fun LicenciasContent(
 
     LicenciasListContent(
         licencias = licencias,
+        needsAttentionCount = needsAttentionCount,
         onItemClick = { licencia ->
             navController.navigateSafely(LicenciaForm(licencia = licencia))
         },
@@ -127,6 +130,7 @@ fun LicenciasListContent(
     onItemClick: (Licencia) -> Unit,
     onDeleteClick: (Licencia) -> Unit,
     onImageClick: (String) -> Unit = {},
+    needsAttentionCount: Int = 0,
     modifier: Modifier = Modifier
 ) {
     if (licencias.isEmpty()) {
@@ -141,6 +145,11 @@ fun LicenciasListContent(
                 .padding(horizontal = 8.dp),
             contentPadding = PaddingValues(vertical = 8.dp)
         ) {
+            if (needsAttentionCount > 0) {
+                item(key = "data_quality_banner") {
+                    DataQualityBanner(count = needsAttentionCount, entityLabel = "licencia")
+                }
+            }
             items(
                 items = licencias,
                 key = { it.id }

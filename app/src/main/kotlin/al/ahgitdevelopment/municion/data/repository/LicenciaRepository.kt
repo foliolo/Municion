@@ -58,6 +58,13 @@ class LicenciaRepository @Inject constructor(
 
     val licencias: Flow<List<Licencia>> = licenciaDao.getAllLicenciasFlow()
 
+    /**
+     * Count of non-deleted licencias whose data the v3.3 parser flagged as
+     * degraded or lost (stability-bug victims, see docs/SYNC_REDESIGN.md §3.1).
+     * Drives the "X entidades necesitan revisión" UI banner.
+     */
+    val needsAttentionCount: Flow<Int> = licenciaDao.countNeedsAttentionFlow()
+
     fun getLicenciasByTipo(tipo: Int): Flow<List<Licencia>> {
         return licenciaDao.getLicenciasByTipoFlow(tipo)
     }

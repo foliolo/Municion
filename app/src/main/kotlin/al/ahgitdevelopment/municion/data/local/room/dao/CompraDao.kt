@@ -147,6 +147,9 @@ interface CompraDao {
     @Query("SELECT * FROM compras WHERE peso = 0")
     suspend fun getComprasWithCorruptedPeso(): List<Compra>
 
+    @Query("SELECT COUNT(*) FROM compras WHERE deleted = 0 AND data_quality != 'ok'")
+    fun countNeedsAttentionFlow(): Flow<Int>
+
     @Query("UPDATE compras SET deleted = 1, deleted_at = :now, updated_at = :now WHERE sync_id = :syncId")
     suspend fun tombstoneBySyncId(syncId: String, now: Long): Int
 

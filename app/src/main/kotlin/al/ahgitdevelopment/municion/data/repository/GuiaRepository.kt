@@ -51,6 +51,8 @@ class GuiaRepository @Inject constructor(
 
     val guias: Flow<List<Guia>> = guiaDao.getAllGuiasFlow()
 
+    val needsAttentionCount: Flow<Int> = guiaDao.countNeedsAttentionFlow()
+
     fun getGuiasByTipoLicencia(tipoLicencia: Int): Flow<List<Guia>> {
         return guiaDao.getGuiasByTipoLicenciaFlow(tipoLicencia)
     }
