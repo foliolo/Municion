@@ -1,0 +1,37 @@
+{
+  "_comment_meta": "Snapshot of the production RTDB rules taken on 2026-05-13 BEFORE the v3.3 phase-1 deploy. Use this file to roll back if the new rules cause unexpected permission-denied errors in production.",
+  "_comment_security_note": "These rules contain a known privacy weakness: `users/.read: true` exposes every user's tree to every authenticated user. The v3.3 phase-1 rules in database.rules.json close that hole. Do NOT keep these rules as the long-term baseline.",
+  "_comment_rollback_command": "firebase deploy --only database --project municion-95caa -- using `firebase database:set / docs/firebase_rules_rollback.json` after a temporary rename. See docs/firebase_rules_deploy.md §Emergency rollback.",
+  "rules": {
+    ".read": false,
+    ".write": false,
+
+    "global_settings": {
+      ".read": true,
+      ".write": false
+    },
+
+    "test": {
+      ".read": true,
+      ".write": true
+    },
+
+    "users": {
+      ".read": true,
+      ".write": false,
+      "$user_id": {
+        ".read": "$user_id === auth.uid",
+        ".write": "$user_id === auth.uid"
+      }
+    },
+
+    "global_database": {
+      ".read": true,
+      ".write": false,
+      "$user_id": {
+        ".read": "$user_id === auth.uid",
+        ".write": "$user_id === auth.uid"
+      }
+    }
+  }
+}

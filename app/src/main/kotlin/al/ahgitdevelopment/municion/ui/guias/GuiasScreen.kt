@@ -2,6 +2,7 @@ package al.ahgitdevelopment.municion.ui.guias
 
 import al.ahgitdevelopment.municion.R
 import al.ahgitdevelopment.municion.data.local.room.entities.Guia
+import al.ahgitdevelopment.municion.ui.components.DataQualityBanner
 import al.ahgitdevelopment.municion.ui.components.DeleteConfirmationDialog
 import al.ahgitdevelopment.municion.ui.components.EmptyState
 import al.ahgitdevelopment.municion.ui.components.ZoomableImageDialog
@@ -52,6 +53,7 @@ fun GuiasContent(
     val resources = LocalResources.current
     val guias by viewModel.guias.collectAsStateWithLifecycle()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val needsAttentionCount by viewModel.needsAttentionCount.collectAsStateWithLifecycle()
 
     var guiaToDelete by remember { mutableStateOf<Guia?>(null) }
     var imageUrlToShow by remember { mutableStateOf<String?>(null) }
@@ -101,6 +103,7 @@ fun GuiasContent(
 
     GuiasListContent(
         guias = guias,
+        needsAttentionCount = needsAttentionCount,
         onItemClick = { guia ->
             val tipoLicenciaStr = resources.getStringArray(R.array.tipo_licencias)
                 .getOrNull(guia.tipoLicencia) ?: ""
@@ -139,6 +142,7 @@ fun GuiasListContent(
     onItemClick: (Guia) -> Unit,
     onDeleteClick: (Guia) -> Unit,
     onImageClick: (String) -> Unit = {},
+    needsAttentionCount: Int = 0,
     modifier: Modifier = Modifier
 ) {
     if (guias.isEmpty()) {
@@ -153,6 +157,11 @@ fun GuiasListContent(
                 .padding(horizontal = 8.dp),
             contentPadding = PaddingValues(vertical = 8.dp)
         ) {
+            if (needsAttentionCount > 0) {
+                item(key = "data_quality_banner") {
+                    DataQualityBanner(count = needsAttentionCount, entityLabel = "guía")
+                }
+            }
             items(
                 items = guias,
                 key = { it.id }

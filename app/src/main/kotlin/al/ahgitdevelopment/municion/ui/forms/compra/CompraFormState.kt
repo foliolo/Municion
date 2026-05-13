@@ -35,6 +35,14 @@ data class CompraFormState(
     
     // Metadata
     val compraId: Int = 0,
+    /**
+     * Stable identity preserved across the fromCompra → toCompra round-trip;
+     * see [al.ahgitdevelopment.municion.ui.forms.licencia.LicenciaFormState.syncId]
+     * for the rationale.
+     */
+    val syncId: String = "",
+    /** syncId of the parent Guia (replaces the positional guiaId for cross-device sync). */
+    val guiaSyncId: String? = null,
     val guiaId: Int = 0,
     val cupoDisponible: Int = 0,
     val cupoTotal: Int = 0,
@@ -117,7 +125,9 @@ data class CompraFormState(
         tienda = tienda,
         valoracion = valoracion,
         fotoUrl = fotoUrl,
-        storagePath = storagePath
+        storagePath = storagePath,
+        syncId = syncId,
+        guiaSyncId = guiaSyncId
     )
     
     /**
@@ -145,7 +155,9 @@ data class CompraFormState(
          */
         fun fromCompra(compra: Compra, guia: Guia): CompraFormState = CompraFormState(
             compraId = compra.id,
+            syncId = compra.syncId,
             guiaId = guia.id,
+            guiaSyncId = compra.guiaSyncId ?: guia.syncId,
             calibre1 = compra.calibre1,
             calibre2 = compra.calibre2 ?: "",
             showCalibre2 = !compra.calibre2.isNullOrBlank(),
@@ -165,13 +177,14 @@ data class CompraFormState(
             isEditing = true,
             originalCompra = compra // Guardar para comparar cambios
         )
-        
+
         /**
          * Crea estado inicial vacío (creación) con datos de la guía.
          * La fecha se inicializa con la fecha actual.
          */
         fun fromGuia(guia: Guia): CompraFormState = CompraFormState(
             guiaId = guia.id,
+            guiaSyncId = guia.syncId,
             calibre1 = guia.calibre1,
             calibre2 = guia.calibre2 ?: "",
             showCalibre2 = !guia.calibre2.isNullOrBlank(),

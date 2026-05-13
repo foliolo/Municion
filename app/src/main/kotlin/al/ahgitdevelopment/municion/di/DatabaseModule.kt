@@ -6,6 +6,7 @@ import al.ahgitdevelopment.municion.data.local.room.dao.AppPurchaseDao
 import al.ahgitdevelopment.municion.data.local.room.dao.CompraDao
 import al.ahgitdevelopment.municion.data.local.room.dao.GuiaDao
 import al.ahgitdevelopment.municion.data.local.room.dao.LicenciaDao
+import al.ahgitdevelopment.municion.data.local.room.dao.SyncOperationDao
 import al.ahgitdevelopment.municion.data.local.room.dao.TiradaDao
 import al.ahgitdevelopment.municion.data.local.room.entities.AppPurchase
 import dagger.Module
@@ -59,5 +60,10 @@ object DatabaseModule {
     @Provides
     fun provideAppPurchaseDao(database: MunicionDatabase): AppPurchaseDao {
         return database.appPurchaseDao()
+    }
+
+    @Provides
+    fun provideSyncOperationDao(database: MunicionDatabase): SyncOperationDao {
+        return database.syncOperationDao()
     }
 }

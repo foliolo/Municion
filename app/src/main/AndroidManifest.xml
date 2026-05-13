@@ -67,6 +67,27 @@
             </intent-filter>
         </service>
 
+        <!--
+            Remove the default WorkManager initializer because MunicionApplication
+            implements Configuration.Provider for HiltWorkerFactory. Without
+            this removal, androidx.startup would initialize WorkManager with
+            the default factory BEFORE our Configuration.Provider gets a
+            chance to register HiltWorkerFactory — @HiltWorker classes
+            (SyncOutboxWorker, TombstoneCleanupWorker) would then fail to
+            instantiate at runtime, silently killing the sync outbox.
+
+            See https://developer.android.com/topic/libraries/architecture/workmanager/advanced/custom-configuration#on-demand
+        -->
+        <provider
+            android:name="androidx.startup.InitializationProvider"
+            android:authorities="${applicationId}.androidx-startup"
+            android:exported="false"
+            tools:node="merge">
+            <meta-data
+                android:name="androidx.work.WorkManagerInitializer"
+                android:value="androidx.startup"
+                tools:node="remove" />
+        </provider>
 
     </application>
 

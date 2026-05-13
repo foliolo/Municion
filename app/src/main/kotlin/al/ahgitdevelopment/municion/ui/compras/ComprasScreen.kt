@@ -2,6 +2,7 @@ package al.ahgitdevelopment.municion.ui.compras
 
 import al.ahgitdevelopment.municion.R
 import al.ahgitdevelopment.municion.data.local.room.entities.Compra
+import al.ahgitdevelopment.municion.ui.components.DataQualityBanner
 import al.ahgitdevelopment.municion.ui.components.DeleteConfirmationDialog
 import al.ahgitdevelopment.municion.ui.components.EmptyState
 import al.ahgitdevelopment.municion.ui.components.ZoomableImageDialog
@@ -54,6 +55,7 @@ fun ComprasContent(
     val compras by compraViewModel.compras.collectAsStateWithLifecycle()
     val guias by guiaViewModel.guias.collectAsStateWithLifecycle()
     val uiState by compraViewModel.uiState.collectAsStateWithLifecycle()
+    val needsAttentionCount by compraViewModel.needsAttentionCount.collectAsStateWithLifecycle()
 
     var compraToDelete by remember { mutableStateOf<Compra?>(null) }
     var imageUrlToShow by remember { mutableStateOf<String?>(null) }
@@ -101,6 +103,7 @@ fun ComprasContent(
 
     ComprasListContent(
         compras = compras,
+        needsAttentionCount = needsAttentionCount,
         onItemClick = { compra ->
             val guia = guias.find { it.id == compra.idPosGuia }
             guia?.let { g ->
@@ -143,6 +146,7 @@ fun ComprasListContent(
     onItemClick: (Compra) -> Unit,
     onDeleteClick: (Compra) -> Unit,
     onImageClick: (String) -> Unit = {},
+    needsAttentionCount: Int = 0,
     modifier: Modifier = Modifier
 ) {
     if (compras.isEmpty()) {
@@ -157,6 +161,11 @@ fun ComprasListContent(
                 .padding(horizontal = 8.dp),
             contentPadding = PaddingValues(vertical = 8.dp)
         ) {
+            if (needsAttentionCount > 0) {
+                item(key = "data_quality_banner") {
+                    DataQualityBanner(count = needsAttentionCount, entityLabel = "compra")
+                }
+            }
             items(
                 items = compras,
                 key = { it.id }

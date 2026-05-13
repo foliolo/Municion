@@ -4,6 +4,7 @@ import al.ahgitdevelopment.municion.data.local.room.entities.Compra
 import al.ahgitdevelopment.municion.data.local.room.entities.Guia
 import al.ahgitdevelopment.municion.data.local.room.entities.Licencia
 import al.ahgitdevelopment.municion.data.local.room.entities.Tirada
+import al.ahgitdevelopment.municion.data.sync.SyncIdGenerator
 import android.util.Log
 import al.ahgitdevelopment.municion.datamodel.Guia as LegacyGuia
 import al.ahgitdevelopment.municion.datamodel.Compra as LegacyCompra
@@ -25,7 +26,15 @@ import al.ahgitdevelopment.municion.datamodel.Tirada as LegacyTirada
 object LegacyConverter {
 
     /**
-     * Convierte Guia legacy a Room entity
+     * Convierte Guia legacy a Room entity.
+     *
+     * Asigna [syncId] deterministicamente desde el legacy.id, igual que hace
+     * [al.ahgitdevelopment.municion.data.local.room.MunicionDatabase.Companion.MIGRATION_32_33]
+     * para usuarios que ya estaban en v3.x. De esta forma:
+     *   - Si la misma Guía existe en Firebase porque otro device la subió,
+     *     ambos convergen al mismo syncId y la sincronización no duplica.
+     *   - El UNIQUE INDEX sobre sync_id en Room no rompe por strings vacíos
+     *     duplicados al hacer batch insert de las legacy.
      */
     fun convertGuia(legacy: LegacyGuia): Guia? {
         return try {
@@ -43,7 +52,8 @@ object LegacyConverter {
                 numArma = legacy.numArma?.takeIf { it.isNotBlank() } ?: "N/A",
                 cupo = legacy.cupo.coerceAtLeast(1),
                 gastado = legacy.gastado.coerceAtLeast(0),
-                imagePath = legacy.imagePath?.takeIf { it.isNotBlank() }
+                imagePath = legacy.imagePath?.takeIf { it.isNotBlank() },
+                syncId = SyncIdGenerator.deterministicSyncId("Guia", legacy.id)
             )
         } catch (e: Exception) {
             Log.e("LegacyConverter", "Error converting Guia ${legacy.id}", e)
@@ -52,8 +62,10 @@ object LegacyConverter {
     }
 
     /**
-     * Convierte Compra legacy a Room entity
-     * Nota: La Compra legacy usa getCalibre1() para el calibre principal
+     * Convierte Compra legacy a Room entity. El [Compra.guiaSyncId] se
+     * resuelve via [SyncIdGenerator.deterministicSyncId] sobre el
+     * [LegacyCompra.idPosGuia] — equivalente a lo que hace
+     * MIGRATION_32_33 cuando linka compras a guias por id.
      */
     fun convertCompra(legacy: LegacyCompra): Compra? {
         return try {
@@ -70,7 +82,9 @@ object LegacyConverter {
                 marca = legacy.marca?.takeIf { it.isNotBlank() } ?: "Sin marca",
                 tienda = legacy.tienda?.takeIf { it.isNotBlank() },
                 valoracion = legacy.valoracion.coerceIn(0f, 5f),
-                imagePath = legacy.imagePath?.takeIf { it.isNotBlank() }
+                imagePath = legacy.imagePath?.takeIf { it.isNotBlank() },
+                syncId = SyncIdGenerator.deterministicSyncId("Compra", legacy.id),
+                guiaSyncId = SyncIdGenerator.deterministicSyncId("Guia", legacy.idPosGuia)
             )
         } catch (e: Exception) {
             Log.e("LegacyConverter", "Error converting Compra ${legacy.id}", e)
@@ -78,10 +92,6 @@ object LegacyConverter {
         }
     }
 
-    /**
-     * Convierte Licencia legacy a Room entity
-     * Nota: La Licencia Room no tiene numDni ni ccaa, usa numSeguro y autonomia
-     */
     fun convertLicencia(legacy: LegacyLicencia): Licencia? {
         return try {
             Licencia(
@@ -97,7 +107,8 @@ object LegacyConverter {
                 numSeguro = legacy.numSeguro?.takeIf { it.isNotBlank() },
                 autonomia = legacy.autonomia,
                 escala = legacy.escala,
-                categoria = legacy.categoria
+                categoria = legacy.categoria,
+                syncId = SyncIdGenerator.deterministicSyncId("Licencia", legacy.id)
             )
         } catch (e: Exception) {
             Log.e("LegacyConverter", "Error converting Licencia ${legacy.id}", e)
@@ -106,12 +117,17 @@ object LegacyConverter {
     }
 
     /**
-     * Convierte Tirada legacy a Room entity
-     * Nota: La Tirada legacy no tiene campo ID
+     * Convierte Tirada legacy a Room entity.
+     *
+     * La Tirada legacy NO tiene id, así que id queda 0 (Room lo auto-genera).
+     * Para syncId, generamos un UUID random — significa que si el mismo
+     * usuario tiene la app en dos devices, la migración legacy crearía dos
+     * syncIds distintos para la misma Tirada. La pérdida es aceptable
+     * porque los Tiradas legacy son raros (solo se usan en v3.x) y v2.x
+     * no tenía sync de Tiradas (SQLite era local-only).
      */
     fun convertTirada(legacy: LegacyTirada): Tirada? {
         return try {
-            // Determinar max puntuación basado en modalidad legacy (si existe)
             val modalidad = legacy.modalidad?.takeIf { it.isNotBlank() }
             val maxPuntuacion = Tirada.getMaxPuntuacion(modalidad)
             Tirada(
@@ -120,7 +136,8 @@ object LegacyConverter {
                 localizacion = legacy.localizacion?.takeIf { it.isNotBlank() },
                 modalidad = modalidad,
                 fecha = legacy.fecha?.takeIf { it.isNotBlank() } ?: "01/01/2000",
-                puntuacion = legacy.puntuacion.coerceIn(0, maxPuntuacion)
+                puntuacion = legacy.puntuacion.coerceIn(0, maxPuntuacion),
+                syncId = SyncIdGenerator.newSyncId()
             )
         } catch (e: Exception) {
             Log.e("LegacyConverter", "Error converting Tirada", e)

@@ -36,7 +36,8 @@ import java.util.Locale
     tableName = "licencias",
     indices = [
         Index(value = ["num_licencia"]),
-        Index(value = ["fecha_caducidad"])
+        Index(value = ["fecha_caducidad"]),
+        Index(value = ["sync_id"], unique = true)
     ]
 )
 data class Licencia(
@@ -90,7 +91,31 @@ data class Licencia(
 
     /** Timestamp de última modificación (para sync diff) */
     @ColumnInfo(name = "updated_at")
-    val updatedAt: Long = System.currentTimeMillis()
+    val updatedAt: Long = System.currentTimeMillis(),
+
+    /**
+     * Stable global identifier used for cross-device sync. Generated client-side
+     * (UUID v4 for new entities, deterministic v3 for legacy entities at migration).
+     * Never changes for the lifetime of the entity.
+     */
+    @ColumnInfo(name = "sync_id")
+    val syncId: String = "",
+
+    /** Soft-delete flag. UI queries filter `deleted = 0` by default. */
+    @ColumnInfo(name = "deleted")
+    val deleted: Boolean = false,
+
+    /** Timestamp when the tombstone was created. Null while alive. */
+    @ColumnInfo(name = "deleted_at")
+    val deletedAt: Long? = null,
+
+    /**
+     * "ok" when the entity has all required fields. "degraded" when some
+     * required field was missing/blank in Firebase and was filled with a
+     * safe default during parsing. UI may prompt the user to review.
+     */
+    @ColumnInfo(name = "data_quality")
+    val dataQuality: String = "ok"
 ) : Parcelable {
 
     // NOTA: NO usar init{require()} aquí porque rompe la deserialización JSON
