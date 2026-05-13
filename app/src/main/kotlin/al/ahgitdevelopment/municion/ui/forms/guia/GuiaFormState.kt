@@ -33,6 +33,11 @@ data class GuiaFormState(
     
     // Metadata
     val guiaId: Int = 0,
+    /**
+     * Stable identity preserved across the fromGuia → toGuia round-trip;
+     * see [LicenciaFormState.syncId] for the rationale.
+     */
+    val syncId: String = "",
     val tipoLicencia: Int = 0,
     val isEditing: Boolean = false,
     
@@ -86,7 +91,8 @@ data class GuiaFormState(
         cupo = cupo.toIntOrNull() ?: 0,
         gastado = gastado.toIntOrNull() ?: 0,
         fotoUrl = fotoUrl,
-        storagePath = storagePath
+        storagePath = storagePath,
+        syncId = syncId
     )
     
     /**
@@ -114,6 +120,7 @@ data class GuiaFormState(
          */
         fun fromGuia(guia: Guia): GuiaFormState = GuiaFormState(
             guiaId = guia.id,
+            syncId = guia.syncId,
             tipoLicencia = guia.tipoLicencia,
             marca = guia.marca,
             modelo = guia.modelo,

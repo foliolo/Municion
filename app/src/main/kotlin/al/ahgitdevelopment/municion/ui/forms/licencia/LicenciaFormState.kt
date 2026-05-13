@@ -32,6 +32,15 @@ data class LicenciaFormState(
     
     // Metadata
     val licenciaId: Int = 0,
+    /**
+     * syncId of the entity being edited. MUST be preserved across the
+     * fromLicencia → toLicencia round-trip, otherwise the repository would
+     * regenerate a fresh UUID on update and the local row would lose its
+     * link to its Firebase counterpart (resulting in a duplicate on the
+     * next sync). Empty string means "this is a new entity, generate a
+     * fresh UUID on save".
+     */
+    val syncId: String = "",
     val isEditing: Boolean = false,
     
     // Errores de validación
@@ -91,7 +100,8 @@ data class LicenciaFormState(
         escala = if (showEscala) escala else -1,
         categoria = if (showCategoria) categoria else -1,
         fotoUrl = fotoUrl,
-        storagePath = storagePath
+        storagePath = storagePath,
+        syncId = syncId
     )
     
     /**
@@ -119,6 +129,7 @@ data class LicenciaFormState(
          */
         fun fromLicencia(licencia: Licencia): LicenciaFormState = LicenciaFormState(
             licenciaId = licencia.id,
+            syncId = licencia.syncId,
             tipoLicencia = licencia.tipo,
             numLicencia = licencia.numLicencia,
             fechaExpedicion = licencia.fechaExpedicion,
