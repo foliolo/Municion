@@ -1,44 +1,58 @@
 package al.ahgitdevelopment.municion.data.repository
 
+import al.ahgitdevelopment.municion.data.local.room.dao.SyncOperationDao
 import al.ahgitdevelopment.municion.data.local.room.dao.TiradaDao
 import al.ahgitdevelopment.municion.data.local.room.entities.Tirada
-import al.ahgitdevelopment.municion.data.sync.FirebaseSyncHelper
-import al.ahgitdevelopment.municion.data.sync.toFirebaseMap
-import al.ahgitdevelopment.municion.domain.usecase.FirebaseParseException
+import al.ahgitdevelopment.municion.data.sync.SyncIdGenerator
+import al.ahgitdevelopment.municion.data.sync.SyncOutboxEnqueuer
+import al.ahgitdevelopment.municion.data.sync.SyncOutboxWorker
+import al.ahgitdevelopment.municion.data.sync.TolerantParsers
 import al.ahgitdevelopment.municion.domain.usecase.ParseError
-import al.ahgitdevelopment.municion.domain.usecase.SensitiveFields
 import al.ahgitdevelopment.municion.domain.usecase.SyncResultWithErrors
+import android.content.Context
 import android.util.Log
 import com.google.firebase.crashlytics.FirebaseCrashlytics
+import com.google.firebase.database.DatabaseReference
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
 
 /**
- * Repository for Tirada
+ * Repository for Tirada.
  *
- * Uses per-entity Firebase writes instead of full-list sync.
+ * Same write/read contract as the other repos.
  *
  * @since v3.0.0 (TRACK B Modernization)
+ * @updated v3.3.0 (Sync redesign)
  */
 @Singleton
 class TiradaRepository @Inject constructor(
+    @ApplicationContext private val appContext: Context,
     private val tiradaDao: TiradaDao,
-    private val syncHelper: FirebaseSyncHelper,
+    private val outboxDao: SyncOperationDao,
+    private val outboxEnqueuer: SyncOutboxEnqueuer,
+    private val firebaseDb: DatabaseReference,
     private val crashlytics: FirebaseCrashlytics
 ) {
 
     companion object {
         private const val TAG = "TiradaRepository"
         private const val ENTITY_PATH = "tiradas"
+        private const val ENTITY_TYPE = "Tirada"
     }
 
     val tiradas: Flow<List<Tirada>> = tiradaDao.getAllTiradasFlow()
 
     suspend fun getTiradaById(id: Int): Tirada? = withContext(Dispatchers.IO) {
         tiradaDao.getTiradaById(id)
+    }
+
+    suspend fun getTiradaBySyncId(syncId: String): Tirada? = withContext(Dispatchers.IO) {
+        tiradaDao.getTiradaBySyncId(syncId)
     }
 
     suspend fun getTiradasConPuntuacion(): List<Tirada> = withContext(Dispatchers.IO) {
@@ -55,14 +69,16 @@ class TiradaRepository @Inject constructor(
 
     suspend fun saveTirada(tirada: Tirada, userId: String? = null): Result<Long> = withContext(Dispatchers.IO) {
         try {
-            val stamped = tirada.copy(updatedAt = System.currentTimeMillis())
+            val stamped = tirada.copy(
+                syncId = tirada.syncId.takeIf { it.isNotBlank() } ?: SyncIdGenerator.newSyncId(),
+                deleted = false,
+                deletedAt = null,
+                updatedAt = System.currentTimeMillis()
+            )
             val id = tiradaDao.insert(stamped)
             val saved = stamped.copy(id = id.toInt())
-
-            userId?.let {
-                syncHelper.writeEntity(it, ENTITY_PATH, saved.id, saved.toFirebaseMap())
-            }
-
+            outboxEnqueuer.enqueueUpsert(saved, userId)
+            triggerSync(userId)
             Result.success(id)
         } catch (e: Exception) {
             crashlytics.recordException(e)
@@ -72,13 +88,13 @@ class TiradaRepository @Inject constructor(
 
     suspend fun updateTirada(tirada: Tirada, userId: String? = null): Result<Unit> = withContext(Dispatchers.IO) {
         try {
-            val stamped = tirada.copy(updatedAt = System.currentTimeMillis())
+            val stamped = tirada.copy(
+                syncId = tirada.syncId.takeIf { it.isNotBlank() } ?: SyncIdGenerator.newSyncId(),
+                updatedAt = System.currentTimeMillis()
+            )
             tiradaDao.update(stamped)
-
-            userId?.let {
-                syncHelper.writeEntity(it, ENTITY_PATH, stamped.id, stamped.toFirebaseMap())
-            }
-
+            outboxEnqueuer.enqueueUpsert(stamped, userId)
+            triggerSync(userId)
             Result.success(Unit)
         } catch (e: Exception) {
             crashlytics.recordException(e)
@@ -88,12 +104,16 @@ class TiradaRepository @Inject constructor(
 
     suspend fun deleteTirada(tirada: Tirada, userId: String? = null): Result<Unit> = withContext(Dispatchers.IO) {
         try {
-            tiradaDao.delete(tirada)
-
-            userId?.let {
-                syncHelper.deleteEntity(it, ENTITY_PATH, tirada.id)
-            }
-
+            val now = System.currentTimeMillis()
+            val tombstoned = tirada.copy(
+                syncId = tirada.syncId.takeIf { it.isNotBlank() } ?: SyncIdGenerator.newSyncId(),
+                deleted = true,
+                deletedAt = now,
+                updatedAt = now
+            )
+            tiradaDao.update(tombstoned)
+            outboxEnqueuer.enqueueUpsert(tombstoned, userId)
+            triggerSync(userId)
             Result.success(Unit)
         } catch (e: Exception) {
             crashlytics.recordException(e)
@@ -101,144 +121,85 @@ class TiradaRepository @Inject constructor(
         }
     }
 
-    /**
-     * Syncs FROM Firebase -> Room using smart diff
-     */
     suspend fun syncFromFirebase(userId: String): Result<SyncResultWithErrors> = withContext(Dispatchers.IO) {
         try {
             crashlytics.setUserId(userId)
+            val snapshot = firebaseDb
+                .child("users").child(userId).child("db").child(ENTITY_PATH)
+                .get().await()
 
-            val localTimestamps = tiradaDao.getAllTimestamps()
-            val localIds = localTimestamps.keys
-
+            val totalInFirebase = snapshot.childrenCount.toInt()
             val parseErrors = mutableListOf<ParseError>()
+            val degradedSyncIds = mutableListOf<String>()
+            val localBySyncId = tiradaDao.getAllTiradasIncludingDeleted().associateBy { it.syncId }
+            val pendingSyncIds = outboxDao.pendingSyncIdsFor(ENTITY_TYPE).toSet()
 
-            val diffResult = syncHelper.syncFromFirebaseWithDiff(
-                userId = userId,
-                entityPath = ENTITY_PATH,
-                localIds = localIds,
-                localTimestamps = localTimestamps,
-                parser = { key, value ->
-                    parseTiradaFromMap(key, value, parseErrors)
-                },
-                getId = { it.id },
-                getUpdatedAt = { it.updatedAt },
-                upsert = { tiradaDao.insert(it) },
-                deleteLocal = { tiradaDao.deleteById(it) }
-            )
+            var upserted = 0
+            var skippedPending = 0
+            var skippedOlder = 0
 
-            val hasLocalData = tiradaDao.countTiradas() > 0
+            snapshot.children.forEach { child ->
+                val key = child.key
+                val parsed = TolerantParsers.parseTirada(key, child.value)
+                if (parsed == null) {
+                    parseErrors += ParseError(
+                        entity = "Tirada",
+                        itemKey = key ?: "?",
+                        failedField = "<unparseable>",
+                        errorType = "InvalidShape",
+                        fieldValue = "[REDACTED]"
+                    )
+                    return@forEach
+                }
+
+                if (parsed.dataQuality == "degraded" || parsed.dataQuality == "lost") {
+                    degradedSyncIds += parsed.syncId
+                }
+
+                if (parsed.syncId in pendingSyncIds) {
+                    skippedPending++
+                    return@forEach
+                }
+
+                val local = localBySyncId[parsed.syncId]
+                if (local == null || parsed.updatedAt > local.updatedAt) {
+                    val toInsert = if (local != null) parsed.copy(id = local.id) else parsed.copy(id = 0)
+                    tiradaDao.insert(toInsert)
+                    upserted++
+                } else {
+                    skippedOlder++
+                }
+            }
+
+            Log.i(TAG, "Sync $ENTITY_PATH: total=$totalInFirebase upserted=$upserted skippedPending=$skippedPending skippedOlder=$skippedOlder degraded=${degradedSyncIds.size}")
+            if (degradedSyncIds.isNotEmpty()) {
+                crashlytics.log("Tirada degraded count: ${degradedSyncIds.size}")
+            }
 
             Result.success(SyncResultWithErrors(
-                success = diffResult.success,
-                syncedCount = diffResult.upserted,
-                totalInFirebase = diffResult.totalInFirebase,
+                success = true,
+                syncedCount = upserted,
+                totalInFirebase = totalInFirebase,
                 parseErrors = parseErrors,
-                hasLocalData = hasLocalData
+                hasLocalData = tiradaDao.countTiradas() > 0
             ))
         } catch (e: Exception) {
             Log.e(TAG, "Sync failed: ${e.message}", e)
-            crashlytics.log("Failed to sync tiradas from Firebase: ${e.message}")
             crashlytics.recordException(e)
             Result.failure(e)
         }
     }
 
-    /**
-     * Full sync TO Firebase (all tiradas as map). Used for auto-fix only.
-     */
+    @Deprecated("Outbox is the source of truth for writes; this is now a no-op")
     suspend fun syncToFirebase(userId: String): Result<Unit> = withContext(Dispatchers.IO) {
-        try {
-            val allTiradas = tiradaDao.getAllTiradas()
-            val entityMaps = allTiradas.associate { it.id.toString() to it.toFirebaseMap() }
-            syncHelper.fullSyncToFirebase(userId, ENTITY_PATH, entityMaps)
-        } catch (e: Exception) {
-            crashlytics.log("Failed to full-sync tiradas to Firebase: ${e.message}")
-            crashlytics.recordException(e)
-            Result.failure(e)
-        }
+        Log.w(TAG, "Deprecated syncToFirebase ignored; outbox handles writes")
+        triggerSync(userId)
+        Result.success(Unit)
     }
 
-    // --- Parsing ---
-
-    @Suppress("UNCHECKED_CAST")
-    private fun parseTiradaFromMap(
-        itemKey: String,
-        value: Any?,
-        parseErrors: MutableList<ParseError>
-    ): Tirada? {
-        val map = value as? Map<String, Any?> ?: run {
-            reportFieldError(itemKey, "root", "Not a Map", value?.toString(), parseErrors)
-            return null
-        }
-
-        val descripcion = (map["descripcion"] as? String)?.takeIf { it.isNotBlank() } ?: run {
-            reportFieldError(itemKey, "descripcion", "Blank or missing", map["descripcion"]?.toString(), parseErrors)
-            return null
-        }
-
-        val fecha = (map["fecha"] as? String)?.takeIf { it.isNotBlank() } ?: run {
-            reportFieldError(itemKey, "fecha", "Blank or missing", map["fecha"]?.toString(), parseErrors)
-            return null
-        }
-
-        val id = (map["id"] as? Number)?.toInt() ?: 0
-        val localizacion = map["rango"] as? String  // Firebase uses "rango" for compatibility
-        val categoria = map["categoria"] as? String
-        val modalidad = map["modalidad"] as? String
-        val puntuacion = (map["puntuacion"] as? Number)?.toInt() ?: 0
-        val updatedAt = (map["updatedAt"] as? Number)?.toLong() ?: System.currentTimeMillis()
-
-        val maxPuntuacion = Tirada.getMaxPuntuacion(modalidad)
-        if (puntuacion !in 0..maxPuntuacion) {
-            reportFieldError(itemKey, "puntuacion", "Must be 0-$maxPuntuacion for $modalidad", puntuacion.toString(), parseErrors)
-            return null
-        }
-
-        return try {
-            Tirada(
-                id = id,
-                descripcion = descripcion,
-                localizacion = localizacion,
-                categoria = categoria,
-                modalidad = modalidad,
-                fecha = fecha,
-                puntuacion = puntuacion,
-                updatedAt = updatedAt
-            )
-        } catch (e: Exception) {
-            reportFieldError(itemKey, "constructor", e.message ?: "Unknown", null, parseErrors)
-            null
-        }
-    }
-
-    private fun reportFieldError(
-        itemKey: String,
-        fieldName: String,
-        errorType: String,
-        fieldValue: String?,
-        parseErrors: MutableList<ParseError>
-    ) {
-        val redactedValue = SensitiveFields.redactIfNeeded(fieldName, fieldValue)
-
-        parseErrors.add(ParseError(
-            entity = "Tirada",
-            itemKey = itemKey,
-            failedField = fieldName,
-            errorType = errorType,
-            fieldValue = redactedValue
-        ))
-
-        crashlytics.apply {
-            setCustomKey("entity", "Tirada")
-            setCustomKey("item_key", itemKey)
-            setCustomKey("failed_field", fieldName)
-            setCustomKey("error_type", errorType)
-            setCustomKey("field_value", redactedValue)
-            recordException(FirebaseParseException("[Tirada] Field '$fieldName' failed: $errorType"))
-        }
-
-        Log.e(TAG, "Parse error Tirada[$itemKey].$fieldName: $errorType (value: $redactedValue)")
+    private fun triggerSync(userId: String?) {
+        if (userId.isNullOrBlank()) return
+        SyncOutboxWorker.enqueueOneShot(appContext)
     }
 
     data class TiradaEstadisticas(
