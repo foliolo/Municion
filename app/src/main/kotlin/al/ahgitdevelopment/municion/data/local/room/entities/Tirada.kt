@@ -33,7 +33,8 @@ import java.util.Locale
 @Entity(
     tableName = "tiradas",
     indices = [
-        Index(value = ["fecha"])
+        Index(value = ["fecha"]),
+        Index(value = ["sync_id"], unique = true)
     ]
 )
 data class Tirada(
@@ -61,7 +62,19 @@ data class Tirada(
 
     /** Timestamp de última modificación (para sync diff) */
     @ColumnInfo(name = "updated_at")
-    val updatedAt: Long = System.currentTimeMillis()
+    val updatedAt: Long = System.currentTimeMillis(),
+
+    @ColumnInfo(name = "sync_id")
+    val syncId: String = "",
+
+    @ColumnInfo(name = "deleted")
+    val deleted: Boolean = false,
+
+    @ColumnInfo(name = "deleted_at")
+    val deletedAt: Long? = null,
+
+    @ColumnInfo(name = "data_quality")
+    val dataQuality: String = "ok"
 ) : Parcelable {
 
     // NOTA: NO usar init{require()} aquí porque rompe la deserialización JSON

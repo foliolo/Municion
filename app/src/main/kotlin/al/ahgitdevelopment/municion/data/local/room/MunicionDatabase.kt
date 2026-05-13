@@ -4,11 +4,13 @@ import al.ahgitdevelopment.municion.data.local.room.dao.AppPurchaseDao
 import al.ahgitdevelopment.municion.data.local.room.dao.CompraDao
 import al.ahgitdevelopment.municion.data.local.room.dao.GuiaDao
 import al.ahgitdevelopment.municion.data.local.room.dao.LicenciaDao
+import al.ahgitdevelopment.municion.data.local.room.dao.SyncOperationDao
 import al.ahgitdevelopment.municion.data.local.room.dao.TiradaDao
 import al.ahgitdevelopment.municion.data.local.room.entities.AppPurchase
 import al.ahgitdevelopment.municion.data.local.room.entities.Compra
 import al.ahgitdevelopment.municion.data.local.room.entities.Guia
 import al.ahgitdevelopment.municion.data.local.room.entities.Licencia
+import al.ahgitdevelopment.municion.data.local.room.entities.SyncOperation
 import al.ahgitdevelopment.municion.data.local.room.entities.Tirada
 import android.content.Context
 import android.util.Log
@@ -36,9 +38,10 @@ import androidx.sqlite.db.SupportSQLiteDatabase
         Compra::class,
         Licencia::class,
         Tirada::class,
-        AppPurchase::class
+        AppPurchase::class,
+        SyncOperation::class
     ],
-    version = 32,
+    version = 33,
     exportSchema = true
 )
 abstract class MunicionDatabase : RoomDatabase() {
@@ -48,6 +51,7 @@ abstract class MunicionDatabase : RoomDatabase() {
     abstract fun licenciaDao(): LicenciaDao
     abstract fun tiradaDao(): TiradaDao
     abstract fun appPurchaseDao(): AppPurchaseDao
+    abstract fun syncOperationDao(): SyncOperationDao
 
     companion object {
         private const val DATABASE_NAME = "municion.db"
@@ -82,11 +86,96 @@ abstract class MunicionDatabase : RoomDatabase() {
         }
 
         /**
-         * MIGRATION: v31 → v32
+         * MIGRATION: v32 → v33
          *
-         * CAMBIO: Agregar columna 'updated_at' a las 4 tablas principales
-         * para soporte de sincronización diff (comparar timestamps local vs remoto)
+         * Adds the sync-redesign columns to all four entity tables and creates
+         * the [SyncOperation] outbox table.
+         *
+         * Added columns (per table):
+         *   - sync_id TEXT NOT NULL DEFAULT ''  — UUID, backfilled in code on
+         *     first DB access via SyncIdBackfill. Marked UNIQUE.
+         *   - deleted INTEGER NOT NULL DEFAULT 0  — tombstone flag.
+         *   - deleted_at INTEGER  — tombstone timestamp.
+         *   - data_quality TEXT NOT NULL DEFAULT 'ok'  — 'ok' | 'degraded'.
+         *
+         * Additionally, [compras] gets `guia_sync_id TEXT` (nullable) as the
+         * future replacement for `id_pos_guia`. Both coexist during v3.3-v3.5.
+         *
+         * @see al.ahgitdevelopment.municion.data.sync.SyncIdGenerator
          */
+        val MIGRATION_32_33 = object : Migration(32, 33) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                Log.i("MunicionDatabase", "Starting migration v32 → v33 (sync redesign columns)")
+
+                val entityTables = listOf("licencias", "guias", "compras", "tiradas")
+                for (table in entityTables) {
+                    database.execSQL("ALTER TABLE $table ADD COLUMN sync_id TEXT NOT NULL DEFAULT ''")
+                    database.execSQL("ALTER TABLE $table ADD COLUMN deleted INTEGER NOT NULL DEFAULT 0")
+                    database.execSQL("ALTER TABLE $table ADD COLUMN deleted_at INTEGER")
+                    database.execSQL("ALTER TABLE $table ADD COLUMN data_quality TEXT NOT NULL DEFAULT 'ok'")
+                }
+
+                // compras.guia_sync_id — populated by SyncIdBackfill after migration,
+                // once each Guia has its own sync_id assigned.
+                database.execSQL("ALTER TABLE compras ADD COLUMN guia_sync_id TEXT")
+                database.execSQL("CREATE INDEX IF NOT EXISTS index_compras_guia_sync_id ON compras(guia_sync_id)")
+
+                // Unique indices on sync_id. They are unique on '' too, so we
+                // cannot index until the backfill assigns real values. Defer
+                // index creation to SyncIdBackfill once the backfill is done
+                // for that table. We use partial-state indices: create the
+                // non-unique secondary index now so Room doesn't fail
+                // schema validation; SyncIdBackfill will rebuild as UNIQUE
+                // after backfill completes.
+                //
+                // Room validates indices against the entity definition, so
+                // we MUST create them with the expected unique constraint.
+                // The backfill runs SYNCHRONOUSLY before any consumer can
+                // query the DB (Room.databaseBuilder.addCallback onCreate
+                // is too late; we do it via the database provider).
+                //
+                // For v3.3 the safest path is to leave sync_id empty until
+                // the post-migration coroutine runs, and have the unique
+                // index applied to '' values — SQLite UNIQUE allows multiple
+                // NULL but not multiple ''. Therefore, the migration backfills
+                // sync_id with a unique placeholder per row (the legacy id),
+                // and the in-code backfill replaces it with the deterministic
+                // UUID. The unique constraint never sees duplicate ''.
+                //
+                // Placeholder backfill: a UUID-shaped string that includes
+                // the legacy id. The post-migration step will overwrite this
+                // with the deterministic UUID v3 once kotlin code runs.
+                for (table in entityTables) {
+                    database.execSQL(
+                        "UPDATE $table SET sync_id = '00000000-0000-0000-0000-' || printf('%012d', id) WHERE sync_id = ''"
+                    )
+                    database.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS index_${table}_sync_id ON $table(sync_id)")
+                }
+
+                // Outbox table for the new write pipeline.
+                database.execSQL("""
+                    CREATE TABLE IF NOT EXISTS sync_outbox (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                        entity_type TEXT NOT NULL,
+                        entity_sync_id TEXT NOT NULL,
+                        operation TEXT NOT NULL,
+                        payload_json TEXT NOT NULL,
+                        user_id TEXT NOT NULL,
+                        created_at INTEGER NOT NULL,
+                        last_attempt_at INTEGER,
+                        retry_count INTEGER NOT NULL DEFAULT 0,
+                        last_error TEXT,
+                        status TEXT NOT NULL DEFAULT 'PENDING'
+                    )
+                """.trimIndent())
+                database.execSQL("CREATE INDEX IF NOT EXISTS index_sync_outbox_status ON sync_outbox(status)")
+                database.execSQL("CREATE INDEX IF NOT EXISTS index_sync_outbox_entity_type_entity_sync_id ON sync_outbox(entity_type, entity_sync_id)")
+                database.execSQL("CREATE INDEX IF NOT EXISTS index_sync_outbox_created_at ON sync_outbox(created_at)")
+
+                Log.i("MunicionDatabase", "Migration v32 → v33 completed")
+            }
+        }
+
         val MIGRATION_31_32 = object : Migration(31, 32) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 Log.i("MunicionDatabase", "Starting migration v31 → v32 (Add updated_at to all tables)")
@@ -529,7 +618,8 @@ abstract class MunicionDatabase : RoomDatabase() {
                     MIGRATION_28_29,
                     MIGRATION_29_30,
                     MIGRATION_30_31,
-                    MIGRATION_31_32
+                    MIGRATION_31_32,
+                    MIGRATION_32_33
                 )
                 .fallbackToDestructiveMigration(false)  // Solo como último recurso
                 .build()

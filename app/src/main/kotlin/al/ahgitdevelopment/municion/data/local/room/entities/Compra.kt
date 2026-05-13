@@ -36,7 +36,9 @@ import java.util.Locale
     tableName = "compras",
     indices = [
         Index(value = ["id_pos_guia"]),  // Índice para queries por guía
-        Index(value = ["fecha"])          // Índice para ordenar por fecha
+        Index(value = ["fecha"]),          // Índice para ordenar por fecha
+        Index(value = ["sync_id"], unique = true),
+        Index(value = ["guia_sync_id"])    // Lookup por guía global
     ]
 )
 data class Compra(
@@ -88,7 +90,28 @@ data class Compra(
 
     /** Timestamp de última modificación (para sync diff) */
     @ColumnInfo(name = "updated_at")
-    val updatedAt: Long = System.currentTimeMillis()
+    val updatedAt: Long = System.currentTimeMillis(),
+
+    @ColumnInfo(name = "sync_id")
+    val syncId: String = "",
+
+    /**
+     * Stable global identifier of the parent Guia. Replaces the legacy
+     * positional [idPosGuia] for cross-device sync. Both columns are
+     * maintained during the transition (v3.5–v3.6); [idPosGuia] is the
+     * authority for in-memory operations until the codebase migrates fully.
+     */
+    @ColumnInfo(name = "guia_sync_id")
+    val guiaSyncId: String? = null,
+
+    @ColumnInfo(name = "deleted")
+    val deleted: Boolean = false,
+
+    @ColumnInfo(name = "deleted_at")
+    val deletedAt: Long? = null,
+
+    @ColumnInfo(name = "data_quality")
+    val dataQuality: String = "ok"
 ) : Parcelable {
 
     // NOTA: NO usar init{require()} aquí porque rompe la deserialización JSON

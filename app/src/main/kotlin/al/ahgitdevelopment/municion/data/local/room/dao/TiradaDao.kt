@@ -1,6 +1,14 @@
 package al.ahgitdevelopment.municion.data.local.room.dao
 
-import androidx.room.*
+import androidx.room.ColumnInfo
+import androidx.room.Dao
+import androidx.room.Delete
+import androidx.room.Insert
+import androidx.room.MapColumn
+import androidx.room.OnConflictStrategy
+import androidx.room.Query
+import androidx.room.Transaction
+import androidx.room.Update
 import al.ahgitdevelopment.municion.data.local.room.entities.Tirada
 import kotlinx.coroutines.flow.Flow
 
@@ -15,62 +23,70 @@ import kotlinx.coroutines.flow.Flow
 interface TiradaDao {
 
     /**
-     * Observa TODAS las tiradas ordenadas por fecha descendente
+     * Observa TODAS las tiradas (filtra tombstones).
      */
-    @Query("SELECT * FROM tiradas ORDER BY fecha DESC")
+    @Query("SELECT * FROM tiradas WHERE deleted = 0 ORDER BY fecha DESC")
     fun getAllTiradasFlow(): Flow<List<Tirada>>
 
     /**
-     * Obtiene todas las tiradas
+     * Obtiene todas las tiradas (filtra tombstones).
      */
-    @Query("SELECT * FROM tiradas ORDER BY fecha DESC")
+    @Query("SELECT * FROM tiradas WHERE deleted = 0 ORDER BY fecha DESC")
     suspend fun getAllTiradas(): List<Tirada>
 
+    @Query("SELECT * FROM tiradas ORDER BY fecha DESC")
+    suspend fun getAllTiradasIncludingDeleted(): List<Tirada>
+
     /**
-     * Obtiene una tirada por ID
+     * Obtiene una tirada por ID.
      */
     @Query("SELECT * FROM tiradas WHERE id = :id")
     suspend fun getTiradaById(id: Int): Tirada?
 
+    @Query("SELECT * FROM tiradas WHERE sync_id = :syncId")
+    suspend fun getTiradaBySyncId(syncId: String): Tirada?
+
     /**
-     * Obtiene tiradas con puntuación
+     * Obtiene tiradas con puntuación.
      */
-    @Query("SELECT * FROM tiradas WHERE puntuacion IS NOT NULL ORDER BY fecha DESC")
+    @Query("SELECT * FROM tiradas WHERE puntuacion IS NOT NULL AND deleted = 0 ORDER BY fecha DESC")
     suspend fun getTiradasConPuntuacion(): List<Tirada>
 
     /**
-     * Obtiene tiradas de una localización específica
-     * NOTA: La columna en BD se llama "rango" por compatibilidad
+     * Obtiene tiradas de una localización específica.
      */
-    @Query("SELECT * FROM tiradas WHERE rango = :localizacion ORDER BY fecha DESC")
+    @Query("SELECT * FROM tiradas WHERE rango = :localizacion AND deleted = 0 ORDER BY fecha DESC")
     suspend fun getTiradasByLocalizacion(localizacion: String): List<Tirada>
 
     /**
-     * Cuenta tiradas totales
+     * Cuenta tiradas totales.
      */
-    @Query("SELECT COUNT(*) FROM tiradas")
+    @Query("SELECT COUNT(*) FROM tiradas WHERE deleted = 0")
     suspend fun countTiradas(): Int
 
     /**
-     * Cuenta TODAS las tiradas (alias para migración)
+     * Cuenta TODAS las tiradas (alias para migración).
      */
-    @Query("SELECT COUNT(*) FROM tiradas")
+    @Query("SELECT COUNT(*) FROM tiradas WHERE deleted = 0")
     suspend fun getCount(): Int
 
     /**
-     * Calcula puntuación promedio
+     * Calcula puntuación promedio.
      */
-    @Query("SELECT AVG(puntuacion) FROM tiradas WHERE puntuacion IS NOT NULL")
+    @Query("SELECT AVG(puntuacion) FROM tiradas WHERE puntuacion IS NOT NULL AND deleted = 0")
     suspend fun getPromedioPuntuacion(): Float?
 
     /**
-     * Obtiene mejor puntuación
+     * Obtiene mejor puntuación.
      */
-    @Query("SELECT MAX(puntuacion) FROM tiradas WHERE puntuacion IS NOT NULL")
+    @Query("SELECT MAX(puntuacion) FROM tiradas WHERE puntuacion IS NOT NULL AND deleted = 0")
     suspend fun getMejorPuntuacion(): Float?
 
+    @Query("SELECT sync_id, updated_at, deleted FROM tiradas")
+    suspend fun getAllSyncMetadata(): List<TiradaSyncMeta>
+
     /**
-     * Obtiene ID y timestamp de todas las tiradas (para diff sync)
+     * @deprecated Used by the legacy diff sync.
      */
     @Query("SELECT id, updated_at FROM tiradas")
     suspend fun getAllTimestamps(): Map<@MapColumn(columnName = "id") Int, @MapColumn(columnName = "updated_at") Long>
@@ -119,4 +135,19 @@ interface TiradaDao {
         deleteAll()
         insertAll(tiradas)
     }
+
+    @Query("UPDATE tiradas SET deleted = 1, deleted_at = :now, updated_at = :now WHERE sync_id = :syncId")
+    suspend fun tombstoneBySyncId(syncId: String, now: Long): Int
+
+    @Query("DELETE FROM tiradas WHERE deleted = 1 AND deleted_at IS NOT NULL AND deleted_at < :before")
+    suspend fun purgeTombstonesBefore(before: Long): Int
 }
+
+data class TiradaSyncMeta(
+    @ColumnInfo(name = "sync_id")
+    val syncId: String,
+    @ColumnInfo(name = "updated_at")
+    val updatedAt: Long,
+    @ColumnInfo(name = "deleted")
+    val deleted: Boolean
+)
