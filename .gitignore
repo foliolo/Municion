@@ -60,6 +60,7 @@ gen-external-apklibs
 *.BACKUP.*
 *.BASE.*
 *.LOCAL.*
+!app/schemas/**
 *.REMOTE.*
 *_BACKUP_*.txt
 *_BASE_*.txt
