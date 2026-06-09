@@ -2,8 +2,10 @@
 
 package al.ahgitdevelopment.municion.util
 
+import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
+import kotlinx.datetime.plus
 import kotlinx.datetime.todayIn
 import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
@@ -59,6 +61,17 @@ fun utcMillisToDdMmYyyy(millis: Long): String {
 }
 
 private const val MILLIS_PER_DAY = 86_400_000L
+
+private fun LocalDate.toDdMmYyyy(): String =
+    "${day.toString().padStart(2, '0')}/${(month.ordinal + 1).toString().padStart(2, '0')}/$year"
+
+/** Adds [years] to a "dd/MM/yyyy" date (clamps Feb 29). Null if the input is malformed. */
+fun plusYearsDdMmYyyy(ddMmYyyy: String, years: Int): String? =
+    parseDdMmYyyy(ddMmYyyy)?.plus(years, DateTimeUnit.YEAR)?.toDdMmYyyy()
+
+/** 31 December of the year of a "dd/MM/yyyy" date. Null if malformed. */
+fun endOfYearDdMmYyyy(ddMmYyyy: String): String? =
+    parseDdMmYyyy(ddMmYyyy)?.let { "31/12/${it.year}" }
 
 /** Formats a "dd/MM/yyyy" string as "dd MMM yyyy" (Spanish month abbreviations); falls back to the input. */
 fun formatDisplayDate(ddMmYyyy: String): String {

@@ -21,6 +21,10 @@ import al.ahgitdevelopment.municion.domain.usecase.UpdateCompraUseCase
 import al.ahgitdevelopment.municion.firebase.CrashReporter
 import al.ahgitdevelopment.municion.firebase.CurrentUserIdProvider
 import al.ahgitdevelopment.municion.firebase.FirebaseCurrentUserIdProvider
+import al.ahgitdevelopment.municion.ui.forms.compra.CompraFormViewModel
+import al.ahgitdevelopment.municion.ui.forms.guia.GuiaFormViewModel
+import al.ahgitdevelopment.municion.ui.forms.licencia.LicenciaFormViewModel
+import al.ahgitdevelopment.municion.ui.forms.tirada.TiradaFormViewModel
 import al.ahgitdevelopment.municion.ui.viewmodel.CompraViewModel
 import al.ahgitdevelopment.municion.ui.viewmodel.GuiaViewModel
 import al.ahgitdevelopment.municion.ui.viewmodel.LicenciaViewModel
@@ -91,5 +95,8 @@ val presentationModule = module {
     viewModelOf(::TiradaViewModel)
     viewModelOf(::LoginViewModel)
     viewModelOf(::MigrationViewModel)
-    // form ViewModels added below as the form screens land (phase 6).
+    viewModelOf(::LicenciaFormViewModel)
+    viewModelOf(::GuiaFormViewModel)
+    viewModelOf(::CompraFormViewModel)
+    viewModelOf(::TiradaFormViewModel)
 }

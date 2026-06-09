@@ -3,6 +3,10 @@ package al.ahgitdevelopment.municion.ui.navigation
 import al.ahgitdevelopment.municion.ui.auth.LoginScreen
 import al.ahgitdevelopment.municion.ui.auth.MigrationScreen
 import al.ahgitdevelopment.municion.ui.compras.ComprasContent
+import al.ahgitdevelopment.municion.ui.forms.compra.CompraFormScreen
+import al.ahgitdevelopment.municion.ui.forms.guia.GuiaFormScreen
+import al.ahgitdevelopment.municion.ui.forms.licencia.LicenciaFormScreen
+import al.ahgitdevelopment.municion.ui.forms.tirada.TiradaFormScreen
 import al.ahgitdevelopment.municion.ui.guias.GuiasContent
 import al.ahgitdevelopment.municion.ui.licencias.LicenciasContent
 import al.ahgitdevelopment.municion.ui.tiradas.TiradasContent
@@ -18,6 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.toRoute
 
 /**
  * Single NavHost. Child screens are content-only (the Scaffold lives in MainScreen).
@@ -66,21 +71,41 @@ fun MunicionNavHost(
             PlaceholderContent("Ajustes (próximamente)")
         }
         // Forms — real screens land in the forms sub-milestone (phase 6).
-        composable<LicenciaForm> {
-            onRegisterSaveCallback(null)
-            PlaceholderContent("Formulario de licencia (próximamente)")
+        composable<LicenciaForm> { entry ->
+            LicenciaFormScreen(
+                licenciaId = entry.toRoute<LicenciaForm>().licenciaId,
+                navController = navController,
+                snackbarHostState = snackbarHostState,
+                onRegisterSaveCallback = onRegisterSaveCallback,
+            )
         }
-        composable<GuiaForm> {
-            onRegisterSaveCallback(null)
-            PlaceholderContent("Formulario de guía (próximamente)")
+        composable<GuiaForm> { entry ->
+            val route = entry.toRoute<GuiaForm>()
+            GuiaFormScreen(
+                guiaId = route.guiaId,
+                tipoLicencia = route.tipoLicencia,
+                navController = navController,
+                snackbarHostState = snackbarHostState,
+                onRegisterSaveCallback = onRegisterSaveCallback,
+            )
         }
-        composable<CompraForm> {
-            onRegisterSaveCallback(null)
-            PlaceholderContent("Formulario de compra (próximamente)")
+        composable<CompraForm> { entry ->
+            val route = entry.toRoute<CompraForm>()
+            CompraFormScreen(
+                compraId = route.compraId,
+                guiaId = route.guiaId,
+                navController = navController,
+                snackbarHostState = snackbarHostState,
+                onRegisterSaveCallback = onRegisterSaveCallback,
+            )
         }
-        composable<TiradaForm> {
-            onRegisterSaveCallback(null)
-            PlaceholderContent("Formulario de tirada (próximamente)")
+        composable<TiradaForm> { entry ->
+            TiradaFormScreen(
+                tiradaId = entry.toRoute<TiradaForm>().tiradaId,
+                navController = navController,
+                snackbarHostState = snackbarHostState,
+                onRegisterSaveCallback = onRegisterSaveCallback,
+            )
         }
     }
 }
