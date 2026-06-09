@@ -39,8 +39,8 @@ android {
         applicationId = "al.ahgitdevelopment.municion"
         minSdk = 26
         targetSdk = 36
-        versionCode = 45
-        versionName = "3.3.0"
+        versionCode = 46
+        versionName = "4.0.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
