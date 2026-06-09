@@ -4,5 +4,22 @@
 <dict>
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
+	<!-- Calendar reminders for licence expiry (IosCalendarManager / EventKit). -->
+	<key>NSCalendarsUsageDescription</key>
+	<string>Se usa para crear recordatorios de caducidad de tus licencias en tu calendario.</string>
+	<!-- Picking weapon/licence/purchase photos from the gallery (FileKit). -->
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Se usa para adjuntar fotos a tus armas, licencias y compras.</string>
+	<!-- Taking photos for the entities (if capture is enabled). -->
+	<key>NSCameraUsageDescription</key>
+	<string>Se usa para hacer fotos de tus armas, licencias y compras.</string>
+	<!-- App Tracking Transparency, required once iOS AdMob is enabled. -->
+	<key>NSUserTrackingUsageDescription</key>
+	<string>Se usa para mostrar anuncios más relevantes.</string>
+	<!-- Push notifications (FCM via APNs). -->
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>remote-notification</string>
+	</array>
 </dict>
 </plist>

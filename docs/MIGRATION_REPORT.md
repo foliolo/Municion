@@ -72,7 +72,10 @@ Stack destino: Kotlin 2.4.0 · Compose MP 1.11.1 · AGP 9.2.1 · módulos `:shar
   - Fastlane: `androidApp/fastlane/{Appfile,Fastfile}`, `iosApp/fastlane/{Appfile,Matchfile,Fastfile}`, `Gemfile`
   - `.editorconfig` (`ktlint_standard_function-naming = disabled` para @Composable/factories PascalCase); `:shared:ktlintCheck` ✅
   - **Verificado:** `ktlintCheck` ✅ · Android `assembleDebug` ✅ · iOS link ✅ (los workflows se validan al primer push con los secrets configurados)
-- [ ] Fase 11 — Finalización Xcode (SPM, Info.plist, entitlements, iconos)
+- [~] **Fase 11 — Finalización Xcode (preparado lo posible sin Xcode)**
+  - [x] `Info.plist`: añadidas `NSCalendarsUsageDescription` (calendario), `NSPhotoLibraryUsageDescription`/`NSCameraUsageDescription` (imagen), `NSUserTrackingUsageDescription` (ATT/AdMob), `UIBackgroundModes`→`remote-notification` (push).
+  - [x] `Config.xcconfig`: **corregido el bundle id** a `al.ahgitdevelopment.municion` (ver Problema #15) + comentarios sobre `TEAM_ID`.
+  - [ ] Requiere Xcode (detallado en §4.F): paquetes SPM (Firebase/AdMob/UMP), `GoogleService-Info.plist` real, capabilities Push/App Attest (entitlements los gestiona Xcode al activarlas — no se crean a mano para no romper la firma), Run Script `embedAndSignAppleFrameworkForXcode`, `GADApplicationIdentifier`, icono de app, StoreKit config.
 
 ---
 
@@ -94,6 +97,7 @@ Stack destino: Kotlin 2.4.0 · Compose MP 1.11.1 · AGP 9.2.1 · módulos `:shar
 | 12 | `SyncDataUseCase` dependía de auth/billing/FirebaseFormatMigrator (otras fases) | Simplificado a 4 repos + `CurrentUserIdProvider` + `SyncScheduler`. Reconcile de ads se cablea en Fase 7; `FirebaseFormatMigrator` descartado (parsing tolerante + syncId determinista lo subsumen). |
 | 13 | `@HiltWorker` (Hilt) | Workers `CoroutineWorker` + `KoinComponent` (factory por defecto de WorkManager; sin Configuration.Provider). |
 | 14 | `iosApp/iosApp/GoogleService-Info.plist` se generó en Fase 8 con `API_KEY`/`GOOGLE_APP_ID`/`*CLIENT_ID` **inventados** (la app iOS no está registrada y `municion-95caa` no es accesible) | Reescrito como **placeholder explícito**: valores reales y derivables conservados (`PROJECT_ID`/`GCM_SENDER_ID`/`BUNDLE_ID`/`STORAGE_BUCKET`/`DATABASE_URL`, contrastados con el `google-services.json` real de `develop`); credenciales específicas de iOS → `REPLACE_WITH_REAL_IOS_*` + comentario de cabecera. El usuario debe registrar la app iOS y sustituir el fichero por el real (§4). |
+| 15 | `Config.xcconfig` (plantilla JetBrains) ponía `PRODUCT_BUNDLE_IDENTIFIER=al.ahgitdevelopment.municion$(TEAM_ID)` → bundle real `al.ahgitdevelopment.municion3NXH5U7C5A`, que **no coincide** con Firebase/AdMob/RevenueCat/App Store/Fastlane (todos `al.ahgitdevelopment.municion`) → Firebase/AdMob fallarían en iOS | Bundle id corregido a `al.ahgitdevelopment.municion` (el sufijo `$(TEAM_ID)` era el truco del wizard para provisioning gratuito). `TEAM_ID` se deja al usuario (verificar que es su Apple Team ID real). |
 
 **Avisos (no bloqueantes, vigilar):**
 - Skiko: `coil3 3.4.0` arrastra skiko 0.9.22.2 vs Compose MP 0.144.6 (resuelve a la mayor; vigilar render de imágenes en iOS).

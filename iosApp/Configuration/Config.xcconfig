@@ -1,7 +1,12 @@
+// TEAM_ID must be your real Apple Developer Team ID (Developer Portal → Membership).
+// Verify this value before archiving — it drives signing/provisioning.
 TEAM_ID=3NXH5U7C5A
 
 PRODUCT_NAME=Municion
-PRODUCT_BUNDLE_IDENTIFIER=al.ahgitdevelopment.municion$(TEAM_ID)
+// Must match the bundle id registered in Firebase / AdMob / App Store Connect / RevenueCat.
+// (The JetBrains wizard default appended $(TEAM_ID) for free provisioning; removed so the
+// real backend config — GoogleService-Info.plist, AdMob, Fastlane — resolves correctly.)
+PRODUCT_BUNDLE_IDENTIFIER=al.ahgitdevelopment.municion
 
 CURRENT_PROJECT_VERSION=1
 MARKETING_VERSION=4.0.0
