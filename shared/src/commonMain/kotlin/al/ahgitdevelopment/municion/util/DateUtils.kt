@@ -42,6 +42,24 @@ fun daysFromTodayTo(target: LocalDate): Long =
 fun daysSince(target: LocalDate): Long =
     today().toEpochDays() - target.toEpochDays()
 
+/** Today as "dd/MM/yyyy". */
+fun todayDdMmYyyy(): String {
+    val d = today()
+    return "${d.day.toString().padStart(2, '0')}/${(d.month.ordinal + 1).toString().padStart(2, '0')}/${d.year}"
+}
+
+/** "dd/MM/yyyy" → UTC-midnight epoch millis (for Material3 DatePicker initial selection). */
+fun ddMmYyyyToUtcMillis(value: String): Long? =
+    parseDdMmYyyy(value)?.let { it.toEpochDays() * MILLIS_PER_DAY }
+
+/** UTC-midnight epoch millis (from Material3 DatePicker) → "dd/MM/yyyy". */
+fun utcMillisToDdMmYyyy(millis: Long): String {
+    val date = LocalDate.fromEpochDays(millis / MILLIS_PER_DAY)
+    return "${date.day.toString().padStart(2, '0')}/${(date.month.ordinal + 1).toString().padStart(2, '0')}/${date.year}"
+}
+
+private const val MILLIS_PER_DAY = 86_400_000L
+
 /** Formats a "dd/MM/yyyy" string as "dd MMM yyyy" (Spanish month abbreviations); falls back to the input. */
 fun formatDisplayDate(ddMmYyyy: String): String {
     val parts = ddMmYyyy.split("/")
