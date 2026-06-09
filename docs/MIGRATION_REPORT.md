@@ -17,7 +17,11 @@ Stack destino: Kotlin 2.4.0 · Compose MP 1.11.1 · AGP 9.2.1 · módulos `:shar
   - [x] 0.5 Theme (Color/Theme/Type) + drawables + i18n (es default / en) en composeResources; `Res` en `al.ahgitdevelopment.municion.resources`
   - [~] 0.6 Esqueleto Room KMP → **fusionado en Fase 2** (Room exige ≥1 entidad en `@Database`)
   - **Verificado:** `:androidApp:assembleDebug` ✅ · `:shared:linkDebugFrameworkIosSimulatorArm64` ✅
-- [ ] Fase 1 — Capa Firebase común (GitLive) + init iOS
+- [x] **Fase 1 — Capa Firebase común (GitLive)** (Kotlin) + init iOS Swift
+  - `CrashReporter`, `AnalyticsTracker`/`FirebaseAnalyticsTracker` (lean), `CurrentUserIdProvider` (GitLive crashlytics/analytics/auth) cableados en Koin
+  - `iOSApp.swift`: `FirebaseApp.configure()` + persistencia RTDB + App Check + Analytics
+  - **Pendiente acción usuario:** añadir paquetes SPM de Firebase en Xcode + `GoogleService-Info.plist` (ver §4). El datasource RTDB se hace en Fase 3 (con el sync).
+  - **Verificado (Kotlin):** Android ✅ · iOS link ✅. (Swift compila al añadir SPM.)
 - [x] **Fase 2 — Entidades, DAOs, migraciones Room** (incluye 0.6)
   - 6 entidades a commonMain (sin `@Parcelize`/`Context`/Java dates; `@Serializable` + Room intactos; columnas idénticas para compatibilidad de schema)
   - utils comunes: `Time` (`nowMillis`), `DateUtils` (parse/format/diff "dd/MM/yyyy" con kotlinx-datetime), `NumberFormat`, **`Md5`** (MD5 puro) + `SyncIdGenerator` (v4 con `kotlin.uuid`, v3 byte-idéntico a Java)
@@ -72,6 +76,7 @@ Stack destino: Kotlin 2.4.0 · Compose MP 1.11.1 · AGP 9.2.1 · módulos `:shar
 > Pendiente de completar al avanzar las fases. Resumen de lo necesario:
 
 - **Firebase** (`municion-95caa`, no accesible desde la cuenta CLI/MCP actual): registrar app iOS (bundle `al.ahgitdevelopment.municion`) → `GoogleService-Info.plist`; aportar `google-services.json` real (Android) → reemplaza el placeholder y se publica como secret `FIREBASE_JSON` (base64); habilitar RTDB/Storage/Auth(Email+Anónimo)/Crashlytics/Analytics/FCM.
+- **Xcode — SPM Firebase (Fase 1):** en Xcode → File → Add Package Dependencies → `https://github.com/firebase/firebase-ios-sdk` (Up to Next Major). Añadir al target `iosApp` los productos: `FirebaseCore`, `FirebaseAuth`, `FirebaseDatabase`, `FirebaseStorage`, `FirebaseCrashlytics`, `FirebaseAnalytics`, `FirebaseMessaging`, `FirebaseAppCheck`. Arrastrar `GoogleService-Info.plist` a `iosApp/iosApp/` (Target Membership = iosApp). Sin Podfile. (`iOSApp.swift` ya hace `FirebaseApp.configure()` + persistencia RTDB.)
 - **AdMob:** apps iOS+Android, unidades banner → `ADMOB_APPLICATION_ID(_IOS)`, `ADMOB_BOTTOM_BANNER_ID(_IOS)` en `local.properties`/secrets.
 - **RevenueCat:** proyecto, productos remove-ads (Play + App Store) → entitlement `ad_free`; claves SDK.
 - **Apple Developer / App Store Connect, Google Play Console, GitHub secrets, Xcode (SPM Firebase/AdMob), keystore:** detalle en fases 7/10/11.

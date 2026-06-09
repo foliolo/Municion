@@ -1,7 +1,14 @@
 package al.ahgitdevelopment.municion.di
 
+import al.ahgitdevelopment.municion.analytics.AnalyticsTracker
+import al.ahgitdevelopment.municion.analytics.FirebaseAnalyticsTracker
 import al.ahgitdevelopment.municion.data.local.room.MunicionDatabase
 import al.ahgitdevelopment.municion.data.local.room.buildMunicionDatabase
+import al.ahgitdevelopment.municion.firebase.CrashReporter
+import al.ahgitdevelopment.municion.firebase.CurrentUserIdProvider
+import al.ahgitdevelopment.municion.firebase.FirebaseCurrentUserIdProvider
+import org.koin.core.module.dsl.singleOf
+import org.koin.dsl.bind
 import org.koin.dsl.module
 
 /**
@@ -18,7 +25,12 @@ val dataModule = module {
     single { get<MunicionDatabase>().appPurchaseDao() }
     single { get<MunicionDatabase>().syncOperationDao() }
 
-    // Firebase / repositories / sync wired in phases 1–3.
+    // Firebase common layer (GitLive)
+    singleOf(::CrashReporter)
+    singleOf(::FirebaseAnalyticsTracker) bind AnalyticsTracker::class
+    singleOf(::FirebaseCurrentUserIdProvider) bind CurrentUserIdProvider::class
+
+    // RTDB datasource + repositories + sync wired in phase 3.
 }
 
 /**
