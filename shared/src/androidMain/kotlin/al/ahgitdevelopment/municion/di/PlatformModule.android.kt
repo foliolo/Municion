@@ -4,6 +4,8 @@ import al.ahgitdevelopment.municion.data.local.room.MUNICION_DATABASE_NAME
 import al.ahgitdevelopment.municion.data.local.room.MunicionDatabase
 import al.ahgitdevelopment.municion.data.sync.AndroidSyncScheduler
 import al.ahgitdevelopment.municion.data.sync.SyncScheduler
+import al.ahgitdevelopment.municion.platform.AndroidCalendarManager
+import al.ahgitdevelopment.municion.platform.CalendarManager
 import android.content.Context
 import androidx.room.Room
 import androidx.room.RoomDatabase
@@ -22,4 +24,7 @@ actual val platformModule: Module =
 
         // Sync scheduling via WorkManager.
         single<SyncScheduler> { AndroidSyncScheduler(androidContext()) }
+
+        // Calendar reminders via CalendarContract.
+        single<CalendarManager> { AndroidCalendarManager(androidContext(), get()) }
     }

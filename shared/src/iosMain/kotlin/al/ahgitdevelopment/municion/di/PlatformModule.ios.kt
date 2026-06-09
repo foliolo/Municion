@@ -6,6 +6,8 @@ import al.ahgitdevelopment.municion.data.local.room.MUNICION_DATABASE_NAME
 import al.ahgitdevelopment.municion.data.local.room.MunicionDatabase
 import al.ahgitdevelopment.municion.data.sync.IosSyncScheduler
 import al.ahgitdevelopment.municion.data.sync.SyncScheduler
+import al.ahgitdevelopment.municion.platform.CalendarManager
+import al.ahgitdevelopment.municion.platform.IosCalendarManager
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import kotlinx.cinterop.ExperimentalForeignApi
@@ -33,4 +35,7 @@ actual val platformModule: Module =
 
         // Sync scheduling: foreground + on-demand drains.
         single<SyncScheduler> { IosSyncScheduler(get(), get()) }
+
+        // Calendar reminders via EventKit.
+        single<CalendarManager> { IosCalendarManager(get()) }
     }

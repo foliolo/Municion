@@ -6,6 +6,7 @@ import al.ahgitdevelopment.municion.data.repository.LicenciaRepository
 import al.ahgitdevelopment.municion.data.sync.SyncIdGenerator
 import al.ahgitdevelopment.municion.firebase.CrashReporter
 import al.ahgitdevelopment.municion.firebase.CurrentUserIdProvider
+import al.ahgitdevelopment.municion.platform.CalendarManager
 import al.ahgitdevelopment.municion.ui.forms.FormUiState
 import al.ahgitdevelopment.municion.util.endOfYearDdMmYyyy
 import al.ahgitdevelopment.municion.util.plusYearsDdMmYyyy
@@ -22,6 +23,7 @@ class LicenciaFormViewModel(
     private val currentUserId: CurrentUserIdProvider,
     private val crashReporter: CrashReporter,
     private val imageStorage: ImageStorageRepository,
+    private val calendarManager: CalendarManager,
 ) : ViewModel() {
     private val _state = MutableStateFlow(LicenciaFormState())
     val state: StateFlow<LicenciaFormState> = _state.asStateFlow()
@@ -122,6 +124,10 @@ class LicenciaFormViewModel(
                 } else {
                     repository.saveLicencia(licencia, userId).map { }
                 }
+            // Best-effort calendar reminders (expiry day + 1 month before). Never blocks the save.
+            if (result.isSuccess && licencia.fechaCaducidad.isNotBlank()) {
+                calendarManager.createLicenseExpirationEvents(licencia)
+            }
             _uiState.value =
                 result.fold(
                     onSuccess = { FormUiState.Saved(if (s.isEditing) "Licencia actualizada" else "Licencia guardada") },

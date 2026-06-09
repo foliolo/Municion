@@ -4,6 +4,7 @@ import al.ahgitdevelopment.municion.data.local.room.entities.Licencia
 import al.ahgitdevelopment.municion.data.repository.LicenciaRepository
 import al.ahgitdevelopment.municion.firebase.CrashReporter
 import al.ahgitdevelopment.municion.firebase.CurrentUserIdProvider
+import al.ahgitdevelopment.municion.platform.CalendarManager
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -17,6 +18,7 @@ class LicenciaViewModel(
     private val licenciaRepository: LicenciaRepository,
     private val currentUserId: CurrentUserIdProvider,
     private val crashReporter: CrashReporter,
+    private val calendarManager: CalendarManager,
 ) : ViewModel() {
     val licencias: StateFlow<List<Licencia>> =
         licenciaRepository.licencias
@@ -42,6 +44,8 @@ class LicenciaViewModel(
     fun deleteLicencia(licencia: Licencia) =
         run("Licencia eliminada") {
             licenciaRepository.deleteLicencia(licencia, currentUserId.currentUserId()).getOrThrow()
+            // Best-effort: remove the expiry reminders too.
+            calendarManager.deleteLicenseCalendarEvents(licencia)
         }
 
     fun resetUiState() {
