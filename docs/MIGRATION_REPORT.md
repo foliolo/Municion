@@ -40,13 +40,19 @@ Stack destino: Kotlin 2.4.0 · Compose MP 1.11.1 · AGP 9.2.1 · módulos `:shar
   - `AuthViewModel` reacciona al `Flow authStateChanged` de GitLive (estados Loading/NotAuthenticated/RequiresMigration/Authenticated)
   - `Legacy{Converter,MigrationHelper}` (v2.x Android-only, código muerto) **descartados**
   - **Verificado:** Android ✅ · iOS link ✅
-- [ ] Fase 5 — Navegación MP
-- [ ] Fase 6 — Features por entidad
-- [ ] Fase 7 — Plataforma (imagen, AdMob, RevenueCat, calendario, FCM)
+- [x] **Fase 5 — Navegación MP** — `NavRoutes` `@Serializable` con `id` (sin NavType custom Parcelable). NavHost real va con las pantallas (Fase 6).
+- [~] **Fase 6 — Features por entidad** (EN CURSO)
+  - [x] ViewModels de lista (Licencia/Guia/Compra/Tirada) + `MainViewModel` + `EntityUiState` (CRUD vía repos/usecases, `CurrentUserIdProvider`)
+  - [ ] Componentes compartidos (TopBar/BottomBar/FAB/DatePickerField/DropdownField/Delete/EmptyState/DataQualityBanner) — **traducir APIs de recursos Android (`R`/`androidx...res`) → Compose MP (`Res`/`org.jetbrains.compose.resources`)**
+  - [ ] Pantallas lista + items + diálogos de selección (Guia/Compra)
+  - [ ] Formularios (screen/state/viewmodel) de las 4 entidades
+  - [ ] Login + Migration screens (+ Login/Migration ViewModels)
+  - [ ] MainScreen (Scaffold + bottom nav) + MunicionNavHost + MainActivity + App() iOS
+- [ ] Fase 7 — Plataforma (imagen FileKit/cámara, AdMob expect/actual, RevenueCat purchases-kmp, calendario EventKit, FCM)
 - [ ] Fase 8 — Settings, tutorial, calidad de datos
-- [ ] Fase 9 — Tests
-- [ ] Fase 10 — CI/CD
-- [ ] Fase 11 — Finalización Xcode
+- [ ] Fase 9 — Tests (portar a commonTest + mokkery)
+- [ ] Fase 10 — CI/CD (Fastlane + GitHub Actions)
+- [ ] Fase 11 — Finalización Xcode (SPM, Info.plist, entitlements, iconos)
 
 ---
 
