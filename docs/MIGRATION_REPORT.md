@@ -28,7 +28,13 @@ Stack destino: Kotlin 2.4.0 · Compose MP 1.11.1 · AGP 9.2.1 · módulos `:shar
   - 6 DAOs (Flow/suspend/@Transaction) + proyecciones `*SyncMeta`
   - `MunicionDatabase` v33 (@ConstructedBy) + 10 migraciones v23→v33 portadas a `SQLiteConnection`; builder con `BundledSQLiteDriver`; Room builder por plataforma (Android `getDatabasePath`, iOS `NSDocumentDirectory`)
   - **Verificado:** `:androidApp:assembleDebug` ✅ · `:shared:linkDebugFrameworkIosSimulatorArm64` ✅ · `:shared:testAndroidHostTest` (golden UUID) ✅
-- [ ] Fase 3 — Repositorios + sync + SyncScheduler
+- [x] **Fase 3 — Repositorios + sync + SyncScheduler**
+  - `MunicionRtdbDatasource` (GitLive RTDB): escritura tipada de entidad, lectura tipada a DTOs tolerantes
+  - `SyncOutboxConfig`/`SyncOutboxEnqueuer`/`SyncOutboxDrainer` (drenado en commonMain), `TolerantParsers` (DTO→entidad), DTOs `@Serializable`
+  - 4 repos (write: Room+outbox+drain; read: merge no destructivo, pending-wins, newer-wins)
+  - `SyncScheduler` (interfaz común): `AndroidSyncScheduler` (WorkManager: periódico 15min + cleanup diario + on-demand) / `IosSyncScheduler` (foreground + on-demand)
+  - `SyncDataUseCase` (download paralelo 4 colecciones), casos de uso Compra (cupo), `ClearLocalDataUseCase`
+  - **Verificado:** Android `assembleDebug` ✅ · iOS link ✅ · host tests ✅
 - [ ] Fase 4 — Autenticación
 - [ ] Fase 5 — Navegación MP
 - [ ] Fase 6 — Features por entidad
@@ -53,6 +59,10 @@ Stack destino: Kotlin 2.4.0 · Compose MP 1.11.1 · AGP 9.2.1 · módulos `:shar
 | 7 | `UUID.nameUUIDFromBytes` (UUID v3/MD5) no existe en KMP | MD5 puro en Kotlin (`util/Md5.kt`) + golden test contra vectores de Java. ✅ idéntico. |
 | 8 | `getAllTimestamps()` usaba `Map`/`@MapColumn` (soporte dudoso en Room KMP, además @deprecated) | Eliminado de los DAOs (el sync v3.5+ usa `getAllSyncMetadata`). |
 | 9 | `Dispatchers.IO` es JVM-only (interno en Native) | `setQueryCoroutineContext(Dispatchers.Default)` (multiplataforma). |
+| 10 | Lectura RTDB cruda corrompería datos en iOS (`NSNumber` no es `kotlin.Number`) | Lectura con **deserialización tipada GitLive a DTOs tolerantes**; `TolerantParsers` opera sobre el DTO. (mejora) |
+| 11 | `withTransaction` (room-ktx) es Android-only; no hay transacción cross-DAO en Room KMP | insert+enqueue **secuencial** (Room es source of truth; sin pérdida — entidad reenviada en siguiente edición si el proceso muere entre medias). Endurecer con `useWriterConnection` más adelante. |
+| 12 | `SyncDataUseCase` dependía de auth/billing/FirebaseFormatMigrator (otras fases) | Simplificado a 4 repos + `CurrentUserIdProvider` + `SyncScheduler`. Reconcile de ads se cablea en Fase 7; `FirebaseFormatMigrator` descartado (parsing tolerante + syncId determinista lo subsumen). |
+| 13 | `@HiltWorker` (Hilt) | Workers `CoroutineWorker` + `KoinComponent` (factory por defecto de WorkManager; sin Configuration.Provider). |
 
 **Avisos (no bloqueantes, vigilar):**
 - Skiko: `coil3 3.4.0` arrastra skiko 0.9.22.2 vs Compose MP 0.144.6 (resuelve a la mayor; vigilar render de imágenes en iOS).

@@ -57,21 +57,10 @@
         </provider>
 
         <!--
-            Remove the default WorkManager initializer: MunicionApplication implements
-            Configuration.Provider so the Koin-backed WorkerFactory is registered before
-            WorkManager initializes (SyncOutboxWorker / TombstoneCleanupWorker resolve
-            their dependencies from Koin). See phase 3 of the KMP migration.
+            WorkManager uses its default initializer + default WorkerFactory. The sync workers
+            are plain CoroutineWorkers that resolve their dependencies from Koin internally
+            (KoinComponent), so no custom Configuration.Provider is needed.
         -->
-        <provider
-            android:name="androidx.startup.InitializationProvider"
-            android:authorities="${applicationId}.androidx-startup"
-            android:exported="false"
-            tools:node="merge">
-            <meta-data
-                android:name="androidx.work.WorkManagerInitializer"
-                android:value="androidx.startup"
-                tools:node="remove" />
-        </provider>
 
     </application>
 

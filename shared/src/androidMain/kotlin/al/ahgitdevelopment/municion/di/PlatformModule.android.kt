@@ -2,6 +2,8 @@ package al.ahgitdevelopment.municion.di
 
 import al.ahgitdevelopment.municion.data.local.room.MUNICION_DATABASE_NAME
 import al.ahgitdevelopment.municion.data.local.room.MunicionDatabase
+import al.ahgitdevelopment.municion.data.sync.AndroidSyncScheduler
+import al.ahgitdevelopment.municion.data.sync.SyncScheduler
 import android.content.Context
 import androidx.room.Room
 import androidx.room.RoomDatabase
@@ -16,4 +18,7 @@ actual val platformModule: Module = module {
         val dbFile = context.getDatabasePath(MUNICION_DATABASE_NAME)
         Room.databaseBuilder<MunicionDatabase>(context, dbFile.absolutePath)
     }
+
+    // Sync scheduling via WorkManager.
+    single<SyncScheduler> { AndroidSyncScheduler(androidContext()) }
 }

@@ -20,4 +20,7 @@ interface AppPurchaseDao {
 
     @Query("DELETE FROM app_purchases WHERE sku = :sku")
     suspend fun delete(sku: String)
+
+    @Query("DELETE FROM app_purchases")
+    suspend fun deleteAll()
 }

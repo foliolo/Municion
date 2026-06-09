@@ -145,4 +145,7 @@ interface SyncOperationDao {
         """,
     )
     suspend fun resetFailedToRetry(): Int
+
+    @Query("DELETE FROM sync_outbox")
+    suspend fun deleteAll()
 }

@@ -12,6 +12,7 @@ import androidx.room.PrimaryKey
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.plus
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 /**
@@ -36,7 +37,8 @@ data class Tirada(
     @ColumnInfo(name = "descripcion")
     val descripcion: String,
 
-    /** Shooting range/location (legacy column name "rango"). */
+    /** Shooting range/location (legacy column/Firebase key "rango"). */
+    @SerialName("rango")
     @ColumnInfo(name = "rango")
     val localizacion: String? = null,
 

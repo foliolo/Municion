@@ -4,6 +4,8 @@ package al.ahgitdevelopment.municion.di
 
 import al.ahgitdevelopment.municion.data.local.room.MUNICION_DATABASE_NAME
 import al.ahgitdevelopment.municion.data.local.room.MunicionDatabase
+import al.ahgitdevelopment.municion.data.sync.IosSyncScheduler
+import al.ahgitdevelopment.municion.data.sync.SyncScheduler
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import kotlinx.cinterop.ExperimentalForeignApi
@@ -26,4 +28,7 @@ actual val platformModule: Module = module {
         val dbPath = requireNotNull(documentsDir?.path) + "/" + MUNICION_DATABASE_NAME
         Room.databaseBuilder<MunicionDatabase>(name = dbPath)
     }
+
+    // Sync scheduling: foreground + on-demand drains.
+    single<SyncScheduler> { IosSyncScheduler(get(), get()) }
 }

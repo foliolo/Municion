@@ -4,9 +4,24 @@ import al.ahgitdevelopment.municion.analytics.AnalyticsTracker
 import al.ahgitdevelopment.municion.analytics.FirebaseAnalyticsTracker
 import al.ahgitdevelopment.municion.data.local.room.MunicionDatabase
 import al.ahgitdevelopment.municion.data.local.room.buildMunicionDatabase
+import al.ahgitdevelopment.municion.data.repository.CompraRepository
+import al.ahgitdevelopment.municion.data.repository.GuiaRepository
+import al.ahgitdevelopment.municion.data.repository.LicenciaRepository
+import al.ahgitdevelopment.municion.data.repository.TiradaRepository
+import al.ahgitdevelopment.municion.data.sync.MunicionRtdbDatasource
+import al.ahgitdevelopment.municion.data.sync.SyncOutboxDrainer
+import al.ahgitdevelopment.municion.data.sync.SyncOutboxEnqueuer
+import al.ahgitdevelopment.municion.domain.usecase.ClearLocalDataUseCase
+import al.ahgitdevelopment.municion.domain.usecase.CreateCompraUseCase
+import al.ahgitdevelopment.municion.domain.usecase.DeleteCompraUseCase
+import al.ahgitdevelopment.municion.domain.usecase.SyncDataUseCase
+import al.ahgitdevelopment.municion.domain.usecase.UpdateCompraUseCase
 import al.ahgitdevelopment.municion.firebase.CrashReporter
 import al.ahgitdevelopment.municion.firebase.CurrentUserIdProvider
 import al.ahgitdevelopment.municion.firebase.FirebaseCurrentUserIdProvider
+import dev.gitlive.firebase.Firebase
+import dev.gitlive.firebase.database.FirebaseDatabase
+import dev.gitlive.firebase.database.database
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.bind
 import org.koin.dsl.module
@@ -26,11 +41,28 @@ val dataModule = module {
     single { get<MunicionDatabase>().syncOperationDao() }
 
     // Firebase common layer (GitLive)
+    single<FirebaseDatabase> { Firebase.database }
     singleOf(::CrashReporter)
     singleOf(::FirebaseAnalyticsTracker) bind AnalyticsTracker::class
     singleOf(::FirebaseCurrentUserIdProvider) bind CurrentUserIdProvider::class
 
-    // RTDB datasource + repositories + sync wired in phase 3.
+    // Sync subsystem (SyncScheduler is provided by platformModule)
+    singleOf(::MunicionRtdbDatasource)
+    singleOf(::SyncOutboxEnqueuer)
+    singleOf(::SyncOutboxDrainer)
+
+    // Repositories
+    singleOf(::LicenciaRepository)
+    singleOf(::GuiaRepository)
+    singleOf(::CompraRepository)
+    singleOf(::TiradaRepository)
+
+    // Use cases
+    singleOf(::CreateCompraUseCase)
+    singleOf(::UpdateCompraUseCase)
+    singleOf(::DeleteCompraUseCase)
+    singleOf(::ClearLocalDataUseCase)
+    singleOf(::SyncDataUseCase)
 }
 
 /**
