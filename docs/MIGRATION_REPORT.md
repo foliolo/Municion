@@ -53,7 +53,7 @@ Stack destino: Kotlin 2.4.0 · Compose MP 1.11.1 · AGP 9.2.1 · módulos `:shar
 - [~] **Fase 7 — Plataforma (parcial)**
   - [x] Banner AdMob `expect/actual` (`ads/AdaptiveBanner.kt` + Android `AdView` en `AndroidView` con test unit id / iOS stub no-op), gateado por `RemoveAdsManager.hasRemovedAds`
   - [x] `RemoveAdsManager` (interfaz común + `NoOpRemoveAdsManager`) cableado en Koin
-  - [ ] Imagen (FileKit + cámara/EXIF expect/actual + upload Storage GitLive) — **pendiente**
+  - [x] Imagen: picker de galería FileKit (común, sin cinterop) + `ImageProcessor` expect/actual (Android: EXIF + downscale + JPEG; iOS: passthrough) + `StorageData` expect/actual (ByteArray→GitLive `Data`) + `ImageStorageRepository` (sube a `v3_userdata/{uid}/{armas|licencias|compras}/{syncId}.jpg`, devuelve downloadUrl+path). `ImagePickerField` en los 3 formularios (Guía/Licencia/Compra); subida al guardar; FileKit Core init en `MunicionApplication`. *(Cámara directa diferida; la galería del sistema cubre captura en ambas plataformas.)*
   - [ ] RevenueCat `purchases-kmp` (compra/restore + reconcile `AppPurchase`/`ads_removed`) — **pendiente** (spike de link iOS antes)
   - [ ] Calendario `expect/actual` (CalendarContract / EventKit) — **pendiente**
   - [ ] FCM (servicio Android / coordinator iOS + APNs) — **pendiente**

@@ -8,6 +8,7 @@ import al.ahgitdevelopment.municion.resources.tipo_licencias
 import al.ahgitdevelopment.municion.resources.tipo_permiso_conducir
 import al.ahgitdevelopment.municion.ui.components.DatePickerField
 import al.ahgitdevelopment.municion.ui.components.DropdownField
+import al.ahgitdevelopment.municion.ui.components.ImagePickerField
 import al.ahgitdevelopment.municion.ui.forms.FormUiState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -44,6 +45,7 @@ fun LicenciaFormScreen(
 
     val state by viewModel.state.collectAsStateWithLifecycle()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val pickedImage by viewModel.pickedImage.collectAsStateWithLifecycle()
 
     LaunchedEffect(uiState) {
         when (val s = uiState) {
@@ -74,6 +76,15 @@ fun LicenciaFormScreen(
                 .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
+        ImagePickerField(
+            currentImageUrl = state.fotoUrl,
+            pickedBytes = pickedImage,
+            isBusy = uiState is FormUiState.Saving,
+            onPick = viewModel::onImagePicked,
+            onRemove = viewModel::onImageRemoved,
+            label = "Foto de la licencia",
+        )
+
         DropdownField(
             label = "Tipo de licencia",
             options = tipos.toList(),

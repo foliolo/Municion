@@ -9,7 +9,9 @@ import al.ahgitdevelopment.municion.auth.FirebaseAuthRepository
 import al.ahgitdevelopment.municion.data.local.room.MunicionDatabase
 import al.ahgitdevelopment.municion.data.local.room.buildMunicionDatabase
 import al.ahgitdevelopment.municion.data.repository.CompraRepository
+import al.ahgitdevelopment.municion.data.repository.FirebaseImageStorageRepository
 import al.ahgitdevelopment.municion.data.repository.GuiaRepository
+import al.ahgitdevelopment.municion.data.repository.ImageStorageRepository
 import al.ahgitdevelopment.municion.data.repository.LicenciaRepository
 import al.ahgitdevelopment.municion.data.repository.TiradaRepository
 import al.ahgitdevelopment.municion.data.sync.MunicionRtdbDatasource
@@ -76,6 +78,7 @@ val dataModule =
         singleOf(::SyncOutboxDrainer)
 
         // Repositories
+        singleOf(::FirebaseImageStorageRepository) bind ImageStorageRepository::class
         singleOf(::LicenciaRepository)
         singleOf(::GuiaRepository)
         singleOf(::CompraRepository)

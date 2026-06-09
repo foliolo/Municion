@@ -1,6 +1,9 @@
 package al.ahgitdevelopment.municion.ui.forms.guia
 
 import al.ahgitdevelopment.municion.data.repository.GuiaRepository
+import al.ahgitdevelopment.municion.data.repository.ImageFolder
+import al.ahgitdevelopment.municion.data.repository.ImageStorageRepository
+import al.ahgitdevelopment.municion.data.sync.SyncIdGenerator
 import al.ahgitdevelopment.municion.firebase.CrashReporter
 import al.ahgitdevelopment.municion.firebase.CurrentUserIdProvider
 import al.ahgitdevelopment.municion.ui.forms.FormUiState
@@ -16,12 +19,26 @@ class GuiaFormViewModel(
     private val repository: GuiaRepository,
     private val currentUserId: CurrentUserIdProvider,
     private val crashReporter: CrashReporter,
+    private val imageStorage: ImageStorageRepository,
 ) : ViewModel() {
     private val _state = MutableStateFlow(GuiaFormState())
     val state: StateFlow<GuiaFormState> = _state.asStateFlow()
 
     private val _uiState = MutableStateFlow<FormUiState>(FormUiState.Idle)
     val uiState: StateFlow<FormUiState> = _uiState.asStateFlow()
+
+    /** Bytes of an image picked but not yet uploaded (upload happens on [save]). */
+    private val _pickedImage = MutableStateFlow<ByteArray?>(null)
+    val pickedImage: StateFlow<ByteArray?> = _pickedImage.asStateFlow()
+
+    fun onImagePicked(bytes: ByteArray) {
+        _pickedImage.value = bytes
+    }
+
+    fun onImageRemoved() {
+        _pickedImage.value = null
+        _state.update { it.copy(fotoUrl = null, storagePath = null, imagePath = null) }
+    }
 
     fun initialize(
         guiaId: Int?,
@@ -111,6 +128,7 @@ class GuiaFormViewModel(
         viewModelScope.launch {
             _uiState.value = FormUiState.Saving
             val userId = currentUserId.currentUserId()
+            if (!uploadPendingImage(userId)) return@launch
             val guia = _state.value.toGuia()
             val result =
                 if (s.isEditing) {
@@ -127,6 +145,32 @@ class GuiaFormViewModel(
                     },
                 )
         }
+    }
+
+    /**
+     * Uploads a freshly-picked image (if any) under the guía's syncId and updates the form state
+     * with the resulting download URL + storage path. Returns false (and sets an error) on failure
+     * so [save] can abort without persisting an entity that points at a missing image.
+     */
+    private suspend fun uploadPendingImage(userId: String?): Boolean {
+        val bytes = _pickedImage.value ?: return true
+        if (userId.isNullOrBlank()) return true // No signed-in user: keep the existing photo, skip upload.
+        val key = _state.value.syncId.ifBlank { SyncIdGenerator.newSyncId() }
+        _state.update { it.copy(syncId = key) }
+        return imageStorage
+            .uploadImage(userId, ImageFolder.GUIA, key, bytes)
+            .fold(
+                onSuccess = { result ->
+                    _state.update { it.copy(fotoUrl = result.downloadUrl, storagePath = result.storagePath, imagePath = null) }
+                    _pickedImage.value = null
+                    true
+                },
+                onFailure = {
+                    crashReporter.recordException(it)
+                    _uiState.value = FormUiState.Error("No se pudo subir la imagen")
+                    false
+                },
+            )
     }
 
     fun resetUiState() {

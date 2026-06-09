@@ -3,6 +3,9 @@ package al.ahgitdevelopment.municion.ui.forms.compra
 import al.ahgitdevelopment.municion.data.local.room.entities.Compra
 import al.ahgitdevelopment.municion.data.repository.CompraRepository
 import al.ahgitdevelopment.municion.data.repository.GuiaRepository
+import al.ahgitdevelopment.municion.data.repository.ImageFolder
+import al.ahgitdevelopment.municion.data.repository.ImageStorageRepository
+import al.ahgitdevelopment.municion.data.sync.SyncIdGenerator
 import al.ahgitdevelopment.municion.domain.usecase.CreateCompraUseCase
 import al.ahgitdevelopment.municion.domain.usecase.UpdateCompraUseCase
 import al.ahgitdevelopment.municion.firebase.CrashReporter
@@ -31,6 +34,7 @@ class CompraFormViewModel(
     private val updateCompraUseCase: UpdateCompraUseCase,
     private val currentUserId: CurrentUserIdProvider,
     private val crashReporter: CrashReporter,
+    private val imageStorage: ImageStorageRepository,
 ) : ViewModel() {
     private val _state = MutableStateFlow(CompraFormState())
     val state: StateFlow<CompraFormState> = _state.asStateFlow()
@@ -38,8 +42,21 @@ class CompraFormViewModel(
     private val _uiState = MutableStateFlow<FormUiState>(FormUiState.Idle)
     val uiState: StateFlow<FormUiState> = _uiState.asStateFlow()
 
+    /** Bytes of an image picked but not yet uploaded (upload happens on [save]). */
+    private val _pickedImage = MutableStateFlow<ByteArray?>(null)
+    val pickedImage: StateFlow<ByteArray?> = _pickedImage.asStateFlow()
+
     /** Original purchase (edit mode only), kept for the quota adjustment in [UpdateCompraUseCase]. */
     private var oldCompra: Compra? = null
+
+    fun onImagePicked(bytes: ByteArray) {
+        _pickedImage.value = bytes
+    }
+
+    fun onImageRemoved() {
+        _pickedImage.value = null
+        _state.update { it.copy(fotoUrl = null, storagePath = null, imagePath = null) }
+    }
 
     fun initialize(
         compraId: Int?,
@@ -131,6 +148,7 @@ class CompraFormViewModel(
         viewModelScope.launch {
             _uiState.value = FormUiState.Saving
             val userId = currentUserId.currentUserId()
+            if (!uploadPendingImage(userId)) return@launch
             val newCompra = _state.value.toCompra()
             val result =
                 if (s.isEditing) {
@@ -152,6 +170,32 @@ class CompraFormViewModel(
                     },
                 )
         }
+    }
+
+    /**
+     * Uploads a freshly-picked image (if any) under the compra's syncId and updates the form state
+     * with the resulting download URL + storage path. Returns false (and sets an error) on failure
+     * so [save] can abort.
+     */
+    private suspend fun uploadPendingImage(userId: String?): Boolean {
+        val bytes = _pickedImage.value ?: return true
+        if (userId.isNullOrBlank()) return true // No signed-in user: keep the existing photo, skip upload.
+        val key = _state.value.syncId.ifBlank { SyncIdGenerator.newSyncId() }
+        _state.update { it.copy(syncId = key) }
+        return imageStorage
+            .uploadImage(userId, ImageFolder.COMPRA, key, bytes)
+            .fold(
+                onSuccess = { result ->
+                    _state.update { it.copy(fotoUrl = result.downloadUrl, storagePath = result.storagePath, imagePath = null) }
+                    _pickedImage.value = null
+                    true
+                },
+                onFailure = {
+                    crashReporter.recordException(it)
+                    _uiState.value = FormUiState.Error("No se pudo subir la imagen")
+                    false
+                },
+            )
     }
 
     fun resetUiState() {

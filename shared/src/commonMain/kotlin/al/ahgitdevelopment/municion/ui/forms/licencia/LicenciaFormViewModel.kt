@@ -1,6 +1,9 @@
 package al.ahgitdevelopment.municion.ui.forms.licencia
 
+import al.ahgitdevelopment.municion.data.repository.ImageFolder
+import al.ahgitdevelopment.municion.data.repository.ImageStorageRepository
 import al.ahgitdevelopment.municion.data.repository.LicenciaRepository
+import al.ahgitdevelopment.municion.data.sync.SyncIdGenerator
 import al.ahgitdevelopment.municion.firebase.CrashReporter
 import al.ahgitdevelopment.municion.firebase.CurrentUserIdProvider
 import al.ahgitdevelopment.municion.ui.forms.FormUiState
@@ -18,12 +21,26 @@ class LicenciaFormViewModel(
     private val repository: LicenciaRepository,
     private val currentUserId: CurrentUserIdProvider,
     private val crashReporter: CrashReporter,
+    private val imageStorage: ImageStorageRepository,
 ) : ViewModel() {
     private val _state = MutableStateFlow(LicenciaFormState())
     val state: StateFlow<LicenciaFormState> = _state.asStateFlow()
 
     private val _uiState = MutableStateFlow<FormUiState>(FormUiState.Idle)
     val uiState: StateFlow<FormUiState> = _uiState.asStateFlow()
+
+    /** Bytes of an image picked but not yet uploaded (upload happens on [save]). */
+    private val _pickedImage = MutableStateFlow<ByteArray?>(null)
+    val pickedImage: StateFlow<ByteArray?> = _pickedImage.asStateFlow()
+
+    fun onImagePicked(bytes: ByteArray) {
+        _pickedImage.value = bytes
+    }
+
+    fun onImageRemoved() {
+        _pickedImage.value = null
+        _state.update { it.copy(fotoUrl = null, storagePath = null) }
+    }
 
     fun initialize(licenciaId: Int?) {
         if (licenciaId == null || licenciaId <= 0) return
@@ -93,6 +110,7 @@ class LicenciaFormViewModel(
         viewModelScope.launch {
             _uiState.value = FormUiState.Saving
             val userId = currentUserId.currentUserId()
+            if (!uploadPendingImage(userId)) return@launch
             val licencia = _state.value.toLicencia()
             val result =
                 if (s.isEditing) {
@@ -113,6 +131,32 @@ class LicenciaFormViewModel(
                     },
                 )
         }
+    }
+
+    /**
+     * Uploads a freshly-picked image (if any) under the licencia's syncId and updates the form
+     * state with the resulting download URL + storage path. Returns false (and sets an error) on
+     * failure so [save] can abort.
+     */
+    private suspend fun uploadPendingImage(userId: String?): Boolean {
+        val bytes = _pickedImage.value ?: return true
+        if (userId.isNullOrBlank()) return true // No signed-in user: keep the existing photo, skip upload.
+        val key = _state.value.syncId.ifBlank { SyncIdGenerator.newSyncId() }
+        _state.update { it.copy(syncId = key) }
+        return imageStorage
+            .uploadImage(userId, ImageFolder.LICENCIA, key, bytes)
+            .fold(
+                onSuccess = { result ->
+                    _state.update { it.copy(fotoUrl = result.downloadUrl, storagePath = result.storagePath) }
+                    _pickedImage.value = null
+                    true
+                },
+                onFailure = {
+                    crashReporter.recordException(it)
+                    _uiState.value = FormUiState.Error("No se pudo subir la imagen")
+                    false
+                },
+            )
     }
 
     fun resetUiState() {

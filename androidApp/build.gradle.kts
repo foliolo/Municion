@@ -114,5 +114,9 @@ dependencies {
 
     implementation(libs.compose.uiToolingPreview)
     debugImplementation(libs.compose.uiTooling)
+
+    // FileKit Core: needed in the Application to manually initialize the picker subsystem
+    // (the dialogs/compose artifact lives in :shared as `implementation`, so it is not transitive).
+    implementation(libs.filekit.core)
     // NOTE: Firebase App Check Debug provider is wired in phase 1 (with the firebase BOM).
 }

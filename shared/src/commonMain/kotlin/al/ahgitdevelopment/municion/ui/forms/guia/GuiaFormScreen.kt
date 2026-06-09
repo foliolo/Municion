@@ -4,6 +4,7 @@ import al.ahgitdevelopment.municion.resources.Res
 import al.ahgitdevelopment.municion.resources.calibres
 import al.ahgitdevelopment.municion.resources.tipo_armas
 import al.ahgitdevelopment.municion.ui.components.DropdownField
+import al.ahgitdevelopment.municion.ui.components.ImagePickerField
 import al.ahgitdevelopment.municion.ui.forms.FormUiState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -44,6 +45,7 @@ fun GuiaFormScreen(
 
     val state by viewModel.state.collectAsStateWithLifecycle()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val pickedImage by viewModel.pickedImage.collectAsStateWithLifecycle()
 
     LaunchedEffect(uiState) {
         when (val s = uiState) {
@@ -71,6 +73,15 @@ fun GuiaFormScreen(
                 .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
+        ImagePickerField(
+            currentImageUrl = state.fotoUrl ?: state.imagePath,
+            pickedBytes = pickedImage,
+            isBusy = uiState is FormUiState.Saving,
+            onPick = viewModel::onImagePicked,
+            onRemove = viewModel::onImageRemoved,
+            label = "Foto del arma",
+        )
+
         DropdownField(
             label = "Tipo de arma",
             options = tiposArma.toList(),

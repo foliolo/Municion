@@ -4,6 +4,7 @@ import al.ahgitdevelopment.municion.resources.Res
 import al.ahgitdevelopment.municion.resources.lugar_compra
 import al.ahgitdevelopment.municion.ui.components.DatePickerField
 import al.ahgitdevelopment.municion.ui.components.DropdownField
+import al.ahgitdevelopment.municion.ui.components.ImagePickerField
 import al.ahgitdevelopment.municion.ui.forms.FormUiState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -45,6 +46,7 @@ fun CompraFormScreen(
 
     val state by viewModel.state.collectAsStateWithLifecycle()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val pickedImage by viewModel.pickedImage.collectAsStateWithLifecycle()
 
     val lugarCompra = stringArrayResource(Res.array.lugar_compra)
 
@@ -78,6 +80,15 @@ fun CompraFormScreen(
                 .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
+        ImagePickerField(
+            currentImageUrl = state.fotoUrl ?: state.imagePath,
+            pickedBytes = pickedImage,
+            isBusy = uiState is FormUiState.Saving,
+            onPick = viewModel::onImagePicked,
+            onRemove = viewModel::onImageRemoved,
+            label = "Foto de la compra",
+        )
+
         // Available quota info
         Text(
             text = "Cupo disponible: ${state.cupoDisponible} / ${state.cupoTotal}",

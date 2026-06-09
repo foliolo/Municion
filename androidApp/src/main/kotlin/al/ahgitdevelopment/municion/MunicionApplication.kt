@@ -3,6 +3,8 @@ package al.ahgitdevelopment.municion
 import al.ahgitdevelopment.municion.data.sync.SyncScheduler
 import al.ahgitdevelopment.municion.di.initKoin
 import android.app.Application
+import io.github.vinceglb.filekit.FileKit
+import io.github.vinceglb.filekit.manualFileKitCoreInitialization
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.mp.KoinPlatform
@@ -14,6 +16,8 @@ import org.koin.mp.KoinPlatform
 class MunicionApplication : Application() {
     override fun onCreate() {
         super.onCreate()
+        // FileKit Core (reads picked image bytes) needs manual init when App Startup is constrained.
+        FileKit.manualFileKitCoreInitialization(this)
         initKoin {
             androidLogger()
             androidContext(this@MunicionApplication)
