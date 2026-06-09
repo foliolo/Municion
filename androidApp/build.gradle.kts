@@ -118,5 +118,10 @@ dependencies {
     // FileKit Core: needed in the Application to manually initialize the picker subsystem
     // (the dialogs/compose artifact lives in :shared as `implementation`, so it is not transitive).
     implementation(libs.filekit.core)
+
+    // Firebase Cloud Messaging (native Android SDK) for push notifications. :shared uses GitLive,
+    // but FCM has no GitLive module, so the messaging service lives in the Android app.
+    implementation(project.dependencies.platform(libs.firebase.bom))
+    implementation(libs.firebase.messaging)
     // NOTE: Firebase App Check Debug provider is wired in phase 1 (with the firebase BOM).
 }
