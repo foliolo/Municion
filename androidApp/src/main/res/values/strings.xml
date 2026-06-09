@@ -1,0 +1,4 @@
+<resources>
+    <!-- Launcher label. UI-facing strings live in the shared module's Compose resources. -->
+    <string name="app_name">Tu Armería</string>
+</resources>

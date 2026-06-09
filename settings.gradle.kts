@@ -1,28 +1,32 @@
-rootProject.name = "Municion"
-
-// Enable type-safe project accessors (Gradle 8.0+ feature)
+rootProject.name = "MunicionKMP"
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 pluginManagement {
     repositories {
-        google()
+        google {
+            mavenContent {
+                includeGroupAndSubgroups("androidx")
+                includeGroupAndSubgroups("com.android")
+                includeGroupAndSubgroups("com.google")
+            }
+        }
         mavenCentral()
         gradlePluginPortal()
     }
 }
-plugins {
-    id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"
-}
 
 dependencyResolutionManagement {
-    // Enforce centralized repository declaration (security best practice)
-    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
-
     repositories {
-        google()
+        google {
+            mavenContent {
+                includeGroupAndSubgroups("androidx")
+                includeGroupAndSubgroups("com.android")
+                includeGroupAndSubgroups("com.google")
+            }
+        }
         mavenCentral()
-        maven { url = uri("https://jitpack.io") }
     }
 }
 
-include(":app")
+include(":androidApp")
+include(":shared")
