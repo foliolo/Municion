@@ -19,6 +19,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -39,10 +40,20 @@ fun AccountSettingsContent(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val pending by viewModel.pendingSyncCount.collectAsStateWithLifecycle()
     val failed by viewModel.failedSyncCount.collectAsStateWithLifecycle()
+    val hasRemovedAds by viewModel.hasRemovedAds.collectAsStateWithLifecycle()
+    val purchaseInFlight by viewModel.purchaseInFlight.collectAsStateWithLifecycle()
+    val purchaseMessage by viewModel.purchaseMessage.collectAsStateWithLifecycle()
 
     var showSignOut by remember { mutableStateOf(false) }
     var showDelete by remember { mutableStateOf(false) }
     var showTutorial by remember { mutableStateOf(false) }
+
+    LaunchedEffect(purchaseMessage) {
+        purchaseMessage?.let {
+            snackbarHostState.showSnackbar(it)
+            viewModel.consumePurchaseMessage()
+        }
+    }
 
     if (showTutorial) TutorialDialog(onDismiss = { showTutorial = false })
 
@@ -106,6 +117,34 @@ fun AccountSettingsContent(
                 if (failed > 0) {
                     OutlinedButton(onClick = { viewModel.retryFailedSync() }, modifier = Modifier.fillMaxWidth()) {
                         Text("Reintentar sincronizaciones fallidas")
+                    }
+                }
+            }
+        }
+
+        Card(modifier = Modifier.fillMaxWidth()) {
+            Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Text("Quitar anuncios", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
+                if (hasRemovedAds) {
+                    Text("Ya has quitado los anuncios. ¡Gracias!", style = MaterialTheme.typography.bodyMedium)
+                } else {
+                    Text(
+                        "Compra única para eliminar los anuncios de la aplicación.",
+                        style = MaterialTheme.typography.bodyMedium,
+                    )
+                    Button(
+                        onClick = { viewModel.purchaseRemoveAds() },
+                        enabled = !purchaseInFlight,
+                        modifier = Modifier.fillMaxWidth(),
+                    ) {
+                        Text("Quitar anuncios")
+                    }
+                    OutlinedButton(
+                        onClick = { viewModel.restorePurchases() },
+                        enabled = !purchaseInFlight,
+                        modifier = Modifier.fillMaxWidth(),
+                    ) {
+                        Text("Restaurar compra")
                     }
                 }
             }

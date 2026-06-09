@@ -7,10 +7,10 @@ import kotlinx.coroutines.flow.asStateFlow
 /**
  * "Remove ads" entitlement source of truth.
  *
- * The default binding is [NoOpRemoveAdsManager] (ads always shown). The RevenueCat-backed
- * implementation (via the official `purchases-kmp` SDK) is wired once RevenueCat SDK keys are
- * configured (see MIGRATION_REPORT phase 7) — `Purchases.configure(appUserID=uid)`, observe the
- * `ad_free` entitlement, and reconcile with the local [AppPurchase] row + `settings/ads_removed`.
+ * The bound implementation is [al.ahgitdevelopment.municion.purchases.RevenueCatRemoveAdsManager]
+ * (official `purchases-kmp` SDK; `ad_free` entitlement). It degrades to no-op behaviour until the
+ * RevenueCat SDK keys are configured (see MIGRATION_REPORT §4.C). [NoOpRemoveAdsManager] remains for
+ * tests/previews.
  */
 interface RemoveAdsManager {
     val hasRemovedAds: StateFlow<Boolean>

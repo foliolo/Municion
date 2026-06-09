@@ -1,6 +1,5 @@
 package al.ahgitdevelopment.municion.di
 
-import al.ahgitdevelopment.municion.ads.NoOpRemoveAdsManager
 import al.ahgitdevelopment.municion.ads.RemoveAdsManager
 import al.ahgitdevelopment.municion.analytics.AnalyticsTracker
 import al.ahgitdevelopment.municion.analytics.FirebaseAnalyticsTracker
@@ -25,6 +24,8 @@ import al.ahgitdevelopment.municion.domain.usecase.UpdateCompraUseCase
 import al.ahgitdevelopment.municion.firebase.CrashReporter
 import al.ahgitdevelopment.municion.firebase.CurrentUserIdProvider
 import al.ahgitdevelopment.municion.firebase.FirebaseCurrentUserIdProvider
+import al.ahgitdevelopment.municion.purchases.RevenueCatRemoveAdsManager
+import al.ahgitdevelopment.municion.purchases.revenueCatApiKey
 import al.ahgitdevelopment.municion.ui.forms.compra.CompraFormViewModel
 import al.ahgitdevelopment.municion.ui.forms.guia.GuiaFormViewModel
 import al.ahgitdevelopment.municion.ui.forms.licencia.LicenciaFormViewModel
@@ -68,8 +69,9 @@ val dataModule =
         singleOf(::FirebaseAuthRepository)
         singleOf(::CrashReporter)
         singleOf(::FirebaseAnalyticsTracker) bind AnalyticsTracker::class
-        // Remove-ads entitlement (RevenueCat impl wired in phase 7 once SDK keys are configured).
-        single<RemoveAdsManager> { NoOpRemoveAdsManager() }
+        // Remove-ads entitlement via RevenueCat (purchases-kmp). Degrades to no-op until SDK keys
+        // are configured in local.properties / CI secrets (see MIGRATION_REPORT §4.C).
+        single<RemoveAdsManager> { RevenueCatRemoveAdsManager(revenueCatApiKey(), get()) }
         singleOf(::FirebaseCurrentUserIdProvider) bind CurrentUserIdProvider::class
 
         // Sync subsystem (SyncScheduler is provided by platformModule)
