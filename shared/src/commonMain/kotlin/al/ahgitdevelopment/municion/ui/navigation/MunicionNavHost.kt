@@ -9,15 +9,12 @@ import al.ahgitdevelopment.municion.ui.forms.licencia.LicenciaFormScreen
 import al.ahgitdevelopment.municion.ui.forms.tirada.TiradaFormScreen
 import al.ahgitdevelopment.municion.ui.guias.GuiasContent
 import al.ahgitdevelopment.municion.ui.licencias.LicenciasContent
+import al.ahgitdevelopment.municion.ui.settings.AccountSettingsContent
 import al.ahgitdevelopment.municion.ui.tiradas.TiradasContent
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -68,7 +65,7 @@ fun MunicionNavHost(
         }
         composable<Settings> {
             onRegisterSaveCallback(null)
-            PlaceholderContent("Ajustes (próximamente)")
+            AccountSettingsContent(navController, snackbarHostState)
         }
         // Forms — real screens land in the forms sub-milestone (phase 6).
         composable<LicenciaForm> { entry ->
@@ -107,12 +104,5 @@ fun MunicionNavHost(
                 onRegisterSaveCallback = onRegisterSaveCallback,
             )
         }
-    }
-}
-
-@Composable
-private fun PlaceholderContent(text: String) {
-    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Text(text)
     }
 }

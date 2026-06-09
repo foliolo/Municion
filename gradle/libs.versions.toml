@@ -2,7 +2,7 @@
 # Toolchain & build
 agp = "9.2.1"
 kotlin = "2.4.0"
-ksp = "2.3.7"
+ksp = "2.3.9"
 composeMultiplatform = "1.11.1"
 material3 = "1.11.0-alpha07"
 
@@ -45,12 +45,12 @@ filekit = "0.14.1"
 
 # Firebase
 firebase-gitlive = "2.4.0"
-firebase-bom-android = "34.14.0"
+firebase-bom-android = "34.14.1"
 google-services-plugin = "4.4.4"
 firebase-crashlytics-plugin = "3.0.7"
 
 # Build secrets
-buildkonfig = "6.0.9"
+buildkonfig = "6.0.10"
 
 # Monetization (AdMob Android-only; iOS via SPM. RevenueCat via purchases-kmp, iOS dep handled by Gradle)
 play-services-ads = "25.3.0"

@@ -25,6 +25,7 @@ import al.ahgitdevelopment.municion.ui.forms.compra.CompraFormViewModel
 import al.ahgitdevelopment.municion.ui.forms.guia.GuiaFormViewModel
 import al.ahgitdevelopment.municion.ui.forms.licencia.LicenciaFormViewModel
 import al.ahgitdevelopment.municion.ui.forms.tirada.TiradaFormViewModel
+import al.ahgitdevelopment.municion.ui.viewmodel.AccountSettingsViewModel
 import al.ahgitdevelopment.municion.ui.viewmodel.CompraViewModel
 import al.ahgitdevelopment.municion.ui.viewmodel.GuiaViewModel
 import al.ahgitdevelopment.municion.ui.viewmodel.LicenciaViewModel
@@ -99,4 +100,5 @@ val presentationModule = module {
     viewModelOf(::GuiaFormViewModel)
     viewModelOf(::CompraFormViewModel)
     viewModelOf(::TiradaFormViewModel)
+    viewModelOf(::AccountSettingsViewModel)
 }

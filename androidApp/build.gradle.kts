@@ -22,7 +22,9 @@ val localProperties = Properties().apply {
     val file = rootProject.file("local.properties")
     if (file.exists()) file.inputStream().use { load(it) }
 }
+
 fun localProperty(name: String): String = localProperties.getProperty(name) ?: ""
+//FIXME: Handel this variable in a way it is not hardcoded
 val admobAppId = localProperty("ADMOB_APPLICATION_ID")
     .ifBlank { "ca-app-pub-3940256099942544~3347511713" }
 
