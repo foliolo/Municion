@@ -1,13 +1,17 @@
 package al.ahgitdevelopment.municion.ui.viewmodel
 
+import al.ahgitdevelopment.municion.ads.RemoveAdsManager
 import al.ahgitdevelopment.municion.domain.usecase.SyncDataUseCase
 import al.ahgitdevelopment.municion.firebase.CrashReporter
 import al.ahgitdevelopment.municion.firebase.CurrentUserIdProvider
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 /**
@@ -18,18 +22,24 @@ class MainViewModel(
     private val syncDataUseCase: SyncDataUseCase,
     private val currentUserId: CurrentUserIdProvider,
     private val crashReporter: CrashReporter,
+    private val removeAdsManager: RemoveAdsManager,
 ) : ViewModel() {
 
     private val _syncState = MutableStateFlow<SyncState>(SyncState.Idle)
     val syncState: StateFlow<SyncState> = _syncState.asStateFlow()
 
-    private val _showAds = MutableStateFlow(true)
-    val showAds: StateFlow<Boolean> = _showAds.asStateFlow()
+    /** Show ads unless the user has the remove-ads entitlement. */
+    val showAds: StateFlow<Boolean> = removeAdsManager.hasRemovedAds
+        .map { !it }
+        .stateIn(viewModelScope, SharingStarted.Lazily, true)
 
     val userId: String? get() = currentUserId.currentUserId()
 
     fun initSync() {
-        if (userId != null) syncFromFirebase()
+        if (userId != null) {
+            viewModelScope.launch { removeAdsManager.initialize(userId) }
+            syncFromFirebase()
+        }
     }
 
     fun syncFromFirebase() {

@@ -1,5 +1,7 @@
 package al.ahgitdevelopment.municion.di
 
+import al.ahgitdevelopment.municion.ads.NoOpRemoveAdsManager
+import al.ahgitdevelopment.municion.ads.RemoveAdsManager
 import al.ahgitdevelopment.municion.analytics.AnalyticsTracker
 import al.ahgitdevelopment.municion.analytics.FirebaseAnalyticsTracker
 import al.ahgitdevelopment.municion.auth.AuthViewModel
@@ -63,6 +65,8 @@ val dataModule = module {
     singleOf(::FirebaseAuthRepository)
     singleOf(::CrashReporter)
     singleOf(::FirebaseAnalyticsTracker) bind AnalyticsTracker::class
+    // Remove-ads entitlement (RevenueCat impl wired in phase 7 once SDK keys are configured).
+    single<RemoveAdsManager> { NoOpRemoveAdsManager() }
     singleOf(::FirebaseCurrentUserIdProvider) bind CurrentUserIdProvider::class
 
     // Sync subsystem (SyncScheduler is provided by platformModule)

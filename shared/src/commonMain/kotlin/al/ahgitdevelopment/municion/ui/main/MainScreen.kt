@@ -1,5 +1,7 @@
 package al.ahgitdevelopment.municion.ui.main
 
+import al.ahgitdevelopment.municion.BuildConfig
+import al.ahgitdevelopment.municion.ads.AdaptiveBanner
 import al.ahgitdevelopment.municion.auth.AuthViewModel
 import al.ahgitdevelopment.municion.ui.components.MunicionBottomBar
 import al.ahgitdevelopment.municion.ui.components.MunicionFAB
@@ -24,8 +26,10 @@ import al.ahgitdevelopment.municion.ui.viewmodel.MainViewModel
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -64,6 +68,7 @@ fun MainScreen(
 
     val scope = rememberCoroutineScope()
     val syncState by viewModel.syncState.collectAsStateWithLifecycle()
+    val showAds by viewModel.showAds.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
@@ -144,12 +149,18 @@ fun MainScreen(
             }
         },
         bottomBar = {
-            AnimatedVisibility(
-                visible = showBottomBar,
-                enter = slideInVertically(initialOffsetY = { it }),
-                exit = slideOutVertically(targetOffsetY = { it }),
-            ) {
-                MunicionBottomBar(navController = navController)
+            Column {
+                val isSettingsScreen = currentRoute == Settings::class.qualifiedName
+                if (!isAuthScreen && !isSettingsScreen && showAds) {
+                    AdaptiveBanner(adUnitId = BuildConfig.ADMOB_BOTTOM_BANNER_ID, modifier = Modifier.fillMaxWidth())
+                }
+                AnimatedVisibility(
+                    visible = showBottomBar,
+                    enter = slideInVertically(initialOffsetY = { it }),
+                    exit = slideOutVertically(targetOffsetY = { it }),
+                ) {
+                    MunicionBottomBar(navController = navController)
+                }
             }
         },
         floatingActionButton = {
