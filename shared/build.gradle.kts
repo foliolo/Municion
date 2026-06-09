@@ -22,6 +22,11 @@ val localProperties = Properties().apply {
 fun localProperty(name: String): String = localProperties.getProperty(name) ?: ""
 
 kotlin {
+    compilerOptions {
+        // Room generates an `actual object` for @ConstructedBy; silences the KT-61573 beta note.
+        freeCompilerArgs.add("-Xexpect-actual-classes")
+    }
+
     listOf(
         iosArm64(),
         iosSimulatorArm64(),

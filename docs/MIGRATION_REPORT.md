@@ -18,7 +18,12 @@ Stack destino: Kotlin 2.4.0 · Compose MP 1.11.1 · AGP 9.2.1 · módulos `:shar
   - [~] 0.6 Esqueleto Room KMP → **fusionado en Fase 2** (Room exige ≥1 entidad en `@Database`)
   - **Verificado:** `:androidApp:assembleDebug` ✅ · `:shared:linkDebugFrameworkIosSimulatorArm64` ✅
 - [ ] Fase 1 — Capa Firebase común (GitLive) + init iOS
-- [ ] Fase 2 — Entidades, DAOs, migraciones Room
+- [x] **Fase 2 — Entidades, DAOs, migraciones Room** (incluye 0.6)
+  - 6 entidades a commonMain (sin `@Parcelize`/`Context`/Java dates; `@Serializable` + Room intactos; columnas idénticas para compatibilidad de schema)
+  - utils comunes: `Time` (`nowMillis`), `DateUtils` (parse/format/diff "dd/MM/yyyy" con kotlinx-datetime), `NumberFormat`, **`Md5`** (MD5 puro) + `SyncIdGenerator` (v4 con `kotlin.uuid`, v3 byte-idéntico a Java)
+  - 6 DAOs (Flow/suspend/@Transaction) + proyecciones `*SyncMeta`
+  - `MunicionDatabase` v33 (@ConstructedBy) + 10 migraciones v23→v33 portadas a `SQLiteConnection`; builder con `BundledSQLiteDriver`; Room builder por plataforma (Android `getDatabasePath`, iOS `NSDocumentDirectory`)
+  - **Verificado:** `:androidApp:assembleDebug` ✅ · `:shared:linkDebugFrameworkIosSimulatorArm64` ✅ · `:shared:testAndroidHostTest` (golden UUID) ✅
 - [ ] Fase 3 — Repositorios + sync + SyncScheduler
 - [ ] Fase 4 — Autenticación
 - [ ] Fase 5 — Navegación MP
@@ -40,6 +45,10 @@ Stack destino: Kotlin 2.4.0 · Compose MP 1.11.1 · AGP 9.2.1 · módulos `:shar
 | 3 | `play-services-ads` crashea al arrancar si `AdMob APPLICATION_ID` está vacío | `resValue admob_app_id` con fallback al **AdMob test app id** hasta tener el real. |
 | 4 | Sin `google-services.json` (proyecto `municion-95caa` no accesible) | Creado **placeholder** gitignored para builds locales; el real lo aporta el usuario / CI (ver §4). |
 | 5 | `keystore.properties` no estaba en `.gitignore` (contiene contraseñas) | Añadido a `.gitignore`. |
+| 6 | `.mcp.json` con tokens GitHub en claro, `.backups/` (RTDB prod) y `docs/affected_users.txt` (PII) sin trackear | Excluidos del commit + `.gitignore`. **Rotar tokens GitHub (acción del usuario).** |
+| 7 | `UUID.nameUUIDFromBytes` (UUID v3/MD5) no existe en KMP | MD5 puro en Kotlin (`util/Md5.kt`) + golden test contra vectores de Java. ✅ idéntico. |
+| 8 | `getAllTimestamps()` usaba `Map`/`@MapColumn` (soporte dudoso en Room KMP, además @deprecated) | Eliminado de los DAOs (el sync v3.5+ usa `getAllSyncMetadata`). |
+| 9 | `Dispatchers.IO` es JVM-only (interno en Native) | `setQueryCoroutineContext(Dispatchers.Default)` (multiplataforma). |
 
 **Avisos (no bloqueantes, vigilar):**
 - Skiko: `coil3 3.4.0` arrastra skiko 0.9.22.2 vs Compose MP 0.144.6 (resuelve a la mayor; vigilar render de imágenes en iOS).

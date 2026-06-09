@@ -1,9 +1,29 @@
+@file:OptIn(ExperimentalForeignApi::class)
+
 package al.ahgitdevelopment.municion.di
 
+import al.ahgitdevelopment.municion.data.local.room.MUNICION_DATABASE_NAME
+import al.ahgitdevelopment.municion.data.local.room.MunicionDatabase
+import androidx.room.Room
+import androidx.room.RoomDatabase
+import kotlinx.cinterop.ExperimentalForeignApi
 import org.koin.core.module.Module
 import org.koin.dsl.module
+import platform.Foundation.NSDocumentDirectory
+import platform.Foundation.NSFileManager
+import platform.Foundation.NSUserDomainMask
 
 actual val platformModule: Module = module {
-    // iOS bindings (Room builder over NSDocumentDirectory, NSUserDefaults settings,
-    // foreground SyncScheduler, EventKit, image capture) are added in later phases.
+    // Room database builder over NSDocumentDirectory (the app sandbox).
+    single<RoomDatabase.Builder<MunicionDatabase>> {
+        val documentsDir = NSFileManager.defaultManager.URLForDirectory(
+            directory = NSDocumentDirectory,
+            inDomain = NSUserDomainMask,
+            appropriateForURL = null,
+            create = false,
+            error = null,
+        )
+        val dbPath = requireNotNull(documentsDir?.path) + "/" + MUNICION_DATABASE_NAME
+        Room.databaseBuilder<MunicionDatabase>(name = dbPath)
+    }
 }

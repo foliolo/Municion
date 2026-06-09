@@ -1,5 +1,7 @@
 package al.ahgitdevelopment.municion.di
 
+import al.ahgitdevelopment.municion.data.local.room.MunicionDatabase
+import al.ahgitdevelopment.municion.data.local.room.buildMunicionDatabase
 import org.koin.dsl.module
 
 /**
@@ -7,7 +9,16 @@ import org.koin.dsl.module
  * subsystem. Populated incrementally across the migration phases.
  */
 val dataModule = module {
-    // Firebase / Room / repositories / sync wired in phases 1–3.
+    // Room database + DAOs (the RoomDatabase.Builder is provided by platformModule).
+    single { buildMunicionDatabase(get()) }
+    single { get<MunicionDatabase>().licenciaDao() }
+    single { get<MunicionDatabase>().guiaDao() }
+    single { get<MunicionDatabase>().compraDao() }
+    single { get<MunicionDatabase>().tiradaDao() }
+    single { get<MunicionDatabase>().appPurchaseDao() }
+    single { get<MunicionDatabase>().syncOperationDao() }
+
+    // Firebase / repositories / sync wired in phases 1–3.
 }
 
 /**
