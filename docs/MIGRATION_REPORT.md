@@ -35,7 +35,11 @@ Stack destino: Kotlin 2.4.0 · Compose MP 1.11.1 · AGP 9.2.1 · módulos `:shar
   - `SyncScheduler` (interfaz común): `AndroidSyncScheduler` (WorkManager: periódico 15min + cleanup diario + on-demand) / `IosSyncScheduler` (foreground + on-demand)
   - `SyncDataUseCase` (download paralelo 4 colecciones), casos de uso Compra (cupo), `ClearLocalDataUseCase`
   - **Verificado:** Android `assembleDebug` ✅ · iOS link ✅ · host tests ✅
-- [ ] Fase 4 — Autenticación
+- [x] **Fase 4 — Autenticación (GitLive auth)**
+  - `FirebaseAuthRepository` (create/signIn/link/migrateFromLegacy/reset/delete/reauth/signOut) sobre GitLive
+  - `AuthViewModel` reacciona al `Flow authStateChanged` de GitLive (estados Loading/NotAuthenticated/RequiresMigration/Authenticated)
+  - `Legacy{Converter,MigrationHelper}` (v2.x Android-only, código muerto) **descartados**
+  - **Verificado:** Android ✅ · iOS link ✅
 - [ ] Fase 5 — Navegación MP
 - [ ] Fase 6 — Features por entidad
 - [ ] Fase 7 — Plataforma (imagen, AdMob, RevenueCat, calendario, FCM)
