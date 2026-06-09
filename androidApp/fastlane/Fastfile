@@ -1,0 +1,38 @@
+default_platform(:android)
+
+# Release is driven by a git tag "vX.Y.Z". versionName comes from the tag; versionCode is the
+# next free code on the Play Internal track. The signed AAB is uploaded as a DRAFT (manual
+# publish in Play Console). Signing uses keystore.properties (restored on CI from secrets).
+platform :android do
+  desc "Build a signed AAB from the current git tag and upload to Play Internal (draft)"
+  lane :release_from_tag do
+    tag = ENV["RELEASE_TAG"] || `git describe --tags --abbrev=0`.strip
+    version_name = tag.sub(/^v/, "")
+    UI.user_error!("Could not derive a version from tag '#{tag}'") if version_name.empty?
+
+    version_code = begin
+      google_play_track_version_codes(track: "internal").max.to_i + 1
+    rescue
+      1
+    end
+
+    gradle(
+      task: ":androidApp:bundleRelease",
+      project_dir: "..",
+      properties: {
+        "appVersionName" => version_name,
+        "appVersionCode" => version_code,
+        "appBuildType" => "release",
+      },
+    )
+
+    upload_to_play_store(
+      track: "internal",
+      release_status: "draft",
+      aab: "../androidApp/build/outputs/bundle/release/androidApp-release.aab",
+      skip_upload_metadata: true,
+      skip_upload_images: true,
+      skip_upload_screenshots: true,
+    )
+  end
+end

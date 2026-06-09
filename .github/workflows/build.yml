@@ -1,0 +1,78 @@
+name: Build
+
+on:
+  pull_request:
+    branches: [develop, "stale/new_version"]
+  push:
+    branches: [develop, "feature/kmp-migration"]
+  workflow_dispatch:
+
+concurrency:
+  group: build-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  ktlint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+      - uses: gradle/actions/setup-gradle@v4
+      - run: ./gradlew :shared:ktlintCheck
+
+  android:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+      - uses: gradle/actions/setup-gradle@v4
+      # google-services.json is gitignored; restore it from a single-line base64 secret.
+      - name: Restore google-services.json
+        run: echo "${{ secrets.FIREBASE_JSON }}" | base64 --decode > androidApp/google-services.json
+      - name: Render local.properties
+        run: |
+          {
+            echo "ADMOB_APPLICATION_ID=${{ secrets.ADMOB_APPLICATION_ID }}"
+            echo "ADMOB_BOTTOM_BANNER_ID=${{ secrets.ADMOB_BOTTOM_BANNER_ID }}"
+            echo "ADMOB_APPLICATION_ID_IOS=${{ secrets.ADMOB_APPLICATION_ID_IOS }}"
+            echo "ADMOB_BOTTOM_BANNER_ID_IOS=${{ secrets.ADMOB_BOTTOM_BANNER_ID_IOS }}"
+            echo "REVENUECAT_PLAY_SDK_KEY=${{ secrets.REVENUECAT_PLAY_SDK_KEY }}"
+            echo "REVENUECAT_PLAY_SDK_KEY_TEST=${{ secrets.REVENUECAT_PLAY_SDK_KEY_TEST }}"
+            echo "REVENUECAT_APPSTORE_SDK_KEY=${{ secrets.REVENUECAT_APPSTORE_SDK_KEY }}"
+          } > local.properties
+      - name: Assemble debug + unit tests
+        run: ./gradlew :androidApp:assembleDebug :shared:testAndroidHostTest
+
+  ios:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+      - uses: gradle/actions/setup-gradle@v4
+      - name: Select Xcode
+        run: sudo xcode-select -s /Applications/Xcode_16.4.app
+      - name: Render local.properties
+        run: |
+          {
+            echo "ADMOB_APPLICATION_ID_IOS=${{ secrets.ADMOB_APPLICATION_ID_IOS }}"
+            echo "ADMOB_BOTTOM_BANNER_ID_IOS=${{ secrets.ADMOB_BOTTOM_BANNER_ID_IOS }}"
+            echo "REVENUECAT_APPSTORE_SDK_KEY=${{ secrets.REVENUECAT_APPSTORE_SDK_KEY }}"
+          } > local.properties
+      - name: Build shared framework for the simulator
+        run: ./gradlew :shared:linkDebugFrameworkIosSimulatorArm64
+      # Full xcodebuild of iosApp requires the SPM packages + GoogleService-Info.plist committed
+      # in the Xcode project (see MIGRATION_REPORT phase 11); enable once those are in place:
+      # - name: Resolve SPM + build iOS app
+      #   run: |
+      #     cd iosApp
+      #     xcodebuild -resolvePackageDependencies -scheme iosApp
+      #     xcodebuild build -scheme iosApp -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 16'

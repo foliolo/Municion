@@ -1,0 +1,60 @@
+name: Deploy Android
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Release tag (e.g. v4.0.0)"
+        required: true
+
+concurrency:
+  group: deploy-android-${{ github.event.inputs.tag || github.ref_name }}
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.tag || github.ref_name }}
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.3"
+          bundler-cache: true
+      - uses: gradle/actions/setup-gradle@v4
+
+      - name: Restore signing keystore
+        run: echo "${{ secrets.SIGNING_KEY_B64 }}" | base64 --decode > release.keystore
+      - name: Write keystore.properties
+        run: |
+          {
+            echo "storeFile=$GITHUB_WORKSPACE/release.keystore"
+            echo "storePassword=${{ secrets.SIGNING_KEY_STORE_PASSWORD }}"
+            echo "keyAlias=${{ secrets.SIGNING_ALIAS }}"
+            echo "keyPassword=${{ secrets.SIGNING_KEY_PASSWORD }}"
+          } > keystore.properties
+      - name: Restore google-services.json
+        run: echo "${{ secrets.FIREBASE_JSON }}" | base64 --decode > androidApp/google-services.json
+      - name: Render local.properties
+        run: |
+          {
+            echo "ADMOB_APPLICATION_ID=${{ secrets.ADMOB_APPLICATION_ID }}"
+            echo "ADMOB_BOTTOM_BANNER_ID=${{ secrets.ADMOB_BOTTOM_BANNER_ID }}"
+            echo "REVENUECAT_PLAY_SDK_KEY=${{ secrets.REVENUECAT_PLAY_SDK_KEY }}"
+          } > local.properties
+      - name: Write Play service account
+        run: echo '${{ secrets.SERVICE_ACCOUNT_GOOGLE_PLAY_CONSOLE_JSON }}' > androidApp/play-service-account.json
+
+      - name: Fastlane release
+        working-directory: androidApp
+        env:
+          RELEASE_TAG: ${{ github.event.inputs.tag || github.ref_name }}
+          PLAY_SERVICE_ACCOUNT_JSON_PATH: play-service-account.json
+        run: bundle exec fastlane android release_from_tag
