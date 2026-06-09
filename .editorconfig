@@ -1,0 +1,6 @@
+root = true
+
+[*.{kt,kts}]
+# PascalCase is intentional for @Composable functions and Compose/iOS factory functions
+# (e.g. MainViewController, AdaptiveBanner), so the function-naming rule is noisy here.
+ktlint_standard_function-naming = disabled

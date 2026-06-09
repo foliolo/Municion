@@ -25,39 +25,29 @@ import androidx.room.PrimaryKey
 data class SyncOperation(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0,
-
     /** "Licencia" | "Guia" | "Compra" | "Tirada" */
     @ColumnInfo(name = "entity_type")
     val entityType: String,
-
     /** syncId of the target entity. */
     @ColumnInfo(name = "entity_sync_id")
     val entitySyncId: String,
-
     /** [Operation.UPSERT] or [Operation.DELETE]. */
     @ColumnInfo(name = "operation")
     val operation: String,
-
     /** JSON snapshot of the entity when the op was enqueued. */
     @ColumnInfo(name = "payload_json")
     val payloadJson: String,
-
     /** Authenticated user UID at enqueue time (writes go under users/{userId}/db/...). */
     @ColumnInfo(name = "user_id")
     val userId: String,
-
     @ColumnInfo(name = "created_at")
     val createdAt: Long = nowMillis(),
-
     @ColumnInfo(name = "last_attempt_at")
     val lastAttemptAt: Long? = null,
-
     @ColumnInfo(name = "retry_count")
     val retryCount: Int = 0,
-
     @ColumnInfo(name = "last_error")
     val lastError: String? = null,
-
     /** [Status.PENDING] | [Status.IN_FLIGHT] | [Status.SYNCED] | [Status.FAILED] */
     @ColumnInfo(name = "status")
     val status: String = Status.PENDING,

@@ -22,7 +22,6 @@ import al.ahgitdevelopment.municion.data.sync.dto.TiradaDto
  * deterministic UUID from (entityType, dto.id or firebaseKey-as-int).
  */
 object TolerantParsers {
-
     private fun String?.nb(): String? = this?.takeIf { it.isNotBlank() }
 
     private fun resolveSyncId(
@@ -38,15 +37,21 @@ object TolerantParsers {
         return null
     }
 
-    fun parseLicencia(firebaseKey: String?, dto: LicenciaDto?): Licencia? {
+    fun parseLicencia(
+        firebaseKey: String?,
+        dto: LicenciaDto?,
+    ): Licencia? {
         if (dto == null) return null
         val syncId = resolveSyncId(firebaseKey, dto.syncId, dto.id, "Licencia") ?: return null
 
         val numLicencia = dto.numLicencia.orEmpty()
         val fechaExpedicion = dto.fechaExpedicion.orEmpty()
         val fechaCaducidad = dto.fechaCaducidad.orEmpty()
-        val stabilityCorrupt = dto.stability != null &&
-            numLicencia.isBlank() && fechaExpedicion.isBlank() && fechaCaducidad.isBlank()
+        val stabilityCorrupt =
+            dto.stability != null &&
+                numLicencia.isBlank() &&
+                fechaExpedicion.isBlank() &&
+                fechaCaducidad.isBlank()
         val missingRequired = numLicencia.isBlank() || fechaExpedicion.isBlank() || fechaCaducidad.isBlank()
 
         return Licencia(
@@ -73,7 +78,10 @@ object TolerantParsers {
         )
     }
 
-    fun parseGuia(firebaseKey: String?, dto: GuiaDto?): Guia? {
+    fun parseGuia(
+        firebaseKey: String?,
+        dto: GuiaDto?,
+    ): Guia? {
         if (dto == null) return null
         val syncId = resolveSyncId(firebaseKey, dto.syncId, dto.id, "Guia") ?: return null
 
@@ -83,10 +91,19 @@ object TolerantParsers {
         val calibre1 = dto.calibre1.orEmpty()
         val numGuia = dto.numGuia.orEmpty()
         val numArma = dto.numArma.orEmpty()
-        val stabilityCorrupt = dto.stability != null &&
-            marca.isBlank() && modelo.isBlank() && apodo.isBlank() && numGuia.isBlank()
-        val missingRequired = marca.isBlank() || modelo.isBlank() || apodo.isBlank() ||
-            calibre1.isBlank() || numGuia.isBlank() || numArma.isBlank()
+        val stabilityCorrupt =
+            dto.stability != null &&
+                marca.isBlank() &&
+                modelo.isBlank() &&
+                apodo.isBlank() &&
+                numGuia.isBlank()
+        val missingRequired =
+            marca.isBlank() ||
+                modelo.isBlank() ||
+                apodo.isBlank() ||
+                calibre1.isBlank() ||
+                numGuia.isBlank() ||
+                numArma.isBlank()
 
         return Guia(
             id = dto.id ?: 0,
@@ -113,7 +130,10 @@ object TolerantParsers {
         )
     }
 
-    fun parseCompra(firebaseKey: String?, dto: CompraDto?): Compra? {
+    fun parseCompra(
+        firebaseKey: String?,
+        dto: CompraDto?,
+    ): Compra? {
         if (dto == null) return null
         val syncId = resolveSyncId(firebaseKey, dto.syncId, dto.id, "Compra") ?: return null
 
@@ -121,8 +141,12 @@ object TolerantParsers {
         val fecha = dto.fecha.orEmpty()
         val tipo = dto.tipo.orEmpty()
         val marca = dto.marca.orEmpty()
-        val stabilityCorrupt = dto.stability != null &&
-            calibre1.isBlank() && fecha.isBlank() && tipo.isBlank() && marca.isBlank()
+        val stabilityCorrupt =
+            dto.stability != null &&
+                calibre1.isBlank() &&
+                fecha.isBlank() &&
+                tipo.isBlank() &&
+                marca.isBlank()
         val missingRequired = calibre1.isBlank() || fecha.isBlank() || tipo.isBlank() || marca.isBlank()
 
         return Compra(
@@ -150,7 +174,10 @@ object TolerantParsers {
         )
     }
 
-    fun parseTirada(firebaseKey: String?, dto: TiradaDto?): Tirada? {
+    fun parseTirada(
+        firebaseKey: String?,
+        dto: TiradaDto?,
+    ): Tirada? {
         if (dto == null) return null
         val syncId = resolveSyncId(firebaseKey, dto.syncId, dto.id, "Tirada") ?: return null
 
@@ -177,9 +204,13 @@ object TolerantParsers {
         )
     }
 
-    private fun quality(stabilityCorrupt: Boolean, missingRequired: Boolean): String = when {
-        stabilityCorrupt -> "lost"
-        missingRequired -> "degraded"
-        else -> "ok"
-    }
+    private fun quality(
+        stabilityCorrupt: Boolean,
+        missingRequired: Boolean,
+    ): String =
+        when {
+            stabilityCorrupt -> "lost"
+            missingRequired -> "degraded"
+            else -> "ok"
+        }
 }

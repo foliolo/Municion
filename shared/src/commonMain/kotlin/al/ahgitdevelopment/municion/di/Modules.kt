@@ -49,60 +49,62 @@ import org.koin.dsl.module
  * Shared data graph: Firebase (GitLive), Room database + DAOs, repositories and the sync
  * subsystem. Populated incrementally across the migration phases.
  */
-val dataModule = module {
-    // Room database + DAOs (the RoomDatabase.Builder is provided by platformModule).
-    single { buildMunicionDatabase(get()) }
-    single { get<MunicionDatabase>().licenciaDao() }
-    single { get<MunicionDatabase>().guiaDao() }
-    single { get<MunicionDatabase>().compraDao() }
-    single { get<MunicionDatabase>().tiradaDao() }
-    single { get<MunicionDatabase>().appPurchaseDao() }
-    single { get<MunicionDatabase>().syncOperationDao() }
+val dataModule =
+    module {
+        // Room database + DAOs (the RoomDatabase.Builder is provided by platformModule).
+        single { buildMunicionDatabase(get()) }
+        single { get<MunicionDatabase>().licenciaDao() }
+        single { get<MunicionDatabase>().guiaDao() }
+        single { get<MunicionDatabase>().compraDao() }
+        single { get<MunicionDatabase>().tiradaDao() }
+        single { get<MunicionDatabase>().appPurchaseDao() }
+        single { get<MunicionDatabase>().syncOperationDao() }
 
-    // Firebase common layer (GitLive)
-    single<FirebaseDatabase> { Firebase.database }
-    single<FirebaseAuth> { Firebase.auth }
-    singleOf(::FirebaseAuthRepository)
-    singleOf(::CrashReporter)
-    singleOf(::FirebaseAnalyticsTracker) bind AnalyticsTracker::class
-    // Remove-ads entitlement (RevenueCat impl wired in phase 7 once SDK keys are configured).
-    single<RemoveAdsManager> { NoOpRemoveAdsManager() }
-    singleOf(::FirebaseCurrentUserIdProvider) bind CurrentUserIdProvider::class
+        // Firebase common layer (GitLive)
+        single<FirebaseDatabase> { Firebase.database }
+        single<FirebaseAuth> { Firebase.auth }
+        singleOf(::FirebaseAuthRepository)
+        singleOf(::CrashReporter)
+        singleOf(::FirebaseAnalyticsTracker) bind AnalyticsTracker::class
+        // Remove-ads entitlement (RevenueCat impl wired in phase 7 once SDK keys are configured).
+        single<RemoveAdsManager> { NoOpRemoveAdsManager() }
+        singleOf(::FirebaseCurrentUserIdProvider) bind CurrentUserIdProvider::class
 
-    // Sync subsystem (SyncScheduler is provided by platformModule)
-    singleOf(::MunicionRtdbDatasource)
-    singleOf(::SyncOutboxEnqueuer)
-    singleOf(::SyncOutboxDrainer)
+        // Sync subsystem (SyncScheduler is provided by platformModule)
+        singleOf(::MunicionRtdbDatasource)
+        singleOf(::SyncOutboxEnqueuer)
+        singleOf(::SyncOutboxDrainer)
 
-    // Repositories
-    singleOf(::LicenciaRepository)
-    singleOf(::GuiaRepository)
-    singleOf(::CompraRepository)
-    singleOf(::TiradaRepository)
+        // Repositories
+        singleOf(::LicenciaRepository)
+        singleOf(::GuiaRepository)
+        singleOf(::CompraRepository)
+        singleOf(::TiradaRepository)
 
-    // Use cases
-    singleOf(::CreateCompraUseCase)
-    singleOf(::UpdateCompraUseCase)
-    singleOf(::DeleteCompraUseCase)
-    singleOf(::ClearLocalDataUseCase)
-    singleOf(::SyncDataUseCase)
-}
+        // Use cases
+        singleOf(::CreateCompraUseCase)
+        singleOf(::UpdateCompraUseCase)
+        singleOf(::DeleteCompraUseCase)
+        singleOf(::ClearLocalDataUseCase)
+        singleOf(::SyncDataUseCase)
+    }
 
 /**
  * Presentation graph: ViewModels. Added per feature in phases 4–8.
  */
-val presentationModule = module {
-    viewModelOf(::AuthViewModel)
-    viewModelOf(::MainViewModel)
-    viewModelOf(::LicenciaViewModel)
-    viewModelOf(::GuiaViewModel)
-    viewModelOf(::CompraViewModel)
-    viewModelOf(::TiradaViewModel)
-    viewModelOf(::LoginViewModel)
-    viewModelOf(::MigrationViewModel)
-    viewModelOf(::LicenciaFormViewModel)
-    viewModelOf(::GuiaFormViewModel)
-    viewModelOf(::CompraFormViewModel)
-    viewModelOf(::TiradaFormViewModel)
-    viewModelOf(::AccountSettingsViewModel)
-}
+val presentationModule =
+    module {
+        viewModelOf(::AuthViewModel)
+        viewModelOf(::MainViewModel)
+        viewModelOf(::LicenciaViewModel)
+        viewModelOf(::GuiaViewModel)
+        viewModelOf(::CompraViewModel)
+        viewModelOf(::TiradaViewModel)
+        viewModelOf(::LoginViewModel)
+        viewModelOf(::MigrationViewModel)
+        viewModelOf(::LicenciaFormViewModel)
+        viewModelOf(::GuiaFormViewModel)
+        viewModelOf(::CompraFormViewModel)
+        viewModelOf(::TiradaFormViewModel)
+        viewModelOf(::AccountSettingsViewModel)
+    }

@@ -65,24 +65,27 @@ fun LicenciaItem(
         }
     }
 
-    val statusColor = when {
-        licencia.estaCaducada() -> LicenseExpired
-        licencia.caducaProxima() -> LicenseExpiring
-        else -> LicenseValid
-    }
+    val statusColor =
+        when {
+            licencia.estaCaducada() -> LicenseExpired
+            licencia.caducaProxima() -> LicenseExpiring
+            else -> LicenseValid
+        }
     val tipos = stringArrayResource(Res.array.tipo_licencias)
-    val nombre = licencia.nombre?.takeIf { it.isNotBlank() }
-        ?: tipos.getOrElse(licencia.tipo) { "Licencia Tipo ${licencia.tipo}" }
+    val nombre =
+        licencia.nombre?.takeIf { it.isNotBlank() }
+            ?: tipos.getOrElse(licencia.tipo) { "Licencia Tipo ${licencia.tipo}" }
 
     SwipeToDismissBox(
         state = dismissState,
         backgroundContent = {
             Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .clip(RoundedCornerShape(12.dp))
-                    .background(MaterialTheme.colorScheme.error)
-                    .padding(horizontal = 20.dp),
+                modifier =
+                    Modifier
+                        .fillMaxSize()
+                        .clip(RoundedCornerShape(12.dp))
+                        .background(MaterialTheme.colorScheme.error)
+                        .padding(horizontal = 20.dp),
                 contentAlignment = Alignment.CenterEnd,
             ) {
                 Icon(Icons.Default.Delete, stringResource(Res.string.cd_delete), tint = MaterialTheme.colorScheme.onError)
@@ -101,17 +104,18 @@ fun LicenciaItem(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Box(
-                    modifier = Modifier
-                        .size(64.dp)
-                        .clip(RoundedCornerShape(8.dp))
-                        .background(statusColor.copy(alpha = 0.15f))
-                        .then(
-                            if (!licencia.fotoUrl.isNullOrBlank() && onImageClick != null) {
-                                Modifier.clickable { onImageClick(licencia.fotoUrl!!) }
-                            } else {
-                                Modifier
-                            },
-                        ),
+                    modifier =
+                        Modifier
+                            .size(64.dp)
+                            .clip(RoundedCornerShape(8.dp))
+                            .background(statusColor.copy(alpha = 0.15f))
+                            .then(
+                                if (!licencia.fotoUrl.isNullOrBlank() && onImageClick != null) {
+                                    Modifier.clickable { onImageClick(licencia.fotoUrl) }
+                                } else {
+                                    Modifier
+                                },
+                            ),
                     contentAlignment = Alignment.Center,
                 ) {
                     if (!licencia.fotoUrl.isNullOrBlank()) {
@@ -129,9 +133,19 @@ fun LicenciaItem(
                 Spacer(Modifier.width(12.dp))
 
                 Column(modifier = Modifier.weight(1f)) {
-                    Text(nombre, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                    Text(
+                        nombre,
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.SemiBold,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                    )
                     Spacer(Modifier.height(4.dp))
-                    Text(licencia.numLicencia, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f))
+                    Text(
+                        licencia.numLicencia,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
+                    )
                     Spacer(Modifier.height(8.dp))
                     Row(
                         modifier = Modifier.fillMaxWidth(),
@@ -139,7 +153,11 @@ fun LicenciaItem(
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
                         Text(licencia.estadoDescripcion(), style = MaterialTheme.typography.labelMedium, color = statusColor)
-                        Text("Caduca: ${licencia.fechaCaducidad}", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f))
+                        Text(
+                            "Caduca: ${licencia.fechaCaducidad}",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f),
+                        )
                     }
                 }
             }

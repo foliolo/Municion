@@ -13,45 +13,54 @@ class UpdateCompraUseCase(
     private val guiaRepository: GuiaRepository,
     private val crashReporter: CrashReporter,
 ) {
-    suspend operator fun invoke(oldCompra: Compra, newCompra: Compra, userId: String?): Result<Unit> = try {
-        val guia = guiaRepository.getGuiaById(newCompra.idPosGuia)
-            ?: return Result.failure(IllegalArgumentException("Guía no encontrada: ${newCompra.idPosGuia}"))
+    suspend operator fun invoke(
+        oldCompra: Compra,
+        newCompra: Compra,
+        userId: String?,
+    ): Result<Unit> =
+        try {
+            val guia =
+                guiaRepository.getGuiaById(newCompra.idPosGuia)
+                    ?: return Result.failure(IllegalArgumentException("Guía no encontrada: ${newCompra.idPosGuia}"))
 
-        val oldCounts = !CreateCompraUseCase.isCompraCampoTiro(oldCompra.tienda)
-        val newCounts = !CreateCompraUseCase.isCompraCampoTiro(newCompra.tienda)
+            val oldCounts = !CreateCompraUseCase.isCompraCampoTiro(oldCompra.tienda)
+            val newCounts = !CreateCompraUseCase.isCompraCampoTiro(newCompra.tienda)
 
-        val ajusteCupo = when {
-            oldCounts && newCounts -> {
-                val diff = newCompra.unidades - oldCompra.unidades
-                if (diff > 0 && guia.disponible() < diff) {
-                    return Result.failure(
-                        IllegalStateException("Cupo insuficiente. Disponible: ${guia.disponible()}, Incremento: $diff"),
-                    )
+            val ajusteCupo =
+                when {
+                    oldCounts && newCounts -> {
+                        val diff = newCompra.unidades - oldCompra.unidades
+                        if (diff > 0 && guia.disponible() < diff) {
+                            return Result.failure(
+                                IllegalStateException("Cupo insuficiente. Disponible: ${guia.disponible()}, Incremento: $diff"),
+                            )
+                        }
+                        diff
+                    }
+                    !oldCounts && !newCounts -> 0
+                    oldCounts && !newCounts -> -oldCompra.unidades
+                    else -> { // !oldCounts && newCounts
+                        if (guia.disponible() < newCompra.unidades) {
+                            return Result.failure(
+                                IllegalStateException(
+                                    "Cupo insuficiente. Disponible: ${guia.disponible()}, Requerido: ${newCompra.unidades}",
+                                ),
+                            )
+                        }
+                        newCompra.unidades
+                    }
                 }
-                diff
-            }
-            !oldCounts && !newCounts -> 0
-            oldCounts && !newCounts -> -oldCompra.unidades
-            else -> { // !oldCounts && newCounts
-                if (guia.disponible() < newCompra.unidades) {
-                    return Result.failure(
-                        IllegalStateException("Cupo insuficiente. Disponible: ${guia.disponible()}, Requerido: ${newCompra.unidades}"),
-                    )
-                }
-                newCompra.unidades
-            }
-        }
 
-        if (ajusteCupo > 0) {
-            guiaRepository.incrementGastado(guia.id, ajusteCupo, userId).getOrThrow()
-        } else if (ajusteCupo < 0) {
-            guiaRepository.decrementGastado(guia.id, -ajusteCupo, userId).getOrThrow()
-        }
+            if (ajusteCupo > 0) {
+                guiaRepository.incrementGastado(guia.id, ajusteCupo, userId).getOrThrow()
+            } else if (ajusteCupo < 0) {
+                guiaRepository.decrementGastado(guia.id, -ajusteCupo, userId).getOrThrow()
+            }
 
-        compraRepository.updateCompra(newCompra, userId).getOrThrow()
-        Result.success(Unit)
-    } catch (e: Exception) {
-        crashReporter.recordException(e)
-        Result.failure(e)
-    }
+            compraRepository.updateCompra(newCompra, userId).getOrThrow()
+            Result.success(Unit)
+        } catch (e: Exception) {
+            crashReporter.recordException(e)
+            Result.failure(e)
+        }
 }

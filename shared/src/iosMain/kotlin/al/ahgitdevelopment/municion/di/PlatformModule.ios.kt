@@ -15,20 +15,22 @@ import platform.Foundation.NSDocumentDirectory
 import platform.Foundation.NSFileManager
 import platform.Foundation.NSUserDomainMask
 
-actual val platformModule: Module = module {
-    // Room database builder over NSDocumentDirectory (the app sandbox).
-    single<RoomDatabase.Builder<MunicionDatabase>> {
-        val documentsDir = NSFileManager.defaultManager.URLForDirectory(
-            directory = NSDocumentDirectory,
-            inDomain = NSUserDomainMask,
-            appropriateForURL = null,
-            create = false,
-            error = null,
-        )
-        val dbPath = requireNotNull(documentsDir?.path) + "/" + MUNICION_DATABASE_NAME
-        Room.databaseBuilder<MunicionDatabase>(name = dbPath)
-    }
+actual val platformModule: Module =
+    module {
+        // Room database builder over NSDocumentDirectory (the app sandbox).
+        single<RoomDatabase.Builder<MunicionDatabase>> {
+            val documentsDir =
+                NSFileManager.defaultManager.URLForDirectory(
+                    directory = NSDocumentDirectory,
+                    inDomain = NSUserDomainMask,
+                    appropriateForURL = null,
+                    create = false,
+                    error = null,
+                )
+            val dbPath = requireNotNull(documentsDir?.path) + "/" + MUNICION_DATABASE_NAME
+            Room.databaseBuilder<MunicionDatabase>(name = dbPath)
+        }
 
-    // Sync scheduling: foreground + on-demand drains.
-    single<SyncScheduler> { IosSyncScheduler(get(), get()) }
-}
+        // Sync scheduling: foreground + on-demand drains.
+        single<SyncScheduler> { IosSyncScheduler(get(), get()) }
+    }

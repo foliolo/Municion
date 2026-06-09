@@ -6,7 +6,6 @@ import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class SyncIdGeneratorTest {
-
     /**
      * Golden vectors generated from `java.util.UUID.nameUUIDFromBytes` (the Android
      * implementation). The KMP MD5/v3 path MUST reproduce them byte-for-byte, otherwise

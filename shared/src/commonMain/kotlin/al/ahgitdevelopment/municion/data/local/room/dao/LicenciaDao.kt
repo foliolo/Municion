@@ -13,7 +13,6 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface LicenciaDao {
-
     @Query("SELECT * FROM licencias WHERE deleted = 0 ORDER BY fecha_caducidad ASC")
     fun getAllLicenciasFlow(): Flow<List<Licencia>>
 
@@ -77,7 +76,10 @@ interface LicenciaDao {
     fun countNeedsAttentionFlow(): Flow<Int>
 
     @Query("UPDATE licencias SET deleted = 1, deleted_at = :now, updated_at = :now WHERE sync_id = :syncId")
-    suspend fun tombstoneBySyncId(syncId: String, now: Long): Int
+    suspend fun tombstoneBySyncId(
+        syncId: String,
+        now: Long,
+    ): Int
 
     @Query("DELETE FROM licencias WHERE deleted = 1 AND deleted_at IS NOT NULL AND deleted_at < :before")
     suspend fun purgeTombstonesBefore(before: Long): Int

@@ -16,8 +16,8 @@ import java.util.concurrent.TimeUnit
 class TombstoneCleanupWorker(
     appContext: Context,
     params: WorkerParameters,
-) : CoroutineWorker(appContext, params), KoinComponent {
-
+) : CoroutineWorker(appContext, params),
+    KoinComponent {
     private val database: MunicionDatabase by inject()
 
     override suspend fun doWork(): Result {
@@ -36,7 +36,8 @@ class TombstoneCleanupWorker(
 
         fun enqueuePeriodic(context: Context) {
             val req = PeriodicWorkRequestBuilder<TombstoneCleanupWorker>(1, TimeUnit.DAYS).build()
-            WorkManager.getInstance(context)
+            WorkManager
+                .getInstance(context)
                 .enqueueUniquePeriodicWork(PERIODIC_NAME, ExistingPeriodicWorkPolicy.KEEP, req)
         }
     }

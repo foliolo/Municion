@@ -60,66 +60,76 @@ data class CompraFormState(
             return unidadesInt > cupoDisponible
         }
 
-    fun toCompra(): Compra = Compra(
-        id = compraId,
-        idPosGuia = guiaId,
-        calibre1 = calibre1,
-        calibre2 = if (showCalibre2) calibre2.ifBlank { null } else null,
-        unidades = unidades.toIntOrNull() ?: 0,
-        precio = precio.replace(",", ".").toDoubleOrNull() ?: 0.0,
-        fecha = fecha,
-        tipo = tipo,
-        peso = peso.toIntOrNull() ?: 0,
-        marca = marca,
-        tienda = tienda.ifBlank { null },
-        valoracion = valoracion,
-        imagePath = imagePath,
-        fotoUrl = fotoUrl,
-        storagePath = storagePath,
-        syncId = syncId,
-        guiaSyncId = guiaSyncId,
-    )
+    fun toCompra(): Compra =
+        Compra(
+            id = compraId,
+            idPosGuia = guiaId,
+            calibre1 = calibre1,
+            calibre2 = if (showCalibre2) calibre2.ifBlank { null } else null,
+            unidades = unidades.toIntOrNull() ?: 0,
+            precio = precio.replace(",", ".").toDoubleOrNull() ?: 0.0,
+            fecha = fecha,
+            tipo = tipo,
+            peso = peso.toIntOrNull() ?: 0,
+            marca = marca,
+            tienda = tienda.ifBlank { null },
+            valoracion = valoracion,
+            imagePath = imagePath,
+            fotoUrl = fotoUrl,
+            storagePath = storagePath,
+            syncId = syncId,
+            guiaSyncId = guiaSyncId,
+        )
 
     companion object {
         /** Initial state for editing an existing purchase, with quota context from the parent guía. */
-        fun fromCompra(compra: Compra, guia: Guia): CompraFormState = CompraFormState(
-            compraId = compra.id,
-            syncId = compra.syncId,
-            guiaId = guia.id,
-            guiaSyncId = compra.guiaSyncId ?: guia.syncId,
-            calibre1 = compra.calibre1,
-            calibre2 = compra.calibre2 ?: "",
-            showCalibre2 = !compra.calibre2.isNullOrBlank(),
-            marca = compra.marca,
-            tipo = compra.tipo,
-            peso = compra.peso.toString(),
-            unidades = compra.unidades.toString(),
-            precio = compra.precio.toString(),
-            fecha = compra.fecha,
-            tienda = compra.tienda ?: "",
-            valoracion = compra.valoracion,
-            imagePath = compra.imagePath,
-            fotoUrl = compra.fotoUrl,
-            storagePath = compra.storagePath,
-            // When editing, only add back the original units if they counted against the quota.
-            // Shooting-range purchases never subtracted, so there is nothing to recover.
-            cupoDisponible = guia.disponible() +
-                if (CreateCompraUseCase.isCompraCampoTiro(compra.tienda)) 0 else compra.unidades,
-            cupoTotal = guia.cupo,
-            isEditing = true,
-        )
+        fun fromCompra(
+            compra: Compra,
+            guia: Guia,
+        ): CompraFormState =
+            CompraFormState(
+                compraId = compra.id,
+                syncId = compra.syncId,
+                guiaId = guia.id,
+                guiaSyncId = compra.guiaSyncId ?: guia.syncId,
+                calibre1 = compra.calibre1,
+                calibre2 = compra.calibre2 ?: "",
+                showCalibre2 = !compra.calibre2.isNullOrBlank(),
+                marca = compra.marca,
+                tipo = compra.tipo,
+                peso = compra.peso.toString(),
+                unidades = compra.unidades.toString(),
+                precio = compra.precio.toString(),
+                fecha = compra.fecha,
+                tienda = compra.tienda ?: "",
+                valoracion = compra.valoracion,
+                imagePath = compra.imagePath,
+                fotoUrl = compra.fotoUrl,
+                storagePath = compra.storagePath,
+                // When editing, only add back the original units if they counted against the quota.
+                // Shooting-range purchases never subtracted, so there is nothing to recover.
+                cupoDisponible =
+                    guia.disponible() +
+                        if (CreateCompraUseCase.isCompraCampoTiro(compra.tienda)) 0 else compra.unidades,
+                cupoTotal = guia.cupo,
+                isEditing = true,
+            )
 
         /** Initial empty state for a new purchase, prefilled from the parent guía. */
-        fun fromGuia(guia: Guia, fecha: String): CompraFormState = CompraFormState(
-            guiaId = guia.id,
-            guiaSyncId = guia.syncId,
-            calibre1 = guia.calibre1,
-            calibre2 = guia.calibre2 ?: "",
-            showCalibre2 = !guia.calibre2.isNullOrBlank(),
-            fecha = fecha,
-            cupoDisponible = guia.disponible(),
-            cupoTotal = guia.cupo,
-            isEditing = false,
-        )
+        fun fromGuia(
+            guia: Guia,
+            fecha: String,
+        ): CompraFormState =
+            CompraFormState(
+                guiaId = guia.id,
+                guiaSyncId = guia.syncId,
+                calibre1 = guia.calibre1,
+                calibre2 = guia.calibre2 ?: "",
+                showCalibre2 = !guia.calibre2.isNullOrBlank(),
+                fecha = fecha,
+                cupoDisponible = guia.disponible(),
+                cupoTotal = guia.cupo,
+                isEditing = false,
+            )
     }
 }

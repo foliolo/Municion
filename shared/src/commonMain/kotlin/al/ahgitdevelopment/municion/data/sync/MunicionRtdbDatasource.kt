@@ -22,26 +22,41 @@ import kotlinx.coroutines.flow.first
  *
  * Data lives under `users/{userId}/db/{collection}/{syncId}`.
  */
-open class MunicionRtdbDatasource(private val database: FirebaseDatabase) {
-
-    private fun collection(userId: String, path: String) =
-        database.reference("users/$userId/db/$path")
+open class MunicionRtdbDatasource(
+    private val database: FirebaseDatabase,
+) {
+    private fun collection(
+        userId: String,
+        path: String,
+    ) = database.reference("users/$userId/db/$path")
 
     // ---- Writes (per entity; tombstones included) -------------------------------------------
 
-    open suspend fun writeLicencia(userId: String, entity: Licencia) {
+    open suspend fun writeLicencia(
+        userId: String,
+        entity: Licencia,
+    ) {
         collection(userId, "licencias").child(entity.syncId).setValue(entity) { encodeDefaults = true }
     }
 
-    open suspend fun writeGuia(userId: String, entity: Guia) {
+    open suspend fun writeGuia(
+        userId: String,
+        entity: Guia,
+    ) {
         collection(userId, "guias").child(entity.syncId).setValue(entity) { encodeDefaults = true }
     }
 
-    open suspend fun writeCompra(userId: String, entity: Compra) {
+    open suspend fun writeCompra(
+        userId: String,
+        entity: Compra,
+    ) {
         collection(userId, "compras").child(entity.syncId).setValue(entity) { encodeDefaults = true }
     }
 
-    open suspend fun writeTirada(userId: String, entity: Tirada) {
+    open suspend fun writeTirada(
+        userId: String,
+        entity: Tirada,
+    ) {
         collection(userId, "tiradas").child(entity.syncId).setValue(entity) { encodeDefaults = true }
     }
 
@@ -65,8 +80,9 @@ open class MunicionRtdbDatasource(private val database: FirebaseDatabase) {
         deserialize: (DataSnapshot) -> T,
     ): List<Pair<String?, T?>> {
         val snapshot = collection(userId, path).valueEvents.first()
-        return snapshot.children.map { child ->
-            child.key to runCatching { deserialize(child) }.getOrNull()
-        }.toList()
+        return snapshot.children
+            .map { child ->
+                child.key to runCatching { deserialize(child) }.getOrNull()
+            }.toList()
     }
 }

@@ -13,7 +13,6 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface CompraDao {
-
     @Query("SELECT * FROM compras WHERE deleted = 0 ORDER BY fecha DESC")
     fun getAllComprasFlow(): Flow<List<Compra>>
 
@@ -81,7 +80,10 @@ interface CompraDao {
     fun countNeedsAttentionFlow(): Flow<Int>
 
     @Query("UPDATE compras SET deleted = 1, deleted_at = :now, updated_at = :now WHERE sync_id = :syncId")
-    suspend fun tombstoneBySyncId(syncId: String, now: Long): Int
+    suspend fun tombstoneBySyncId(
+        syncId: String,
+        now: Long,
+    ): Int
 
     @Query("DELETE FROM compras WHERE deleted = 1 AND deleted_at IS NOT NULL AND deleted_at < :before")
     suspend fun purgeTombstonesBefore(before: Long): Int

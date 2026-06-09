@@ -11,7 +11,10 @@ import com.google.android.gms.ads.AdView
 private const val TEST_BANNER_UNIT = "ca-app-pub-3940256099942544/6300978111"
 
 @Composable
-actual fun AdaptiveBanner(adUnitId: String, modifier: Modifier) {
+actual fun AdaptiveBanner(
+    adUnitId: String,
+    modifier: Modifier,
+) {
     val unitId = adUnitId.ifBlank { TEST_BANNER_UNIT }
     AndroidView(
         modifier = modifier,

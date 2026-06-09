@@ -5,7 +5,6 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 
 class SyncOutboxConfigTest {
-
     @Test
     fun firebasePathFor_mapsEntityTypes() {
         assertEquals("licencias", SyncOutboxConfig.firebasePathFor("Licencia"))

@@ -17,5 +17,6 @@ interface SyncScheduler {
 /** No-op scheduler for tests/previews. */
 object NoOpSyncScheduler : SyncScheduler {
     override fun start() = Unit
+
     override fun requestImmediateDrain() = Unit
 }

@@ -49,13 +49,17 @@ fun AccountSettingsContent(
     if (showSignOut) {
         ConfirmDialog(
             title = "Cerrar sesión",
-            message = if (pending > 0) {
-                "Tienes $pending cambios sin sincronizar. Si cierras sesión ahora podrían no subirse. ¿Continuar?"
-            } else {
-                "¿Seguro que quieres cerrar sesión? Se borrarán los datos locales de este dispositivo."
-            },
+            message =
+                if (pending > 0) {
+                    "Tienes $pending cambios sin sincronizar. Si cierras sesión ahora podrían no subirse. ¿Continuar?"
+                } else {
+                    "¿Seguro que quieres cerrar sesión? Se borrarán los datos locales de este dispositivo."
+                },
             confirmText = "Cerrar sesión",
-            onConfirm = { showSignOut = false; viewModel.signOut() },
+            onConfirm = {
+                showSignOut = false
+                viewModel.signOut()
+            },
             onDismiss = { showSignOut = false },
         )
     }
@@ -64,7 +68,10 @@ fun AccountSettingsContent(
             title = "Eliminar cuenta",
             message = "Esto eliminará tu cuenta y los datos locales de forma permanente. Esta acción no se puede deshacer.",
             confirmText = "Eliminar",
-            onConfirm = { showDelete = false; viewModel.deleteAccount() },
+            onConfirm = {
+                showDelete = false
+                viewModel.deleteAccount()
+            },
             onDismiss = { showDelete = false },
         )
     }

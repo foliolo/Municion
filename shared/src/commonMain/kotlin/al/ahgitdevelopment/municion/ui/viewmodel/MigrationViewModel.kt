@@ -14,15 +14,19 @@ import kotlinx.coroutines.launch
 class MigrationViewModel(
     private val authRepository: FirebaseAuthRepository,
 ) : ViewModel() {
-
     private val _uiState = MutableStateFlow<MigrationUiState>(MigrationUiState.Idle)
     val uiState: StateFlow<MigrationUiState> = _uiState.asStateFlow()
 
-    fun linkAccount(email: String, password: String, confirmPassword: String) {
+    fun linkAccount(
+        email: String,
+        password: String,
+        confirmPassword: String,
+    ) {
         if (!validateInput(email, password, confirmPassword)) return
         viewModelScope.launch {
             _uiState.value = MigrationUiState.Loading
-            authRepository.linkWithEmail(email.trim(), password)
+            authRepository
+                .linkWithEmail(email.trim(), password)
                 .onSuccess { _uiState.value = MigrationUiState.Success(it) }
                 .onFailure { _uiState.value = MigrationUiState.Error(mapError(it)) }
         }
@@ -32,15 +36,20 @@ class MigrationViewModel(
         _uiState.value = MigrationUiState.Idle
     }
 
-    private fun validateInput(email: String, password: String, confirmPassword: String): Boolean {
-        val error = when {
-            email.isBlank() -> "Introduce tu email"
-            !isValidEmail(email) -> "Email no válido"
-            password.isBlank() -> "Introduce tu contraseña"
-            password.length < MIN_PASSWORD_LENGTH -> "La contraseña debe tener al menos $MIN_PASSWORD_LENGTH caracteres"
-            password != confirmPassword -> "Las contraseñas no coinciden"
-            else -> null
-        }
+    private fun validateInput(
+        email: String,
+        password: String,
+        confirmPassword: String,
+    ): Boolean {
+        val error =
+            when {
+                email.isBlank() -> "Introduce tu email"
+                !isValidEmail(email) -> "Email no válido"
+                password.isBlank() -> "Introduce tu contraseña"
+                password.length < MIN_PASSWORD_LENGTH -> "La contraseña debe tener al menos $MIN_PASSWORD_LENGTH caracteres"
+                password != confirmPassword -> "Las contraseñas no coinciden"
+                else -> null
+            }
         return if (error != null) {
             _uiState.value = MigrationUiState.Error(error)
             false
@@ -51,9 +60,16 @@ class MigrationViewModel(
 
     sealed class MigrationUiState {
         data object Idle : MigrationUiState()
+
         data object Loading : MigrationUiState()
-        data class Success(val user: FirebaseUser) : MigrationUiState()
-        data class Error(val message: String) : MigrationUiState()
+
+        data class Success(
+            val user: FirebaseUser,
+        ) : MigrationUiState()
+
+        data class Error(
+            val message: String,
+        ) : MigrationUiState()
     }
 
     private companion object {

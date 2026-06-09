@@ -30,12 +30,13 @@ fun DataQualityBanner(
     if (count <= 0) return
 
     Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 8.dp)
-            .clip(RoundedCornerShape(12.dp))
-            .background(MaterialTheme.colorScheme.errorContainer)
-            .padding(horizontal = 12.dp, vertical = 10.dp),
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 8.dp)
+                .clip(RoundedCornerShape(12.dp))
+                .background(MaterialTheme.colorScheme.errorContainer)
+                .padding(horizontal = 12.dp, vertical = 10.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(10.dp),
     ) {
@@ -52,7 +53,10 @@ fun DataQualityBanner(
     }
 }
 
-private fun bannerText(count: Int, entityLabel: String): String {
+private fun bannerText(
+    count: Int,
+    entityLabel: String,
+): String {
     val plural = count != 1
     val noun = if (plural) "${entityLabel}s" else entityLabel
     val verb = if (plural) "necesitan" else "necesita"

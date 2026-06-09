@@ -18,42 +18,50 @@ class LicenciaViewModel(
     private val currentUserId: CurrentUserIdProvider,
     private val crashReporter: CrashReporter,
 ) : ViewModel() {
+    val licencias: StateFlow<List<Licencia>> =
+        licenciaRepository.licencias
+            .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
 
-    val licencias: StateFlow<List<Licencia>> = licenciaRepository.licencias
-        .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
-
-    val needsAttentionCount: StateFlow<Int> = licenciaRepository.needsAttentionCount
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), 0)
+    val needsAttentionCount: StateFlow<Int> =
+        licenciaRepository.needsAttentionCount
+            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), 0)
 
     private val _uiState = MutableStateFlow<EntityUiState>(EntityUiState.Idle)
     val uiState: StateFlow<EntityUiState> = _uiState.asStateFlow()
 
-    fun saveLicencia(licencia: Licencia) = run("Licencia guardada") {
-        licenciaRepository.saveLicencia(licencia, currentUserId.currentUserId()).getOrThrow()
-    }
+    fun saveLicencia(licencia: Licencia) =
+        run("Licencia guardada") {
+            licenciaRepository.saveLicencia(licencia, currentUserId.currentUserId()).getOrThrow()
+        }
 
-    fun updateLicencia(licencia: Licencia) = run("Licencia actualizada") {
-        licenciaRepository.updateLicencia(licencia, currentUserId.currentUserId()).getOrThrow()
-    }
+    fun updateLicencia(licencia: Licencia) =
+        run("Licencia actualizada") {
+            licenciaRepository.updateLicencia(licencia, currentUserId.currentUserId()).getOrThrow()
+        }
 
-    fun deleteLicencia(licencia: Licencia) = run("Licencia eliminada") {
-        licenciaRepository.deleteLicencia(licencia, currentUserId.currentUserId()).getOrThrow()
-    }
+    fun deleteLicencia(licencia: Licencia) =
+        run("Licencia eliminada") {
+            licenciaRepository.deleteLicencia(licencia, currentUserId.currentUserId()).getOrThrow()
+        }
 
     fun resetUiState() {
         _uiState.value = EntityUiState.Idle
     }
 
-    private fun run(successMessage: String, block: suspend () -> Unit) {
+    private fun run(
+        successMessage: String,
+        block: suspend () -> Unit,
+    ) {
         viewModelScope.launch {
             _uiState.value = EntityUiState.Loading
-            _uiState.value = try {
-                block()
-                EntityUiState.Success(successMessage)
-            } catch (e: Exception) {
-                crashReporter.recordException(e)
-                EntityUiState.Error(e.message ?: "Error desconocido")
-            }
+            _uiState.value =
+                try {
+                    block()
+                    EntityUiState.Success(successMessage)
+                } catch (e: Exception) {
+                    crashReporter.recordException(e)
+                    EntityUiState.Error(e.message ?: "Error desconocido")
+                }
         }
     }
 }

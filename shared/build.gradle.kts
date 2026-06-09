@@ -14,10 +14,11 @@ plugins {
     alias(libs.plugins.mokkery)
 }
 
-val localProperties = Properties().apply {
-    val file = rootProject.file("local.properties")
-    if (file.exists()) file.inputStream().use { load(it) }
-}
+val localProperties =
+    Properties().apply {
+        val file = rootProject.file("local.properties")
+        if (file.exists()) file.inputStream().use { load(it) }
+    }
 
 fun localProperty(name: String): String = localProperties.getProperty(name) ?: ""
 
@@ -47,8 +48,14 @@ kotlin {
 
     androidLibrary {
         namespace = "al.ahgitdevelopment.municion.shared"
-        compileSdk = libs.versions.android.compileSdk.get().toInt()
-        minSdk = libs.versions.android.minSdk.get().toInt()
+        compileSdk =
+            libs.versions.android.compileSdk
+                .get()
+                .toInt()
+        minSdk =
+            libs.versions.android.minSdk
+                .get()
+                .toInt()
 
         // GitLive and kotlin.uuid publish bytecode built at JVM 17.
         compilerOptions {

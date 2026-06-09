@@ -17,13 +17,15 @@ import kotlin.uuid.Uuid
  * [md5]) so ids stay byte-identical to those the Android app already generated.
  */
 object SyncIdGenerator {
-
     private const val NAMESPACE = "municion:v1:"
     private val HEX = "0123456789abcdef".toCharArray()
 
     fun newSyncId(): String = Uuid.random().toString()
 
-    fun deterministicSyncId(table: String, legacyId: Int): String {
+    fun deterministicSyncId(
+        table: String,
+        legacyId: Int,
+    ): String {
         require(table.isNotBlank()) { "table must not be blank" }
         val seed = "$NAMESPACE$table:$legacyId"
         val bytes = md5(seed.encodeToByteArray())

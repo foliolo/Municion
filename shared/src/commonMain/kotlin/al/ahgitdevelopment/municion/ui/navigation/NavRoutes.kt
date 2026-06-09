@@ -37,15 +37,25 @@ data object Settings : Route
 
 // ----- Forms (id == null → create) -----
 @Serializable
-data class LicenciaForm(val licenciaId: Int? = null) : Route
+data class LicenciaForm(
+    val licenciaId: Int? = null,
+) : Route
 
 /** Create needs [tipoLicencia] (selected via dialog); edit loads by [guiaId]. */
 @Serializable
-data class GuiaForm(val guiaId: Int? = null, val tipoLicencia: Int = -1) : Route
+data class GuiaForm(
+    val guiaId: Int? = null,
+    val tipoLicencia: Int = -1,
+) : Route
 
 /** [guiaId] is the parent guía (always required, for quota validation). */
 @Serializable
-data class CompraForm(val compraId: Int? = null, val guiaId: Int) : Route
+data class CompraForm(
+    val compraId: Int? = null,
+    val guiaId: Int,
+) : Route
 
 @Serializable
-data class TiradaForm(val tiradaId: Int? = null) : Route
+data class TiradaForm(
+    val tiradaId: Int? = null,
+) : Route

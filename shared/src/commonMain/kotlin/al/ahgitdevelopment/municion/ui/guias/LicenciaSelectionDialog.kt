@@ -40,14 +40,16 @@ fun LicenciaSelectionDialog(
             } else {
                 LazyColumn {
                     items(licencias) { licencia ->
-                        val nombre = licencia.nombre?.takeIf { it.isNotBlank() }
-                            ?: tipos.getOrElse(licencia.tipo) { "Licencia Tipo ${licencia.tipo}" }
+                        val nombre =
+                            licencia.nombre?.takeIf { it.isNotBlank() }
+                                ?: tipos.getOrElse(licencia.tipo) { "Licencia Tipo ${licencia.tipo}" }
                         Text(
                             text = nombre,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .clickable { onSelect(licencia) }
-                                .padding(vertical = 12.dp),
+                            modifier =
+                                Modifier
+                                    .fillMaxWidth()
+                                    .clickable { onSelect(licencia) }
+                                    .padding(vertical = 12.dp),
                             style = MaterialTheme.typography.bodyLarge,
                         )
                         HorizontalDivider()

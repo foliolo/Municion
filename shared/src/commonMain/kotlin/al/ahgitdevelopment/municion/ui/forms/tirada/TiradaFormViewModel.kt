@@ -19,7 +19,6 @@ class TiradaFormViewModel(
     private val currentUserId: CurrentUserIdProvider,
     private val crashReporter: CrashReporter,
 ) : ViewModel() {
-
     private val _state = MutableStateFlow(TiradaFormState(fecha = todayDdMmYyyy()))
     val state: StateFlow<TiradaFormState> = _state.asStateFlow()
 
@@ -34,40 +33,58 @@ class TiradaFormViewModel(
     }
 
     fun onDescripcion(value: String) = _state.update { it.copy(descripcion = value, descripcionError = null) }
+
     fun onLocalizacion(value: String) = _state.update { it.copy(localizacion = value) }
+
     fun onCategoria(value: String) = _state.update { it.copy(categoria = value) }
+
     fun onFecha(value: String) = _state.update { it.copy(fecha = value, fechaError = null) }
+
     fun onPuntuacion(value: String) = _state.update { it.copy(puntuacion = value.filter { c -> c.isDigit() }) }
 
-    fun onModalidad(value: String) = _state.update {
-        // Re-coerce score into the new modality's range.
-        val max = Tirada.getMaxPuntuacion(value)
-        val coerced = (it.puntuacion.toIntOrNull() ?: 0).coerceIn(0, max)
-        it.copy(modalidad = value, puntuacion = coerced.toString())
-    }
+    fun onModalidad(value: String) =
+        _state.update {
+            // Re-coerce score into the new modality's range.
+            val max = Tirada.getMaxPuntuacion(value)
+            val coerced = (it.puntuacion.toIntOrNull() ?: 0).coerceIn(0, max)
+            it.copy(modalidad = value, puntuacion = coerced.toString())
+        }
 
     fun save() {
         val s = _state.value
         var hasErrors = false
-        if (s.descripcion.isBlank()) { _state.update { it.copy(descripcionError = "Introduce la descripción") }; hasErrors = true }
-        if (s.fecha.isBlank()) { _state.update { it.copy(fechaError = "Introduce la fecha") }; hasErrors = true }
+        if (s.descripcion.isBlank()) {
+            _state.update { it.copy(descripcionError = "Introduce la descripción") }
+            hasErrors = true
+        }
+        if (s.fecha.isBlank()) {
+            _state.update { it.copy(fechaError = "Introduce la fecha") }
+            hasErrors = true
+        }
         if (hasErrors) return
 
         viewModelScope.launch {
             _uiState.value = FormUiState.Saving
             val userId = currentUserId.currentUserId()
             val tirada = _state.value.toTirada()
-            val result = if (s.isEditing) {
-                repository.updateTirada(tirada, userId).map { }
-            } else {
-                repository.saveTirada(tirada, userId).map { }
-            }
-            _uiState.value = result.fold(
-                onSuccess = { FormUiState.Saved(if (s.isEditing) "Tirada actualizada" else "Tirada guardada") },
-                onFailure = { crashReporter.recordException(it); FormUiState.Error(it.message ?: "Error al guardar") },
-            )
+            val result =
+                if (s.isEditing) {
+                    repository.updateTirada(tirada, userId).map { }
+                } else {
+                    repository.saveTirada(tirada, userId).map { }
+                }
+            _uiState.value =
+                result.fold(
+                    onSuccess = { FormUiState.Saved(if (s.isEditing) "Tirada actualizada" else "Tirada guardada") },
+                    onFailure = {
+                        crashReporter.recordException(it)
+                        FormUiState.Error(it.message ?: "Error al guardar")
+                    },
+                )
         }
     }
 
-    fun resetUiState() { _uiState.value = FormUiState.Idle }
+    fun resetUiState() {
+        _uiState.value = FormUiState.Idle
+    }
 }

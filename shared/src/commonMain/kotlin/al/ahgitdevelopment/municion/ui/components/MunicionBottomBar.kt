@@ -2,8 +2,8 @@ package al.ahgitdevelopment.municion.ui.components
 
 import al.ahgitdevelopment.municion.resources.Res
 import al.ahgitdevelopment.municion.resources.outline_social_leaderboard_24
-import al.ahgitdevelopment.municion.resources.section_compras_title
 import al.ahgitdevelopment.municion.resources.section_competiciones_title
+import al.ahgitdevelopment.municion.resources.section_compras_title
 import al.ahgitdevelopment.municion.resources.section_guias_title
 import al.ahgitdevelopment.municion.resources.section_licencias_title
 import al.ahgitdevelopment.municion.ui.navigation.Compras
@@ -37,8 +37,13 @@ import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
 sealed interface IconSource {
-    data class Vector(val imageVector: ImageVector) : IconSource
-    data class Drawable(val resource: DrawableResource) : IconSource
+    data class Vector(
+        val imageVector: ImageVector,
+    ) : IconSource
+
+    data class Drawable(
+        val resource: DrawableResource,
+    ) : IconSource
 }
 
 data class BottomNavItem(
@@ -50,12 +55,13 @@ data class BottomNavItem(
 /** Bottom navigation with the four main tabs. Hidden on form/settings screens. */
 @Composable
 fun MunicionBottomBar(navController: NavHostController) {
-    val items = listOf(
-        BottomNavItem(Licencias, IconSource.Vector(Icons.Default.Badge), Res.string.section_licencias_title),
-        BottomNavItem(Guias, IconSource.Vector(Icons.Default.Security), Res.string.section_guias_title),
-        BottomNavItem(Compras, IconSource.Vector(Icons.Default.ShoppingCart), Res.string.section_compras_title),
-        BottomNavItem(Tiradas, IconSource.Drawable(Res.drawable.outline_social_leaderboard_24), Res.string.section_competiciones_title),
-    )
+    val items =
+        listOf(
+            BottomNavItem(Licencias, IconSource.Vector(Icons.Default.Badge), Res.string.section_licencias_title),
+            BottomNavItem(Guias, IconSource.Vector(Icons.Default.Security), Res.string.section_guias_title),
+            BottomNavItem(Compras, IconSource.Vector(Icons.Default.ShoppingCart), Res.string.section_compras_title),
+            BottomNavItem(Tiradas, IconSource.Drawable(Res.drawable.outline_social_leaderboard_24), Res.string.section_competiciones_title),
+        )
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
@@ -86,13 +92,14 @@ fun MunicionBottomBar(navController: NavHostController) {
                         restoreState = true
                     }
                 },
-                colors = NavigationBarItemDefaults.colors(
-                    selectedIconColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                    selectedTextColor = MaterialTheme.colorScheme.onPrimary,
-                    unselectedIconColor = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.7f),
-                    unselectedTextColor = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.7f),
-                    indicatorColor = MaterialTheme.colorScheme.primaryContainer,
-                ),
+                colors =
+                    NavigationBarItemDefaults.colors(
+                        selectedIconColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                        selectedTextColor = MaterialTheme.colorScheme.onPrimary,
+                        unselectedIconColor = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.7f),
+                        unselectedTextColor = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.7f),
+                        indicatorColor = MaterialTheme.colorScheme.primaryContainer,
+                    ),
             )
         }
     }

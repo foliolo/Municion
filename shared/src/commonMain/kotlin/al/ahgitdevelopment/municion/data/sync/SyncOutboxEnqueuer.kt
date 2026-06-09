@@ -16,24 +16,38 @@ import kotlinx.serialization.json.Json
 class SyncOutboxEnqueuer(
     private val outboxDao: SyncOperationDao,
 ) {
-    private val json = Json {
-        ignoreUnknownKeys = true
-        encodeDefaults = true
-    }
+    private val json =
+        Json {
+            ignoreUnknownKeys = true
+            encodeDefaults = true
+        }
 
-    suspend fun enqueueUpsert(entity: Licencia, userId: String?) =
-        enqueueUpsert("Licencia", entity.syncId, json.encodeToString(entity), userId)
+    suspend fun enqueueUpsert(
+        entity: Licencia,
+        userId: String?,
+    ) = enqueueUpsert("Licencia", entity.syncId, json.encodeToString(entity), userId)
 
-    suspend fun enqueueUpsert(entity: Guia, userId: String?) =
-        enqueueUpsert("Guia", entity.syncId, json.encodeToString(entity), userId)
+    suspend fun enqueueUpsert(
+        entity: Guia,
+        userId: String?,
+    ) = enqueueUpsert("Guia", entity.syncId, json.encodeToString(entity), userId)
 
-    suspend fun enqueueUpsert(entity: Compra, userId: String?) =
-        enqueueUpsert("Compra", entity.syncId, json.encodeToString(entity), userId)
+    suspend fun enqueueUpsert(
+        entity: Compra,
+        userId: String?,
+    ) = enqueueUpsert("Compra", entity.syncId, json.encodeToString(entity), userId)
 
-    suspend fun enqueueUpsert(entity: Tirada, userId: String?) =
-        enqueueUpsert("Tirada", entity.syncId, json.encodeToString(entity), userId)
+    suspend fun enqueueUpsert(
+        entity: Tirada,
+        userId: String?,
+    ) = enqueueUpsert("Tirada", entity.syncId, json.encodeToString(entity), userId)
 
-    private suspend fun enqueueUpsert(entityType: String, syncId: String, payloadJson: String, userId: String?) {
+    private suspend fun enqueueUpsert(
+        entityType: String,
+        syncId: String,
+        payloadJson: String,
+        userId: String?,
+    ) {
         val uid = userId ?: return
         require(syncId.isNotBlank()) { "$entityType.syncId must not be blank when enqueueing" }
         outboxDao.enqueueCoalescing(
@@ -48,7 +62,12 @@ class SyncOutboxEnqueuer(
     }
 
     /** Soft delete: propagated as an UPSERT with deleted=true (caller already saved deleted=true). */
-    suspend fun enqueueDelete(entityType: String, syncId: String, payloadJson: String, userId: String?) {
+    suspend fun enqueueDelete(
+        entityType: String,
+        syncId: String,
+        payloadJson: String,
+        userId: String?,
+    ) {
         val uid = userId ?: return
         require(syncId.isNotBlank()) { "syncId must not be blank when enqueueing delete" }
         outboxDao.enqueueCoalescing(

@@ -11,16 +11,17 @@ class ClearLocalDataUseCase(
     private val database: MunicionDatabase,
     private val crashReporter: CrashReporter,
 ) {
-    suspend operator fun invoke(): Result<Unit> = try {
-        database.licenciaDao().deleteAll()
-        database.guiaDao().deleteAll()
-        database.compraDao().deleteAll()
-        database.tiradaDao().deleteAll()
-        database.appPurchaseDao().deleteAll()
-        database.syncOperationDao().deleteAll()
-        Result.success(Unit)
-    } catch (e: Exception) {
-        crashReporter.recordException(e)
-        Result.failure(e)
-    }
+    suspend operator fun invoke(): Result<Unit> =
+        try {
+            database.licenciaDao().deleteAll()
+            database.guiaDao().deleteAll()
+            database.compraDao().deleteAll()
+            database.tiradaDao().deleteAll()
+            database.appPurchaseDao().deleteAll()
+            database.syncOperationDao().deleteAll()
+            Result.success(Unit)
+        } catch (e: Exception) {
+            crashReporter.recordException(e)
+            Result.failure(e)
+        }
 }

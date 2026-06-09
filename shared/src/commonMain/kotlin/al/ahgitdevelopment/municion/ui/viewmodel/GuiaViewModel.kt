@@ -25,46 +25,55 @@ class GuiaViewModel(
     private val currentUserId: CurrentUserIdProvider,
     private val crashReporter: CrashReporter,
 ) : ViewModel() {
+    val guias: StateFlow<List<Guia>> =
+        guiaRepository.guias
+            .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
 
-    val guias: StateFlow<List<Guia>> = guiaRepository.guias
-        .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
-
-    val needsAttentionCount: StateFlow<Int> = guiaRepository.needsAttentionCount
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), 0)
+    val needsAttentionCount: StateFlow<Int> =
+        guiaRepository.needsAttentionCount
+            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), 0)
 
     /** Licencias available to associate when creating a guía. */
-    val licencias: StateFlow<List<Licencia>> = licenciaRepository.licencias
-        .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
+    val licencias: StateFlow<List<Licencia>> =
+        licenciaRepository.licencias
+            .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
 
     private val _uiState = MutableStateFlow<EntityUiState>(EntityUiState.Idle)
     val uiState: StateFlow<EntityUiState> = _uiState.asStateFlow()
 
-    fun saveGuia(guia: Guia) = run("Guía guardada") {
-        guiaRepository.saveGuia(guia, currentUserId.currentUserId()).getOrThrow()
-    }
+    fun saveGuia(guia: Guia) =
+        run("Guía guardada") {
+            guiaRepository.saveGuia(guia, currentUserId.currentUserId()).getOrThrow()
+        }
 
-    fun updateGuia(guia: Guia) = run("Guía actualizada") {
-        guiaRepository.updateGuia(guia, currentUserId.currentUserId()).getOrThrow()
-    }
+    fun updateGuia(guia: Guia) =
+        run("Guía actualizada") {
+            guiaRepository.updateGuia(guia, currentUserId.currentUserId()).getOrThrow()
+        }
 
-    fun deleteGuia(guia: Guia) = run("Guía eliminada") {
-        guiaRepository.deleteGuia(guia, currentUserId.currentUserId()).getOrThrow()
-    }
+    fun deleteGuia(guia: Guia) =
+        run("Guía eliminada") {
+            guiaRepository.deleteGuia(guia, currentUserId.currentUserId()).getOrThrow()
+        }
 
     fun resetUiState() {
         _uiState.value = EntityUiState.Idle
     }
 
-    private fun run(successMessage: String, block: suspend () -> Unit) {
+    private fun run(
+        successMessage: String,
+        block: suspend () -> Unit,
+    ) {
         viewModelScope.launch {
             _uiState.value = EntityUiState.Loading
-            _uiState.value = try {
-                block()
-                EntityUiState.Success(successMessage)
-            } catch (e: Exception) {
-                crashReporter.recordException(e)
-                EntityUiState.Error(e.message ?: "Error desconocido")
-            }
+            _uiState.value =
+                try {
+                    block()
+                    EntityUiState.Success(successMessage)
+                } catch (e: Exception) {
+                    crashReporter.recordException(e)
+                    EntityUiState.Error(e.message ?: "Error desconocido")
+                }
         }
     }
 }

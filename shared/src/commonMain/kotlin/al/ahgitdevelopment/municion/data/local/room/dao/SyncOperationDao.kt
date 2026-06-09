@@ -11,7 +11,6 @@ import kotlinx.coroutines.flow.Flow
 /** DAO for the sync outbox. */
 @Dao
 interface SyncOperationDao {
-
     @Insert(onConflict = OnConflictStrategy.ABORT)
     suspend fun enqueue(operation: SyncOperation): Long
 
@@ -45,7 +44,10 @@ interface SyncOperationDao {
         LIMIT 1
         """,
     )
-    suspend fun findPendingUpsert(entityType: String, entitySyncId: String): SyncOperation?
+    suspend fun findPendingUpsert(
+        entityType: String,
+        entitySyncId: String,
+    ): SyncOperation?
 
     @Query(
         """
@@ -57,7 +59,11 @@ interface SyncOperationDao {
         WHERE id = :id
         """,
     )
-    suspend fun updatePending(id: Long, payloadJson: String, createdAt: Long)
+    suspend fun updatePending(
+        id: Long,
+        payloadJson: String,
+        createdAt: Long,
+    )
 
     @Query(
         """
@@ -68,7 +74,11 @@ interface SyncOperationDao {
         LIMIT :limit
         """,
     )
-    suspend fun nextBatch(limit: Int, now: Long, backoffMs: Long): List<SyncOperation>
+    suspend fun nextBatch(
+        limit: Int,
+        now: Long,
+        backoffMs: Long,
+    ): List<SyncOperation>
 
     @Query(
         """
@@ -77,7 +87,10 @@ interface SyncOperationDao {
         WHERE id = :id AND status = 'PENDING'
         """,
     )
-    suspend fun markInFlight(id: Long, now: Long): Int
+    suspend fun markInFlight(
+        id: Long,
+        now: Long,
+    ): Int
 
     @Query(
         """
@@ -86,7 +99,10 @@ interface SyncOperationDao {
         WHERE id = :id
         """,
     )
-    suspend fun markSynced(id: Long, now: Long)
+    suspend fun markSynced(
+        id: Long,
+        now: Long,
+    )
 
     @Query(
         """
@@ -95,7 +111,11 @@ interface SyncOperationDao {
         WHERE id = :id
         """,
     )
-    suspend fun markRetry(id: Long, now: Long, error: String?)
+    suspend fun markRetry(
+        id: Long,
+        now: Long,
+        error: String?,
+    )
 
     @Query(
         """
@@ -104,7 +124,11 @@ interface SyncOperationDao {
         WHERE id = :id
         """,
     )
-    suspend fun markFailed(id: Long, now: Long, error: String?)
+    suspend fun markFailed(
+        id: Long,
+        now: Long,
+        error: String?,
+    )
 
     @Query(
         """

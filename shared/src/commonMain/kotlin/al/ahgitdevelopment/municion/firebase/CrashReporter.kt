@@ -17,7 +17,10 @@ open class CrashReporter {
         Firebase.crashlytics.setUserId(userId.orEmpty())
     }
 
-    open fun setCustomKey(key: String, value: String) {
+    open fun setCustomKey(
+        key: String,
+        value: String,
+    ) {
         Firebase.crashlytics.setCustomKey(key, value)
     }
 

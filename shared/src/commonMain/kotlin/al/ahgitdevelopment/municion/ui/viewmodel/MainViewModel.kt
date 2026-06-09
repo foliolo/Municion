@@ -24,14 +24,14 @@ class MainViewModel(
     private val crashReporter: CrashReporter,
     private val removeAdsManager: RemoveAdsManager,
 ) : ViewModel() {
-
     private val _syncState = MutableStateFlow<SyncState>(SyncState.Idle)
     val syncState: StateFlow<SyncState> = _syncState.asStateFlow()
 
     /** Show ads unless the user has the remove-ads entitlement. */
-    val showAds: StateFlow<Boolean> = removeAdsManager.hasRemovedAds
-        .map { !it }
-        .stateIn(viewModelScope, SharingStarted.Lazily, true)
+    val showAds: StateFlow<Boolean> =
+        removeAdsManager.hasRemovedAds
+            .map { !it }
+            .stateIn(viewModelScope, SharingStarted.Lazily, true)
 
     val userId: String? get() = currentUserId.currentUserId()
 
@@ -46,17 +46,18 @@ class MainViewModel(
         val uid = userId ?: return
         viewModelScope.launch {
             _syncState.value = SyncState.Syncing
-            _syncState.value = try {
-                val result = syncDataUseCase.syncFromFirebaseWithAutoFix(uid).getOrThrow()
-                when {
-                    result.allSuccess && !result.hasParseErrors -> SyncState.Success(result.successCount)
-                    result.allSuccess -> SyncState.SuccessWithParseErrors(result.successCount, result.allParseErrors.size)
-                    else -> SyncState.PartialSuccess(result.successCount)
+            _syncState.value =
+                try {
+                    val result = syncDataUseCase.syncFromFirebaseWithAutoFix(uid).getOrThrow()
+                    when {
+                        result.allSuccess && !result.hasParseErrors -> SyncState.Success(result.successCount)
+                        result.allSuccess -> SyncState.SuccessWithParseErrors(result.successCount, result.allParseErrors.size)
+                        else -> SyncState.PartialSuccess(result.successCount)
+                    }
+                } catch (e: Exception) {
+                    crashReporter.recordException(e)
+                    SyncState.Error(e.message ?: "Error de sincronización")
                 }
-            } catch (e: Exception) {
-                crashReporter.recordException(e)
-                SyncState.Error(e.message ?: "Error de sincronización")
-            }
         }
     }
 
@@ -67,10 +68,24 @@ class MainViewModel(
 
     sealed class SyncState {
         data object Idle : SyncState()
+
         data object Syncing : SyncState()
-        data class Success(val count: Int) : SyncState()
-        data class SuccessWithParseErrors(val count: Int, val parseErrorCount: Int) : SyncState()
-        data class PartialSuccess(val count: Int) : SyncState()
-        data class Error(val message: String) : SyncState()
+
+        data class Success(
+            val count: Int,
+        ) : SyncState()
+
+        data class SuccessWithParseErrors(
+            val count: Int,
+            val parseErrorCount: Int,
+        ) : SyncState()
+
+        data class PartialSuccess(
+            val count: Int,
+        ) : SyncState()
+
+        data class Error(
+            val message: String,
+        ) : SyncState()
     }
 }

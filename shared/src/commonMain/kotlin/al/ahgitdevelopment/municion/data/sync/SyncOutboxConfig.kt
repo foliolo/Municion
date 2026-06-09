@@ -2,7 +2,6 @@ package al.ahgitdevelopment.municion.data.sync
 
 /** Tunables for the outbox-based write pipeline. */
 object SyncOutboxConfig {
-
     /** Max number of operations a single drain pass tries. */
     const val BATCH_SIZE = 50
 
@@ -21,13 +20,14 @@ object SyncOutboxConfig {
     }
 
     /** Entity type → Firebase collection name. */
-    fun firebasePathFor(entityType: String): String = when (entityType) {
-        "Licencia" -> "licencias"
-        "Guia" -> "guias"
-        "Compra" -> "compras"
-        "Tirada" -> "tiradas"
-        else -> throw IllegalArgumentException("Unknown entity type: $entityType")
-    }
+    fun firebasePathFor(entityType: String): String =
+        when (entityType) {
+            "Licencia" -> "licencias"
+            "Guia" -> "guias"
+            "Compra" -> "compras"
+            "Tirada" -> "tiradas"
+            else -> throw IllegalArgumentException("Unknown entity type: $entityType")
+        }
 
     /** Tombstone retention before periodic purge removes the row from Room. */
     const val TOMBSTONE_TTL_MS = 30L * 24 * 60 * 60 * 1_000 // 30 days

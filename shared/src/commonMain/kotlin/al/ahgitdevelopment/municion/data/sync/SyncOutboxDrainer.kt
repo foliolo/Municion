@@ -21,21 +21,27 @@ class SyncOutboxDrainer(
     private val rtdb: MunicionRtdbDatasource,
     private val crashReporter: CrashReporter,
 ) {
-    private val json = Json {
-        ignoreUnknownKeys = true
-        encodeDefaults = true
-    }
+    private val json =
+        Json {
+            ignoreUnknownKeys = true
+            encodeDefaults = true
+        }
 
-    data class DrainResult(val synced: Int, val failed: Int, val hasMore: Boolean)
+    data class DrainResult(
+        val synced: Int,
+        val failed: Int,
+        val hasMore: Boolean,
+    )
 
     suspend fun drainOnce(): DrainResult {
         outboxDao.resetInFlight()
 
         val now = nowMillis()
-        val batch = outboxDao.nextBatch(SyncOutboxConfig.BATCH_SIZE, now, backoffMs = 0L).filter { row ->
-            val nextAttemptAt = (row.lastAttemptAt ?: 0L) + SyncOutboxConfig.computeBackoffMs(row.retryCount)
-            row.lastAttemptAt == null || nextAttemptAt <= now
-        }
+        val batch =
+            outboxDao.nextBatch(SyncOutboxConfig.BATCH_SIZE, now, backoffMs = 0L).filter { row ->
+                val nextAttemptAt = (row.lastAttemptAt ?: 0L) + SyncOutboxConfig.computeBackoffMs(row.retryCount)
+                row.lastAttemptAt == null || nextAttemptAt <= now
+            }
         if (batch.isEmpty()) return DrainResult(0, 0, hasMore = false)
 
         var synced = 0

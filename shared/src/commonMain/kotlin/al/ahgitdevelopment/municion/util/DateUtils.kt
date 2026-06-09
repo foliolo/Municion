@@ -15,9 +15,21 @@ import kotlin.time.ExperimentalTime
  * Multiplatform replacement for the Android `SimpleDateFormat`/`Calendar` usage.
  */
 
-private val SPANISH_MONTHS = arrayOf(
-    "ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "oct", "nov", "dic",
-)
+private val SPANISH_MONTHS =
+    arrayOf(
+        "ene",
+        "feb",
+        "mar",
+        "abr",
+        "may",
+        "jun",
+        "jul",
+        "ago",
+        "sep",
+        "oct",
+        "nov",
+        "dic",
+    )
 
 /** Parses a "dd/MM/yyyy" string into a [LocalDate], or null if malformed/invalid. */
 fun parseDdMmYyyy(value: String): LocalDate? {
@@ -37,12 +49,10 @@ fun parseDdMmYyyy(value: String): LocalDate? {
 fun today(): LocalDate = Clock.System.todayIn(TimeZone.currentSystemDefault())
 
 /** Whole days from today to [target] (negative when [target] is in the past). */
-fun daysFromTodayTo(target: LocalDate): Long =
-    target.toEpochDays() - today().toEpochDays()
+fun daysFromTodayTo(target: LocalDate): Long = target.toEpochDays() - today().toEpochDays()
 
 /** Whole days elapsed since [target] (negative when [target] is in the future). */
-fun daysSince(target: LocalDate): Long =
-    today().toEpochDays() - target.toEpochDays()
+fun daysSince(target: LocalDate): Long = today().toEpochDays() - target.toEpochDays()
 
 /** Today as "dd/MM/yyyy". */
 fun todayDdMmYyyy(): String {
@@ -51,8 +61,7 @@ fun todayDdMmYyyy(): String {
 }
 
 /** "dd/MM/yyyy" → UTC-midnight epoch millis (for Material3 DatePicker initial selection). */
-fun ddMmYyyyToUtcMillis(value: String): Long? =
-    parseDdMmYyyy(value)?.let { it.toEpochDays() * MILLIS_PER_DAY }
+fun ddMmYyyyToUtcMillis(value: String): Long? = parseDdMmYyyy(value)?.let { it.toEpochDays() * MILLIS_PER_DAY }
 
 /** UTC-midnight epoch millis (from Material3 DatePicker) → "dd/MM/yyyy". */
 fun utcMillisToDdMmYyyy(millis: Long): String {
@@ -62,16 +71,16 @@ fun utcMillisToDdMmYyyy(millis: Long): String {
 
 private const val MILLIS_PER_DAY = 86_400_000L
 
-private fun LocalDate.toDdMmYyyy(): String =
-    "${day.toString().padStart(2, '0')}/${(month.ordinal + 1).toString().padStart(2, '0')}/$year"
+private fun LocalDate.toDdMmYyyy(): String = "${day.toString().padStart(2, '0')}/${(month.ordinal + 1).toString().padStart(2, '0')}/$year"
 
 /** Adds [years] to a "dd/MM/yyyy" date (clamps Feb 29). Null if the input is malformed. */
-fun plusYearsDdMmYyyy(ddMmYyyy: String, years: Int): String? =
-    parseDdMmYyyy(ddMmYyyy)?.plus(years, DateTimeUnit.YEAR)?.toDdMmYyyy()
+fun plusYearsDdMmYyyy(
+    ddMmYyyy: String,
+    years: Int,
+): String? = parseDdMmYyyy(ddMmYyyy)?.plus(years, DateTimeUnit.YEAR)?.toDdMmYyyy()
 
 /** 31 December of the year of a "dd/MM/yyyy" date. Null if malformed. */
-fun endOfYearDdMmYyyy(ddMmYyyy: String): String? =
-    parseDdMmYyyy(ddMmYyyy)?.let { "31/12/${it.year}" }
+fun endOfYearDdMmYyyy(ddMmYyyy: String): String? = parseDdMmYyyy(ddMmYyyy)?.let { "31/12/${it.year}" }
 
 /** Formats a "dd/MM/yyyy" string as "dd MMM yyyy" (Spanish month abbreviations); falls back to the input. */
 fun formatDisplayDate(ddMmYyyy: String): String {

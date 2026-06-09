@@ -39,10 +39,11 @@ fun GuiaSelectionDialog(
                 LazyColumn {
                     items(guias) { guia ->
                         Column(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .clickable { onSelect(guia) }
-                                .padding(vertical = 12.dp),
+                            modifier =
+                                Modifier
+                                    .fillMaxWidth()
+                                    .clickable { onSelect(guia) }
+                                    .padding(vertical = 12.dp),
                         ) {
                             Text(
                                 text = "${guia.marca} ${guia.modelo}",

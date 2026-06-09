@@ -24,28 +24,30 @@ data class TiradaFormState(
 ) {
     val maxPuntuacion: Int get() = Tirada.getMaxPuntuacion(modalidad)
 
-    fun toTirada(): Tirada = Tirada(
-        id = tiradaId,
-        descripcion = descripcion,
-        localizacion = localizacion.ifBlank { null },
-        categoria = categoria.ifBlank { null },
-        modalidad = modalidad.ifBlank { null },
-        fecha = fecha,
-        puntuacion = (puntuacion.toIntOrNull() ?: 0).coerceIn(0, maxPuntuacion),
-        syncId = syncId,
-    )
+    fun toTirada(): Tirada =
+        Tirada(
+            id = tiradaId,
+            descripcion = descripcion,
+            localizacion = localizacion.ifBlank { null },
+            categoria = categoria.ifBlank { null },
+            modalidad = modalidad.ifBlank { null },
+            fecha = fecha,
+            puntuacion = (puntuacion.toIntOrNull() ?: 0).coerceIn(0, maxPuntuacion),
+            syncId = syncId,
+        )
 
     companion object {
-        fun fromTirada(t: Tirada): TiradaFormState = TiradaFormState(
-            tiradaId = t.id,
-            syncId = t.syncId,
-            descripcion = t.descripcion,
-            localizacion = t.localizacion ?: "",
-            categoria = t.categoria ?: "",
-            modalidad = t.modalidad ?: Tirada.MODALIDAD_PRECISION,
-            fecha = t.fecha,
-            puntuacion = t.puntuacion.toString(),
-            isEditing = true,
-        )
+        fun fromTirada(t: Tirada): TiradaFormState =
+            TiradaFormState(
+                tiradaId = t.id,
+                syncId = t.syncId,
+                descripcion = t.descripcion,
+                localizacion = t.localizacion ?: "",
+                categoria = t.categoria ?: "",
+                modalidad = t.modalidad ?: Tirada.MODALIDAD_PRECISION,
+                fecha = t.fecha,
+                puntuacion = t.puntuacion.toString(),
+                isEditing = true,
+            )
     }
 }

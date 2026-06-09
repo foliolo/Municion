@@ -14,15 +14,21 @@ import kotlinx.coroutines.flow.asStateFlow
  */
 interface RemoveAdsManager {
     val hasRemovedAds: StateFlow<Boolean>
+
     suspend fun initialize(userId: String?)
+
     suspend fun purchaseRemoveAds(): Result<Boolean>
+
     suspend fun restore(): Result<Boolean>
 }
 
 class NoOpRemoveAdsManager : RemoveAdsManager {
     private val _hasRemovedAds = MutableStateFlow(false)
     override val hasRemovedAds: StateFlow<Boolean> = _hasRemovedAds.asStateFlow()
+
     override suspend fun initialize(userId: String?) = Unit
+
     override suspend fun purchaseRemoveAds(): Result<Boolean> = Result.success(false)
+
     override suspend fun restore(): Result<Boolean> = Result.success(false)
 }

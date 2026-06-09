@@ -8,18 +8,18 @@ import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 
 class TolerantParsersTest {
-
     private val validSyncId = "0d02e861-2e34-351b-b27f-311b6d60c54a"
 
     @Test
     fun parseLicencia_ok_whenAllRequiredPresent() {
-        val dto = LicenciaDto(
-            syncId = validSyncId,
-            tipo = 1,
-            numLicencia = "B-123",
-            fechaExpedicion = "01/01/2020",
-            fechaCaducidad = "01/01/2030",
-        )
+        val dto =
+            LicenciaDto(
+                syncId = validSyncId,
+                tipo = 1,
+                numLicencia = "B-123",
+                fechaExpedicion = "01/01/2020",
+                fechaCaducidad = "01/01/2030",
+            )
         val l = TolerantParsers.parseLicencia("k", dto)
         assertNotNull(l)
         assertEquals("ok", l.dataQuality)
@@ -51,7 +51,11 @@ class TolerantParsersTest {
 
     @Test
     fun parseLicencia_derivesSyncIdFromFirebaseKey() {
-        val l = TolerantParsers.parseLicencia(validSyncId, LicenciaDto(numLicencia = "X", fechaExpedicion = "01/01/2020", fechaCaducidad = "01/01/2030"))
+        val l =
+            TolerantParsers.parseLicencia(
+                validSyncId,
+                LicenciaDto(numLicencia = "X", fechaExpedicion = "01/01/2020", fechaCaducidad = "01/01/2030"),
+            )
         assertNotNull(l)
         assertEquals(validSyncId, l.syncId)
     }

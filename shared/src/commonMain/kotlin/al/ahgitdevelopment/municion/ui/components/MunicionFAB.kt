@@ -39,7 +39,10 @@ fun MunicionFAB(
 }
 
 @Composable
-private fun AddFAB(onClick: () -> Unit, contentDescription: String) {
+private fun AddFAB(
+    onClick: () -> Unit,
+    contentDescription: String,
+) {
     FloatingActionButton(onClick = onClick, containerColor = MaterialTheme.colorScheme.primary) {
         Icon(Icons.Default.Add, contentDescription = contentDescription)
     }

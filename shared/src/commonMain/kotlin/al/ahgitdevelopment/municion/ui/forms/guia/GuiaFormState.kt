@@ -40,45 +40,47 @@ data class GuiaFormState(
     /** Spent ammunition is only editable when modifying an existing guía. */
     val showGastado: Boolean get() = isEditing
 
-    fun toGuia(): Guia = Guia(
-        id = guiaId,
-        tipoLicencia = tipoLicencia,
-        marca = marca,
-        modelo = modelo,
-        apodo = apodo,
-        tipoArma = tipoArma,
-        calibre1 = calibre1,
-        calibre2 = if (showCalibre2) calibre2.ifBlank { null } else null,
-        numGuia = numGuia,
-        numArma = numArma,
-        cupo = cupo.toIntOrNull() ?: 0,
-        gastado = gastado.toIntOrNull() ?: 0,
-        imagePath = imagePath,
-        fotoUrl = fotoUrl,
-        storagePath = storagePath,
-        syncId = syncId,
-    )
+    fun toGuia(): Guia =
+        Guia(
+            id = guiaId,
+            tipoLicencia = tipoLicencia,
+            marca = marca,
+            modelo = modelo,
+            apodo = apodo,
+            tipoArma = tipoArma,
+            calibre1 = calibre1,
+            calibre2 = if (showCalibre2) calibre2.ifBlank { null } else null,
+            numGuia = numGuia,
+            numArma = numArma,
+            cupo = cupo.toIntOrNull() ?: 0,
+            gastado = gastado.toIntOrNull() ?: 0,
+            imagePath = imagePath,
+            fotoUrl = fotoUrl,
+            storagePath = storagePath,
+            syncId = syncId,
+        )
 
     companion object {
-        fun fromGuia(g: Guia): GuiaFormState = GuiaFormState(
-            guiaId = g.id,
-            syncId = g.syncId,
-            tipoLicencia = g.tipoLicencia,
-            marca = g.marca,
-            modelo = g.modelo,
-            apodo = g.apodo,
-            tipoArma = g.tipoArma,
-            calibre1 = g.calibre1,
-            calibre2 = g.calibre2 ?: "",
-            showCalibre2 = !g.calibre2.isNullOrBlank(),
-            numGuia = g.numGuia,
-            numArma = g.numArma,
-            cupo = g.cupo.toString(),
-            gastado = g.gastado.toString(),
-            imagePath = g.imagePath,
-            fotoUrl = g.fotoUrl,
-            storagePath = g.storagePath,
-            isEditing = true,
-        )
+        fun fromGuia(g: Guia): GuiaFormState =
+            GuiaFormState(
+                guiaId = g.id,
+                syncId = g.syncId,
+                tipoLicencia = g.tipoLicencia,
+                marca = g.marca,
+                modelo = g.modelo,
+                apodo = g.apodo,
+                tipoArma = g.tipoArma,
+                calibre1 = g.calibre1,
+                calibre2 = g.calibre2 ?: "",
+                showCalibre2 = !g.calibre2.isNullOrBlank(),
+                numGuia = g.numGuia,
+                numArma = g.numArma,
+                cupo = g.cupo.toString(),
+                gastado = g.gastado.toString(),
+                imagePath = g.imagePath,
+                fotoUrl = g.fotoUrl,
+                storagePath = g.storagePath,
+                isEditing = true,
+            )
     }
 }

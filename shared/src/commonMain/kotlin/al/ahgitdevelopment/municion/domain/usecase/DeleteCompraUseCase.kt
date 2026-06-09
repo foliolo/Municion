@@ -11,14 +11,18 @@ class DeleteCompraUseCase(
     private val guiaRepository: GuiaRepository,
     private val crashReporter: CrashReporter,
 ) {
-    suspend operator fun invoke(compra: Compra, userId: String?): Result<Unit> = try {
-        if (!CreateCompraUseCase.isCompraCampoTiro(compra.tienda)) {
-            guiaRepository.decrementGastado(compra.idPosGuia, compra.unidades, userId).getOrThrow()
+    suspend operator fun invoke(
+        compra: Compra,
+        userId: String?,
+    ): Result<Unit> =
+        try {
+            if (!CreateCompraUseCase.isCompraCampoTiro(compra.tienda)) {
+                guiaRepository.decrementGastado(compra.idPosGuia, compra.unidades, userId).getOrThrow()
+            }
+            compraRepository.deleteCompra(compra, userId).getOrThrow()
+            Result.success(Unit)
+        } catch (e: Exception) {
+            crashReporter.recordException(e)
+            Result.failure(e)
         }
-        compraRepository.deleteCompra(compra, userId).getOrThrow()
-        Result.success(Unit)
-    } catch (e: Exception) {
-        crashReporter.recordException(e)
-        Result.failure(e)
-    }
 }

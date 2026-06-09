@@ -8,6 +8,9 @@ import androidx.compose.ui.Modifier
  * via the GoogleMobileAds SPM package added in Xcode) — see MIGRATION_REPORT phase 7.
  */
 @Composable
-actual fun AdaptiveBanner(adUnitId: String, modifier: Modifier) {
+actual fun AdaptiveBanner(
+    adUnitId: String,
+    modifier: Modifier,
+) {
     // Intentionally empty on iOS for now.
 }

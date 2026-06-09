@@ -60,11 +60,12 @@ fun MainScreen(
     viewModel: MainViewModel = koinViewModel(),
     guiaViewModel: GuiaViewModel = koinViewModel(),
 ) {
-    val startDestination: Route = when (authState) {
-        is AuthViewModel.AuthState.NotAuthenticated, is AuthViewModel.AuthState.Error -> Login
-        is AuthViewModel.AuthState.RequiresMigration -> Migration
-        else -> Licencias
-    }
+    val startDestination: Route =
+        when (authState) {
+            is AuthViewModel.AuthState.NotAuthenticated, is AuthViewModel.AuthState.Error -> Login
+            is AuthViewModel.AuthState.RequiresMigration -> Migration
+            else -> Licencias
+        }
 
     val scope = rememberCoroutineScope()
     val syncState by viewModel.syncState.collectAsStateWithLifecycle()
@@ -102,8 +103,9 @@ fun MainScreen(
     val isAuthScreen = currentRoute in authScreenRoutes
     val showTopBar = !isAuthScreen
     val showBottomBar = currentRoute in listScreenRoutes
-    val showFab = !isAuthScreen &&
-        (currentRoute in listScreenRoutes || (currentRoute?.contains("Form") == true && formSaveCallback != null))
+    val showFab =
+        !isAuthScreen &&
+            (currentRoute in listScreenRoutes || (currentRoute?.contains("Form") == true && formSaveCallback != null))
 
     if (showLicenciaDialog) {
         LicenciaSelectionDialog(
@@ -202,9 +204,10 @@ fun MainScreen(
 }
 
 private val authScreenRoutes = setOf(Login::class.qualifiedName, Migration::class.qualifiedName)
-private val listScreenRoutes = setOf(
-    Licencias::class.qualifiedName,
-    Guias::class.qualifiedName,
-    Compras::class.qualifiedName,
-    Tiradas::class.qualifiedName,
-)
+private val listScreenRoutes =
+    setOf(
+        Licencias::class.qualifiedName,
+        Guias::class.qualifiedName,
+        Compras::class.qualifiedName,
+        Tiradas::class.qualifiedName,
+    )

@@ -33,42 +33,31 @@ data class Tirada(
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")
     val id: Int = 0,
-
     @ColumnInfo(name = "descripcion")
     val descripcion: String,
-
     /** Shooting range/location (legacy column/Firebase key "rango"). */
     @SerialName("rango")
     @ColumnInfo(name = "rango")
     val localizacion: String? = null,
-
     /** Category: Nacional, Autonómica, Local/Social. */
     @ColumnInfo(name = "categoria")
     val categoria: String? = null,
-
     /** Modality: Precisión (0-600 pts) or IPSC (0-100%). */
     @ColumnInfo(name = "modalidad")
     val modalidad: String? = null,
-
     @ColumnInfo(name = "fecha")
     val fecha: String,
-
     /** Score: 0-600 (Precisión) or 0-100 (IPSC). */
     @ColumnInfo(name = "puntuacion")
     val puntuacion: Int = 0,
-
     @ColumnInfo(name = "updated_at")
     val updatedAt: Long = nowMillis(),
-
     @ColumnInfo(name = "sync_id")
     val syncId: String = "",
-
     @ColumnInfo(name = "deleted")
     val deleted: Boolean = false,
-
     @ColumnInfo(name = "deleted_at")
     val deletedAt: Long? = null,
-
     @ColumnInfo(name = "data_quality")
     val dataQuality: String = "ok",
 ) {
@@ -103,13 +92,14 @@ data class Tirada(
 
         fun getMaxPuntuacion(modalidad: String?): Int = if (modalidad == MODALIDAD_IPSC) 100 else 600
 
-        fun empty() = Tirada(
-            descripcion = "Práctica semanal",
-            localizacion = "Galería Municipal",
-            modalidad = MODALIDAD_PRECISION,
-            fecha = "01/01/2024",
-            puntuacion = 85,
-        )
+        fun empty() =
+            Tirada(
+                descripcion = "Práctica semanal",
+                localizacion = "Galería Municipal",
+                modalidad = MODALIDAD_PRECISION,
+                fecha = "01/01/2024",
+                puntuacion = 85,
+            )
 
         /** Milliseconds until the session "expires" (1 year after its date); 0 if invalid. */
         fun millisUntilExpiracy(tirada: Tirada): Long {

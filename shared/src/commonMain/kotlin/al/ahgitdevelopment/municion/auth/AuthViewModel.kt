@@ -16,7 +16,6 @@ import kotlinx.coroutines.launch
 class AuthViewModel(
     private val auth: FirebaseAuth,
 ) : ViewModel() {
-
     private val _authState = MutableStateFlow<AuthState>(AuthState.Loading)
     val authState: StateFlow<AuthState> = _authState.asStateFlow()
 
@@ -27,21 +26,33 @@ class AuthViewModel(
     }
 
     fun getCurrentUserId(): String? = auth.currentUser?.uid
+
     fun isAccountLinked(): Boolean = auth.currentUser?.let { !it.isAnonymous } ?: false
 
     private fun updateAuthState(user: FirebaseUser?) {
-        _authState.value = when {
-            user == null -> AuthState.NotAuthenticated
-            user.isAnonymous -> AuthState.RequiresMigration(user)
-            else -> AuthState.Authenticated(user)
-        }
+        _authState.value =
+            when {
+                user == null -> AuthState.NotAuthenticated
+                user.isAnonymous -> AuthState.RequiresMigration(user)
+                else -> AuthState.Authenticated(user)
+            }
     }
 
     sealed class AuthState {
         data object Loading : AuthState()
+
         data object NotAuthenticated : AuthState()
-        data class RequiresMigration(val user: FirebaseUser) : AuthState()
-        data class Authenticated(val user: FirebaseUser) : AuthState()
-        data class Error(val message: String) : AuthState()
+
+        data class RequiresMigration(
+            val user: FirebaseUser,
+        ) : AuthState()
+
+        data class Authenticated(
+            val user: FirebaseUser,
+        ) : AuthState()
+
+        data class Error(
+            val message: String,
+        ) : AuthState()
     }
 }

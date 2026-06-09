@@ -33,66 +33,47 @@ data class Licencia(
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")
     val id: Int = 0,
-
     @ColumnInfo(name = "tipo")
     val tipo: Int,
-
     @ColumnInfo(name = "nombre")
     val nombre: String? = null,
-
     @ColumnInfo(name = "tipo_permiso_conduccion")
     val tipoPermisoConduccion: Int = -1,
-
     @ColumnInfo(name = "edad")
     val edad: Int,
-
     @ColumnInfo(name = "fecha_expedicion")
     val fechaExpedicion: String,
-
     @ColumnInfo(name = "fecha_caducidad")
     val fechaCaducidad: String,
-
     @ColumnInfo(name = "num_licencia")
     val numLicencia: String,
-
     @ColumnInfo(name = "num_abonado")
     val numAbonado: Int = -1,
-
     @ColumnInfo(name = "num_seguro")
     val numSeguro: String? = null,
-
     @ColumnInfo(name = "autonomia")
     val autonomia: Int = -1,
-
     @ColumnInfo(name = "escala")
     val escala: Int = -1,
-
     @ColumnInfo(name = "categoria")
     val categoria: Int = -1,
-
     /** Firebase Storage download URL for the license photo. */
     @ColumnInfo(name = "foto_url")
     val fotoUrl: String? = null,
-
     /** Firebase Storage path (for deletion). */
     @ColumnInfo(name = "storage_path")
     val storagePath: String? = null,
-
     /** Last-modification timestamp (sync diff). */
     @ColumnInfo(name = "updated_at")
     val updatedAt: Long = nowMillis(),
-
     /** Stable global identifier for cross-device sync (UUID, generated client-side). */
     @ColumnInfo(name = "sync_id")
     val syncId: String = "",
-
     /** Soft-delete flag. UI queries filter `deleted = 0`. */
     @ColumnInfo(name = "deleted")
     val deleted: Boolean = false,
-
     @ColumnInfo(name = "deleted_at")
     val deletedAt: Long? = null,
-
     /** "ok" | "degraded" | "lost" — set by tolerant sync parsing. */
     @ColumnInfo(name = "data_quality")
     val dataQuality: String = "ok",
@@ -110,24 +91,26 @@ data class Licencia(
 
     fun estaActiva(): Boolean = !estaCaducada()
 
-    fun estadoDescripcion(): String = when {
-        estaCaducada() -> "Caducada"
-        caducaProxima() -> "Caduca en ${diasHastaCaducidad() ?: 0} días"
-        else -> "Activa"
-    }
+    fun estadoDescripcion(): String =
+        when {
+            estaCaducada() -> "Caducada"
+            caducaProxima() -> "Caduca en ${diasHastaCaducidad() ?: 0} días"
+            else -> "Activa"
+        }
 
     /** Description used for calendar expiration events. */
     fun getDescripcionCalendario(): String = "${nombre ?: "Licencia Tipo $tipo"}: $numLicencia"
 
     companion object {
-        fun empty() = Licencia(
-            tipo = 0,
-            nombre = "Tipo B",
-            edad = 30,
-            fechaExpedicion = "01/01/2024",
-            fechaCaducidad = "01/01/2029",
-            numLicencia = "B-12345678",
-        )
+        fun empty() =
+            Licencia(
+                tipo = 0,
+                nombre = "Tipo B",
+                edad = 30,
+                fechaExpedicion = "01/01/2024",
+                fechaCaducidad = "01/01/2029",
+                numLicencia = "B-12345678",
+            )
 
         fun formatFecha(fecha: String): String = formatDisplayDate(fecha)
     }

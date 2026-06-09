@@ -13,7 +13,6 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface GuiaDao {
-
     @Query("SELECT * FROM guias WHERE deleted = 0 ORDER BY apodo ASC")
     fun getAllGuiasFlow(): Flow<List<Guia>>
 
@@ -61,13 +60,22 @@ interface GuiaDao {
     suspend fun update(guia: Guia)
 
     @Query("UPDATE guias SET gastado = :gastado WHERE id = :id")
-    suspend fun updateGastado(id: Int, gastado: Int)
+    suspend fun updateGastado(
+        id: Int,
+        gastado: Int,
+    )
 
     @Query("UPDATE guias SET gastado = gastado + :cantidad WHERE id = :id")
-    suspend fun incrementGastado(id: Int, cantidad: Int)
+    suspend fun incrementGastado(
+        id: Int,
+        cantidad: Int,
+    )
 
     @Query("UPDATE guias SET gastado = MAX(0, gastado - :cantidad) WHERE id = :id")
-    suspend fun decrementGastado(id: Int, cantidad: Int)
+    suspend fun decrementGastado(
+        id: Int,
+        cantidad: Int,
+    )
 
     @Query("UPDATE guias SET gastado = 0")
     suspend fun resetAllGastado()
@@ -91,7 +99,10 @@ interface GuiaDao {
     fun countNeedsAttentionFlow(): Flow<Int>
 
     @Query("UPDATE guias SET deleted = 1, deleted_at = :now, updated_at = :now WHERE sync_id = :syncId")
-    suspend fun tombstoneBySyncId(syncId: String, now: Long): Int
+    suspend fun tombstoneBySyncId(
+        syncId: String,
+        now: Long,
+    ): Int
 
     @Query("DELETE FROM guias WHERE deleted = 1 AND deleted_at IS NOT NULL AND deleted_at < :before")
     suspend fun purgeTombstonesBefore(before: Long): Int

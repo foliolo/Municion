@@ -23,8 +23,8 @@ import java.util.concurrent.TimeUnit
 class SyncOutboxWorker(
     appContext: Context,
     params: WorkerParameters,
-) : CoroutineWorker(appContext, params), KoinComponent {
-
+) : CoroutineWorker(appContext, params),
+    KoinComponent {
     private val drainer: SyncOutboxDrainer by inject()
 
     override suspend fun doWork(): Result {
@@ -37,23 +37,28 @@ class SyncOutboxWorker(
         private const val ONESHOT_NAME = "sync_outbox_oneshot"
         private const val PERIODIC_NAME = "sync_outbox_periodic"
 
-        private val connected = Constraints.Builder()
-            .setRequiredNetworkType(NetworkType.CONNECTED)
-            .build()
+        private val connected =
+            Constraints
+                .Builder()
+                .setRequiredNetworkType(NetworkType.CONNECTED)
+                .build()
 
         fun enqueueOneShot(context: Context) {
-            val req = OneTimeWorkRequestBuilder<SyncOutboxWorker>()
-                .setConstraints(connected)
-                .setBackoffCriteria(BackoffPolicy.EXPONENTIAL, 10, TimeUnit.SECONDS)
-                .build()
+            val req =
+                OneTimeWorkRequestBuilder<SyncOutboxWorker>()
+                    .setConstraints(connected)
+                    .setBackoffCriteria(BackoffPolicy.EXPONENTIAL, 10, TimeUnit.SECONDS)
+                    .build()
             WorkManager.getInstance(context).enqueueUniqueWork(ONESHOT_NAME, ExistingWorkPolicy.KEEP, req)
         }
 
         fun enqueuePeriodic(context: Context) {
-            val req = PeriodicWorkRequestBuilder<SyncOutboxWorker>(15, TimeUnit.MINUTES)
-                .setConstraints(connected)
-                .build()
-            WorkManager.getInstance(context)
+            val req =
+                PeriodicWorkRequestBuilder<SyncOutboxWorker>(15, TimeUnit.MINUTES)
+                    .setConstraints(connected)
+                    .build()
+            WorkManager
+                .getInstance(context)
                 .enqueueUniquePeriodicWork(PERIODIC_NAME, ExistingPeriodicWorkPolicy.KEEP, req)
         }
     }

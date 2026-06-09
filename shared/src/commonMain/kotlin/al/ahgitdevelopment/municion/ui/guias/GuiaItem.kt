@@ -70,17 +70,19 @@ fun GuiaItem(
     }
 
     // Remaining-cupo fraction: 1.0 = full, 0.0 = exhausted.
-    val remainingFraction = if (guia.cupo > 0) {
-        (guia.disponible().toFloat() / guia.cupo.toFloat()).coerceIn(0f, 1f)
-    } else {
-        0f
-    }
+    val remainingFraction =
+        if (guia.cupo > 0) {
+            (guia.disponible().toFloat() / guia.cupo.toFloat()).coerceIn(0f, 1f)
+        } else {
+            0f
+        }
 
     // Continuous color interpolation: green (full) → yellow (half) → red (empty).
-    val cupoColor = when {
-        remainingFraction >= 0.5f -> lerp(LicenseExpiring, LicenseValid, (remainingFraction - 0.5f) * 2f)
-        else -> lerp(LicenseExpired, LicenseExpiring, remainingFraction * 2f)
-    }
+    val cupoColor =
+        when {
+            remainingFraction >= 0.5f -> lerp(LicenseExpiring, LicenseValid, (remainingFraction - 0.5f) * 2f)
+            else -> lerp(LicenseExpired, LicenseExpiring, remainingFraction * 2f)
+        }
 
     val imageUrl = guia.fotoUrl ?: guia.imagePath
     val hasValidImage = guia.hasImage() && !imageUrl.isNullOrBlank()
@@ -89,11 +91,12 @@ fun GuiaItem(
         state = dismissState,
         backgroundContent = {
             Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .clip(RoundedCornerShape(12.dp))
-                    .background(MaterialTheme.colorScheme.error)
-                    .padding(horizontal = 20.dp),
+                modifier =
+                    Modifier
+                        .fillMaxSize()
+                        .clip(RoundedCornerShape(12.dp))
+                        .background(MaterialTheme.colorScheme.error)
+                        .padding(horizontal = 20.dp),
                 contentAlignment = Alignment.CenterEnd,
             ) {
                 Icon(Icons.Default.Delete, stringResource(Res.string.cd_delete), tint = MaterialTheme.colorScheme.onError)
@@ -112,17 +115,18 @@ fun GuiaItem(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Box(
-                    modifier = Modifier
-                        .size(72.dp)
-                        .clip(RoundedCornerShape(8.dp))
-                        .background(Primary.copy(alpha = 0.15f))
-                        .then(
-                            if (hasValidImage && onImageClick != null) {
-                                Modifier.clickable { onImageClick(imageUrl!!) }
-                            } else {
-                                Modifier
-                            },
-                        ),
+                    modifier =
+                        Modifier
+                            .size(72.dp)
+                            .clip(RoundedCornerShape(8.dp))
+                            .background(Primary.copy(alpha = 0.15f))
+                            .then(
+                                if (hasValidImage && onImageClick != null) {
+                                    Modifier.clickable { onImageClick(imageUrl) }
+                                } else {
+                                    Modifier
+                                },
+                            ),
                     contentAlignment = Alignment.Center,
                 ) {
                     if (hasValidImage) {
@@ -140,11 +144,27 @@ fun GuiaItem(
                 Spacer(Modifier.width(12.dp))
 
                 Column(modifier = Modifier.weight(1f)) {
-                    Text(guia.apodo, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                    Text(
+                        guia.apodo,
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.SemiBold,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                    )
                     Spacer(Modifier.height(2.dp))
-                    Text("${guia.marca} ${guia.modelo}", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f), maxLines = 1, overflow = TextOverflow.Ellipsis)
+                    Text(
+                        "${guia.marca} ${guia.modelo}",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                    )
                     Spacer(Modifier.height(2.dp))
-                    Text(guia.calibre1, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f))
+                    Text(
+                        guia.calibre1,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f),
+                    )
                     Spacer(Modifier.height(6.dp))
                     Row(
                         modifier = Modifier.fillMaxWidth(),
@@ -152,9 +172,10 @@ fun GuiaItem(
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
                         val trackColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f)
-                        val barBrush = Brush.horizontalGradient(
-                            colors = listOf(lerp(cupoColor, LicenseValid, 0.3f), cupoColor),
-                        )
+                        val barBrush =
+                            Brush.horizontalGradient(
+                                colors = listOf(lerp(cupoColor, LicenseValid, 0.3f), cupoColor),
+                            )
                         Canvas(modifier = Modifier.weight(1f).height(6.dp)) {
                             val cornerRadius = CornerRadius(size.height / 2f)
                             drawRoundRect(color = trackColor, cornerRadius = cornerRadius)

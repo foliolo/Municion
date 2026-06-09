@@ -24,15 +24,18 @@ class AccountSettingsViewModel(
     private val syncOperationDao: SyncOperationDao,
     private val syncScheduler: SyncScheduler,
 ) : ViewModel() {
-
     private val _uiState = MutableStateFlow<AccountUiState>(AccountUiState.Loading)
     val uiState: StateFlow<AccountUiState> = _uiState.asStateFlow()
 
-    val pendingSyncCount: StateFlow<Int> = syncOperationDao.countPendingFlow()
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), 0)
+    val pendingSyncCount: StateFlow<Int> =
+        syncOperationDao
+            .countPendingFlow()
+            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), 0)
 
-    val failedSyncCount: StateFlow<Int> = syncOperationDao.countFailedFlow()
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), 0)
+    val failedSyncCount: StateFlow<Int> =
+        syncOperationDao
+            .countFailedFlow()
+            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), 0)
 
     init {
         loadAccountState()
@@ -40,11 +43,12 @@ class AccountSettingsViewModel(
 
     fun loadAccountState() {
         val user = authRepository.getCurrentUser()
-        _uiState.value = if (user != null) {
-            AccountUiState.Loaded(AccountInfo(email = user.email, uid = user.uid, isAnonymous = user.isAnonymous))
-        } else {
-            AccountUiState.NotAuthenticated
-        }
+        _uiState.value =
+            if (user != null) {
+                AccountUiState.Loaded(AccountInfo(email = user.email, uid = user.uid, isAnonymous = user.isAnonymous))
+            } else {
+                AccountUiState.NotAuthenticated
+            }
     }
 
     fun forceSync() = syncScheduler.requestImmediateDrain()
@@ -75,16 +79,25 @@ class AccountSettingsViewModel(
 
     sealed class AccountUiState {
         data object Loading : AccountUiState()
+
         data object NotAuthenticated : AccountUiState()
-        data class Loaded(val accountInfo: AccountInfo) : AccountUiState()
+
+        data class Loaded(
+            val accountInfo: AccountInfo,
+        ) : AccountUiState()
     }
 
-    data class AccountInfo(val email: String?, val uid: String, val isAnonymous: Boolean = false) {
+    data class AccountInfo(
+        val email: String?,
+        val uid: String,
+        val isAnonymous: Boolean = false,
+    ) {
         val statusText: String
-            get() = when {
-                isAnonymous -> "Requiere migración"
-                !email.isNullOrBlank() -> email
-                else -> uid.take(8) + "…"
-            }
+            get() =
+                when {
+                    isAnonymous -> "Requiere migración"
+                    !email.isNullOrBlank() -> email
+                    else -> uid.take(8) + "…"
+                }
     }
 }

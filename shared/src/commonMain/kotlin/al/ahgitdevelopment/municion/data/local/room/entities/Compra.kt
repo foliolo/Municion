@@ -29,66 +29,46 @@ data class Compra(
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")
     val id: Int = 0,
-
     @ColumnInfo(name = "id_pos_guia")
     val idPosGuia: Int,
-
     @ColumnInfo(name = "calibre1")
     val calibre1: String,
-
     @ColumnInfo(name = "calibre2")
     val calibre2: String? = null,
-
     @ColumnInfo(name = "unidades")
     val unidades: Int,
-
     @ColumnInfo(name = "precio")
     val precio: Double,
-
     @ColumnInfo(name = "fecha")
     val fecha: String,
-
     @ColumnInfo(name = "tipo")
     val tipo: String,
-
     /** Bullet weight in grains (changed from TEXT to INTEGER in schema v23). */
     @ColumnInfo(name = "peso")
     val peso: Int,
-
     @ColumnInfo(name = "marca")
     val marca: String,
-
     @ColumnInfo(name = "tienda")
     val tienda: String? = null,
-
     @ColumnInfo(name = "valoracion")
     val valoracion: Float = 0f,
-
     @ColumnInfo(name = "image_path")
     val imagePath: String? = null,
-
     @ColumnInfo(name = "foto_url")
     val fotoUrl: String? = null,
-
     @ColumnInfo(name = "storage_path")
     val storagePath: String? = null,
-
     @ColumnInfo(name = "updated_at")
     val updatedAt: Long = nowMillis(),
-
     @ColumnInfo(name = "sync_id")
     val syncId: String = "",
-
     /** Stable global identifier of the parent Guia (cross-device sync key). */
     @ColumnInfo(name = "guia_sync_id")
     val guiaSyncId: String? = null,
-
     @ColumnInfo(name = "deleted")
     val deleted: Boolean = false,
-
     @ColumnInfo(name = "deleted_at")
     val deletedAt: Long? = null,
-
     @ColumnInfo(name = "data_quality")
     val dataQuality: String = "ok",
 ) {
@@ -105,15 +85,16 @@ data class Compra(
     fun formatoPrecio(): String = formatPriceEuro(precio)
 
     companion object {
-        fun empty() = Compra(
-            idPosGuia = 0,
-            calibre1 = "9mm",
-            unidades = 50,
-            precio = 25.0,
-            fecha = "01/01/2024",
-            tipo = "FMJ",
-            peso = 115,
-            marca = "Winchester",
-        )
+        fun empty() =
+            Compra(
+                idPosGuia = 0,
+                calibre1 = "9mm",
+                unidades = 50,
+                precio = 25.0,
+                fecha = "01/01/2024",
+                tipo = "FMJ",
+                peso = 115,
+                marca = "Winchester",
+            )
     }
 }

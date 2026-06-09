@@ -6,10 +6,17 @@ package al.ahgitdevelopment.municion.analytics
  */
 interface AnalyticsTracker {
     fun setEnabled(enabled: Boolean)
+
     fun setUserId(userId: String?)
 
     /** Param values must be String/Int/Long/Double/Boolean; others are dropped. */
-    fun logEvent(name: String, params: Map<String, Any?> = emptyMap())
+    fun logEvent(
+        name: String,
+        params: Map<String, Any?> = emptyMap(),
+    )
 
-    fun logScreenView(screenName: String, screenClass: String? = null)
+    fun logScreenView(
+        screenName: String,
+        screenClass: String? = null,
+    )
 }

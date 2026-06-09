@@ -1,7 +1,9 @@
 package al.ahgitdevelopment.municion.domain.usecase
 
 /** Non-fatal exception reported when a Firebase record can't be parsed. */
-class FirebaseParseException(message: String) : Exception(message)
+class FirebaseParseException(
+    message: String,
+) : Exception(message)
 
 /** Detail about a Firebase parse failure (PII redacted). */
 data class ParseError(
@@ -26,12 +28,21 @@ data class SyncResultWithErrors(
 
 /** PII fields never sent to Crashlytics. */
 object SensitiveFields {
-    val REDACTED_FIELDS = setOf(
-        "numLicencia", "numGuia", "numArma", "nombre", "dni", "numAbonado", "numSeguro",
-    )
+    val REDACTED_FIELDS =
+        setOf(
+            "numLicencia",
+            "numGuia",
+            "numArma",
+            "nombre",
+            "dni",
+            "numAbonado",
+            "numSeguro",
+        )
 
     fun isSensitive(fieldName: String): Boolean = fieldName in REDACTED_FIELDS
 
-    fun redactIfNeeded(fieldName: String, value: String?): String =
-        if (isSensitive(fieldName)) "[REDACTED]" else value?.take(100) ?: "null"
+    fun redactIfNeeded(
+        fieldName: String,
+        value: String?,
+    ): String = if (isSensitive(fieldName)) "[REDACTED]" else value?.take(100) ?: "null"
 }

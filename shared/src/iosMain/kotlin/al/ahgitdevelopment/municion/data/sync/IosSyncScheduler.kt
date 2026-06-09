@@ -19,7 +19,6 @@ class IosSyncScheduler(
     private val drainer: SyncOutboxDrainer,
     private val database: MunicionDatabase,
 ) : SyncScheduler {
-
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
     private var lastCleanupAt = 0L
 

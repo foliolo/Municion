@@ -62,22 +62,24 @@ fun TiradaItem(
     }
 
     // Color by score (0-600)
-    val scoreColor = when {
-        tirada.puntuacion >= 500 -> LicenseValid // Excellent
-        tirada.puntuacion >= 300 -> LicenseExpiring // Good
-        tirada.puntuacion > 0 -> LicenseExpired // Improvable
-        else -> MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
-    }
+    val scoreColor =
+        when {
+            tirada.puntuacion >= 500 -> LicenseValid // Excellent
+            tirada.puntuacion >= 300 -> LicenseExpiring // Good
+            tirada.puntuacion > 0 -> LicenseExpired // Improvable
+            else -> MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
+        }
 
     SwipeToDismissBox(
         state = dismissState,
         backgroundContent = {
             Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .clip(RoundedCornerShape(12.dp))
-                    .background(MaterialTheme.colorScheme.error)
-                    .padding(horizontal = 20.dp),
+                modifier =
+                    Modifier
+                        .fillMaxSize()
+                        .clip(RoundedCornerShape(12.dp))
+                        .background(MaterialTheme.colorScheme.error)
+                        .padding(horizontal = 20.dp),
                 contentAlignment = Alignment.CenterEnd,
             ) {
                 Icon(Icons.Default.Delete, stringResource(Res.string.cd_delete), tint = MaterialTheme.colorScheme.onError)
@@ -96,10 +98,11 @@ fun TiradaItem(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Box(
-                    modifier = Modifier
-                        .size(48.dp)
-                        .clip(RoundedCornerShape(8.dp))
-                        .background(Tertiary.copy(alpha = 0.15f)),
+                    modifier =
+                        Modifier
+                            .size(48.dp)
+                            .clip(RoundedCornerShape(8.dp))
+                            .background(Tertiary.copy(alpha = 0.15f)),
                     contentAlignment = Alignment.Center,
                 ) {
                     Icon(
