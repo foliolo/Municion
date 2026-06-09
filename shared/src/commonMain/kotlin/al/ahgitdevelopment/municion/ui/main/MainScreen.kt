@@ -3,6 +3,8 @@ package al.ahgitdevelopment.municion.ui.main
 import al.ahgitdevelopment.municion.BuildConfig
 import al.ahgitdevelopment.municion.ads.AdaptiveBanner
 import al.ahgitdevelopment.municion.auth.AuthViewModel
+import al.ahgitdevelopment.municion.platform.AppPermission
+import al.ahgitdevelopment.municion.platform.rememberPermissionRequester
 import al.ahgitdevelopment.municion.ui.components.MunicionBottomBar
 import al.ahgitdevelopment.municion.ui.components.MunicionFAB
 import al.ahgitdevelopment.municion.ui.components.MunicionTopBar
@@ -71,6 +73,14 @@ fun MainScreen(
     val syncState by viewModel.syncState.collectAsStateWithLifecycle()
     val showAds by viewModel.showAds.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
+
+    // Ask for the notification permission once the user is in (Android 13+; no-op elsewhere).
+    val notificationPermission = rememberPermissionRequester(AppPermission.NOTIFICATIONS)
+    LaunchedEffect(authState) {
+        if (authState is AuthViewModel.AuthState.Authenticated && !notificationPermission.isGranted) {
+            notificationPermission.request()
+        }
+    }
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route

@@ -1,5 +1,8 @@
 package al.ahgitdevelopment.municion.ui.forms.licencia
 
+import al.ahgitdevelopment.municion.platform.AppPermission
+import al.ahgitdevelopment.municion.platform.PermissionRequester
+import al.ahgitdevelopment.municion.platform.rememberPermissionRequester
 import al.ahgitdevelopment.municion.resources.Res
 import al.ahgitdevelopment.municion.resources.categorias
 import al.ahgitdevelopment.municion.resources.ccaa
@@ -12,18 +15,23 @@ import al.ahgitdevelopment.municion.ui.components.ImagePickerField
 import al.ahgitdevelopment.municion.ui.forms.FormUiState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Card
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -46,6 +54,7 @@ fun LicenciaFormScreen(
     val state by viewModel.state.collectAsStateWithLifecycle()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val pickedImage by viewModel.pickedImage.collectAsStateWithLifecycle()
+    val calendarPermission = rememberPermissionRequester(AppPermission.CALENDAR)
 
     LaunchedEffect(uiState) {
         when (val s = uiState) {
@@ -76,6 +85,8 @@ fun LicenciaFormScreen(
                 .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
+        CalendarPermissionPrompt(calendarPermission)
+
         ImagePickerField(
             currentImageUrl = state.fotoUrl,
             pickedBytes = pickedImage,
@@ -190,6 +201,32 @@ fun LicenciaFormScreen(
                 singleLine = true,
                 modifier = Modifier.fillMaxWidth(),
             )
+        }
+    }
+}
+
+/**
+ * Shown only when the calendar permission is missing: explains why it is needed and triggers the
+ * system request. Once granted, saving the licence creates the expiry reminders. On iOS the
+ * requester is always "granted" (EventKit asks for access itself), so this card never appears.
+ */
+@Composable
+private fun CalendarPermissionPrompt(requester: PermissionRequester) {
+    if (requester.isGranted) return
+    Card(modifier = Modifier.fillMaxWidth()) {
+        Row(
+            modifier = Modifier.fillMaxWidth().padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                Text("Recordatorios de caducidad", style = MaterialTheme.typography.titleSmall)
+                Text(
+                    "Permite el acceso al calendario para crear avisos de caducidad de la licencia.",
+                    style = MaterialTheme.typography.bodySmall,
+                )
+            }
+            TextButton(onClick = { requester.request() }) { Text("Permitir") }
         }
     }
 }
