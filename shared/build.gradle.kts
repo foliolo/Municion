@@ -159,6 +159,12 @@ kotlin {
     }
 }
 
+compose.resources {
+    publicResClass = true
+    packageOfResClass = "al.ahgitdevelopment.municion.resources"
+    generateResClass = always
+}
+
 room {
     schemaDirectory("$projectDir/schemas")
 }

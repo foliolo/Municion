@@ -14,8 +14,8 @@ Stack destino: Kotlin 2.4.0 · Compose MP 1.11.1 · AGP 9.2.1 · módulos `:shar
   - [x] 0.2 `:shared` configurado (JVM17, Compose resources, BuildKonfig, Room/KSP por target, framework iOS estático)
   - [x] 0.3 `:androidApp` configurado (google-services + crashlytics, firma desde keystore.properties, manifest, AdMob)
   - [x] 0.4 Esqueleto Koin (`initKoin` idempotente, `platformModule` expect/actual, `MunicionApplication`, init iOS)
-  - [ ] 0.5 Theme + fuentes + drawables + i18n en composeResources (gate CMP-9547)
-  - [ ] 0.6 Esqueleto Room KMP (DatabaseBuilder expect/actual)
+  - [x] 0.5 Theme (Color/Theme/Type) + drawables + i18n (es default / en) en composeResources; `Res` en `al.ahgitdevelopment.municion.resources`
+  - [~] 0.6 Esqueleto Room KMP → **fusionado en Fase 2** (Room exige ≥1 entidad en `@Database`)
   - **Verificado:** `:androidApp:assembleDebug` ✅ · `:shared:linkDebugFrameworkIosSimulatorArm64` ✅
 - [ ] Fase 1 — Capa Firebase común (GitLive) + init iOS
 - [ ] Fase 2 — Entidades, DAOs, migraciones Room
@@ -53,6 +53,8 @@ Stack destino: Kotlin 2.4.0 · Compose MP 1.11.1 · AGP 9.2.1 · módulos `:shar
 - `deterministicSyncId` se replanteará con MD5/v3 multiplataforma + golden tests (Fase 3) para garantizar convergencia cross-device (Java `UUID.nameUUIDFromBytes` no existe en KMP).
 - Navegación: se sustituirá el paso de entidad completa (Parcelable+Base64, Android-only) por paso de `id`/`syncId` y carga en el ViewModel (Fase 5).
 - Eliminadas dependencias declaradas sin uso (biometric, security-crypto) — pendiente confirmar.
+- Fuentes **Raleway omitidas**: el theme de `develop` (`Type.kt`) usa `FontFamily.Default`, no las fuentes de assets (eran del XML antiguo). Sin pérdida visual.
+- `selector.xml` (drawable `<selector>` del bottom-nav XML antiguo) no portado (Compose no usa state-list drawables).
 
 ---
 
