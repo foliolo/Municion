@@ -41,13 +41,15 @@ Stack destino: Kotlin 2.4.0 · Compose MP 1.11.1 · AGP 9.2.1 · módulos `:shar
   - `Legacy{Converter,MigrationHelper}` (v2.x Android-only, código muerto) **descartados**
   - **Verificado:** Android ✅ · iOS link ✅
 - [x] **Fase 5 — Navegación MP** — `NavRoutes` `@Serializable` con `id` (sin NavType custom Parcelable). NavHost real va con las pantallas (Fase 6).
-- [~] **Fase 6 — Features por entidad** (EN CURSO)
-  - [x] ViewModels de lista (Licencia/Guia/Compra/Tirada) + `MainViewModel` + `EntityUiState` (CRUD vía repos/usecases, `CurrentUserIdProvider`)
-  - [ ] Componentes compartidos (TopBar/BottomBar/FAB/DatePickerField/DropdownField/Delete/EmptyState/DataQualityBanner) — **traducir APIs de recursos Android (`R`/`androidx...res`) → Compose MP (`Res`/`org.jetbrains.compose.resources`)**
-  - [ ] Pantallas lista + items + diálogos de selección (Guia/Compra)
-  - [ ] Formularios (screen/state/viewmodel) de las 4 entidades
-  - [ ] Login + Migration screens (+ Login/Migration ViewModels)
-  - [ ] MainScreen (Scaffold + bottom nav) + MunicionNavHost + MainActivity + App() iOS
+- [x] **Fase 6 — Features por entidad (UI completa)**
+  - ViewModels lista + `MainViewModel` + `EntityUiState`; componentes compartidos (TopBar/BottomBar/FAB/DatePicker MP/Dropdown/Delete/EmptyState/DataQualityBanner) con APIs Compose MP
+  - pantallas lista + items (Coil3, swipe-delete, barra cupo) + diálogos de selección
+  - formularios de las 4 entidades (State+ViewModel+Screen, validación, recálculo caducidad) + `FormUiState`
+  - Login + Migration (GitLive auth)
+  - `MainScreen` (Scaffold único) + `MunicionNavHost` (rutas por `id`) + `App()` gate de auth
+  - **Imagen diferida a Fase 7** (en edición se preserva `fotoUrl`/`storagePath`); calibre con dropdown (sin autocomplete); algunas labels de auth/forms en texto literal (no externalizadas aún)
+  - **Verificado:** Android ✅ · iOS link ✅ · app navegable end-to-end
+  - *Subagentes:* listas (Guia/Compra/Tirada) y formularios (Guia/Compra/Tirada) portados por agentes en paralelo, integrados y compilados centralmente.
 - [ ] Fase 7 — Plataforma (imagen FileKit/cámara, AdMob expect/actual, RevenueCat purchases-kmp, calendario EventKit, FCM)
 - [ ] Fase 8 — Settings, tutorial, calidad de datos
 - [ ] Fase 9 — Tests (portar a commonTest + mokkery)
