@@ -1,15 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ⚠️ PLACEHOLDER — NOT A REAL FIREBASE CONFIG.
+
+  The iOS app for the Firebase project `municion-95caa` has NOT been registered yet,
+  so the iOS-specific credentials below (API_KEY, GOOGLE_APP_ID, *CLIENT_ID) are
+  PLACEHOLDERS and will NOT authenticate. The project/bundle/sender/storage/database
+  values ARE correct (taken from the real Android `google-services.json`).
+
+  TO MAKE iOS FIREBASE WORK:
+    1. Firebase console → project `municion-95caa` → Add app → iOS
+       → bundle id: al.ahgitdevelopment.municion
+    2. Download the real `GoogleService-Info.plist` and REPLACE this file with it.
+    3. In Xcode, ensure it is added to the `iosApp` target (Target Membership = iosApp).
+  See docs/MIGRATION_REPORT.md §4 (Firebase iOS) for the full step-by-step.
+-->
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>CLIENT_ID</key>
-	<string>522449412724-pf4fl4rl2f3fpeae69b2k0qcuhdio69c.apps.googleusercontent.com</string>
-	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.522449412724-pf4fl4rl2f3fpeae69b2k0qcuhdio69c</string>
-	<key>ANDROID_CLIENT_ID</key>
-	<string>522449412724-1325flru2h6lh2k4d4kup6qs6kh0ah2h.apps.googleusercontent.com</string>
 	<key>API_KEY</key>
-	<string>AIzaSyAlifAtnMMcFoayR7gWu9jaV5DfRG6HHNE</string>
+	<string>REPLACE_WITH_REAL_IOS_API_KEY</string>
+	<key>GOOGLE_APP_ID</key>
+	<string>REPLACE_WITH_REAL_IOS_GOOGLE_APP_ID</string>
+	<key>CLIENT_ID</key>
+	<string>REPLACE_WITH_REAL_IOS_CLIENT_ID</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>REPLACE_WITH_REAL_IOS_REVERSED_CLIENT_ID</string>
 	<key>GCM_SENDER_ID</key>
 	<string>522449412724</string>
 	<key>PLIST_VERSION</key>
@@ -23,15 +38,13 @@
 	<key>IS_ADS_ENABLED</key>
 	<false></false>
 	<key>IS_ANALYTICS_ENABLED</key>
-	<false></false>
+	<true></true>
 	<key>IS_APPINVITE_ENABLED</key>
 	<true></true>
 	<key>IS_GCM_ENABLED</key>
 	<true></true>
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
-	<key>GOOGLE_APP_ID</key>
-	<string>1:522449412724:ios:90b2a5b79a9fcbf1aa6721</string>
 	<key>DATABASE_URL</key>
 	<string>https://municion-95caa.firebaseio.com</string>
 </dict>
