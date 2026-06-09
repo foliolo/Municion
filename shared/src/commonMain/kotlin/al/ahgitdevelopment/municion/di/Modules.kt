@@ -24,7 +24,9 @@ import al.ahgitdevelopment.municion.firebase.FirebaseCurrentUserIdProvider
 import al.ahgitdevelopment.municion.ui.viewmodel.CompraViewModel
 import al.ahgitdevelopment.municion.ui.viewmodel.GuiaViewModel
 import al.ahgitdevelopment.municion.ui.viewmodel.LicenciaViewModel
+import al.ahgitdevelopment.municion.ui.viewmodel.LoginViewModel
 import al.ahgitdevelopment.municion.ui.viewmodel.MainViewModel
+import al.ahgitdevelopment.municion.ui.viewmodel.MigrationViewModel
 import al.ahgitdevelopment.municion.ui.viewmodel.TiradaViewModel
 import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.auth.FirebaseAuth
@@ -87,5 +89,7 @@ val presentationModule = module {
     viewModelOf(::GuiaViewModel)
     viewModelOf(::CompraViewModel)
     viewModelOf(::TiradaViewModel)
+    viewModelOf(::LoginViewModel)
+    viewModelOf(::MigrationViewModel)
     // form ViewModels added below as the form screens land (phase 6).
 }
