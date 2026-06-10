@@ -1,5 +1,31 @@
-git_url(ENV["MATCH_GIT_URL"])
+# Matchfile — encrypted distribution of iOS signing artifacts for Munición.
+# `match` stores certificates and provisioning profiles in a private Git repo,
+# encrypted with MATCH_PASSWORD, and syncs them across developer machines + CI.
+#
+# Munición reuses the shared apptolast/ios-certificates repo: the App Store
+# distribution certificate already lives there, so the bootstrap only creates
+# a new App Store provisioning profile for al.ahgitdevelopment.municion.
+#
+# Bootstrap (single-time, run from `iosApp/`):
+#   cd iosApp
+#   bundle exec fastlane ios bootstrap_match   # creates App Store cert (reused) + profile
+#
+# Refresh in CI: lanes call `match(type: "appstore", readonly: true)` so the
+# CI job never tries to create new certificates (which would burn one of
+# Apple's 2 distribution-cert slots).
+
+git_url(ENV["MATCH_GIT_URL"]) unless ENV["MATCH_GIT_URL"].to_s.empty?
+
+# Storage mode: `git` keeps things simple and free; switch to `google_cloud`
+# or `s3` if the certificates repo outgrows Git.
 storage_mode("git")
-type("appstore")
+
+# Bundle identifier(s) `match` issues profiles for. Keep in sync with the
+# Appfile (and PRODUCT_BUNDLE_IDENTIFIER in Config.xcconfig).
 app_identifier(["al.ahgitdevelopment.municion"])
-readonly(true)
+
+# Apple Developer team — read from env so this file stays committed.
+team_id(ENV["FASTLANE_TEAM_ID"]) unless ENV["FASTLANE_TEAM_ID"].to_s.empty?
+
+# Default to App Store distribution; lanes can override with `type:`.
+type("appstore")

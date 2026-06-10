@@ -39,6 +39,7 @@ docs/affected_users.txt
 # Google Services (e.g. APIs or Firebase)
 composeApp/google-services.json
 androidApp/google-services.json
+GoogleService-Info.plist
 
 # Android Profiling
 *.hprof
