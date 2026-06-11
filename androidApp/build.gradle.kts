@@ -84,6 +84,7 @@ android {
     }
 
     buildFeatures {
+        buildConfig = true
         compose = true
         resValues = true
     }
@@ -123,5 +124,9 @@ dependencies {
     // but FCM has no GitLive module, so the messaging service lives in the Android app.
     implementation(project.dependencies.platform(libs.firebase.bom))
     implementation(libs.firebase.messaging)
-    // NOTE: Firebase App Check Debug provider is wired in phase 1 (with the firebase BOM).
+    // Firebase App Check. Play Integrity attests release builds; the Debug provider is added
+    // ONLY to debug builds so it never ships in production. The provider is installed per-variant
+    // in src/{debug,release}/kotlin/.../AppCheckInstaller.kt.
+    implementation(libs.firebase.appcheck.playintegrity)
+    debugImplementation(libs.firebase.appcheck.debug)
 }

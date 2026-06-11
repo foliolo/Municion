@@ -4,6 +4,10 @@
 <dict>
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
+	<!-- AdMob iOS App ID. ⚠️ TEST id de Google (placeholder). Reemplázalo por el App ID real
+	     de la app iOS de AdMob ANTES de release; no es secreto (va embebido en el .ipa). -->
+	<key>GADApplicationIdentifier</key>
+	<string>ca-app-pub-3940256099942544~1458002511</string>
 	<!-- Calendar reminders for licence expiry (IosCalendarManager / EventKit). -->
 	<key>NSCalendarsUsageDescription</key>
 	<string>Se usa para crear recordatorios de caducidad de tus licencias en tu calendario.</string>

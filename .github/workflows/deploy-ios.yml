@@ -30,6 +30,9 @@ jobs:
           bundler-cache: true
       - name: Select Xcode
         run: sudo xcode-select -s /Applications/Xcode_16.4.app
+      # GoogleService-Info.plist is gitignored; restore it from a single-line base64 secret.
+      - name: Restore GoogleService-Info.plist
+        run: echo "${{ secrets.GOOGLE_SERVICE_INFO_PLIST_B64 }}" | base64 --decode > iosApp/iosApp/GoogleService-Info.plist
       - name: Render local.properties
         run: |
           {
