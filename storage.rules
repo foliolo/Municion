@@ -1,0 +1,48 @@
+rules_version = '2';
+
+// Firebase Storage security rules for Munición.
+// Images live under v3_userdata/{uid}/{armas|licencias|compras}/{file}.jpg (see ImageStorageRepository).
+// Owner-only: a signed-in user may read/write exactly their own subtree.
+// NOTE: the app must upload with contentType "image/jpeg" (set in ImageStorageRepository) or the
+// image/* check below rejects the upload — raw putData defaults to application/octet-stream.
+service firebase.storage {
+  match /b/municion-95caa.appspot.com/o {
+
+    // ============================================
+    // v3_userdata: estructura actual (armas, licencias, compras)
+    // ============================================
+    match /v3_userdata/{userId}/{folder}/{fileName} {
+      allow read: if request.auth != null
+                  && request.auth.uid == userId;
+
+      // create/update must be an image < 5 MB; delete carries no request.resource, so allow it
+      // for the owner without those checks (otherwise request.resource.* throws and denies).
+      allow write: if request.auth != null
+                   && request.auth.uid == userId
+                   && folder in ['armas', 'licencias', 'compras']
+                   && (request.resource == null
+                       || (request.resource.contentType.matches('image/.*')
+                           && request.resource.size < 5 * 1024 * 1024));
+    }
+
+    // ============================================
+    // Rutas legacy (solo lectura para migración)
+    // ============================================
+    match /UserImages/{userId}/{allPaths=**} {
+      allow read: if request.auth != null
+                  && request.auth.uid == userId;
+    }
+
+    match /GlobalDatabase_v2/UserImages/{userId}/{allPaths=**} {
+      allow read: if request.auth != null
+                  && request.auth.uid == userId;
+    }
+
+    // ============================================
+    // Contenido público
+    // ============================================
+    match /TutorialImages/{allPaths=**} {
+      allow read: if true;
+    }
+  }
+}

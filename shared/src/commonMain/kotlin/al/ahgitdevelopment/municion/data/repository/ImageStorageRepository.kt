@@ -5,6 +5,7 @@ import al.ahgitdevelopment.municion.firebase.toStorageData
 import al.ahgitdevelopment.municion.platform.processImageForUpload
 import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.storage.storage
+import dev.gitlive.firebase.storage.storageMetadata
 
 /** Storage sub-tree per entity, mirroring the `develop` layout `v3_userdata/{uid}/{folder}/…`. */
 enum class ImageFolder(
@@ -49,7 +50,12 @@ class FirebaseImageStorageRepository(
         runCatching {
             val path = "$ROOT/$userId/${folder.folder}/$key.jpg"
             val ref = Firebase.storage.reference.child(path)
-            ref.putData(processImageForUpload(bytes).toStorageData())
+            // Set the JPEG content type explicitly. Raw putData defaults to application/octet-stream,
+            // which serves the wrong MIME and is rejected by Storage rules that require image/*.
+            ref.putData(
+                processImageForUpload(bytes).toStorageData(),
+                storageMetadata { contentType = "image/jpeg" },
+            )
             ImageUploadResult(downloadUrl = ref.getDownloadUrl(), storagePath = path)
         }.onFailure { crashReporter.recordException(it) }
 
