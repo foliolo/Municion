@@ -20,6 +20,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -41,7 +42,10 @@ fun GuiaFormScreen(
     viewModel: GuiaFormViewModel = koinViewModel(),
 ) {
     LaunchedEffect(guiaId) { viewModel.initialize(guiaId, tipoLicencia) }
-    LaunchedEffect(Unit) { onRegisterSaveCallback { viewModel.save() } }
+    DisposableEffect(Unit) {
+        onRegisterSaveCallback { viewModel.save() }
+        onDispose { onRegisterSaveCallback(null) }
+    }
 
     val state by viewModel.state.collectAsStateWithLifecycle()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()

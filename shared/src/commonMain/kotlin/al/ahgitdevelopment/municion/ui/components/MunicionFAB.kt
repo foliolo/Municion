@@ -34,7 +34,10 @@ fun MunicionFAB(
         Guias::class.qualifiedName -> AddFAB(onAddGuia, "Añadir guía")
         Compras::class.qualifiedName -> AddFAB(onAddCompra, "Añadir compra")
         Tiradas::class.qualifiedName -> AddFAB(onAddTirada, "Añadir tirada")
-        else -> if (currentRoute?.contains("Form") == true && hasSaveCallback) SaveFAB(onSave)
+        // Save FAB is driven purely by a registered save callback (set only on form screens, cleared
+        // elsewhere by the NavHost). This avoids matching the route string, which is platform-fragile
+        // (the qualified-name vs route-pattern mismatch hid the FAB on iOS).
+        else -> if (hasSaveCallback) SaveFAB(onSave)
     }
 }
 

@@ -143,7 +143,10 @@ class CompraFormViewModel(
             _state.update { it.copy(tiendaError = "Selecciona el lugar de compra") }
             hasErrors = true
         }
-        if (hasErrors) return
+        if (hasErrors) {
+            _uiState.value = FormUiState.Error("Revisa los campos obligatorios")
+            return
+        }
 
         viewModelScope.launch {
             _uiState.value = FormUiState.Saving

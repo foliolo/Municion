@@ -61,7 +61,10 @@ class TiradaFormViewModel(
             _state.update { it.copy(fechaError = "Introduce la fecha") }
             hasErrors = true
         }
-        if (hasErrors) return
+        if (hasErrors) {
+            _uiState.value = FormUiState.Error("Revisa los campos obligatorios")
+            return
+        }
 
         viewModelScope.launch {
             _uiState.value = FormUiState.Saving

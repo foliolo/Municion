@@ -40,31 +40,24 @@ fun MunicionNavHost(
         modifier = modifier.padding(innerPadding),
     ) {
         composable<Login> {
-            onRegisterSaveCallback(null)
             LoginScreen(onLoginSuccess = {})
         }
         composable<Migration> {
-            onRegisterSaveCallback(null)
             MigrationScreen(onMigrationSuccess = {})
         }
         composable<Licencias> {
-            onRegisterSaveCallback(null)
             LicenciasContent(navController, snackbarHostState)
         }
         composable<Guias> {
-            onRegisterSaveCallback(null)
             GuiasContent(navController, snackbarHostState)
         }
         composable<Compras> {
-            onRegisterSaveCallback(null)
             ComprasContent(navController, snackbarHostState)
         }
         composable<Tiradas> {
-            onRegisterSaveCallback(null)
             TiradasContent(navController, snackbarHostState)
         }
         composable<Settings> {
-            onRegisterSaveCallback(null)
             AccountSettingsContent(navController, snackbarHostState)
         }
         // Forms — real screens land in the forms sub-milestone (phase 6).

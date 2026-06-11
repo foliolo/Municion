@@ -114,7 +114,7 @@ fun MainScreen(
     val showBottomBar = currentRoute in listScreenRoutes
     val showFab =
         !isAuthScreen &&
-            (currentRoute in listScreenRoutes || (currentRoute?.contains("Form") == true && formSaveCallback != null))
+            (currentRoute in listScreenRoutes || formSaveCallback != null)
 
     if (showLicenciaDialog) {
         LicenciaSelectionDialog(

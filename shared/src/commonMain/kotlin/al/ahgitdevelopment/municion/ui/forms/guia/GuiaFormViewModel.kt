@@ -123,7 +123,10 @@ class GuiaFormViewModel(
             _state.update { it.copy(cupoError = "Introduce un cupo válido") }
             hasErrors = true
         }
-        if (hasErrors) return
+        if (hasErrors) {
+            _uiState.value = FormUiState.Error("Revisa los campos obligatorios")
+            return
+        }
 
         viewModelScope.launch {
             _uiState.value = FormUiState.Saving

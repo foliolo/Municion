@@ -107,7 +107,10 @@ class LicenciaFormViewModel(
             _state.update { it.copy(edadError = "Introduce la edad") }
             hasErrors = true
         }
-        if (hasErrors) return
+        if (hasErrors) {
+            _uiState.value = FormUiState.Error("Revisa los campos obligatorios")
+            return
+        }
 
         viewModelScope.launch {
             _uiState.value = FormUiState.Saving
