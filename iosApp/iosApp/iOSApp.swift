@@ -33,6 +33,10 @@ struct iOSApp: App {
         Database.database().isPersistenceEnabled = true
 
         Analytics.setAnalyticsCollectionEnabled(true)
+
+        // Register the Kotlin↔Swift ad bridges (VC-independent). The consent/ATT/MobileAds.start
+        // flow is kicked off later from ContentView.onAppear, once a presenting VC exists.
+        AdsCoordinator.shared.registerBridges()
     }
 
     var body: some Scene {

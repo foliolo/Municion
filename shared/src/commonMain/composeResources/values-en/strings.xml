@@ -408,4 +408,7 @@
 
     <!-- Dialog Actions (v3.3.0) -->
     <string name="dialog_select_license">Select a license</string>
+
+    <!-- Ads -->
+    <string name="ad_attribution_label">Ad</string>
 </resources>

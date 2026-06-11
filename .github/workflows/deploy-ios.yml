@@ -38,6 +38,7 @@ jobs:
           {
             echo "ADMOB_APPLICATION_ID_IOS=${{ secrets.ADMOB_APPLICATION_ID_IOS }}"
             echo "ADMOB_BOTTOM_BANNER_ID_IOS=${{ secrets.ADMOB_BOTTOM_BANNER_ID_IOS }}"
+            echo "ADMOB_NATIVE_ADVANCED_ID_IOS=${{ secrets.ADMOB_NATIVE_ADVANCED_ID_IOS }}"
             echo "REVENUECAT_APPSTORE_SDK_KEY=${{ secrets.REVENUECAT_APPSTORE_SDK_KEY }}"
           } > local.properties
       - name: Fastlane release

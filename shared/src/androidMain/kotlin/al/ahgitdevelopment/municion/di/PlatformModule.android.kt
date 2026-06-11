@@ -1,5 +1,7 @@
 package al.ahgitdevelopment.municion.di
 
+import al.ahgitdevelopment.municion.ads.AdMobNativeAdManager
+import al.ahgitdevelopment.municion.ads.NativeAdManager
 import al.ahgitdevelopment.municion.data.local.room.MUNICION_DATABASE_NAME
 import al.ahgitdevelopment.municion.data.local.room.MunicionDatabase
 import al.ahgitdevelopment.municion.data.sync.AndroidSyncScheduler
@@ -27,4 +29,7 @@ actual val platformModule: Module =
 
         // Calendar reminders via CalendarContract.
         single<CalendarManager> { AndroidCalendarManager(androidContext(), get()) }
+
+        // Native advanced ads pool (shared across the four list screens).
+        single<NativeAdManager> { AdMobNativeAdManager(androidContext(), get()) }
     }

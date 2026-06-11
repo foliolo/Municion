@@ -3,9 +3,10 @@ package al.ahgitdevelopment.municion.ads
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 
-/** Bottom banner ad. Android renders a real AdMob AdView; iOS is a no-op until the Swift bridge. */
+/**
+ * Persistent bottom banner shown above the bottom navigation on every screen except the auth flow.
+ * Android renders a lifecycle-aware adaptive AdMob banner; iOS bridges to a Swift `BannerAdViewFactory`.
+ * The unit id is resolved per platform via [AdUnitIds.bottomBanner].
+ */
 @Composable
-expect fun AdaptiveBanner(
-    adUnitId: String,
-    modifier: Modifier = Modifier,
-)
+expect fun AdaptiveBanner(modifier: Modifier = Modifier)

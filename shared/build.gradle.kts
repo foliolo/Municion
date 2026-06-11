@@ -198,11 +198,14 @@ buildConfig {
     val appBuildType = (project.findProperty("appBuildType") as String?) ?: "debug"
     buildConfigField("BUILD_TYPE", appBuildType)
 
-    // AdMob (banner only). Per-platform unit ids.
+    // AdMob — per-platform unit ids (banner + native advanced). BuildConfig is common; the
+    // per-platform selector lives in AdUnitIds (expect/actual). Field names mirror local.properties.
     buildConfigField("ADMOB_APPLICATION_ID", localProperty("ADMOB_APPLICATION_ID"))
-    buildConfigField("ADMOB_BOTTOM_BANNER_ID", localProperty("ADMOB_BOTTOM_BANNER_ID"))
+    buildConfigField("ADMOB_BOTTOM_BANNER_ID_ANDROID", localProperty("ADMOB_BOTTOM_BANNER_ID_ANDROID"))
+    buildConfigField("ADMOB_NATIVE_ADVANCED_ID_ANDROID", localProperty("ADMOB_NATIVE_ADVANCED_ID_ANDROID"))
     buildConfigField("ADMOB_APPLICATION_ID_IOS", localProperty("ADMOB_APPLICATION_ID_IOS"))
     buildConfigField("ADMOB_BOTTOM_BANNER_ID_IOS", localProperty("ADMOB_BOTTOM_BANNER_ID_IOS"))
+    buildConfigField("ADMOB_NATIVE_ADVANCED_ID_IOS", localProperty("ADMOB_NATIVE_ADVANCED_ID_IOS"))
 
     // RevenueCat SDK keys (remove-ads entitlement).
     buildConfigField("REVENUECAT_PLAY_SDK_KEY", localProperty("REVENUECAT_PLAY_SDK_KEY"))

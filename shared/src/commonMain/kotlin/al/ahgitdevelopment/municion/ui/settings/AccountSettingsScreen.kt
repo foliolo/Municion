@@ -1,5 +1,6 @@
 package al.ahgitdevelopment.municion.ui.settings
 
+import al.ahgitdevelopment.municion.ads.rememberConsentOptions
 import al.ahgitdevelopment.municion.ui.components.TutorialDialog
 import al.ahgitdevelopment.municion.ui.viewmodel.AccountSettingsViewModel
 import androidx.compose.foundation.layout.Arrangement
@@ -43,6 +44,7 @@ fun AccountSettingsContent(
     val hasRemovedAds by viewModel.hasRemovedAds.collectAsStateWithLifecycle()
     val purchaseInFlight by viewModel.purchaseInFlight.collectAsStateWithLifecycle()
     val purchaseMessage by viewModel.purchaseMessage.collectAsStateWithLifecycle()
+    val consentOptions = rememberConsentOptions()
 
     var showSignOut by remember { mutableStateOf(false) }
     var showDelete by remember { mutableStateOf(false) }
@@ -145,6 +147,21 @@ fun AccountSettingsContent(
                         modifier = Modifier.fillMaxWidth(),
                     ) {
                         Text("Restaurar compra")
+                    }
+                }
+            }
+        }
+
+        if (consentOptions.isAvailable) {
+            Card(modifier = Modifier.fillMaxWidth()) {
+                Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Text("Privacidad y consentimiento", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
+                    Text(
+                        "Gestiona tu consentimiento para anuncios personalizados.",
+                        style = MaterialTheme.typography.bodyMedium,
+                    )
+                    OutlinedButton(onClick = consentOptions.show, modifier = Modifier.fillMaxWidth()) {
+                        Text("Opciones de privacidad")
                     }
                 }
             }

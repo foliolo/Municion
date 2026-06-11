@@ -1,6 +1,5 @@
 package al.ahgitdevelopment.municion.ui.main
 
-import al.ahgitdevelopment.municion.BuildConfig
 import al.ahgitdevelopment.municion.ads.AdaptiveBanner
 import al.ahgitdevelopment.municion.auth.AuthViewModel
 import al.ahgitdevelopment.municion.platform.AppPermission
@@ -162,9 +161,10 @@ fun MainScreen(
         },
         bottomBar = {
             Column {
-                val isSettingsScreen = currentRoute == Settings::class.qualifiedName
-                if (!isAuthScreen && !isSettingsScreen && showAds) {
-                    AdaptiveBanner(adUnitId = BuildConfig.ADMOB_BOTTOM_BANNER_ID, modifier = Modifier.fillMaxWidth())
+                // Single persistent banner above the bottom nav, shown everywhere except the auth flow
+                // (Login/Migration) and gated by the remove-ads entitlement.
+                if (!isAuthScreen && showAds) {
+                    AdaptiveBanner(modifier = Modifier.fillMaxWidth())
                 }
                 AnimatedVisibility(
                     visible = showBottomBar,

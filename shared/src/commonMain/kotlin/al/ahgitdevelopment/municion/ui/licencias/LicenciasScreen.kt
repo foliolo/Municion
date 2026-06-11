@@ -1,5 +1,8 @@
 package al.ahgitdevelopment.municion.ui.licencias
 
+import al.ahgitdevelopment.municion.ads.NativeAdHandle
+import al.ahgitdevelopment.municion.ads.NativeAdManager
+import al.ahgitdevelopment.municion.ads.itemsWithNativeAds
 import al.ahgitdevelopment.municion.data.local.room.entities.Licencia
 import al.ahgitdevelopment.municion.resources.Res
 import al.ahgitdevelopment.municion.resources.dialog_delete_license_message
@@ -15,7 +18,6 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -28,6 +30,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 
 /** Stateful Licencias content (no Scaffold — TopBar/BottomBar/FAB live in MainScreen). */
@@ -40,6 +43,9 @@ fun LicenciasContent(
     val licencias by viewModel.licencias.collectAsStateWithLifecycle()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val needsAttentionCount by viewModel.needsAttentionCount.collectAsStateWithLifecycle()
+    val nativeAdManager = koinInject<NativeAdManager>()
+    val nativeAds by nativeAdManager.nativeAds.collectAsStateWithLifecycle()
+    LaunchedEffect(Unit) { nativeAdManager.loadAds() }
 
     var licenciaToDelete by remember { mutableStateOf<Licencia?>(null) }
 
@@ -71,6 +77,7 @@ fun LicenciasContent(
 
     LicenciasListContent(
         licencias = licencias,
+        nativeAds = nativeAds,
         needsAttentionCount = needsAttentionCount,
         onItemClick = { navController.navigate(LicenciaForm(licenciaId = it.id)) },
         onDeleteClick = { licenciaToDelete = it },
@@ -82,6 +89,7 @@ fun LicenciasListContent(
     licencias: List<Licencia>,
     onItemClick: (Licencia) -> Unit,
     onDeleteClick: (Licencia) -> Unit,
+    nativeAds: List<NativeAdHandle> = emptyList(),
     needsAttentionCount: Int = 0,
     modifier: Modifier = Modifier,
 ) {
@@ -97,7 +105,7 @@ fun LicenciasListContent(
                     DataQualityBanner(count = needsAttentionCount, entityLabel = "licencia")
                 }
             }
-            items(items = licencias, key = { it.id }) { licencia ->
+            itemsWithNativeAds(items = licencias, nativeAds = nativeAds, key = { it.id }) { licencia ->
                 LicenciaItem(
                     licencia = licencia,
                     onClick = { onItemClick(licencia) },

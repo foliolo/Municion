@@ -422,4 +422,7 @@
 
     <!-- Dialog Actions (v3.3.0) -->
     <string name="dialog_select_license">Selecciona una licencia</string>
+
+    <!-- Ads -->
+    <string name="ad_attribution_label">Publicidad</string>
 </resources>

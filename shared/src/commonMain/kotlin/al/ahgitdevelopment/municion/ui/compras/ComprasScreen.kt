@@ -1,5 +1,8 @@
 package al.ahgitdevelopment.municion.ui.compras
 
+import al.ahgitdevelopment.municion.ads.NativeAdHandle
+import al.ahgitdevelopment.municion.ads.NativeAdManager
+import al.ahgitdevelopment.municion.ads.itemsWithNativeAds
 import al.ahgitdevelopment.municion.data.local.room.entities.Compra
 import al.ahgitdevelopment.municion.resources.Res
 import al.ahgitdevelopment.municion.resources.dialog_delete_purchase_message
@@ -15,7 +18,6 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -28,6 +30,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 
 /** Stateful Compras content (no Scaffold — TopBar/BottomBar/FAB live in MainScreen). */
@@ -40,6 +43,9 @@ fun ComprasContent(
     val compras by viewModel.compras.collectAsStateWithLifecycle()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val needsAttentionCount by viewModel.needsAttentionCount.collectAsStateWithLifecycle()
+    val nativeAdManager = koinInject<NativeAdManager>()
+    val nativeAds by nativeAdManager.nativeAds.collectAsStateWithLifecycle()
+    LaunchedEffect(Unit) { nativeAdManager.loadAds() }
 
     var compraToDelete by remember { mutableStateOf<Compra?>(null) }
 
@@ -71,6 +77,7 @@ fun ComprasContent(
 
     ComprasListContent(
         compras = compras,
+        nativeAds = nativeAds,
         needsAttentionCount = needsAttentionCount,
         onItemClick = { navController.navigate(CompraForm(compraId = it.id, guiaId = it.idPosGuia)) },
         onDeleteClick = { compraToDelete = it },
@@ -83,6 +90,7 @@ fun ComprasListContent(
     onItemClick: (Compra) -> Unit,
     onDeleteClick: (Compra) -> Unit,
     onImageClick: (String) -> Unit = {},
+    nativeAds: List<NativeAdHandle> = emptyList(),
     needsAttentionCount: Int = 0,
     modifier: Modifier = Modifier,
 ) {
@@ -98,7 +106,7 @@ fun ComprasListContent(
                     DataQualityBanner(count = needsAttentionCount, entityLabel = "compra")
                 }
             }
-            items(items = compras, key = { it.id }) { compra ->
+            itemsWithNativeAds(items = compras, nativeAds = nativeAds, key = { it.id }) { compra ->
                 CompraItem(
                     compra = compra,
                     onClick = { onItemClick(compra) },

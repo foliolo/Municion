@@ -1,5 +1,8 @@
 package al.ahgitdevelopment.municion.ui.tiradas
 
+import al.ahgitdevelopment.municion.ads.NativeAdHandle
+import al.ahgitdevelopment.municion.ads.NativeAdManager
+import al.ahgitdevelopment.municion.ads.itemsWithNativeAds
 import al.ahgitdevelopment.municion.data.local.room.entities.Tirada
 import al.ahgitdevelopment.municion.resources.Res
 import al.ahgitdevelopment.municion.resources.dialog_delete_competition_message
@@ -15,7 +18,6 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -28,6 +30,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 
 /** Stateful Tiradas content (no Scaffold — TopBar/BottomBar/FAB live in MainScreen). */
@@ -40,6 +43,9 @@ fun TiradasContent(
     val tiradas by viewModel.tiradas.collectAsStateWithLifecycle()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val needsAttentionCount by viewModel.needsAttentionCount.collectAsStateWithLifecycle()
+    val nativeAdManager = koinInject<NativeAdManager>()
+    val nativeAds by nativeAdManager.nativeAds.collectAsStateWithLifecycle()
+    LaunchedEffect(Unit) { nativeAdManager.loadAds() }
 
     var tiradaToDelete by remember { mutableStateOf<Tirada?>(null) }
 
@@ -71,6 +77,7 @@ fun TiradasContent(
 
     TiradasListContent(
         tiradas = tiradas,
+        nativeAds = nativeAds,
         needsAttentionCount = needsAttentionCount,
         onItemClick = { navController.navigate(TiradaForm(tiradaId = it.id)) },
         onDeleteClick = { tiradaToDelete = it },
@@ -82,6 +89,7 @@ fun TiradasListContent(
     tiradas: List<Tirada>,
     onItemClick: (Tirada) -> Unit,
     onDeleteClick: (Tirada) -> Unit,
+    nativeAds: List<NativeAdHandle> = emptyList(),
     needsAttentionCount: Int = 0,
     modifier: Modifier = Modifier,
 ) {
@@ -97,7 +105,7 @@ fun TiradasListContent(
                     DataQualityBanner(count = needsAttentionCount, entityLabel = "tirada")
                 }
             }
-            items(items = tiradas, key = { it.id }) { tirada ->
+            itemsWithNativeAds(items = tiradas, nativeAds = nativeAds, key = { it.id }) { tirada ->
                 TiradaItem(
                     tirada = tirada,
                     onClick = { onItemClick(tirada) },
