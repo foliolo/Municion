@@ -202,6 +202,28 @@
     <string name="tirada_disparos_format">%1$d shots</string>
     <string name="tirada_porcentaje_format">%.1f%% accuracy</string>
 
+    <!-- Auth -->
+    <string name="auth_logo_content_description">Tu Armería logo</string>
+    <string name="auth_login_title">Sign in</string>
+    <string name="auth_register_title">Create your account</string>
+    <string name="auth_login_subtitle">Your documents, purchases, and licenses sync with your account.</string>
+    <string name="auth_register_subtitle">Save your data and recover it across your devices.</string>
+    <string name="auth_google_button">Continue with Google</string>
+    <string name="auth_apple_button">Continue with Apple</string>
+    <string name="auth_email_section">Or use email and password</string>
+    <string name="auth_email_label">Email</string>
+    <string name="auth_password_label">Password</string>
+    <string name="auth_confirm_password_label">Repeat password</string>
+    <string name="auth_show_password">Show password</string>
+    <string name="auth_hide_password">Hide password</string>
+    <string name="auth_sign_in_button">Sign in</string>
+    <string name="auth_create_account_button">Create account</string>
+    <string name="auth_loading">Loading</string>
+    <string name="auth_toggle_to_login">Already have an account? Sign in</string>
+    <string name="auth_toggle_to_register">No account yet? Register</string>
+    <string name="auth_forgot_password">Forgot your password?</string>
+    <string name="auth_password_reset_sent">Recovery email sent. Check your inbox.</string>
+
     <!-- Compose Form Validation (v3.0.0) -->
     <string name="error_field_required">Required field</string>
     <string name="error_valid_units">Enter valid units</string>

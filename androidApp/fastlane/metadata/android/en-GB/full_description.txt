@@ -1,0 +1,39 @@
+The essential tool for gun owners, hunters and sport shooters in Spain.
+
+Navigating Spanish firearms regulations can be complex, especially for expats and international shooters. Tu Armería (My Armory) is built specifically to help you manage your inventory and stay compliant with Spanish gun laws (Reglamento de Armas) — no more scribbling on the back of your permit.
+
+Whether you hold a D, E or F licence, the app helps you track your legal ammo limits, manage renewals and organise your shooting championships.
+
+🔫 DIGITAL FIREARM INVENTORY
+Securely digitise your gun safe. Organise every firearm (rifles, shotguns, handguns) in one place tailored to Spanish documentation.
+• Tech specs: make, model, calibre, serial number and photos.
+• Each firearm linked to its Spanish "Guía de Pertenencia" and licence type (B, C, D, E, F, AEM).
+• Sensitive data kept private on your device.
+
+📥 AMMO QUOTA & STOCK TRACKER (Spain compliant)
+Spain enforces strict limits on ammunition purchase and storage. Stay on the right side of the law effortlessly:
+• Annual quota: track rounds bought against your legal yearly limit per firearm.
+• Purchases & usage: log every shop purchase and range session for a real-time balance.
+• Shooting-range purchases are automatically exempt from your quota, per Spanish regulation.
+
+📅 RENEWAL & INSPECTION REMINDERS
+Never miss a deadline again:
+• Licence-expiry reminders adjusted to your licence type and age.
+• Mandatory inspections (Revista de Armas): get notified in advance to book with the Guardia Civil (Intervención de Armas).
+• Insurance & federation: track valid dates for hunting liability insurance and your federation card.
+
+🏅 CHAMPIONSHIPS & SHOOTING LOG
+For competitive shooters (IPSC, F-Class, Precision):
+• Event calendar for championships and club matches.
+• Activity record — essential for renewing the F licence (sport shooting).
+• Log scores and ammo usage for every session.
+
+WHO IS IT FOR?
+• Expats & residents: simplify your Spanish gun paperwork.
+• Hunters: organise logistics for montería and small-game seasons.
+• Sport shooters: manage ammo consumption and competition calendars.
+
+WHY TU ARMERÍA?
+Generic gun apps from the US don't understand the Spanish "Guía" system or the strict ammo limits enforced by the Guardia Civil. Tu Armería does. It's your personal compliance assistant — plus it works offline and syncs your data securely to the cloud.
+
+✅ Download Tu Armería today and master your gun ownership in Spain.

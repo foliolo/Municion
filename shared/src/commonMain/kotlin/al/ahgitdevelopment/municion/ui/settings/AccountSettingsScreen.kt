@@ -44,6 +44,8 @@ fun AccountSettingsContent(
     val hasRemovedAds by viewModel.hasRemovedAds.collectAsStateWithLifecycle()
     val purchaseInFlight by viewModel.purchaseInFlight.collectAsStateWithLifecycle()
     val purchaseMessage by viewModel.purchaseMessage.collectAsStateWithLifecycle()
+    val deleteInFlight by viewModel.deleteInFlight.collectAsStateWithLifecycle()
+    val deleteMessage by viewModel.deleteMessage.collectAsStateWithLifecycle()
     val consentOptions = rememberConsentOptions()
 
     var showSignOut by remember { mutableStateOf(false) }
@@ -54,6 +56,13 @@ fun AccountSettingsContent(
         purchaseMessage?.let {
             snackbarHostState.showSnackbar(it)
             viewModel.consumePurchaseMessage()
+        }
+    }
+
+    LaunchedEffect(deleteMessage) {
+        deleteMessage?.let {
+            snackbarHostState.showSnackbar(it)
+            viewModel.consumeDeleteMessage()
         }
     }
 
@@ -79,7 +88,9 @@ fun AccountSettingsContent(
     if (showDelete) {
         ConfirmDialog(
             title = "Eliminar cuenta",
-            message = "Esto eliminará tu cuenta y los datos locales de forma permanente. Esta acción no se puede deshacer.",
+            message =
+                "Esto eliminará tu cuenta y todos tus datos de forma permanente. Esta acción no se puede deshacer." +
+                    "\n\nSi iniciaste sesión con Apple, se te pedirá iniciar sesión de nuevo para confirmarlo.",
             confirmText = "Eliminar",
             onConfirm = {
                 showDelete = false
@@ -177,10 +188,11 @@ fun AccountSettingsContent(
 
         Button(
             onClick = { showDelete = true },
+            enabled = !deleteInFlight,
             modifier = Modifier.fillMaxWidth(),
             colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error),
         ) {
-            Text("Eliminar cuenta")
+            Text(if (deleteInFlight) "Eliminando…" else "Eliminar cuenta")
         }
     }
 }

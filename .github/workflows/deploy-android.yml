@@ -49,6 +49,7 @@ jobs:
             echo "ADMOB_BOTTOM_BANNER_ID_ANDROID=${{ secrets.ADMOB_BOTTOM_BANNER_ID_ANDROID }}"
             echo "ADMOB_NATIVE_ADVANCED_ID_ANDROID=${{ secrets.ADMOB_NATIVE_ADVANCED_ID_ANDROID }}"
             echo "REVENUECAT_PLAY_SDK_KEY=${{ secrets.REVENUECAT_PLAY_SDK_KEY }}"
+            echo "GOOGLE_WEB_CLIENT_ID=${{ secrets.GOOGLE_WEB_CLIENT_ID }}"
           } > local.properties
       - name: Write Play service account
         run: echo '${{ secrets.SERVICE_ACCOUNT_GOOGLE_PLAY_CONSOLE_JSON }}' > androidApp/play-service-account.json

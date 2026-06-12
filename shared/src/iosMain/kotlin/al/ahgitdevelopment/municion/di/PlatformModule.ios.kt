@@ -4,6 +4,8 @@ package al.ahgitdevelopment.municion.di
 
 import al.ahgitdevelopment.municion.ads.IosNativeAdManager
 import al.ahgitdevelopment.municion.ads.NativeAdManager
+import al.ahgitdevelopment.municion.auth.IosSocialAuthProvider
+import al.ahgitdevelopment.municion.auth.SocialAuthProvider
 import al.ahgitdevelopment.municion.data.local.room.MUNICION_DATABASE_NAME
 import al.ahgitdevelopment.municion.data.local.room.MunicionDatabase
 import al.ahgitdevelopment.municion.data.sync.IosSyncScheduler
@@ -43,4 +45,7 @@ actual val platformModule: Module =
 
         // Native advanced ads pool (delegates to the Swift bridge).
         single<NativeAdManager> { IosNativeAdManager() }
+
+        // Firebase Auth social providers.
+        single<SocialAuthProvider> { IosSocialAuthProvider(get(), get()) }
     }

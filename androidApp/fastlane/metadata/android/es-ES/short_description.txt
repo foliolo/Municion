@@ -1,0 +1,1 @@
+Controla cupos de munición, caducidad de licencias de armas, guías y tiradas.

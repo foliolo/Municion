@@ -47,6 +47,7 @@ jobs:
             echo "REVENUECAT_PLAY_SDK_KEY=${{ secrets.REVENUECAT_PLAY_SDK_KEY }}"
             echo "REVENUECAT_PLAY_SDK_KEY_TEST=${{ secrets.REVENUECAT_PLAY_SDK_KEY_TEST }}"
             echo "REVENUECAT_APPSTORE_SDK_KEY=${{ secrets.REVENUECAT_APPSTORE_SDK_KEY }}"
+            echo "GOOGLE_WEB_CLIENT_ID=${{ secrets.GOOGLE_WEB_CLIENT_ID }}"
           } > local.properties
       - name: Assemble debug + unit tests
         run: ./gradlew :androidApp:assembleDebug :shared:testAndroidHostTest

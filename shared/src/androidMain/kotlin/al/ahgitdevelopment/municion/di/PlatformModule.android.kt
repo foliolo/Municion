@@ -2,6 +2,8 @@ package al.ahgitdevelopment.municion.di
 
 import al.ahgitdevelopment.municion.ads.AdMobNativeAdManager
 import al.ahgitdevelopment.municion.ads.NativeAdManager
+import al.ahgitdevelopment.municion.auth.AndroidSocialAuthProvider
+import al.ahgitdevelopment.municion.auth.SocialAuthProvider
 import al.ahgitdevelopment.municion.data.local.room.MUNICION_DATABASE_NAME
 import al.ahgitdevelopment.municion.data.local.room.MunicionDatabase
 import al.ahgitdevelopment.municion.data.sync.AndroidSyncScheduler
@@ -32,4 +34,7 @@ actual val platformModule: Module =
 
         // Native advanced ads pool (shared across the four list screens).
         single<NativeAdManager> { AdMobNativeAdManager(androidContext(), get()) }
+
+        // Firebase Auth social providers.
+        single<SocialAuthProvider> { AndroidSocialAuthProvider(androidContext(), get(), get()) }
     }

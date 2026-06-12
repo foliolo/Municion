@@ -1,6 +1,9 @@
 package al.ahgitdevelopment.municion.ui.viewmodel
 
 import al.ahgitdevelopment.municion.auth.FirebaseAuthRepository
+import al.ahgitdevelopment.municion.auth.SocialAuthProvider
+import al.ahgitdevelopment.municion.auth.SocialLoginAvailability
+import al.ahgitdevelopment.municion.auth.SocialLoginProvider
 import al.ahgitdevelopment.municion.util.isValidEmail
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -13,9 +16,22 @@ import kotlinx.coroutines.launch
 /** Login / sign-up / password-reset for the auth screen. */
 class LoginViewModel(
     private val authRepository: FirebaseAuthRepository,
+    private val socialAuthProvider: SocialAuthProvider,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow<LoginUiState>(LoginUiState.Idle)
     val uiState: StateFlow<LoginUiState> = _uiState.asStateFlow()
+
+    private val _socialLoginAvailability =
+        MutableStateFlow(
+            SocialLoginAvailability(
+                google = socialAuthProvider.isGoogleAvailable,
+                apple = socialAuthProvider.isAppleAvailable,
+            ),
+        )
+    val socialLoginAvailability: StateFlow<SocialLoginAvailability> = _socialLoginAvailability.asStateFlow()
+
+    private val _loadingProvider = MutableStateFlow<SocialLoginProvider?>(null)
+    val loadingProvider: StateFlow<SocialLoginProvider?> = _loadingProvider.asStateFlow()
 
     fun signIn(
         email: String,
@@ -50,6 +66,25 @@ class LoginViewModel(
         }
     }
 
+    fun signInWithProvider(provider: SocialLoginProvider) {
+        viewModelScope.launch {
+            _loadingProvider.value = provider
+            _uiState.value = LoginUiState.Loading
+
+            val result =
+                when (provider) {
+                    SocialLoginProvider.Google -> socialAuthProvider.signInWithGoogle()
+                    SocialLoginProvider.Apple -> socialAuthProvider.signInWithApple()
+                }
+
+            result
+                .onSuccess { _uiState.value = LoginUiState.Success(it) }
+                .onFailure { _uiState.value = LoginUiState.Error(mapError(it)) }
+
+            _loadingProvider.value = null
+        }
+    }
+
     fun resetPassword(email: String) {
         if (email.isBlank() || !isValidEmail(email)) {
             _uiState.value = LoginUiState.Error("Email no válido")
@@ -66,6 +101,7 @@ class LoginViewModel(
 
     fun resetState() {
         _uiState.value = LoginUiState.Idle
+        _loadingProvider.value = null
     }
 
     private fun validateInput(
@@ -125,6 +161,11 @@ internal fun mapError(error: Throwable): String {
             "Ya existe una cuenta con este email"
         msg.contains("network", true) -> "Error de conexión. Comprueba tu internet"
         msg.contains("blocked", true) -> "Demasiados intentos. Inténtalo más tarde"
+        msg.contains("cancel", true) -> "Inicio de sesión cancelado"
+        msg.contains("no está configurado", true) || msg.contains("not configured", true) ->
+            "Este proveedor no está configurado"
+        msg.contains("No se pudo abrir", true) ->
+            msg
         else -> "Error: ${msg.ifBlank { "desconocido" }}"
     }
 }

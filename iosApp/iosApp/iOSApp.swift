@@ -37,6 +37,7 @@ struct iOSApp: App {
         // Register the Kotlin↔Swift ad bridges (VC-independent). The consent/ATT/MobileAds.start
         // flow is kicked off later from ContentView.onAppear, once a presenting VC exists.
         AdsCoordinator.shared.registerBridges()
+        SocialAuthCoordinator.shared.registerBridges()
     }
 
     var body: some Scene {

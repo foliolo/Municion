@@ -2,6 +2,7 @@ package al.ahgitdevelopment.municion.ui.viewmodel
 
 import al.ahgitdevelopment.municion.ads.RemoveAdsManager
 import al.ahgitdevelopment.municion.auth.FirebaseAuthRepository
+import al.ahgitdevelopment.municion.auth.SocialAuthProvider
 import al.ahgitdevelopment.municion.data.local.room.dao.SyncOperationDao
 import al.ahgitdevelopment.municion.data.sync.SyncScheduler
 import al.ahgitdevelopment.municion.domain.usecase.ClearLocalDataUseCase
@@ -21,6 +22,7 @@ import kotlinx.coroutines.launch
  */
 class AccountSettingsViewModel(
     private val authRepository: FirebaseAuthRepository,
+    private val socialAuthProvider: SocialAuthProvider,
     private val clearLocalDataUseCase: ClearLocalDataUseCase,
     private val syncOperationDao: SyncOperationDao,
     private val syncScheduler: SyncScheduler,
@@ -39,6 +41,14 @@ class AccountSettingsViewModel(
     /** One-shot user-facing message after a purchase/restore; cleared via [consumePurchaseMessage]. */
     private val _purchaseMessage = MutableStateFlow<String?>(null)
     val purchaseMessage: StateFlow<String?> = _purchaseMessage.asStateFlow()
+
+    /** True while account deletion runs (the Apple re-login + revocation can take a moment). */
+    private val _deleteInFlight = MutableStateFlow(false)
+    val deleteInFlight: StateFlow<Boolean> = _deleteInFlight.asStateFlow()
+
+    /** One-shot message shown if deletion is cancelled or fails; cleared via [consumeDeleteMessage]. */
+    private val _deleteMessage = MutableStateFlow<String?>(null)
+    val deleteMessage: StateFlow<String?> = _deleteMessage.asStateFlow()
 
     val pendingSyncCount: StateFlow<Int> =
         syncOperationDao
@@ -94,6 +104,10 @@ class AccountSettingsViewModel(
         _purchaseMessage.value = null
     }
 
+    fun consumeDeleteMessage() {
+        _deleteMessage.value = null
+    }
+
     fun forceSync() = syncScheduler.requestImmediateDrain()
 
     fun retryFailedSync() {
@@ -112,11 +126,41 @@ class AccountSettingsViewModel(
         }
     }
 
+    /**
+     * Deletes the account permanently. For users who signed in with Apple we first force a fresh
+     * Sign in with Apple to (a) satisfy Firebase's "recent login" requirement for deletion and
+     * (b) revoke the Apple token (Apple's account-deletion requirement). Cloud data (Realtime
+     * Database + Storage) is wiped server-side by the "Delete User Data" Firebase extension once
+     * the auth user is removed.
+     */
     fun deleteAccount() {
+        if (_deleteInFlight.value) return
         viewModelScope.launch {
-            authRepository.deleteAccount()
-            clearLocalDataUseCase()
-            _uiState.value = AccountUiState.NotAuthenticated
+            _deleteInFlight.value = true
+            try {
+                val user = authRepository.getCurrentUser()
+                val isAppleUser = user?.providerData?.any { it.providerId == APPLE_PROVIDER_ID } == true
+
+                if (isAppleUser) {
+                    val reauth = socialAuthProvider.reauthenticateAndRevokeApple()
+                    if (reauth.isFailure) {
+                        _deleteMessage.value =
+                            "No se pudo eliminar la cuenta. Vuelve a iniciar sesión con Apple e inténtalo de nuevo."
+                        return@launch
+                    }
+                }
+
+                val deletion = authRepository.deleteAccount()
+                if (deletion.isFailure) {
+                    _deleteMessage.value = "No se pudo eliminar la cuenta. Inténtalo de nuevo."
+                    return@launch
+                }
+
+                clearLocalDataUseCase()
+                _uiState.value = AccountUiState.NotAuthenticated
+            } finally {
+                _deleteInFlight.value = false
+            }
         }
     }
 
@@ -142,5 +186,9 @@ class AccountSettingsViewModel(
                     !email.isNullOrBlank() -> email
                     else -> uid.take(8) + "…"
                 }
+    }
+
+    private companion object {
+        const val APPLE_PROVIDER_ID = "apple.com"
     }
 }

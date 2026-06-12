@@ -16,6 +16,7 @@ ios-deploymentTarget = "16.0"
 androidx-activity = "1.13.0"
 androidx-appcompat = "1.7.1"
 androidx-core = "1.19.0"
+androidx-credentials = "1.5.0"
 androidx-lifecycle = "2.10.0"
 androidx-navigation-compose-mp = "2.9.2"
 androidx-room = "2.8.4"
@@ -48,6 +49,7 @@ firebase-gitlive = "2.4.0"
 firebase-bom-android = "34.14.1"
 google-services-plugin = "4.4.4"
 firebase-crashlytics-plugin = "3.0.7"
+googleid = "1.2.0"
 
 # Build secrets
 buildkonfig = "6.0.10"
@@ -84,6 +86,8 @@ kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.
 
 # AndroidX (androidMain)
 androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "androidx-core" }
+androidx-credentials = { module = "androidx.credentials:credentials", version.ref = "androidx-credentials" }
+androidx-credentials-play-services-auth = { module = "androidx.credentials:credentials-play-services-auth", version.ref = "androidx-credentials" }
 androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "androidx-appcompat" }
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activity" }
 androidx-work-runtime = { module = "androidx.work:work-runtime-ktx", version.ref = "androidx-work" }
@@ -155,6 +159,7 @@ firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "fir
 firebase-appcheck-playintegrity = { module = "com.google.firebase:firebase-appcheck-playintegrity" }
 firebase-appcheck-debug = { module = "com.google.firebase:firebase-appcheck-debug" }
 firebase-messaging = { module = "com.google.firebase:firebase-messaging" }
+googleid = { module = "com.google.android.libraries.identity.googleid:googleid", version.ref = "googleid" }
 
 # AdMob (Android-only)
 play-services-ads = { module = "com.google.android.gms:play-services-ads", version.ref = "play-services-ads" }

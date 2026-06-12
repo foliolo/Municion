@@ -103,13 +103,18 @@ end
 
 platform :ios do
 
-  desc "One-time setup/update: create App Store signing certificate + provisioning profile in the encrypted match repo"
+  desc "One-time setup/update: create App Store signing certificate + provisioning profile in the encrypted match repo. force: true regenerates the profile so it picks up new App ID capabilities (e.g. Sign in with Apple)."
   lane :bootstrap_match do
     api_key = app_store_connect_api_key_token
 
     match(
       type: "appstore",
       readonly: false,
+      # Regenerate the provisioning profile every run so it reflects the current
+      # App ID capabilities (Sign in with Apple was added in the Developer
+      # portal). force only renews provisioning profiles — it never recreates
+      # the shared apptolast distribution certificate, so no cert slot is burned.
+      force: true,
       app_identifier: [BUNDLE_ID],
       api_key: api_key
     )

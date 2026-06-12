@@ -214,7 +214,27 @@
     <string name="tirada_disparos_format">%1$d disparos</string>
     <string name="tirada_porcentaje_format">%.1f%% de aciertos</string>
 
-    <!-- Auth removed in v3.4.0 (Auth Simplification) -->
+    <!-- Auth -->
+    <string name="auth_logo_content_description">Logo de Tu Armería</string>
+    <string name="auth_login_title">Inicia sesión</string>
+    <string name="auth_register_title">Crea tu cuenta</string>
+    <string name="auth_login_subtitle">Tus guías, compras y licencias se sincronizan con tu cuenta.</string>
+    <string name="auth_register_subtitle">Guarda tus datos y recupéralos en tus dispositivos.</string>
+    <string name="auth_google_button">Continuar con Google</string>
+    <string name="auth_apple_button">Continuar con Apple</string>
+    <string name="auth_email_section">O usa email y contraseña</string>
+    <string name="auth_email_label">Email</string>
+    <string name="auth_password_label">Contraseña</string>
+    <string name="auth_confirm_password_label">Repite la contraseña</string>
+    <string name="auth_show_password">Mostrar contraseña</string>
+    <string name="auth_hide_password">Ocultar contraseña</string>
+    <string name="auth_sign_in_button">Entrar</string>
+    <string name="auth_create_account_button">Crear cuenta</string>
+    <string name="auth_loading">Cargando</string>
+    <string name="auth_toggle_to_login">¿Ya tienes cuenta? Inicia sesión</string>
+    <string name="auth_toggle_to_register">¿No tienes cuenta? Regístrate</string>
+    <string name="auth_forgot_password">¿Olvidaste tu contraseña?</string>
+    <string name="auth_password_reset_sent">Email de recuperación enviado. Revisa tu bandeja de entrada.</string>
 
     <!-- Compose Form Validation (v3.0.0) -->
     <string name="error_field_required">Campo obligatorio</string>

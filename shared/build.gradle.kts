@@ -140,6 +140,9 @@ kotlin {
             implementation(libs.compose.uiToolingPreview)
             implementation(libs.androidx.activity.compose)
             implementation(libs.androidx.core.ktx)
+            implementation(libs.androidx.credentials)
+            implementation(libs.androidx.credentials.play.services.auth)
+            implementation(libs.googleid)
 
             // Coroutines Android dispatcher
             implementation(libs.kotlinx.coroutines.android)
@@ -211,6 +214,9 @@ buildConfig {
     buildConfigField("REVENUECAT_PLAY_SDK_KEY", localProperty("REVENUECAT_PLAY_SDK_KEY"))
     buildConfigField("REVENUECAT_PLAY_SDK_KEY_TEST", localProperty("REVENUECAT_PLAY_SDK_KEY_TEST"))
     buildConfigField("REVENUECAT_APPSTORE_SDK_KEY", localProperty("REVENUECAT_APPSTORE_SDK_KEY"))
+
+    // Firebase Auth social providers.
+    buildConfigField("GOOGLE_WEB_CLIENT_ID", localProperty("GOOGLE_WEB_CLIENT_ID"))
 }
 
 ktlint {

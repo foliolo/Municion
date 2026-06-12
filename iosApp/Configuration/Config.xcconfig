@@ -8,5 +8,9 @@ PRODUCT_NAME=Municion
 // real backend config — GoogleService-Info.plist, AdMob, Fastlane — resolves correctly.)
 PRODUCT_BUNDLE_IDENTIFIER=al.ahgitdevelopment.municion
 
+// Required by Google Sign-In. Keep it in sync with REVERSED_CLIENT_ID from
+// iosApp/GoogleService-Info.plist.
+GOOGLE_REVERSED_CLIENT_ID=com.googleusercontent.apps.522449412724-pf4fl4rl2f3fpeae69b2k0qcuhdio69c
+
 CURRENT_PROJECT_VERSION=1
 MARKETING_VERSION=4.0.0

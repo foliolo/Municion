@@ -1,0 +1,7 @@
+Tu Armería gets a complete overhaul:
+• Brand-new, faster and easier interface (Material You).
+• Full offline support — your data is always available and securely synced.
+• More accurate ammo quota and usage tracking.
+• Improved licence-expiry and inspection reminders.
+• Greater stability and bug fixes.
+Thanks for choosing Tu Armería!
