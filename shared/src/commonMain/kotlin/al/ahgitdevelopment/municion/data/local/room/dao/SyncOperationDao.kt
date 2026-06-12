@@ -6,7 +6,6 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
-import kotlinx.coroutines.flow.Flow
 
 /** DAO for the sync outbox. */
 @Dao
@@ -138,12 +137,6 @@ interface SyncOperationDao {
     )
     suspend fun pendingSyncIdsFor(entityType: String): List<String>
 
-    @Query("SELECT COUNT(*) FROM sync_outbox WHERE status IN ('PENDING', 'IN_FLIGHT')")
-    fun countPendingFlow(): Flow<Int>
-
-    @Query("SELECT COUNT(*) FROM sync_outbox WHERE status = 'FAILED'")
-    fun countFailedFlow(): Flow<Int>
-
     @Query("DELETE FROM sync_outbox WHERE status = 'SYNCED' AND last_attempt_at < :before")
     suspend fun purgeSyncedBefore(before: Long): Int
 
@@ -160,7 +153,7 @@ interface SyncOperationDao {
     )
     suspend fun resetInFlight(): Int
 
-    /** Resets FAILED rows to PENDING (user-facing "retry failed syncs"). */
+    /** Resets FAILED rows to PENDING (automatic recovery: called by SyncDataUseCase before each drain). */
     @Query(
         """
         UPDATE sync_outbox

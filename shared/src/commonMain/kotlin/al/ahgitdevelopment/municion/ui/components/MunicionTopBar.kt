@@ -9,11 +9,11 @@ import al.ahgitdevelopment.municion.resources.section_competiciones_title
 import al.ahgitdevelopment.municion.resources.section_compras_title
 import al.ahgitdevelopment.municion.resources.section_guias_title
 import al.ahgitdevelopment.municion.resources.section_licencias_title
-import al.ahgitdevelopment.municion.resources.title_account_settings
 import al.ahgitdevelopment.municion.resources.title_competition
 import al.ahgitdevelopment.municion.resources.title_guide
 import al.ahgitdevelopment.municion.resources.title_license
 import al.ahgitdevelopment.municion.resources.title_purchase
+import al.ahgitdevelopment.municion.resources.title_settings
 import al.ahgitdevelopment.municion.ui.navigation.Compras
 import al.ahgitdevelopment.municion.ui.navigation.Guias
 import al.ahgitdevelopment.municion.ui.navigation.Licencias
@@ -149,7 +149,7 @@ private fun getSectionTitle(route: String?): String =
 private fun getFormTitle(route: String?): String =
     when {
         route == null -> ""
-        route == SettingsRoute::class.qualifiedName -> stringResource(Res.string.title_account_settings)
+        route == SettingsRoute::class.qualifiedName -> stringResource(Res.string.title_settings)
         route.contains("LicenciaForm") -> stringResource(Res.string.title_license)
         route.contains("GuiaForm") -> stringResource(Res.string.title_guide)
         route.contains("CompraForm") -> stringResource(Res.string.title_purchase)

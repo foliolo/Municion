@@ -73,11 +73,6 @@ class MainViewModel(
         }
     }
 
-    /** Manual "force sync": trigger an outbox drain. */
-    fun forceSync() {
-        syncDataUseCase.syncToFirebase()
-    }
-
     sealed class SyncState {
         data object Idle : SyncState()
 

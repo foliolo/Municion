@@ -3,29 +3,32 @@ package al.ahgitdevelopment.municion.ui.viewmodel
 import al.ahgitdevelopment.municion.ads.RemoveAdsManager
 import al.ahgitdevelopment.municion.auth.FirebaseAuthRepository
 import al.ahgitdevelopment.municion.auth.SocialAuthProvider
-import al.ahgitdevelopment.municion.data.local.room.dao.SyncOperationDao
-import al.ahgitdevelopment.municion.data.sync.SyncScheduler
 import al.ahgitdevelopment.municion.domain.usecase.ClearLocalDataUseCase
+import al.ahgitdevelopment.municion.resources.Res
+import al.ahgitdevelopment.municion.resources.settings_delete_error
+import al.ahgitdevelopment.municion.resources.settings_delete_error_apple
+import al.ahgitdevelopment.municion.resources.settings_purchase_error
+import al.ahgitdevelopment.municion.resources.settings_purchase_not_completed
+import al.ahgitdevelopment.municion.resources.settings_purchase_success
+import al.ahgitdevelopment.municion.resources.settings_restore_error
+import al.ahgitdevelopment.municion.resources.settings_restore_none
+import al.ahgitdevelopment.municion.resources.settings_restore_success
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import org.jetbrains.compose.resources.StringResource
 
 /**
- * Account settings: shows account info + sync health, and lets the user retry failed syncs,
- * force a sync, sign out (clears local data), delete the account, or buy/restore "remove ads"
- * (RevenueCat).
+ * Settings: shows the user profile (avatar, name, auth provider), lets the user buy/restore
+ * "remove ads" (RevenueCat), sign out (clears local data), or delete the account.
  */
 class AccountSettingsViewModel(
     private val authRepository: FirebaseAuthRepository,
     private val socialAuthProvider: SocialAuthProvider,
     private val clearLocalDataUseCase: ClearLocalDataUseCase,
-    private val syncOperationDao: SyncOperationDao,
-    private val syncScheduler: SyncScheduler,
     private val removeAdsManager: RemoveAdsManager,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow<AccountUiState>(AccountUiState.Loading)
@@ -39,26 +42,16 @@ class AccountSettingsViewModel(
     val purchaseInFlight: StateFlow<Boolean> = _purchaseInFlight.asStateFlow()
 
     /** One-shot user-facing message after a purchase/restore; cleared via [consumePurchaseMessage]. */
-    private val _purchaseMessage = MutableStateFlow<String?>(null)
-    val purchaseMessage: StateFlow<String?> = _purchaseMessage.asStateFlow()
+    private val _purchaseMessage = MutableStateFlow<StringResource?>(null)
+    val purchaseMessage: StateFlow<StringResource?> = _purchaseMessage.asStateFlow()
 
     /** True while account deletion runs (the Apple re-login + revocation can take a moment). */
     private val _deleteInFlight = MutableStateFlow(false)
     val deleteInFlight: StateFlow<Boolean> = _deleteInFlight.asStateFlow()
 
     /** One-shot message shown if deletion is cancelled or fails; cleared via [consumeDeleteMessage]. */
-    private val _deleteMessage = MutableStateFlow<String?>(null)
-    val deleteMessage: StateFlow<String?> = _deleteMessage.asStateFlow()
-
-    val pendingSyncCount: StateFlow<Int> =
-        syncOperationDao
-            .countPendingFlow()
-            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), 0)
-
-    val failedSyncCount: StateFlow<Int> =
-        syncOperationDao
-            .countFailedFlow()
-            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), 0)
+    private val _deleteMessage = MutableStateFlow<StringResource?>(null)
+    val deleteMessage: StateFlow<StringResource?> = _deleteMessage.asStateFlow()
 
     init {
         loadAccountState()
@@ -68,7 +61,23 @@ class AccountSettingsViewModel(
         val user = authRepository.getCurrentUser()
         _uiState.value =
             if (user != null) {
-                AccountUiState.Loaded(AccountInfo(email = user.email, uid = user.uid, isAnonymous = user.isAnonymous))
+                val provider =
+                    when {
+                        user.isAnonymous -> AuthProvider.ANONYMOUS
+                        user.providerData.any { it.providerId == GOOGLE_PROVIDER_ID } -> AuthProvider.GOOGLE
+                        user.providerData.any { it.providerId == APPLE_PROVIDER_ID } -> AuthProvider.APPLE
+                        else -> AuthProvider.EMAIL
+                    }
+                AccountUiState.Loaded(
+                    AccountInfo(
+                        email = user.email,
+                        uid = user.uid,
+                        displayName = user.displayName,
+                        photoUrl = user.photoURL,
+                        isAnonymous = user.isAnonymous,
+                        provider = provider,
+                    ),
+                )
             } else {
                 AccountUiState.NotAuthenticated
             }
@@ -80,8 +89,8 @@ class AccountSettingsViewModel(
             _purchaseInFlight.value = true
             _purchaseMessage.value =
                 removeAdsManager.purchaseRemoveAds().fold(
-                    onSuccess = { if (it) "¡Anuncios eliminados!" else "Compra no completada" },
-                    onFailure = { "No se pudo completar la compra" },
+                    onSuccess = { if (it) Res.string.settings_purchase_success else Res.string.settings_purchase_not_completed },
+                    onFailure = { Res.string.settings_purchase_error },
                 )
             _purchaseInFlight.value = false
         }
@@ -93,8 +102,8 @@ class AccountSettingsViewModel(
             _purchaseInFlight.value = true
             _purchaseMessage.value =
                 removeAdsManager.restore().fold(
-                    onSuccess = { if (it) "Compra restaurada" else "No se encontraron compras" },
-                    onFailure = { "No se pudo restaurar la compra" },
+                    onSuccess = { if (it) Res.string.settings_restore_success else Res.string.settings_restore_none },
+                    onFailure = { Res.string.settings_restore_error },
                 )
             _purchaseInFlight.value = false
         }
@@ -106,15 +115,6 @@ class AccountSettingsViewModel(
 
     fun consumeDeleteMessage() {
         _deleteMessage.value = null
-    }
-
-    fun forceSync() = syncScheduler.requestImmediateDrain()
-
-    fun retryFailedSync() {
-        viewModelScope.launch {
-            syncOperationDao.resetFailedToRetry()
-            syncScheduler.requestImmediateDrain()
-        }
     }
 
     /** Clears local data and signs out. The auth flow then routes back to Login. */
@@ -144,15 +144,14 @@ class AccountSettingsViewModel(
                 if (isAppleUser) {
                     val reauth = socialAuthProvider.reauthenticateAndRevokeApple()
                     if (reauth.isFailure) {
-                        _deleteMessage.value =
-                            "No se pudo eliminar la cuenta. Vuelve a iniciar sesión con Apple e inténtalo de nuevo."
+                        _deleteMessage.value = Res.string.settings_delete_error_apple
                         return@launch
                     }
                 }
 
                 val deletion = authRepository.deleteAccount()
                 if (deletion.isFailure) {
-                    _deleteMessage.value = "No se pudo eliminar la cuenta. Inténtalo de nuevo."
+                    _deleteMessage.value = Res.string.settings_delete_error
                     return@launch
                 }
 
@@ -174,21 +173,19 @@ class AccountSettingsViewModel(
         ) : AccountUiState()
     }
 
+    enum class AuthProvider { GOOGLE, APPLE, EMAIL, ANONYMOUS }
+
     data class AccountInfo(
         val email: String?,
         val uid: String,
-        val isAnonymous: Boolean = false,
-    ) {
-        val statusText: String
-            get() =
-                when {
-                    isAnonymous -> "Requiere migración"
-                    !email.isNullOrBlank() -> email
-                    else -> uid.take(8) + "…"
-                }
-    }
+        val displayName: String?,
+        val photoUrl: String?,
+        val isAnonymous: Boolean,
+        val provider: AuthProvider,
+    )
 
     private companion object {
         const val APPLE_PROVIDER_ID = "apple.com"
+        const val GOOGLE_PROVIDER_ID = "google.com"
     }
 }

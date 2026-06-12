@@ -1,5 +1,6 @@
 package al.ahgitdevelopment.municion.domain.usecase
 
+import al.ahgitdevelopment.municion.data.local.room.dao.SyncOperationDao
 import al.ahgitdevelopment.municion.data.repository.CompraRepository
 import al.ahgitdevelopment.municion.data.repository.GuiaRepository
 import al.ahgitdevelopment.municion.data.repository.LicenciaRepository
@@ -24,6 +25,7 @@ class SyncDataUseCase(
     private val licenciaRepository: LicenciaRepository,
     private val tiradaRepository: TiradaRepository,
     private val syncScheduler: SyncScheduler,
+    private val syncOperationDao: SyncOperationDao,
     private val currentUserIdProvider: CurrentUserIdProvider,
     private val crashReporter: CrashReporter,
 ) {
@@ -45,7 +47,9 @@ class SyncDataUseCase(
                 val lr = licencias.await()
                 val tr = tiradas.await()
 
-                // Drain any pending local writes now that we know the network is usable.
+                // Give ops that exhausted their retries a fresh chance, then drain any pending
+                // local writes now that we know the network is usable.
+                syncOperationDao.resetFailedToRetry()
                 syncScheduler.requestImmediateDrain()
 
                 Result.success(
@@ -68,11 +72,6 @@ class SyncDataUseCase(
 
     /** Compatibility wrapper (auto-fix removed in the redesign). */
     suspend fun syncFromFirebaseWithAutoFix(userId: String): Result<SyncResult> = syncFromFirebase(userId)
-
-    /** Manual "force sync": trigger an outbox drain (never a destructive re-upload). */
-    fun syncToFirebase() {
-        syncScheduler.requestImmediateDrain()
-    }
 
     data class SyncResult(
         val guiasSuccess: Boolean,

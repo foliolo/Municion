@@ -74,10 +74,15 @@ final class IOSNativeAdViewFactory: NSObject, NativeAdViewFactory {
         adView.addSubview(mediaView)
         adView.mediaView = mediaView
 
-        let badge = UILabel()
+        // High-contrast filled chip (mirrors the Android badge). A low-contrast plain label is not
+        // reliably detected by the AdMob native ad validator, which flags "Ad attribution missing".
+        let badge = PaddingLabel()
         badge.text = "Publicidad"
-        badge.font = .systemFont(ofSize: 10, weight: .semibold)
-        badge.textColor = .secondaryLabel
+        badge.font = .systemFont(ofSize: 11, weight: .semibold)
+        badge.textColor = .label
+        badge.backgroundColor = .systemGray5
+        badge.layer.cornerRadius = 4
+        badge.clipsToBounds = true
 
         let headline = UILabel()
         headline.text = nativeAd.headline
@@ -133,5 +138,20 @@ final class IOSNativeAdViewFactory: NSObject, NativeAdViewFactory {
 
         adView.nativeAd = nativeAd
         return adView
+    }
+}
+
+/// A `UILabel` with internal padding so a background-filled badge ("Publicidad") doesn't hug its text.
+private final class PaddingLabel: UILabel {
+    private let insets = UIEdgeInsets(top: 2, left: 6, bottom: 2, right: 6)
+
+    override func drawText(in rect: CGRect) {
+        super.drawText(in: rect.inset(by: insets))
+    }
+
+    override var intrinsicContentSize: CGSize {
+        let size = super.intrinsicContentSize
+        return CGSize(width: size.width + insets.left + insets.right,
+                      height: size.height + insets.top + insets.bottom)
     }
 }

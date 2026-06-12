@@ -165,7 +165,6 @@
     <string name="login_text_info">Introduce 6 dígitos como mínimo</string>
     <string name="description_login_button">Botón de login</string>
 
-    <string name="settings_title_show_tutorial">Mostrar tutorial</string>
     <string name="btn_tutorial_entrar">Entrar</string>
 
     <!-- Pregunta de seguridad -->
@@ -190,7 +189,6 @@
 
     <!--IN-APP BILLING-->
     <string name="app_public_key" translatable="false">MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAvDvqFcMgylgnwiMHai3DqTiCEobhOp5Sx6i0TqiXpcOeB/H0AjPL7+6uqFRjrKmrxrNh0H6dw6oHPcuvO4M0WjIRfTyMOxnj/77APaVKYFJfQkebS19NxeldRiK67zVLrNVx5FWTpg4iwzOot6las7QxzAVG+CCy0KULP4q3khwZ/d0UKgJSvZwDpY6c9071tL6Vo1UTqbfAQf8lm1pinGPltZVJIQzvrCz1GAngEHU+eo4JHAUomVHJNTt7HlTABmhGUpOEG0MtMRSmlIq9yjoYvvO8PXcsFqF12z9LmMBH57Sw7mP3+9aeR6hMUS8N/Rqi6vw6KQivzeTqr0MyxwIDAQAB</string>
-    <string name="settings_title_remove_ads">Eliminar publicidad</string>
     <string name="purchase_cancel">Compra cancelada</string>
     <string name="purchase_done">Ya has eliminado la publicidad</string>
     <string name="purchase_not_support">Tu dispositivo no soporta compras integradas</string>
@@ -315,25 +313,41 @@
     <!-- Compose TopBar and Navigation (v3.0.0) -->
     <string name="action_sync">Sincronizar</string>
     <string name="action_back">Volver</string>
-    <string name="title_account_settings">Configuración de cuenta</string>
+    <string name="title_settings">Configuración</string>
     <string name="title_license">Licencia</string>
     <string name="title_guide">Guía</string>
     <string name="title_purchase">Compra</string>
     <string name="title_competition">Tirada</string>
     <string name="action_select_date">Seleccionar fecha</string>
 
-    <!-- Compose Account Settings (v3.0.0) -->
+    <!-- Compose Settings -->
     <string name="loading">Cargando…</string>
-    <string name="not_authenticated">No autenticado</string>
-    <string name="account_status">Estado de cuenta</string>
-    <string name="account_info">Información de cuenta</string>
-    <string name="no_email">Sin email</string>
-    <string name="uid_display">UID: %1$s…</string>
     <string name="tutorial">Tutorial</string>
     <string name="tutorial_description">Aprende a usar la aplicación</string>
     <string name="sign_out">Cerrar sesión</string>
-    <string name="sign_out_anonymous_warning">Si cierras sesión con una cuenta anónima, perderás acceso a tus datos en la nube. Los datos locales se mantendrán.\n\n¿Estás seguro?</string>
-    <string name="sign_out_confirm">¿Estás seguro de que deseas cerrar sesión?</string>
+    <string name="settings_section_account">Cuenta</string>
+    <string name="settings_section_premium">Premium</string>
+    <string name="settings_section_privacy">Privacidad</string>
+    <string name="settings_section_help">Ayuda</string>
+    <string name="settings_provider_email">Email y contraseña</string>
+    <string name="settings_provider_anonymous">Cuenta anónima</string>
+    <string name="cd_profile_photo">Foto de perfil</string>
+    <string name="settings_ads_removed_thanks">Ya has quitado los anuncios. ¡Gracias!</string>
+    <string name="settings_restore_purchase">Restaurar compra</string>
+    <string name="settings_privacy_options">Opciones de privacidad</string>
+    <string name="settings_privacy_description">Gestiona tu consentimiento para anuncios personalizados</string>
+    <string name="settings_sign_out_message">¿Seguro que quieres cerrar sesión? Se borrarán los datos locales de este dispositivo.</string>
+    <string name="settings_delete_account">Eliminar cuenta</string>
+    <string name="settings_delete_account_message">Esto eliminará tu cuenta y todos tus datos de forma permanente. Esta acción no se puede deshacer.\n\nSi iniciaste sesión con Apple, se te pedirá iniciar sesión de nuevo para confirmarlo.</string>
+    <string name="settings_deleting">Eliminando…</string>
+    <string name="settings_purchase_success">¡Anuncios eliminados!</string>
+    <string name="settings_purchase_not_completed">Compra no completada</string>
+    <string name="settings_purchase_error">No se pudo completar la compra</string>
+    <string name="settings_restore_success">Compra restaurada</string>
+    <string name="settings_restore_none">No se encontraron compras</string>
+    <string name="settings_restore_error">No se pudo restaurar la compra</string>
+    <string name="settings_delete_error_apple">No se pudo eliminar la cuenta. Vuelve a iniciar sesión con Apple e inténtalo de nuevo.</string>
+    <string name="settings_delete_error">No se pudo eliminar la cuenta. Inténtalo de nuevo.</string>
 
     <!-- Calendar Permissions (v3.3.0) -->
     <string name="calendar_permission_granted">Permiso de calendario concedido</string>
@@ -347,10 +361,8 @@
     <string name="calendar_event_expires_one_month">Tu licencia caduca dentro de un mes</string>
 
     <!-- Premium/Ads (v3.3.0) -->
-    <string name="premium_status">Premium (Sin Anuncios)</string>
-    <string name="remove_ads_title">Eliminar Publicidad</string>
-    <string name="remove_ads_description">Apoya el desarrollo y elimina los anuncios</string>
-    <string name="loading_info">Cargando información…</string>
+    <string name="remove_ads_title">Quitar anuncios</string>
+    <string name="remove_ads_description">Compra única para eliminar los anuncios</string>
 
     <!-- Login/Auth UI (v3.3.0) -->
     <string name="app_title">Tu Armería</string>
