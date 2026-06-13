@@ -13,6 +13,7 @@ import al.ahgitdevelopment.municion.resources.settings_purchase_success
 import al.ahgitdevelopment.municion.resources.settings_restore_error
 import al.ahgitdevelopment.municion.resources.settings_restore_none
 import al.ahgitdevelopment.municion.resources.settings_restore_success
+import al.ahgitdevelopment.municion.util.ScreenshotMode
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -58,6 +59,21 @@ class AccountSettingsViewModel(
     }
 
     fun loadAccountState() {
+        if (ScreenshotMode.enabled) {
+            // Fictional profile for App Store screenshots — no real personal data.
+            _uiState.value =
+                AccountUiState.Loaded(
+                    AccountInfo(
+                        email = "alex.garcia@example.com",
+                        uid = "screenshot-demo",
+                        displayName = "Alex García",
+                        photoUrl = null,
+                        isAnonymous = false,
+                        provider = AuthProvider.GOOGLE,
+                    ),
+                )
+            return
+        }
         val user = authRepository.getCurrentUser()
         _uiState.value =
             if (user != null) {

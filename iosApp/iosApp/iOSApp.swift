@@ -36,7 +36,11 @@ struct iOSApp: App {
 
         // Register the Kotlin↔Swift ad bridges (VC-independent). The consent/ATT/MobileAds.start
         // flow is kicked off later from ContentView.onAppear, once a presenting VC exists.
-        AdsCoordinator.shared.registerBridges()
+        // Screenshot mode (fastlane snapshot) skips ads entirely so no consent/ATT dialog or ad
+        // content shows up in App Store screenshots.
+        if !ProcessInfo.processInfo.arguments.contains("-screenshotMode") {
+            AdsCoordinator.shared.registerBridges()
+        }
         SocialAuthCoordinator.shared.registerBridges()
     }
 

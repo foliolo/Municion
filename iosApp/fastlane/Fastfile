@@ -222,6 +222,19 @@ platform :ios do
     UI.success "Uploaded build #{next_build} to TestFlight"
   end
 
+  desc "Generate localized App Store screenshots on simulators. The app's screenshot mode (launch args -screenshotMode/-screenshotScreen) skips auth/ads and seeds fictional demo data; the UI test just launches and shoots. Devices/languages live in the Snapfile. Upload afterwards with upload_store_assets."
+  lane :screenshots do
+    # Fail fast on Kotlin errors before xcodebuild; tests build the simulator framework (Debug).
+    gradle(
+      task: "#{SHARED_MODULE}:linkDebugFrameworkIosSimulatorArm64",
+      project_dir: ROOT_DIR,
+      flags: "--no-configuration-cache"
+    )
+
+    capture_screenshots
+    UI.success "Screenshots generated at #{SCREENSHOTS_PATH}"
+  end
+
   desc "Upload App Store metadata and any prepared screenshots. Does not upload a binary or submit for review."
   lane :upload_store_assets do
     api_key = app_store_connect_api_key_token

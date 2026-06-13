@@ -1,0 +1,35 @@
+# Snapfile — fastlane snapshot config for App Store screenshots.
+# The app's screenshot mode does the navigation/data work (see MunicionScreenshots.swift);
+# snapshot just drives devices and languages.
+#
+# App Store Connect only requires one iPhone size (6.9" or 6.5") and one iPad size (13");
+# the remaining slots scale down automatically.
+
+devices([
+  "iPhone 16 Pro Max",
+  "iPad Pro 13-inch (M4)"
+])
+
+languages([
+  "es-ES",
+  "en-US"
+])
+
+scheme("iosApp")
+output_directory("./fastlane/screenshots")
+clear_previous_screenshots(true)
+
+# Clean status bar: 9:41, full battery, full signal.
+override_status_bar(true)
+
+# CMP + Firebase are heavy; serial simulators are slower but far more stable.
+concurrent_simulators(false)
+stop_after_first_error(true)
+disable_slide_to_type(true)
+
+# Stable derived-data path: SPM binary artifacts (Firebase/GMA xcframeworks) resolve ONCE and are
+# reused across device/language runs. A fresh temp derived-data per run intermittently fails with
+# "There is no Info.plist found at ....xcframework/Info.plist" (incomplete artifact extraction);
+# a shared path + a retry avoids that flake.
+derived_data_path("/tmp/municion_snapshot_dd")
+number_of_retries(1)

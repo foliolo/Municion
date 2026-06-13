@@ -24,6 +24,7 @@ import al.ahgitdevelopment.municion.ui.navigation.TiradaForm
 import al.ahgitdevelopment.municion.ui.navigation.Tiradas
 import al.ahgitdevelopment.municion.ui.viewmodel.GuiaViewModel
 import al.ahgitdevelopment.municion.ui.viewmodel.MainViewModel
+import al.ahgitdevelopment.municion.util.ScreenshotMode
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
@@ -63,9 +64,10 @@ fun MainScreen(
     guiaViewModel: GuiaViewModel = koinViewModel(),
 ) {
     val startDestination: Route =
-        when (authState) {
-            is AuthViewModel.AuthState.NotAuthenticated, is AuthViewModel.AuthState.Error -> Login
-            is AuthViewModel.AuthState.RequiresMigration -> Migration
+        when {
+            ScreenshotMode.enabled -> screenshotStartDestination()
+            authState is AuthViewModel.AuthState.NotAuthenticated || authState is AuthViewModel.AuthState.Error -> Login
+            authState is AuthViewModel.AuthState.RequiresMigration -> Migration
             else -> Licencias
         }
 
@@ -94,6 +96,7 @@ fun MainScreen(
 
     // Auth-driven navigation (login / logout / migration).
     LaunchedEffect(authState) {
+        if (ScreenshotMode.enabled) return@LaunchedEffect // Stay on the requested screenshot screen.
         when (authState) {
             is AuthViewModel.AuthState.NotAuthenticated, is AuthViewModel.AuthState.Error ->
                 navController.navigate(Login) { popUpTo(0) { inclusive = true } }
@@ -164,7 +167,7 @@ fun MainScreen(
             Column {
                 // Single persistent banner above the bottom nav, shown everywhere except the auth flow
                 // (Login/Migration) and gated by the remove-ads entitlement.
-                if (!isAuthScreen && showAds) {
+                if (!isAuthScreen && showAds && !ScreenshotMode.enabled) {
                     // The bottom nav consumes the navigation-bar inset; when it is hidden (settings/forms)
                     // the banner is the bottom-most element and must apply the inset itself, otherwise the
                     // system 3-button nav bar draws on top of it.
@@ -221,6 +224,17 @@ fun MainScreen(
         )
     }
 }
+
+/** Maps the `-screenshotScreen` launch argument to a start destination (fastlane snapshot). */
+private fun screenshotStartDestination(): Route =
+    when (ScreenshotMode.startScreen) {
+        "login" -> Login
+        "guias" -> Guias
+        "compras" -> Compras
+        "tiradas" -> Tiradas
+        "settings" -> Settings
+        else -> Licencias
+    }
 
 private val authScreenRoutes = setOf(Login::class.qualifiedName, Migration::class.qualifiedName)
 private val listScreenRoutes =

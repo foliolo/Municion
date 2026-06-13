@@ -15,6 +15,11 @@ struct ContentView: View {
         ComposeView()
             .ignoresSafeArea(edges: .all)
             .ignoresSafeArea(.keyboard) // Compose has own keyboard handler
-            .onAppear { AdsCoordinator.shared.startIfNeeded() }
+            .onAppear {
+                // Screenshot mode (fastlane snapshot): no consent/ATT dialogs, no ads.
+                if !ProcessInfo.processInfo.arguments.contains("-screenshotMode") {
+                    AdsCoordinator.shared.startIfNeeded()
+                }
+            }
     }
 }
