@@ -33,7 +33,7 @@ actual val platformModule: Module =
         single<CalendarManager> { AndroidCalendarManager(androidContext(), get()) }
 
         // Native advanced ads pool (shared across the four list screens).
-        single<NativeAdManager> { AdMobNativeAdManager(androidContext(), get()) }
+        single<NativeAdManager> { AdMobNativeAdManager(androidContext(), get(), get()) }
 
         // Firebase Auth social providers.
         single<SocialAuthProvider> { AndroidSocialAuthProvider(androidContext(), get(), get()) }

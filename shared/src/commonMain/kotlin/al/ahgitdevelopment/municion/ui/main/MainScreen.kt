@@ -31,6 +31,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -164,7 +165,15 @@ fun MainScreen(
                 // Single persistent banner above the bottom nav, shown everywhere except the auth flow
                 // (Login/Migration) and gated by the remove-ads entitlement.
                 if (!isAuthScreen && showAds) {
-                    AdaptiveBanner(modifier = Modifier.fillMaxWidth())
+                    // The bottom nav consumes the navigation-bar inset; when it is hidden (settings/forms)
+                    // the banner is the bottom-most element and must apply the inset itself, otherwise the
+                    // system 3-button nav bar draws on top of it.
+                    AdaptiveBanner(
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .then(if (showBottomBar) Modifier else Modifier.navigationBarsPadding()),
+                    )
                 }
                 AnimatedVisibility(
                     visible = showBottomBar,

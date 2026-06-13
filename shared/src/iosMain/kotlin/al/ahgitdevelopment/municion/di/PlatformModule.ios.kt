@@ -44,7 +44,7 @@ actual val platformModule: Module =
         single<CalendarManager> { IosCalendarManager(get()) }
 
         // Native advanced ads pool (delegates to the Swift bridge).
-        single<NativeAdManager> { IosNativeAdManager() }
+        single<NativeAdManager> { IosNativeAdManager(get()) }
 
         // Firebase Auth social providers.
         single<SocialAuthProvider> { IosSocialAuthProvider(get(), get()) }

@@ -1,6 +1,5 @@
 package al.ahgitdevelopment.municion.ui.viewmodel
 
-import al.ahgitdevelopment.municion.ads.NativeAdManager
 import al.ahgitdevelopment.municion.ads.RemoveAdsManager
 import al.ahgitdevelopment.municion.domain.usecase.SyncDataUseCase
 import al.ahgitdevelopment.municion.firebase.CrashReporter
@@ -24,26 +23,16 @@ class MainViewModel(
     private val currentUserId: CurrentUserIdProvider,
     private val crashReporter: CrashReporter,
     private val removeAdsManager: RemoveAdsManager,
-    private val nativeAdManager: NativeAdManager,
 ) : ViewModel() {
     private val _syncState = MutableStateFlow<SyncState>(SyncState.Idle)
     val syncState: StateFlow<SyncState> = _syncState.asStateFlow()
 
-    /** Show ads unless the user has the remove-ads entitlement. */
+    /** Show ads unless the user has the remove-ads entitlement. The native ad pool gates itself
+     * inside [al.ahgitdevelopment.municion.ads.NativeAdManager] implementations. */
     val showAds: StateFlow<Boolean> =
         removeAdsManager.hasRemovedAds
             .map { !it }
             .stateIn(viewModelScope, SharingStarted.Lazily, true)
-
-    init {
-        // Drop the native ad pool as soon as the user buys remove-ads; the four lists react to the
-        // now-empty flow and stop interleaving ads (the banner is gated separately via [showAds]).
-        viewModelScope.launch {
-            removeAdsManager.hasRemovedAds.collect { removed ->
-                if (removed) nativeAdManager.destroyAds()
-            }
-        }
-    }
 
     val userId: String? get() = currentUserId.currentUserId()
 

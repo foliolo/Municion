@@ -9,9 +9,10 @@ import kotlinx.coroutines.flow.asStateFlow
  * (Licencias, Guías, Compras, Tiradas). The UI collects [nativeAds] and interleaves them via
  * [itemsWithNativeAds]; an empty pool (not loaded yet, or ads removed) renders no ads.
  *
- * Lifecycle: [loadAds] is triggered once after consent + `MobileAds` init from the platform
- * bootstrap (Android: AdsBootstrap; iOS: iOSApp.swift). [destroyAds] is called when the user buys
- * the remove-ads entitlement, which clears the flow and the four lists stop showing ads reactively.
+ * Lifecycle: [loadAds] is triggered by the list screens when they compose (after consent +
+ * `MobileAds` init from the platform bootstrap). Implementations own the remove-ads gating
+ * end-to-end: they observe the entitlement, refuse to load while ad-free, drop the pool when the
+ * purchase activates, and discard in-flight loader deliveries that land after it.
  */
 interface NativeAdManager {
     val nativeAds: StateFlow<List<NativeAdHandle>>

@@ -38,6 +38,7 @@ import al.ahgitdevelopment.municion.ui.viewmodel.LoginViewModel
 import al.ahgitdevelopment.municion.ui.viewmodel.MainViewModel
 import al.ahgitdevelopment.municion.ui.viewmodel.MigrationViewModel
 import al.ahgitdevelopment.municion.ui.viewmodel.TiradaViewModel
+import com.russhwolf.settings.Settings
 import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.auth.FirebaseAuth
 import dev.gitlive.firebase.auth.auth
@@ -71,7 +72,8 @@ val dataModule =
         singleOf(::FirebaseAnalyticsTracker) bind AnalyticsTracker::class
         // Remove-ads entitlement via RevenueCat (purchases-kmp). Degrades to no-op until SDK keys
         // are configured in local.properties / CI secrets (see MIGRATION_REPORT §4.C).
-        single<RemoveAdsManager> { RevenueCatRemoveAdsManager(revenueCatApiKey(), get()) }
+        single { Settings() }
+        single<RemoveAdsManager> { RevenueCatRemoveAdsManager(revenueCatApiKey(), get(), get()) }
         singleOf(::FirebaseCurrentUserIdProvider) bind CurrentUserIdProvider::class
 
         // Sync subsystem (SyncScheduler is provided by platformModule)

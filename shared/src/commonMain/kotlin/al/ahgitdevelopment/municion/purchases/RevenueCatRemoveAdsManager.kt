@@ -11,6 +11,7 @@ import com.revenuecat.purchases.kmp.ktx.awaitOfferings
 import com.revenuecat.purchases.kmp.ktx.awaitPurchase
 import com.revenuecat.purchases.kmp.ktx.awaitRestore
 import com.revenuecat.purchases.kmp.models.CustomerInfo
+import com.russhwolf.settings.Settings
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -25,10 +26,18 @@ import kotlinx.coroutines.flow.asStateFlow
  */
 class RevenueCatRemoveAdsManager(
     private val apiKey: String,
+    private val settings: Settings,
     private val crashReporter: CrashReporter,
 ) : RemoveAdsManager {
-    private val _hasRemovedAds = MutableStateFlow(false)
+    // Seeded from the local cache so a premium user starts ad-free at cold start (no ad flash while
+    // RevenueCat refreshes over the network); the next refresh corrects the cache if it's stale.
+    private val _hasRemovedAds = MutableStateFlow(settings.getBoolean(KEY_AD_FREE_CACHE, false))
     override val hasRemovedAds: StateFlow<Boolean> = _hasRemovedAds.asStateFlow()
+
+    private fun setAdFree(active: Boolean) {
+        _hasRemovedAds.value = active
+        settings.putBoolean(KEY_AD_FREE_CACHE, active)
+    }
 
     override suspend fun initialize(userId: String?) {
         if (apiKey.isBlank()) return // Keys not configured: behave as a no-op.
@@ -55,15 +64,18 @@ class RevenueCatRemoveAdsManager(
             val offering =
                 Purchases.sharedInstance.awaitOfferings().current
                     ?: error("RevenueCat no tiene un offering por defecto")
+            // Remove-ads is a one-time lifetime non-consumable: pick the lifetime package explicitly,
+            // never availablePackages.first() (the offering may also expose sample subscription packages
+            // such as Monthly, which would charge the wrong product).
             val pkg =
-                offering.availablePackages.firstOrNull()
-                    ?: error("El offering de RevenueCat no tiene paquetes")
+                offering.lifetime
+                    ?: error("El offering de RevenueCat no tiene un paquete lifetime")
             val active =
                 Purchases.sharedInstance
                     .awaitPurchase(pkg)
                     .customerInfo
                     .isAdFree()
-            _hasRemovedAds.value = active
+            setAdFree(active)
             active
         }.onFailure { crashReporter.recordException(it) }
 
@@ -71,17 +83,18 @@ class RevenueCatRemoveAdsManager(
         runCatching {
             check(Purchases.isConfigured) { "RevenueCat no está configurado" }
             val active = Purchases.sharedInstance.awaitRestore().isAdFree()
-            _hasRemovedAds.value = active
+            setAdFree(active)
             active
         }.onFailure { crashReporter.recordException(it) }
 
     private suspend fun refreshEntitlement() {
-        _hasRemovedAds.value = Purchases.sharedInstance.awaitCustomerInfo().isAdFree()
+        setAdFree(Purchases.sharedInstance.awaitCustomerInfo().isAdFree())
     }
 
     private fun CustomerInfo.isAdFree(): Boolean = entitlements[AD_FREE_ENTITLEMENT]?.isActive == true
 
     private companion object {
         const val AD_FREE_ENTITLEMENT = "ad_free"
+        const val KEY_AD_FREE_CACHE = "ad_free_entitlement_cache"
     }
 }

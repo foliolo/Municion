@@ -320,7 +320,7 @@
     <string name="settings_provider_email">Email and password</string>
     <string name="settings_provider_anonymous">Anonymous account</string>
     <string name="cd_profile_photo">Profile photo</string>
-    <string name="settings_ads_removed_thanks">You already removed ads. Thank you!</string>
+    <string name="settings_ads_removed_thanks">You already removed ads.\nThank you!</string>
     <string name="settings_restore_purchase">Restore purchase</string>
     <string name="settings_privacy_options">Privacy options</string>
     <string name="settings_privacy_description">Manage your consent for personalized ads</string>

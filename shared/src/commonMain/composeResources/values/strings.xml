@@ -332,7 +332,7 @@
     <string name="settings_provider_email">Email y contraseña</string>
     <string name="settings_provider_anonymous">Cuenta anónima</string>
     <string name="cd_profile_photo">Foto de perfil</string>
-    <string name="settings_ads_removed_thanks">Ya has quitado los anuncios. ¡Gracias!</string>
+    <string name="settings_ads_removed_thanks">Ya has quitado los anuncios.\n¡Gracias!</string>
     <string name="settings_restore_purchase">Restaurar compra</string>
     <string name="settings_privacy_options">Opciones de privacidad</string>
     <string name="settings_privacy_description">Gestiona tu consentimiento para anuncios personalizados</string>
