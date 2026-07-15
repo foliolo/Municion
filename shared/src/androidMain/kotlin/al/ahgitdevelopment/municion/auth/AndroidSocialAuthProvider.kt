@@ -1,7 +1,7 @@
 package al.ahgitdevelopment.municion.auth
 
-import al.ahgitdevelopment.municion.BuildConfig
 import al.ahgitdevelopment.municion.firebase.CrashReporter
+import al.ahgitdevelopment.municion.shared.BuildConfig
 import android.app.Activity
 import android.content.Context
 import androidx.credentials.CredentialManager

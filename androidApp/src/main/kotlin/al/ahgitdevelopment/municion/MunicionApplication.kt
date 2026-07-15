@@ -3,9 +3,6 @@ package al.ahgitdevelopment.municion
 import al.ahgitdevelopment.municion.data.sync.SyncScheduler
 import al.ahgitdevelopment.municion.di.initKoin
 import android.app.Application
-import com.google.firebase.appcheck.FirebaseAppCheck
-import com.google.firebase.appcheck.debug.DebugAppCheckProviderFactory
-import com.google.firebase.appcheck.playintegrity.PlayIntegrityAppCheckProviderFactory
 import io.github.vinceglb.filekit.FileKit
 import io.github.vinceglb.filekit.manualFileKitCoreInitialization
 import org.koin.android.ext.koin.androidContext

@@ -1,6 +1,6 @@
 package al.ahgitdevelopment.municion.purchases
 
-import al.ahgitdevelopment.municion.BuildConfig
+import al.ahgitdevelopment.municion.shared.BuildConfig
 
 // Play Store key. Debug builds prefer the sandbox/test key when one is configured.
 actual fun revenueCatApiKey(): String {

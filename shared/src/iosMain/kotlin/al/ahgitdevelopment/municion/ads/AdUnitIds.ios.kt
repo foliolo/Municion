@@ -1,6 +1,6 @@
 package al.ahgitdevelopment.municion.ads
 
-import al.ahgitdevelopment.municion.BuildConfig
+import al.ahgitdevelopment.municion.shared.BuildConfig
 
 // Google's official iOS test unit ids. Used in non-release builds so development never requests live
 // ads against the real unit ids (AdMob policy). Release reads the configured ids from BuildConfig.

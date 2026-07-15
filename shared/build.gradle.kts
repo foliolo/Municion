@@ -193,7 +193,10 @@ dependencies {
 }
 
 buildConfig {
-    packageName("al.ahgitdevelopment.municion")
+    // Own namespace (matches the module's `namespace` above) so this generated class does not
+    // collide with :androidApp's AGP-generated al.ahgitdevelopment.municion.BuildConfig at dex
+    // merge time (release fails with "defined multiple times"; debug tolerates it silently).
+    packageName("al.ahgitdevelopment.municion.shared")
     useKotlinOutput { internalVisibility = false }
 
     // Release builds inject -PappBuildType=release; local/dev fall back to "debug" so
