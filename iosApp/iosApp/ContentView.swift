@@ -16,8 +16,14 @@ struct ContentView: View {
             .ignoresSafeArea(edges: .all)
             .ignoresSafeArea(.keyboard) // Compose has own keyboard handler
             .onAppear {
-                // Screenshot mode (fastlane snapshot): no consent/ATT dialogs, no ads.
-                if !ProcessInfo.processInfo.arguments.contains("-screenshotMode") {
+                // Screenshot mode (fastlane snapshot): no consent/ATT dialogs, no ads. Debug-only
+                // QA path — release builds never read the launch argument and always start ads.
+                #if DEBUG
+                let isScreenshotMode = ProcessInfo.processInfo.arguments.contains("-screenshotMode")
+                #else
+                let isScreenshotMode = false
+                #endif
+                if !isScreenshotMode {
                     AdsCoordinator.shared.startIfNeeded()
                 }
             }
