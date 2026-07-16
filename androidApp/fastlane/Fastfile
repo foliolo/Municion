@@ -35,4 +35,36 @@ platform :android do
       skip_upload_screenshots: true,
     )
   end
+
+  desc "Build a signed AAB with an explicit version and upload to Play Internal (draft). " \
+       "Usage: fastlane android internal version_name:0.2.0 [version_code:47]"
+  lane :internal do |options|
+    version_name = options[:version_name]
+    UI.user_error!("Pass version_name, e.g. `fastlane android internal version_name:0.2.0`") if version_name.to_s.empty?
+
+    version_code = options[:version_code] || begin
+      google_play_track_version_codes(track: "internal").max.to_i + 1
+    rescue
+      1
+    end
+
+    gradle(
+      task: ":androidApp:bundleRelease",
+      project_dir: "..",
+      properties: {
+        "appVersionName" => version_name,
+        "appVersionCode" => version_code,
+        "appBuildType" => "release",
+      },
+    )
+
+    upload_to_play_store(
+      track: "internal",
+      release_status: "draft",
+      aab: "../androidApp/build/outputs/bundle/release/androidApp-release.aab",
+      skip_upload_metadata: true,
+      skip_upload_images: true,
+      skip_upload_screenshots: true,
+    )
+  end
 end
