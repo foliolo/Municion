@@ -12,6 +12,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddAPhoto
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.PhotoCamera
+import androidx.compose.material.icons.filled.PhotoLibrary
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -29,14 +31,16 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import io.github.vinceglb.filekit.dialogs.FileKitType
+import io.github.vinceglb.filekit.dialogs.compose.rememberCameraPickerLauncher
 import io.github.vinceglb.filekit.dialogs.compose.rememberFilePickerLauncher
 import io.github.vinceglb.filekit.readBytes
 import kotlinx.coroutines.launch
 
 /**
  * Reusable image field for the entity forms: shows the current photo (freshly-picked bytes take
- * precedence over the stored [currentImageUrl]), lets the user pick a new one from the gallery via
- * FileKit (Android + iOS, no cinterop), and remove it. Upload happens on save in the ViewModel.
+ * precedence over the stored [currentImageUrl]), lets the user capture a new one with the camera or
+ * pick it from the gallery via FileKit (Android + iOS, no cinterop), and remove it. Upload happens
+ * on save in the ViewModel.
  */
 @Composable
 fun ImagePickerField(
@@ -49,9 +53,16 @@ fun ImagePickerField(
     label: String = "Foto",
 ) {
     val scope = rememberCoroutineScope()
-    val launcher =
+    val galleryLauncher =
         rememberFilePickerLauncher(type = FileKitType.Image) { file ->
             file?.let { picked -> scope.launch { onPick(picked.readBytes()) } }
+        }
+    // Camera capture: FileKit ships its own FileProvider and requests the CAMERA runtime permission
+    // internally, so no extra Android manifest / iOS Info.plist wiring is needed beyond the already
+    // declared NSCameraUsageDescription and android.permission.CAMERA.
+    val cameraLauncher =
+        rememberCameraPickerLauncher { file ->
+            file?.let { captured -> scope.launch { onPick(captured.readBytes()) } }
         }
     val hasImage = pickedBytes != null || !currentImageUrl.isNullOrBlank()
 
@@ -103,16 +114,20 @@ fun ImagePickerField(
                 }
             }
         }
-        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            OutlinedButton(onClick = { launcher.launch() }, enabled = !isBusy) {
-                Icon(Icons.Default.AddAPhoto, contentDescription = null, modifier = Modifier.padding(end = 8.dp))
-                Text(if (hasImage) "Cambiar" else "Añadir foto", fontSize = 14.sp)
+        Row(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.fillMaxWidth()) {
+            OutlinedButton(onClick = { cameraLauncher.launch() }, enabled = !isBusy, modifier = Modifier.weight(1f)) {
+                Icon(Icons.Default.PhotoCamera, contentDescription = null, modifier = Modifier.padding(end = 8.dp))
+                Text("Cámara", fontSize = 14.sp)
             }
-            if (hasImage) {
-                TextButton(onClick = onRemove, enabled = !isBusy) {
-                    Icon(Icons.Default.Delete, contentDescription = null, modifier = Modifier.padding(end = 8.dp))
-                    Text("Eliminar", fontSize = 14.sp)
-                }
+            OutlinedButton(onClick = { galleryLauncher.launch() }, enabled = !isBusy, modifier = Modifier.weight(1f)) {
+                Icon(Icons.Default.PhotoLibrary, contentDescription = null, modifier = Modifier.padding(end = 8.dp))
+                Text("Galería", fontSize = 14.sp)
+            }
+        }
+        if (hasImage) {
+            TextButton(onClick = onRemove, enabled = !isBusy) {
+                Icon(Icons.Default.Delete, contentDescription = null, modifier = Modifier.padding(end = 8.dp))
+                Text("Eliminar", fontSize = 14.sp)
             }
         }
     }
