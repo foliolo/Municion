@@ -17,6 +17,8 @@ final class MunicionAppCheckProviderFactory: NSObject, AppCheckProviderFactory {
 
 @main
 struct iOSApp: App {
+    @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
+
     init() {
         // App Check factory MUST be set before FirebaseApp.configure().
         #if DEBUG
