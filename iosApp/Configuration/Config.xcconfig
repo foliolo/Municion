@@ -14,3 +14,10 @@ GOOGLE_REVERSED_CLIENT_ID=com.googleusercontent.apps.522449412724-pf4fl4rl2f3fpe
 
 CURRENT_PROJECT_VERSION=2
 MARKETING_VERSION=0.2.0
+
+// Simulator builds don't need code signing. Disabling it here stops the Kotlin framework
+// embed/sign phase (:shared:embedAndSignAppleFrameworkForXcode) from failing on the simulator once
+// the distribution certificate is installed (it would otherwise try to sign the framework with an
+// identity that isn't valid for the simulator). Device (iphoneos) signing is untouched, so
+// TestFlight/App Store archives are unaffected.
+CODE_SIGNING_ALLOWED[sdk=iphonesimulator*] = NO
