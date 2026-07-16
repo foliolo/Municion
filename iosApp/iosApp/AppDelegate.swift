@@ -36,12 +36,12 @@ final class AppDelegate: NSObject, UIApplicationDelegate, MessagingDelegate, UNU
         _ application: UIApplication,
         didFailToRegisterForRemoteNotificationsWithError error: Error
     ) {
-        print("APNs registration failed: \(error.localizedDescription)")
+        NSLog("APNs registration failed: %@", error.localizedDescription)
     }
 
     // FCM registration token. Console/topic campaigns don't need it server-side; logged for testing.
     func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String?) {
-        print("FCM registration token: \(fcmToken ?? "nil")")
+        NSLog("FCM registration token: %@", fcmToken ?? "nil")
     }
 
     // Show notifications while the app is in the foreground.
