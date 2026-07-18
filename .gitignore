@@ -762,3 +762,6 @@ obj/
 
 # Temp migration notes (PII) — do not commit
 debug-users-migration-TEMP.md
+
+# Local Codex / MCP config (contains API tokens — never commit)
+.codex/
