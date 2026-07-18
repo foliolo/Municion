@@ -1,10 +1,12 @@
 default_platform(:android)
 
 # Release is driven by a git tag "vX.Y.Z". versionName comes from the tag; versionCode is the
-# next free code on the Play Internal track. The signed AAB is uploaded as a DRAFT (manual
-# publish in Play Console). Signing uses keystore.properties (restored on CI from secrets).
+# next free code on the Play Internal track. This app publishes a signed APK (not AAB) and is
+# NOT enrolled in Play App Signing — the APK is signed solely with our keystore. The APK is
+# uploaded as a DRAFT (manual publish in Play Console). Signing uses keystore.properties
+# (restored on CI from secrets).
 platform :android do
-  desc "Build a signed AAB from the current git tag and upload to Play Internal (draft)"
+  desc "Build a signed APK from the current git tag and upload to Play Internal (draft)"
   lane :release_from_tag do
     tag = ENV["RELEASE_TAG"] || `git describe --tags --abbrev=0`.strip
     version_name = tag.sub(/^v/, "")
@@ -17,7 +19,7 @@ platform :android do
     end
 
     gradle(
-      task: ":androidApp:bundleRelease",
+      task: ":androidApp:assembleRelease",
       project_dir: "..",
       properties: {
         "appVersionName" => version_name,
@@ -29,14 +31,15 @@ platform :android do
     upload_to_play_store(
       track: "internal",
       release_status: "draft",
-      aab: "../androidApp/build/outputs/bundle/release/androidApp-release.aab",
+      apk: "../androidApp/build/outputs/apk/release/androidApp-release.apk",
+      skip_upload_aab: true,
       skip_upload_metadata: true,
       skip_upload_images: true,
       skip_upload_screenshots: true,
     )
   end
 
-  desc "Build a signed AAB with an explicit version and upload to Play Internal (draft). " \
+  desc "Build a signed APK with an explicit version and upload to Play Internal (draft). " \
        "Usage: fastlane android internal version_name:0.2.0 [version_code:47]"
   lane :internal do |options|
     version_name = options[:version_name]
@@ -49,7 +52,7 @@ platform :android do
     end
 
     gradle(
-      task: ":androidApp:bundleRelease",
+      task: ":androidApp:assembleRelease",
       project_dir: "..",
       properties: {
         "appVersionName" => version_name,
@@ -61,7 +64,8 @@ platform :android do
     upload_to_play_store(
       track: "internal",
       release_status: "draft",
-      aab: "../androidApp/build/outputs/bundle/release/androidApp-release.aab",
+      apk: "../androidApp/build/outputs/apk/release/androidApp-release.apk",
+      skip_upload_aab: true,
       skip_upload_metadata: true,
       skip_upload_images: true,
       skip_upload_screenshots: true,

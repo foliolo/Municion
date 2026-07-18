@@ -1,2 +1,18 @@
-json_key_file(ENV["PLAY_SERVICE_ACCOUNT_JSON_PATH"] || "play-service-account.json")
+# Appfile — fixed identifiers for the Android side of Munición (KMP).
+#
+# fastlane reads this automatically when running any lane in this directory.
+# Anything that changes per-developer or per-environment (e.g., the path to
+# the Play Console service account JSON) is read from environment variables
+# loaded by fastlane-dotenv from `androidApp/fastlane/.env*`.
+
+# Application package as declared in androidApp/build.gradle.kts:applicationId.
+# Must match the Play Console listing exactly — Google rejects mismatches.
 package_name("al.ahgitdevelopment.municion")
+
+# Path to the Play Console service account JSON key file. Set in `.env` locally
+# (gitignored) or as an env var in CI. `SUPPLY_JSON_KEY` is the canonical
+# `supply` env var, so both `google_play_track_version_codes` and
+# `upload_to_play_store` pick it up. Resolved at lane runtime so a missing
+# value only blows up when a lane that actually needs Play access runs.
+# `PLAY_SERVICE_ACCOUNT_JSON_PATH` is kept as a fallback for existing CI setups.
+json_key_file(ENV["SUPPLY_JSON_KEY"] || ENV["PLAY_SERVICE_ACCOUNT_JSON_PATH"]) if ENV["SUPPLY_JSON_KEY"] || ENV["PLAY_SERVICE_ACCOUNT_JSON_PATH"]
